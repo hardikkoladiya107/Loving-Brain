@@ -14,13 +14,37 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/ic_co_parenting_icon.png
+  AssetGenImage get icCoParentingIcon =>
+      const AssetGenImage('assets/icons/ic_co_parenting_icon.png');
+
   /// File path: assets/icons/ic_daily_mindful_moments_icon.png
   AssetGenImage get icDailyMindfulMomentsIcon =>
       const AssetGenImage('assets/icons/ic_daily_mindful_moments_icon.png');
 
+  /// File path: assets/icons/ic_daily_schedule_planner_icon.png
+  AssetGenImage get icDailySchedulePlannerIcon =>
+      const AssetGenImage('assets/icons/ic_daily_schedule_planner_icon.png');
+
+  /// File path: assets/icons/ic_email_prefix_icon.png
+  AssetGenImage get icEmailPrefixIcon =>
+      const AssetGenImage('assets/icons/ic_email_prefix_icon.png');
+
+  /// File path: assets/icons/ic_mindfulness.png
+  AssetGenImage get icMindfulness =>
+      const AssetGenImage('assets/icons/ic_mindfulness.png');
+
+  /// File path: assets/icons/ic_parent_support.png
+  AssetGenImage get icParentSupport =>
+      const AssetGenImage('assets/icons/ic_parent_support.png');
+
   /// File path: assets/icons/ic_parenting_insights_icon.png
   AssetGenImage get icParentingInsightsIcon =>
       const AssetGenImage('assets/icons/ic_parenting_insights_icon.png');
+
+  /// File path: assets/icons/ic_password_prefix_icon.png
+  AssetGenImage get icPasswordPrefixIcon =>
+      const AssetGenImage('assets/icons/ic_password_prefix_icon.png');
 
   /// File path: assets/icons/ic_stress_sos_icon.png
   AssetGenImage get icStressSosIcon =>
@@ -28,14 +52,28 @@ class $AssetsIconsGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    icCoParentingIcon,
     icDailyMindfulMomentsIcon,
+    icDailySchedulePlannerIcon,
+    icEmailPrefixIcon,
+    icMindfulness,
+    icParentSupport,
     icParentingInsightsIcon,
+    icPasswordPrefixIcon,
     icStressSosIcon,
   ];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// File path: assets/images/img_child_profile_bg.png
+  AssetGenImage get imgChildProfileBg =>
+      const AssetGenImage('assets/images/img_child_profile_bg.png');
+
+  /// File path: assets/images/img_login_bg.png
+  AssetGenImage get imgLoginBg =>
+      const AssetGenImage('assets/images/img_login_bg.png');
 
   /// File path: assets/images/img_on_boarding_bg1.png
   AssetGenImage get imgOnBoardingBg1 =>
@@ -53,12 +91,19 @@ class $AssetsImagesGen {
   AssetGenImage get imgOnBoardingBg4 =>
       const AssetGenImage('assets/images/img_on_boarding_bg_4.png');
 
+  /// File path: assets/images/img_parent_profile_bg.png
+  AssetGenImage get imgParentProfileBg =>
+      const AssetGenImage('assets/images/img_parent_profile_bg.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
+    imgChildProfileBg,
+    imgLoginBg,
     imgOnBoardingBg1,
     imgOnBoardingBg2,
     imgOnBoardingBg3,
     imgOnBoardingBg4,
+    imgParentProfileBg,
   ];
 }
 

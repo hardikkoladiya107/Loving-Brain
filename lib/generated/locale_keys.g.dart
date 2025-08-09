@@ -24,5 +24,18 @@ abstract class  LocaleKeys {
   static const justTapAway = 'justTapAway';
   static const weGuideYouThroughParenting = 'weGuideYouThroughParenting';
   static const takeAFree2weekCoaching = 'takeAFree2weekCoaching';
+  static const intelligent = 'intelligent';
+  static const chatbot = 'chatbot';
+  static const dailySchedulePlanner = 'dailySchedulePlanner';
+  static const shareResponsibilityFairly = 'shareResponsibilityFairly';
+  static const coParentingCalendar = 'coParentingCalendar';
+  static const coordinateChildRoutinesMealsSchoolPlaytimeTherapy = 'coordinateChildRoutinesMealsSchoolPlaytimeTherapy';
+  static const mindfulness = 'mindfulness';
+  static const overallWellbeing = 'overallWellbeing';
+  static const parentSupport = 'parentSupport';
+  static const certifiedTrainersCounselors = 'certifiedTrainersCounselors';
+  static const donHaveAnAccount = 'donHaveAnAccount';
+  static const signUp = 'signUp';
+  static const forgotPassword = 'forgotPassword';
 
 }

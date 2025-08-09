@@ -11,3 +11,13 @@ const yellowTextColor = Color(0xFFFFCE00);
 
 const yellowButtonStartColor = Color(0xFF62BFD4);
 const yellowButtonEndColor = Color(0xFFF1DD76);
+const yellowTextColor2 = Color(0xFFFDE466);
+const blackTextColor = Color(0xFF545454);
+
+const sliderTrackColor1 = Color(0xFFFFB58A);
+const sliderTrackColor2 = Color(0xFF5271FF);
+const sliderTrackColor3 = Color(0xFFFF66C4);
+const sliderTrackColor4 = Color(0xFF5CE1E6);
+
+const blueButtonColor = Color(0xff805AFF);
+const blueTextColor = Color(0xff0157C8);
