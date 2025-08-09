@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../gen/assets.gen.dart';
 
-class OnBoardingScreen extends StatefulWidget {
-  const OnBoardingScreen({super.key});
+class OnBoardingScreen4 extends StatefulWidget {
+  const OnBoardingScreen4({super.key});
 
   @override
-  State<OnBoardingScreen> createState() => _OnBoardingScreenState();
+  State<OnBoardingScreen4> createState() => _OnBoardingScreen4State();
 }
 
-class _OnBoardingScreenState extends State<OnBoardingScreen> {
+class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage(Assets.images.imgOnBoardingBg.path),
+          image: AssetImage(Assets.images.imgOnBoardingBg1.path),
         ),
       ),
       child: Scaffold(backgroundColor: Colors.transparent),

@@ -2,7 +2,13 @@
 class Assets {
   Assets._();
 
-  static const String imagesImgOnBoardingBg =
-      'assets/images/img_on_boarding_bg.png';
+  static const String imagesImgOnBoardingBg1 =
+      'assets/images/img_on_boarding_bg1.png';
+  static const String imagesImgOnBoardingBg2 =
+      'assets/images/img_on_boarding_bg_2.png';
+  static const String imagesImgOnBoardingBg3 =
+      'assets/images/img_on_boarding_bg_3.png';
+  static const String imagesImgOnBoardingBg4 =
+      'assets/images/img_on_boarding_bg_4.png';
   static const String translationsEn = 'assets/translations/en.json';
 }

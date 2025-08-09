@@ -14,12 +14,29 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets/images/img_on_boarding_bg.png
-  AssetGenImage get imgOnBoardingBg =>
-      const AssetGenImage('assets/images/img_on_boarding_bg.png');
+  /// File path: assets/images/img_on_boarding_bg1.png
+  AssetGenImage get imgOnBoardingBg1 =>
+      const AssetGenImage('assets/images/img_on_boarding_bg1.png');
+
+  /// File path: assets/images/img_on_boarding_bg_2.png
+  AssetGenImage get imgOnBoardingBg2 =>
+      const AssetGenImage('assets/images/img_on_boarding_bg_2.png');
+
+  /// File path: assets/images/img_on_boarding_bg_3.png
+  AssetGenImage get imgOnBoardingBg3 =>
+      const AssetGenImage('assets/images/img_on_boarding_bg_3.png');
+
+  /// File path: assets/images/img_on_boarding_bg_4.png
+  AssetGenImage get imgOnBoardingBg4 =>
+      const AssetGenImage('assets/images/img_on_boarding_bg_4.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [imgOnBoardingBg];
+  List<AssetGenImage> get values => [
+    imgOnBoardingBg1,
+    imgOnBoardingBg2,
+    imgOnBoardingBg3,
+    imgOnBoardingBg4,
+  ];
 }
 
 class $AssetsTranslationsGen {
