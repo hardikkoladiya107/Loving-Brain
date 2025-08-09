@@ -2,6 +2,12 @@
 class Assets {
   Assets._();
 
+  static const String iconsIcDailyMindfulMomentsIcon =
+      'assets/icons/ic_daily_mindful_moments_icon.png';
+  static const String iconsIcParentingInsightsIcon =
+      'assets/icons/ic_parenting_insights_icon.png';
+  static const String iconsIcStressSosIcon =
+      'assets/icons/ic_stress_sos_icon.png';
   static const String imagesImgOnBoardingBg1 =
       'assets/images/img_on_boarding_bg1.png';
   static const String imagesImgOnBoardingBg2 =

@@ -11,6 +11,29 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
+
+  /// File path: assets/icons/ic_daily_mindful_moments_icon.png
+  AssetGenImage get icDailyMindfulMomentsIcon =>
+      const AssetGenImage('assets/icons/ic_daily_mindful_moments_icon.png');
+
+  /// File path: assets/icons/ic_parenting_insights_icon.png
+  AssetGenImage get icParentingInsightsIcon =>
+      const AssetGenImage('assets/icons/ic_parenting_insights_icon.png');
+
+  /// File path: assets/icons/ic_stress_sos_icon.png
+  AssetGenImage get icStressSosIcon =>
+      const AssetGenImage('assets/icons/ic_stress_sos_icon.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [
+    icDailyMindfulMomentsIcon,
+    icParentingInsightsIcon,
+    icStressSosIcon,
+  ];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -52,6 +75,7 @@ class $AssetsTranslationsGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
 }

@@ -80,7 +80,7 @@ TextStyle getTextStyle({
   double? letterSpacing,
   FontStyle? fontStyle,
 }) {
-  return GoogleFonts.inter(
+  return GoogleFonts.quicksand(
     fontSize: fontSize ?? 16,
     fontStyle: fontStyle,
     color: color,
@@ -115,11 +115,11 @@ extension extOnDouble on double {
 
 extension extOnInt on int {
   Widget get spaceH {
-    return SizedBox(height: toDouble());
+    return SizedBox(height: h);
   }
 
   Widget get spaceW {
-    return SizedBox(width: toDouble());
+    return SizedBox(width: w);
   }
 }
 

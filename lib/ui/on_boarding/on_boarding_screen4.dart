@@ -15,6 +15,7 @@ class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
+          fit: BoxFit.cover,
           image: AssetImage(Assets.images.imgOnBoardingBg1.path),
         ),
       ),

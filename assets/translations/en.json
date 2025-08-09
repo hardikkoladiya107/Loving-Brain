@@ -1,5 +1,24 @@
 {
 
   "appName" : "Loving Brain",
-  "notSupportedInThisDevice" : "Not Supported in this device"
+  "notSupportedInThisDevice" : "Not Supported in this device",
+  "welcomeTo" : "Welcome to",
+  "lovingBrain" : "Loving Brain",
+  "login" : "Login",
+  "getStarted" : "Get Started",
+  "becauseEveryChildDeservesTheBestVersionOfYou" : "Because every child deserves the\nbest version of you",
+  "dailyMindfulMoments" : "Daily Mindful Moments",
+  "parentingInsights" : "Parenting Insights",
+  "stressSOS" : "Stress SOS",
+  "twoMinExercisesToResetAndRecharge" : "2-min exercises to reset and recharge",
+  "expertBackedTipsTailoredForYourNeeds" : "Expert-backed tips tailored for your needs",
+  "quickToolsForCalmingInToughMoments" : "Quick tools for calming in tough moments",
+  "evenSuperheroesRequireSupport" : "“Even superheroes require support,\nespecially those who are nurturing the\nnext generation.”",
+  "next" : "Next",
+  "letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs" : "Let’s take care of your mind, so you can take care of theirs",
+  "youMadeTt" : "You made it",
+  "personalizedParentSupport" : "Personalized\nParent Support:",
+  "justTapAway" : "Just a Tap Away",
+  "weGuideYouThroughParenting" : "We guide you through parenting\nwith expert advice, emotional\ncheck-ins, daily tips, and a safe\nspace to grow , for both you and\nyour child",
+  "takeAFree2weekCoaching" : "Take a free 2-week coaching\nbreak with us!\nPick your challenges, we’ll\nhelp you through them."
 }
