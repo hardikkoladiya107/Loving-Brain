@@ -151,10 +151,10 @@ extension extOnWidget on Widget {
   }) {
     return Padding(
       padding: EdgeInsets.only(
-        left: all ?? left ?? 0.0,
-        right: all ?? right ?? 0.0,
-        top: all ?? top ?? 0.0,
-        bottom: all ?? bottom ?? 0.0,
+        left: (all ?? left ?? 0.0).w,
+        right: (all ?? right ?? 0.0).w,
+        top: (all ?? top ?? 0.0).h,
+        bottom: (all ?? bottom ?? 0.0).h,
       ),
       child: this,
     );

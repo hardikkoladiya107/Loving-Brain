@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
@@ -115,7 +116,14 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Colors.black,
             fontWeight: FontWeight.w600,
           ),
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ParentProfileScreen(),
+              ),
+            );
+            // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChildProfileScreen(  )));
+          },
         ),
       ],
     );

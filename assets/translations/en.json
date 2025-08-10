@@ -33,6 +33,13 @@
   "certifiedTrainersCounselors" : "Certified Trainers |\nCounselors",
   "donHaveAnAccount" : "Don’t have an account?",
   "signUp" : "Sign up",
-  "forgotPassword" : "Forgot password?"
+  "forgotPassword" : "Forgot password?",
+  "createYourAccountToBeginYourParentingJourney" : "Create your account to begin your parenting journey.",
+  "calmCorner" : "Calm Corner",
+  "challenges" : "Challenges",
+  "trackKidBehaviour" : "Track Kid Behaviour",
+  "learnPlay" : "Learn & Play",
+  "sleep" : "Sleep",
+  "howAreWeFeeling" : "How Are We Feeling?"
 
 }

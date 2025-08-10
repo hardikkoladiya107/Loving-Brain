@@ -37,5 +37,12 @@ abstract class  LocaleKeys {
   static const donHaveAnAccount = 'donHaveAnAccount';
   static const signUp = 'signUp';
   static const forgotPassword = 'forgotPassword';
+  static const createYourAccountToBeginYourParentingJourney = 'createYourAccountToBeginYourParentingJourney';
+  static const calmCorner = 'calmCorner';
+  static const challenges = 'challenges';
+  static const trackKidBehaviour = 'trackKidBehaviour';
+  static const learnPlay = 'learnPlay';
+  static const sleep = 'sleep';
+  static const howAreWeFeeling = 'howAreWeFeeling';
 
 }

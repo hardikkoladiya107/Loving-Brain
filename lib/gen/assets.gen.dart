@@ -14,6 +14,22 @@ import 'package:flutter/widgets.dart';
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/ic_ai_icon.png
+  AssetGenImage get icAiIcon =>
+      const AssetGenImage('assets/icons/ic_ai_icon.png');
+
+  /// File path: assets/icons/ic_calender_icon.png
+  AssetGenImage get icCalenderIcon =>
+      const AssetGenImage('assets/icons/ic_calender_icon.png');
+
+  /// File path: assets/icons/ic_calm_corner.png
+  AssetGenImage get icCalmCorner =>
+      const AssetGenImage('assets/icons/ic_calm_corner.png');
+
+  /// File path: assets/icons/ic_challenges_icon.png
+  AssetGenImage get icChallengesIcon =>
+      const AssetGenImage('assets/icons/ic_challenges_icon.png');
+
   /// File path: assets/icons/ic_co_parenting_icon.png
   AssetGenImage get icCoParentingIcon =>
       const AssetGenImage('assets/icons/ic_co_parenting_icon.png');
@@ -29,6 +45,18 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_email_prefix_icon.png
   AssetGenImage get icEmailPrefixIcon =>
       const AssetGenImage('assets/icons/ic_email_prefix_icon.png');
+
+  /// File path: assets/icons/ic_forward_icon.png
+  AssetGenImage get icForwardIcon =>
+      const AssetGenImage('assets/icons/ic_forward_icon.png');
+
+  /// File path: assets/icons/ic_home_icon.png
+  AssetGenImage get icHomeIcon =>
+      const AssetGenImage('assets/icons/ic_home_icon.png');
+
+  /// File path: assets/icons/ic_journal_icon.png
+  AssetGenImage get icJournalIcon =>
+      const AssetGenImage('assets/icons/ic_journal_icon.png');
 
   /// File path: assets/icons/ic_mindfulness.png
   AssetGenImage get icMindfulness =>
@@ -46,21 +74,53 @@ class $AssetsIconsGen {
   AssetGenImage get icPasswordPrefixIcon =>
       const AssetGenImage('assets/icons/ic_password_prefix_icon.png');
 
+  /// File path: assets/icons/ic_profile_icon.png
+  AssetGenImage get icProfileIcon =>
+      const AssetGenImage('assets/icons/ic_profile_icon.png');
+
+  /// File path: assets/icons/ic_profile_icon2.png
+  AssetGenImage get icProfileIcon2 =>
+      const AssetGenImage('assets/icons/ic_profile_icon2.png');
+
+  /// File path: assets/icons/ic_schedule_icon.png
+  AssetGenImage get icScheduleIcon =>
+      const AssetGenImage('assets/icons/ic_schedule_icon.png');
+
+  /// File path: assets/icons/ic_streak_icon.png
+  AssetGenImage get icStreakIcon =>
+      const AssetGenImage('assets/icons/ic_streak_icon.png');
+
   /// File path: assets/icons/ic_stress_sos_icon.png
   AssetGenImage get icStressSosIcon =>
       const AssetGenImage('assets/icons/ic_stress_sos_icon.png');
 
+  /// File path: assets/icons/ic_track_kid_behaviour.png
+  AssetGenImage get icTrackKidBehaviour =>
+      const AssetGenImage('assets/icons/ic_track_kid_behaviour.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
+    icAiIcon,
+    icCalenderIcon,
+    icCalmCorner,
+    icChallengesIcon,
     icCoParentingIcon,
     icDailyMindfulMomentsIcon,
     icDailySchedulePlannerIcon,
     icEmailPrefixIcon,
+    icForwardIcon,
+    icHomeIcon,
+    icJournalIcon,
     icMindfulness,
     icParentSupport,
     icParentingInsightsIcon,
     icPasswordPrefixIcon,
+    icProfileIcon,
+    icProfileIcon2,
+    icScheduleIcon,
+    icStreakIcon,
     icStressSosIcon,
+    icTrackKidBehaviour,
   ];
 }
 
@@ -70,6 +130,18 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_child_profile_bg.png
   AssetGenImage get imgChildProfileBg =>
       const AssetGenImage('assets/images/img_child_profile_bg.png');
+
+  /// File path: assets/images/img_home_card_bg.png
+  AssetGenImage get imgHomeCardBg =>
+      const AssetGenImage('assets/images/img_home_card_bg.png');
+
+  /// File path: assets/images/img_how_are_we_feeling.png
+  AssetGenImage get imgHowAreWeFeeling =>
+      const AssetGenImage('assets/images/img_how_are_we_feeling.png');
+
+  /// File path: assets/images/img_learn_and_play.png
+  AssetGenImage get imgLearnAndPlay =>
+      const AssetGenImage('assets/images/img_learn_and_play.png');
 
   /// File path: assets/images/img_login_bg.png
   AssetGenImage get imgLoginBg =>
@@ -95,15 +167,23 @@ class $AssetsImagesGen {
   AssetGenImage get imgParentProfileBg =>
       const AssetGenImage('assets/images/img_parent_profile_bg.png');
 
+  /// File path: assets/images/img_sleep.png
+  AssetGenImage get imgSleep =>
+      const AssetGenImage('assets/images/img_sleep.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     imgChildProfileBg,
+    imgHomeCardBg,
+    imgHowAreWeFeeling,
+    imgLearnAndPlay,
     imgLoginBg,
     imgOnBoardingBg1,
     imgOnBoardingBg2,
     imgOnBoardingBg3,
     imgOnBoardingBg4,
     imgParentProfileBg,
+    imgSleep,
   ];
 }
 

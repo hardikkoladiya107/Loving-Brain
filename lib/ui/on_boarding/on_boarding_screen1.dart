@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/login/login_screen.dart';
 import 'package:loving_brain/ui/on_boarding/on_boarding_screen2.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -90,7 +91,11 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
           ],
         ).appPadding(top: 10, bottom: 10),
       ),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+      },
     ).appPadding(left: 30, right: 30);
   }
 }
