@@ -40,6 +40,26 @@
   "trackKidBehaviour" : "Track Kid Behaviour",
   "learnPlay" : "Learn & Play",
   "sleep" : "Sleep",
-  "howAreWeFeeling" : "How Are We Feeling?"
+  "howAreWeFeeling" : "How Are We Feeling?",
+  "gender" : "Gender",
+  "dateOfBirth" : "Date of Birth",
+  "yourRelationshipToChild" : "Your relationship to child",
+  "childAgeStage" : "Child's Age / Stage",
+  "childName" : "Child Name",
+  "signUpWithGoogle" : "Sign Up with Google",
+  "signInWithApple" : "Sign in with Apple",
+  "startMyJourney" : "Start my journey",
+  "chooseYourCalm" : "Choose Your Calm",
+  "selectExerciseFindMomentOfPeaceForYouAnd" : "Select an exercise to find a moment of peace for you and",
+  "diaperChangeBreath" : "Diaper Change Breath",
+  "mindfulFeedingAnchor" : "Mindful Feeding Anchor",
+  "sunnyBreathForKids" : "Sunny Breath for Kids",
+  "sleepDeprivationRest" : "Sleep Deprivation Rest",
+  "aQuickCalmingBreathFindSerenityBusyMoments" : "A Quick Calming Breath to Find Serenity in Busy Moments",
+  "focusOnSensationsDuringFeedingConnectWithYourBaby" : "Focus on sensations during feeding to connect with your baby",
+  "feelTheSunshineEnveloping" : "Feel the sunshine enveloping you with each breath",
+  "aQuickMentalRefreshForTiredParents" : "A Quick Mental Refresh for Tired Parents"
+
+
 
 }

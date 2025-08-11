@@ -22,3 +22,5 @@ const sliderTrackColor4 = Color(0xFF5CE1E6);
 const blueButtonColor = Color(0xff805AFF);
 const blueTextColor = Color(0xff0157C8);
 const greyColor = Color(0xffDFDFDF);
+const buttonColor1 = Color(0xffa7dae9);
+const pinkColor1 = Color(0xffd6b1ef);

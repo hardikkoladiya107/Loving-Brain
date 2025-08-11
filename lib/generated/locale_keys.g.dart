@@ -44,5 +44,23 @@ abstract class  LocaleKeys {
   static const learnPlay = 'learnPlay';
   static const sleep = 'sleep';
   static const howAreWeFeeling = 'howAreWeFeeling';
+  static const gender = 'gender';
+  static const dateOfBirth = 'dateOfBirth';
+  static const yourRelationshipToChild = 'yourRelationshipToChild';
+  static const childAgeStage = 'childAgeStage';
+  static const childName = 'childName';
+  static const signUpWithGoogle = 'signUpWithGoogle';
+  static const signInWithApple = 'signInWithApple';
+  static const startMyJourney = 'startMyJourney';
+  static const chooseYourCalm = 'chooseYourCalm';
+  static const selectExerciseFindMomentOfPeaceForYouAnd = 'selectExerciseFindMomentOfPeaceForYouAnd';
+  static const diaperChangeBreath = 'diaperChangeBreath';
+  static const mindfulFeedingAnchor = 'mindfulFeedingAnchor';
+  static const sunnyBreathForKids = 'sunnyBreathForKids';
+  static const sleepDeprivationRest = 'sleepDeprivationRest';
+  static const aQuickCalmingBreathFindSerenityBusyMoments = 'aQuickCalmingBreathFindSerenityBusyMoments';
+  static const focusOnSensationsDuringFeedingConnectWithYourBaby = 'focusOnSensationsDuringFeedingConnectWithYourBaby';
+  static const feelTheSunshineEnveloping = 'feelTheSunshineEnveloping';
+  static const aQuickMentalRefreshForTiredParents = 'aQuickMentalRefreshForTiredParents';
 
 }

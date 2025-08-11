@@ -19,12 +19,14 @@ class AppTextField extends StatefulWidget {
     this.showAddButton = false,
     this.showInfoButton = false,
     this.filled = true,
+    this.readOnly,
   });
 
   final String? title;
   final String? hint;
   final bool showAddButton;
   final bool showInfoButton;
+  final bool? readOnly;
   final bool filled;
   final Color fillColor;
   final TextEditingController? controller;
@@ -55,14 +57,13 @@ class _AppTextFieldState extends State<AppTextField> {
         Theme(
           data: Theme.of(context).copyWith(
             textSelectionTheme: TextSelectionThemeData(
-              cursorColor: primaryColor, // Cursor color
-              selectionColor: primaryColor.withValues(
-                alpha: 0.5,
-              ), // Highlighted text background color
-              selectionHandleColor: primaryColor, // Thumb (handle) color
+              cursorColor: primaryColor,
+              selectionColor: primaryColor.withValues(alpha: 0.5),
+              selectionHandleColor: primaryColor,
             ),
           ),
           child: TextField(
+            readOnly: widget.readOnly ?? false,
             keyboardType: widget.keyboardType,
             controller: widget.controller,
             onChanged: widget.onChanged,

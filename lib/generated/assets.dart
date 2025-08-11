@@ -3,6 +3,7 @@ class Assets {
   Assets._();
 
   static const String iconsIcAiIcon = 'assets/icons/ic_ai_icon.png';
+  static const String iconsIcAppleIcon = 'assets/icons/ic_apple_icon.png';
   static const String iconsIcCalenderIcon = 'assets/icons/ic_calender_icon.png';
   static const String iconsIcCalmCorner = 'assets/icons/ic_calm_corner.png';
   static const String iconsIcChallengesIcon =
@@ -13,11 +14,16 @@ class Assets {
       'assets/icons/ic_daily_mindful_moments_icon.png';
   static const String iconsIcDailySchedulePlannerIcon =
       'assets/icons/ic_daily_schedule_planner_icon.png';
+  static const String iconsIcDiaperChangeBreath =
+      'assets/icons/ic_diaper_change_breath.png';
   static const String iconsIcEmailPrefixIcon =
       'assets/icons/ic_email_prefix_icon.png';
   static const String iconsIcForwardIcon = 'assets/icons/ic_forward_icon.png';
+  static const String iconsIcGoogleIcon = 'assets/icons/ic_google_icon.png';
   static const String iconsIcHomeIcon = 'assets/icons/ic_home_icon.png';
   static const String iconsIcJournalIcon = 'assets/icons/ic_journal_icon.png';
+  static const String iconsIcMindfulFeedingAnchor =
+      'assets/icons/ic_mindful_feeding_anchor.png';
   static const String iconsIcMindfulness = 'assets/icons/ic_mindfulness.png';
   static const String iconsIcParentSupport =
       'assets/icons/ic_parent_support.png';
@@ -28,13 +34,27 @@ class Assets {
   static const String iconsIcProfileIcon = 'assets/icons/ic_profile_icon.png';
   static const String iconsIcProfileIcon2 = 'assets/icons/ic_profile_icon2.png';
   static const String iconsIcScheduleIcon = 'assets/icons/ic_schedule_icon.png';
+  static const String iconsIcSleepDeprivationRest =
+      'assets/icons/ic_sleep_deprivation_rest.png';
   static const String iconsIcStreakIcon = 'assets/icons/ic_streak_icon.png';
   static const String iconsIcStressSosIcon =
       'assets/icons/ic_stress_sos_icon.png';
+  static const String iconsIcSunnyBreathForKids =
+      'assets/icons/ic_sunny_breath_for_kids.png';
   static const String iconsIcTrackKidBehaviour =
       'assets/icons/ic_track_kid_behaviour.png';
   static const String imagesImgChildProfileBg =
       'assets/images/img_child_profile_bg.png';
+  static const String imagesImgChooseCalmCardBg1 =
+      'assets/images/img_choose_calm_card_bg1.png';
+  static const String imagesImgChooseCalmCardBg2 =
+      'assets/images/img_choose_calm_card_bg2.png';
+  static const String imagesImgChooseCalmCardBg3 =
+      'assets/images/img_choose_calm_card_bg3.png';
+  static const String imagesImgChooseCalmCardBg4 =
+      'assets/images/img_choose_calm_card_bg4.png';
+  static const String imagesImgChooseYourCalmBg =
+      'assets/images/img_choose_your_calm_bg.png';
   static const String imagesImgHomeCardBg =
       'assets/images/img_home_card_bg.png';
   static const String imagesImgHowAreWeFeeling =
