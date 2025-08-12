@@ -62,5 +62,22 @@ abstract class  LocaleKeys {
   static const focusOnSensationsDuringFeedingConnectWithYourBaby = 'focusOnSensationsDuringFeedingConnectWithYourBaby';
   static const feelTheSunshineEnveloping = 'feelTheSunshineEnveloping';
   static const aQuickMentalRefreshForTiredParents = 'aQuickMentalRefreshForTiredParents';
+  static const postpartumCalmMeditation = 'postpartumCalmMeditation';
+  static const aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm = 'aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm';
+  static const moreExercisesAvailableInFutureChallenges = 'moreExercisesAvailableInFutureChallenges';
+  static const moduleDescription = 'moduleDescription';
+  static const sleepDescription = 'sleepDescription';
+  static const postpartumCalmConnection = 'postpartumCalmConnection';
+  static const postpartumCalmConnectionDescription = 'postpartumCalmConnectionDescription';
+  static const toddlerEmotionalUnderstanding = 'toddlerEmotionalUnderstanding';
+  static const forParents1To3YearsOld = 'forParents1To3YearsOld';
+  static const buildingFamilyConnection = 'buildingFamilyConnection';
+  static const strengthenBondsCommunication = 'strengthenBondsCommunication';
+  static const unlockMoreInDepthCourses = 'unlockMoreInDepthCourses';
+  static const modules = 'modules';
+  static const calmMeditation = 'calmMeditation';
+  static const nowPlaying = 'nowPlaying';
+  static const paspartum_description = 'paspartum_description';
+  static const recommendedForYou = 'recommendedForYou';
 
 }

@@ -24,3 +24,4 @@ const blueTextColor = Color(0xff0157C8);
 const greyColor = Color(0xffDFDFDF);
 const buttonColor1 = Color(0xffa7dae9);
 const pinkColor1 = Color(0xffd6b1ef);
+const greyColor1 = Color(0xff717273);

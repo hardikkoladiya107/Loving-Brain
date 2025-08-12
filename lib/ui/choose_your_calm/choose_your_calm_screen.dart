@@ -5,6 +5,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../other/app_color.dart';
 
 class ChooseYourCalmScreen extends StatefulWidget {
   const ChooseYourCalmScreen({super.key});
@@ -25,17 +26,29 @@ class _ChooseYourCalmScreenState extends State<ChooseYourCalmScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(),
-            60.spaceH,
-            _header(),
-            10.spaceH,
-            _headerDescription(),
-            _topCards(),
-            _bottomCards(),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(),
+              60.spaceH,
+              _header(),
+              10.spaceH,
+              _headerDescription(),
+              16.spaceH,
+              _topCards(),
+              10.spaceH,
+              _middleCard(),
+              10.spaceH,
+              _bottomCards(),
+              10.spaceH,
+              LocaleKeys.moreExercisesAvailableInFutureChallenges.tr().appText(
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -127,8 +140,8 @@ class _ChooseYourCalmScreenState extends State<ChooseYourCalmScreen> {
     required Color textColor,
   }) {
     return Container(
-      height: 200.h,
-      width: 160.w,
+      height: 180.h,
+      width: 155.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
@@ -136,23 +149,82 @@ class _ChooseYourCalmScreenState extends State<ChooseYourCalmScreen> {
           image: AssetImage(image.path),
         ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          icon.image(height: 80, width: 80),
-          10.spaceH,
-          title.appText(
-            color: textColor,
-            fontWeight: FontWeight.w800,
-            fontSize: 11,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon.image(height: 80, width: 80),
+              10.spaceH,
+              title.appText(
+                color: textColor,
+                fontWeight: FontWeight.w800,
+                fontSize: 11,
+              ),
+              description.appText(
+                color: textColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 8,
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          description.appText(
-            color: textColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 10,
+          Positioned(bottom: 10, right: 0, child: _playIcon()),
+        ],
+      ).appPadding(left: 10.w, right: 10.w),
+    );
+  }
+
+  Widget _middleCard() {
+    return Container(
+      height: 135.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage(Assets.images.imgChooseCalmCardBg5.path),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Assets.icons.icPostpartumCalmMeditation.image(
+            height: 90.h,
+            width: 90.w,
+          ),
+          10.spaceH,
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LocaleKeys.postpartumCalmMeditation.tr().appText(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                ),
+                8.spaceH,
+                LocaleKeys
+                    .aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm
+                    .tr()
+                    .appText(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 10,
+                    ),
+              ],
+            ),
           ),
         ],
       ).appPadding(left: 10.w, right: 10.w),
+    ).appPadding(left: 30.w, right: 30.w);
+  }
+
+  Widget _playIcon() {
+    return Container(
+      height: 25,
+      width: 25,
+      decoration: BoxDecoration(color: greyColor1, shape: BoxShape.circle),
+      child: Icon(Icons.play_arrow, color: Colors.white, size: 15),
     );
   }
 }

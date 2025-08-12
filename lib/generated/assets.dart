@@ -19,21 +19,33 @@ class Assets {
   static const String iconsIcEmailPrefixIcon =
       'assets/icons/ic_email_prefix_icon.png';
   static const String iconsIcForwardIcon = 'assets/icons/ic_forward_icon.png';
+  static const String iconsIcForwardIcon2 = 'assets/icons/ic_forward_icon2.png';
   static const String iconsIcGoogleIcon = 'assets/icons/ic_google_icon.png';
   static const String iconsIcHomeIcon = 'assets/icons/ic_home_icon.png';
   static const String iconsIcJournalIcon = 'assets/icons/ic_journal_icon.png';
+  static const String iconsIcLastPlayedIcon =
+      'assets/icons/ic_last_played_icon.png';
   static const String iconsIcMindfulFeedingAnchor =
       'assets/icons/ic_mindful_feeding_anchor.png';
   static const String iconsIcMindfulness = 'assets/icons/ic_mindfulness.png';
+  static const String iconsIcMusicIcon = 'assets/icons/ic_music_icon.png';
+  static const String iconsIcNextPlayIcon =
+      'assets/icons/ic_next_play_icon.png';
   static const String iconsIcParentSupport =
       'assets/icons/ic_parent_support.png';
   static const String iconsIcParentingInsightsIcon =
       'assets/icons/ic_parenting_insights_icon.png';
   static const String iconsIcPasswordPrefixIcon =
       'assets/icons/ic_password_prefix_icon.png';
+  static const String iconsIcPauseIcon = 'assets/icons/ic_pause_icon.png';
+  static const String iconsIcPostpartumCalmMeditation =
+      'assets/icons/ic_postpartum_calm_meditation.png';
+  static const String iconsIcPremiumIcon = 'assets/icons/ic_premium_icon.png';
   static const String iconsIcProfileIcon = 'assets/icons/ic_profile_icon.png';
   static const String iconsIcProfileIcon2 = 'assets/icons/ic_profile_icon2.png';
+  static const String iconsIcRepeatIcon = 'assets/icons/ic_repeat_icon.png';
   static const String iconsIcScheduleIcon = 'assets/icons/ic_schedule_icon.png';
+  static const String iconsIcShuffleIcon = 'assets/icons/ic_shuffle_icon.png';
   static const String iconsIcSleepDeprivationRest =
       'assets/icons/ic_sleep_deprivation_rest.png';
   static const String iconsIcStreakIcon = 'assets/icons/ic_streak_icon.png';
@@ -53,6 +65,8 @@ class Assets {
       'assets/images/img_choose_calm_card_bg3.png';
   static const String imagesImgChooseCalmCardBg4 =
       'assets/images/img_choose_calm_card_bg4.png';
+  static const String imagesImgChooseCalmCardBg5 =
+      'assets/images/img_choose_calm_card_bg5.png';
   static const String imagesImgChooseYourCalmBg =
       'assets/images/img_choose_your_calm_bg.png';
   static const String imagesImgHomeCardBg =
@@ -62,6 +76,16 @@ class Assets {
   static const String imagesImgLearnAndPlay =
       'assets/images/img_learn_and_play.png';
   static const String imagesImgLoginBg = 'assets/images/img_login_bg.png';
+  static const String imagesImgModuleCardBg1 =
+      'assets/images/img_module_card_bg_1.png';
+  static const String imagesImgModuleCardBg2 =
+      'assets/images/img_module_card_bg_2.png';
+  static const String imagesImgModuleCardBg3 =
+      'assets/images/img_module_card_bg_3.png';
+  static const String imagesImgModuleCardBg4 =
+      'assets/images/img_module_card_bg_4.png';
+  static const String imagesImgModulesScreenBg =
+      'assets/images/img_modules_screen_bg.png';
   static const String imagesImgOnBoardingBg1 =
       'assets/images/img_on_boarding_bg1.png';
   static const String imagesImgOnBoardingBg2 =
@@ -72,6 +96,8 @@ class Assets {
       'assets/images/img_on_boarding_bg_4.png';
   static const String imagesImgParentProfileBg =
       'assets/images/img_parent_profile_bg.png';
+  static const String imagesImgPostPartumCalmMeditation =
+      'assets/images/img_post_partum_calm_meditation.png';
   static const String imagesImgSleep = 'assets/images/img_sleep.png';
   static const String translationsEn = 'assets/translations/en.json';
 }

@@ -5,7 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loving_brain/provider.dart';
-import 'package:loving_brain/ui/choose_your_calm/choose_your_calm_screen.dart';
+import 'package:loving_brain/ui/postpartum_calm/postpartum_calm_screen.dart';
 
 import 'generated/locale_keys.g.dart';
 import 'other/preferances.dart';
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: EasyLoading.init(),
-          home: /*OnBoardingScreen1()*/ ChooseYourCalmScreen(),
+          home: /*OnBoardingScreen1()*/ PostpartumCalmScreen(),
         ),
       ),
     );

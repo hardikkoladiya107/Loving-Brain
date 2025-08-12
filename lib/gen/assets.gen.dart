@@ -58,6 +58,10 @@ class $AssetsIconsGen {
   AssetGenImage get icForwardIcon =>
       const AssetGenImage('assets/icons/ic_forward_icon.png');
 
+  /// File path: assets/icons/ic_forward_icon2.png
+  AssetGenImage get icForwardIcon2 =>
+      const AssetGenImage('assets/icons/ic_forward_icon2.png');
+
   /// File path: assets/icons/ic_google_icon.png
   AssetGenImage get icGoogleIcon =>
       const AssetGenImage('assets/icons/ic_google_icon.png');
@@ -70,6 +74,10 @@ class $AssetsIconsGen {
   AssetGenImage get icJournalIcon =>
       const AssetGenImage('assets/icons/ic_journal_icon.png');
 
+  /// File path: assets/icons/ic_last_played_icon.png
+  AssetGenImage get icLastPlayedIcon =>
+      const AssetGenImage('assets/icons/ic_last_played_icon.png');
+
   /// File path: assets/icons/ic_mindful_feeding_anchor.png
   AssetGenImage get icMindfulFeedingAnchor =>
       const AssetGenImage('assets/icons/ic_mindful_feeding_anchor.png');
@@ -77,6 +85,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_mindfulness.png
   AssetGenImage get icMindfulness =>
       const AssetGenImage('assets/icons/ic_mindfulness.png');
+
+  /// File path: assets/icons/ic_music_icon.png
+  AssetGenImage get icMusicIcon =>
+      const AssetGenImage('assets/icons/ic_music_icon.png');
+
+  /// File path: assets/icons/ic_next_play_icon.png
+  AssetGenImage get icNextPlayIcon =>
+      const AssetGenImage('assets/icons/ic_next_play_icon.png');
 
   /// File path: assets/icons/ic_parent_support.png
   AssetGenImage get icParentSupport =>
@@ -90,6 +106,18 @@ class $AssetsIconsGen {
   AssetGenImage get icPasswordPrefixIcon =>
       const AssetGenImage('assets/icons/ic_password_prefix_icon.png');
 
+  /// File path: assets/icons/ic_pause_icon.png
+  AssetGenImage get icPauseIcon =>
+      const AssetGenImage('assets/icons/ic_pause_icon.png');
+
+  /// File path: assets/icons/ic_postpartum_calm_meditation.png
+  AssetGenImage get icPostpartumCalmMeditation =>
+      const AssetGenImage('assets/icons/ic_postpartum_calm_meditation.png');
+
+  /// File path: assets/icons/ic_premium_icon.png
+  AssetGenImage get icPremiumIcon =>
+      const AssetGenImage('assets/icons/ic_premium_icon.png');
+
   /// File path: assets/icons/ic_profile_icon.png
   AssetGenImage get icProfileIcon =>
       const AssetGenImage('assets/icons/ic_profile_icon.png');
@@ -98,9 +126,17 @@ class $AssetsIconsGen {
   AssetGenImage get icProfileIcon2 =>
       const AssetGenImage('assets/icons/ic_profile_icon2.png');
 
+  /// File path: assets/icons/ic_repeat_icon.png
+  AssetGenImage get icRepeatIcon =>
+      const AssetGenImage('assets/icons/ic_repeat_icon.png');
+
   /// File path: assets/icons/ic_schedule_icon.png
   AssetGenImage get icScheduleIcon =>
       const AssetGenImage('assets/icons/ic_schedule_icon.png');
+
+  /// File path: assets/icons/ic_shuffle_icon.png
+  AssetGenImage get icShuffleIcon =>
+      const AssetGenImage('assets/icons/ic_shuffle_icon.png');
 
   /// File path: assets/icons/ic_sleep_deprivation_rest.png
   AssetGenImage get icSleepDeprivationRest =>
@@ -135,17 +171,26 @@ class $AssetsIconsGen {
     icDiaperChangeBreath,
     icEmailPrefixIcon,
     icForwardIcon,
+    icForwardIcon2,
     icGoogleIcon,
     icHomeIcon,
     icJournalIcon,
+    icLastPlayedIcon,
     icMindfulFeedingAnchor,
     icMindfulness,
+    icMusicIcon,
+    icNextPlayIcon,
     icParentSupport,
     icParentingInsightsIcon,
     icPasswordPrefixIcon,
+    icPauseIcon,
+    icPostpartumCalmMeditation,
+    icPremiumIcon,
     icProfileIcon,
     icProfileIcon2,
+    icRepeatIcon,
     icScheduleIcon,
+    icShuffleIcon,
     icSleepDeprivationRest,
     icStreakIcon,
     icStressSosIcon,
@@ -177,6 +222,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgChooseCalmCardBg4 =>
       const AssetGenImage('assets/images/img_choose_calm_card_bg4.png');
 
+  /// File path: assets/images/img_choose_calm_card_bg5.png
+  AssetGenImage get imgChooseCalmCardBg5 =>
+      const AssetGenImage('assets/images/img_choose_calm_card_bg5.png');
+
   /// File path: assets/images/img_choose_your_calm_bg.png
   AssetGenImage get imgChooseYourCalmBg =>
       const AssetGenImage('assets/images/img_choose_your_calm_bg.png');
@@ -196,6 +245,26 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_login_bg.png
   AssetGenImage get imgLoginBg =>
       const AssetGenImage('assets/images/img_login_bg.png');
+
+  /// File path: assets/images/img_module_card_bg_1.png
+  AssetGenImage get imgModuleCardBg1 =>
+      const AssetGenImage('assets/images/img_module_card_bg_1.png');
+
+  /// File path: assets/images/img_module_card_bg_2.png
+  AssetGenImage get imgModuleCardBg2 =>
+      const AssetGenImage('assets/images/img_module_card_bg_2.png');
+
+  /// File path: assets/images/img_module_card_bg_3.png
+  AssetGenImage get imgModuleCardBg3 =>
+      const AssetGenImage('assets/images/img_module_card_bg_3.png');
+
+  /// File path: assets/images/img_module_card_bg_4.png
+  AssetGenImage get imgModuleCardBg4 =>
+      const AssetGenImage('assets/images/img_module_card_bg_4.png');
+
+  /// File path: assets/images/img_modules_screen_bg.png
+  AssetGenImage get imgModulesScreenBg =>
+      const AssetGenImage('assets/images/img_modules_screen_bg.png');
 
   /// File path: assets/images/img_on_boarding_bg1.png
   AssetGenImage get imgOnBoardingBg1 =>
@@ -217,6 +286,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgParentProfileBg =>
       const AssetGenImage('assets/images/img_parent_profile_bg.png');
 
+  /// File path: assets/images/img_post_partum_calm_meditation.png
+  AssetGenImage get imgPostPartumCalmMeditation =>
+      const AssetGenImage('assets/images/img_post_partum_calm_meditation.png');
+
   /// File path: assets/images/img_sleep.png
   AssetGenImage get imgSleep =>
       const AssetGenImage('assets/images/img_sleep.png');
@@ -228,16 +301,23 @@ class $AssetsImagesGen {
     imgChooseCalmCardBg2,
     imgChooseCalmCardBg3,
     imgChooseCalmCardBg4,
+    imgChooseCalmCardBg5,
     imgChooseYourCalmBg,
     imgHomeCardBg,
     imgHowAreWeFeeling,
     imgLearnAndPlay,
     imgLoginBg,
+    imgModuleCardBg1,
+    imgModuleCardBg2,
+    imgModuleCardBg3,
+    imgModuleCardBg4,
+    imgModulesScreenBg,
     imgOnBoardingBg1,
     imgOnBoardingBg2,
     imgOnBoardingBg3,
     imgOnBoardingBg4,
     imgParentProfileBg,
+    imgPostPartumCalmMeditation,
     imgSleep,
   ];
 }
