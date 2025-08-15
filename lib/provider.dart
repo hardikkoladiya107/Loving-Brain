@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/ui/activity/bloc/activity_cubit.dart';
 import 'package:loving_brain/ui/activity_completed/bloc/activity_completed_cubit.dart';
 import 'package:loving_brain/ui/ai_chat/bloc/ai_chat_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
@@ -27,5 +28,8 @@ var blocProvider = [
   BlocProvider<AiChatCubit>(create: (BuildContext context) => AiChatCubit()),
   BlocProvider<ActivityCompletedCubit>(
     create: (BuildContext context) => ActivityCompletedCubit(),
+  ),
+  BlocProvider<ActivityCubit>(
+    create: (BuildContext context) => ActivityCubit(),
   ),
 ];

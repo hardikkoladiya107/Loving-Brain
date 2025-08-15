@@ -12,6 +12,7 @@ class Assets {
   static const String iconsIcCalmCorner = 'assets/icons/ic_calm_corner.png';
   static const String iconsIcChallengesIcon =
       'assets/icons/ic_challenges_icon.png';
+  static const String iconsIcCheck = 'assets/icons/ic_check.png';
   static const String iconsIcCoParentingIcon =
       'assets/icons/ic_co_parenting_icon.png';
   static const String iconsIcDailyMindfulMomentsIcon =
@@ -55,6 +56,9 @@ class Assets {
   static const String iconsIcPremiumIcon = 'assets/icons/ic_premium_icon.png';
   static const String iconsIcProfileIcon = 'assets/icons/ic_profile_icon.png';
   static const String iconsIcProfileIcon2 = 'assets/icons/ic_profile_icon2.png';
+  static const String iconsIcQuestion = 'assets/icons/ic_question.png';
+  static const String iconsIcReflactInJournal =
+      'assets/icons/ic_reflact_in_journal.png';
   static const String iconsIcRepeatIcon = 'assets/icons/ic_repeat_icon.png';
   static const String iconsIcScheduleIcon = 'assets/icons/ic_schedule_icon.png';
   static const String iconsIcShuffleIcon = 'assets/icons/ic_shuffle_icon.png';
@@ -63,14 +67,19 @@ class Assets {
   static const String iconsIcStoryBuilderDice =
       'assets/icons/ic_story_builder_dice.png';
   static const String iconsIcStreakIcon = 'assets/icons/ic_streak_icon.png';
+  static const String iconsIcStreakMailIcon =
+      'assets/icons/ic_streak_mail_icon.png';
   static const String iconsIcStressSosIcon =
       'assets/icons/ic_stress_sos_icon.png';
   static const String iconsIcSubscriptionIcon =
       'assets/icons/ic_subscription_icon.png';
   static const String iconsIcSunnyBreathForKids =
       'assets/icons/ic_sunny_breath_for_kids.png';
+  static const String iconsIcTimer = 'assets/icons/ic_timer.png';
   static const String iconsIcTrackKidBehaviour =
       'assets/icons/ic_track_kid_behaviour.png';
+  static const String imagesIcTipCardBg = 'assets/images/img_tip_card_bg.png';
+  static const String imagesImgActivityBg = 'assets/images/img_activity_bg.png';
   static const String imagesImgActivityCompleted =
       'assets/images/img_activity_completed.png';
   static const String imagesImgAiChatBg = 'assets/images/img_ai_chat_bg.png';

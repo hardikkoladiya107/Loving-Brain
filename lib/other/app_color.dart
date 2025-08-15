@@ -48,3 +48,6 @@ const aiQuestionCardColor1 = Color(0xFFE6EAFF);
 const aiQuestionCardColor2 = Color(0xFFFCF1DC);
 const aiQuestionCardColor3 = Color(0xFFF3F6E7);
 const aiQuestionCardColor4 = Color(0xFFF1F1F1);
+const pinkColor = Color(0xFFFF7A93);
+const greyColor3 = Color(0xFFDDD8D4);
+const buttonColor2 = Color(0xFFFFF7ED);

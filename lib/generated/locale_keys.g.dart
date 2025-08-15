@@ -124,5 +124,14 @@ abstract class  LocaleKeys {
   static const myNewbornIsCryingContinuouslyWhatStepsShouldITake = 'myNewbornIsCryingContinuouslyWhatStepsShouldITake';
   static const howCanIEncourageMyChildExpressTheirFeelings = 'howCanIEncourageMyChildExpressTheirFeelings';
   static const howCanIHandleToddlerTantrumInPublic = 'howCanIHandleToddlerTantrumInPublic';
+  static const activityCompleted = 'activityCompleted';
+  static const youveAddedToYourStreak = 'youveAddedToYourStreak';
+  static const brainStreaks = 'brainStreaks';
+  static const getAIPlayInsight = 'getAIPlayInsight';
+  static const getAIPlayInsightDescription = 'getAIPlayInsightDescription';
+  static const reflectInJournal = 'reflectInJournal';
+  static const thisHugReleasesOxytocinTheBondingHormoneForBothOfYou = 'thisHugReleasesOxytocinTheBondingHormoneForBothOfYou';
+  static const parentingTip = 'parentingTip';
+  static const markAsDone = 'markAsDone';
 
 }
