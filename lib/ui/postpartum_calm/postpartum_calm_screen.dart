@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
@@ -25,15 +26,17 @@ class _PostpartumCalmScreenState extends State<PostpartumCalmScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            250.spaceH,
-            _controllersItems(),
-            30.spaceH,
-            _description(),
-            30.spaceH,
-            _recommendedForYou(),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              250.spaceH,
+              _controllersItems(),
+              30.spaceH,
+              _description(),
+              30.spaceH,
+              _recommendedForYou(),
+            ],
+          ),
         ),
       ),
     );
@@ -161,8 +164,38 @@ class _PostpartumCalmScreenState extends State<PostpartumCalmScreen> {
             ),
           ],
         ),
-        Row(children: []),
+        10.spaceH,
+        Row(
+          children: [
+            30.spaceW,
+            _recommendedItem(
+              label: LocaleKeys.easeAnxiety.tr(),
+              bg: Assets.images.imgEaseAnxietyBg,
+            ),
+            10.spaceW,
+            _recommendedItem(
+              label: LocaleKeys.scanBody.tr(),
+              bg: Assets.images.imgScanBodyBg,
+            ),
+          ],
+        ),
       ],
+    );
+  }
+
+  Widget _recommendedItem({required String label, required AssetGenImage bg}) {
+    return Container(
+      height: 90.h,
+      width: 140.w,
+      decoration: BoxDecoration(
+        color: Colors.pink,
+        borderRadius: BorderRadius.circular(12),
+        image: DecorationImage(fit: BoxFit.cover, image: AssetImage(bg.path)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [label.appText(fontWeight: FontWeight.w700)],
+      ),
     );
   }
 }

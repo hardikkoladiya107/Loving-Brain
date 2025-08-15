@@ -10,10 +10,14 @@ class AppTextField extends StatefulWidget {
     this.hint,
     this.controller,
     this.onChanged,
+    this.height,
     this.onAddButtonTap,
     this.inputFormatters,
     this.keyboardType,
     this.prefixIcon,
+    this.suffixIcon,
+    this.titleFontSize,
+    this.contentPadding,
     this.fillColor = Colors.white,
     this.tfType = TFTYPE.FILLED,
     this.showAddButton = false,
@@ -23,6 +27,8 @@ class AppTextField extends StatefulWidget {
   });
 
   final String? title;
+  final double? titleFontSize;
+  final double? height;
   final String? hint;
   final bool showAddButton;
   final bool showInfoButton;
@@ -35,7 +41,9 @@ class AppTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final TFTYPE? tfType;
+  final EdgeInsets? contentPadding;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -50,7 +58,14 @@ class _AppTextFieldState extends State<AppTextField> {
         if (widget.title != null)
           Column(
             children: [
-              Row(children: [(widget.title ?? "").appText(fontSize: 14)]),
+              Row(
+                children: [
+                  (widget.title ?? "").appText(
+                    fontSize: widget.titleFontSize ?? 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ],
+              ),
               8.spaceH,
             ],
           ),
@@ -63,6 +78,7 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
           ),
           child: TextField(
+            textAlignVertical: TextAlignVertical.center, // vertical alignment
             readOnly: widget.readOnly ?? false,
             keyboardType: widget.keyboardType,
             controller: widget.controller,
@@ -70,7 +86,11 @@ class _AppTextFieldState extends State<AppTextField> {
             style: getTextStyle(),
             inputFormatters: widget.inputFormatters,
             decoration: InputDecoration(
+              contentPadding:
+                  widget.contentPadding ??
+                  EdgeInsets.symmetric(vertical: 0, horizontal: 16),
               prefixIcon: widget.prefixIcon,
+              suffixIcon: widget.suffixIcon,
               hintText: widget.hint,
               hintStyle: getTextStyle(
                 fontSize: 14,

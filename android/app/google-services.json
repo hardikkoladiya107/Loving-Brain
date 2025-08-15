@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "779880600850",
+    "project_id": "hugsand-heart-u86wap",
+    "storage_bucket": "hugsand-heart-u86wap.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:779880600850:android:dfe73752a2b390de84cfcb",
+        "android_client_info": {
+          "package_name": "com.app.loving_brain"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6388Z_ToQ5DW2-CAZS-j8rtDox_pu5dY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

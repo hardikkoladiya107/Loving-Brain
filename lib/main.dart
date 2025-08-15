@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loving_brain/provider.dart';
-import 'package:loving_brain/ui/postpartum_calm/postpartum_calm_screen.dart';
+import 'package:loving_brain/ui/activity_completed/activity_completed_screen.dart';
 
 import 'generated/locale_keys.g.dart';
 import 'other/preferances.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
+  await Firebase.initializeApp();
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('gu'), Locale('hi')],
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: EasyLoading.init(),
-          home: /*OnBoardingScreen1()*/ PostpartumCalmScreen(),
+          home: /*OnBoardingScreen1()*/ ActivityCompletedScreen(),
         ),
       ),
     );
