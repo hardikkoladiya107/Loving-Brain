@@ -133,5 +133,12 @@ abstract class  LocaleKeys {
   static const thisHugReleasesOxytocinTheBondingHormoneForBothOfYou = 'thisHugReleasesOxytocinTheBondingHormoneForBothOfYou';
   static const parentingTip = 'parentingTip';
   static const markAsDone = 'markAsDone';
+  static const whatHappened = 'whatHappened';
+  static const tellUsMore = 'tellUsMore';
+  static const describeWhatHappenedWhenAndWhereAndHowRohanFelt = 'describeWhatHappenedWhenAndWhereAndHowRohanFelt';
+  static const logBehavior = 'logBehavior';
+  static const selectBehavior = 'selectBehavior';
+  static const lovingBrainInsight = 'lovingBrainInsight';
+  static const getPersonalizedRecentLoggedBehaviors = 'getPersonalizedRecentLoggedBehaviors';
 
 }

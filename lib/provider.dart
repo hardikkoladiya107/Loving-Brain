@@ -6,6 +6,7 @@ import 'package:loving_brain/ui/ai_chat/bloc/ai_chat_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
 import 'package:loving_brain/ui/home_screen/bloc/home_cubit.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
+import 'package:loving_brain/ui/new_behavior/bloc/new_behavior_cubit.dart';
 import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
@@ -31,5 +32,8 @@ var blocProvider = [
   ),
   BlocProvider<ActivityCubit>(
     create: (BuildContext context) => ActivityCubit(),
+  ),
+  BlocProvider<NewBehaviorCubit>(
+    create: (BuildContext context) => NewBehaviorCubit(),
   ),
 ];

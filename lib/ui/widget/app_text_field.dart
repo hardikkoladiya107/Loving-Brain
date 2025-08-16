@@ -24,11 +24,15 @@ class AppTextField extends StatefulWidget {
     this.showInfoButton = false,
     this.filled = true,
     this.readOnly,
+    this.maxLines,
+    this.minLines,
   });
 
   final String? title;
   final double? titleFontSize;
   final double? height;
+  final int? maxLines;
+  final int? minLines;
   final String? hint;
   final bool showAddButton;
   final bool showInfoButton;
@@ -82,6 +86,8 @@ class _AppTextFieldState extends State<AppTextField> {
             readOnly: widget.readOnly ?? false,
             keyboardType: widget.keyboardType,
             controller: widget.controller,
+            maxLines: widget.maxLines,
+            minLines: widget.minLines,
             onChanged: widget.onChanged,
             style: getTextStyle(),
             inputFormatters: widget.inputFormatters,
