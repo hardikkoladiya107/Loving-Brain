@@ -1,8 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../../../manager/subscription_manager/subscription_utils.dart';
 import '../../../model/user_model.dart';
-import '../other/subscription_utils.dart';
 
 part 'subscription_state.freezed.dart';
 

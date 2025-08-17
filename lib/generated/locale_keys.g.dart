@@ -140,5 +140,9 @@ abstract class  LocaleKeys {
   static const selectBehavior = 'selectBehavior';
   static const lovingBrainInsight = 'lovingBrainInsight';
   static const getPersonalizedRecentLoggedBehaviors = 'getPersonalizedRecentLoggedBehaviors';
+  static const selectDateOfBirth = 'selectDateOfBirth';
+  static const enterChildName = 'enterChildName';
+  static const selectRelationship = 'selectRelationship';
+  static const selectAge = 'selectAge';
 
 }

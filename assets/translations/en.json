@@ -137,7 +137,11 @@
   "logBehavior": "Log Behavior",
   "selectBehavior": "Select a Behavior",
   "lovingBrainInsight": "Loving Brain Insight",
-  "getPersonalizedRecentLoggedBehaviors": "Get a personalized insight based on Rohan's recent logged behaviors."
+  "getPersonalizedRecentLoggedBehaviors": "Get a personalized insight based on Rohan's recent logged behaviors.",
+  "selectDateOfBirth": "Select date of birth",
+  "enterChildName": "Enter child name",
+  "selectRelationship": "Select relationship",
+  "selectAge": "Select Age"
 
 
 

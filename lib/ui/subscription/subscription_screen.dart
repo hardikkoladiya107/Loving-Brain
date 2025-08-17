@@ -11,13 +11,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../manager/subscription_manager/subscription_utils.dart';
 import '../../other/app_color.dart';
 import '../../other/snack_bar.dart';
 import '../widget/app_button.dart';
 import '../widget/base_button.dart';
 import 'bloc/subscription_cubit.dart';
 import 'bloc/subscription_state.dart';
-import 'other/subscription_utils.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});

@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/home_screen/home_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -9,6 +11,8 @@ import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../widget/app_dropdown.dart';
+import 'bloc/child_profile_cubit.dart';
+import 'bloc/child_profile_state.dart';
 
 class ChildProfileScreen extends StatefulWidget {
   const ChildProfileScreen({super.key});
@@ -20,38 +24,43 @@ class ChildProfileScreen extends StatefulWidget {
 class _ChildProfileScreenState extends State<ChildProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(Assets.images.imgChildProfileBg.path),
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(),
-              100.spaceH,
-              _header(),
-              80.spaceH,
-              _childName(),
-              10.spaceH,
-              _relationshipToChild(),
-              10.spaceH,
-              childsAge(),
-              16.spaceH,
-              _startMyJourney(),
-              32.spaceH,
-              _signUpWithGoogle(),
-              16.spaceH,
-              _signUpWithApple(),
-            ],
+    return BlocConsumer<ChildProfileCubit, ChildProfileState>(
+      builder: (context, state) {
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(Assets.images.imgChildProfileBg.path),
+            ),
           ),
-        ),
-      ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(),
+                  100.spaceH,
+                  _header(),
+                  80.spaceH,
+                  _childName(),
+                  10.spaceH,
+                  _relationshipToChild(),
+                  10.spaceH,
+                  childsAge(),
+                  16.spaceH,
+                  _startMyJourney(),
+                  32.spaceH,
+                  _signUpWithGoogle(),
+                  16.spaceH,
+                  _signUpWithApple(),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      listener: (context, state) {},
     );
   }
 
@@ -71,6 +80,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
   Widget _childName() {
     return AppTextField(
       title: LocaleKeys.childName.tr(),
+      hint: LocaleKeys.enterChildName.tr(),
     ).appPadding(left: 30, right: 30);
   }
 
@@ -97,7 +107,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LocaleKeys.yourRelationshipToChild.tr().appText(fontSize: 14),
+          LocaleKeys.yourRelationshipToChild.tr().appText(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
           8.spaceH,
           Container(
             height: 55.h,
@@ -107,7 +120,11 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             ),
             child: Row(
               children: [
-                "".appText(),
+                16.spaceW,
+                LocaleKeys.selectRelationship.tr().appText(
+                  fontSize: 14,
+                  color: Colors.grey.shade400,
+                ),
                 Spacer(),
                 Icon(Icons.arrow_drop_down),
                 20.spaceW,
@@ -142,7 +159,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LocaleKeys.childAgeStage.tr().appText(fontSize: 14),
+          LocaleKeys.childAgeStage.tr().appText(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
           8.spaceH,
           Container(
             height: 55.h,
@@ -152,7 +172,11 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             ),
             child: Row(
               children: [
-                "".appText(),
+                16.spaceW,
+                LocaleKeys.selectAge.tr().appText(
+                  fontSize: 14,
+                  color: Colors.grey.shade400,
+                ),
                 Spacer(),
                 Icon(Icons.arrow_drop_down),
                 20.spaceW,
@@ -182,7 +206,11 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           ],
         ),
       ),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+      },
     );
   }
 

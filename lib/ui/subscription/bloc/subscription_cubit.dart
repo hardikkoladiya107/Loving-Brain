@@ -17,12 +17,12 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_state.dart';
 
 import '../../../generated/locale_keys.g.dart';
+import '../../../manager/subscription_manager/subscription_utils.dart';
 import '../../../model/subscription/apple_subscription_model.dart';
 import '../../../model/user_model.dart';
 import '../../../other/extra_methods.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/subscription_repo.dart';
-import '../other/subscription_utils.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
   SubscriptionCubit() : super(SubscriptionState());

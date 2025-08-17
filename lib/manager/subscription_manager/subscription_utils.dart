@@ -14,10 +14,14 @@ const String packageNameKey = "package_name";
 const monthlyPlan = "com.app.mind_momentsx.monthly";
 const yearly = "com.app.mind_momentsx.yearly";
 
+String iosSubscriptionStatusUrl(String transactionID) {
+  // "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/subscriptions/$transactionID?status=1"
+  return "https://api.storekit.itunes.apple.com/inApps/v1/transactions/$transactionID?status=1";
+}
+
 const privacyPolicyUrl = "https://harmonious-moxie-ff5ad6.netlify.app";
 const termsOfUseWebUrl = "https://chimerical-chimera-ccd130.netlify.app";
-const appUrl =
-    "https://play.google.com/store/apps/details?id=com.app.mind_momentsx";
+
 List<String> kProductIds = [monthlyPlan, yearly];
 
 class SubsProductDetails {
@@ -37,6 +41,7 @@ class SubsProductDetails {
 }
 
 class TokenGenerator {
+  //TODO :- need to change this creds
   static String generateJwtToken() {
     try {
       DateTime currentUtc = DateTime.now().toUtc();

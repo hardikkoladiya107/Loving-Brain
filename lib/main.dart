@@ -6,9 +6,10 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loving_brain/provider.dart';
-import 'package:loving_brain/ui/new_behavior/new_behavior_screen.dart';
+import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
 
 import 'generated/locale_keys.g.dart';
+import 'manager/google_sign_in/google_signin_manager.dart';
 import 'other/preferances.dart';
 
 Future<void> main() async {
@@ -16,6 +17,7 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
   await Firebase.initializeApp();
+
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('gu'), Locale('hi')],
@@ -29,8 +31,19 @@ Future<void> main() async {
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    GoogleSignInManager.instance.initialise();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +61,7 @@ class MyApp extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: EasyLoading.init(),
-          home: /*OnBoardingScreen1()*/ NewBehaviorScreen(),
+          home: OnBoardingScreen1(),
         ),
       ),
     );

@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/ui/activity/bloc/activity_cubit.dart';
 import 'package:loving_brain/ui/activity_completed/bloc/activity_completed_cubit.dart';
 import 'package:loving_brain/ui/ai_chat/bloc/ai_chat_cubit.dart';
+import 'package:loving_brain/ui/child_profile/bloc/child_profile_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
 import 'package:loving_brain/ui/home_screen/bloc/home_cubit.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/new_behavior/bloc/new_behavior_cubit.dart';
+import 'package:loving_brain/ui/parent_profile/bloc/parent_profile_cubit.dart';
 import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
@@ -35,5 +37,11 @@ var blocProvider = [
   ),
   BlocProvider<NewBehaviorCubit>(
     create: (BuildContext context) => NewBehaviorCubit(),
+  ),
+  BlocProvider<ParentProfileCubit>(
+    create: (BuildContext context) => ParentProfileCubit(),
+  ),
+  BlocProvider<ChildProfileCubit>(
+    create: (BuildContext context) => ChildProfileCubit(),
   ),
 ];

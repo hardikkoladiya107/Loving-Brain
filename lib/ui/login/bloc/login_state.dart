@@ -4,5 +4,9 @@ part 'login_state.freezed.dart';
 
 @freezed
 abstract class LoginState with _$LoginState {
-  const factory LoginState({@Default("") String xyz}) = _LoginState;
+  const factory LoginState({
+    @Default("") String message,
+    @Default("") String email,
+    @Default("") String password,
+  }) = _LoginState;
 }

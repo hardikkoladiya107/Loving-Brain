@@ -12,7 +12,20 @@
           "package_name": "com.app.loving_brain"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "779880600850-tberbmcrr7mv3075e8l9sans6oh8n0ss.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.loving_brain",
+            "certificate_hash": "c83f65323727d27615ba65f9cfe191b154a19c62"
+          }
+        },
+        {
+          "client_id": "779880600850-18h1ttsrfpsj0r4l8vk5qehdujoedn9c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD6388Z_ToQ5DW2-CAZS-j8rtDox_pu5dY"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "779880600850-18h1ttsrfpsj0r4l8vk5qehdujoedn9c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "779880600850-fdcegpctqrgavff03ajo8v1ftaa203pc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lovingBrain"
+              }
+            }
+          ]
         }
       }
     }

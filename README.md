@@ -21,3 +21,10 @@ for build or generate code
 
 For generating local string
 # flutter pub run easy_localization:generate -S assets/translations -f keys -o locale_keys.g.dart
+
+
+## Firebase firestore rules deploy ## 
+firebase deploy --only firestore:rules
+
+## Firebase function deploy ## 
+firebase deploy --only functions  

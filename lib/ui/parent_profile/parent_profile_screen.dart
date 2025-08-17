@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
@@ -10,6 +11,9 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/extra_methods.dart';
+import 'bloc/parent_profile_cubit.dart';
+import 'bloc/parent_profile_state.dart';
 
 class ParentProfileScreen extends StatefulWidget {
   const ParentProfileScreen({super.key});
@@ -21,35 +25,46 @@ class ParentProfileScreen extends StatefulWidget {
 class _ParentProfileScreenState extends State<ParentProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(Assets.images.imgParentProfileBg.path),
-        ),
-      ),
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              80.spaceH,
-              _header(),
-              140.spaceH,
-              AppTextField(title: "Your Name").appPadding(left: 30, right: 30),
-              10.spaceH,
-              AppTextField(title: "Email").appPadding(left: 30, right: 30),
-              10.spaceH,
-              _dateOfBirthButton(),
-              10.spaceH,
-              _genderDropDown(),
-              30.spaceH,
-              _nextButton(),
-            ],
+    return BlocConsumer<ParentProfileCubit, ParentProfileState>(
+      builder: (context, state) {
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(Assets.images.imgParentProfileBg.path),
+            ),
           ),
-        ),
-      ),
+          child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: Colors.transparent,
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  80.spaceH,
+                  _header(),
+                  140.spaceH,
+                  AppTextField(
+                    title: "Your Name",
+                    hint: "Enter your name",
+                  ).appPadding(left: 30, right: 30),
+                  10.spaceH,
+                  AppTextField(
+                    title: "Email",
+                    hint: "Enter email",
+                  ).appPadding(left: 30, right: 30),
+                  10.spaceH,
+                  _dateOfBirthButton(context, state),
+                  10.spaceH,
+                  _genderDropDown(),
+                  30.spaceH,
+                  _nextButton(),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      listener: (context, state) {},
     );
   }
 
@@ -66,26 +81,8 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget _dateOfBirthButton() {
-    return AppDropDownButton(
-      offset: Offset(0, 78.h),
-      dropDownWidget: (close) {
-        return Container(
-          height: 200,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.1),
-                blurRadius: 2,
-                spreadRadius: 2,
-                offset: Offset(1, 1),
-              ),
-            ],
-          ),
-        );
-      },
+  Widget _dateOfBirthButton(BuildContext context, ParentProfileState state) {
+    return BaseButton(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,7 +96,19 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             ),
             child: Row(
               children: [
-                "".appText(),
+                16.spaceW,
+                if (state.dateOfBirth != null) ...[
+                  formatDate(state.dateOfBirth!).toString().appText(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ] else ...[
+                  LocaleKeys.selectDateOfBirth.tr().appText(
+                    fontSize: 14,
+                    color: Colors.grey.shade400,
+                  ),
+                ],
                 Spacer(),
                 Icon(Icons.arrow_drop_down),
                 20.spaceW,
@@ -108,6 +117,9 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           ),
         ],
       ),
+      onTap: () {
+        _showDatePickerDialog();
+      },
     ).appPadding(left: 30, right: 30);
   }
 
@@ -144,7 +156,11 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             ),
             child: Row(
               children: [
-                "".appText(),
+                16.spaceW,
+                "Select Gender".appText(
+                  fontSize: 14,
+                  color: Colors.grey.shade400,
+                ),
                 Spacer(),
                 Icon(Icons.arrow_drop_down),
                 20.spaceW,
@@ -180,5 +196,14 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
         );
       },
     );
+  }
+
+  Future<void> _showDatePickerDialog() async {
+    var date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    context.read<ParentProfileCubit>().changeProps(dateOfBirth: date);
   }
 }

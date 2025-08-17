@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginState {
 
- String get xyz;
+ String get message; String get email; String get password;
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $LoginStateCopyWith<LoginState> get copyWith => _$LoginStateCopyWithImpl<LoginSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.xyz, xyz) || other.xyz == xyz));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.message, message) || other.message == message)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,xyz);
+int get hashCode => Object.hash(runtimeType,message,email,password);
 
 @override
 String toString() {
-  return 'LoginState(xyz: $xyz)';
+  return 'LoginState(message: $message, email: $email, password: $password)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $LoginStateCopyWith<$Res>  {
   factory $LoginStateCopyWith(LoginState value, $Res Function(LoginState) _then) = _$LoginStateCopyWithImpl;
 @useResult
 $Res call({
- String xyz
+ String message, String email, String password
 });
 
 
@@ -62,9 +62,11 @@ class _$LoginStateCopyWithImpl<$Res>
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? xyz = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? email = null,Object? password = null,}) {
   return _then(_self.copyWith(
-xyz: null == xyz ? _self.xyz : xyz // ignore: cast_nullable_to_non_nullable
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -150,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String xyz)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  String email,  String password)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginState() when $default != null:
-return $default(_that.xyz);case _:
+return $default(_that.message,_that.email,_that.password);case _:
   return orElse();
 
 }
@@ -171,10 +173,10 @@ return $default(_that.xyz);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String xyz)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  String email,  String password)  $default,) {final _that = this;
 switch (_that) {
 case _LoginState():
-return $default(_that.xyz);case _:
+return $default(_that.message,_that.email,_that.password);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +193,10 @@ return $default(_that.xyz);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String xyz)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  String email,  String password)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginState() when $default != null:
-return $default(_that.xyz);case _:
+return $default(_that.message,_that.email,_that.password);case _:
   return null;
 
 }
@@ -206,10 +208,12 @@ return $default(_that.xyz);case _:
 
 
 class _LoginState implements LoginState {
-  const _LoginState({this.xyz = ""});
+  const _LoginState({this.message = "", this.email = "", this.password = ""});
   
 
-@override@JsonKey() final  String xyz;
+@override@JsonKey() final  String message;
+@override@JsonKey() final  String email;
+@override@JsonKey() final  String password;
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +225,16 @@ _$LoginStateCopyWith<_LoginState> get copyWith => __$LoginStateCopyWithImpl<_Log
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.xyz, xyz) || other.xyz == xyz));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.message, message) || other.message == message)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,xyz);
+int get hashCode => Object.hash(runtimeType,message,email,password);
 
 @override
 String toString() {
-  return 'LoginState(xyz: $xyz)';
+  return 'LoginState(message: $message, email: $email, password: $password)';
 }
 
 
@@ -241,7 +245,7 @@ abstract mixin class _$LoginStateCopyWith<$Res> implements $LoginStateCopyWith<$
   factory _$LoginStateCopyWith(_LoginState value, $Res Function(_LoginState) _then) = __$LoginStateCopyWithImpl;
 @override @useResult
 $Res call({
- String xyz
+ String message, String email, String password
 });
 
 
@@ -258,9 +262,11 @@ class __$LoginStateCopyWithImpl<$Res>
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? xyz = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? email = null,Object? password = null,}) {
   return _then(_LoginState(
-xyz: null == xyz ? _self.xyz : xyz // ignore: cast_nullable_to_non_nullable
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
