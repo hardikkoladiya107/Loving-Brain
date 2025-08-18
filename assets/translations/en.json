@@ -141,7 +141,13 @@
   "selectDateOfBirth": "Select date of birth",
   "enterChildName": "Enter child name",
   "selectRelationship": "Select relationship",
-  "selectAge": "Select Age"
+  "selectAge": "Select Age",
+  "howAreYouFeeling": "How are you feeling",
+  "happy": "Happy",
+  "sad": "Sad",
+  "calm": "Calm",
+  "mad": "Mad",
+  "worried": "Worried"
 
 
 

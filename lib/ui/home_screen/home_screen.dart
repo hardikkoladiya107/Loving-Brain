@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/home_screen/pages/ai_page.dart';
 import 'package:loving_brain/ui/home_screen/pages/home_page.dart';
 import 'package:loving_brain/ui/home_screen/pages/journal_page.dart';
 import 'package:loving_brain/ui/home_screen/pages/profile_page.dart';
-import 'package:loving_brain/ui/home_screen/pages/schedules_page.dart';
+import 'package:loving_brain/ui/schedule/schedule_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
+import '../ai_chat/ai_chat_screen.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -39,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   index: state.bottomNavigationIndex,
                   children: [
                     HomePage(),
-                    SchedulesPage(),
-                    AiPage(),
+                    ScheduleScreen(),
+                    AiChatScreen(),
                     JournalPage(),
                     ProfilePage(),
                   ],

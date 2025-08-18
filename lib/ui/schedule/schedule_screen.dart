@@ -44,7 +44,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
                 20.spaceH,
                 Container(
-                  height: (context.height * 0.7).h,
+                  height: (context.height * 0.65).h,
                   width: (context.width - 60).w,
                   decoration: BoxDecoration(
                     color: scheduleBgColor,

@@ -144,5 +144,11 @@ abstract class  LocaleKeys {
   static const enterChildName = 'enterChildName';
   static const selectRelationship = 'selectRelationship';
   static const selectAge = 'selectAge';
+  static const howAreYouFeeling = 'howAreYouFeeling';
+  static const happy = 'happy';
+  static const sad = 'sad';
+  static const calm = 'calm';
+  static const mad = 'mad';
+  static const worried = 'worried';
 
 }

@@ -11,7 +11,6 @@ import 'package:loving_brain/ui/widget/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
-import '../home_screen/home_screen.dart';
 import '../widget/base_button.dart';
 import 'bloc/login_state.dart';
 
@@ -165,9 +164,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ).appPadding(top: 10, bottom: 10),
       ),
       onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+        context.read<LoginCubit>().performLogin();
+        // Navigator.of(
+        //   context,
+        // ).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
       },
     ).appPadding(left: 24, right: 24);
   }
@@ -189,7 +189,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 builder: (context) => const ParentProfileScreen(),
               ),
             );
-            // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ChildProfileScreen(  )));
           },
         ),
       ],

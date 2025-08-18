@@ -51,3 +51,4 @@ const aiQuestionCardColor4 = Color(0xFFF1F1F1);
 const pinkColor = Color(0xFFFF7A93);
 const greyColor3 = Color(0xFFDDD8D4);
 const buttonColor2 = Color(0xFFFFF7ED);
+const orangeColor2 = Color(0xFFff972a);

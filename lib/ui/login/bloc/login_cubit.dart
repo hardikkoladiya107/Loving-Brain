@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/manager/apple_sign_in/apple_signin_manager.dart';
 
@@ -23,5 +24,16 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> signInWithApple() async {
     await AppleSignInManager.instance.authenticate();
+  }
+
+  Future<void> performLogin() async {
+    final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: state.email.trim(),
+      password: state.password.trim(),
+    );
+  }
+
+  bool _isValidate() {
+    return false;
   }
 }
