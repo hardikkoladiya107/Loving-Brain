@@ -7,6 +7,7 @@ abstract class ParentProfileState with _$ParentProfileState {
   const factory ParentProfileState({
     @Default("") String message,
     DateTime? dateOfBirth,
+    @Default([]) List<String> genderList,
     @Default("") String selectedGender,
     @Default("") String parentName,
     @Default("") String parentEmail,

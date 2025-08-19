@@ -10,6 +10,7 @@ class ParentProfileCubit extends Cubit<ParentProfileState> {
     String? parentEmail,
     String? message,
     DateTime? dateOfBirth,
+    List<String>? genderList,
   }) {
     emit(
       state.copyWith(
@@ -17,7 +18,14 @@ class ParentProfileCubit extends Cubit<ParentProfileState> {
         parentName: parentName ?? state.parentName,
         parentEmail: parentEmail ?? state.parentEmail,
         dateOfBirth: dateOfBirth ?? state.dateOfBirth,
+        genderList: genderList ?? state.genderList,
+        selectedGender: selectedGender ?? state.selectedGender,
       ),
     );
+  }
+
+  void init() {
+    emit(ParentProfileState());
+    changeProps(genderList: ["Male", "Female", "Other"]);
   }
 }

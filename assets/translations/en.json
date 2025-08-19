@@ -147,7 +147,32 @@
   "sad": "Sad",
   "calm": "Calm",
   "mad": "Mad",
-  "worried": "Worried"
+  "worried": "Worried",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "yourName": "Your Name",
+  "enterYourName": "Enter your name",
+  "email": "Email",
+  "enterEmail": "Enter email",
+  "selectGender": "Select Gender",
+  "emailAddress": "Email Address",
+  "enterEmailAddress": "Enter Email Address",
+  "password": "Password",
+  "enterPassword": "Enter Password",
+  "confirmPassword": "Confirm Password",
+  "enterConfirmPassword": "Enter Confirm Password",
+  "createYourAccount": "Create Your Account",
+  "secureYourSpotLovingBrainCommunity": "Secure your spot in the Loving Brain community",
+  "register": "Register",
+  "accountAlreadyExists": "Account already exists",
+  "pleaseEnterEmailAddress": "Please enter email address!",
+  "pleaseEnterPassword": "Please enter password!",
+  "pleaseEnterConfirmPassword": "Please enter confirm password!",
+  "passwordAndConfirmPasswordShouldSame": "Password and confirm password should be same!!",
+  "pleaseEnterValidEmail": "Please enter valid email!",
+  "passwordShouldBeMoreLetters": "Password should be more than 6 letters"
+
 
 
 

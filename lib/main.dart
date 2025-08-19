@@ -6,7 +6,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loving_brain/provider.dart';
-import 'package:loving_brain/ui/home_screen/home_screen.dart';
+import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
 
 import 'generated/locale_keys.g.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: EasyLoading.init(),
-          home: HomeScreen(),
+          home: OnBoardingScreen1(),
         ),
       ),
     );

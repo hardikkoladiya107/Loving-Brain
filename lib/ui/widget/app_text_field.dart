@@ -7,6 +7,7 @@ class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
     this.title,
+    this.error,
     this.hint,
     this.controller,
     this.onChanged,
@@ -26,15 +27,20 @@ class AppTextField extends StatefulWidget {
     this.readOnly,
     this.maxLines,
     this.minLines,
+    this.obscureText = false,
+    this.showError = true,
   });
 
   final String? title;
+  final String? error;
   final double? titleFontSize;
   final double? height;
   final int? maxLines;
   final int? minLines;
   final String? hint;
   final bool showAddButton;
+  final bool showError;
+  final bool obscureText;
   final bool showInfoButton;
   final bool? readOnly;
   final bool filled;
@@ -70,7 +76,7 @@ class _AppTextFieldState extends State<AppTextField> {
                   ),
                 ],
               ),
-              8.spaceH,
+              6.spaceH,
             ],
           ),
         Theme(
@@ -82,12 +88,14 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
           ),
           child: TextField(
-            textAlignVertical: TextAlignVertical.center, // vertical alignment
+            textAlignVertical: TextAlignVertical.center,
+            // vertical alignment
             readOnly: widget.readOnly ?? false,
             keyboardType: widget.keyboardType,
             controller: widget.controller,
             maxLines: widget.maxLines,
             minLines: widget.minLines,
+            obscureText: widget.obscureText,
             onChanged: widget.onChanged,
             style: getTextStyle(),
             inputFormatters: widget.inputFormatters,
@@ -113,6 +121,21 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
           ),
         ),
+        if (widget.showError)
+          Column(
+            children: [
+              4.spaceH,
+              Row(
+                children: [
+                  (widget.error ?? "").appText(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }

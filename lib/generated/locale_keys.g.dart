@@ -150,5 +150,26 @@ abstract class  LocaleKeys {
   static const calm = 'calm';
   static const mad = 'mad';
   static const worried = 'worried';
+  static const yourName = 'yourName';
+  static const enterYourName = 'enterYourName';
+  static const email = 'email';
+  static const enterEmail = 'enterEmail';
+  static const selectGender = 'selectGender';
+  static const emailAddress = 'emailAddress';
+  static const enterEmailAddress = 'enterEmailAddress';
+  static const password = 'password';
+  static const enterPassword = 'enterPassword';
+  static const confirmPassword = 'confirmPassword';
+  static const enterConfirmPassword = 'enterConfirmPassword';
+  static const createYourAccount = 'createYourAccount';
+  static const secureYourSpotLovingBrainCommunity = 'secureYourSpotLovingBrainCommunity';
+  static const register = 'register';
+  static const accountAlreadyExists = 'accountAlreadyExists';
+  static const pleaseEnterEmailAddress = 'pleaseEnterEmailAddress';
+  static const pleaseEnterPassword = 'pleaseEnterPassword';
+  static const pleaseEnterConfirmPassword = 'pleaseEnterConfirmPassword';
+  static const passwordAndConfirmPasswordShouldSame = 'passwordAndConfirmPasswordShouldSame';
+  static const pleaseEnterValidEmail = 'pleaseEnterValidEmail';
+  static const passwordShouldBeMoreLetters = 'passwordShouldBeMoreLetters';
 
 }

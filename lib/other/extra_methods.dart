@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:intl/intl.dart';
+
+import '../model/api_result_status.dart';
 
 Future<String> getUniqueDeviceId() async {
   final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -20,4 +23,24 @@ Future<String> getUniqueDeviceId() async {
 String formatDate(DateTime dateOfBirth) {
   String formattedDate = DateFormat('yyyy-MM-dd').format(dateOfBirth);
   return formattedDate;
+}
+
+ApiResultStatus onFirebaseException(FirebaseException e) {
+  if (e.code == 'permission-denied') {
+    return ApiResultStatus.error(error: Exception("Permission denied."));
+  } else if (e.code == 'unavailable') {
+    return ApiResultStatus.error(
+      error: Exception("Service unavailable. Try again later."),
+    );
+  } else if (e.code == 'not-found') {
+    return ApiResultStatus.error(error: Exception("Document not found."));
+  } else if (e.code == 'invalid-email') {
+    return ApiResultStatus.error(
+      error: Exception("Email address is not valid!"),
+    );
+  } else {
+    return ApiResultStatus.error(
+      error: Exception("FireStore error: ${e.message}"),
+    );
+  }
 }

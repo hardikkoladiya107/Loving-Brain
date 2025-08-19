@@ -4,6 +4,7 @@ class UserModel {
   UserModel({
     String? referenceId,
     String? platform,
+    String? email,
     String? productId,
     String? originalTransactionId,
     String? subscriptionStatus,
@@ -13,6 +14,7 @@ class UserModel {
     DateTime? updatedDate,
   }) {
     _platform = platform;
+    _email = email;
     _productId = productId;
     _originalTransactionId = originalTransactionId;
     _subscriptionStatus = subscriptionStatus;
@@ -30,37 +32,46 @@ class UserModel {
   }) {
     _referenceId = id;
     _platform = jsonObject['platform'];
+    _email = jsonObject['email'];
     _productId = jsonObject['product_id'];
     _originalTransactionId = jsonObject['original_transaction_id'];
     _transactionId = jsonObject['transactionId'];
     _subscriptionStatus = jsonObject['subscription_status'];
     _purchaseToken = jsonObject['purchase_token'];
 
-    if (fromConvert) {
-      if (jsonObject['updated_date'] != null) {
-        _updatedDate = DateTime.parse(jsonObject['updated_date']);
+    try {
+      if (fromConvert) {
+        if (jsonObject['updated_date'] != null) {
+          _updatedDate = DateTime.parse(jsonObject['updated_date']);
+        }
+      } else {
+        if (jsonObject['updated_date'] != null) {
+          _updatedDate = (jsonObject['updated_date'] as Timestamp).toDate();
+        }
       }
-    } else {
-      if (jsonObject['updated_date'] != null) {
-        _updatedDate = (jsonObject['updated_date'] as Timestamp).toDate();
-      }
+    } catch (e) {
+      e;
     }
-
-    if (fromConvert) {
-      if (jsonObject['free_task_use_time'] != null) {
-        _freeTaskUseTime = DateTime.parse(jsonObject['free_task_use_time']);
+    try {
+      if (fromConvert) {
+        if (jsonObject['free_task_use_time'] != null) {
+          _freeTaskUseTime = DateTime.parse(jsonObject['free_task_use_time']);
+        }
+      } else {
+        if (jsonObject['free_task_use_time'] != null) {
+          _freeTaskUseTime = (jsonObject['free_task_use_time'] as Timestamp)
+              .toDate();
+        }
       }
-    } else {
-      if (jsonObject['free_task_use_time'] != null) {
-        _freeTaskUseTime = (jsonObject['free_task_use_time'] as Timestamp)
-            .toDate();
-      }
+    } catch (e) {
+      e;
     }
   }
 
   String? _referenceId;
   String? _platform;
   String? _productId;
+  String? _email;
   String? _originalTransactionId;
   String? _subscriptionStatus;
   String? _transactionId;
@@ -72,6 +83,7 @@ class UserModel {
     String? referenceId,
     String? platform,
     String? productId,
+    String? email,
     String? originalTransactionId,
     String? subscriptionStatus,
     String? transactionId,
@@ -82,6 +94,7 @@ class UserModel {
     return UserModel(
       referenceId: referenceId ?? _referenceId,
       platform: platform ?? _platform,
+      email: email ?? _email,
       productId: productId ?? _productId,
       subscriptionStatus: subscriptionStatus ?? _subscriptionStatus,
       originalTransactionId: originalTransactionId ?? _originalTransactionId,
@@ -95,6 +108,7 @@ class UserModel {
   String? get platform => _platform;
 
   String? get productId => _productId;
+  String? get email => _email;
 
   String? get subscriptionStatus => _subscriptionStatus;
 
@@ -117,36 +131,45 @@ class UserModel {
     final map = <String, dynamic>{};
     map['id'] = _referenceId;
     map['platform'] = _platform;
+    map['email'] = _email;
     map['product_id'] = _productId;
     map['original_transaction_id'] = _originalTransactionId;
     map['subscription_status'] = _subscriptionStatus;
     map['transactionId'] = _transactionId;
     map['purchase_token'] = _purchaseToken;
 
-    if (forConvert) {
-      if (_updatedDate != null) {
-        Timestamp ts = Timestamp.fromDate(_updatedDate!);
-        map['updated_date'] = ts.toDate().toIso8601String();
-      }
-    } else {
-      if (_updatedDate != null) {
-        Timestamp ts = Timestamp.fromDate(_updatedDate!);
-        map['updated_date'] = ts;
-      }
-    }
-
-    if (updateFreeTaskTime) {
+    try {
       if (forConvert) {
-        if (_freeTaskUseTime != null) {
-          Timestamp ts = Timestamp.fromDate(_freeTaskUseTime!);
-          map['free_task_use_time'] = ts.toDate().toIso8601String();
+        if (_updatedDate != null) {
+          Timestamp ts = Timestamp.fromDate(_updatedDate!);
+          map['updated_date'] = ts.toDate().toIso8601String();
         }
       } else {
-        if (_freeTaskUseTime != null) {
-          Timestamp ts = Timestamp.fromDate(_freeTaskUseTime!);
-          map['free_task_use_time'] = ts;
+        if (_updatedDate != null) {
+          Timestamp ts = Timestamp.fromDate(_updatedDate!);
+          map['updated_date'] = ts;
         }
       }
+    } catch (e) {
+      e;
+    }
+
+    try {
+      if (updateFreeTaskTime) {
+        if (forConvert) {
+          if (_freeTaskUseTime != null) {
+            Timestamp ts = Timestamp.fromDate(_freeTaskUseTime!);
+            map['free_task_use_time'] = ts.toDate().toIso8601String();
+          }
+        } else {
+          if (_freeTaskUseTime != null) {
+            Timestamp ts = Timestamp.fromDate(_freeTaskUseTime!);
+            map['free_task_use_time'] = ts;
+          }
+        }
+      }
+    } catch (e) {
+      e;
     }
 
     return map;

@@ -2,16 +2,19 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../model/api_result_status.dart';
 
-part 'login_state.freezed.dart';
+part 'register_state.freezed.dart';
 
 @freezed
-abstract class LoginState with _$LoginState {
-  const factory LoginState({
+abstract class RegisterState with _$RegisterState {
+  const factory RegisterState({
+    @Default(false) bool obscureTextPassword,
+    @Default(false) bool obscureTextConfirmPassword,
     @Default("") String emailAddress,
     @Default("") String password,
+    @Default("") String confirmPassword,
     @Default("") String emailAddressError,
     @Default("") String passwordError,
+    @Default("") String confirmPasswordError,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
-    @Default(false) bool obscureTextPassword,
-  }) = _LoginState;
+  }) = _RegisterState;
 }

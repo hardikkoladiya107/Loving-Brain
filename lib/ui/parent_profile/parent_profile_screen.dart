@@ -24,6 +24,12 @@ class ParentProfileScreen extends StatefulWidget {
 
 class _ParentProfileScreenState extends State<ParentProfileScreen> {
   @override
+  void initState() {
+    context.read<ParentProfileCubit>().init();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<ParentProfileCubit, ParentProfileState>(
       builder: (context, state) {
@@ -44,18 +50,19 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                   _header(),
                   140.spaceH,
                   AppTextField(
-                    title: "Your Name",
-                    hint: "Enter your name",
+                    title: LocaleKeys.yourName.tr(),
+                    hint: LocaleKeys.enterYourName.tr(),
                   ).appPadding(left: 30, right: 30),
                   10.spaceH,
                   AppTextField(
-                    title: "Email",
-                    hint: "Enter email",
+                    title: LocaleKeys.email.tr(),
+                    hint: LocaleKeys.enterEmail.tr(),
+                    keyboardType: TextInputType.emailAddress,
                   ).appPadding(left: 30, right: 30),
                   10.spaceH,
                   _dateOfBirthButton(context, state),
                   10.spaceH,
-                  _genderDropDown(),
+                  _genderDropDown(state),
                   30.spaceH,
                   _nextButton(),
                 ],
@@ -82,13 +89,13 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
   }
 
   Widget _dateOfBirthButton(BuildContext context, ParentProfileState state) {
-    return BaseButton(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LocaleKeys.dateOfBirth.tr().appText(fontSize: 14),
-          8.spaceH,
-          Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LocaleKeys.dateOfBirth.tr().appText(fontSize: 14),
+        8.spaceH,
+        BaseButton(
+          child: Container(
             height: 55,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -110,25 +117,54 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                   ),
                 ],
                 Spacer(),
-                Icon(Icons.arrow_drop_down),
+                Icon(Icons.calendar_month),
                 20.spaceW,
               ],
             ),
           ),
-        ],
-      ),
-      onTap: () {
-        _showDatePickerDialog();
-      },
+          onTap: () {
+            _showDatePickerDialog();
+          },
+        ),
+      ],
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget _genderDropDown() {
+  Widget _genderDropDown(ParentProfileState state) {
     return AppDropDownButton(
       offset: Offset(0, 78.h),
       dropDownWidget: (close) {
+        List<Widget> widgetsList = [];
+        for (int i = 0; i < state.genderList.length; i++) {
+          var gender = state.genderList[i];
+
+          widgetsList.add(
+            BaseButton(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(),
+                  8.spaceH,
+                  gender
+                      .appText(fontWeight: FontWeight.w500)
+                      .appPadding(left: 16),
+                  8.spaceH,
+                  if (i < state.genderList.length - 1)
+                    Divider(height: 0.1, thickness: 0.2),
+                ],
+              ),
+              onTap: () {
+                close.call();
+                context.read<ParentProfileCubit>().changeProps(
+                  selectedGender: gender,
+                );
+              },
+            ),
+          );
+        }
+
         return Container(
-          height: 200,
+          height: 125.h,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -141,12 +177,16 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
               ),
             ],
           ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [...widgetsList],
+          ),
         );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          "Gender".appText(fontSize: 14),
+          LocaleKeys.gender.tr().appText(fontSize: 14),
           8.spaceH,
           Container(
             height: 55,
@@ -157,10 +197,18 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             child: Row(
               children: [
                 16.spaceW,
-                "Select Gender".appText(
-                  fontSize: 14,
-                  color: Colors.grey.shade400,
-                ),
+                if ((state.selectedGender ?? "").isNotEmpty) ...[
+                  state.selectedGender.appText(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ] else ...[
+                  LocaleKeys.selectGender.tr().appText(
+                    fontSize: 14,
+                    color: Colors.grey.shade400,
+                  ),
+                ],
                 Spacer(),
                 Icon(Icons.arrow_drop_down),
                 20.spaceW,

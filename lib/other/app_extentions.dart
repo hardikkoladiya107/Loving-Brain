@@ -31,6 +31,11 @@ extension extOnString on String {
     return replaceAll(from, "");
   }
 
+  bool get isValidEmail {
+    final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return regex.hasMatch(this);
+  }
+
   String replaceOrRemove(String from, String replace) {
     if (replace.isEmpty) {
       return removeTagBlockContainingText(this, from);

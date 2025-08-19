@@ -1,19 +1,33 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/manager/apple_sign_in/apple_signin_manager.dart';
+import 'package:loving_brain/other/app_extentions.dart';
 
+import '../../../generated/locale_keys.g.dart';
 import '../../../manager/google_sign_in/google_signin_manager.dart';
+import '../../../model/api_result_status.dart';
+import '../../../repo/auth_repo.dart';
 import 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
 
-  void changeProps(String? message, String? email, String? password) {
+  void changeProps({
+    String? emailAddress,
+    String? password,
+    String? emailAddressError,
+    String? passwordError,
+    bool? obscureTextPassword,
+    ApiResultStatus? apiResultStatus,
+  }) {
     emit(
       state.copyWith(
-        message: message ?? state.message,
-        email: email ?? state.email,
+        emailAddress: emailAddress ?? state.emailAddress,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
         password: password ?? state.password,
+        emailAddressError: emailAddressError ?? state.emailAddressError,
+        passwordError: passwordError ?? state.passwordError,
+        obscureTextPassword: obscureTextPassword ?? state.obscureTextPassword,
       ),
     );
   }
@@ -27,13 +41,39 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> performLogin() async {
-    final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: state.email.trim(),
-      password: state.password.trim(),
-    );
+    if (_isValidate()) {
+      var apiResult = await AuthRepo.instance.signInWithEmailAndPassword(
+        email: state.emailAddress,
+        password: state.password,
+      );
+      changeProps(apiResultStatus: apiResult);
+    }
   }
 
   bool _isValidate() {
-    return false;
+    if (state.emailAddress.trim().isEmpty ||
+        !state.emailAddress.trim().isValidEmail ||
+        state.password.trim().isEmpty ||
+        state.password.length < 6) {
+      if (state.emailAddress.trim().isEmpty) {
+        changeProps(emailAddressError: LocaleKeys.pleaseEnterEmailAddress.tr());
+      } else if (!state.emailAddress.trim().isValidEmail) {
+        changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
+      } else {
+        changeProps(emailAddressError: "");
+      }
+
+      if (state.password.trim().isEmpty) {
+        changeProps(passwordError: LocaleKeys.pleaseEnterPassword.tr());
+      } else if (state.password.length < 6) {
+        changeProps(passwordError: LocaleKeys.passwordShouldBeMoreLetters.tr());
+      } else {
+        changeProps(passwordError: "");
+      }
+      return false;
+    }
+
+    changeProps(passwordError: "", emailAddressError: "");
+    return true;
   }
 }

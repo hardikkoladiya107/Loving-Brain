@@ -11,6 +11,7 @@ import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/new_behavior/bloc/new_behavior_cubit.dart';
 import 'package:loving_brain/ui/parent_profile/bloc/parent_profile_cubit.dart';
 import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dart';
+import 'package:loving_brain/ui/register/bloc/register_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
 
@@ -47,5 +48,8 @@ var blocProvider = [
   ),
   BlocProvider<DailyMoodCheckInCubit>(
     create: (BuildContext context) => DailyMoodCheckInCubit(),
+  ),
+  BlocProvider<RegisterCubit>(
+    create: (BuildContext context) => RegisterCubit(),
   ),
 ];

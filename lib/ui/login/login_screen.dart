@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
-import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../register/register_screen.dart';
 import '../widget/base_button.dart';
 import 'bloc/login_state.dart';
 
@@ -22,6 +22,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController emailTextEditingController = TextEditingController();
+  TextEditingController passwordTextEditingController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginState>(
@@ -42,9 +45,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   156.spaceH,
                   _loginIcon(),
                   60.spaceH,
-                  _email(),
+                  _email(state),
                   12.spaceH,
-                  _password(),
+                  _password(state),
                   12.spaceH,
                   _forgotPassword(),
                   24.spaceH,
@@ -165,9 +168,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       onTap: () {
         context.read<LoginCubit>().performLogin();
-        // Navigator.of(
-        //   context,
-        // ).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
       },
     ).appPadding(left: 24, right: 24);
   }
@@ -185,9 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ParentProfileScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const RegisterScreen()),
             );
           },
         ),
@@ -195,27 +193,49 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _email() {
+  Widget _email(LoginState state) {
     return AppTextField(
+      controller: emailTextEditingController,
+      title: LocaleKeys.emailAddress.tr(),
+      hint: LocaleKeys.enterEmailAddress.tr(),
+      error: state.emailAddressError,
+      keyboardType: TextInputType.emailAddress,
       prefixIcon: Assets.icons.icEmailPrefixIcon.image(
         height: 30,
         width: 30,
         color: Colors.grey,
       ),
-      keyboardType: TextInputType.emailAddress,
-      hint: "Enter Email",
+      onChanged: (value) {
+        context.read<LoginCubit>().changeProps(emailAddress: value);
+      },
     ).appPadding(left: 20, right: 20);
   }
 
-  Widget _password() {
+  Widget _password(LoginState state) {
     return AppTextField(
+      controller: emailTextEditingController,
+      title: LocaleKeys.password.tr(),
+      hint: LocaleKeys.enterPassword.tr(),
+      error: state.passwordError,
       keyboardType: TextInputType.visiblePassword,
       prefixIcon: Assets.icons.icPasswordPrefixIcon.image(
         height: 30,
         width: 30,
         color: Colors.grey,
       ),
-      hint: "Enter password",
+      suffixIcon: IconButton(
+        icon: Icon(
+          state.obscureTextPassword ? Icons.visibility_off : Icons.visibility,
+        ),
+        onPressed: () {
+          context.read<LoginCubit>().changeProps(
+            obscureTextPassword: !state.obscureTextPassword,
+          );
+        },
+      ),
+      onChanged: (value) {
+        context.read<LoginCubit>().changeProps(password: value);
+      },
     ).appPadding(left: 20, right: 20);
   }
 

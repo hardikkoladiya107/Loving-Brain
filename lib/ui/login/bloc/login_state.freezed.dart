@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginState {
 
- String get message; String get email; String get password;
+ String get emailAddress; String get password; String get emailAddressError; String get passwordError; ApiResultStatus get apiResultStatus; bool get obscureTextPassword;
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $LoginStateCopyWith<LoginState> get copyWith => _$LoginStateCopyWithImpl<LoginSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.message, message) || other.message == message)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,email,password);
+int get hashCode => Object.hash(runtimeType,emailAddress,password,emailAddressError,passwordError,apiResultStatus,obscureTextPassword);
 
 @override
 String toString() {
-  return 'LoginState(message: $message, email: $email, password: $password)';
+  return 'LoginState(emailAddress: $emailAddress, password: $password, emailAddressError: $emailAddressError, passwordError: $passwordError, apiResultStatus: $apiResultStatus, obscureTextPassword: $obscureTextPassword)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $LoginStateCopyWith<$Res>  {
   factory $LoginStateCopyWith(LoginState value, $Res Function(LoginState) _then) = _$LoginStateCopyWithImpl;
 @useResult
 $Res call({
- String message, String email, String password
+ String emailAddress, String password, String emailAddressError, String passwordError, ApiResultStatus apiResultStatus, bool obscureTextPassword
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus;
 
 }
 /// @nodoc
@@ -62,15 +62,27 @@ class _$LoginStateCopyWithImpl<$Res>
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? email = null,Object? password = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? emailAddress = null,Object? password = null,Object? emailAddressError = null,Object? passwordError = null,Object? apiResultStatus = null,Object? obscureTextPassword = null,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
-as String,
+as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
+as String,passwordError: null == passwordError ? _self.passwordError : passwordError // ignore: cast_nullable_to_non_nullable
+as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
-
+/// Create a copy of LoginState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.apiResultStatus, (value) {
+    return _then(_self.copyWith(apiResultStatus: value));
+  });
+}
 }
 
 
@@ -152,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  String email,  String password)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus apiResultStatus,  bool obscureTextPassword)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginState() when $default != null:
-return $default(_that.message,_that.email,_that.password);case _:
+return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.passwordError,_that.apiResultStatus,_that.obscureTextPassword);case _:
   return orElse();
 
 }
@@ -173,10 +185,10 @@ return $default(_that.message,_that.email,_that.password);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  String email,  String password)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus apiResultStatus,  bool obscureTextPassword)  $default,) {final _that = this;
 switch (_that) {
 case _LoginState():
-return $default(_that.message,_that.email,_that.password);case _:
+return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.passwordError,_that.apiResultStatus,_that.obscureTextPassword);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +205,10 @@ return $default(_that.message,_that.email,_that.password);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  String email,  String password)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus apiResultStatus,  bool obscureTextPassword)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginState() when $default != null:
-return $default(_that.message,_that.email,_that.password);case _:
+return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.passwordError,_that.apiResultStatus,_that.obscureTextPassword);case _:
   return null;
 
 }
@@ -208,12 +220,15 @@ return $default(_that.message,_that.email,_that.password);case _:
 
 
 class _LoginState implements LoginState {
-  const _LoginState({this.message = "", this.email = "", this.password = ""});
+  const _LoginState({this.emailAddress = "", this.password = "", this.emailAddressError = "", this.passwordError = "", this.apiResultStatus = const ApiResultStatus.initial(), this.obscureTextPassword = false});
   
 
-@override@JsonKey() final  String message;
-@override@JsonKey() final  String email;
+@override@JsonKey() final  String emailAddress;
 @override@JsonKey() final  String password;
+@override@JsonKey() final  String emailAddressError;
+@override@JsonKey() final  String passwordError;
+@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  bool obscureTextPassword;
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +240,16 @@ _$LoginStateCopyWith<_LoginState> get copyWith => __$LoginStateCopyWithImpl<_Log
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.message, message) || other.message == message)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,email,password);
+int get hashCode => Object.hash(runtimeType,emailAddress,password,emailAddressError,passwordError,apiResultStatus,obscureTextPassword);
 
 @override
 String toString() {
-  return 'LoginState(message: $message, email: $email, password: $password)';
+  return 'LoginState(emailAddress: $emailAddress, password: $password, emailAddressError: $emailAddressError, passwordError: $passwordError, apiResultStatus: $apiResultStatus, obscureTextPassword: $obscureTextPassword)';
 }
 
 
@@ -245,11 +260,11 @@ abstract mixin class _$LoginStateCopyWith<$Res> implements $LoginStateCopyWith<$
   factory _$LoginStateCopyWith(_LoginState value, $Res Function(_LoginState) _then) = __$LoginStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message, String email, String password
+ String emailAddress, String password, String emailAddressError, String passwordError, ApiResultStatus apiResultStatus, bool obscureTextPassword
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus;
 
 }
 /// @nodoc
@@ -262,16 +277,28 @@ class __$LoginStateCopyWithImpl<$Res>
 
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? email = null,Object? password = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? emailAddress = null,Object? password = null,Object? emailAddressError = null,Object? passwordError = null,Object? apiResultStatus = null,Object? obscureTextPassword = null,}) {
   return _then(_LoginState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
-as String,
+as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
+as String,passwordError: null == passwordError ? _self.passwordError : passwordError // ignore: cast_nullable_to_non_nullable
+as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
-
+/// Create a copy of LoginState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.apiResultStatus, (value) {
+    return _then(_self.copyWith(apiResultStatus: value));
+  });
+}
 }
 
 // dart format on
