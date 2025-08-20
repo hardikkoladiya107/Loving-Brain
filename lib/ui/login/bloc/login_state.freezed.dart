@@ -220,7 +220,7 @@ return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.
 
 
 class _LoginState implements LoginState {
-  const _LoginState({this.emailAddress = "", this.password = "", this.emailAddressError = "", this.passwordError = "", this.apiResultStatus = const ApiResultStatus.initial(), this.obscureTextPassword = false});
+  const _LoginState({this.emailAddress = "", this.password = "", this.emailAddressError = "", this.passwordError = "", this.apiResultStatus = const ApiResultStatus.initial(), this.obscureTextPassword = true});
   
 
 @override@JsonKey() final  String emailAddress;

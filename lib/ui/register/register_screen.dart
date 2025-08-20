@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +35,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
       builder: (context, state) {
+        if (emailTextEditingController.value.text != state.emailAddress) {
+          emailTextEditingController.value = emailTextEditingController.value
+              .copyWith(
+                text: state.emailAddress,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    emailTextEditingController.value.selection.start,
+                    state.emailAddress.length,
+                  ),
+                ),
+              );
+        }
+
+        if (passwordTextEditingController.value.text != state.password) {
+          passwordTextEditingController.value = passwordTextEditingController
+              .value
+              .copyWith(
+                text: state.password,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    passwordTextEditingController.value.selection.start,
+                    state.password.length,
+                  ),
+                ),
+              );
+        }
+
+        if (confirmPasswordTextEditingController.value.text !=
+            state.confirmPassword) {
+          confirmPasswordTextEditingController.value =
+              confirmPasswordTextEditingController.value.copyWith(
+                text: state.confirmPassword,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    confirmPasswordTextEditingController.value.selection.start,
+                    state.confirmPassword.length,
+                  ),
+                ),
+              );
+        }
+
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -131,10 +174,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             EasyLoading.show();
           },
           data: (data) {
+            context.read<RegisterCubit>().clearFields();
             EasyLoading.dismiss();
-            Navigator.of(context).push(
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => const ParentProfileScreen(),
+                builder: (context) =>
+                    ParentProfileScreen(userId: data.toString()),
               ),
             );
           },

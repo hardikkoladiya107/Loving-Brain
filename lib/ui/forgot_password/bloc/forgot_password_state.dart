@@ -2,16 +2,13 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../model/api_result_status.dart';
 
-part 'login_state.freezed.dart';
+part 'forgot_password_state.freezed.dart';
 
 @freezed
-abstract class LoginState with _$LoginState {
-  const factory LoginState({
+abstract class ForgotPasswordState with _$ForgotPasswordState {
+  const factory ForgotPasswordState({
     @Default("") String emailAddress,
-    @Default("") String password,
     @Default("") String emailAddressError,
-    @Default("") String passwordError,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
-    @Default(true) bool obscureTextPassword,
-  }) = _LoginState;
+  }) = _ForgotPasswordState;
 }

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
   UserModel({
-    String? referenceId,
+    String? uid,
     String? platform,
     String? email,
     String? productId,
@@ -12,7 +12,16 @@ class UserModel {
     String? purchaseToken,
     DateTime? freeTaskUseTime,
     DateTime? updatedDate,
+    String? displayName,
+    String? parentName,
+    String? parentGender,
+    DateTime? parentDateOfBirth,
+    String? childName,
+    String? childAge,
+    String? relationshipToChild,
+    String? parentEmail,
   }) {
+    _uid = uid;
     _platform = platform;
     _email = email;
     _productId = productId;
@@ -21,23 +30,50 @@ class UserModel {
     _freeTaskUseTime = freeTaskUseTime;
     _updatedDate = updatedDate;
     _transactionId = transactionId;
-    _referenceId = referenceId;
     _purchaseToken = purchaseToken;
+    _displayName = displayName;
+    _parentName = parentName;
+    _parentGender = parentGender;
+    _parentDateOfBirth = parentDateOfBirth;
+    _childName = childName;
+    _childAge = childAge;
+    _relationshipToChild = relationshipToChild;
+    _parentEmail = parentEmail;
   }
 
-  UserModel.fromJson(
-    dynamic jsonObject,
-    String id, {
-    bool fromConvert = false,
-  }) {
-    _referenceId = id;
+  UserModel.fromJson(dynamic jsonObject, {bool fromConvert = false}) {
+    _uid = jsonObject['uid'];
     _platform = jsonObject['platform'];
-    _email = jsonObject['email'];
     _productId = jsonObject['product_id'];
     _originalTransactionId = jsonObject['original_transaction_id'];
     _transactionId = jsonObject['transactionId'];
     _subscriptionStatus = jsonObject['subscription_status'];
     _purchaseToken = jsonObject['purchase_token'];
+    _email = jsonObject['email'];
+    _displayName = jsonObject['display_name'];
+    _parentName = jsonObject['parent_name'];
+    _parentGender = jsonObject['parent_gender'];
+    _childName = jsonObject['child_name'];
+    _childAge = jsonObject['child_age'];
+    _relationshipToChild = jsonObject['relationship_to_child'];
+    _parentEmail = jsonObject['parent_email'];
+
+    try {
+      if (fromConvert) {
+        if (jsonObject['parent_date_of_birth'] != null) {
+          _parentDateOfBirth = DateTime.parse(
+            jsonObject['parent_date_of_birth'],
+          );
+        }
+      } else {
+        if (jsonObject['parent_date_of_birth'] != null) {
+          _parentDateOfBirth = (jsonObject['parent_date_of_birth'] as Timestamp)
+              .toDate();
+        }
+      }
+    } catch (e) {
+      e;
+    }
 
     try {
       if (fromConvert) {
@@ -68,7 +104,8 @@ class UserModel {
     }
   }
 
-  String? _referenceId;
+  String? _uid;
+
   String? _platform;
   String? _productId;
   String? _email;
@@ -76,11 +113,22 @@ class UserModel {
   String? _subscriptionStatus;
   String? _transactionId;
   String? _purchaseToken;
+  String? _displayName;
+  String? _parentName;
+  String? _parentGender;
+
+  String? _childName;
+  String? _childAge;
+  String? _relationshipToChild;
+  String? _parentEmail;
+
+  DateTime? _parentDateOfBirth;
   DateTime? _freeTaskUseTime;
   DateTime? _updatedDate;
 
   UserModel copyWith({
-    String? referenceId,
+    String? uid,
+
     String? platform,
     String? productId,
     String? email,
@@ -90,9 +138,17 @@ class UserModel {
     String? purchaseToken,
     DateTime? freeTaskUseTime,
     DateTime? updatedDate,
+    String? displayName,
+    String? parentName,
+    String? parentGender,
+    String? childName,
+    String? childAge,
+    String? relationshipToChild,
+    DateTime? parentDateOfBirth,
+    String? parentEmail,
   }) {
     return UserModel(
-      referenceId: referenceId ?? _referenceId,
+      uid: uid ?? _uid,
       platform: platform ?? _platform,
       email: email ?? _email,
       productId: productId ?? _productId,
@@ -102,19 +158,30 @@ class UserModel {
       updatedDate: updatedDate ?? _updatedDate,
       transactionId: transactionId ?? _transactionId,
       purchaseToken: purchaseToken ?? _purchaseToken,
+      displayName: displayName ?? _displayName,
+      parentName: parentName ?? _parentName,
+      parentGender: parentGender ?? _parentGender,
+      parentDateOfBirth: parentDateOfBirth ?? _parentDateOfBirth,
+      childName: childName ?? _childName,
+      childAge: childAge ?? _childAge,
+      parentEmail: parentEmail ?? _parentEmail,
+      relationshipToChild: relationshipToChild ?? _relationshipToChild,
     );
   }
+
+  String? get uid => _uid;
 
   String? get platform => _platform;
 
   String? get productId => _productId;
+
   String? get email => _email;
+
+  String? get parentEmail => _parentEmail;
 
   String? get subscriptionStatus => _subscriptionStatus;
 
   String? get originalTransactionId => _originalTransactionId;
-
-  String? get referenceId => _referenceId;
 
   String? get transactionId => _transactionId;
 
@@ -124,12 +191,27 @@ class UserModel {
 
   DateTime? get freeTaskUseTime => _freeTaskUseTime;
 
+  String? get displayName => _displayName;
+
+  String? get parentName => _parentName;
+
+  String? get parentGender => _parentGender;
+
+  DateTime? get parentDateOfBirth => _parentDateOfBirth;
+
+  String? get childName => _childName;
+
+  String? get childAge => _childAge;
+
+  String? get relationshipToChild => _relationshipToChild;
+
   Map<String, dynamic> toJson({
     bool forConvert = false,
     bool updateFreeTaskTime = true,
   }) {
     final map = <String, dynamic>{};
-    map['id'] = _referenceId;
+    map['uid'] = _uid;
+
     map['platform'] = _platform;
     map['email'] = _email;
     map['product_id'] = _productId;
@@ -137,6 +219,29 @@ class UserModel {
     map['subscription_status'] = _subscriptionStatus;
     map['transactionId'] = _transactionId;
     map['purchase_token'] = _purchaseToken;
+    map['display_name'] = _displayName;
+    map['parent_name'] = _parentName;
+    map['parent_gender'] = _parentGender;
+    map['parent_email'] = _parentEmail;
+    map['child_name'] = _childName;
+    map['child_age'] = _childAge;
+    map['relationship_to_child'] = _relationshipToChild;
+
+    try {
+      if (forConvert) {
+        if (_parentDateOfBirth != null) {
+          Timestamp ts = Timestamp.fromDate(_parentDateOfBirth!);
+          map['parent_date_of_birth'] = ts.toDate().toIso8601String();
+        }
+      } else {
+        if (_parentDateOfBirth != null) {
+          Timestamp ts = Timestamp.fromDate(_parentDateOfBirth!);
+          map['parent_date_of_birth'] = ts;
+        }
+      }
+    } catch (e) {
+      e;
+    }
 
     try {
       if (forConvert) {

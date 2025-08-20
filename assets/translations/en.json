@@ -171,7 +171,15 @@
   "pleaseEnterConfirmPassword": "Please enter confirm password!",
   "passwordAndConfirmPasswordShouldSame": "Password and confirm password should be same!!",
   "pleaseEnterValidEmail": "Please enter valid email!",
-  "passwordShouldBeMoreLetters": "Password should be more than 6 letters"
+  "passwordShouldBeMoreLetters": "Password should be more than 6 letters",
+  "sendResetEmail": "Send reset email",
+  "pleaseEnterParentName": "Please enter parent name",
+  "pleaseEnterParentGender": "Please enter parent gender",
+  "pleaseEnterParentDateOfBirth": "Please enter parent date of birth",
+  "pleaseEnterRelationshipToChild": "Please enter relationship to child",
+  "pleaseEnterChildAge": "Please enter child age",
+  "pleaseEnterChildName": "Please enter child name",
+  "userNotFound": "User not found!!"
 
 
 

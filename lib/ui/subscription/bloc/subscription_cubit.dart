@@ -115,7 +115,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       event,
     ) async {
       if (event.data() != null) {
-        var userModel = UserModel.fromJson(event.data(), event.reference.id);
+        var userModel = UserModel.fromJson(event.data());
         await preferences.saveUserModel(userModel);
         changeProps(userModel: userModel);
       }
@@ -170,7 +170,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           startLoading();
           var snapshot = await usersCollection.get();
           var allUser = snapshot.docs
-              .map((e) => UserModel.fromJson(e.data(), e.reference.id))
+              .map((e) => UserModel.fromJson(e.data()))
               .toList();
           if (transactionIdentifier.isNotEmpty &&
               !allUser.any(
@@ -205,7 +205,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     String productId = tempPurchaseDetail.productID;
     var snapshot = await usersCollection.get();
     var allUser = snapshot.docs
-        .map((e) => UserModel.fromJson(e.data(), e.reference.id))
+        .map((e) => UserModel.fromJson(e.data()))
         .toList();
     if (purchaseToken.isNotEmpty &&
         !allUser.any((element) => element.purchaseToken == purchaseToken)) {
@@ -444,7 +444,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
             "error": response.statusCode.toString(),
             "detail": jsonEncode(response.data),
             "time": DateTime.now().toIso8601String(),
-            "uId": userModel.referenceId,
+            "uId": userModel.uid,
           });
         }
       } else if (response.statusCode == 404) {
@@ -459,7 +459,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           "error": response.statusCode.toString(),
           "detail": jsonEncode(response.data),
           "time": DateTime.now().toIso8601String(),
-          "uId": userModel.referenceId,
+          "uId": userModel.uid,
         });
       } else {
         _updateCurrentUser({
@@ -473,11 +473,11 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           "error": response.statusCode.toString(),
           "detail": jsonEncode(response.data),
           "time": DateTime.now().toIso8601String(),
-          "uId": userModel.referenceId,
+          "uId": userModel.uid,
         });
       }
     } catch (e) {
-      saveErrorToFirebase(e, userModel.referenceId);
+      saveErrorToFirebase(e, userModel.uid);
     }
   }
 

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ParentProfileState {
 
- String get message; DateTime? get dateOfBirth; List<String> get genderList; String get selectedGender; String get parentName; String get parentEmail;
+ List<String> get genderList; String get parentName; String get parentNameError; String get parentEmailAddress; String get parentEmailAddressError; DateTime? get parentDateOfBirth; String get parentDateOfBirthError; String get parentGender; String get parentGenderError; ApiResultStatus get apiResultStatus;
 /// Create a copy of ParentProfileState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ParentProfileStateCopyWith<ParentProfileState> get copyWith => _$ParentProfileS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParentProfileState&&(identical(other.message, message) || other.message == message)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&const DeepCollectionEquality().equals(other.genderList, genderList)&&(identical(other.selectedGender, selectedGender) || other.selectedGender == selectedGender)&&(identical(other.parentName, parentName) || other.parentName == parentName)&&(identical(other.parentEmail, parentEmail) || other.parentEmail == parentEmail));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParentProfileState&&const DeepCollectionEquality().equals(other.genderList, genderList)&&(identical(other.parentName, parentName) || other.parentName == parentName)&&(identical(other.parentNameError, parentNameError) || other.parentNameError == parentNameError)&&(identical(other.parentEmailAddress, parentEmailAddress) || other.parentEmailAddress == parentEmailAddress)&&(identical(other.parentEmailAddressError, parentEmailAddressError) || other.parentEmailAddressError == parentEmailAddressError)&&(identical(other.parentDateOfBirth, parentDateOfBirth) || other.parentDateOfBirth == parentDateOfBirth)&&(identical(other.parentDateOfBirthError, parentDateOfBirthError) || other.parentDateOfBirthError == parentDateOfBirthError)&&(identical(other.parentGender, parentGender) || other.parentGender == parentGender)&&(identical(other.parentGenderError, parentGenderError) || other.parentGenderError == parentGenderError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,dateOfBirth,const DeepCollectionEquality().hash(genderList),selectedGender,parentName,parentEmail);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(genderList),parentName,parentNameError,parentEmailAddress,parentEmailAddressError,parentDateOfBirth,parentDateOfBirthError,parentGender,parentGenderError,apiResultStatus);
 
 @override
 String toString() {
-  return 'ParentProfileState(message: $message, dateOfBirth: $dateOfBirth, genderList: $genderList, selectedGender: $selectedGender, parentName: $parentName, parentEmail: $parentEmail)';
+  return 'ParentProfileState(genderList: $genderList, parentName: $parentName, parentNameError: $parentNameError, parentEmailAddress: $parentEmailAddress, parentEmailAddressError: $parentEmailAddressError, parentDateOfBirth: $parentDateOfBirth, parentDateOfBirthError: $parentDateOfBirthError, parentGender: $parentGender, parentGenderError: $parentGenderError, apiResultStatus: $apiResultStatus)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $ParentProfileStateCopyWith<$Res>  {
   factory $ParentProfileStateCopyWith(ParentProfileState value, $Res Function(ParentProfileState) _then) = _$ParentProfileStateCopyWithImpl;
 @useResult
 $Res call({
- String message, DateTime? dateOfBirth, List<String> genderList, String selectedGender, String parentName, String parentEmail
+ List<String> genderList, String parentName, String parentNameError, String parentEmailAddress, String parentEmailAddressError, DateTime? parentDateOfBirth, String parentDateOfBirthError, String parentGender, String parentGenderError, ApiResultStatus apiResultStatus
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus;
 
 }
 /// @nodoc
@@ -62,18 +62,31 @@ class _$ParentProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of ParentProfileState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? dateOfBirth = freezed,Object? genderList = null,Object? selectedGender = null,Object? parentName = null,Object? parentEmail = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? genderList = null,Object? parentName = null,Object? parentNameError = null,Object? parentEmailAddress = null,Object? parentEmailAddressError = null,Object? parentDateOfBirth = freezed,Object? parentDateOfBirthError = null,Object? parentGender = null,Object? parentGenderError = null,Object? apiResultStatus = null,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,dateOfBirth: freezed == dateOfBirth ? _self.dateOfBirth : dateOfBirth // ignore: cast_nullable_to_non_nullable
-as DateTime?,genderList: null == genderList ? _self.genderList : genderList // ignore: cast_nullable_to_non_nullable
-as List<String>,selectedGender: null == selectedGender ? _self.selectedGender : selectedGender // ignore: cast_nullable_to_non_nullable
-as String,parentName: null == parentName ? _self.parentName : parentName // ignore: cast_nullable_to_non_nullable
-as String,parentEmail: null == parentEmail ? _self.parentEmail : parentEmail // ignore: cast_nullable_to_non_nullable
-as String,
+genderList: null == genderList ? _self.genderList : genderList // ignore: cast_nullable_to_non_nullable
+as List<String>,parentName: null == parentName ? _self.parentName : parentName // ignore: cast_nullable_to_non_nullable
+as String,parentNameError: null == parentNameError ? _self.parentNameError : parentNameError // ignore: cast_nullable_to_non_nullable
+as String,parentEmailAddress: null == parentEmailAddress ? _self.parentEmailAddress : parentEmailAddress // ignore: cast_nullable_to_non_nullable
+as String,parentEmailAddressError: null == parentEmailAddressError ? _self.parentEmailAddressError : parentEmailAddressError // ignore: cast_nullable_to_non_nullable
+as String,parentDateOfBirth: freezed == parentDateOfBirth ? _self.parentDateOfBirth : parentDateOfBirth // ignore: cast_nullable_to_non_nullable
+as DateTime?,parentDateOfBirthError: null == parentDateOfBirthError ? _self.parentDateOfBirthError : parentDateOfBirthError // ignore: cast_nullable_to_non_nullable
+as String,parentGender: null == parentGender ? _self.parentGender : parentGender // ignore: cast_nullable_to_non_nullable
+as String,parentGenderError: null == parentGenderError ? _self.parentGenderError : parentGenderError // ignore: cast_nullable_to_non_nullable
+as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,
   ));
 }
-
+/// Create a copy of ParentProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.apiResultStatus, (value) {
+    return _then(_self.copyWith(apiResultStatus: value));
+  });
+}
 }
 
 
@@ -155,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  DateTime? dateOfBirth,  List<String> genderList,  String selectedGender,  String parentName,  String parentEmail)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<String> genderList,  String parentName,  String parentNameError,  String parentEmailAddress,  String parentEmailAddressError,  DateTime? parentDateOfBirth,  String parentDateOfBirthError,  String parentGender,  String parentGenderError,  ApiResultStatus apiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ParentProfileState() when $default != null:
-return $default(_that.message,_that.dateOfBirth,_that.genderList,_that.selectedGender,_that.parentName,_that.parentEmail);case _:
+return $default(_that.genderList,_that.parentName,_that.parentNameError,_that.parentEmailAddress,_that.parentEmailAddressError,_that.parentDateOfBirth,_that.parentDateOfBirthError,_that.parentGender,_that.parentGenderError,_that.apiResultStatus);case _:
   return orElse();
 
 }
@@ -176,10 +189,10 @@ return $default(_that.message,_that.dateOfBirth,_that.genderList,_that.selectedG
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  DateTime? dateOfBirth,  List<String> genderList,  String selectedGender,  String parentName,  String parentEmail)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<String> genderList,  String parentName,  String parentNameError,  String parentEmailAddress,  String parentEmailAddressError,  DateTime? parentDateOfBirth,  String parentDateOfBirthError,  String parentGender,  String parentGenderError,  ApiResultStatus apiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileState():
-return $default(_that.message,_that.dateOfBirth,_that.genderList,_that.selectedGender,_that.parentName,_that.parentEmail);case _:
+return $default(_that.genderList,_that.parentName,_that.parentNameError,_that.parentEmailAddress,_that.parentEmailAddressError,_that.parentDateOfBirth,_that.parentDateOfBirthError,_that.parentGender,_that.parentGenderError,_that.apiResultStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +209,10 @@ return $default(_that.message,_that.dateOfBirth,_that.genderList,_that.selectedG
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  DateTime? dateOfBirth,  List<String> genderList,  String selectedGender,  String parentName,  String parentEmail)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<String> genderList,  String parentName,  String parentNameError,  String parentEmailAddress,  String parentEmailAddressError,  DateTime? parentDateOfBirth,  String parentDateOfBirthError,  String parentGender,  String parentGenderError,  ApiResultStatus apiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileState() when $default != null:
-return $default(_that.message,_that.dateOfBirth,_that.genderList,_that.selectedGender,_that.parentName,_that.parentEmail);case _:
+return $default(_that.genderList,_that.parentName,_that.parentNameError,_that.parentEmailAddress,_that.parentEmailAddressError,_that.parentDateOfBirth,_that.parentDateOfBirthError,_that.parentGender,_that.parentGenderError,_that.apiResultStatus);case _:
   return null;
 
 }
@@ -211,11 +224,9 @@ return $default(_that.message,_that.dateOfBirth,_that.genderList,_that.selectedG
 
 
 class _ParentProfileState implements ParentProfileState {
-  const _ParentProfileState({this.message = "", this.dateOfBirth, final  List<String> genderList = const [], this.selectedGender = "", this.parentName = "", this.parentEmail = ""}): _genderList = genderList;
+  const _ParentProfileState({final  List<String> genderList = const [], this.parentName = "", this.parentNameError = "", this.parentEmailAddress = "", this.parentEmailAddressError = "", this.parentDateOfBirth, this.parentDateOfBirthError = "", this.parentGender = "", this.parentGenderError = "", this.apiResultStatus = const ApiResultStatus.initial()}): _genderList = genderList;
   
 
-@override@JsonKey() final  String message;
-@override final  DateTime? dateOfBirth;
  final  List<String> _genderList;
 @override@JsonKey() List<String> get genderList {
   if (_genderList is EqualUnmodifiableListView) return _genderList;
@@ -223,9 +234,15 @@ class _ParentProfileState implements ParentProfileState {
   return EqualUnmodifiableListView(_genderList);
 }
 
-@override@JsonKey() final  String selectedGender;
 @override@JsonKey() final  String parentName;
-@override@JsonKey() final  String parentEmail;
+@override@JsonKey() final  String parentNameError;
+@override@JsonKey() final  String parentEmailAddress;
+@override@JsonKey() final  String parentEmailAddressError;
+@override final  DateTime? parentDateOfBirth;
+@override@JsonKey() final  String parentDateOfBirthError;
+@override@JsonKey() final  String parentGender;
+@override@JsonKey() final  String parentGenderError;
+@override@JsonKey() final  ApiResultStatus apiResultStatus;
 
 /// Create a copy of ParentProfileState
 /// with the given fields replaced by the non-null parameter values.
@@ -237,16 +254,16 @@ _$ParentProfileStateCopyWith<_ParentProfileState> get copyWith => __$ParentProfi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ParentProfileState&&(identical(other.message, message) || other.message == message)&&(identical(other.dateOfBirth, dateOfBirth) || other.dateOfBirth == dateOfBirth)&&const DeepCollectionEquality().equals(other._genderList, _genderList)&&(identical(other.selectedGender, selectedGender) || other.selectedGender == selectedGender)&&(identical(other.parentName, parentName) || other.parentName == parentName)&&(identical(other.parentEmail, parentEmail) || other.parentEmail == parentEmail));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ParentProfileState&&const DeepCollectionEquality().equals(other._genderList, _genderList)&&(identical(other.parentName, parentName) || other.parentName == parentName)&&(identical(other.parentNameError, parentNameError) || other.parentNameError == parentNameError)&&(identical(other.parentEmailAddress, parentEmailAddress) || other.parentEmailAddress == parentEmailAddress)&&(identical(other.parentEmailAddressError, parentEmailAddressError) || other.parentEmailAddressError == parentEmailAddressError)&&(identical(other.parentDateOfBirth, parentDateOfBirth) || other.parentDateOfBirth == parentDateOfBirth)&&(identical(other.parentDateOfBirthError, parentDateOfBirthError) || other.parentDateOfBirthError == parentDateOfBirthError)&&(identical(other.parentGender, parentGender) || other.parentGender == parentGender)&&(identical(other.parentGenderError, parentGenderError) || other.parentGenderError == parentGenderError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,dateOfBirth,const DeepCollectionEquality().hash(_genderList),selectedGender,parentName,parentEmail);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_genderList),parentName,parentNameError,parentEmailAddress,parentEmailAddressError,parentDateOfBirth,parentDateOfBirthError,parentGender,parentGenderError,apiResultStatus);
 
 @override
 String toString() {
-  return 'ParentProfileState(message: $message, dateOfBirth: $dateOfBirth, genderList: $genderList, selectedGender: $selectedGender, parentName: $parentName, parentEmail: $parentEmail)';
+  return 'ParentProfileState(genderList: $genderList, parentName: $parentName, parentNameError: $parentNameError, parentEmailAddress: $parentEmailAddress, parentEmailAddressError: $parentEmailAddressError, parentDateOfBirth: $parentDateOfBirth, parentDateOfBirthError: $parentDateOfBirthError, parentGender: $parentGender, parentGenderError: $parentGenderError, apiResultStatus: $apiResultStatus)';
 }
 
 
@@ -257,11 +274,11 @@ abstract mixin class _$ParentProfileStateCopyWith<$Res> implements $ParentProfil
   factory _$ParentProfileStateCopyWith(_ParentProfileState value, $Res Function(_ParentProfileState) _then) = __$ParentProfileStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message, DateTime? dateOfBirth, List<String> genderList, String selectedGender, String parentName, String parentEmail
+ List<String> genderList, String parentName, String parentNameError, String parentEmailAddress, String parentEmailAddressError, DateTime? parentDateOfBirth, String parentDateOfBirthError, String parentGender, String parentGenderError, ApiResultStatus apiResultStatus
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus;
 
 }
 /// @nodoc
@@ -274,19 +291,32 @@ class __$ParentProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of ParentProfileState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? dateOfBirth = freezed,Object? genderList = null,Object? selectedGender = null,Object? parentName = null,Object? parentEmail = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? genderList = null,Object? parentName = null,Object? parentNameError = null,Object? parentEmailAddress = null,Object? parentEmailAddressError = null,Object? parentDateOfBirth = freezed,Object? parentDateOfBirthError = null,Object? parentGender = null,Object? parentGenderError = null,Object? apiResultStatus = null,}) {
   return _then(_ParentProfileState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,dateOfBirth: freezed == dateOfBirth ? _self.dateOfBirth : dateOfBirth // ignore: cast_nullable_to_non_nullable
-as DateTime?,genderList: null == genderList ? _self._genderList : genderList // ignore: cast_nullable_to_non_nullable
-as List<String>,selectedGender: null == selectedGender ? _self.selectedGender : selectedGender // ignore: cast_nullable_to_non_nullable
-as String,parentName: null == parentName ? _self.parentName : parentName // ignore: cast_nullable_to_non_nullable
-as String,parentEmail: null == parentEmail ? _self.parentEmail : parentEmail // ignore: cast_nullable_to_non_nullable
-as String,
+genderList: null == genderList ? _self._genderList : genderList // ignore: cast_nullable_to_non_nullable
+as List<String>,parentName: null == parentName ? _self.parentName : parentName // ignore: cast_nullable_to_non_nullable
+as String,parentNameError: null == parentNameError ? _self.parentNameError : parentNameError // ignore: cast_nullable_to_non_nullable
+as String,parentEmailAddress: null == parentEmailAddress ? _self.parentEmailAddress : parentEmailAddress // ignore: cast_nullable_to_non_nullable
+as String,parentEmailAddressError: null == parentEmailAddressError ? _self.parentEmailAddressError : parentEmailAddressError // ignore: cast_nullable_to_non_nullable
+as String,parentDateOfBirth: freezed == parentDateOfBirth ? _self.parentDateOfBirth : parentDateOfBirth // ignore: cast_nullable_to_non_nullable
+as DateTime?,parentDateOfBirthError: null == parentDateOfBirthError ? _self.parentDateOfBirthError : parentDateOfBirthError // ignore: cast_nullable_to_non_nullable
+as String,parentGender: null == parentGender ? _self.parentGender : parentGender // ignore: cast_nullable_to_non_nullable
+as String,parentGenderError: null == parentGenderError ? _self.parentGenderError : parentGenderError // ignore: cast_nullable_to_non_nullable
+as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,
   ));
 }
 
-
+/// Create a copy of ParentProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.apiResultStatus, (value) {
+    return _then(_self.copyWith(apiResultStatus: value));
+  });
+}
 }
 
 // dart format on

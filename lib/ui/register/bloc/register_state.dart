@@ -7,8 +7,8 @@ part 'register_state.freezed.dart';
 @freezed
 abstract class RegisterState with _$RegisterState {
   const factory RegisterState({
-    @Default(false) bool obscureTextPassword,
-    @Default(false) bool obscureTextConfirmPassword,
+    @Default(true) bool obscureTextPassword,
+    @Default(true) bool obscureTextConfirmPassword,
     @Default("") String emailAddress,
     @Default("") String password,
     @Default("") String confirmPassword,

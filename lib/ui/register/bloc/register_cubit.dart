@@ -106,4 +106,17 @@ class RegisterCubit extends Cubit<RegisterState> {
       changeProps(apiResultStatus: credential);
     }
   }
+
+  void clearFields() {
+    changeProps(
+      emailAddress: "",
+      emailAddressError: "",
+      password: "",
+      passwordError: "",
+      confirmPassword: "",
+      obscureTextPassword: true,
+      obscureTextConfirmPassword: true,
+      confirmPasswordError: "",
+    );
+  }
 }

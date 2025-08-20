@@ -171,5 +171,13 @@ abstract class  LocaleKeys {
   static const passwordAndConfirmPasswordShouldSame = 'passwordAndConfirmPasswordShouldSame';
   static const pleaseEnterValidEmail = 'pleaseEnterValidEmail';
   static const passwordShouldBeMoreLetters = 'passwordShouldBeMoreLetters';
+  static const sendResetEmail = 'sendResetEmail';
+  static const pleaseEnterParentName = 'pleaseEnterParentName';
+  static const pleaseEnterParentGender = 'pleaseEnterParentGender';
+  static const pleaseEnterParentDateOfBirth = 'pleaseEnterParentDateOfBirth';
+  static const pleaseEnterRelationshipToChild = 'pleaseEnterRelationshipToChild';
+  static const pleaseEnterChildAge = 'pleaseEnterChildAge';
+  static const pleaseEnterChildName = 'pleaseEnterChildName';
+  static const userNotFound = 'userNotFound';
 
 }

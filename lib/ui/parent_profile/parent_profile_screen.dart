@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
@@ -12,17 +16,25 @@ import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
+import '../../other/snack_bar.dart';
 import 'bloc/parent_profile_cubit.dart';
 import 'bloc/parent_profile_state.dart';
 
 class ParentProfileScreen extends StatefulWidget {
-  const ParentProfileScreen({super.key});
+  const ParentProfileScreen({super.key, required this.userId});
+
+  final String userId;
 
   @override
   State<ParentProfileScreen> createState() => _ParentProfileScreenState();
 }
 
 class _ParentProfileScreenState extends State<ParentProfileScreen> {
+  TextEditingController parentNameTextEditingController =
+      TextEditingController();
+  TextEditingController parentEmailTextEditingController =
+      TextEditingController();
+
   @override
   void initState() {
     context.read<ParentProfileCubit>().init();
@@ -33,6 +45,33 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ParentProfileCubit, ParentProfileState>(
       builder: (context, state) {
+        if (parentEmailTextEditingController.value.text !=
+            state.parentEmailAddress) {
+          parentEmailTextEditingController.value =
+              parentEmailTextEditingController.value.copyWith(
+                text: state.parentEmailAddress,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    parentEmailTextEditingController.value.selection.start,
+                    state.parentEmailAddress.length,
+                  ),
+                ),
+              );
+        }
+
+        if (parentNameTextEditingController.value.text != state.parentName) {
+          parentNameTextEditingController.value =
+              parentNameTextEditingController.value.copyWith(
+                text: state.parentName,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    parentNameTextEditingController.value.selection.start,
+                    state.parentName.length,
+                  ),
+                ),
+              );
+        }
+
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -49,16 +88,9 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                   80.spaceH,
                   _header(),
                   140.spaceH,
-                  AppTextField(
-                    title: LocaleKeys.yourName.tr(),
-                    hint: LocaleKeys.enterYourName.tr(),
-                  ).appPadding(left: 30, right: 30),
+                  _name(state),
                   10.spaceH,
-                  AppTextField(
-                    title: LocaleKeys.email.tr(),
-                    hint: LocaleKeys.enterEmail.tr(),
-                    keyboardType: TextInputType.emailAddress,
-                  ).appPadding(left: 30, right: 30),
+                  _email(state),
                   10.spaceH,
                   _dateOfBirthButton(context, state),
                   10.spaceH,
@@ -71,7 +103,28 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.apiResultStatus.whenOrNull(
+          initial: () {},
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+            context.read<ParentProfileCubit>().clearFields();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) =>
+                    ChildProfileScreen(userId: data.toString()),
+              ),
+            );
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+        );
+      },
     );
   }
 
@@ -104,8 +157,8 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             child: Row(
               children: [
                 16.spaceW,
-                if (state.dateOfBirth != null) ...[
-                  formatDate(state.dateOfBirth!).toString().appText(
+                if (state.parentDateOfBirth != null) ...[
+                  formatDate(state.parentDateOfBirth!).toString().appText(
                     fontSize: 14,
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
@@ -126,6 +179,20 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             _showDatePickerDialog();
           },
         ),
+        Column(
+          children: [
+            4.spaceH,
+            Row(
+              children: [
+                (state.parentDateOfBirthError ?? "").appText(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red,
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     ).appPadding(left: 30, right: 30);
   }
@@ -137,7 +204,6 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
         List<Widget> widgetsList = [];
         for (int i = 0; i < state.genderList.length; i++) {
           var gender = state.genderList[i];
-
           widgetsList.add(
             BaseButton(
               child: Column(
@@ -156,7 +222,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
               onTap: () {
                 close.call();
                 context.read<ParentProfileCubit>().changeProps(
-                  selectedGender: gender,
+                  parentGender: gender,
                 );
               },
             ),
@@ -197,8 +263,8 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             child: Row(
               children: [
                 16.spaceW,
-                if ((state.selectedGender ?? "").isNotEmpty) ...[
-                  state.selectedGender.appText(
+                if ((state.parentGender ?? "").isNotEmpty) ...[
+                  state.parentGender.appText(
                     fontSize: 14,
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
@@ -214,6 +280,20 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                 20.spaceW,
               ],
             ),
+          ),
+          Column(
+            children: [
+              4.spaceH,
+              Row(
+                children: [
+                  (state.parentGenderError ?? "").appText(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
@@ -239,9 +319,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ChildProfileScreen()),
-        );
+        context.read<ParentProfileCubit>().addParentDetail(widget.userId);
       },
     );
   }
@@ -252,6 +330,33 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    context.read<ParentProfileCubit>().changeProps(dateOfBirth: date);
+    context.read<ParentProfileCubit>().changeProps(parentDateOfBirth: date);
+  }
+
+  Widget _name(ParentProfileState state) {
+    return AppTextField(
+      title: LocaleKeys.yourName.tr(),
+      hint: LocaleKeys.enterYourName.tr(),
+      controller: parentNameTextEditingController,
+      error: state.parentNameError,
+      onChanged: (value) {
+        context.read<ParentProfileCubit>().changeProps(parentName: value);
+      },
+    ).appPadding(left: 30, right: 30);
+  }
+
+  Widget _email(ParentProfileState state) {
+    return AppTextField(
+      title: LocaleKeys.email.tr(),
+      hint: LocaleKeys.enterEmail.tr(),
+      keyboardType: TextInputType.emailAddress,
+      error: state.parentEmailAddressError,
+      controller: parentEmailTextEditingController,
+      onChanged: (value) {
+        context.read<ParentProfileCubit>().changeProps(
+          parentEmailAddress: value,
+        );
+      },
+    ).appPadding(left: 30, right: 30);
   }
 }

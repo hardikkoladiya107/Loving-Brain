@@ -223,7 +223,7 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 
 
 class _RegisterState implements RegisterState {
-  const _RegisterState({this.obscureTextPassword = false, this.obscureTextConfirmPassword = false, this.emailAddress = "", this.password = "", this.confirmPassword = "", this.emailAddressError = "", this.passwordError = "", this.confirmPasswordError = "", this.apiResultStatus = const ApiResultStatus.initial()});
+  const _RegisterState({this.obscureTextPassword = true, this.obscureTextConfirmPassword = true, this.emailAddress = "", this.password = "", this.confirmPassword = "", this.emailAddressError = "", this.passwordError = "", this.confirmPasswordError = "", this.apiResultStatus = const ApiResultStatus.initial()});
   
 
 @override@JsonKey() final  bool obscureTextPassword;

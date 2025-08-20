@@ -42,6 +42,7 @@ class LoginCubit extends Cubit<LoginState> {
 
   Future<void> performLogin() async {
     if (_isValidate()) {
+      changeProps(apiResultStatus: ApiResultStatus.loading());
       var apiResult = await AuthRepo.instance.signInWithEmailAndPassword(
         email: state.emailAddress,
         password: state.password,
@@ -75,5 +76,15 @@ class LoginCubit extends Cubit<LoginState> {
 
     changeProps(passwordError: "", emailAddressError: "");
     return true;
+  }
+
+  void clearFields() {
+    changeProps(
+      emailAddress: "",
+      emailAddressError: "",
+      password: "",
+      passwordError: "",
+      obscureTextPassword: true,
+    );
   }
 }

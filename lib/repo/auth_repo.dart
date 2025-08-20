@@ -35,11 +35,22 @@ class AuthRepo {
     }
   }
 
+  Future<UserModel?> getUserFromUid({required String uId}) async {
+    try {
+      var user = await userCollection.doc(uId).get();
+      return UserModel.fromJson(user.data());
+    } on FirebaseException catch (e) {
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<bool> isAccountExistWithEmail({required String email}) async {
     try {
       var allUsers = await userCollection.get();
       if (allUsers.docs.any((element) {
-        var userModel = UserModel.fromJson(element.data(), element.id);
+        var userModel = UserModel.fromJson(element.data());
         return email == userModel.email;
       })) {
         return true;
@@ -59,7 +70,7 @@ class AuthRepo {
   }) async {
     try {
       userCollection.doc(uId).set(request);
-      return ApiResultStatus.data(data: true);
+      return ApiResultStatus.data(data: uId);
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } on Exception catch (e) {
@@ -72,8 +83,8 @@ class AuthRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      userCollection.doc(uId).update(request);
-      return ApiResultStatus.data(data: true);
+      await userCollection.doc(uId).update(request);
+      return ApiResultStatus.data(data: uId);
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } on Exception catch (e) {
@@ -96,6 +107,7 @@ class AuthRepo {
         return addUserToFireStore(
           uId: credential.user!.uid,
           request: {
+            "uid": credential.user!.uid,
             "display_name": credential.user!.displayName,
             "email": credential.user!.email,
           },
@@ -120,6 +132,35 @@ class AuthRepo {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
+      );
+      if (credential.user != null) {
+        var userModel = await getUserFromUid(uId: credential.user!.uid);
+        if (userModel != null) {
+          return ApiResultStatus.data(data: userModel.toJson());
+        } else {
+          return ApiResultStatus.error(
+            error: Exception(LocaleKeys.userNotFound.tr()),
+          );
+        }
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.userNotFound.tr()),
+        );
+      }
+      return ApiResultStatus.data(data: credential.user?.uid);
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> sendPasswordResetEmail({
+    required String email,
+  }) async {
+    try {
+      final credential = await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email.trim(),
       );
       return ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {

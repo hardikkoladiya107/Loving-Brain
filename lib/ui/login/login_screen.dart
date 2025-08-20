@@ -1,15 +1,24 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
+import 'package:loving_brain/ui/home_screen/home_screen.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/snack_bar.dart';
+import '../forgot_password/forgot_password_screen.dart';
+import '../parent_profile/parent_profile_screen.dart';
 import '../register/register_screen.dart';
 import '../widget/base_button.dart';
 import 'bloc/login_state.dart';
@@ -29,6 +38,33 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<LoginCubit, LoginState>(
       builder: (context, state) {
+        if (emailTextEditingController.value.text != state.emailAddress) {
+          emailTextEditingController.value = emailTextEditingController.value
+              .copyWith(
+                text: state.emailAddress,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    emailTextEditingController.value.selection.start,
+                    state.emailAddress.length,
+                  ),
+                ),
+              );
+        }
+
+        if (passwordTextEditingController.value.text != state.password) {
+          passwordTextEditingController.value = passwordTextEditingController
+              .value
+              .copyWith(
+                text: state.password,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    passwordTextEditingController.value.selection.start,
+                    state.password.length,
+                  ),
+                ),
+              );
+        }
+
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -65,7 +101,21 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.apiResultStatus.whenOrNull(
+          initial: () {},
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            _loggedInSuccess(data);
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+        );
+      },
     );
   }
 
@@ -184,6 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
             fontWeight: FontWeight.w600,
           ),
           onTap: () {
+            context.read<LoginCubit>().clearFields();
             Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => const RegisterScreen()),
             );
@@ -213,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _password(LoginState state) {
     return AppTextField(
-      controller: emailTextEditingController,
+      controller: passwordTextEditingController,
       title: LocaleKeys.password.tr(),
       hint: LocaleKeys.enterPassword.tr(),
       error: state.passwordError,
@@ -223,6 +274,8 @@ class _LoginScreenState extends State<LoginScreen> {
         width: 30,
         color: Colors.grey,
       ),
+      obscureText: state.obscureTextPassword,
+      maxLines: 1,
       suffixIcon: IconButton(
         icon: Icon(
           state.obscureTextPassword ? Icons.visibility_off : Icons.visibility,
@@ -247,10 +300,50 @@ class _LoginScreenState extends State<LoginScreen> {
           child: LocaleKeys.forgotPassword.tr().appText(
             fontWeight: FontWeight.w600,
           ),
-          onTap: () {},
+          onTap: () {
+            context.read<LoginCubit>().clearFields();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ForgotPasswordScreen(),
+              ),
+            );
+          },
         ),
         20.spaceW,
       ],
     );
+  }
+
+  void _loggedInSuccess(Map<String, dynamic> data) {
+    var userModel = UserModel.fromJson(data);
+    context.read<LoginCubit>().clearFields();
+    EasyLoading.dismiss();
+
+    if (userModel.uid == null) {
+      return;
+    }
+
+    if ((userModel.parentName ?? "").isEmpty ||
+        (userModel.parentGender ?? "").isEmpty ||
+        (userModel.parentEmail ?? "").isEmpty ||
+        userModel.parentDateOfBirth == null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ParentProfileScreen(userId: userModel.uid!),
+        ),
+      );
+    } else if ((userModel.childName ?? "").isEmpty ||
+        (userModel.childAge ?? "").isEmpty ||
+        (userModel.relationshipToChild ?? "").isEmpty) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ChildProfileScreen(userId: userModel.uid!),
+        ),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    }
   }
 }

@@ -12,10 +12,8 @@ class SharedPreference {
     _preferences ??= await SharedPreferences.getInstance();
   }
 
-  static const unlockedTemplate = "unlockedTemplate";
-  static const mobileUniqueCode = "mobile_unique_code";
-  static const isDarkMode = "is_dark_mode";
   static const user = "user";
+  static const isLogin = "isLogin";
 
   bool? getBool(String key, {bool defValue = false}) {
     return _preferences == null
@@ -68,7 +66,7 @@ class SharedPreference {
         var map = json.decode(_preferences!.getString(user)!);
         return UserModel.fromJson(
           json.decode(_preferences!.getString(user)!),
-          map["id"],
+
           fromConvert: true,
         );
       }
