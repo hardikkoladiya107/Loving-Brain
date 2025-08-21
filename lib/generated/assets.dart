@@ -26,6 +26,7 @@ class Assets {
   static const String iconsIcEmailPrefixIcon =
       'assets/icons/ic_email_prefix_icon.png';
   static const String iconsIcFeedIcon = 'assets/icons/ic_feed_icon.png';
+  static const String iconsIcForwardArrow = 'assets/icons/ic_forward_arrow.png';
   static const String iconsIcForwardIcon = 'assets/icons/ic_forward_icon.png';
   static const String iconsIcForwardIcon2 = 'assets/icons/ic_forward_icon2.png';
   static const String iconsIcGoogleIcon = 'assets/icons/ic_google_icon.png';
@@ -67,6 +68,7 @@ class Assets {
   static const String iconsIcQuestion = 'assets/icons/ic_question.png';
   static const String iconsIcReflactInJournal =
       'assets/icons/ic_reflact_in_journal.png';
+  static const String iconsIcReminderIcon = 'assets/icons/ic_reminder_icon.png';
   static const String iconsIcRepeatIcon = 'assets/icons/ic_repeat_icon.png';
   static const String iconsIcSadIcon = 'assets/icons/ic_sad_icon.png';
   static const String iconsIcScheduleIcon = 'assets/icons/ic_schedule_icon.png';
@@ -92,6 +94,7 @@ class Assets {
   static const String iconsIcWorriedIcon = 'assets/icons/ic_worried_icon.png';
   static const String imagesIcNewBehaviorBg =
       'assets/images/ic_new_behavior_bg.png';
+  static const String imagesIcReminderBg = 'assets/images/img_reminder_bg.png';
   static const String imagesImgActivityBg = 'assets/images/img_activity_bg.png';
   static const String imagesImgActivityCompleted =
       'assets/images/img_activity_completed.png';
@@ -116,6 +119,8 @@ class Assets {
       'assets/images/img_daily_routine_bg.png';
   static const String imagesImgEaseAnxietyBg =
       'assets/images/img_ease_anxiety_bg.png';
+  static const String imagesImgEssentialsBg =
+      'assets/images/img_essentials_bg.png';
   static const String imagesImgHomeCardBg =
       'assets/images/img_home_card_bg.png';
   static const String imagesImgHowAreWeFeeling =
@@ -154,5 +159,7 @@ class Assets {
   static const String imagesImgScheduleBg = 'assets/images/img_schedule_bg.png';
   static const String imagesImgSleep = 'assets/images/img_sleep.png';
   static const String imagesImgTipCardBg = 'assets/images/img_tip_card_bg.png';
+  static const String imagesImgWriteYourThoughtBg =
+      'assets/images/img_write_your_thought_bg.png';
   static const String translationsEn = 'assets/translations/en.json';
 }

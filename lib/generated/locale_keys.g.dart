@@ -179,5 +179,13 @@ abstract class  LocaleKeys {
   static const pleaseEnterChildAge = 'pleaseEnterChildAge';
   static const pleaseEnterChildName = 'pleaseEnterChildName';
   static const userNotFound = 'userNotFound';
+  static const sharedInformationBothParentsSamePage = 'sharedInformationBothParentsSamePage';
+  static const hi = 'hi';
+  static const howYourHeartTodayTakeMomentReflect = 'howYourHeartTodayTakeMomentReflect';
+  static const writeYourThoughts = 'writeYourThoughts';
+  static const typeYourThoughtsHere = 'typeYourThoughtsHere';
+  static const saveEntry = 'saveEntry';
+  static const getAIReflection = 'getAIReflection';
+  static const yourPastEntries = 'yourPastEntries';
 
 }

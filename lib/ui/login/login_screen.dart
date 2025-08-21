@@ -8,6 +8,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
 import 'package:loving_brain/ui/home_screen/home_screen.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
@@ -314,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void _loggedInSuccess(Map<String, dynamic> data) {
+  Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
     var userModel = UserModel.fromJson(data);
     context.read<LoginCubit>().clearFields();
     EasyLoading.dismiss();
@@ -341,6 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
+      await preferences.putBool(SharedPreference.isLogin, true);
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );

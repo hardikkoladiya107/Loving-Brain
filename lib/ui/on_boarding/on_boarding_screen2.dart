@@ -103,9 +103,9 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
                       )
                       .appPadding(all: 12),
                 ).appPadding(left: 30, right: 30),
-                80.spaceH,
+                130.spaceH,
                 _nextButton(),
-                100.spaceH,
+                30.spaceH,
               ],
             ),
           ],

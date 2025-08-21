@@ -14,6 +14,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/preferances.dart';
 import '../../other/snack_bar.dart';
 import '../widget/app_dropdown.dart';
 import 'bloc/child_profile_cubit.dart';
@@ -93,9 +94,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           loading: () {
             EasyLoading.show();
           },
-          data: (data) {
+          data: (data) async {
             EasyLoading.dismiss();
             context.read<ChildProfileCubit>().clearFields();
+            await preferences.putBool(SharedPreference.isLogin, true);
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );

@@ -68,8 +68,9 @@ class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
               trackerStartColor: sliderTrackColor4,
               trackerEndColor: sliderTrackColor4.withValues(alpha: 0.3),
             ),
-            20.spaceH,
+            Spacer(),
             _nextButton(),
+            30.spaceH,
           ],
         ),
       ),
@@ -117,7 +118,7 @@ class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
@@ -127,21 +128,22 @@ class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
           Expanded(
             child: Column(
               children: [
-                10.spaceH,
+                8.spaceH,
                 Row(
                   children: [
                     Expanded(
                       child: title.appText(
                         color: blackTextColor,
                         fontWeight: FontWeight.w900,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: TextAlign.start,
                       ),
                     ),
                     Expanded(
                       child: description.appText(
                         color: blackTextColor,
-                        fontSize: 14,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
                         textAlign: TextAlign.end,
                       ),
                     ),
@@ -159,7 +161,7 @@ class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
                   ),
                   child: Slider(value: 1, onChanged: (value) {}, max: 10),
                 ),
-                16.spaceH,
+                12.spaceH,
               ],
             ),
           ),

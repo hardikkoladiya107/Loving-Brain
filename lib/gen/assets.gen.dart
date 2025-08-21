@@ -77,6 +77,10 @@ class $AssetsIconsGen {
   AssetGenImage get icFeedIcon =>
       const AssetGenImage('assets/icons/ic_feed_icon.png');
 
+  /// File path: assets/icons/ic_forward_arrow.png
+  AssetGenImage get icForwardArrow =>
+      const AssetGenImage('assets/icons/ic_forward_arrow.png');
+
   /// File path: assets/icons/ic_forward_icon.png
   AssetGenImage get icForwardIcon =>
       const AssetGenImage('assets/icons/ic_forward_icon.png');
@@ -190,6 +194,10 @@ class $AssetsIconsGen {
   AssetGenImage get icReflactInJournal =>
       const AssetGenImage('assets/icons/ic_reflact_in_journal.png');
 
+  /// File path: assets/icons/ic_reminder_icon.png
+  AssetGenImage get icReminderIcon =>
+      const AssetGenImage('assets/icons/ic_reminder_icon.png');
+
   /// File path: assets/icons/ic_repeat_icon.png
   AssetGenImage get icRepeatIcon =>
       const AssetGenImage('assets/icons/ic_repeat_icon.png');
@@ -271,6 +279,7 @@ class $AssetsIconsGen {
     icDiaperChangeBreath,
     icEmailPrefixIcon,
     icFeedIcon,
+    icForwardArrow,
     icForwardIcon,
     icForwardIcon2,
     icGoogleIcon,
@@ -299,6 +308,7 @@ class $AssetsIconsGen {
     icProfileIcon2,
     icQuestion,
     icReflactInJournal,
+    icReminderIcon,
     icRepeatIcon,
     icSadIcon,
     icScheduleIcon,
@@ -377,6 +387,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgEaseAnxietyBg =>
       const AssetGenImage('assets/images/img_ease_anxiety_bg.png');
 
+  /// File path: assets/images/img_essentials_bg.png
+  AssetGenImage get imgEssentialsBg =>
+      const AssetGenImage('assets/images/img_essentials_bg.png');
+
   /// File path: assets/images/img_home_card_bg.png
   AssetGenImage get imgHomeCardBg =>
       const AssetGenImage('assets/images/img_home_card_bg.png');
@@ -445,6 +459,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgPostPartumCalmMeditation =>
       const AssetGenImage('assets/images/img_post_partum_calm_meditation.png');
 
+  /// File path: assets/images/img_reminder_bg.png
+  AssetGenImage get imgReminderBg =>
+      const AssetGenImage('assets/images/img_reminder_bg.png');
+
   /// File path: assets/images/img_scan_body_bg.png
   AssetGenImage get imgScanBodyBg =>
       const AssetGenImage('assets/images/img_scan_body_bg.png');
@@ -460,6 +478,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_tip_card_bg.png
   AssetGenImage get imgTipCardBg =>
       const AssetGenImage('assets/images/img_tip_card_bg.png');
+
+  /// File path: assets/images/img_write_your_thought_bg.png
+  AssetGenImage get imgWriteYourThoughtBg =>
+      const AssetGenImage('assets/images/img_write_your_thought_bg.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [
@@ -477,6 +499,7 @@ class $AssetsImagesGen {
     imgDailyMoodCheckInBg,
     imgDailyRoutineBg,
     imgEaseAnxietyBg,
+    imgEssentialsBg,
     imgHomeCardBg,
     imgHowAreWeFeeling,
     imgLearnAndPlay,
@@ -494,10 +517,12 @@ class $AssetsImagesGen {
     imgPlayAndConnectBg,
     imgPlayIdeaCard,
     imgPostPartumCalmMeditation,
+    imgReminderBg,
     imgScanBodyBg,
     imgScheduleBg,
     imgSleep,
     imgTipCardBg,
+    imgWriteYourThoughtBg,
   ];
 }
 

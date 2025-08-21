@@ -179,7 +179,15 @@
   "pleaseEnterRelationshipToChild": "Please enter relationship to child",
   "pleaseEnterChildAge": "Please enter child age",
   "pleaseEnterChildName": "Please enter child name",
-  "userNotFound": "User not found!!"
+  "userNotFound": "User not found!!",
+  "sharedInformationBothParentsSamePage": "Shared information to keep both parents on the same\n page",
+  "hi": "Hi",
+  "howYourHeartTodayTakeMomentReflect": "how is your heart today? Take a moment to reflect on your parenting journey.",
+  "writeYourThoughts": "Write your Thoughts",
+  "typeYourThoughtsHere": "Type your Thoughts Here ....",
+  "saveEntry": "+ Save Entry",
+  "getAIReflection": "Get AI Reflection",
+  "yourPastEntries": "Your Past Entries"
 
 
 

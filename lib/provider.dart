@@ -6,6 +6,7 @@ import 'package:loving_brain/ui/ai_chat/bloc/ai_chat_cubit.dart';
 import 'package:loving_brain/ui/child_profile/bloc/child_profile_cubit.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/bloc/daily_mood_check_in_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
+import 'package:loving_brain/ui/essentials/bloc/essentials_cubit.dart';
 import 'package:loving_brain/ui/forgot_password/bloc/forgot_password_cubit.dart';
 import 'package:loving_brain/ui/home_screen/bloc/home_cubit.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
@@ -15,6 +16,7 @@ import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dar
 import 'package:loving_brain/ui/register/bloc/register_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
+import 'package:loving_brain/ui/write_your_thought/bloc/write_your_thought_cubit.dart';
 
 var blocProvider = [
   BlocProvider<LoginCubit>(create: (BuildContext context) => LoginCubit()),
@@ -55,5 +57,11 @@ var blocProvider = [
   ),
   BlocProvider<ForgotPasswordCubit>(
     create: (BuildContext context) => ForgotPasswordCubit(),
+  ),
+  BlocProvider<EssentialsCubit>(
+    create: (BuildContext context) => EssentialsCubit(),
+  ),
+  BlocProvider<WriteYourThoughtCubit>(
+    create: (BuildContext context) => WriteYourThoughtCubit(),
   ),
 ];

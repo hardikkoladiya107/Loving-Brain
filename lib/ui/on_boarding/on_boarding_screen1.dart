@@ -32,26 +32,26 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Row(children: []),
-            110.spaceH,
+            125.spaceH,
             LocaleKeys.welcomeTo.tr().appText(
               fontWeight: FontWeight.w600,
               fontSize: 18,
             ),
             LocaleKeys.lovingBrain.tr().appText(
-              fontWeight: FontWeight.w800,
-              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              fontSize: 28,
             ),
             Spacer(),
             Column(
               children: [
                 LocaleKeys.becauseEveryChildDeservesTheBestVersionOfYou
                     .tr()
-                    .appText(fontWeight: FontWeight.w700, fontSize: 16)
+                    .appText(fontWeight: FontWeight.w800, fontSize: 16)
                     .appPadding(left: 20, right: 20),
                 40.spaceH,
                 _getStartedButton(),
                 20.spaceH,
-                _loginButton(),
+                //_loginButton(),
                 60.spaceH,
               ],
             ),
@@ -64,7 +64,10 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
   Widget _getStartedButton() {
     return BaseButton(
       child: Container(
-        decoration: BoxDecoration(color: yellowButtonColor),
+        decoration: BoxDecoration(
+          color: yellowColor2,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

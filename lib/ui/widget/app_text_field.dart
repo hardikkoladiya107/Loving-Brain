@@ -27,6 +27,7 @@ class AppTextField extends StatefulWidget {
     this.readOnly,
     this.maxLines,
     this.minLines,
+    this.hintStyle,
     this.obscureText = false,
     this.showError = true,
   });
@@ -38,6 +39,7 @@ class AppTextField extends StatefulWidget {
   final int? maxLines;
   final int? minLines;
   final String? hint;
+  final TextStyle? hintStyle;
   final bool showAddButton;
   final bool showError;
   final bool obscureText;
@@ -106,10 +108,9 @@ class _AppTextFieldState extends State<AppTextField> {
               prefixIcon: widget.prefixIcon,
               suffixIcon: widget.suffixIcon,
               hintText: widget.hint,
-              hintStyle: getTextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade400,
-              ),
+              hintStyle:
+                  widget.hintStyle ??
+                  getTextStyle(fontSize: 14, color: Colors.grey.shade400),
               filled: widget.filled,
               fillColor: widget.fillColor,
               border: widget.tfType == TFTYPE.FILLED

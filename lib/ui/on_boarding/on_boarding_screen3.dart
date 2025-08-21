@@ -51,7 +51,7 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                 ),
               ),
             ),
-            Positioned(bottom: 60, left: 0, right: 0, child: _nextButton()),
+            Positioned(bottom: 30, left: 0, right: 0, child: _nextButton()),
           ],
         ),
       ),

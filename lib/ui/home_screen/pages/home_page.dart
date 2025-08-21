@@ -29,6 +29,8 @@ class _HomePageState extends State<HomePage> {
             _secondCard(),
             10.spaceH,
             _thirdCard(),
+            Spacer(),
+            _reminder(),
           ],
         ),
       ),
@@ -245,6 +247,90 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: () {},
+    );
+  }
+
+  Widget _reminder() {
+    return Stack(
+      children: [
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 150.h,
+            decoration: BoxDecoration(
+              color: yellowColor4,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(100),
+                topRight: Radius.circular(100),
+              ),
+            ),
+          ),
+        ),
+
+        Container(height: 190.h),
+
+        Positioned(
+          left: 0,
+          right: 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 100.h,
+                width: 270.w,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(Assets.images.imgReminderBg.path),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        "Remember to re-evaluate".appText(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        "Tantrum strategies in 3 days".appText(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        Row(
+                          children: [
+                            "Take action".appText(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            10.spaceW,
+                            Assets.icons.icForwardArrow.image(
+                              height: 22.h,
+                              width: 22.w,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    10.spaceW,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Assets.icons.icReminderIcon.image(
+                          height: 25.h,
+                          width: 25.w,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
