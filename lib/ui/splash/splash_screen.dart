@@ -14,23 +14,28 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration(seconds: 2), () {
-        if (preferences.getBool(SharedPreference.isLogin) ?? false) {
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (context) => const HomeScreen()));
-        } else {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const OnBoardingScreen1()),
-          );
-        }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(Duration(seconds: 2), () {
+          if (preferences.getBool(SharedPreference.isLogin) ?? false) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          } else {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const OnBoardingScreen1(),
+              ),
+            );
+          }
+        });
       });
     });
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.pink,);
+    return Scaffold();
   }
 }

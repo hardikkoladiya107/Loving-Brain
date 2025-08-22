@@ -277,55 +277,58 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: 100.h,
-                width: 270.w,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(Assets.images.imgReminderBg.path),
+              BaseButton(
+                child: Container(
+                  height: 100.h,
+                  width: 270.w,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(Assets.images.imgReminderBg.path),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          "Remember to re-evaluate".appText(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          "Tantrum strategies in 3 days".appText(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          Row(
+                            children: [
+                              "Take action".appText(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              10.spaceW,
+                              Assets.icons.icForwardArrow.image(
+                                height: 22.h,
+                                width: 22.w,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      10.spaceW,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Assets.icons.icReminderIcon.image(
+                            height: 25.h,
+                            width: 25.w,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        "Remember to re-evaluate".appText(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                        ),
-                        "Tantrum strategies in 3 days".appText(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        Row(
-                          children: [
-                            "Take action".appText(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            10.spaceW,
-                            Assets.icons.icForwardArrow.image(
-                              height: 22.h,
-                              width: 22.w,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    10.spaceW,
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Assets.icons.icReminderIcon.image(
-                          height: 25.h,
-                          width: 25.w,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                onTap: () {},
               ),
             ],
           ),

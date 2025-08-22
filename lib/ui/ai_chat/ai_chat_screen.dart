@@ -86,12 +86,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
 
                 Positioned(
                   right: 20,
-                  bottom: 40,
+                  bottom: 0,
                   left: 20,
                   child: AppTextField(
                     tfType: TFTYPE.FILLED,
                     hint: "Connect with brain ai",
-
                     contentPadding: EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 16,
