@@ -177,17 +177,19 @@ class _OnBoardingScreen4State extends State<OnBoardingScreen4> {
       children: [
         BaseButton(
           child: Container(
+            width: 200.w,
             decoration: BoxDecoration(
               color: blueButtonColor,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 LocaleKeys.next
                     .tr()
                     .appText(fontWeight: FontWeight.w700, color: Colors.white)
-                    .appPadding(left: 80, right: 80, top: 8, bottom: 8),
+                    .appPadding(top: 8, bottom: 8),
               ],
             ),
           ),

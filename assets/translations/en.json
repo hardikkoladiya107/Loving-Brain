@@ -1,6 +1,7 @@
 {
 
   "appName" : "Loving Brain",
+  "yourPersonalParentingCoPilot" : "Your Personal Parenting Co-pilot",
   "notSupportedInThisDevice" : "Not Supported in this device",
   "welcomeTo" : "Welcome to",
   "lovingBrain" : "Loving Brain",
@@ -187,7 +188,8 @@
   "typeYourThoughtsHere": "Type your Thoughts Here ....",
   "saveEntry": "+ Save Entry",
   "getAIReflection": "Get AI Reflection",
-  "yourPastEntries": "Your Past Entries"
+  "yourPastEntries": "Your Past Entries",
+  "startYourDay": "Start Your Day"
 
 
 

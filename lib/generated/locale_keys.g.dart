@@ -4,6 +4,7 @@
 
 abstract class  LocaleKeys {
   static const appName = 'appName';
+  static const yourPersonalParentingCoPilot = 'yourPersonalParentingCoPilot';
   static const notSupportedInThisDevice = 'notSupportedInThisDevice';
   static const welcomeTo = 'welcomeTo';
   static const lovingBrain = 'lovingBrain';
@@ -187,5 +188,6 @@ abstract class  LocaleKeys {
   static const saveEntry = 'saveEntry';
   static const getAIReflection = 'getAIReflection';
   static const yourPastEntries = 'yourPastEntries';
+  static const startYourDay = 'startYourDay';
 
 }

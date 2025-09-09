@@ -51,7 +51,15 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                 ),
               ),
             ),
-            Positioned(bottom: 30, left: 0, right: 0, child: _nextButton()),
+            Positioned(
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [_nextButton()],
+              ),
+            ),
           ],
         ),
       ),
@@ -84,36 +92,29 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
   }
 
   Widget _nextButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        BaseButton(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [yellowButtonStartColor, yellowButtonEndColor],
-              ),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                LocaleKeys.next
-                    .tr()
-                    .appText(fontWeight: FontWeight.w700, color: Colors.white)
-                    .appPadding(left: 80, right: 80, top: 8, bottom: 8),
-              ],
-            ),
-          ),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const OnBoardingScreen4(),
-              ),
-            );
-          },
+    return BaseButton(
+      child: Container(
+        width: 200.w,
+        decoration: BoxDecoration(
+          color: cardColor2,
+          borderRadius: BorderRadius.circular(20),
         ),
-      ],
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LocaleKeys.next
+                .tr()
+                .appText(fontWeight: FontWeight.w700, color: Colors.white)
+                .appPadding(left: 40, right: 40, top: 8, bottom: 8),
+          ],
+        ),
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const OnBoardingScreen4()),
+        );
+      },
     );
   }
 }

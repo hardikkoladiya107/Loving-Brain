@@ -94,7 +94,6 @@ class Assets {
   static const String iconsIcWorriedIcon = 'assets/icons/ic_worried_icon.png';
   static const String imagesIcNewBehaviorBg =
       'assets/images/ic_new_behavior_bg.png';
-  static const String imagesIcReminderBg = 'assets/images/img_reminder_bg.png';
   static const String imagesImgActivityBg = 'assets/images/img_activity_bg.png';
   static const String imagesImgActivityCompleted =
       'assets/images/img_activity_completed.png';
@@ -154,10 +153,12 @@ class Assets {
       'assets/images/img_play_idea_card.png';
   static const String imagesImgPostPartumCalmMeditation =
       'assets/images/img_post_partum_calm_meditation.png';
+  static const String imagesImgReminderBg = 'assets/images/img_reminder_bg.png';
   static const String imagesImgScanBodyBg =
       'assets/images/img_scan_body_bg.png';
   static const String imagesImgScheduleBg = 'assets/images/img_schedule_bg.png';
   static const String imagesImgSleep = 'assets/images/img_sleep.png';
+  static const String imagesImgSplashBg = 'assets/images/img_splash_bg.png';
   static const String imagesImgTipCardBg = 'assets/images/img_tip_card_bg.png';
   static const String imagesImgWriteYourThoughtBg =
       'assets/images/img_write_your_thought_bg.png';

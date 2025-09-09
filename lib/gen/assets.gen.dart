@@ -475,6 +475,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgSleep =>
       const AssetGenImage('assets/images/img_sleep.png');
 
+  /// File path: assets/images/img_splash_bg.png
+  AssetGenImage get imgSplashBg =>
+      const AssetGenImage('assets/images/img_splash_bg.png');
+
   /// File path: assets/images/img_tip_card_bg.png
   AssetGenImage get imgTipCardBg =>
       const AssetGenImage('assets/images/img_tip_card_bg.png');
@@ -521,6 +525,7 @@ class $AssetsImagesGen {
     imgScanBodyBg,
     imgScheduleBg,
     imgSleep,
+    imgSplashBg,
     imgTipCardBg,
     imgWriteYourThoughtBg,
   ];

@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/home_screen/pages/home_page.dart';
-import 'package:loving_brain/ui/home_screen/pages/profile_page.dart';
 import 'package:loving_brain/ui/module/module_screen.dart';
+import 'package:loving_brain/ui/profile/profile_screen.dart';
 import 'package:loving_brain/ui/schedule/schedule_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ScheduleScreen(),
                     AiChatScreen(),
                     ModuleScreen(),
-                    ProfilePage(),
+                    ProfileScreen(),
                   ],
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -149,17 +150,19 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
   Widget _nextButton() {
     return BaseButton(
       child: Container(
+        width: 200.w,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [orangeColorStart, orangeColorEnd]),
+          color: cardColor2,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LocaleKeys.next
+            LocaleKeys.startYourDay
                 .tr()
-                .appText(fontWeight: FontWeight.w700)
-                .appPadding(left: 80, right: 80, top: 8, bottom: 8),
+                .appText(fontWeight: FontWeight.w700, color: Colors.white)
+                .appPadding(top: 8, bottom: 8),
           ],
         ),
       ),
