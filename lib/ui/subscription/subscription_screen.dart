@@ -33,6 +33,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     super.initState();
   }
 
+  var scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SubscriptionCubit, SubscriptionState>(
@@ -85,30 +87,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           );
         }
 
-        return Scaffold(
-          body: SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
+        return Container(
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
+              child: Stack(
                 children: [
-                  25.h.spaceH,
-                  _appBar(),
-                  Assets.icons.icSubscriptionIcon.image(height: 250.h),
-                  LocaleKeys.personalizedQuotesExercisesAnytimeEveryMood
-                      .tr()
-                      .appText(fontWeight: FontWeight.w600)
-                      .appPadding(left: 20.w, right: 20.w),
-                  16.h.spaceH,
-                  ...widgetsList,
-                  16.h.spaceH,
-                  AppButton(
-                    onTap: () {
-                      context.read<SubscriptionCubit>().buyProduct();
-                    },
-                    title: LocaleKeys.subscribe.tr(),
-                    backgroundColor: appButtonColor,
-                  ),
-                  16.h.spaceH,
-                  termsAndConditionText(),
+                  _backgroundImage(),
+                  _subscriptionWidget(widgetsList),
                 ],
               ),
             ),
@@ -126,6 +113,38 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           showSnackBar(message: state.message, type: SnackBarType.None);
         }
       },
+    );
+  }
+
+  Widget _subscriptionWidget(List<Widget> widgetsList) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          45.h.spaceH,
+          _appBar(),
+          52.h.spaceH,
+          LocaleKeys.getMoreFromLovingBrain
+              .tr()
+              .appText(
+                fontWeight: FontWeight.w900,
+                color: yellowTextColor3,
+                fontSize: 20,
+              )
+              .appPadding(left: 20.w, right: 20.w),
+          16.h.spaceH,
+          ...widgetsList,
+          16.h.spaceH,
+          AppButton(
+            onTap: () {
+              context.read<SubscriptionCubit>().buyProduct();
+            },
+            title: LocaleKeys.subscribe.tr(),
+            backgroundColor: appButtonColor,
+          ),
+          16.h.spaceH,
+          termsAndConditionText(),
+        ],
+      ),
     );
   }
 
@@ -235,7 +254,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 text: Platform.isIOS
                     ? LocaleKeys.subsTermsTextIOS.tr()
                     : LocaleKeys.subsTermsTextAndroid.tr(),
-                style: const TextStyle(fontSize: 14),
+                style: getTextStyle(fontSize: 14),
               ),
             ],
           ),
@@ -246,7 +265,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             children: <InlineSpan>[
               TextSpan(
                 text: LocaleKeys.forMoreInformationPleaseVisitOur.tr(),
-                style: TextStyle(fontSize: 14),
+                style: getTextStyle(fontSize: 14),
               ),
               TextSpan(
                 text: LocaleKeys.termsOfUse.tr(),
@@ -256,11 +275,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       throw Exception('Could not launch $termsOfUseWebUrl');
                     }
                   },
-                style: const TextStyle(fontSize: 14, color: Colors.blue),
+                style: getTextStyle(fontSize: 14, color: Colors.blue),
               ),
               TextSpan(
                 text: " ${LocaleKeys.and.tr()} ",
-                style: TextStyle(fontSize: 14),
+                style: getTextStyle(fontSize: 14),
               ),
               TextSpan(
                 text: LocaleKeys.privacyPolicy.tr(),
@@ -270,13 +289,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       throw Exception('Could not launch $privacyPolicyUrl');
                     }
                   },
-                style: const TextStyle(fontSize: 14, color: Colors.blue),
+                style: getTextStyle(fontSize: 14, color: Colors.blue),
               ),
-              const TextSpan(text: ".", style: TextStyle(fontSize: 14)),
+              TextSpan(text: ".", style: getTextStyle(fontSize: 14)),
             ],
           ),
         ),
       ],
     ).appPadding(left: 25, right: 25, bottom: 25);
+  }
+
+  Widget _backgroundImage() {
+    return Column(
+      children: [
+        Assets.images.imgSubscriptionBg.image(height: context.height),
+        Container(height: context.height / 2),
+      ],
+    );
   }
 }

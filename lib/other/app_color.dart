@@ -8,6 +8,7 @@ const cardColor3 = Color(0xFFFF97A7);
 const orangeColorStart = Color(0xFFFFDE59);
 const orangeColorEnd = Color(0xFFFF914D);
 const yellowTextColor = Color(0xFFFFCE00);
+const yellowTextColor3 = Color(0xFFF7F772);
 
 const yellowButtonStartColor = Color(0xFF62BFD4);
 const yellowButtonEndColor = Color(0xFFF1DD76);
@@ -55,3 +56,14 @@ const orangeColor2 = Color(0xFFff972a);
 const yellowColor2 = Color(0xFFffd62e);
 const yellowColor3 = Color(0xFFEABE5C);
 const yellowColor4 = Color(0xFFFDE466);
+
+const gentleReminderIconColor = Color(0xFF06CB5B);
+const dailyEmotionCheckIconColor = Color(0xFFF5DB48);
+const todayPlayIdeaIconColor = Color(0xFFFFC138);
+const scheduleReminderIconColor = Color(0xFF81592F);
+const termsAndConditionIconColor = Color(0xFF005CD6);
+const privacyPolicyIconColor = Color(0xFFFF1616);
+const rateThisAppIconColor = Color(0xFF8C52FF);
+const shareThisAppIconColor = Color(0xFFFF66C4);
+
+const subscriptionColor = Color(0xFF6C79BF);

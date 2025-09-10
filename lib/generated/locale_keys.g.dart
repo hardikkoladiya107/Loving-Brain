@@ -189,5 +189,15 @@ abstract class  LocaleKeys {
   static const getAIReflection = 'getAIReflection';
   static const yourPastEntries = 'yourPastEntries';
   static const startYourDay = 'startYourDay';
+  static const getGentleRemindersForPlay = 'getGentleRemindersForPlay';
+  static const dailyEmotionCheckIn = 'dailyEmotionCheckIn';
+  static const darkLight = 'darkLight';
+  static const scheduleReminders = 'scheduleReminders';
+  static const eventsFromCoParentingCalendar = 'eventsFromCoParentingCalendar';
+  static const termsConditions = 'termsConditions';
+  static const rateThisApp = 'rateThisApp';
+  static const shareThisApp = 'shareThisApp';
+  static const quickReminders = 'quickReminders';
+  static const getMoreFromLovingBrain = 'getMoreFromLovingBrain';
 
 }
