@@ -6,6 +6,7 @@ class Assets {
   static const String iconsIcAnimalWalkChallengeIcon =
       'assets/icons/ic_animal_walk_challenge_icon.png';
   static const String iconsIcAppleIcon = 'assets/icons/ic_apple_icon.png';
+  static const String iconsIcBackIcon = 'assets/icons/ic_back_icon.png';
   static const String iconsIcCalenderIcon = 'assets/icons/ic_calender_icon.png';
   static const String iconsIcCalenderIcon2 =
       'assets/icons/ic_calender_icon2.png';
@@ -154,6 +155,7 @@ class Assets {
       'assets/images/img_module_card_bg_4.png';
   static const String imagesImgModulesScreenBg =
       'assets/images/img_modules_screen_bg.png';
+  static const String imagesImgMonthlyBg = 'assets/images/img_monthly_bg.png';
   static const String imagesImgOnBoardingBg1 =
       'assets/images/img_on_boarding_bg1.png';
   static const String imagesImgOnBoardingBg2 =
@@ -181,5 +183,6 @@ class Assets {
   static const String imagesImgTipCardBg = 'assets/images/img_tip_card_bg.png';
   static const String imagesImgWriteYourThoughtBg =
       'assets/images/img_write_your_thought_bg.png';
+  static const String imagesImgYearlyBg = 'assets/images/img_yearly_bg.png';
   static const String translationsEn = 'assets/translations/en.json';
 }

@@ -29,7 +29,8 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
-    context.read<SubscriptionCubit>().init();
+    //TODO:- Subscription commented
+    //context.read<SubscriptionCubit>().init();
     super.initState();
   }
 
@@ -40,7 +41,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return BlocConsumer<SubscriptionCubit, SubscriptionState>(
       builder: (context, state) {
         List<Widget> widgetsList = [];
-        if ((state.products ?? []).isNotEmpty &&
+        //TODO:- Subscription commented
+        /*if ((state.products ?? []).isNotEmpty &&
             (state.userModel?.productId ?? "").isEmpty) {
           widgetsList.add(
             _subscriptionItem(
@@ -85,19 +87,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               },
             ).appPadding(top: 10.h),
           );
-        }
+        }*/
 
-        return Container(
-          child: Scaffold(
-            extendBodyBehindAppBar: true,
-            backgroundColor: Colors.white,
-            body: SingleChildScrollView(
-              child: Stack(
-                children: [
-                  _backgroundImage(),
-                  _subscriptionWidget(widgetsList),
-                ],
-              ),
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+            child: Stack(
+              children: [_backgroundImage(), _subscriptionWidget(widgetsList)],
             ),
           ),
         );
@@ -122,26 +119,51 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         children: [
           45.h.spaceH,
           _appBar(),
-          52.h.spaceH,
-          LocaleKeys.getMoreFromLovingBrain
-              .tr()
-              .appText(
-                fontWeight: FontWeight.w900,
-                color: yellowTextColor3,
-                fontSize: 20,
-              )
-              .appPadding(left: 20.w, right: 20.w),
+          48.h.spaceH,
+          _headerText(),
+          26.h.spaceH,
+          _headerDescription(),
+          150.h.spaceH,
+          // ...widgetsList,
+          _subscriptionItem(
+            isShow: true,
+            isSubscribed: false,
+            isSelected: false,
+            title: LocaleKeys.premiumAnnual.tr(),
+            price: "100\$/month",
+            description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
+            onTap: () {},
+            bgImage: Assets.images.imgMonthlyBg,
+          ),
           16.h.spaceH,
-          ...widgetsList,
-          16.h.spaceH,
+          _subscriptionItem(
+            isShow: true,
+            isSubscribed: true,
+            isSelected: true,
+            title: LocaleKeys.premiumAnnual.tr(),
+            price: "100\$/month",
+            description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
+            onTap: () {},
+            bgImage: Assets.images.imgYearlyBg,
+          ),
+          32.h.spaceH,
           AppButton(
             onTap: () {
               context.read<SubscriptionCubit>().buyProduct();
             },
             title: LocaleKeys.subscribe.tr(),
-            backgroundColor: appButtonColor,
+            backgroundColor: blueButtonColor,
+            height: 42.h,
           ),
           16.h.spaceH,
+          BaseButton(
+            child: LocaleKeys.restore.tr().appText(
+              color: blueButtonColor,
+              fontWeight: FontWeight.w800,
+            ),
+            onTap: () {},
+          ),
+          32.h.spaceH,
           termsAndConditionText(),
         ],
       ),
@@ -156,74 +178,85 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     required bool isSubscribed,
     required bool isShow,
     required GestureTapCallback? onTap,
+    required AssetGenImage bgImage,
   }) {
     if (!isShow) {
       return Container();
     }
     return BaseButton(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSubscribed
-              ? Colors.green.withValues(alpha: 0.3)
-              : cardColorPrimary,
-          border: isSelected
-              ? Border.all(
-                  color: appButtonColor,
-                  width: isSubscribed ? 2.5 : 1.5,
-                )
-              : null,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.3),
-              offset: Offset(1, 1),
-              blurRadius: 5,
-              spreadRadius: 1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          children: [
+            bgImage.image(height: 100.h, width: 350.w, fit: BoxFit.cover),
+            Container(
+              height: 100.h,
+              width: 350.w,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                // color: isSubscribed
+                //     ? Colors.green.withValues(alpha: 0.3)
+                //     : cardColorPrimary,
+                border: isSelected
+                    ? Border.all(
+                        color: appButtonColor,
+                        width: isSubscribed ? 2.5 : 1.5,
+                      )
+                    : null,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  // BoxShadow(
+                  //   color: Colors.grey.withValues(alpha: 0.3),
+                  //   offset: Offset(1, 1),
+                  //   blurRadius: 5,
+                  //   spreadRadius: 1,
+                  // ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      title.appText(fontSize: 16, fontWeight: FontWeight.w600),
+                      Spacer(),
+                      price.appText(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        textAlign: TextAlign.start,
+                      ),
+                    ],
+                  ),
+                  8.h.spaceH,
+                  description.appText(fontSize: 12, textAlign: TextAlign.start),
+                  4.h.spaceH,
+                  if (isSubscribed)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade900,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: LocaleKeys.subscribed
+                              .tr()
+                              .appText(
+                                fontSize: 11,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              )
+                              .appPadding(left: 8, right: 8, top: 2, bottom: 2),
+                        ),
+                      ],
+                    ),
+                ],
+              ).appPadding(left: 16, right: 16),
             ),
           ],
         ),
-        height: 100,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                title.appText(fontSize: 16, fontWeight: FontWeight.w600),
-                Spacer(),
-                price.appText(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  textAlign: TextAlign.start,
-                ),
-              ],
-            ),
-            8.h.spaceH,
-            description.appText(fontSize: 12, textAlign: TextAlign.start),
-            4.h.spaceH,
-            if (isSubscribed)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade900,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: LocaleKeys.subscribed
-                        .tr()
-                        .appText(
-                          fontSize: 11,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        )
-                        .appPadding(left: 8, right: 8, top: 2, bottom: 2),
-                  ),
-                ],
-              ),
-          ],
-        ).appPadding(left: 16, right: 16),
       ),
     ).appPadding(left: 20, right: 20);
   }
@@ -232,7 +265,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Row(
       children: [
         BaseButton(
-          child: Icon(Icons.arrow_back),
+          child: Assets.icons.icBackIcon.image(height: 36, width: 36),
           onTap: () {
             Navigator.pop(context);
           },
@@ -254,7 +287,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 text: Platform.isIOS
                     ? LocaleKeys.subsTermsTextIOS.tr()
                     : LocaleKeys.subsTermsTextAndroid.tr(),
-                style: getTextStyle(fontSize: 14),
+                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
             ],
           ),
@@ -265,7 +298,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             children: <InlineSpan>[
               TextSpan(
                 text: LocaleKeys.forMoreInformationPleaseVisitOur.tr(),
-                style: getTextStyle(fontSize: 14),
+                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               TextSpan(
                 text: LocaleKeys.termsOfUse.tr(),
@@ -275,11 +308,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       throw Exception('Could not launch $termsOfUseWebUrl');
                     }
                   },
-                style: getTextStyle(fontSize: 14, color: Colors.blue),
+                style: getTextStyle(
+                  fontSize: 14,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               TextSpan(
                 text: " ${LocaleKeys.and.tr()} ",
-                style: getTextStyle(fontSize: 14),
+                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
               ),
               TextSpan(
                 text: LocaleKeys.privacyPolicy.tr(),
@@ -289,9 +326,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       throw Exception('Could not launch $privacyPolicyUrl');
                     }
                   },
-                style: getTextStyle(fontSize: 14, color: Colors.blue),
+                style: getTextStyle(
+                  fontSize: 14,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-              TextSpan(text: ".", style: getTextStyle(fontSize: 14)),
+              TextSpan(
+                text: ".",
+                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+              ),
             ],
           ),
         ),
@@ -306,5 +350,28 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         Container(height: context.height / 2),
       ],
     );
+  }
+
+  Widget _headerText() {
+    return LocaleKeys.getMoreFromLovingBrain
+        .tr()
+        .appText(
+          fontWeight: FontWeight.w900,
+          color: yellowTextColor3,
+          fontSize: 20,
+        )
+        .appPadding(left: 20.w, right: 20.w);
+  }
+
+  Widget _headerDescription() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: LocaleKeys.unlockAllChallengesToolsAndInsightsForAMoreConfident
+          .tr()
+          .appText(fontSize: 12, fontWeight: FontWeight.w800),
+    ).appPadding(left: 20.w, right: 20.w);
   }
 }

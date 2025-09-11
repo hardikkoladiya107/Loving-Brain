@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/ui/activity/bloc/activity_cubit.dart';
 import 'package:loving_brain/ui/activity_completed/bloc/activity_completed_cubit.dart';
+import 'package:loving_brain/ui/add_shared_event/cubit/add_shared_event_cubit.dart';
 import 'package:loving_brain/ui/ai_chat/bloc/ai_chat_cubit.dart';
 import 'package:loving_brain/ui/child_profile/bloc/child_profile_cubit.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/bloc/daily_mood_check_in_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
 import 'package:loving_brain/ui/essentials/bloc/essentials_cubit.dart';
 import 'package:loving_brain/ui/forgot_password/bloc/forgot_password_cubit.dart';
 import 'package:loving_brain/ui/home_screen/bloc/home_cubit.dart';
+import 'package:loving_brain/ui/link_co_parent/bloc/link_co_parent_cubit.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/new_behavior/bloc/new_behavior_cubit.dart';
 import 'package:loving_brain/ui/parent_profile/bloc/parent_profile_cubit.dart';
@@ -66,4 +68,10 @@ var blocProvider = [
     create: (BuildContext context) => WriteYourThoughtCubit(),
   ),
   BlocProvider<ProfileCubit>(create: (BuildContext context) => ProfileCubit()),
+  BlocProvider<AddSharedEventCubit>(
+    create: (BuildContext context) => AddSharedEventCubit(),
+  ),
+  BlocProvider<LinkCoParentCubit>(
+    create: (BuildContext context) => LinkCoParentCubit(),
+  ),
 ];

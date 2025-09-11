@@ -199,5 +199,7 @@ abstract class  LocaleKeys {
   static const shareThisApp = 'shareThisApp';
   static const quickReminders = 'quickReminders';
   static const getMoreFromLovingBrain = 'getMoreFromLovingBrain';
+  static const unlockAllChallengesToolsAndInsightsForAMoreConfident = 'unlockAllChallengesToolsAndInsightsForAMoreConfident';
+  static const restore = 'restore';
 
 }

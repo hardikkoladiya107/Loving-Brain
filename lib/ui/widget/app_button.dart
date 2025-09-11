@@ -12,10 +12,12 @@ class AppButton extends StatelessWidget {
     this.backgroundColor = primaryColor,
     this.widget,
     this.borderRadius,
+    this.height,
     this.padding = const EdgeInsets.only(left: 16, right: 16),
   });
 
   final String? title;
+  final double? height;
   final Widget? widget;
   final BorderRadius? borderRadius;
   final GestureTapCallback? onTap;
@@ -29,7 +31,7 @@ class AppButton extends StatelessWidget {
       child: BaseButton(
         onTap: onTap,
         child: Container(
-          height: 52,
+          height: height ?? 52,
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: borderRadius ?? BorderRadius.circular(50),

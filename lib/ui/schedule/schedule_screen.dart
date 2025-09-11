@@ -8,6 +8,9 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../add_shared_event/add_shared_event_screen.dart';
+import '../daily_routine/daily_routine_screen.dart';
+import '../link_co_parent/link_co_parent_screen.dart';
 import 'bloc/schedule_cubit.dart';
 import 'bloc/schedule_state.dart';
 
@@ -143,7 +146,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         _routineItem(schedule: '9.30 am', label: 'Morning Nap'),
         _routineItem(schedule: '9.30 am', label: 'Morning Nap'),
         16.spaceH,
-        _scheduleButton(text: "+ ${LocaleKeys.addActivity.tr()}", onTap: () {}),
+        _scheduleButton(
+          text: "+ ${LocaleKeys.addActivity.tr()}",
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const DailyRoutineScreen(),
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -175,7 +187,24 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         16.spaceH,
         _scheduleButton(
           text: "+ ${LocaleKeys.addSharedEvent.tr()}",
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const AddSharedEventScreen(),
+              ),
+            );
+          },
+        ),
+        16.spaceH,
+        _scheduleButton(
+          text: "Link co-parent",
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const LinkCoParentScreen(),
+              ),
+            );
+          },
         ),
       ],
     );

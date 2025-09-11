@@ -26,6 +26,10 @@ class $AssetsIconsGen {
   AssetGenImage get icAppleIcon =>
       const AssetGenImage('assets/icons/ic_apple_icon.png');
 
+  /// File path: assets/icons/ic_back_icon.png
+  AssetGenImage get icBackIcon =>
+      const AssetGenImage('assets/icons/ic_back_icon.png');
+
   /// File path: assets/icons/ic_calender_icon.png
   AssetGenImage get icCalenderIcon =>
       const AssetGenImage('assets/icons/ic_calender_icon.png');
@@ -302,6 +306,7 @@ class $AssetsIconsGen {
     icAiIcon,
     icAnimalWalkChallengeIcon,
     icAppleIcon,
+    icBackIcon,
     icCalenderIcon,
     icCalenderIcon2,
     icCalmCorner,
@@ -472,6 +477,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgModulesScreenBg =>
       const AssetGenImage('assets/images/img_modules_screen_bg.png');
 
+  /// File path: assets/images/img_monthly_bg.png
+  AssetGenImage get imgMonthlyBg =>
+      const AssetGenImage('assets/images/img_monthly_bg.png');
+
   /// File path: assets/images/img_on_boarding_bg1.png
   AssetGenImage get imgOnBoardingBg1 =>
       const AssetGenImage('assets/images/img_on_boarding_bg1.png');
@@ -536,6 +545,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgWriteYourThoughtBg =>
       const AssetGenImage('assets/images/img_write_your_thought_bg.png');
 
+  /// File path: assets/images/img_yearly_bg.png
+  AssetGenImage get imgYearlyBg =>
+      const AssetGenImage('assets/images/img_yearly_bg.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     icNewBehaviorBg,
@@ -562,6 +575,7 @@ class $AssetsImagesGen {
     imgModuleCardBg3,
     imgModuleCardBg4,
     imgModulesScreenBg,
+    imgMonthlyBg,
     imgOnBoardingBg1,
     imgOnBoardingBg2,
     imgOnBoardingBg3,
@@ -578,6 +592,7 @@ class $AssetsImagesGen {
     imgSubscriptionBg,
     imgTipCardBg,
     imgWriteYourThoughtBg,
+    imgYearlyBg,
   ];
 }
 
