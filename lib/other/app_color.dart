@@ -67,3 +67,6 @@ const rateThisAppIconColor = Color(0xFF8C52FF);
 const shareThisAppIconColor = Color(0xFFFF66C4);
 
 const subscriptionColor = Color(0xFF6C79BF);
+const tabBarBgColor = Color(0xFFECF4A6);
+const selectedTabColor = Color(0xFFD0EBF4);
+const fillTextfieldColor = Color(0xFFEAEAEA);

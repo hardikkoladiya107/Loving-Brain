@@ -74,7 +74,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 children: [
                   (widget.title ?? "").appText(
                     fontSize: widget.titleFontSize ?? 14,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ],
               ),

@@ -425,6 +425,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgChooseYourCalmBg =>
       const AssetGenImage('assets/images/img_choose_your_calm_bg.png');
 
+  /// File path: assets/images/img_co_parent_bg.png
+  AssetGenImage get imgCoParentBg =>
+      const AssetGenImage('assets/images/img_co_parent_bg.png');
+
   /// File path: assets/images/img_daily_mood_check_in_bg.png
   AssetGenImage get imgDailyMoodCheckInBg =>
       const AssetGenImage('assets/images/img_daily_mood_check_in_bg.png');
@@ -562,6 +566,7 @@ class $AssetsImagesGen {
     imgChooseCalmCardBg4,
     imgChooseCalmCardBg5,
     imgChooseYourCalmBg,
+    imgCoParentBg,
     imgDailyMoodCheckInBg,
     imgDailyRoutineBg,
     imgEaseAnxietyBg,

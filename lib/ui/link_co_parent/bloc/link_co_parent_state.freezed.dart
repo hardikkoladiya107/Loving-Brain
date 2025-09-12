@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LinkCoParentState {
 
- String get message;
+ String get selectedTab;
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $LinkCoParentStateCopyWith<LinkCoParentState> get copyWith => _$LinkCoParentStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LinkCoParentState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,selectedTab);
 
 @override
 String toString() {
-  return 'LinkCoParentState(message: $message)';
+  return 'LinkCoParentState(selectedTab: $selectedTab)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $LinkCoParentStateCopyWith<$Res>  {
   factory $LinkCoParentStateCopyWith(LinkCoParentState value, $Res Function(LinkCoParentState) _then) = _$LinkCoParentStateCopyWithImpl;
 @useResult
 $Res call({
- String message
+ String selectedTab
 });
 
 
@@ -62,9 +62,9 @@ class _$LinkCoParentStateCopyWithImpl<$Res>
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedTab = null,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+selectedTab: null == selectedTab ? _self.selectedTab : selectedTab // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -150,10 +150,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedTab)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LinkCoParentState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.selectedTab);case _:
   return orElse();
 
 }
@@ -171,10 +171,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedTab)  $default,) {final _that = this;
 switch (_that) {
 case _LinkCoParentState():
-return $default(_that.message);case _:
+return $default(_that.selectedTab);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +191,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedTab)?  $default,) {final _that = this;
 switch (_that) {
 case _LinkCoParentState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.selectedTab);case _:
   return null;
 
 }
@@ -206,10 +206,10 @@ return $default(_that.message);case _:
 
 
 class _LinkCoParentState implements LinkCoParentState {
-  const _LinkCoParentState({this.message = "message"});
+  const _LinkCoParentState({this.selectedTab = "EMAIL"});
   
 
-@override@JsonKey() final  String message;
+@override@JsonKey() final  String selectedTab;
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +221,16 @@ _$LinkCoParentStateCopyWith<_LinkCoParentState> get copyWith => __$LinkCoParentS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LinkCoParentState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,selectedTab);
 
 @override
 String toString() {
-  return 'LinkCoParentState(message: $message)';
+  return 'LinkCoParentState(selectedTab: $selectedTab)';
 }
 
 
@@ -241,7 +241,7 @@ abstract mixin class _$LinkCoParentStateCopyWith<$Res> implements $LinkCoParentS
   factory _$LinkCoParentStateCopyWith(_LinkCoParentState value, $Res Function(_LinkCoParentState) _then) = __$LinkCoParentStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String selectedTab
 });
 
 
@@ -258,9 +258,9 @@ class __$LinkCoParentStateCopyWithImpl<$Res>
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedTab = null,}) {
   return _then(_LinkCoParentState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+selectedTab: null == selectedTab ? _self.selectedTab : selectedTab // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

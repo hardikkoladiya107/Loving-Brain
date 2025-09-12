@@ -130,6 +130,8 @@ class Assets {
       'assets/images/img_choose_calm_card_bg5.png';
   static const String imagesImgChooseYourCalmBg =
       'assets/images/img_choose_your_calm_bg.png';
+  static const String imagesImgCoParentBg =
+      'assets/images/img_co_parent_bg.png';
   static const String imagesImgDailyMoodCheckInBg =
       'assets/images/img_daily_mood_check_in_bg.png';
   static const String imagesImgDailyRoutineBg =

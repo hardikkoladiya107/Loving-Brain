@@ -4,6 +4,6 @@ part 'link_co_parent_state.freezed.dart';
 
 @freezed
 abstract class LinkCoParentState with _$LinkCoParentState {
-  const factory LinkCoParentState({@Default("message") String message}) =
+  const factory LinkCoParentState({@Default("EMAIL") String selectedTab}) =
       _LinkCoParentState;
 }
