@@ -6,6 +6,7 @@ class Assets {
   static const String iconsIcAnimalWalkChallengeIcon =
       'assets/icons/ic_animal_walk_challenge_icon.png';
   static const String iconsIcAppleIcon = 'assets/icons/ic_apple_icon.png';
+  static const String iconsIcApproveIcon = 'assets/icons/ic_approve_icon.png';
   static const String iconsIcBackIcon = 'assets/icons/ic_back_icon.png';
   static const String iconsIcCalenderIcon = 'assets/icons/ic_calender_icon.png';
   static const String iconsIcCalenderIcon2 =
@@ -29,6 +30,7 @@ class Assets {
       'assets/icons/ic_daily_mindful_moments_icon.png';
   static const String iconsIcDailySchedulePlannerIcon =
       'assets/icons/ic_daily_schedule_planner_icon.png';
+  static const String iconsIcDeclineIcon = 'assets/icons/ic_decline_icon.png';
   static const String iconsIcDiaperChangeBreath =
       'assets/icons/ic_diaper_change_breath.png';
   static const String iconsIcEmailPrefixIcon =
@@ -76,6 +78,7 @@ class Assets {
       'assets/icons/ic_privacy_policy_icon.png';
   static const String iconsIcProfileIcon = 'assets/icons/ic_profile_icon.png';
   static const String iconsIcProfileIcon2 = 'assets/icons/ic_profile_icon2.png';
+  static const String iconsIcProposeIcon = 'assets/icons/ic_propose_icon.png';
   static const String iconsIcQuestion = 'assets/icons/ic_question.png';
   static const String iconsIcRateThisAppIcon =
       'assets/icons/ic_rate_this_app_icon.png';
@@ -115,6 +118,7 @@ class Assets {
       'assets/icons/ic_todays_play_idea_icon.png';
   static const String iconsIcTrackKidBehaviour =
       'assets/icons/ic_track_kid_behaviour.png';
+  static const String iconsIcUserIcon = 'assets/icons/ic_user_icon.png';
   static const String iconsIcWorriedIcon = 'assets/icons/ic_worried_icon.png';
   static const String imagesIcNewBehaviorBg =
       'assets/images/ic_new_behavior_bg.png';

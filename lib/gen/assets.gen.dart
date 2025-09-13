@@ -26,6 +26,10 @@ class $AssetsIconsGen {
   AssetGenImage get icAppleIcon =>
       const AssetGenImage('assets/icons/ic_apple_icon.png');
 
+  /// File path: assets/icons/ic_approve_icon.png
+  AssetGenImage get icApproveIcon =>
+      const AssetGenImage('assets/icons/ic_approve_icon.png');
+
   /// File path: assets/icons/ic_back_icon.png
   AssetGenImage get icBackIcon =>
       const AssetGenImage('assets/icons/ic_back_icon.png');
@@ -61,6 +65,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_check.png
   AssetGenImage get icCheck => const AssetGenImage('assets/icons/ic_check.png');
 
+  /// File path: assets/icons/ic_child_emoji_icon.png
+  AssetGenImage get icChildEmojiIcon =>
+      const AssetGenImage('assets/icons/ic_child_emoji_icon.png');
+
   /// File path: assets/icons/ic_co_parenting_icon.png
   AssetGenImage get icCoParentingIcon =>
       const AssetGenImage('assets/icons/ic_co_parenting_icon.png');
@@ -80,6 +88,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_daily_schedule_planner_icon.png
   AssetGenImage get icDailySchedulePlannerIcon =>
       const AssetGenImage('assets/icons/ic_daily_schedule_planner_icon.png');
+
+  /// File path: assets/icons/ic_decline_icon.png
+  AssetGenImage get icDeclineIcon =>
+      const AssetGenImage('assets/icons/ic_decline_icon.png');
 
   /// File path: assets/icons/ic_diaper_change_breath.png
   AssetGenImage get icDiaperChangeBreath =>
@@ -210,6 +222,10 @@ class $AssetsIconsGen {
   AssetGenImage get icProfileIcon2 =>
       const AssetGenImage('assets/icons/ic_profile_icon2.png');
 
+  /// File path: assets/icons/ic_propose_icon.png
+  AssetGenImage get icProposeIcon =>
+      const AssetGenImage('assets/icons/ic_propose_icon.png');
+
   /// File path: assets/icons/ic_question.png
   AssetGenImage get icQuestion =>
       const AssetGenImage('assets/icons/ic_question.png');
@@ -309,6 +325,10 @@ class $AssetsIconsGen {
   AssetGenImage get icTrackKidBehaviour =>
       const AssetGenImage('assets/icons/ic_track_kid_behaviour.png');
 
+  /// File path: assets/icons/ic_user_icon.png
+  AssetGenImage get icUserIcon =>
+      const AssetGenImage('assets/icons/ic_user_icon.png');
+
   /// File path: assets/icons/ic_worried_icon.png
   AssetGenImage get icWorriedIcon =>
       const AssetGenImage('assets/icons/ic_worried_icon.png');
@@ -318,6 +338,7 @@ class $AssetsIconsGen {
     icAiIcon,
     icAnimalWalkChallengeIcon,
     icAppleIcon,
+    icApproveIcon,
     icBackIcon,
     icCalenderIcon,
     icCalenderIcon2,
@@ -327,11 +348,13 @@ class $AssetsIconsGen {
     icCameraIcon,
     icChallengesIcon,
     icCheck,
+    icChildEmojiIcon,
     icCoParentingIcon,
     icCrownIcon,
     icDailyEmotionCheckIcon,
     icDailyMindfulMomentsIcon,
     icDailySchedulePlannerIcon,
+    icDeclineIcon,
     icDiaperChangeBreath,
     icEmailPrefixIcon,
     icFeedIcon,
@@ -364,6 +387,7 @@ class $AssetsIconsGen {
     icPrivacyPolicyIcon,
     icProfileIcon,
     icProfileIcon2,
+    icProposeIcon,
     icQuestion,
     icRateThisAppIcon,
     icReflactInJournal,
@@ -389,6 +413,7 @@ class $AssetsIconsGen {
     icTimerIcon,
     icTodaysPlayIdeaIcon,
     icTrackKidBehaviour,
+    icUserIcon,
     icWorriedIcon,
   ];
 }

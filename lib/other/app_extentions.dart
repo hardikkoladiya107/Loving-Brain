@@ -10,9 +10,13 @@ extension extOnString on String {
     double? letterSpacing,
     TextAlign? textAlign,
     FontStyle? fontStyle,
+    int? maxLines,
+    TextOverflow? overflow,
   }) {
     return Text(
       this,
+      maxLines: maxLines,
+      overflow: overflow,
       textAlign: textAlign ?? TextAlign.center,
       style: getTextStyle(
         fontSize: (fontSize ?? 16).sp,
