@@ -10,12 +10,16 @@ class Assets {
   static const String iconsIcCalenderIcon = 'assets/icons/ic_calender_icon.png';
   static const String iconsIcCalenderIcon2 =
       'assets/icons/ic_calender_icon2.png';
+  static const String iconsIcCalenderIcon3 =
+      'assets/icons/ic_calender_icon_3.png';
   static const String iconsIcCalmCorner = 'assets/icons/ic_calm_corner.png';
   static const String iconsIcCalmIcon = 'assets/icons/ic_calm_icon.png';
   static const String iconsIcCameraIcon = 'assets/icons/ic_camera_icon.png';
   static const String iconsIcChallengesIcon =
       'assets/icons/ic_challenges_icon.png';
   static const String iconsIcCheck = 'assets/icons/ic_check.png';
+  static const String iconsIcChildEmojiIcon =
+      'assets/icons/ic_child_emoji_icon.png';
   static const String iconsIcCoParentingIcon =
       'assets/icons/ic_co_parenting_icon.png';
   static const String iconsIcCrownIcon = 'assets/icons/ic_crown_icon.png';
@@ -40,6 +44,7 @@ class Assets {
   static const String iconsIcJournalIcon = 'assets/icons/ic_journal_icon.png';
   static const String iconsIcLastPlayedIcon =
       'assets/icons/ic_last_played_icon.png';
+  static const String iconsIcLocationIcon = 'assets/icons/ic_location_icon.png';
   static const String iconsIcLogNewBehavior =
       'assets/icons/ic_log_new_behavior.png';
   static const String iconsIcMadIcon = 'assets/icons/ic_mad_icon.png';
@@ -105,6 +110,7 @@ class Assets {
   static const String iconsIcTermsAndConditionIcon =
       'assets/icons/ic_terms_and_condition_icon.png';
   static const String iconsIcTimer = 'assets/icons/ic_timer.png';
+  static const String iconsIcTimerIcon = 'assets/icons/ic_timer_icon.png';
   static const String iconsIcTodaysPlayIdeaIcon =
       'assets/icons/ic_todays_play_idea_icon.png';
   static const String iconsIcTrackKidBehaviour =
@@ -115,6 +121,8 @@ class Assets {
   static const String imagesImgActivityBg = 'assets/images/img_activity_bg.png';
   static const String imagesImgActivityCompleted =
       'assets/images/img_activity_completed.png';
+  static const String imagesImgAddSharedBg =
+      'assets/images/img_add_shared_bg.png';
   static const String imagesImgAiChatBg = 'assets/images/img_ai_chat_bg.png';
   static const String imagesImgChildProfileBg =
       'assets/images/img_child_profile_bg.png';
@@ -140,6 +148,10 @@ class Assets {
       'assets/images/img_ease_anxiety_bg.png';
   static const String imagesImgEssentialsBg =
       'assets/images/img_essentials_bg.png';
+  static const String imagesImgEventApprovalBg =
+      'assets/images/img_event_approval_bg.png';
+  static const String imagesImgEventDetailBg =
+      'assets/images/img_event_detail_bg.png';
   static const String imagesImgHomeCardBg =
       'assets/images/img_home_card_bg.png';
   static const String imagesImgHowAreWeFeeling =

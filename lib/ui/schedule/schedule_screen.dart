@@ -10,6 +10,8 @@ import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../add_shared_event/add_shared_event_screen.dart';
 import '../daily_routine/daily_routine_screen.dart';
+import '../event_approval/event_approval_screen.dart';
+import '../event_detail/event_detail_screen.dart';
 import '../link_co_parent/link_co_parent_screen.dart';
 import 'bloc/schedule_cubit.dart';
 import 'bloc/schedule_state.dart';
@@ -142,9 +144,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               fontSize: 14,
             )
             .appPadding(left: 16),
-        _routineItem(schedule: '7:am', label: 'Morning Nap'),
-        _routineItem(schedule: '9.30 am', label: 'Morning Nap'),
-        _routineItem(schedule: '9.30 am', label: 'Morning Nap'),
+        _routineItem(schedule: '7:am', label: 'Morning Nap', onTap: () {}),
+        _routineItem(schedule: '9.30 am', label: 'Morning Nap', onTap: () {}),
+        _routineItem(schedule: '9.30 am', label: 'Morning Nap', onTap: () {}),
         16.spaceH,
         _scheduleButton(
           text: "+ ${LocaleKeys.addActivity.tr()}",
@@ -178,11 +180,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           schedule: 'Aug 5 - 4:00 PM',
           label: 'School Pick-up (Priya)',
           status: LocaleKeys.approved.tr(),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const EventDetailScreen(),
+              ),
+            );
+          },
         ),
         _routineItem(
           schedule: 'Aug 5 - 4:00 PM',
           label: 'School Pick-up (Priya)',
           status: LocaleKeys.pending.tr(),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const EventApprovalScreen(),
+              ),
+            );
+          },
         ),
         16.spaceH,
         _scheduleButton(
@@ -213,61 +229,65 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget _routineItem({
     required String schedule,
     required String label,
+    required GestureTapCallback? onTap,
     String? status,
   }) {
-    return Container(
-      height: 65,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          20.spaceW,
-          Assets.icons.icCalenderIcon2.image(height: 30),
-          16.spaceW,
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                schedule.appText(fontSize: 12, fontWeight: FontWeight.w700),
-                2.spaceH,
-                label.appText(fontSize: 10, fontWeight: FontWeight.w600),
-              ],
+    return BaseButton(
+      child: Container(
+        height: 65,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            20.spaceW,
+            Assets.icons.icCalenderIcon2.image(height: 30),
+            16.spaceW,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  schedule.appText(fontSize: 12, fontWeight: FontWeight.w700),
+                  2.spaceH,
+                  label.appText(fontSize: 10, fontWeight: FontWeight.w600),
+                ],
+              ),
             ),
-          ),
-          if (status != null)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: status == LocaleKeys.approved.tr()
-                        ? approvedColor
-                        : status == LocaleKeys.pending.tr()
-                        ? pendingColor
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+            if (status != null)
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: status == LocaleKeys.approved.tr()
+                          ? approvedColor
+                          : status == LocaleKeys.pending.tr()
+                          ? pendingColor
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: status
+                        .appText(fontSize: 9, fontWeight: FontWeight.w800)
+                        .appPadding(left: 6, right: 6, top: 2, bottom: 2),
                   ),
-                  child: status
-                      .appText(fontSize: 9, fontWeight: FontWeight.w800)
-                      .appPadding(left: 6, right: 6, top: 2, bottom: 2),
-                ),
-                10.spaceH,
-                BaseButton(
-                  child: "${LocaleKeys.proposeChange.tr()} >".appText(
-                    fontSize: 9,
-                    color: blueColor1,
-                    fontWeight: FontWeight.w800,
+                  10.spaceH,
+                  BaseButton(
+                    child: "${LocaleKeys.proposeChange.tr()} >".appText(
+                      fontSize: 9,
+                      color: blueColor1,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    onTap: () {},
                   ),
-                  onTap: () {},
-                ),
-              ],
-            ),
-          10.spaceW,
-        ],
+                ],
+              ),
+            10.spaceW,
+          ],
+        ),
       ),
+      onTap: onTap,
     ).appPadding(left: 12, right: 12, top: 10);
   }
 

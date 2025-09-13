@@ -91,7 +91,6 @@ class _AppTextFieldState extends State<AppTextField> {
           ),
           child: TextField(
             textAlignVertical: TextAlignVertical.center,
-            // vertical alignment
             readOnly: widget.readOnly ?? false,
             keyboardType: widget.keyboardType,
             controller: widget.controller,

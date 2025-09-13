@@ -38,6 +38,10 @@ class $AssetsIconsGen {
   AssetGenImage get icCalenderIcon2 =>
       const AssetGenImage('assets/icons/ic_calender_icon2.png');
 
+  /// File path: assets/icons/ic_calender_icon_3.png
+  AssetGenImage get icCalenderIcon3 =>
+      const AssetGenImage('assets/icons/ic_calender_icon_3.png');
+
   /// File path: assets/icons/ic_calm_corner.png
   AssetGenImage get icCalmCorner =>
       const AssetGenImage('assets/icons/ic_calm_corner.png');
@@ -124,6 +128,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_last_played_icon.png
   AssetGenImage get icLastPlayedIcon =>
       const AssetGenImage('assets/icons/ic_last_played_icon.png');
+
+  /// File path: assets/icons/ic_location_icon.png
+  AssetGenImage get icLocationIcon =>
+      const AssetGenImage('assets/icons/ic_location_icon.png');
 
   /// File path: assets/icons/ic_log_new_behavior.png
   AssetGenImage get icLogNewBehavior =>
@@ -289,6 +297,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_timer.png
   AssetGenImage get icTimer => const AssetGenImage('assets/icons/ic_timer.png');
 
+  /// File path: assets/icons/ic_timer_icon.png
+  AssetGenImage get icTimerIcon =>
+      const AssetGenImage('assets/icons/ic_timer_icon.png');
+
   /// File path: assets/icons/ic_todays_play_idea_icon.png
   AssetGenImage get icTodaysPlayIdeaIcon =>
       const AssetGenImage('assets/icons/ic_todays_play_idea_icon.png');
@@ -309,6 +321,7 @@ class $AssetsIconsGen {
     icBackIcon,
     icCalenderIcon,
     icCalenderIcon2,
+    icCalenderIcon3,
     icCalmCorner,
     icCalmIcon,
     icCameraIcon,
@@ -331,6 +344,7 @@ class $AssetsIconsGen {
     icHomeIcon,
     icJournalIcon,
     icLastPlayedIcon,
+    icLocationIcon,
     icLogNewBehavior,
     icMadIcon,
     icMindfulFeedingAnchor,
@@ -372,6 +386,7 @@ class $AssetsIconsGen {
     icTantrumIcon,
     icTermsAndConditionIcon,
     icTimer,
+    icTimerIcon,
     icTodaysPlayIdeaIcon,
     icTrackKidBehaviour,
     icWorriedIcon,
@@ -392,6 +407,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_activity_completed.png
   AssetGenImage get imgActivityCompleted =>
       const AssetGenImage('assets/images/img_activity_completed.png');
+
+  /// File path: assets/images/img_add_shared_bg.png
+  AssetGenImage get imgAddSharedBg =>
+      const AssetGenImage('assets/images/img_add_shared_bg.png');
 
   /// File path: assets/images/img_ai_chat_bg.png
   AssetGenImage get imgAiChatBg =>
@@ -444,6 +463,14 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_essentials_bg.png
   AssetGenImage get imgEssentialsBg =>
       const AssetGenImage('assets/images/img_essentials_bg.png');
+
+  /// File path: assets/images/img_event_approval_bg.png
+  AssetGenImage get imgEventApprovalBg =>
+      const AssetGenImage('assets/images/img_event_approval_bg.png');
+
+  /// File path: assets/images/img_event_detail_bg.png
+  AssetGenImage get imgEventDetailBg =>
+      const AssetGenImage('assets/images/img_event_detail_bg.png');
 
   /// File path: assets/images/img_home_card_bg.png
   AssetGenImage get imgHomeCardBg =>
@@ -558,6 +585,7 @@ class $AssetsImagesGen {
     icNewBehaviorBg,
     imgActivityBg,
     imgActivityCompleted,
+    imgAddSharedBg,
     imgAiChatBg,
     imgChildProfileBg,
     imgChooseCalmCardBg1,
@@ -571,6 +599,8 @@ class $AssetsImagesGen {
     imgDailyRoutineBg,
     imgEaseAnxietyBg,
     imgEssentialsBg,
+    imgEventApprovalBg,
+    imgEventDetailBg,
     imgHomeCardBg,
     imgHowAreWeFeeling,
     imgLearnAndPlay,
