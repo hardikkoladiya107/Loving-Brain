@@ -30,6 +30,10 @@ class $AssetsIconsGen {
   AssetGenImage get icApproveIcon =>
       const AssetGenImage('assets/icons/ic_approve_icon.png');
 
+  /// File path: assets/icons/ic_attachment_pin.png
+  AssetGenImage get icAttachmentPin =>
+      const AssetGenImage('assets/icons/ic_attachment_pin.png');
+
   /// File path: assets/icons/ic_back_icon.png
   AssetGenImage get icBackIcon =>
       const AssetGenImage('assets/icons/ic_back_icon.png');
@@ -206,6 +210,10 @@ class $AssetsIconsGen {
   AssetGenImage get icPostpartumCalmMeditation =>
       const AssetGenImage('assets/icons/ic_postpartum_calm_meditation.png');
 
+  /// File path: assets/icons/ic_premium_feature_icon.png
+  AssetGenImage get icPremiumFeatureIcon =>
+      const AssetGenImage('assets/icons/ic_premium_feature_icon.png');
+
   /// File path: assets/icons/ic_premium_icon.png
   AssetGenImage get icPremiumIcon =>
       const AssetGenImage('assets/icons/ic_premium_icon.png');
@@ -298,6 +306,10 @@ class $AssetsIconsGen {
   AssetGenImage get icSubscriptionIcon =>
       const AssetGenImage('assets/icons/ic_subscription_icon.png');
 
+  /// File path: assets/icons/ic_success_check.png
+  AssetGenImage get icSuccessCheck =>
+      const AssetGenImage('assets/icons/ic_success_check.png');
+
   /// File path: assets/icons/ic_sunny_breath_for_kids.png
   AssetGenImage get icSunnyBreathForKids =>
       const AssetGenImage('assets/icons/ic_sunny_breath_for_kids.png');
@@ -339,6 +351,7 @@ class $AssetsIconsGen {
     icAnimalWalkChallengeIcon,
     icAppleIcon,
     icApproveIcon,
+    icAttachmentPin,
     icBackIcon,
     icCalenderIcon,
     icCalenderIcon2,
@@ -383,6 +396,7 @@ class $AssetsIconsGen {
     icPlayHistoryIcon,
     icPositiveBehavior,
     icPostpartumCalmMeditation,
+    icPremiumFeatureIcon,
     icPremiumIcon,
     icPrivacyPolicyIcon,
     icProfileIcon,
@@ -406,6 +420,7 @@ class $AssetsIconsGen {
     icStreakMailIcon,
     icStressSosIcon,
     icSubscriptionIcon,
+    icSuccessCheck,
     icSunnyBreathForKids,
     icTantrumIcon,
     icTermsAndConditionIcon,
