@@ -201,5 +201,7 @@ abstract class  LocaleKeys {
   static const getMoreFromLovingBrain = 'getMoreFromLovingBrain';
   static const unlockAllChallengesToolsAndInsightsForAMoreConfident = 'unlockAllChallengesToolsAndInsightsForAMoreConfident';
   static const restore = 'restore';
+  static const logOut = 'logOut';
+  static const deleteAccount = 'deleteAccount';
 
 }

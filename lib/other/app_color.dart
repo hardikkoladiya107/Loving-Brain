@@ -65,6 +65,8 @@ const termsAndConditionIconColor = Color(0xFF005CD6);
 const privacyPolicyIconColor = Color(0xFFFF1616);
 const rateThisAppIconColor = Color(0xFF8C52FF);
 const shareThisAppIconColor = Color(0xFFFF66C4);
+const logoutAppIconColor = Color(0xFFFF7684);
+const deleteAccountIconColor = Color(0xFF8C52FF);
 
 const subscriptionColor = Color(0xFF6C79BF);
 const tabBarBgColor = Color(0xFFECF4A6);

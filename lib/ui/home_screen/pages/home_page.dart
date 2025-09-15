@@ -8,6 +8,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
+import '../../your_streak/your_streak_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -112,7 +113,19 @@ class _HomePageState extends State<HomePage> {
                   ),
                   "Streak!".appText(fontWeight: FontWeight.w600),
                   12.spaceH,
-                  Assets.icons.icCalenderIcon.image(height: 50, width: 50),
+                  BaseButton(
+                    child: Assets.icons.icCalenderIcon.image(
+                      height: 50,
+                      width: 50,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const YourStreakScreen(),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
               20.spaceW,

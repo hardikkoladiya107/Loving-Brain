@@ -136,6 +136,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Assets.icons.icShareThisAppIcon,
                   iconColor: shareThisAppIconColor,
                 ),
+                _settingItem(
+                  title: LocaleKeys.deleteAccount.tr(),
+                  icon: null,
+                  icon2: Icons.delete,
+                  iconColor: blueColor,
+                  onTap: () {},
+                ),
+                _settingItem(
+                  title: LocaleKeys.logOut.tr(),
+                  icon: null,
+                  icon2: Icons.logout,
+                  iconColor: logoutAppIconColor,
+                  onTap: () {},
+                ),
                 100.spaceH,
               ],
             ),
@@ -148,8 +162,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _settingItem({
     required String title,
-    required AssetGenImage icon,
+    required AssetGenImage? icon,
+
     required Color iconColor,
+    IconData? icon2,
     String? description,
     bool showCheckBox = false,
     bool check = false,
@@ -164,8 +180,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(color: iconColor, shape: BoxShape.circle),
             height: 45,
             width: 45,
-            child: Center(child: icon.image(height: 25, width: 25)),
+            child: Center(
+              child: (icon != null)
+                  ? icon.image(height: 25, width: 25)
+                  : (icon2 != null)
+                  ? Icon(icon2, color: Colors.white)
+                  : Container(),
+            ),
           ),
+
           10.spaceW,
           Expanded(
             child: Column(

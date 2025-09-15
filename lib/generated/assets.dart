@@ -38,6 +38,7 @@ class Assets {
   static const String iconsIcEmailPrefixIcon =
       'assets/icons/ic_email_prefix_icon.png';
   static const String iconsIcFeedIcon = 'assets/icons/ic_feed_icon.png';
+  static const String iconsIcFlagIcon = 'assets/icons/ic_flag_icon.png';
   static const String iconsIcForwardArrow = 'assets/icons/ic_forward_arrow.png';
   static const String iconsIcForwardIcon = 'assets/icons/ic_forward_icon.png';
   static const String iconsIcForwardIcon2 = 'assets/icons/ic_forward_icon2.png';
@@ -149,6 +150,8 @@ class Assets {
       'assets/images/img_choose_your_calm_bg.png';
   static const String imagesImgCoParentBg =
       'assets/images/img_co_parent_bg.png';
+  static const String imagesImgCurrentStreakCard =
+      'assets/images/img_current_streak_card.png';
   static const String imagesImgDailyMoodCheckInBg =
       'assets/images/img_daily_mood_check_in_bg.png';
   static const String imagesImgDailyRoutineBg =
@@ -207,5 +210,7 @@ class Assets {
   static const String imagesImgWriteYourThoughtBg =
       'assets/images/img_write_your_thought_bg.png';
   static const String imagesImgYearlyBg = 'assets/images/img_yearly_bg.png';
+  static const String imagesImgYourStreakBg =
+      'assets/images/img_your_streak_bg.png';
   static const String translationsEn = 'assets/translations/en.json';
 }

@@ -109,6 +109,10 @@ class $AssetsIconsGen {
   AssetGenImage get icFeedIcon =>
       const AssetGenImage('assets/icons/ic_feed_icon.png');
 
+  /// File path: assets/icons/ic_flag_icon.png
+  AssetGenImage get icFlagIcon =>
+      const AssetGenImage('assets/icons/ic_flag_icon.png');
+
   /// File path: assets/icons/ic_forward_arrow.png
   AssetGenImage get icForwardArrow =>
       const AssetGenImage('assets/icons/ic_forward_arrow.png');
@@ -371,6 +375,7 @@ class $AssetsIconsGen {
     icDiaperChangeBreath,
     icEmailPrefixIcon,
     icFeedIcon,
+    icFlagIcon,
     icForwardArrow,
     icForwardIcon,
     icForwardIcon2,
@@ -487,6 +492,10 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_co_parent_bg.png
   AssetGenImage get imgCoParentBg =>
       const AssetGenImage('assets/images/img_co_parent_bg.png');
+
+  /// File path: assets/images/img_current_streak_card.png
+  AssetGenImage get imgCurrentStreakCard =>
+      const AssetGenImage('assets/images/img_current_streak_card.png');
 
   /// File path: assets/images/img_daily_mood_check_in_bg.png
   AssetGenImage get imgDailyMoodCheckInBg =>
@@ -620,6 +629,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgYearlyBg =>
       const AssetGenImage('assets/images/img_yearly_bg.png');
 
+  /// File path: assets/images/img_your_streak_bg.png
+  AssetGenImage get imgYourStreakBg =>
+      const AssetGenImage('assets/images/img_your_streak_bg.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     icNewBehaviorBg,
@@ -635,6 +648,7 @@ class $AssetsImagesGen {
     imgChooseCalmCardBg5,
     imgChooseYourCalmBg,
     imgCoParentBg,
+    imgCurrentStreakCard,
     imgDailyMoodCheckInBg,
     imgDailyRoutineBg,
     imgEaseAnxietyBg,
@@ -668,6 +682,7 @@ class $AssetsImagesGen {
     imgTipCardBg,
     imgWriteYourThoughtBg,
     imgYearlyBg,
+    imgYourStreakBg,
   ];
 }
 
