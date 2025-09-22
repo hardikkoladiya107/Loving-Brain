@@ -4,7 +4,6 @@ import 'package:loving_brain/manager/apple_sign_in/apple_signin_manager.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
 import '../../../generated/locale_keys.g.dart';
-import '../../../manager/google_sign_in/google_signin_manager.dart';
 import '../../../model/api_result_status.dart';
 import '../../../repo/auth_repo.dart';
 import 'login_state.dart';
@@ -33,7 +32,9 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> googleAuthenticate() async {
-    await GoogleSignInManager.instance.authenticate();
+    changeProps(apiResultStatus: ApiResultStatus.loading());
+    var apiResult = await AuthRepo.instance.signInWithGoogle();
+    changeProps(apiResultStatus: apiResult);
   }
 
   Future<void> signInWithApple() async {

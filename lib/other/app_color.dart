@@ -73,3 +73,4 @@ const tabBarBgColor = Color(0xFFECF4A6);
 const selectedTabColor = Color(0xFFD0EBF4);
 const fillTextfieldColor = Color(0xFFEAEAEA);
 const addSharedEventBgColor = Color(0xFFF2F2F2);
+const calmCornerBgColor = Color(0xFFFAF9F9);

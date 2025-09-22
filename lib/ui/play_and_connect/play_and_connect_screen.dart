@@ -9,6 +9,7 @@ import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../../other/dashed_divider.dart';
+import '../activity/activity_screen.dart';
 import 'bloc/play_and_connect_state.dart';
 
 class PlayAndConnectScreen extends StatefulWidget {
@@ -20,30 +21,43 @@ class PlayAndConnectScreen extends StatefulWidget {
 
 class _PlayAndConnectScreenState extends State<PlayAndConnectScreen> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<PlayAndConnectCubit>().init();
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<PlayAndConnectCubit, PlayAndConnectState>(
       builder: (context, state) {
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(Assets.images.imgPlayAndConnectBg.path),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _header(),
-                  20.spaceH,
-                  _playIdeaCard(),
-                  10.spaceH,
-                  _allPlayActivities(),
-                  10.spaceH,
-                  _yourPlanHistory(),
-                ],
-              ),
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SingleChildScrollView(
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Assets.images.imgPlayAndConnectBg.image(
+                      height: context.height,
+                      width: context.height,
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _header(),
+                    20.spaceH,
+                    _playIdeaCard(),
+                    10.spaceH,
+                    _allPlayActivities(),
+                    10.spaceH,
+                    _yourPlanHistory(),
+                  ],
+                ),
+              ],
             ),
           ),
         );
@@ -144,19 +158,26 @@ class _PlayAndConnectScreenState extends State<PlayAndConnectScreen> {
   }
 
   Widget _startActivity() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+    return BaseButton(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.icons.icHeartIcon.image(height: 24, width: 24),
+            20.spaceW,
+            LocaleKeys.startActivity.tr().appText(fontWeight: FontWeight.w700),
+          ],
+        ).appPadding(top: 4, bottom: 4),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Assets.icons.icHeartIcon.image(height: 24, width: 24),
-          20.spaceW,
-          LocaleKeys.startActivity.tr().appText(fontWeight: FontWeight.w700),
-        ],
-      ).appPadding(top: 4, bottom: 4),
+      onTap: () {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => const ActivityScreen()));
+      },
     );
   }
 

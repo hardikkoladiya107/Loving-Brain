@@ -60,11 +60,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDUNM7nAk9gDS6nBARWl5r61K2IxIZs6SI',
-    appId: '1:779880600850:ios:266956591ab9660c84cfcb',
+    appId: '1:779880600850:ios:bf02926ff4d5f38b84cfcb',
     messagingSenderId: '779880600850',
     projectId: 'hugsand-heart-u86wap',
     storageBucket: 'hugsand-heart-u86wap.firebasestorage.app',
-    iosBundleId: 'com.example.lovingBrain',
+    androidClientId: '779880600850-tberbmcrr7mv3075e8l9sans6oh8n0ss.apps.googleusercontent.com',
+    iosClientId: '779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it.apps.googleusercontent.com',
+    iosBundleId: 'com.app.lovingbrain',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

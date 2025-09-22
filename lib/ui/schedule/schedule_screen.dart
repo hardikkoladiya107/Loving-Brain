@@ -28,69 +28,78 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ScheduleCubit, ScheduleState>(
       builder: (context, state) {
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.images.imgScheduleBg.path),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+        return Scaffold(
+          body: SingleChildScrollView(
+            child: Stack(
               children: [
-                Row(),
-                Spacer(),
-                "Schedule".appText(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                Column(
+                  children: [
+                    Assets.images.imgScheduleBg.image(
+                      height: context.height,
+                      width: context.width,
+                    ),
+                    Container(height: context.height / 2),
+                  ],
                 ),
-                20.spaceH,
-                Container(
-                  height: (context.height * 0.65).h,
-                  width: (context.width - 60).w,
-                  decoration: BoxDecoration(
-                    color: scheduleBgColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    children: [
-                      10.spaceH,
-                      Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(),
+                    60.spaceH,
+                    LocaleKeys.schedule.tr().appText(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    20.spaceH,
+                    Container(
+                      height: (context.height * 0.65).h,
+                      width: (context.width - 60).w,
+                      decoration: BoxDecoration(
+                        color: scheduleBgColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
                         children: [
-                          8.spaceW,
-                          _tabItem(
-                            label: LocaleKeys.dailyRoutine.tr(),
-                            isSelected: state.tabIndex == 0,
-                            onTap: () {
-                              context.read<ScheduleCubit>().changeProps(
-                                tabIndex: 0,
-                              );
-                            },
+                          10.spaceH,
+                          Row(
+                            children: [
+                              8.spaceW,
+                              _tabItem(
+                                label: LocaleKeys.dailyRoutine.tr(),
+                                isSelected: state.tabIndex == 0,
+                                onTap: () {
+                                  context.read<ScheduleCubit>().changeProps(
+                                    tabIndex: 0,
+                                  );
+                                },
+                              ),
+                              8.spaceW,
+                              _tabItem(
+                                label: LocaleKeys.coParentingSchedule.tr(),
+                                isSelected: state.tabIndex == 1,
+                                onTap: () {
+                                  context.read<ScheduleCubit>().changeProps(
+                                    tabIndex: 1,
+                                  );
+                                },
+                              ),
+                              8.spaceW,
+                            ],
                           ),
-                          8.spaceW,
-                          _tabItem(
-                            label: LocaleKeys.coParentingSchedule.tr(),
-                            isSelected: state.tabIndex == 1,
-                            onTap: () {
-                              context.read<ScheduleCubit>().changeProps(
-                                tabIndex: 1,
-                              );
-                            },
+                          Expanded(
+                            child: IndexedStack(
+                              index: state.tabIndex,
+                              children: [
+                                _dailyRoutine(),
+                                coParentingSchedule(),
+                              ],
+                            ),
                           ),
-                          8.spaceW,
                         ],
                       ),
-                      Expanded(
-                        child: IndexedStack(
-                          index: state.tabIndex,
-                          children: [_dailyRoutine(), coParentingSchedule()],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),

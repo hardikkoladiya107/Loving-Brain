@@ -3,4 +3,11 @@ import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_state.dar
 
 class PlayAndConnectCubit extends Cubit<PlayAndConnectState> {
   PlayAndConnectCubit() : super(PlayAndConnectState());
+
+  void init() {
+    emit(PlayAndConnectState());
+    changeProps();
+  }
+
+  void changeProps() {}
 }

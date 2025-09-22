@@ -201,7 +201,24 @@ abstract class  LocaleKeys {
   static const getMoreFromLovingBrain = 'getMoreFromLovingBrain';
   static const unlockAllChallengesToolsAndInsightsForAMoreConfident = 'unlockAllChallengesToolsAndInsightsForAMoreConfident';
   static const restore = 'restore';
-  static const logOut = 'logOut';
   static const deleteAccount = 'deleteAccount';
+  static const logOut = 'logOut';
+  static const areYouSureYouWantToLogout = 'areYouSureYouWantToLogout';
+  static const areYouSureYouWantToDeleteAccount = 'areYouSureYouWantToDeleteAccount';
+  static const cancel = 'cancel';
+  static const delete = 'delete';
+  static const connectWithBrainAI = 'connectWithBrainAI';
+  static const schedule = 'schedule';
+  static const googleSignInNotSupportsThisPlatform = 'googleSignInNotSupportsThisPlatform';
+  static const continueWithGoogle = 'continueWithGoogle';
+  static const continueWithApple = 'continueWithApple';
+  static const logMoodsLabel = 'logMoodsLabel';
+  static const pleaseEnterChildMood = 'pleaseEnterChildMood';
+  static const pleaseEnterParentMood = 'pleaseEnterParentMood';
+  static const youAlreadyLoggedYourMoodToday = 'youAlreadyLoggedYourMoodToday';
+  static const greatJobCheckingIn = 'greatJobCheckingIn';
+  static const pleaseEnterYourThoughts = 'pleaseEnterYourThoughts';
+  static const viewAll = 'viewAll';
+  static const thoughtsList = 'thoughtsList';
 
 }

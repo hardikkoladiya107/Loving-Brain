@@ -12,6 +12,7 @@ class UserModel {
     String? purchaseToken,
     DateTime? freeTaskUseTime,
     DateTime? updatedDate,
+    DateTime? lastOpened,
     String? displayName,
     String? parentName,
     String? parentGender,
@@ -20,6 +21,7 @@ class UserModel {
     String? childAge,
     String? relationshipToChild,
     String? parentEmail,
+    int? streak,
   }) {
     _uid = uid;
     _platform = platform;
@@ -29,6 +31,7 @@ class UserModel {
     _subscriptionStatus = subscriptionStatus;
     _freeTaskUseTime = freeTaskUseTime;
     _updatedDate = updatedDate;
+    _lastOpened = lastOpened;
     _transactionId = transactionId;
     _purchaseToken = purchaseToken;
     _displayName = displayName;
@@ -39,6 +42,7 @@ class UserModel {
     _childAge = childAge;
     _relationshipToChild = relationshipToChild;
     _parentEmail = parentEmail;
+    _streak = streak;
   }
 
   UserModel.fromJson(dynamic jsonObject, {bool fromConvert = false}) {
@@ -57,6 +61,7 @@ class UserModel {
     _childAge = jsonObject['child_age'];
     _relationshipToChild = jsonObject['relationship_to_child'];
     _parentEmail = jsonObject['parent_email'];
+    _streak = jsonObject['streak'];
 
     try {
       if (fromConvert) {
@@ -83,6 +88,19 @@ class UserModel {
       } else {
         if (jsonObject['updated_date'] != null) {
           _updatedDate = (jsonObject['updated_date'] as Timestamp).toDate();
+        }
+      }
+    } catch (e) {
+      e;
+    }
+    try {
+      if (fromConvert) {
+        if (jsonObject['last_opened'] != null) {
+          _lastOpened = DateTime.parse(jsonObject['last_opened']);
+        }
+      } else {
+        if (jsonObject['last_opened'] != null) {
+          _lastOpened = (jsonObject['last_opened'] as Timestamp).toDate();
         }
       }
     } catch (e) {
@@ -125,6 +143,8 @@ class UserModel {
   DateTime? _parentDateOfBirth;
   DateTime? _freeTaskUseTime;
   DateTime? _updatedDate;
+  DateTime? _lastOpened;
+  int? _streak;
 
   UserModel copyWith({
     String? uid,
@@ -138,6 +158,7 @@ class UserModel {
     String? purchaseToken,
     DateTime? freeTaskUseTime,
     DateTime? updatedDate,
+    DateTime? lastOpened,
     String? displayName,
     String? parentName,
     String? parentGender,
@@ -146,6 +167,7 @@ class UserModel {
     String? relationshipToChild,
     DateTime? parentDateOfBirth,
     String? parentEmail,
+    int? streak,
   }) {
     return UserModel(
       uid: uid ?? _uid,
@@ -156,6 +178,7 @@ class UserModel {
       originalTransactionId: originalTransactionId ?? _originalTransactionId,
       freeTaskUseTime: freeTaskUseTime ?? _freeTaskUseTime,
       updatedDate: updatedDate ?? _updatedDate,
+      lastOpened: lastOpened ?? _lastOpened,
       transactionId: transactionId ?? _transactionId,
       purchaseToken: purchaseToken ?? _purchaseToken,
       displayName: displayName ?? _displayName,
@@ -166,6 +189,7 @@ class UserModel {
       childAge: childAge ?? _childAge,
       parentEmail: parentEmail ?? _parentEmail,
       relationshipToChild: relationshipToChild ?? _relationshipToChild,
+      streak: streak ?? _streak,
     );
   }
 
@@ -188,6 +212,7 @@ class UserModel {
   String? get purchaseToken => _purchaseToken;
 
   DateTime? get updatedDate => _updatedDate;
+  DateTime? get lastOpened => _lastOpened;
 
   DateTime? get freeTaskUseTime => _freeTaskUseTime;
 
@@ -204,6 +229,7 @@ class UserModel {
   String? get childAge => _childAge;
 
   String? get relationshipToChild => _relationshipToChild;
+  int? get streak => _streak;
 
   Map<String, dynamic> toJson({
     bool forConvert = false,
@@ -226,6 +252,7 @@ class UserModel {
     map['child_name'] = _childName;
     map['child_age'] = _childAge;
     map['relationship_to_child'] = _relationshipToChild;
+    map['streak'] = _streak;
 
     try {
       if (forConvert) {
@@ -253,6 +280,22 @@ class UserModel {
         if (_updatedDate != null) {
           Timestamp ts = Timestamp.fromDate(_updatedDate!);
           map['updated_date'] = ts;
+        }
+      }
+    } catch (e) {
+      e;
+    }
+
+    try {
+      if (forConvert) {
+        if (_lastOpened != null) {
+          Timestamp ts = Timestamp.fromDate(_lastOpened!);
+          map['last_opened'] = ts.toDate().toIso8601String();
+        }
+      } else {
+        if (_lastOpened != null) {
+          Timestamp ts = Timestamp.fromDate(_lastOpened!);
+          map['last_opened'] = ts;
         }
       }
     } catch (e) {

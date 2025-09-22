@@ -1,17 +1,24 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/main.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
+import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/preferances.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -21,6 +28,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    context.read<ProfileCubit>().init();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileState>(
@@ -43,17 +56,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: 100.h,
                           shape: BoxShape.circle,
                         ),
-                        "Sarah".appText(
+                        10.h.spaceH,
+                        (state.userModel?.parentName ?? "").appText(
                           color: Colors.black,
                           fontWeight: FontWeight.w800,
                           fontSize: 22,
                         ),
-                        "hello@sarah.com".appText(),
+                        5.h.spaceH,
+                        (state.userModel?.email ?? "").appText(),
                       ],
                     ),
                   ],
                 ),
-                10.spaceH,
+                10.h.spaceH,
                 _settingItem(
                   title: LocaleKeys.getGentleRemindersForPlay.tr(),
                   showCheckBox: true,
@@ -141,14 +156,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: null,
                   icon2: Icons.delete,
                   iconColor: blueColor,
-                  onTap: () {},
+                  onTap: () {
+                    _deleteAccountDialog();
+                  },
                 ),
                 _settingItem(
                   title: LocaleKeys.logOut.tr(),
                   icon: null,
                   icon2: Icons.logout,
                   iconColor: logoutAppIconColor,
-                  onTap: () {},
+                  onTap: () {
+                    _logoutDialog();
+                  },
                 ),
                 100.spaceH,
               ],
@@ -156,7 +175,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.logoutApiResultStatus.whenOrNull(
+          initial: () {},
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+            _performLogout();
+          },
+          error: (error) {
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            EasyLoading.dismiss();
+          },
+        );
+
+        state.deleteAccountApiResultStatus.whenOrNull(
+          initial: () {},
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+            _performLogout();
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+        );
+      },
     );
   }
 
@@ -215,5 +264,184 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     ).appPadding(left: 20.w, right: 20.w, top: 10.h);
+  }
+
+  void _logoutDialog() {
+    showAppDialog(
+      child: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.only(left: 20.w, right: 20.w),
+          child: Container(
+            height: 200.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                20.h.spaceH,
+                "${LocaleKeys.logOut.tr()}?".appText(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+                20.h.spaceH,
+                LocaleKeys.areYouSureYouWantToLogout.tr().appText(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+                40.h.spaceH,
+                Row(
+                  children: [
+                    20.w.spaceW,
+                    Expanded(
+                      child: BaseButton(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: LocaleKeys.cancel
+                              .tr()
+                              .appText(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )
+                              .appPadding(top: 10.h, bottom: 10.h),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    10.w.spaceW,
+                    Expanded(
+                      child: BaseButton(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: LocaleKeys.logOut
+                              .tr()
+                              .appText(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )
+                              .appPadding(top: 10.h, bottom: 10.h),
+                        ),
+                        onTap: () {
+                          context.read<ProfileCubit>().logout();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    20.w.spaceW,
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _deleteAccountDialog() {
+    showAppDialog(
+      child: (context) {
+        return Dialog(
+          insetPadding: EdgeInsets.only(left: 20.w, right: 20.w),
+          child: Container(
+            height: 200.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+            ),
+            child: Column(
+              children: [
+                20.h.spaceH,
+                "${LocaleKeys.deleteAccount.tr()}?".appText(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                ),
+                20.h.spaceH,
+                LocaleKeys.areYouSureYouWantToDeleteAccount.tr().appText(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+                30.h.spaceH,
+                Row(
+                  children: [
+                    20.w.spaceW,
+                    Expanded(
+                      child: BaseButton(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: LocaleKeys.cancel
+                              .tr()
+                              .appText(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )
+                              .appPadding(top: 10.h, bottom: 10.h),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    10.w.spaceW,
+                    Expanded(
+                      child: BaseButton(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: blueColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: LocaleKeys.delete
+                              .tr()
+                              .appText(
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )
+                              .appPadding(top: 10.h, bottom: 10.h),
+                        ),
+                        onTap: () {
+                          context.read<ProfileCubit>().deleteAccount();
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    20.w.spaceW,
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _performLogout() async {
+    if (navigatorKey.currentContext != null) {
+      await preferences.putBool(SharedPreference.isLogin, false);
+      await preferences.clearUser();
+      Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const OnBoardingScreen1()),
+        (Route<dynamic> route) => false, // remove all previous routes
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    if (navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!.read<ProfileCubit>().dispose();
+    }
+    super.dispose();
   }
 }

@@ -203,8 +203,27 @@
   "getMoreFromLovingBrain": "Get More from Loving Brain",
   "unlockAllChallengesToolsAndInsightsForAMoreConfident": "Unlock all challenges, tools, and insights for a more confident",
   "restore": "Restore",
+  "deleteAccount": "Delete Account",
   "logOut": "Log-Out",
-  "deleteAccount": "Delete Account"
+  "areYouSureYouWantToLogout": "Are you sure you want to logout?",
+  "areYouSureYouWantToDeleteAccount": "Are you sure you want to delete your account?",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "connectWithBrainAI": "Connect with brain ai",
+  "schedule": "Schedule",
+  "googleSignInNotSupportsThisPlatform": "Google sign-in not supports this platform",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithApple": "Continue with Apple",
+  "logMoodsLabel": "Log Moods",
+  "pleaseEnterChildMood": "Please enter child mood",
+  "pleaseEnterParentMood": "Please enter parent mood",
+  "youAlreadyLoggedYourMoodToday": "You already logged your mood today",
+  "greatJobCheckingIn": "Great job checking in!",
+  "pleaseEnterYourThoughts": "Please enter your thoughts",
+  "viewAll": "View all",
+  "thoughtsList": "Thoughts List"
+
+
 
 
 

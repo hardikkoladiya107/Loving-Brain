@@ -16,64 +16,68 @@ class ModuleScreen extends StatefulWidget {
 class _ModuleScreenState extends State<ModuleScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(Assets.images.imgModulesScreenBg.path),
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              250.spaceH,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  LocaleKeys.modules.tr().appText(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
-                ],
-              ),
-              LocaleKeys.moduleDescription.tr().appText(
-                fontWeight: FontWeight.w600,
-                fontSize: 10,
-              ),
-              12.spaceH,
-              _moduleCard(
-                bgImage: Assets.images.imgModuleCardBg1,
-                title: LocaleKeys.sleep.tr(),
-                description: LocaleKeys.sleepDescription.tr(),
-              ),
-              8.spaceH,
-              _moduleCard(
-                bgImage: Assets.images.imgModuleCardBg2,
-                title: LocaleKeys.postpartumCalmConnection.tr(),
-                description: LocaleKeys.postpartumCalmConnectionDescription
-                    .tr(),
-              ),
-              8.spaceH,
-              _moduleCard(
-                bgImage: Assets.images.imgModuleCardBg3,
-                title: LocaleKeys.toddlerEmotionalUnderstanding.tr(),
-                description: LocaleKeys.forParents1To3YearsOld.tr(),
-              ),
-              8.spaceH,
-              _moduleCard(
-                bgImage: Assets.images.imgModuleCardBg4,
-                title: LocaleKeys.buildingFamilyConnection.tr(),
-                description: LocaleKeys.strengthenBondsCommunication.tr(),
-              ),
-              8.spaceH,
-              LocaleKeys.unlockMoreInDepthCourses
-                  .tr()
-                  .appText(fontSize: 10)
-                  .appPadding(left: 20, right: 20),
-            ],
-          ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                Assets.images.imgModulesScreenBg.image(
+                  height: context.height,
+                  width: context.width,
+                ),
+                SizedBox(height: context.height / 2, width: context.width),
+              ],
+            ),
+            Column(
+              children: [
+                250.spaceH,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    LocaleKeys.modules.tr().appText(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                    ),
+                  ],
+                ),
+                LocaleKeys.moduleDescription.tr().appText(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10,
+                ),
+                12.spaceH,
+                _moduleCard(
+                  bgImage: Assets.images.imgModuleCardBg1,
+                  title: LocaleKeys.sleep.tr(),
+                  description: LocaleKeys.sleepDescription.tr(),
+                ),
+                8.spaceH,
+                _moduleCard(
+                  bgImage: Assets.images.imgModuleCardBg2,
+                  title: LocaleKeys.postpartumCalmConnection.tr(),
+                  description: LocaleKeys.postpartumCalmConnectionDescription
+                      .tr(),
+                ),
+                8.spaceH,
+                _moduleCard(
+                  bgImage: Assets.images.imgModuleCardBg3,
+                  title: LocaleKeys.toddlerEmotionalUnderstanding.tr(),
+                  description: LocaleKeys.forParents1To3YearsOld.tr(),
+                ),
+                8.spaceH,
+                _moduleCard(
+                  bgImage: Assets.images.imgModuleCardBg4,
+                  title: LocaleKeys.buildingFamilyConnection.tr(),
+                  description: LocaleKeys.strengthenBondsCommunication.tr(),
+                ),
+                8.spaceH,
+                LocaleKeys.unlockMoreInDepthCourses
+                    .tr()
+                    .appText(fontSize: 10)
+                    .appPadding(left: 20, right: 20),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileState {
 
- bool get dailyEmotionCheck; bool get todaysPlayIdea; bool get scheduleReminder;
+ bool get dailyEmotionCheck; bool get todaysPlayIdea; bool get scheduleReminder; ApiResultStatus get logoutApiResultStatus; ApiResultStatus get deleteAccountApiResultStatus; UserModel? get userModel;
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ProfileStateCopyWith<ProfileState> get copyWith => _$ProfileStateCopyWithImpl<P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileState&&(identical(other.dailyEmotionCheck, dailyEmotionCheck) || other.dailyEmotionCheck == dailyEmotionCheck)&&(identical(other.todaysPlayIdea, todaysPlayIdea) || other.todaysPlayIdea == todaysPlayIdea)&&(identical(other.scheduleReminder, scheduleReminder) || other.scheduleReminder == scheduleReminder));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileState&&(identical(other.dailyEmotionCheck, dailyEmotionCheck) || other.dailyEmotionCheck == dailyEmotionCheck)&&(identical(other.todaysPlayIdea, todaysPlayIdea) || other.todaysPlayIdea == todaysPlayIdea)&&(identical(other.scheduleReminder, scheduleReminder) || other.scheduleReminder == scheduleReminder)&&(identical(other.logoutApiResultStatus, logoutApiResultStatus) || other.logoutApiResultStatus == logoutApiResultStatus)&&(identical(other.deleteAccountApiResultStatus, deleteAccountApiResultStatus) || other.deleteAccountApiResultStatus == deleteAccountApiResultStatus)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dailyEmotionCheck,todaysPlayIdea,scheduleReminder);
+int get hashCode => Object.hash(runtimeType,dailyEmotionCheck,todaysPlayIdea,scheduleReminder,logoutApiResultStatus,deleteAccountApiResultStatus,userModel);
 
 @override
 String toString() {
-  return 'ProfileState(dailyEmotionCheck: $dailyEmotionCheck, todaysPlayIdea: $todaysPlayIdea, scheduleReminder: $scheduleReminder)';
+  return 'ProfileState(dailyEmotionCheck: $dailyEmotionCheck, todaysPlayIdea: $todaysPlayIdea, scheduleReminder: $scheduleReminder, logoutApiResultStatus: $logoutApiResultStatus, deleteAccountApiResultStatus: $deleteAccountApiResultStatus, userModel: $userModel)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $ProfileStateCopyWith<$Res>  {
   factory $ProfileStateCopyWith(ProfileState value, $Res Function(ProfileState) _then) = _$ProfileStateCopyWithImpl;
 @useResult
 $Res call({
- bool dailyEmotionCheck, bool todaysPlayIdea, bool scheduleReminder
+ bool dailyEmotionCheck, bool todaysPlayIdea, bool scheduleReminder, ApiResultStatus logoutApiResultStatus, ApiResultStatus deleteAccountApiResultStatus, UserModel? userModel
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get logoutApiResultStatus;$ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountApiResultStatus;
 
 }
 /// @nodoc
@@ -62,15 +62,36 @@ class _$ProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? dailyEmotionCheck = null,Object? todaysPlayIdea = null,Object? scheduleReminder = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? dailyEmotionCheck = null,Object? todaysPlayIdea = null,Object? scheduleReminder = null,Object? logoutApiResultStatus = null,Object? deleteAccountApiResultStatus = null,Object? userModel = freezed,}) {
   return _then(_self.copyWith(
 dailyEmotionCheck: null == dailyEmotionCheck ? _self.dailyEmotionCheck : dailyEmotionCheck // ignore: cast_nullable_to_non_nullable
 as bool,todaysPlayIdea: null == todaysPlayIdea ? _self.todaysPlayIdea : todaysPlayIdea // ignore: cast_nullable_to_non_nullable
 as bool,scheduleReminder: null == scheduleReminder ? _self.scheduleReminder : scheduleReminder // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,logoutApiResultStatus: null == logoutApiResultStatus ? _self.logoutApiResultStatus : logoutApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,deleteAccountApiResultStatus: null == deleteAccountApiResultStatus ? _self.deleteAccountApiResultStatus : deleteAccountApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,
   ));
 }
-
+/// Create a copy of ProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get logoutApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.logoutApiResultStatus, (value) {
+    return _then(_self.copyWith(logoutApiResultStatus: value));
+  });
+}/// Create a copy of ProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.deleteAccountApiResultStatus, (value) {
+    return _then(_self.copyWith(deleteAccountApiResultStatus: value));
+  });
+}
 }
 
 
@@ -152,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool dailyEmotionCheck,  bool todaysPlayIdea,  bool scheduleReminder)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool dailyEmotionCheck,  bool todaysPlayIdea,  bool scheduleReminder,  ApiResultStatus logoutApiResultStatus,  ApiResultStatus deleteAccountApiResultStatus,  UserModel? userModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileState() when $default != null:
-return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleReminder);case _:
+return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleReminder,_that.logoutApiResultStatus,_that.deleteAccountApiResultStatus,_that.userModel);case _:
   return orElse();
 
 }
@@ -173,10 +194,10 @@ return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleRemin
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool dailyEmotionCheck,  bool todaysPlayIdea,  bool scheduleReminder)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool dailyEmotionCheck,  bool todaysPlayIdea,  bool scheduleReminder,  ApiResultStatus logoutApiResultStatus,  ApiResultStatus deleteAccountApiResultStatus,  UserModel? userModel)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileState():
-return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleReminder);case _:
+return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleReminder,_that.logoutApiResultStatus,_that.deleteAccountApiResultStatus,_that.userModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -193,10 +214,10 @@ return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleRemin
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool dailyEmotionCheck,  bool todaysPlayIdea,  bool scheduleReminder)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool dailyEmotionCheck,  bool todaysPlayIdea,  bool scheduleReminder,  ApiResultStatus logoutApiResultStatus,  ApiResultStatus deleteAccountApiResultStatus,  UserModel? userModel)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileState() when $default != null:
-return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleReminder);case _:
+return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleReminder,_that.logoutApiResultStatus,_that.deleteAccountApiResultStatus,_that.userModel);case _:
   return null;
 
 }
@@ -208,12 +229,15 @@ return $default(_that.dailyEmotionCheck,_that.todaysPlayIdea,_that.scheduleRemin
 
 
 class _ProfileState implements ProfileState {
-  const _ProfileState({this.dailyEmotionCheck = false, this.todaysPlayIdea = false, this.scheduleReminder = false});
+  const _ProfileState({this.dailyEmotionCheck = false, this.todaysPlayIdea = false, this.scheduleReminder = false, this.logoutApiResultStatus = const ApiResultStatus.initial(), this.deleteAccountApiResultStatus = const ApiResultStatus.initial(), this.userModel});
   
 
 @override@JsonKey() final  bool dailyEmotionCheck;
 @override@JsonKey() final  bool todaysPlayIdea;
 @override@JsonKey() final  bool scheduleReminder;
+@override@JsonKey() final  ApiResultStatus logoutApiResultStatus;
+@override@JsonKey() final  ApiResultStatus deleteAccountApiResultStatus;
+@override final  UserModel? userModel;
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
@@ -225,16 +249,16 @@ _$ProfileStateCopyWith<_ProfileState> get copyWith => __$ProfileStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileState&&(identical(other.dailyEmotionCheck, dailyEmotionCheck) || other.dailyEmotionCheck == dailyEmotionCheck)&&(identical(other.todaysPlayIdea, todaysPlayIdea) || other.todaysPlayIdea == todaysPlayIdea)&&(identical(other.scheduleReminder, scheduleReminder) || other.scheduleReminder == scheduleReminder));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileState&&(identical(other.dailyEmotionCheck, dailyEmotionCheck) || other.dailyEmotionCheck == dailyEmotionCheck)&&(identical(other.todaysPlayIdea, todaysPlayIdea) || other.todaysPlayIdea == todaysPlayIdea)&&(identical(other.scheduleReminder, scheduleReminder) || other.scheduleReminder == scheduleReminder)&&(identical(other.logoutApiResultStatus, logoutApiResultStatus) || other.logoutApiResultStatus == logoutApiResultStatus)&&(identical(other.deleteAccountApiResultStatus, deleteAccountApiResultStatus) || other.deleteAccountApiResultStatus == deleteAccountApiResultStatus)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,dailyEmotionCheck,todaysPlayIdea,scheduleReminder);
+int get hashCode => Object.hash(runtimeType,dailyEmotionCheck,todaysPlayIdea,scheduleReminder,logoutApiResultStatus,deleteAccountApiResultStatus,userModel);
 
 @override
 String toString() {
-  return 'ProfileState(dailyEmotionCheck: $dailyEmotionCheck, todaysPlayIdea: $todaysPlayIdea, scheduleReminder: $scheduleReminder)';
+  return 'ProfileState(dailyEmotionCheck: $dailyEmotionCheck, todaysPlayIdea: $todaysPlayIdea, scheduleReminder: $scheduleReminder, logoutApiResultStatus: $logoutApiResultStatus, deleteAccountApiResultStatus: $deleteAccountApiResultStatus, userModel: $userModel)';
 }
 
 
@@ -245,11 +269,11 @@ abstract mixin class _$ProfileStateCopyWith<$Res> implements $ProfileStateCopyWi
   factory _$ProfileStateCopyWith(_ProfileState value, $Res Function(_ProfileState) _then) = __$ProfileStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool dailyEmotionCheck, bool todaysPlayIdea, bool scheduleReminder
+ bool dailyEmotionCheck, bool todaysPlayIdea, bool scheduleReminder, ApiResultStatus logoutApiResultStatus, ApiResultStatus deleteAccountApiResultStatus, UserModel? userModel
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get logoutApiResultStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountApiResultStatus;
 
 }
 /// @nodoc
@@ -262,16 +286,37 @@ class __$ProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? dailyEmotionCheck = null,Object? todaysPlayIdea = null,Object? scheduleReminder = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? dailyEmotionCheck = null,Object? todaysPlayIdea = null,Object? scheduleReminder = null,Object? logoutApiResultStatus = null,Object? deleteAccountApiResultStatus = null,Object? userModel = freezed,}) {
   return _then(_ProfileState(
 dailyEmotionCheck: null == dailyEmotionCheck ? _self.dailyEmotionCheck : dailyEmotionCheck // ignore: cast_nullable_to_non_nullable
 as bool,todaysPlayIdea: null == todaysPlayIdea ? _self.todaysPlayIdea : todaysPlayIdea // ignore: cast_nullable_to_non_nullable
 as bool,scheduleReminder: null == scheduleReminder ? _self.scheduleReminder : scheduleReminder // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,logoutApiResultStatus: null == logoutApiResultStatus ? _self.logoutApiResultStatus : logoutApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,deleteAccountApiResultStatus: null == deleteAccountApiResultStatus ? _self.deleteAccountApiResultStatus : deleteAccountApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,
   ));
 }
 
-
+/// Create a copy of ProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get logoutApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.logoutApiResultStatus, (value) {
+    return _then(_self.copyWith(logoutApiResultStatus: value));
+  });
+}/// Create a copy of ProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.deleteAccountApiResultStatus, (value) {
+    return _then(_self.copyWith(deleteAccountApiResultStatus: value));
+  });
+}
 }
 
 // dart format on

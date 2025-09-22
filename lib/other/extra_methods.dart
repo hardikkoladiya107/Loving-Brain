@@ -44,3 +44,34 @@ ApiResultStatus onFirebaseException(FirebaseException e) {
     );
   }
 }
+
+bool isSameDate(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+bool isBeforeYesterday(DateTime input) {
+  DateTime now = DateTime.now();
+  DateTime yesterday = DateTime(
+    now.year,
+    now.month,
+    now.day,
+  ).subtract(Duration(days: 1));
+  DateTime inputDate = DateTime(
+    input.year,
+    input.month,
+    input.day,
+  ); // ignore time
+  return inputDate.isBefore(yesterday);
+}
+
+String getStringDate(DateTime input) {
+  return "${input.year}-${input.month}-${input.day}";
+}
+
+String convertToMMMMDYYYY(DateTime? input) {
+  if (input == null) {
+    return "";
+  }
+  String formatted = DateFormat('MMM d, yyyy').format(input);
+  return formatted;
+}

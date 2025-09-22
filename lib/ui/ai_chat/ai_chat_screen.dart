@@ -21,6 +21,12 @@ class AiChatScreen extends StatefulWidget {
 
 class _AiChatScreenState extends State<AiChatScreen> {
   @override
+  void initState() {
+    context.read<AiChatCubit>().init();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<AiChatCubit, AiChatState>(
       builder: (context, state) {
@@ -37,16 +43,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(),
-                    250.spaceH,
-                    _header(),
-                    20.spaceH,
-
-                    //_horizontalCard(),
-                  ],
+                  children: [Row(), 250.spaceH, _header(), 20.spaceH],
                 ),
-
                 Positioned(
                   left: 20.w,
                   bottom: 100.h,
@@ -84,33 +82,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   ),
                 ),
 
-                Positioned(
-                  right: 20,
-                  bottom: 0,
-                  left: 20,
-                  child: AppTextField(
-                    tfType: TFTYPE.FILLED,
-                    hint: "Connect with brain ai",
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
-                    ),
-                    prefixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        10.spaceW,
-                        Icon(Icons.mic_outlined),
-                        10.spaceW,
-                        Icon(Icons.image_outlined),
-                        10.spaceW,
-                      ],
-                    ),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [10.spaceW, Icon(Icons.search), 10.spaceW],
-                    ),
-                  ),
-                ),
+                _bottomTextField(),
               ],
             ),
           ),
@@ -172,6 +144,38 @@ class _AiChatScreenState extends State<AiChatScreen> {
         ),
       ),
       onTap: () {},
+    );
+  }
+
+  Widget _bottomTextField() {
+    return Positioned(
+      right: 20,
+      bottom: 0,
+      left: 20,
+      child: AppTextField(
+        tfType: TFTYPE.FILLED,
+        hint: LocaleKeys.connectWithBrainAI.tr(),
+        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        prefixIcon: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            10.spaceW,
+            Icon(Icons.mic_outlined),
+            10.spaceW,
+            Icon(Icons.image_outlined),
+            10.spaceW,
+          ],
+        ),
+        suffixIcon: BaseButton(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [10.spaceW, Icon(Icons.search), 10.spaceW],
+          ),
+          onTap: () {
+            context.read<AiChatCubit>().sendMessage();
+          },
+        ),
+      ),
     );
   }
 }

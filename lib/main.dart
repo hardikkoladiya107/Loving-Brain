@@ -8,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loving_brain/provider.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 
+import 'firebase_options.dart';
 import 'generated/locale_keys.g.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
 import 'other/preferances.dart';
@@ -16,7 +17,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     EasyLocalization(

@@ -63,15 +63,20 @@ class SharedPreference {
       if (_preferences == null) {
         return null;
       } else {
-        var map = json.decode(_preferences!.getString(user)!);
         return UserModel.fromJson(
           json.decode(_preferences!.getString(user)!),
-
           fromConvert: true,
         );
       }
     } catch (e) {
       return null;
     }
+  }
+
+  Future<bool> clearUser() async {
+    if (_preferences == null) {
+      return false;
+    }
+    return await _preferences?.remove(user) ?? false;
   }
 }

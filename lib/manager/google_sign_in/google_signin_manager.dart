@@ -14,18 +14,11 @@ class GoogleSignInManager {
 
   void initialise() {
     unawaited(
-      signIn
-          .initialize(
-            clientId:
-                "779880600850-tberbmcrr7mv3075e8l9sans6oh8n0ss.apps.googleusercontent.com",
-            serverClientId: "serverClientId",
-          )
-          .then((_) {
-            // signIn.authenticationEvents
-            //     .listen(_handleAuthenticationEvent)
-            //     .onError(_handleAuthenticationError);
-            // signIn.attemptLightweightAuthentication();
-          }),
+      signIn.initialize().then((_) {
+        // signIn.authenticationEvents
+        //     .listen(_handleAuthenticationEvent)
+        //     .onError(_handleAuthenticationError);
+      }),
     );
   }
 
@@ -33,49 +26,17 @@ class GoogleSignInManager {
     'https://www.googleapis.com/auth/contacts.readonly',
   ];
 
-  Future<void> _handleAuthenticationEvent(
-    GoogleSignInAuthenticationEvent event,
-  ) async {
-    final GoogleSignInAccount? googleSignInAccount = switch (event) {
-      GoogleSignInAuthenticationEventSignIn() => event.user,
-      GoogleSignInAuthenticationEventSignOut() => null,
-    };
-    if (googleSignInAccount == null) {
-      return;
-    }
-    final googleAuth = googleSignInAccount.authentication; // now synchronous
-    final credential = GoogleAuthProvider.credential(
-      idToken: googleAuth?.idToken,
-    );
-    final userCredential = await FirebaseAuth.instance.signInWithCredential(
-      credential,
-    );
-    print(userCredential.user?.email);
-  }
-
-  void _handleAuthenticationError(Object e) {
-    signOut();
-  }
-
   Future<GoogleSignInAccount?> authenticate() async {
     try {
       if (signIn.supportsAuthenticate()) {
         final GoogleSignInAccount googleUser = await signIn.authenticate(
           scopeHint: ['email'],
         );
-        final googleAuth = googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth.idToken,
-        );
-        final userCredential = await FirebaseAuth.instance.signInWithCredential(
-          credential,
-        );
-        final user = userCredential.user;
-        print(user?.email ?? "");
         return googleUser;
       }
       return null;
     } on GoogleSignInException catch (e) {
+      e;
       return null;
     }
   }
@@ -94,5 +55,29 @@ class GoogleSignInManager {
     } catch (e) {
       e;
     }
+  }
+
+  Future<void> _handleAuthenticationEvent(
+    GoogleSignInAuthenticationEvent event,
+  ) async {
+    final GoogleSignInAccount? googleSignInAccount = switch (event) {
+      GoogleSignInAuthenticationEventSignIn() => event.user,
+      GoogleSignInAuthenticationEventSignOut() => null,
+    };
+    if (googleSignInAccount == null) {
+      return;
+    }
+    final googleAuth = googleSignInAccount.authentication; // now synchronous
+    final credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+    );
+    final userCredential = await FirebaseAuth.instance.signInWithCredential(
+      credential,
+    );
+    print(userCredential.user?.email);
+  }
+
+  void _handleAuthenticationError(Object e) {
+    signOut();
   }
 }

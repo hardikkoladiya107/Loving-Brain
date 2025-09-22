@@ -10,14 +10,15 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
-import 'package:loving_brain/ui/home_screen/home_screen.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
 import '../../other/snack_bar.dart';
+import '../base_screen/base_screen.dart';
 import '../forgot_password/forgot_password_screen.dart';
 import '../parent_profile/parent_profile_screen.dart';
 import '../register/register_screen.dart';
@@ -133,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Assets.icons.icGoogleIcon.image(height: 24, width: 24),
             20.spaceW,
-            LocaleKeys.signUpWithGoogle
+            LocaleKeys.continueWithGoogle
                 .tr()
                 .appText(fontWeight: FontWeight.w700, fontSize: 14)
                 .appPadding(top: 8, bottom: 8),
@@ -162,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Assets.icons.icAppleIcon.image(height: 24, width: 24),
             20.spaceW,
-            LocaleKeys.signInWithApple
+            LocaleKeys.continueWithApple
                 .tr()
                 .appText(fontWeight: FontWeight.w700, fontSize: 14)
                 .appPadding(top: 10, bottom: 10),
@@ -316,36 +317,37 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
-    var userModel = UserModel.fromJson(data);
-    context.read<LoginCubit>().clearFields();
     EasyLoading.dismiss();
-
-    if (userModel.uid == null) {
-      return;
-    }
-
-    if ((userModel.parentName ?? "").isEmpty ||
-        (userModel.parentGender ?? "").isEmpty ||
-        (userModel.parentEmail ?? "").isEmpty ||
-        userModel.parentDateOfBirth == null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => ParentProfileScreen(userId: userModel.uid!),
-        ),
-      );
-    } else if ((userModel.childName ?? "").isEmpty ||
-        (userModel.childAge ?? "").isEmpty ||
-        (userModel.relationshipToChild ?? "").isEmpty) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => ChildProfileScreen(userId: userModel.uid!),
-        ),
-      );
-    } else {
-      await preferences.putBool(SharedPreference.isLogin, true);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+    var userModel = UserModel.fromJson(data);
+    await preferences.saveUserModel(userModel);
+    if (navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!.read<LoginCubit>().clearFields();
+      if (userModel.uid == null) {
+        return;
+      }
+      if ((userModel.parentName ?? "").isEmpty ||
+          (userModel.parentGender ?? "").isEmpty ||
+          (userModel.parentEmail ?? "").isEmpty ||
+          userModel.parentDateOfBirth == null) {
+        Navigator.of(navigatorKey.currentContext!).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ParentProfileScreen(userId: userModel.uid!),
+          ),
+        );
+      } else if ((userModel.childName ?? "").isEmpty ||
+          (userModel.childAge ?? "").isEmpty ||
+          (userModel.relationshipToChild ?? "").isEmpty) {
+        Navigator.of(navigatorKey.currentContext!).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ChildProfileScreen(userId: userModel.uid!),
+          ),
+        );
+      } else {
+        await preferences.putBool(SharedPreference.isLogin, true);
+        Navigator.of(navigatorKey.currentContext!).pushReplacement(
+          MaterialPageRoute(builder: (context) => const BaseScreen()),
+        );
+      }
     }
   }
 }

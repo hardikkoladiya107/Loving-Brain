@@ -14,6 +14,8 @@ class AiRepo {
     return _instance;
   }
 
+  static AiRepo get instance => _instance;
+
   var dio = Dio(BaseOptions(baseUrl: baseUrl));
 
   Future<ApiResultStatus> getResponse({
@@ -25,9 +27,8 @@ class AiRepo {
         var response = await uploadFile(file: inputFile);
         response.whenOrNull(data: (data) {}, error: (error) {});
       }
-
       var request = {"model": "gpt-5", "input": inputText};
-      var request2 = {
+      /*var request2 = {
         "model": "gpt-5",
         "input": [
           {
@@ -41,10 +42,11 @@ class AiRepo {
             ],
           },
         ],
-      };
+      };*/
       var response = await dio.post(
         "responses",
-        data: {"model": "gpt-5", "input": inputText},
+        data: request,
+        options: Options(headers: {}),
       );
       return ApiResultStatus.data(data: response.data);
     } on DioException catch (e) {

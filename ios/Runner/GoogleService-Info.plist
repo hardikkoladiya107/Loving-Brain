@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>779880600850-tberbmcrr7mv3075e8l9sans6oh8n0ss.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDUNM7nAk9gDS6nBARWl5r61K2IxIZs6SI</string>
 	<key>GCM_SENDER_ID</key>
@@ -9,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.lovingBrain</string>
+	<string>com.app.lovingbrain</string>
 	<key>PROJECT_ID</key>
 	<string>hugsand-heart-u86wap</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:779880600850:ios:266956591ab9660c84cfcb</string>
+	<string>1:779880600850:ios:bf02926ff4d5f38b84cfcb</string>
 </dict>
 </plist>

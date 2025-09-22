@@ -7,7 +7,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/home_screen/home_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -16,6 +15,7 @@ import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../../other/preferances.dart';
 import '../../other/snack_bar.dart';
+import '../base_screen/base_screen.dart';
 import '../widget/app_dropdown.dart';
 import 'bloc/child_profile_cubit.dart';
 import 'bloc/child_profile_state.dart';
@@ -99,7 +99,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             context.read<ChildProfileCubit>().clearFields();
             await preferences.putBool(SharedPreference.isLogin, true);
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => HomeScreen()),
+              MaterialPageRoute(builder: (context) => BaseScreen()),
             );
           },
           error: (Exception error) {

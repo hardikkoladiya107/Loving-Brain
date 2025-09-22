@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
-    // START: FlutterFire Configuration
     id("com.google.gms.google-services")
-    // END: FlutterFire Configuration
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -23,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.app.loving_brain"
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -32,12 +30,6 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
-//            signingConfig signingConfigs.release
-//                    minifyEnabled true
-//            shrinkResources true
-//            proguardFiles getDefaultProguardFile(
-//                    'proguard-android-optimize.txt'),
-//            'proguard-rules.pro'
         }
     }
 }

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WriteYourThoughtState {
 
- String get xyz;
+ UserModel? get userModel; ApiResultStatus get apiResultStatus; String get thoughtsText; String get thoughtsErrorText; List<JournalModel> get journalList;
 /// Create a copy of WriteYourThoughtState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $WriteYourThoughtStateCopyWith<WriteYourThoughtState> get copyWith => _$WriteYou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WriteYourThoughtState&&(identical(other.xyz, xyz) || other.xyz == xyz));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WriteYourThoughtState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.thoughtsText, thoughtsText) || other.thoughtsText == thoughtsText)&&(identical(other.thoughtsErrorText, thoughtsErrorText) || other.thoughtsErrorText == thoughtsErrorText)&&const DeepCollectionEquality().equals(other.journalList, journalList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,xyz);
+int get hashCode => Object.hash(runtimeType,userModel,apiResultStatus,thoughtsText,thoughtsErrorText,const DeepCollectionEquality().hash(journalList));
 
 @override
 String toString() {
-  return 'WriteYourThoughtState(xyz: $xyz)';
+  return 'WriteYourThoughtState(userModel: $userModel, apiResultStatus: $apiResultStatus, thoughtsText: $thoughtsText, thoughtsErrorText: $thoughtsErrorText, journalList: $journalList)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $WriteYourThoughtStateCopyWith<$Res>  {
   factory $WriteYourThoughtStateCopyWith(WriteYourThoughtState value, $Res Function(WriteYourThoughtState) _then) = _$WriteYourThoughtStateCopyWithImpl;
 @useResult
 $Res call({
- String xyz
+ UserModel? userModel, ApiResultStatus apiResultStatus, String thoughtsText, String thoughtsErrorText, List<JournalModel> journalList
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus;
 
 }
 /// @nodoc
@@ -62,13 +62,26 @@ class _$WriteYourThoughtStateCopyWithImpl<$Res>
 
 /// Create a copy of WriteYourThoughtState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? xyz = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? apiResultStatus = null,Object? thoughtsText = null,Object? thoughtsErrorText = null,Object? journalList = null,}) {
   return _then(_self.copyWith(
-xyz: null == xyz ? _self.xyz : xyz // ignore: cast_nullable_to_non_nullable
-as String,
+userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,thoughtsText: null == thoughtsText ? _self.thoughtsText : thoughtsText // ignore: cast_nullable_to_non_nullable
+as String,thoughtsErrorText: null == thoughtsErrorText ? _self.thoughtsErrorText : thoughtsErrorText // ignore: cast_nullable_to_non_nullable
+as String,journalList: null == journalList ? _self.journalList : journalList // ignore: cast_nullable_to_non_nullable
+as List<JournalModel>,
   ));
 }
-
+/// Create a copy of WriteYourThoughtState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.apiResultStatus, (value) {
+    return _then(_self.copyWith(apiResultStatus: value));
+  });
+}
 }
 
 
@@ -150,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String xyz)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WriteYourThoughtState() when $default != null:
-return $default(_that.xyz);case _:
+return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.thoughtsErrorText,_that.journalList);case _:
   return orElse();
 
 }
@@ -171,10 +184,10 @@ return $default(_that.xyz);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String xyz)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)  $default,) {final _that = this;
 switch (_that) {
 case _WriteYourThoughtState():
-return $default(_that.xyz);case _:
+return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.thoughtsErrorText,_that.journalList);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +204,10 @@ return $default(_that.xyz);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String xyz)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)?  $default,) {final _that = this;
 switch (_that) {
 case _WriteYourThoughtState() when $default != null:
-return $default(_that.xyz);case _:
+return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.thoughtsErrorText,_that.journalList);case _:
   return null;
 
 }
@@ -206,10 +219,20 @@ return $default(_that.xyz);case _:
 
 
 class _WriteYourThoughtState implements WriteYourThoughtState {
-  const _WriteYourThoughtState({this.xyz = ""});
+  const _WriteYourThoughtState({this.userModel, this.apiResultStatus = const ApiResultStatus.initial(), this.thoughtsText = "", this.thoughtsErrorText = "", final  List<JournalModel> journalList = const []}): _journalList = journalList;
   
 
-@override@JsonKey() final  String xyz;
+@override final  UserModel? userModel;
+@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  String thoughtsText;
+@override@JsonKey() final  String thoughtsErrorText;
+ final  List<JournalModel> _journalList;
+@override@JsonKey() List<JournalModel> get journalList {
+  if (_journalList is EqualUnmodifiableListView) return _journalList;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_journalList);
+}
+
 
 /// Create a copy of WriteYourThoughtState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +244,16 @@ _$WriteYourThoughtStateCopyWith<_WriteYourThoughtState> get copyWith => __$Write
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WriteYourThoughtState&&(identical(other.xyz, xyz) || other.xyz == xyz));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WriteYourThoughtState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.thoughtsText, thoughtsText) || other.thoughtsText == thoughtsText)&&(identical(other.thoughtsErrorText, thoughtsErrorText) || other.thoughtsErrorText == thoughtsErrorText)&&const DeepCollectionEquality().equals(other._journalList, _journalList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,xyz);
+int get hashCode => Object.hash(runtimeType,userModel,apiResultStatus,thoughtsText,thoughtsErrorText,const DeepCollectionEquality().hash(_journalList));
 
 @override
 String toString() {
-  return 'WriteYourThoughtState(xyz: $xyz)';
+  return 'WriteYourThoughtState(userModel: $userModel, apiResultStatus: $apiResultStatus, thoughtsText: $thoughtsText, thoughtsErrorText: $thoughtsErrorText, journalList: $journalList)';
 }
 
 
@@ -241,11 +264,11 @@ abstract mixin class _$WriteYourThoughtStateCopyWith<$Res> implements $WriteYour
   factory _$WriteYourThoughtStateCopyWith(_WriteYourThoughtState value, $Res Function(_WriteYourThoughtState) _then) = __$WriteYourThoughtStateCopyWithImpl;
 @override @useResult
 $Res call({
- String xyz
+ UserModel? userModel, ApiResultStatus apiResultStatus, String thoughtsText, String thoughtsErrorText, List<JournalModel> journalList
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus;
 
 }
 /// @nodoc
@@ -258,14 +281,27 @@ class __$WriteYourThoughtStateCopyWithImpl<$Res>
 
 /// Create a copy of WriteYourThoughtState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? xyz = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,Object? apiResultStatus = null,Object? thoughtsText = null,Object? thoughtsErrorText = null,Object? journalList = null,}) {
   return _then(_WriteYourThoughtState(
-xyz: null == xyz ? _self.xyz : xyz // ignore: cast_nullable_to_non_nullable
-as String,
+userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,thoughtsText: null == thoughtsText ? _self.thoughtsText : thoughtsText // ignore: cast_nullable_to_non_nullable
+as String,thoughtsErrorText: null == thoughtsErrorText ? _self.thoughtsErrorText : thoughtsErrorText // ignore: cast_nullable_to_non_nullable
+as String,journalList: null == journalList ? _self._journalList : journalList // ignore: cast_nullable_to_non_nullable
+as List<JournalModel>,
   ));
 }
 
-
+/// Create a copy of WriteYourThoughtState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get apiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.apiResultStatus, (value) {
+    return _then(_self.copyWith(apiResultStatus: value));
+  });
+}
 }
 
 // dart format on

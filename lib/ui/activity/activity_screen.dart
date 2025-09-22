@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/activity_completed/activity_completed_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../generated/locale_keys.g.dart';
@@ -115,7 +116,13 @@ class _ActivityScreenState extends State<ActivityScreen> {
                 ],
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ActivityCompletedScreen(),
+                ),
+              );
+            },
           ).appPadding(left: 20, right: 20),
         ],
       ).appPadding(left: 20),

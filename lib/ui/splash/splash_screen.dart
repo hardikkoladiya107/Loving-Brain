@@ -6,7 +6,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/preferances.dart';
-import '../home_screen/home_screen.dart';
+import '../base_screen/base_screen.dart';
 import '../on_boarding/on_boarding_screen1.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Future.delayed(Duration(seconds: 2), () {
           if (preferences.getBool(SharedPreference.isLogin) ?? false) {
             Navigator.of(navigatorKey.currentContext!).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              MaterialPageRoute(builder: (context) => const BaseScreen()),
             );
           } else {
             Navigator.of(navigatorKey.currentContext!).pushReplacement(
