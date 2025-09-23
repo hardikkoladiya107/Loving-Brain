@@ -5,6 +5,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/preferances.dart';
 
 import '../generated/locale_keys.g.dart';
+import '../manager/apple_sign_in/apple_signin_manager.dart';
 import '../manager/google_sign_in/google_signin_manager.dart';
 import '../model/user_model.dart';
 import '../other/extra_methods.dart';
@@ -148,6 +149,71 @@ class AuthRepo {
     }
   }
 
+  Future<ApiResultStatus> sendPasswordResetEmail({
+    required String email,
+  }) async {
+    try {
+      final credential = await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email.trim(),
+      );
+      return ApiResultStatus.data(data: "");
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> deleteAccount() async {
+    try {
+      //await FirebaseAuth.instance.signInAnonymously();
+      if (FirebaseAuth.instance.currentUser != null) {
+        await FirebaseAuth.instance.currentUser?.delete();
+        return ApiResultStatus.data(data: "");
+      } else {
+        return ApiResultStatus.error(error: Exception("Exception"));
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future logout() async {
+    try {
+      // await FirebaseAuth.instance.signInAnonymously();
+      final credential = await FirebaseAuth.instance.signOut();
+      return ApiResultStatus.data(data: "");
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> updateUserToFireStore({
+    String? uId,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var tUid = uId ?? preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await userCollection.doc(tUid).update(request);
+        return ApiResultStatus.data(data: tUid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+
   Future<ApiResultStatus> signInWithGoogle() async {
     try {
       var googleSignInAccount = await GoogleSignInManager.instance
@@ -207,61 +273,58 @@ class AuthRepo {
     }
   }
 
-  Future<ApiResultStatus> sendPasswordResetEmail({
-    required String email,
-  }) async {
-    try {
-      final credential = await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: email.trim(),
-      );
-      return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
-      return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
-    }
-  }
 
-  Future<ApiResultStatus> deleteAccount() async {
+  Future<ApiResultStatus> signInWithApple() async {
     try {
-      //await FirebaseAuth.instance.signInAnonymously();
-      if (FirebaseAuth.instance.currentUser != null) {
-        await FirebaseAuth.instance.currentUser?.delete();
-        return ApiResultStatus.data(data: "");
-      } else {
-        return ApiResultStatus.error(error: Exception("Exception"));
-      }
-    } on FirebaseException catch (e) {
-      return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
-    }
-  }
-
-  Future logout() async {
-    try {
-      // await FirebaseAuth.instance.signInAnonymously();
-      final credential = await FirebaseAuth.instance.signOut();
-      return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
-      return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
-    }
-  }
-
-  Future<ApiResultStatus> updateUserToFireStore({
-    String? uId,
-    required Map<String, dynamic> request,
-  }) async {
-    try {
-      var tUid = uId ?? preferences.getUserModel()?.uid ?? "";
-      if (tUid.isNotEmpty) {
-        await userCollection.doc(tUid).update(request);
-        return ApiResultStatus.data(data: tUid);
-      } else {
+      var appleSignInAccount = await AppleSignInManager.instance
+          .authenticate();
+      if (appleSignInAccount == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final oauthCredential = OAuthProvider("apple.com").credential(
+        idToken: appleSignInAccount.identityToken,
+        accessToken: appleSignInAccount.authorizationCode,
+      );
+
+      final signInUser = await FirebaseAuth.instance.signInWithCredential(
+        oauthCredential,
+      );
+      if (signInUser.user != null) {
+        var userModel = await getUserFromUid(uId: signInUser.user!.uid);
+        if (userModel != null) {
+          return ApiResultStatus.data(data: userModel.toJson());
+        } else {
+          if (signInUser.user != null) {
+            await addUserToFireStore(
+              uId: signInUser.user!.uid,
+              request: {
+                "uid": signInUser.user!.uid,
+                "display_name": signInUser.user!.displayName,
+                "email": signInUser.user!.email,
+                "is_google_sign_in": false,
+                "streak": 0,
+                "last_opened": DateTime.now(),
+              },
+            );
+            var userModel = await getUserFromUid(uId: signInUser.user!.uid);
+            if (userModel != null) {
+              return ApiResultStatus.data(data: userModel.toJson());
+            } else {
+              return ApiResultStatus.error(
+                error: Exception(LocaleKeys.somethingWentWrong.tr()),
+              );
+            }
+          } else {
+            return ApiResultStatus.error(
+              error: Exception(LocaleKeys.somethingWentWrong.tr()),
+            );
+          }
+        }
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.userNotFound.tr()),
         );
       }
     } on FirebaseException catch (e) {

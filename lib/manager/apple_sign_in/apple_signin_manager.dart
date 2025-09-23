@@ -7,13 +7,17 @@ class AppleSignInManager {
 
   static AppleSignInManager get instance => _instance;
 
-  Future<void> authenticate() async {
-    final credential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-    );
-    print(credential);
+  Future<AuthorizationCredentialAppleID?> authenticate() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      return credential;
+    } on SignInWithAppleException catch (e) {
+      return null;
+    }
   }
 }

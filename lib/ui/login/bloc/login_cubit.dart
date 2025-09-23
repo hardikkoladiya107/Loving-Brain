@@ -38,7 +38,9 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> signInWithApple() async {
-    await AppleSignInManager.instance.authenticate();
+    changeProps(apiResultStatus: ApiResultStatus.loading());
+    var apiResult = await AuthRepo.instance.signInWithApple();
+    changeProps(apiResultStatus: apiResult);
   }
 
   Future<void> performLogin() async {

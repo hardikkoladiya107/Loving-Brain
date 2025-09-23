@@ -27,6 +27,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   void initState() {
     context.read<HomeCubit>().init();
@@ -38,16 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocConsumer<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Column(
               children: [
-                10.spaceH,
+                60.spaceH,
                 _topCard(state),
                 10.spaceH,
                 _secondCard(),
                 10.spaceH,
                 _thirdCard(state),
-                Spacer(),
                 _reminder(),
               ],
             ),
@@ -331,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
           left: 0,
           right: 0,
           child: Container(
-            height: 150.h,
+            height: 160.h,
             decoration: BoxDecoration(
               color: yellowColor4,
               borderRadius: BorderRadius.only(
@@ -342,7 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
 
-        Container(height: 190.h),
+        Container(height: 200.h),
 
         Positioned(
           left: 0,

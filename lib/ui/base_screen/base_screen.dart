@@ -32,6 +32,7 @@ class _BaseScreenState extends State<BaseScreen> {
     return BlocConsumer<BaseCubit, BaseState>(
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: Colors.white,
           body: Column(
             children: [
               Expanded(
@@ -46,70 +47,7 @@ class _BaseScreenState extends State<BaseScreen> {
                   ],
                 ),
               ),
-              Container(
-                height: 60.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.2),
-                      offset: Offset(1, -4),
-                      spreadRadius: 3,
-                      blurRadius: 3,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _bottomNavigationItem(
-                      title: "Home",
-                      asset: Assets.icons.icHomeIcon,
-                      onTap: () {
-                        context.read<BaseCubit>().changeProps(
-                          bottomNavigationIndex: 0,
-                        );
-                      },
-                    ),
-                    _bottomNavigationItem(
-                      title: "Schedules",
-                      asset: Assets.icons.icScheduleIcon,
-                      onTap: () {
-                        context.read<BaseCubit>().changeProps(
-                          bottomNavigationIndex: 1,
-                        );
-                      },
-                    ),
-                    _bottomNavigationItem(
-                      title: "Hugs AI",
-                      asset: Assets.icons.icAiIcon,
-                      onTap: () {
-                        context.read<BaseCubit>().changeProps(
-                          bottomNavigationIndex: 2,
-                        );
-                      },
-                    ),
-                    _bottomNavigationItem(
-                      title: "Journal",
-                      asset: Assets.icons.icJournalIcon,
-                      onTap: () {
-                        context.read<BaseCubit>().changeProps(
-                          bottomNavigationIndex: 3,
-                        );
-                      },
-                    ),
-                    _bottomNavigationItem(
-                      title: "Profile",
-                      asset: Assets.icons.icProfileIcon,
-                      onTap: () {
-                        context.read<BaseCubit>().changeProps(
-                          bottomNavigationIndex: 4,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
+              _bottomNavigation(),
             ],
           ),
         );
@@ -131,6 +69,76 @@ class _BaseScreenState extends State<BaseScreen> {
           asset.image(height: 30.h, width: 30.w),
           title.appText(fontSize: 14),
         ],
+      ),
+    );
+  }
+
+  Widget _bottomNavigation() {
+    return SafeArea(
+      top: false,
+      child: Container(
+        height: 60.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.2),
+              offset: Offset(1, -4),
+              spreadRadius: 3,
+              blurRadius: 3,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _bottomNavigationItem(
+              title: "Home",
+              asset: Assets.icons.icHomeIcon,
+              onTap: () {
+                context.read<BaseCubit>().changeProps(
+                  bottomNavigationIndex: 0,
+                );
+              },
+            ),
+            _bottomNavigationItem(
+              title: "Schedules",
+              asset: Assets.icons.icScheduleIcon,
+              onTap: () {
+                context.read<BaseCubit>().changeProps(
+                  bottomNavigationIndex: 1,
+                );
+              },
+            ),
+            _bottomNavigationItem(
+              title: "Hugs AI",
+              asset: Assets.icons.icAiIcon,
+              onTap: () {
+                context.read<BaseCubit>().changeProps(
+                  bottomNavigationIndex: 2,
+                );
+              },
+            ),
+            _bottomNavigationItem(
+              title: "Journal",
+              asset: Assets.icons.icJournalIcon,
+              onTap: () {
+                context.read<BaseCubit>().changeProps(
+                  bottomNavigationIndex: 3,
+                );
+              },
+            ),
+            _bottomNavigationItem(
+              title: "Profile",
+              asset: Assets.icons.icProfileIcon,
+              onTap: () {
+                context.read<BaseCubit>().changeProps(
+                  bottomNavigationIndex: 4,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

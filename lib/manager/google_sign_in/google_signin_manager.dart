@@ -30,6 +30,7 @@ class GoogleSignInManager {
     try {
       if (signIn.supportsAuthenticate()) {
         final GoogleSignInAccount googleUser = await signIn.authenticate(
+
           scopeHint: ['email'],
         );
         return googleUser;
