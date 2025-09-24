@@ -11,18 +11,21 @@ const String transactionIdKey = "transactionId";
 const String purchaseTokenKey = "purchase_token";
 const String packageNameKey = "package_name";
 
-const monthlyPlan = "com.app.mind_momentsx.monthly";
-const yearly = "com.app.mind_momentsx.yearly";
+const monthlyPlan = "com.app.lovingbrain.monthly";
+const yearly = "com.app.lovingbrain.yearly";
+
+bool isForTest = true;
+
+List<String> kProductIds = [monthlyPlan, yearly];
 
 String iosSubscriptionStatusUrl(String transactionID) {
-  // "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/subscriptions/$transactionID?status=1"
-  return "https://api.storekit.itunes.apple.com/inApps/v1/transactions/$transactionID?status=1";
+  return isForTest
+      ? "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/subscriptions/$transactionID?status=1"
+      : "https://api.storekit.itunes.apple.com/inApps/v1/transactions/$transactionID?status=1";
 }
 
 const privacyPolicyUrl = "https://harmonious-moxie-ff5ad6.netlify.app";
 const termsOfUseWebUrl = "https://chimerical-chimera-ccd130.netlify.app";
-
-List<String> kProductIds = [monthlyPlan, yearly];
 
 class SubsProductDetails {
   final String id;
@@ -41,7 +44,6 @@ class SubsProductDetails {
 }
 
 class TokenGenerator {
-  //TODO :- need to change this creds
   static String generateJwtToken() {
     try {
       DateTime currentUtc = DateTime.now().toUtc();
@@ -51,23 +53,23 @@ class TokenGenerator {
           1000;
       Map<String, dynamic> header = {
         "alg": "ES256",
-        "kid": "69JX4TBFF4",
+        "kid": "Z78L47CS46",
         "typ": "JWT",
       };
       Map<String, dynamic> payload = {
-        "iss": "3af2f7c0-31c7-4a27-a164-9da3d6acba4d",
+        "iss": "34d972c6-8242-4403-a237-6464de9f7243",
         "iat": iat,
         "exp": exp,
         "aud": "appstoreconnect-v1",
-        "bid": "com.app.dryads",
+        "bid": "com.app.lovingbrain",
       };
       JWTKey jwtKey = ECPrivateKey('''
       -----BEGIN PRIVATE KEY-----
-      MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgALq7kOMxTKMQPW2r
-      5nOsZMPm4qAUeow1xPvQsc7/+5OgCgYIKoZIzj0DAQehRANCAARJxwcOHvW1JoAO
-      17/JJII4hHGG4E1b9JlN1cDNkaWQe22V5MVqUJEYztCihlpG8xPETVG3mfe0f6Zg
-      Li9VaN64
-      -----END PRIVATE KEY-----''');
+MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgVoNL4OiCJYXplkIX
+dpfSij/wHGeZnqNPUN5Ok3yYwROgCgYIKoZIzj0DAQehRANCAAQ0XMfZXhYK89kf
+ac4dIQo9yKSw5nYXtQ7/Ej8ktDN5Ih5TkjnS9stqeSYYNn1y2HjG0xLASdKLsaN+
+Uw5v+T5U
+-----END PRIVATE KEY-----''');
       JWT jwt = JWT(payload, header: header);
       String token = jwt.sign(jwtKey, algorithm: JWTAlgorithm.ES256);
       log("JWT TOKEN : $token");

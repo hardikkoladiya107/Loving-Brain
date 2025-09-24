@@ -26,6 +26,7 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
+              fit: BoxFit.cover,
               image: AssetImage(Assets.images.imgDailyRoutineBg.path),
             ),
           ),
@@ -105,6 +106,7 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
                   _currentRoutingItem(label: "PLAY"),
                   10.spaceH,
                   _currentRoutingItem(label: ""),
+                  80.spaceH,
                 ],
               ),
             ),

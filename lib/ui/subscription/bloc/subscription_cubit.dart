@@ -22,6 +22,7 @@ import '../../../model/subscription/apple_subscription_model.dart';
 import '../../../model/user_model.dart';
 import '../../../other/extra_methods.dart';
 import '../../../other/preferances.dart';
+import '../../../repo/auth_repo.dart';
 import '../../../repo/subscription_repo.dart';
 
 class SubscriptionCubit extends Cubit<SubscriptionState> {
@@ -108,18 +109,26 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     }
   }
 
-  Future<void> _listenToUser() async {
-    var uniqueId = await getUniqueDeviceId();
-    _userSubscription?.cancel();
-    _userSubscription = usersCollection.doc(uniqueId).snapshots().listen((
-      event,
-    ) async {
-      if (event.data() != null) {
-        var userModel = UserModel.fromJson(event.data());
-        await preferences.saveUserModel(userModel);
-        changeProps(userModel: userModel);
-      }
-    });
+  StreamSubscription? profileSubscription;
+
+  void _listenToUser() {
+    if ((state.userModel?.uid ?? "").isNotEmpty) {
+      profileSubscription?.cancel();
+      profileSubscription = AuthRepo.instance.userCollection
+          .doc(state.userModel!.uid)
+          .snapshots()
+          .listen((event) async {
+            if (event.data() != null) {
+              var userModel = UserModel.fromJson(event.data());
+              await preferences.saveUserModel(userModel);
+              changeProps(userModel: userModel);
+            }
+          });
+    }
+  }
+
+  void dispose() {
+    profileSubscription?.cancel();
   }
 
   Future<void> listenToPurchaseUpdated(
@@ -373,17 +382,14 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
   }
 
   Future<void> getIOSSubscriptionStatus({
-    bool isForTest = false,
+    bool isForTest = true,
     required String transactionID,
     required String productID,
     required UserModel userModel,
   }) async {
     try {
       String jwtToken = TokenGenerator.generateJwtToken();
-      String url = /*isForTest
-          ? "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/subscriptions/$transactionID?status=1"
-          : */
-          "https://api.storekit.itunes.apple.com/inApps/v1/transactions/$transactionID?status=1";
+      String url = iosSubscriptionStatusUrl(transactionID);
       var json = {
         "Authorization": "Bearer $jwtToken",
         'Accept': 'application/json',

@@ -11,9 +11,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../manager/subscription_manager/subscription_utils.dart';
 import '../../other/app_color.dart';
 import '../../other/snack_bar.dart';
+import '../home/bloc/home_cubit.dart';
 import '../widget/app_button.dart';
 import '../widget/base_button.dart';
 import 'bloc/subscription_cubit.dart';
@@ -29,8 +31,7 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
-    //TODO:- Subscription commented
-    //context.read<SubscriptionCubit>().init();
+    context.read<SubscriptionCubit>().init();
     super.initState();
   }
 
@@ -41,8 +42,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return BlocConsumer<SubscriptionCubit, SubscriptionState>(
       builder: (context, state) {
         List<Widget> widgetsList = [];
-        //TODO:- Subscription commented
-        /*if ((state.products ?? []).isNotEmpty &&
+
+        if ((state.products ?? []).isNotEmpty &&
             (state.userModel?.productId ?? "").isEmpty) {
           widgetsList.add(
             _subscriptionItem(
@@ -57,6 +58,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   selectedProduct: null,
                 );
               },
+              bgImage: Assets.images.imgMonthlyBg,
             ),
           );
         }
@@ -67,17 +69,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             _subscriptionItem(
               isShow:
                   (state.userModel?.productId ?? "").isEmpty ||
-                  product?.id == state.userModel?.productId,
-              isSubscribed: product?.id == state.userModel?.productId,
+                  product.id == state.userModel?.productId,
+              isSubscribed: product.id == state.userModel?.productId,
               isSelected:
-                  (product?.id == state.userModel?.productId) ||
-                  state.selectedProduct?.id == product?.id,
-              title: product?.id == monthlyPlan
+                  (product.id == state.userModel?.productId) ||
+                  state.selectedProduct?.id == product.id,
+              title: product.id == monthlyPlan
                   ? LocaleKeys.premiumMonthly.tr()
                   : LocaleKeys.premiumAnnual.tr(),
               price:
-                  "${product?.price}/${product?.id == monthlyPlan ? "month" : "year"}",
-              description: product?.id == monthlyPlan
+                  "${product.price}/${product.id == monthlyPlan ? "month" : "year"}",
+              description: product.id == monthlyPlan
                   ? LocaleKeys.stayFlexibleWithMonthlyAccess.tr()
                   : LocaleKeys.unlimitedAccessToMoodBasedExercises.tr(),
               onTap: () {
@@ -85,9 +87,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   selectedProduct: product,
                 );
               },
+              bgImage: Assets.images.imgYearlyBg,
             ).appPadding(top: 10.h),
           );
-        }*/
+        }
 
         return Scaffold(
           extendBodyBehindAppBar: true,
@@ -124,28 +127,28 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           26.h.spaceH,
           _headerDescription(),
           150.h.spaceH,
-          // ...widgetsList,
-          _subscriptionItem(
-            isShow: true,
-            isSubscribed: false,
-            isSelected: false,
-            title: LocaleKeys.premiumAnnual.tr(),
-            price: "100\$/month",
-            description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
-            onTap: () {},
-            bgImage: Assets.images.imgMonthlyBg,
-          ),
-          16.h.spaceH,
-          _subscriptionItem(
-            isShow: true,
-            isSubscribed: true,
-            isSelected: true,
-            title: LocaleKeys.premiumAnnual.tr(),
-            price: "100\$/month",
-            description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
-            onTap: () {},
-            bgImage: Assets.images.imgYearlyBg,
-          ),
+          ...widgetsList,
+          // _subscriptionItem(
+          //   isShow: true,
+          //   isSubscribed: false,
+          //   isSelected: false,
+          //   title: LocaleKeys.premiumAnnual.tr(),
+          //   price: "100\$/month",
+          //   description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
+          //   onTap: () {},
+          //   bgImage: Assets.images.imgMonthlyBg,
+          // ),
+          // 16.h.spaceH,
+          // _subscriptionItem(
+          //   isShow: true,
+          //   isSubscribed: true,
+          //   isSelected: true,
+          //   title: LocaleKeys.premiumAnnual.tr(),
+          //   price: "100\$/month",
+          //   description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
+          //   onTap: () {},
+          //   bgImage: Assets.images.imgYearlyBg,
+          // ),
           32.h.spaceH,
           AppButton(
             onTap: () {
@@ -373,5 +376,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           .tr()
           .appText(fontSize: 12, fontWeight: FontWeight.w800),
     ).appPadding(left: 20.w, right: 20.w);
+  }
+
+  @override
+  void dispose() {
+    if (navigatorKey.currentContext != null) {
+      context.read<HomeCubit>().dispose();
+    }
+    super.dispose();
   }
 }

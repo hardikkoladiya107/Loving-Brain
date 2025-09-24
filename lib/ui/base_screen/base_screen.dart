@@ -9,6 +9,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../ai_chat/ai_chat_screen.dart';
+import '../daily_routine/daily_routine_screen.dart';
 import '../write_your_thought/write_your_thought_screen.dart';
 import 'bloc/base_cubit.dart';
 import 'bloc/base_state.dart';
@@ -40,7 +41,7 @@ class _BaseScreenState extends State<BaseScreen> {
                   index: state.bottomNavigationIndex,
                   children: [
                     HomeScreen(),
-                    ScheduleScreen(),
+                    DailyRoutineScreen(),
                     AiChatScreen(),
                     WriteYourThoughtScreen(),
                     ProfileScreen(),
