@@ -10,6 +10,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../model/journal_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
@@ -273,7 +274,9 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
 
   @override
   void dispose() {
-    context.read<WriteYourThoughtCubit>().dispose();
+    if (navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!.read<WriteYourThoughtCubit>().dispose();
+    }
     super.dispose();
   }
 }

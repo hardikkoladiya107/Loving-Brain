@@ -36,18 +36,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
       builder: (context, state) {
-        if (emailTextEditingController.value.text != state.emailAddress) {
-          emailTextEditingController.value = emailTextEditingController.value
-              .copyWith(
-                text: state.emailAddress,
-                selection: TextSelection.collapsed(
-                  offset: min(
-                    emailTextEditingController.value.selection.start,
-                    state.emailAddress.length,
-                  ),
-                ),
-              );
-        }
+        emailTextEditingController.text = state.emailAddress;
 
         return Container(
           decoration: BoxDecoration(
@@ -80,6 +69,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           },
           data: (data) {
             EasyLoading.dismiss();
+            showSnackBar(
+              message: LocaleKeys.weSentYouMailToResetYourPassword.tr(),
+              type: SnackBarType.SUCCESS,
+            );
             Navigator.pop(context);
           },
           error: (Exception error) {

@@ -381,7 +381,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void dispose() {
     if (navigatorKey.currentContext != null) {
-      context.read<HomeCubit>().dispose();
+      navigatorKey.currentContext!.read<HomeCubit>().dispose();
     }
     super.dispose();
   }

@@ -47,6 +47,8 @@
 	</array>
 	<key>GIDClientID</key>
     <string>779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it.apps.googleusercontent.com</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 	<key>CFBundleURLTypes</key>
     <array>
     	<dict>

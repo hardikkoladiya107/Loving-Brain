@@ -10,6 +10,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
 import '../choose_your_calm/choose_your_calm_screen.dart';
 import '../module/module_screen.dart';
@@ -27,7 +28,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     context.read<HomeCubit>().init();
@@ -412,7 +412,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    context.read<HomeCubit>().dispose();
+    if (navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!.read<HomeCubit>().dispose();
+    }
     super.dispose();
   }
 }
