@@ -8,7 +8,18 @@ class AiRepo {
 
   static final AiRepo _instance = AiRepo._();
 
-  static final String baseUrl = "https://api.openai.com/v1/";
+  static final String secretKey =
+      "";
+  static final String promptKey =
+      "";
+
+  static final String conversationUrl =
+      "https://api.openai.com/v1/conversations";
+
+  Map<String, dynamic> headers = {
+    "Content-Type": "application/json",
+    "Authorization": secretKey,
+  };
 
   factory AiRepo() {
     return _instance;
@@ -16,43 +27,7 @@ class AiRepo {
 
   static AiRepo get instance => _instance;
 
-  var dio = Dio(BaseOptions(baseUrl: baseUrl));
-
-  Future<ApiResultStatus> getResponse({
-    required String inputText,
-    File? inputFile,
-  }) async {
-    try {
-      if (inputFile != null) {
-        var response = await uploadFile(file: inputFile);
-        response.whenOrNull(data: (data) {}, error: (error) {});
-      }
-      var request = {"model": "gpt-5", "input": inputText};
-      /*var request2 = {
-        "model": "gpt-5",
-        "input": [
-          {
-            "role": "user",
-            "content": [
-              {"type": "input_file", "file_id": "file-6F2ksmvXxt4VdoqmHRw6kL"},
-              {
-                "type": "input_text",
-                "text": "What is the first dragon in the book?",
-              },
-            ],
-          },
-        ],
-      };*/
-      var response = await dio.post(
-        "responses",
-        data: request,
-        options: Options(headers: {}),
-      );
-      return ApiResultStatus.data(data: response.data);
-    } on DioException catch (e) {
-      return ApiResultStatus.error(error: e);
-    }
-  }
+  var dio = Dio();
 
   Future<ApiResultStatus> uploadFile({required File file}) async {
     try {
@@ -65,6 +40,59 @@ class AiRepo {
         'purpose': 'user_data',
       });
       var response = await dio.post("files", data: formData);
+      return ApiResultStatus.data(data: response.data);
+    } on DioException catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> createConversation({String? conversationName}) async {
+    try {
+      var request = {
+        "metadata": {"topic": conversationName ?? "New Chat"},
+      };
+      var response = await dio.post(
+        conversationUrl,
+        data: request,
+        options: Options(headers: headers),
+      );
+      return ApiResultStatus.data(data: response.data);
+    } on DioException catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> getAllConversation({
+    required String conversationId,
+  }) async {
+    try {
+      var response = await dio.get(
+        "$conversationUrl/$conversationId/items?limit=10",
+        options: Options(headers: headers),
+      );
+      return ApiResultStatus.data(data: response.data);
+    } on DioException catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> createResponse({
+    required String conversationId,
+    required String messageText,
+  }) async {
+    try {
+      var response = await dio.post(
+        "https://api.openai.com/v1/responses",
+        data: {
+          "model": "gpt-5",
+          "prompt": {"id": promptKey, "version": "1"},
+          "conversation": {"id": conversationId},
+          "input": [
+            {"role": "user", "content": messageText},
+          ],
+        },
+        options: Options(headers: headers),
+      );
       return ApiResultStatus.data(data: response.data);
     } on DioException catch (e) {
       return ApiResultStatus.error(error: e);

@@ -5,10 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
-
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../chat_detail/chat_detail_screen.dart';
+import '../chat_list/chat_list_screen.dart';
 import 'bloc/ai_chat_cubit.dart';
 import 'bloc/ai_chat_state.dart';
 
@@ -81,7 +82,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         .tr(),
                   ),
                 ),
-
                 _bottomTextField(),
               ],
             ),
@@ -172,7 +172,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
             children: [10.spaceW, Icon(Icons.search), 10.spaceW],
           ),
           onTap: () {
-            context.read<AiChatCubit>().sendMessage();
+
+
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const ChatListScreen()),
+            );
           },
         ),
       ),

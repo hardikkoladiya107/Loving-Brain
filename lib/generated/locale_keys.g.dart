@@ -221,5 +221,6 @@ abstract class  LocaleKeys {
   static const viewAll = 'viewAll';
   static const thoughtsList = 'thoughtsList';
   static const weSentYouMailToResetYourPassword = 'weSentYouMailToResetYourPassword';
+  static const failToCreateConversation = 'failToCreateConversation';
 
 }

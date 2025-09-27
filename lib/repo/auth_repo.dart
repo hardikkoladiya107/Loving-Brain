@@ -335,4 +335,28 @@ class AuthRepo {
       return ApiResultStatus.error(error: e);
     }
   }
+
+
+  Future<ApiResultStatus> addConversationToUser({
+    required String conversationId,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await userCollection.doc(tUid).collection("conversations").doc(conversationId).set(request);
+        return ApiResultStatus.data(data: tUid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+
 }

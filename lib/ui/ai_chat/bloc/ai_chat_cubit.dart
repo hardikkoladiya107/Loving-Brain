@@ -11,7 +11,5 @@ class AiChatCubit extends Cubit<AiChatState> {
     emit(AiChatState());
   }
 
-  Future<ApiResultStatus> sendMessage() {
-    return AiRepo.instance.getResponse(inputText: 'Helloq how are you?');
-  }
+
 }
