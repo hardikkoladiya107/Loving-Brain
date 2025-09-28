@@ -40,6 +40,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     String? conversationId,
     UserModel? userModel,
     List<ChatModel>? chatList,
+    ApiResultStatus? getConversationApiResult,
   }) {
     emit(
       state.copyWith(
@@ -47,6 +48,8 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             createConversationApiResult ?? ApiResultStatus.initial(),
         createResponseApiResult:
             createResponseApiResult ?? ApiResultStatus.initial(),
+        getConversationApiResult:
+            getConversationApiResult ?? ApiResultStatus.initial(),
         chatList: chatList ?? state.chatList,
         chatText: chatText ?? state.chatText,
         conversationId: conversationId ?? state.conversationId,
@@ -92,9 +95,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
           tempConversationList.removeWhere(
             (element) => element.type != "message",
           );
-          changeProps(
-            createResponseApiResult: allConversationResponse,
-          );
+          changeProps(createResponseApiResult: allConversationResponse);
           await _addChatToConversation(tempConversationList.first);
         },
         error: (error) {
@@ -116,6 +117,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
   StreamSubscription? profileSubscription;
 
   void _listenToConversation(String conversationId) {
+    changeProps(getConversationApiResult: ApiResultStatus.loading());
     if ((state.userModel?.uid ?? "").isNotEmpty) {
       profileSubscription?.cancel();
       profileSubscription = AuthRepo.instance.userCollection
@@ -130,6 +132,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
               chatList: event.docs.map((e) {
                 return ChatModel.fromJson(e.data());
               }).toList(),
+              getConversationApiResult: ApiResultStatus.data(data: event.docs),
             );
           });
     }

@@ -52,7 +52,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [Row(), 250.spaceH, _header(), 20.spaceH],
+                  children: [Row(), 250.spaceH, _header(state), 20.spaceH],
                 ),
                 Positioned(
                   left: 20.w,
@@ -100,17 +100,18 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   bottom: 300.h,
                   child: _horizontalCard(
                     color: aiQuestionCardColor1,
-                    text: LocaleKeys.howCanIHandleToddlerTantrumInPublic.tr(), onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(
-                          initialChat: LocaleKeys
-                              .whatAreSomeTipsForConsistentInfantSleep
-                              .tr(),
+                    text: LocaleKeys.howCanIHandleToddlerTantrumInPublic.tr(),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(
+                            initialChat: LocaleKeys
+                                .whatAreSomeTipsForConsistentInfantSleep
+                                .tr(),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -133,7 +134,6 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     },
                   ),
                 ),
-
                 _chatListButton(),
                 _bottomTextField(state),
               ],
@@ -145,13 +145,13 @@ class _AiChatScreenState extends State<AiChatScreen> {
     );
   }
 
-  Widget _header() {
+  Widget _header(AiChatState state) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: "I’m here to assist you, Sarah!"
+      child: "I’m here to assist you, ${state.userModel?.parentName ?? ""}!"
           .appText(fontWeight: FontWeight.w700, fontSize: 14)
           .appPadding(left: 10, right: 10, top: 2, bottom: 2),
     );

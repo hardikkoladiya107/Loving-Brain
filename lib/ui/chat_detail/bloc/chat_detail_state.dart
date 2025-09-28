@@ -12,6 +12,7 @@ abstract class ChatDetailState with _$ChatDetailState {
     String? conversationId,
     @Default(ApiResultStatus.initial()) ApiResultStatus createConversationApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus createResponseApiResult,
+    @Default(ApiResultStatus.initial()) ApiResultStatus getConversationApiResult,
     @Default([]) List<ChatModel> chatList,
     UserModel? userModel
   }) = _ChatDetailState;

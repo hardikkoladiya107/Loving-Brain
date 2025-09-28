@@ -9,9 +9,9 @@ class AiRepo {
   static final AiRepo _instance = AiRepo._();
 
   static final String secretKey =
-      "";
+      " ";
   static final String promptKey =
-      "";
+      " ";
 
   static final String conversationUrl =
       "https://api.openai.com/v1/conversations";
@@ -85,7 +85,7 @@ class AiRepo {
         "https://api.openai.com/v1/responses",
         data: {
           "model": "gpt-5",
-          "prompt": {"id": promptKey, "version": "3"},
+          "prompt": {"id": promptKey, "version": "6"},
           "conversation": {"id": conversationId},
           "input": [
             {"role": "user", "content": messageText},

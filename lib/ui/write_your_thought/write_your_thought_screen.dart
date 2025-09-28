@@ -102,7 +102,6 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                               ),
                             ),
                           ),
-
                           BaseButton(
                             onTap: () {},
                             child: Container(
@@ -123,47 +122,47 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                           ),
                         ],
                       ).appPadding(left: 20, right: 20),
-                      16.spaceH,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          LocaleKeys.yourPastEntries.tr().appText(
-                            fontWeight: FontWeight.w800,
-                          ),
-                          BaseButton(
-                            child: LocaleKeys.viewAll.tr().appText(
-                              color: primaryColor,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 12,
+
+                      if(state.journalList.isNotEmpty)...[
+                        16.spaceH,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            LocaleKeys.yourPastEntries.tr().appText(
+                              fontWeight: FontWeight.w800,
                             ),
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ThoughtListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ).appPadding(left: 20, right: 20),
-                      16.spaceH,
-
-                      ListView.builder(
-                        itemCount: state.journalList.length,
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) {
-                          var journal = state.journalList[index];
-                          return _pastEntry(
-                            color: Colors.pink,
-                            journal: journal,
-                          ).appPadding(bottom: 10);
-                        },
-                      ),
-
-                      // _pastEntry(color: Colors.green),
+                            BaseButton(
+                              child: LocaleKeys.viewAll.tr().appText(
+                                color: primaryColor,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 12,
+                              ),
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                    const ThoughtListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ).appPadding(left: 20, right: 20),
+                        16.spaceH,
+                        ListView.builder(
+                          itemCount: state.journalList.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            var journal = state.journalList[index];
+                            return _pastEntry(
+                              color: Colors.pink,
+                              journal: journal,
+                            ).appPadding(bottom: 10);
+                          },
+                        ),
+                      ]
                     ],
                   ),
                 ],

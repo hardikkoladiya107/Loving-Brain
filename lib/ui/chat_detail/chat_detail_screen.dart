@@ -37,7 +37,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         conversationId: widget.conversationId,
         initialChat: widget.initialChat,
       );
-      _scrollToBottomAnimated();
+
     });
     super.initState();
   }
@@ -90,6 +90,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           },
           loading: () {
             _scrollToBottomAnimated();
+          },
+        );
+
+        state.getConversationApiResult.whenOrNull(
+          data: (data) {
+            _scrollToBottom();
           },
         );
       },
@@ -202,7 +208,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _bottomTextField() {
     return Container(
-      height: 100.h,
+
       decoration: BoxDecoration(
         color: scheduleBgColor,
         boxShadow: [
@@ -218,6 +224,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         children: [
           10.spaceH,
           AppTextField(
+            minLines: 1,
+            maxLines: 3,
             tfType: TFTYPE.FILLED,
             controller: textEditingController,
             hint: LocaleKeys.connectWithBrainAI.tr(),
@@ -238,7 +246,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 children: [10.spaceW, Icon(Icons.send), 10.spaceW],
               ),
               onTap: () {
-                 context.read<ChatDetailCubit>().createResponse();
+                context.read<ChatDetailCubit>().createResponse();
                 //_scrollToBottomAnimated();
               },
             ),
@@ -307,12 +315,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   }
 
   void _scrollToBottomAnimated() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _scrollToBottom() {
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
 }

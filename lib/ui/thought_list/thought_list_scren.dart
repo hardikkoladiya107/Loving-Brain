@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
+import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../model/journal_model.dart';
 import '../../other/extra_methods.dart';
+import '../widget/base_button.dart';
 import 'bloc/thought_list_cubit.dart';
 import 'bloc/thought_list_state.dart';
 
@@ -31,29 +33,49 @@ class _ThoughtListScreenState extends State<ThoughtListScreen> {
     return BlocConsumer<ThoughtListCubit, ThoughtListState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            title: LocaleKeys.thoughtsList.tr().appText(
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
+          body: SafeArea(
+            child: Column(
+              children: [
+                20.spaceH,
+                _appBar(),
+                20.spaceH,
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: state.journalList.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      var journal = state.journalList[index];
+                      return _pastEntry(
+                        color: Colors.pink,
+                        journal: journal,
+                      ).appPadding(bottom: 10);
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-          body: ListView.builder(
-            itemCount: state.journalList.length,
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemBuilder: (context, index) {
-              var journal = state.journalList[index];
-              return _pastEntry(
-                color: Colors.pink,
-                journal: journal,
-              ).appPadding(bottom: 10);
-            },
           ),
         );
       },
       listener: (context, state) {},
     );
+  }
+
+  Widget _appBar() {
+    return Row(
+      children: [
+        BaseButton(
+          child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        12.w.spaceW,
+        LocaleKeys.thoughtsList.tr().appText(fontWeight: FontWeight.w700),
+      ],
+    ).appPadding(left: 20);
   }
 
   Widget _pastEntry({required Color color, required JournalModel journal}) {
