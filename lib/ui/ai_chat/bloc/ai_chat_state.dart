@@ -4,6 +4,6 @@ part 'ai_chat_state.freezed.dart';
 
 @freezed
 abstract class AiChatState with _$AiChatState {
-  const factory AiChatState({@Default("message") String message}) =
+  const factory AiChatState({@Default("") String chatText}) =
       _AiChatState;
 }

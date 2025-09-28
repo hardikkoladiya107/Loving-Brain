@@ -11,5 +11,7 @@ class AiChatCubit extends Cubit<AiChatState> {
     emit(AiChatState());
   }
 
-
+  void changeProps({String? chatText}) {
+    emit(state.copyWith(chatText: chatText ?? state.chatText));
+  }
 }

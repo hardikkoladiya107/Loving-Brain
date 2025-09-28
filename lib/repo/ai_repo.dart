@@ -85,7 +85,7 @@ class AiRepo {
         "https://api.openai.com/v1/responses",
         data: {
           "model": "gpt-5",
-          "prompt": {"id": promptKey, "version": "1"},
+          "prompt": {"id": promptKey, "version": "3"},
           "conversation": {"id": conversationId},
           "input": [
             {"role": "user", "content": messageText},

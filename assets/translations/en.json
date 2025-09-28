@@ -223,7 +223,13 @@
   "viewAll": "View all",
   "thoughtsList": "Thoughts List",
   "weSentYouMailToResetYourPassword": "We've sent you mail to reset your password.",
-  "failToCreateConversation": "Fail to create conversation"
+  "failToCreateConversation": "Fail to create conversation",
+  "askToAI": "Ask to AI",
+  "noChatAvailable": "No chat available!",
+  "chatHistory": "Chat History",
+  "deleteChat": "Delete Chat",
+  "areYouSureToDeleteChat": "Are you sure you want to delete this chat?",
+  "chatDeleted": "Chat Deleted!"
 
 
 

@@ -213,7 +213,6 @@ class AuthRepo {
     }
   }
 
-
   Future<ApiResultStatus> signInWithGoogle() async {
     try {
       var googleSignInAccount = await GoogleSignInManager.instance
@@ -274,11 +273,9 @@ class AuthRepo {
     }
   }
 
-
   Future<ApiResultStatus> signInWithApple() async {
     try {
-      var appleSignInAccount = await AppleSignInManager.instance
-          .authenticate();
+      var appleSignInAccount = await AppleSignInManager.instance.authenticate();
       if (appleSignInAccount == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -336,7 +333,6 @@ class AuthRepo {
     }
   }
 
-
   Future<ApiResultStatus> addConversationToUser({
     required String conversationId,
     required Map<String, dynamic> request,
@@ -344,7 +340,11 @@ class AuthRepo {
     try {
       var tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
-        await userCollection.doc(tUid).collection("conversations").doc(conversationId).set(request);
+        await userCollection
+            .doc(tUid)
+            .collection("conversations")
+            .doc(conversationId)
+            .set(request);
         return ApiResultStatus.data(data: tUid);
       } else {
         return ApiResultStatus.error(
@@ -358,5 +358,53 @@ class AuthRepo {
     }
   }
 
+  Future<ApiResultStatus> addChatToConversation({
+    required String conversationId,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await userCollection
+            .doc(tUid)
+            .collection("conversations")
+            .doc(conversationId)
+            .collection("chats")
+            .add(request);
+        return ApiResultStatus.data(data: tUid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
 
+  Future<ApiResultStatus> deleteConversation({
+    required String conversationId,
+  }) async {
+    try {
+      var tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await AuthRepo.instance.userCollection
+            .doc(tUid)
+            .collection("conversations")
+            .doc(conversationId)
+            .delete();
+        return ApiResultStatus.data(data: tUid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
 }

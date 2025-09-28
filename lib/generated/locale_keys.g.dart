@@ -222,5 +222,11 @@ abstract class  LocaleKeys {
   static const thoughtsList = 'thoughtsList';
   static const weSentYouMailToResetYourPassword = 'weSentYouMailToResetYourPassword';
   static const failToCreateConversation = 'failToCreateConversation';
+  static const askToAI = 'askToAI';
+  static const noChatAvailable = 'noChatAvailable';
+  static const chatHistory = 'chatHistory';
+  static const deleteChat = 'deleteChat';
+  static const areYouSureToDeleteChat = 'areYouSureToDeleteChat';
+  static const chatDeleted = 'chatDeleted';
 
 }

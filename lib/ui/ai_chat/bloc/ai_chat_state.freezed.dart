@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AiChatState {
 
- String get message;
+ String get chatText;
 /// Create a copy of AiChatState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AiChatStateCopyWith<AiChatState> get copyWith => _$AiChatStateCopyWithImpl<AiCh
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiChatState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiChatState&&(identical(other.chatText, chatText) || other.chatText == chatText));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,chatText);
 
 @override
 String toString() {
-  return 'AiChatState(message: $message)';
+  return 'AiChatState(chatText: $chatText)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AiChatStateCopyWith<$Res>  {
   factory $AiChatStateCopyWith(AiChatState value, $Res Function(AiChatState) _then) = _$AiChatStateCopyWithImpl;
 @useResult
 $Res call({
- String message
+ String chatText
 });
 
 
@@ -62,9 +62,9 @@ class _$AiChatStateCopyWithImpl<$Res>
 
 /// Create a copy of AiChatState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? chatText = null,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+chatText: null == chatText ? _self.chatText : chatText // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -150,10 +150,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String chatText)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AiChatState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.chatText);case _:
   return orElse();
 
 }
@@ -171,10 +171,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String chatText)  $default,) {final _that = this;
 switch (_that) {
 case _AiChatState():
-return $default(_that.message);case _:
+return $default(_that.chatText);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +191,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String chatText)?  $default,) {final _that = this;
 switch (_that) {
 case _AiChatState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.chatText);case _:
   return null;
 
 }
@@ -206,10 +206,10 @@ return $default(_that.message);case _:
 
 
 class _AiChatState implements AiChatState {
-  const _AiChatState({this.message = "message"});
+  const _AiChatState({this.chatText = ""});
   
 
-@override@JsonKey() final  String message;
+@override@JsonKey() final  String chatText;
 
 /// Create a copy of AiChatState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +221,16 @@ _$AiChatStateCopyWith<_AiChatState> get copyWith => __$AiChatStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiChatState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiChatState&&(identical(other.chatText, chatText) || other.chatText == chatText));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,chatText);
 
 @override
 String toString() {
-  return 'AiChatState(message: $message)';
+  return 'AiChatState(chatText: $chatText)';
 }
 
 
@@ -241,7 +241,7 @@ abstract mixin class _$AiChatStateCopyWith<$Res> implements $AiChatStateCopyWith
   factory _$AiChatStateCopyWith(_AiChatState value, $Res Function(_AiChatState) _then) = __$AiChatStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String chatText
 });
 
 
@@ -258,9 +258,9 @@ class __$AiChatStateCopyWithImpl<$Res>
 
 /// Create a copy of AiChatState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? chatText = null,}) {
   return _then(_AiChatState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+chatText: null == chatText ? _self.chatText : chatText // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

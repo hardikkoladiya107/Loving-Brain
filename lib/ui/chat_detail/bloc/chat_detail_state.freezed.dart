@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChatDetailState {
 
- String get chatText; String? get conversationId; ApiResultStatus get createConversationApiResult; ApiResultStatus get getAllConversationApiResult; ApiResultStatus get createResponseApiResult; ApiResultStatus get saveConversationResponseApiResult; List<ConversationItem> get conversationList;
+ String get chatText; String? get conversationId; ApiResultStatus get createConversationApiResult; ApiResultStatus get createResponseApiResult; List<ChatModel> get chatList; UserModel? get userModel;
 /// Create a copy of ChatDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ChatDetailStateCopyWith<ChatDetailState> get copyWith => _$ChatDetailStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatDetailState&&(identical(other.chatText, chatText) || other.chatText == chatText)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.createConversationApiResult, createConversationApiResult) || other.createConversationApiResult == createConversationApiResult)&&(identical(other.getAllConversationApiResult, getAllConversationApiResult) || other.getAllConversationApiResult == getAllConversationApiResult)&&(identical(other.createResponseApiResult, createResponseApiResult) || other.createResponseApiResult == createResponseApiResult)&&(identical(other.saveConversationResponseApiResult, saveConversationResponseApiResult) || other.saveConversationResponseApiResult == saveConversationResponseApiResult)&&const DeepCollectionEquality().equals(other.conversationList, conversationList));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatDetailState&&(identical(other.chatText, chatText) || other.chatText == chatText)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.createConversationApiResult, createConversationApiResult) || other.createConversationApiResult == createConversationApiResult)&&(identical(other.createResponseApiResult, createResponseApiResult) || other.createResponseApiResult == createResponseApiResult)&&const DeepCollectionEquality().equals(other.chatList, chatList)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,chatText,conversationId,createConversationApiResult,getAllConversationApiResult,createResponseApiResult,saveConversationResponseApiResult,const DeepCollectionEquality().hash(conversationList));
+int get hashCode => Object.hash(runtimeType,chatText,conversationId,createConversationApiResult,createResponseApiResult,const DeepCollectionEquality().hash(chatList),userModel);
 
 @override
 String toString() {
-  return 'ChatDetailState(chatText: $chatText, conversationId: $conversationId, createConversationApiResult: $createConversationApiResult, getAllConversationApiResult: $getAllConversationApiResult, createResponseApiResult: $createResponseApiResult, saveConversationResponseApiResult: $saveConversationResponseApiResult, conversationList: $conversationList)';
+  return 'ChatDetailState(chatText: $chatText, conversationId: $conversationId, createConversationApiResult: $createConversationApiResult, createResponseApiResult: $createResponseApiResult, chatList: $chatList, userModel: $userModel)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $ChatDetailStateCopyWith<$Res>  {
   factory $ChatDetailStateCopyWith(ChatDetailState value, $Res Function(ChatDetailState) _then) = _$ChatDetailStateCopyWithImpl;
 @useResult
 $Res call({
- String chatText, String? conversationId, ApiResultStatus createConversationApiResult, ApiResultStatus getAllConversationApiResult, ApiResultStatus createResponseApiResult, ApiResultStatus saveConversationResponseApiResult, List<ConversationItem> conversationList
+ String chatText, String? conversationId, ApiResultStatus createConversationApiResult, ApiResultStatus createResponseApiResult, List<ChatModel> chatList, UserModel? userModel
 });
 
 
-$ApiResultStatusCopyWith<dynamic, $Res> get createConversationApiResult;$ApiResultStatusCopyWith<dynamic, $Res> get getAllConversationApiResult;$ApiResultStatusCopyWith<dynamic, $Res> get createResponseApiResult;$ApiResultStatusCopyWith<dynamic, $Res> get saveConversationResponseApiResult;
+$ApiResultStatusCopyWith<dynamic, $Res> get createConversationApiResult;$ApiResultStatusCopyWith<dynamic, $Res> get createResponseApiResult;
 
 }
 /// @nodoc
@@ -62,16 +62,15 @@ class _$ChatDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ChatDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? chatText = null,Object? conversationId = freezed,Object? createConversationApiResult = null,Object? getAllConversationApiResult = null,Object? createResponseApiResult = null,Object? saveConversationResponseApiResult = null,Object? conversationList = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? chatText = null,Object? conversationId = freezed,Object? createConversationApiResult = null,Object? createResponseApiResult = null,Object? chatList = null,Object? userModel = freezed,}) {
   return _then(_self.copyWith(
 chatText: null == chatText ? _self.chatText : chatText // ignore: cast_nullable_to_non_nullable
 as String,conversationId: freezed == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String?,createConversationApiResult: null == createConversationApiResult ? _self.createConversationApiResult : createConversationApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,getAllConversationApiResult: null == getAllConversationApiResult ? _self.getAllConversationApiResult : getAllConversationApiResult // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,createResponseApiResult: null == createResponseApiResult ? _self.createResponseApiResult : createResponseApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,saveConversationResponseApiResult: null == saveConversationResponseApiResult ? _self.saveConversationResponseApiResult : saveConversationResponseApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,conversationList: null == conversationList ? _self.conversationList : conversationList // ignore: cast_nullable_to_non_nullable
-as List<ConversationItem>,
+as ApiResultStatus,chatList: null == chatList ? _self.chatList : chatList // ignore: cast_nullable_to_non_nullable
+as List<ChatModel>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,
   ));
 }
 /// Create a copy of ChatDetailState
@@ -87,28 +86,10 @@ $ApiResultStatusCopyWith<dynamic, $Res> get createConversationApiResult {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<dynamic, $Res> get getAllConversationApiResult {
-  
-  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getAllConversationApiResult, (value) {
-    return _then(_self.copyWith(getAllConversationApiResult: value));
-  });
-}/// Create a copy of ChatDetailState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<dynamic, $Res> get createResponseApiResult {
   
   return $ApiResultStatusCopyWith<dynamic, $Res>(_self.createResponseApiResult, (value) {
     return _then(_self.copyWith(createResponseApiResult: value));
-  });
-}/// Create a copy of ChatDetailState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<dynamic, $Res> get saveConversationResponseApiResult {
-  
-  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveConversationResponseApiResult, (value) {
-    return _then(_self.copyWith(saveConversationResponseApiResult: value));
   });
 }
 }
@@ -192,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String chatText,  String? conversationId,  ApiResultStatus createConversationApiResult,  ApiResultStatus getAllConversationApiResult,  ApiResultStatus createResponseApiResult,  ApiResultStatus saveConversationResponseApiResult,  List<ConversationItem> conversationList)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String chatText,  String? conversationId,  ApiResultStatus createConversationApiResult,  ApiResultStatus createResponseApiResult,  List<ChatModel> chatList,  UserModel? userModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChatDetailState() when $default != null:
-return $default(_that.chatText,_that.conversationId,_that.createConversationApiResult,_that.getAllConversationApiResult,_that.createResponseApiResult,_that.saveConversationResponseApiResult,_that.conversationList);case _:
+return $default(_that.chatText,_that.conversationId,_that.createConversationApiResult,_that.createResponseApiResult,_that.chatList,_that.userModel);case _:
   return orElse();
 
 }
@@ -213,10 +194,10 @@ return $default(_that.chatText,_that.conversationId,_that.createConversationApiR
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String chatText,  String? conversationId,  ApiResultStatus createConversationApiResult,  ApiResultStatus getAllConversationApiResult,  ApiResultStatus createResponseApiResult,  ApiResultStatus saveConversationResponseApiResult,  List<ConversationItem> conversationList)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String chatText,  String? conversationId,  ApiResultStatus createConversationApiResult,  ApiResultStatus createResponseApiResult,  List<ChatModel> chatList,  UserModel? userModel)  $default,) {final _that = this;
 switch (_that) {
 case _ChatDetailState():
-return $default(_that.chatText,_that.conversationId,_that.createConversationApiResult,_that.getAllConversationApiResult,_that.createResponseApiResult,_that.saveConversationResponseApiResult,_that.conversationList);case _:
+return $default(_that.chatText,_that.conversationId,_that.createConversationApiResult,_that.createResponseApiResult,_that.chatList,_that.userModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -233,10 +214,10 @@ return $default(_that.chatText,_that.conversationId,_that.createConversationApiR
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String chatText,  String? conversationId,  ApiResultStatus createConversationApiResult,  ApiResultStatus getAllConversationApiResult,  ApiResultStatus createResponseApiResult,  ApiResultStatus saveConversationResponseApiResult,  List<ConversationItem> conversationList)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String chatText,  String? conversationId,  ApiResultStatus createConversationApiResult,  ApiResultStatus createResponseApiResult,  List<ChatModel> chatList,  UserModel? userModel)?  $default,) {final _that = this;
 switch (_that) {
 case _ChatDetailState() when $default != null:
-return $default(_that.chatText,_that.conversationId,_that.createConversationApiResult,_that.getAllConversationApiResult,_that.createResponseApiResult,_that.saveConversationResponseApiResult,_that.conversationList);case _:
+return $default(_that.chatText,_that.conversationId,_that.createConversationApiResult,_that.createResponseApiResult,_that.chatList,_that.userModel);case _:
   return null;
 
 }
@@ -248,22 +229,21 @@ return $default(_that.chatText,_that.conversationId,_that.createConversationApiR
 
 
 class _ChatDetailState implements ChatDetailState {
-  const _ChatDetailState({this.chatText = "", this.conversationId, this.createConversationApiResult = const ApiResultStatus.initial(), this.getAllConversationApiResult = const ApiResultStatus.initial(), this.createResponseApiResult = const ApiResultStatus.initial(), this.saveConversationResponseApiResult = const ApiResultStatus.initial(), final  List<ConversationItem> conversationList = const []}): _conversationList = conversationList;
+  const _ChatDetailState({this.chatText = "", this.conversationId, this.createConversationApiResult = const ApiResultStatus.initial(), this.createResponseApiResult = const ApiResultStatus.initial(), final  List<ChatModel> chatList = const [], this.userModel}): _chatList = chatList;
   
 
 @override@JsonKey() final  String chatText;
 @override final  String? conversationId;
 @override@JsonKey() final  ApiResultStatus createConversationApiResult;
-@override@JsonKey() final  ApiResultStatus getAllConversationApiResult;
 @override@JsonKey() final  ApiResultStatus createResponseApiResult;
-@override@JsonKey() final  ApiResultStatus saveConversationResponseApiResult;
- final  List<ConversationItem> _conversationList;
-@override@JsonKey() List<ConversationItem> get conversationList {
-  if (_conversationList is EqualUnmodifiableListView) return _conversationList;
+ final  List<ChatModel> _chatList;
+@override@JsonKey() List<ChatModel> get chatList {
+  if (_chatList is EqualUnmodifiableListView) return _chatList;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_conversationList);
+  return EqualUnmodifiableListView(_chatList);
 }
 
+@override final  UserModel? userModel;
 
 /// Create a copy of ChatDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -275,16 +255,16 @@ _$ChatDetailStateCopyWith<_ChatDetailState> get copyWith => __$ChatDetailStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatDetailState&&(identical(other.chatText, chatText) || other.chatText == chatText)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.createConversationApiResult, createConversationApiResult) || other.createConversationApiResult == createConversationApiResult)&&(identical(other.getAllConversationApiResult, getAllConversationApiResult) || other.getAllConversationApiResult == getAllConversationApiResult)&&(identical(other.createResponseApiResult, createResponseApiResult) || other.createResponseApiResult == createResponseApiResult)&&(identical(other.saveConversationResponseApiResult, saveConversationResponseApiResult) || other.saveConversationResponseApiResult == saveConversationResponseApiResult)&&const DeepCollectionEquality().equals(other._conversationList, _conversationList));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatDetailState&&(identical(other.chatText, chatText) || other.chatText == chatText)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.createConversationApiResult, createConversationApiResult) || other.createConversationApiResult == createConversationApiResult)&&(identical(other.createResponseApiResult, createResponseApiResult) || other.createResponseApiResult == createResponseApiResult)&&const DeepCollectionEquality().equals(other._chatList, _chatList)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,chatText,conversationId,createConversationApiResult,getAllConversationApiResult,createResponseApiResult,saveConversationResponseApiResult,const DeepCollectionEquality().hash(_conversationList));
+int get hashCode => Object.hash(runtimeType,chatText,conversationId,createConversationApiResult,createResponseApiResult,const DeepCollectionEquality().hash(_chatList),userModel);
 
 @override
 String toString() {
-  return 'ChatDetailState(chatText: $chatText, conversationId: $conversationId, createConversationApiResult: $createConversationApiResult, getAllConversationApiResult: $getAllConversationApiResult, createResponseApiResult: $createResponseApiResult, saveConversationResponseApiResult: $saveConversationResponseApiResult, conversationList: $conversationList)';
+  return 'ChatDetailState(chatText: $chatText, conversationId: $conversationId, createConversationApiResult: $createConversationApiResult, createResponseApiResult: $createResponseApiResult, chatList: $chatList, userModel: $userModel)';
 }
 
 
@@ -295,11 +275,11 @@ abstract mixin class _$ChatDetailStateCopyWith<$Res> implements $ChatDetailState
   factory _$ChatDetailStateCopyWith(_ChatDetailState value, $Res Function(_ChatDetailState) _then) = __$ChatDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- String chatText, String? conversationId, ApiResultStatus createConversationApiResult, ApiResultStatus getAllConversationApiResult, ApiResultStatus createResponseApiResult, ApiResultStatus saveConversationResponseApiResult, List<ConversationItem> conversationList
+ String chatText, String? conversationId, ApiResultStatus createConversationApiResult, ApiResultStatus createResponseApiResult, List<ChatModel> chatList, UserModel? userModel
 });
 
 
-@override $ApiResultStatusCopyWith<dynamic, $Res> get createConversationApiResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get getAllConversationApiResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get createResponseApiResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get saveConversationResponseApiResult;
+@override $ApiResultStatusCopyWith<dynamic, $Res> get createConversationApiResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get createResponseApiResult;
 
 }
 /// @nodoc
@@ -312,16 +292,15 @@ class __$ChatDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ChatDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? chatText = null,Object? conversationId = freezed,Object? createConversationApiResult = null,Object? getAllConversationApiResult = null,Object? createResponseApiResult = null,Object? saveConversationResponseApiResult = null,Object? conversationList = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? chatText = null,Object? conversationId = freezed,Object? createConversationApiResult = null,Object? createResponseApiResult = null,Object? chatList = null,Object? userModel = freezed,}) {
   return _then(_ChatDetailState(
 chatText: null == chatText ? _self.chatText : chatText // ignore: cast_nullable_to_non_nullable
 as String,conversationId: freezed == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String?,createConversationApiResult: null == createConversationApiResult ? _self.createConversationApiResult : createConversationApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,getAllConversationApiResult: null == getAllConversationApiResult ? _self.getAllConversationApiResult : getAllConversationApiResult // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,createResponseApiResult: null == createResponseApiResult ? _self.createResponseApiResult : createResponseApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,saveConversationResponseApiResult: null == saveConversationResponseApiResult ? _self.saveConversationResponseApiResult : saveConversationResponseApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,conversationList: null == conversationList ? _self._conversationList : conversationList // ignore: cast_nullable_to_non_nullable
-as List<ConversationItem>,
+as ApiResultStatus,chatList: null == chatList ? _self._chatList : chatList // ignore: cast_nullable_to_non_nullable
+as List<ChatModel>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,
   ));
 }
 
@@ -338,28 +317,10 @@ $ApiResultStatusCopyWith<dynamic, $Res> get createConversationApiResult {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<dynamic, $Res> get getAllConversationApiResult {
-  
-  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getAllConversationApiResult, (value) {
-    return _then(_self.copyWith(getAllConversationApiResult: value));
-  });
-}/// Create a copy of ChatDetailState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<dynamic, $Res> get createResponseApiResult {
   
   return $ApiResultStatusCopyWith<dynamic, $Res>(_self.createResponseApiResult, (value) {
     return _then(_self.copyWith(createResponseApiResult: value));
-  });
-}/// Create a copy of ChatDetailState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<dynamic, $Res> get saveConversationResponseApiResult {
-  
-  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveConversationResponseApiResult, (value) {
-    return _then(_self.copyWith(saveConversationResponseApiResult: value));
   });
 }
 }

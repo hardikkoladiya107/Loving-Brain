@@ -1,10 +1,16 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/ai_response_model.dart';
 import 'package:loving_brain/model/conversation_model.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
+import '../../../model/chat_model.dart';
 import '../../../model/create_conversation_model.dart';
+import '../../../model/user_model.dart';
+import '../../../other/preferances.dart';
 import '../../../repo/ai_repo.dart';
 import '../../../repo/auth_repo.dart';
 import 'chat_detail_state.dart';
@@ -15,64 +21,37 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
   void init({String? conversationId, String? initialChat}) {
     emit(
       ChatDetailState(
+        userModel: preferences.getUserModel(),
         conversationId: conversationId,
         chatText: initialChat ?? "",
       ),
     );
     if (conversationId != null) {
-      _getAllConversation();
-    }else{
+      _listenToConversation(conversationId);
+    } else {
       _createConversation();
     }
   }
 
   void changeProps({
     ApiResultStatus? createConversationApiResult,
-    ApiResultStatus? getAllConversationApiResult,
-    List<ConversationItem>? conversationList,
     ApiResultStatus? createResponseApiResult,
     String? chatText,
     String? conversationId,
-    ApiResultStatus? saveConversationResponseApiResult
+    UserModel? userModel,
+    List<ChatModel>? chatList,
   }) {
     emit(
       state.copyWith(
         createConversationApiResult:
             createConversationApiResult ?? ApiResultStatus.initial(),
-        getAllConversationApiResult:
-            getAllConversationApiResult ?? ApiResultStatus.initial(),
         createResponseApiResult:
             createResponseApiResult ?? ApiResultStatus.initial(),
-        conversationList: conversationList ?? state.conversationList,
+        chatList: chatList ?? state.chatList,
         chatText: chatText ?? state.chatText,
         conversationId: conversationId ?? state.conversationId,
-        saveConversationResponseApiResult: saveConversationResponseApiResult ?? state.saveConversationResponseApiResult,
+        userModel: userModel ?? state.userModel,
       ),
-    );
-  }
-
-  Future<void> _createConversation() async {
-    changeProps(createConversationApiResult: ApiResultStatus.loading());
-    var response = await AiRepo.instance.createConversation();
-    response.whenOrNull(
-      data: (data) async {
-        changeProps(createConversationApiResult: response);
-        var conversationModel = CreateConversationModel.fromJson(data);
-        if (conversationModel.id != null) {
-          changeProps(conversationId: conversationModel.id);
-          createResponse();
-          _saveConversationId(conversationModel.id!);
-        } else {
-          changeProps(
-            createConversationApiResult: ApiResultStatus.error(
-              error: Exception(LocaleKeys.failToCreateConversation.tr()),
-            ),
-          );
-        }
-      },
-      error: (error) {
-        changeProps(createConversationApiResult: response);
-      },
     );
   }
 
@@ -88,9 +67,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
 
   Future<void> createResponse() async {
     if (isValid()) {
-      List<ConversationItem> tempConversationList = [];
-      tempConversationList.addAll(state.conversationList ?? []);
-      tempConversationList.add(
+      await _addChatToConversation(
         ConversationItem(
           type: "message",
           content: [AIContent(text: state.chatText, type: "input_text")],
@@ -98,25 +75,27 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
           status: "completed",
         ),
       );
+      var textMessage = state.chatText;
       changeProps(
         createResponseApiResult: ApiResultStatus.loading(),
-        conversationList: tempConversationList,
+        chatText: "",
       );
       var allConversationResponse = await AiRepo.instance.createResponse(
         conversationId: state.conversationId!,
-        messageText: state.chatText,
+        messageText: textMessage,
       );
       allConversationResponse.whenOrNull(
-        data: (data) {
+        data: (data) async {
           var aiResponseModel = AiResponseModel.fromJson(data);
           List<ConversationItem> tempConversationList = [];
-          tempConversationList.addAll(state.conversationList ?? []);
           tempConversationList.addAll(aiResponseModel.output ?? []);
+          tempConversationList.removeWhere(
+            (element) => element.type != "message",
+          );
           changeProps(
             createResponseApiResult: allConversationResponse,
-            conversationList: tempConversationList,
           );
-          _getAllConversation();
+          await _addChatToConversation(tempConversationList.first);
         },
         error: (error) {
           changeProps(createResponseApiResult: allConversationResponse);
@@ -125,36 +104,104 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     }
   }
 
-  Future _getAllConversation() async {
-    changeProps(getAllConversationApiResult: ApiResultStatus.loading());
-    var allConversationResponse = await AiRepo.instance.getAllConversation(
-      conversationId: state.conversationId!,
+  Future<void> _saveConversationId(String id) async {
+    changeProps(createConversationApiResult: ApiResultStatus.initial());
+    var apiResultStatus = await AuthRepo.instance.addConversationToUser(
+      conversationId: id,
+      request: {"conversation_id": id, "first_message": state.chatText},
     );
-    allConversationResponse.whenOrNull(
-      data: (data) {
-        var conversationModel = ConversationModel.fromJson(data);
-        List<ConversationItem> tempConversationList = [];
-        tempConversationList.addAll(conversationModel.data ?? []);
-        tempConversationList.removeWhere(
-          (element) => element.type != "message",
-        );
-        changeProps(
-          conversationList: tempConversationList,
-          getAllConversationApiResult: allConversationResponse,
-        );
+    changeProps(createConversationApiResult: apiResultStatus);
+  }
+
+  StreamSubscription? profileSubscription;
+
+  void _listenToConversation(String conversationId) {
+    if ((state.userModel?.uid ?? "").isNotEmpty) {
+      profileSubscription?.cancel();
+      profileSubscription = AuthRepo.instance.userCollection
+          .doc(state.userModel!.uid)
+          .collection("conversations")
+          .doc(conversationId)
+          .collection("chats")
+          .orderBy("time_stamp", descending: false)
+          .snapshots()
+          .listen((event) {
+            changeProps(
+              chatList: event.docs.map((e) {
+                return ChatModel.fromJson(e.data());
+              }).toList(),
+            );
+          });
+    }
+  }
+
+  void dispose() {
+    profileSubscription?.cancel();
+  }
+
+  Future<void> _createConversation() async {
+    changeProps(createConversationApiResult: ApiResultStatus.loading());
+    var response = await AiRepo.instance.createConversation();
+    response.whenOrNull(
+      data: (data) async {
+        changeProps(createConversationApiResult: response);
+        var conversationModel = CreateConversationModel.fromJson(data);
+        if (conversationModel.id != null) {
+          changeProps(conversationId: conversationModel.id);
+          await _saveConversationId(conversationModel.id!);
+          _listenToConversation(conversationModel.id!);
+          createResponse();
+        } else {
+          changeProps(
+            createConversationApiResult: ApiResultStatus.error(
+              error: Exception(LocaleKeys.failToCreateConversation.tr()),
+            ),
+          );
+        }
       },
       error: (error) {
-        changeProps(getAllConversationApiResult: allConversationResponse);
+        changeProps(createConversationApiResult: response);
       },
     );
   }
 
-  Future<void> _saveConversationId(String id) async {
-    changeProps(saveConversationResponseApiResult : ApiResultStatus.initial());
-    var apiResultStatus = await AuthRepo.instance.addConversationToUser(
-      conversationId: id,
-      request: {"conversation_id": id},
+  Future<void> _addChatToConversation(ConversationItem chat) async {
+    if ((chat.content ?? []).isEmpty) {
+      return;
+    }
+    changeProps(createResponseApiResult: ApiResultStatus.loading());
+    var response = await AuthRepo.instance.addChatToConversation(
+      conversationId: state.conversationId!,
+      request: {
+        "text": (chat.content ?? []).first.text,
+        "role": chat.role,
+        "time_stamp": Timestamp.now(),
+      },
     );
-    changeProps(saveConversationResponseApiResult : apiResultStatus);
+    changeProps(createResponseApiResult: response);
   }
+
+  // Future _getAllConversation() async {
+  //   changeProps(getAllConversationApiResult: ApiResultStatus.loading());
+  //   var allConversationResponse = await AiRepo.instance.getAllConversation(
+  //     conversationId: state.conversationId!,
+  //   );
+  //   allConversationResponse.whenOrNull(
+  //     data: (data) {
+  //       var conversationModel = ConversationModel.fromJson(data);
+  //       List<ConversationItem> tempConversationList = [];
+  //       tempConversationList.addAll(conversationModel.data ?? []);
+  //       tempConversationList.removeWhere(
+  //         (element) => element.type != "message",
+  //       );
+  //       changeProps(
+  //         conversationList: tempConversationList.reversed.toList(),
+  //         getAllConversationApiResult: allConversationResponse,
+  //       );
+  //     },
+  //     error: (error) {
+  //       changeProps(getAllConversationApiResult: allConversationResponse);
+  //     },
+  //   );
+  // }
 }

@@ -21,6 +21,8 @@ class AiChatScreen extends StatefulWidget {
 }
 
 class _AiChatScreenState extends State<AiChatScreen> {
+  TextEditingController textEditingController = TextEditingController();
+
   @override
   void initState() {
     context.read<AiChatCubit>().init();
@@ -31,6 +33,12 @@ class _AiChatScreenState extends State<AiChatScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<AiChatCubit, AiChatState>(
       builder: (context, state) {
+        if (textEditingController.text != state.chatText) {
+          textEditingController.value = textEditingController.value.copyWith(
+            text: state.chatText ?? '',
+            selection: textEditingController.selection,
+          );
+        }
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -54,6 +62,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     text: LocaleKeys
                         .myNewbornIsCryingContinuouslyWhatStepsShouldITake
                         .tr(),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(
+                            initialChat: LocaleKeys
+                                .whatAreSomeTipsForConsistentInfantSleep
+                                .tr(),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -63,6 +82,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     color: aiQuestionCardColor4,
                     text: LocaleKeys.howCanIEncourageMyChildExpressTheirFeelings
                         .tr(),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(
+                            initialChat: LocaleKeys
+                                .whatAreSomeTipsForConsistentInfantSleep
+                                .tr(),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -70,7 +100,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   bottom: 300.h,
                   child: _horizontalCard(
                     color: aiQuestionCardColor1,
-                    text: LocaleKeys.howCanIHandleToddlerTantrumInPublic.tr(),
+                    text: LocaleKeys.howCanIHandleToddlerTantrumInPublic.tr(), onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ChatDetailScreen(
+                          initialChat: LocaleKeys
+                              .whatAreSomeTipsForConsistentInfantSleep
+                              .tr(),
+                        ),
+                      ),
+                    );
+                  },
                   ),
                 ),
                 Positioned(
@@ -80,9 +120,22 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     color: aiQuestionCardColor2,
                     text: LocaleKeys.whatAreSomeTipsForConsistentInfantSleep
                         .tr(),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(
+                            initialChat: LocaleKeys
+                                .whatAreSomeTipsForConsistentInfantSleep
+                                .tr(),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                _bottomTextField(),
+
+                _chatListButton(),
+                _bottomTextField(state),
               ],
             ),
           ),
@@ -104,8 +157,13 @@ class _AiChatScreenState extends State<AiChatScreen> {
     );
   }
 
-  Widget _verticalCard({required Color color, required String text}) {
+  Widget _verticalCard({
+    required Color color,
+    required String text,
+    required GestureTapCallback onTap,
+  }) {
     return BaseButton(
+      onTap: onTap,
       child: Container(
         height: 195.h,
         width: 140.w,
@@ -123,12 +181,16 @@ class _AiChatScreenState extends State<AiChatScreen> {
           ],
         ),
       ),
-      onTap: () {},
     );
   }
 
-  Widget _horizontalCard({required Color color, required String text}) {
+  Widget _horizontalCard({
+    required Color color,
+    required String text,
+    required GestureTapCallback onTap,
+  }) {
     return BaseButton(
+      onTap: onTap,
       child: Container(
         height: 110.h,
         width: 205.w,
@@ -143,17 +205,20 @@ class _AiChatScreenState extends State<AiChatScreen> {
           ],
         ),
       ),
-      onTap: () {},
     );
   }
 
-  Widget _bottomTextField() {
+  Widget _bottomTextField(AiChatState state) {
     return Positioned(
       right: 20,
       bottom: 0,
       left: 20,
       child: AppTextField(
         tfType: TFTYPE.FILLED,
+        controller: textEditingController,
+        onChanged: (value) {
+          context.read<AiChatCubit>().changeProps(chatText: value);
+        },
         hint: LocaleKeys.connectWithBrainAI.tr(),
         contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         prefixIcon: Row(
@@ -172,13 +237,32 @@ class _AiChatScreenState extends State<AiChatScreen> {
             children: [10.spaceW, Icon(Icons.search), 10.spaceW],
           ),
           onTap: () {
-
-
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ChatListScreen()),
-            );
+            if ((state.chatText ?? "").isNotEmpty) {
+              var chatText = state.chatText;
+              context.read<AiChatCubit>().changeProps(chatText: "");
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailScreen(initialChat: chatText),
+                ),
+              );
+            }
           },
         ),
+      ),
+    );
+  }
+
+  Widget _chatListButton() {
+    return Positioned(
+      right: 20,
+      top: 40,
+      child: BaseButton(
+        child: Icon(Icons.list_outlined),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const ChatListScreen()),
+          );
+        },
       ),
     );
   }

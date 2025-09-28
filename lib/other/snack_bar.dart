@@ -25,6 +25,7 @@ Future<void> showSnackBar({
             child: message.appText(
               color: type == SnackBarType.None ? Colors.black : Colors.white,
               textAlign: TextAlign.start,
+              fontWeight: FontWeight.w600
             ),
           ),
         ],

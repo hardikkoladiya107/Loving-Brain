@@ -21,12 +21,15 @@ class ChatListCubit extends Cubit<ChatListState> {
     ApiResultStatus? getConversationsApiResult,
     UserModel? userModel,
     List<ConversationListItem>? conversationList,
+    ApiResultStatus? deleteConversationsApiResult,
   }) {
     emit(
       state.copyWith(
         getConversationsApiResult:
             getConversationsApiResult ?? state.getConversationsApiResult,
         userModel: userModel ?? state.userModel,
+        deleteConversationsApiResult:
+            deleteConversationsApiResult ?? state.deleteConversationsApiResult,
         conversationList: conversationList ?? state.conversationList,
       ),
     );
@@ -45,11 +48,19 @@ class ChatListCubit extends Cubit<ChatListState> {
             if (event.docs.isNotEmpty) {
               changeProps(
                 conversationList: event.docs
-                    .map((e) => ConversationListItem.fromJson(e))
+                    .map((e) => ConversationListItem.fromJson(e.data()))
                     .toList(),
               );
             }
           });
     }
+  }
+
+  Future<void> deleteChat(String conversationId) async {
+    changeProps(getConversationsApiResult: ApiResultStatus.loading());
+    var response = await AuthRepo.instance.deleteConversation(
+      conversationId: conversationId,
+    );
+    changeProps(getConversationsApiResult: response);
   }
 }
