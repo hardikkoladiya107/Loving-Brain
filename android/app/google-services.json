@@ -39,10 +39,10 @@
               "client_type": 3
             },
             {
-              "client_id": "779880600850-fdcegpctqrgavff03ajo8v1ftaa203pc.apps.googleusercontent.com",
+              "client_id": "779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.lovingBrain"
+                "bundle_id": "com.app.lovingbrain"
               }
             }
           ]

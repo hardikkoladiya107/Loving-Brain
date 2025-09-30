@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
@@ -19,10 +21,25 @@ class NewBehaviorScreen extends StatefulWidget {
 }
 
 class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
+  TextEditingController tellUsMoreController = TextEditingController();
+
+  @override
+  void initState() {
+    context.read<NewBehaviorCubit>().init();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<NewBehaviorCubit, NewBehaviorState>(
       builder: (context, state) {
+        if (tellUsMoreController.text != state.tellUsMoreText) {
+          tellUsMoreController.value = tellUsMoreController.value.copyWith(
+            text: state.tellUsMoreText ?? '',
+            selection: tellUsMoreController.selection,
+          );
+        }
+
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -57,12 +74,13 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: "Log New Behavior for Rohan"
-                                  .appText(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 13,
-                                  )
-                                  .appPadding(top: 16),
+                              child:
+                                  "Log New Behavior for ${state.userModel?.childName ?? ""}"
+                                      .appText(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 13,
+                                      )
+                                      .appPadding(top: 16),
                             ),
                             Assets.icons.icLogNewBehavior.image(
                               height: 70,
@@ -71,16 +89,9 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                           ],
                         ),
                         12.spaceH,
-                        _selectBehavior(),
+                        _selectBehavior(state),
                         12.spaceH,
-                        AppTextField(
-                          fillColor: aiQuestionCardColor2,
-                          title: LocaleKeys.tellUsMore.tr(),
-                          hint: LocaleKeys
-                              .describeWhatHappenedWhenAndWhereAndHowRohanFelt
-                              .tr(),
-                          maxLines: 4,
-                        ),
+                        _tellUsMore(),
                         12.spaceH,
                         _logBehaviorButton(),
                         12.spaceH,
@@ -162,7 +173,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget _selectBehavior() {
+  Widget _selectBehavior(NewBehaviorState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -171,26 +182,84 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
           fontWeight: FontWeight.w500,
         ),
         8.spaceH,
-        Container(
-          height: 45,
-          decoration: BoxDecoration(
-            color: aiQuestionCardColor2,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              12.spaceW,
-              Expanded(
-                child: LocaleKeys.selectBehavior.tr().appText(
-                  fontSize: 12,
-                  textAlign: TextAlign.start,
-                  color: Colors.grey.shade400,
-                ),
+        AppDropDownButton(
+          offset: Offset(0, 50),
+          dropDownWidget: (close) {
+            return Container(
+              height: 190.h,
+              decoration: BoxDecoration(
+                color: aiQuestionCardColor2,
+                borderRadius: BorderRadius.circular(12),
               ),
-              12.spaceW,
-              Icon(Icons.arrow_drop_down),
-              12.spaceW,
-            ],
+              child: ListView.builder(
+                itemCount: state.behaviourList.length,
+                padding: EdgeInsets.only(top: 4, bottom: 4),
+                itemBuilder: (context, index) {
+                  var behaviour = state.behaviourList[index];
+                  return BaseButton(
+                    onTap: () {
+                      close.call();
+                      context.read<NewBehaviorCubit>().changeProps(
+                        selectedBehaviour: behaviour.behaviour,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        4.spaceH,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            12.spaceW,
+                            Container(
+                              child: behaviour.behaviour?.appText(
+                                fontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            12.spaceW,
+                          ],
+                        ),
+                        4.spaceH,
+                        if (index != state.behaviourList.length - 1) ...[
+                          Divider(color: Colors.grey.shade300),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+          child: Container(
+            height: 45,
+            decoration: BoxDecoration(
+              color: aiQuestionCardColor2,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                12.spaceW,
+                Expanded(
+                  child:
+                      (state.selectedBehaviour.isNotEmpty
+                              ? state.selectedBehaviour
+                              : (LocaleKeys.selectBehavior.tr()))
+                          .appText(
+                            fontSize: 12,
+                            textAlign: TextAlign.start,
+                            fontWeight: FontWeight.w600,
+                            color: state.selectedBehaviour.isNotEmpty
+                                ? Colors.black
+                                : Colors.grey.shade400,
+                          ),
+                ),
+                12.spaceW,
+                Icon(Icons.arrow_drop_down),
+                12.spaceW,
+              ],
+            ),
           ),
         ),
       ],
@@ -198,24 +267,29 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
   }
 
   Widget _logBehaviorButton() {
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        color: blueButtonColor,
-        borderRadius: BorderRadius.circular(30),
+    return BaseButton(
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          color: blueButtonColor,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.icons.icCameraIcon.image(height: 18),
+            10.spaceW,
+            LocaleKeys.logBehavior.tr().appText(
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ],
+        ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Assets.icons.icCameraIcon.image(height: 18),
-          10.spaceW,
-          LocaleKeys.logBehavior.tr().appText(
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-            fontSize: 14,
-          ),
-        ],
-      ),
+      onTap: () {
+        context.read<NewBehaviorCubit>().logBehaviour();
+      },
     );
   }
 
@@ -317,6 +391,19 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
           20.spaceW,
         ],
       ),
+    );
+  }
+
+  Widget _tellUsMore() {
+    return AppTextField(
+      controller: tellUsMoreController,
+      fillColor: aiQuestionCardColor2,
+      title: LocaleKeys.tellUsMore.tr(),
+      hint: LocaleKeys.describeWhatHappenedWhenAndWhereAndHowRohanFelt.tr(),
+      maxLines: 4,
+      onChanged: (value) {
+        context.read<NewBehaviorCubit>().changeProps(tellUsMoreText: value);
+      },
     );
   }
 }
