@@ -11,6 +11,8 @@ abstract class NewBehaviorState with _$NewBehaviorState {
   const factory NewBehaviorState({
     @Default("") String selectedBehaviour,
     @Default("") String tellUsMoreText,
+    @Default("") String tellUsMoreError,
+    @Default("") String behaviourError,
     @Default([]) List<BehaviourModel> behaviourList,
     UserModel? userModel,
     @Default(ApiResultStatus.initial()) ApiResultStatus getBehaviourApiResultStatus,

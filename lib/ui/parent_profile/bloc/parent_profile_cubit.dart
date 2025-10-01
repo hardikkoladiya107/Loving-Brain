@@ -95,10 +95,10 @@ class ParentProfileCubit extends Cubit<ParentProfileState> {
     return true;
   }
 
-  Future<void> addParentDetail(String userId) async {
+  Future<void> addParentDetail( ) async {
     if (_isValidate()) {
       final credential = await AuthRepo.instance.updateUserToFireStore(
-        uId: userId,
+        uId: null,
         request: {
           "parent_name": state.parentName,
           "parent_email": state.parentEmailAddress,

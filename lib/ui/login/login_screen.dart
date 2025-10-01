@@ -331,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
           userModel.parentDateOfBirth == null) {
         Navigator.of(navigatorKey.currentContext!).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => ParentProfileScreen(userId: userModel.uid!),
+            builder: (context) => ParentProfileScreen( ),
           ),
         );
       } else if ((userModel.childName ?? "").isEmpty ||

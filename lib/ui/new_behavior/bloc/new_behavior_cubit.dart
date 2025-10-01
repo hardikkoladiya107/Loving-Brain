@@ -21,6 +21,8 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
     UserModel? userModel,
     String? selectedBehaviour,
     String? tellUsMoreText,
+    String? tellUsMoreError,
+    String? behaviourError,
   }) {
     emit(
       state.copyWith(
@@ -28,6 +30,8 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
         tellUsMoreText: tellUsMoreText ?? state.tellUsMoreText,
         selectedBehaviour: selectedBehaviour ?? state.selectedBehaviour,
         userModel: userModel ?? state.userModel,
+        tellUsMoreError: tellUsMoreError ?? state.tellUsMoreError,
+        behaviourError: behaviourError ?? state.behaviourError,
         getBehaviourApiResultStatus:
             getBehaviourApiResultStatus ?? ApiResultStatus.initial(),
       ),
@@ -47,7 +51,15 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
     );
   }
 
-  void logBehaviour() {
+  bool _isValidate() {
+    return true;
+  }
 
+
+
+  void logBehaviour() {
+    if (_isValidate()) {
+
+    }
   }
 }

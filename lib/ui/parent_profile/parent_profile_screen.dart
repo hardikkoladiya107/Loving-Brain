@@ -21,9 +21,8 @@ import 'bloc/parent_profile_cubit.dart';
 import 'bloc/parent_profile_state.dart';
 
 class ParentProfileScreen extends StatefulWidget {
-  const ParentProfileScreen({super.key, required this.userId});
+  const ParentProfileScreen({super.key,});
 
-  final String userId;
 
   @override
   State<ParentProfileScreen> createState() => _ParentProfileScreenState();
@@ -319,7 +318,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
         ),
       ),
       onTap: () {
-        context.read<ParentProfileCubit>().addParentDetail(widget.userId);
+        context.read<ParentProfileCubit>().addParentDetail( );
       },
     );
   }

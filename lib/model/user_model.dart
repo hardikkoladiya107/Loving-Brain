@@ -148,7 +148,6 @@ class UserModel {
 
   UserModel copyWith({
     String? uid,
-
     String? platform,
     String? productId,
     String? email,

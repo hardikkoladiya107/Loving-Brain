@@ -22,6 +22,7 @@ class AuthRepo {
   static AuthRepo get instance => _instance;
 
   var userCollection = FirebaseFirestore.instance.collection('users');
+  var childsCollection = FirebaseFirestore.instance.collection('children');
 
   Future<bool> currentUserExist({required String uId}) async {
     try {
@@ -97,7 +98,7 @@ class AuthRepo {
           );
 
       if (credential.user != null) {
-        return addUserToFireStore(
+        await addUserToFireStore(
           uId: credential.user!.uid,
           request: {
             "uid": credential.user!.uid,
@@ -107,6 +108,15 @@ class AuthRepo {
             "last_opened": DateTime.now(),
           },
         );
+        var userModel = await getUserFromUid(uId: credential.user!.uid);
+        if (userModel != null) {
+          await preferences.saveUserModel(userModel);
+          return ApiResultStatus.data(data: userModel.toJson());
+        } else {
+          return ApiResultStatus.error(
+            error: Exception(LocaleKeys.somethingWentWrong.tr()),
+          );
+        }
       } else {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -395,6 +405,30 @@ class AuthRepo {
             .collection("conversations")
             .doc(conversationId)
             .delete();
+        return ApiResultStatus.data(data: tUid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> addChild({
+    required Map<String, String> request,
+  }) async {
+    try {
+      var documentReference = await childsCollection.add(request);
+      var tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await userCollection.doc(tUid).update({
+          "default_child": documentReference,
+          "children": [documentReference],
+        });
         return ApiResultStatus.data(data: tUid);
       } else {
         return ApiResultStatus.error(

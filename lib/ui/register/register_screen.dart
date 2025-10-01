@@ -177,10 +177,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             context.read<RegisterCubit>().clearFields();
             EasyLoading.dismiss();
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) =>
-                    ParentProfileScreen(userId: data.toString()),
-              ),
+              MaterialPageRoute(builder: (context) => ParentProfileScreen()),
             );
           },
           error: (Exception error) {

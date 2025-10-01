@@ -41,20 +41,7 @@ class ChildProfileCubit extends Cubit<ChildProfileState> {
     );
   }
 
-  Future<void> addChildDetail(String userId) async {
-    if (_isValidate()) {
-      changeProps(apiResultStatus: ApiResultStatus.loading());
-      final credential = await AuthRepo.instance.updateUserToFireStore(
-        uId: userId,
-        request: {
-          "child_name": state.childName,
-          "child_age": state.childAge,
-          "relationship_to_child": state.relationShipToChild,
-        },
-      );
-      changeProps(apiResultStatus: credential);
-    }
-  }
+
 
   bool _isValidate() {
     if (state.childName.trim().isEmpty ||
@@ -89,6 +76,20 @@ class ChildProfileCubit extends Cubit<ChildProfileState> {
       relationShipToChildError: "",
     );
     return true;
+  }
+
+  Future<void> addChildDetail(String userId) async {
+    if (_isValidate()) {
+      changeProps(apiResultStatus: ApiResultStatus.loading());
+      final credential = await AuthRepo.instance.addChild(
+        request: {
+          "child_name": state.childName,
+          "child_age": state.childAge,
+          "relationship_to_child": state.relationShipToChild,
+        },
+      );
+      changeProps(apiResultStatus: credential);
+    }
   }
 
   void clearFields() {
