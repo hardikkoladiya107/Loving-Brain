@@ -64,8 +64,21 @@ bool isBeforeYesterday(DateTime input) {
   return inputDate.isBefore(yesterday);
 }
 
-String getStringDate(DateTime input) {
-  return "${input.year}-${input.month}-${input.day}";
+String getStringDate(DateTime? input) {
+  if (input == null) {
+    return "";
+  }
+
+  String formattedTime = DateFormat('yyyy-MM-dd').format(input);
+  return formattedTime;
+ }
+
+String getStringTime(DateTime? input) {
+  if (input == null) {
+    return "";
+  }
+  String formattedTime = DateFormat('hh:mm a').format(input);
+  return formattedTime;
 }
 
 String convertToMMMMDYYYY(DateTime? input) {

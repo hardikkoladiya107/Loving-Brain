@@ -119,7 +119,9 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           .snapshots()
           .listen((event) async {
             if (event.data() != null) {
-              var userModel = UserModel.fromJson(event.data());
+              var userModel = UserModel.fromJson(
+                event.data() as Map<String, dynamic>,
+              );
               await preferences.saveUserModel(userModel);
               changeProps(userModel: userModel);
             }
@@ -179,7 +181,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
           startLoading();
           var snapshot = await usersCollection.get();
           var allUser = snapshot.docs
-              .map((e) => UserModel.fromJson(e.data()))
+              .map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>))
               .toList();
           if (transactionIdentifier.isNotEmpty &&
               !allUser.any(
@@ -214,7 +216,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     String productId = tempPurchaseDetail.productID;
     var snapshot = await usersCollection.get();
     var allUser = snapshot.docs
-        .map((e) => UserModel.fromJson(e.data()))
+        .map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>))
         .toList();
     if (purchaseToken.isNotEmpty &&
         !allUser.any((element) => element.purchaseToken == purchaseToken)) {

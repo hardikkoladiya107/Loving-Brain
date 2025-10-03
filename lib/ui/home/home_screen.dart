@@ -54,7 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+
+      },
     );
   }
 
@@ -85,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Hello, ${state.userModel?.parentName ?? ""}!".appText(
                       fontWeight: FontWeight.w600,
                     ),
-                    "Ready to nurture ${state.userModel?.childName ?? ""}'s journey?\n(Child: ${state.userModel?.childName ?? ""}, ${state.userModel?.childAge ?? ""} old)"
+                    "Ready to nurture ${state.childModel?.childName ?? ""}'s journey?\n(Child: ${state.childModel?.childName ?? ""}, ${state.childModel?.childAge ?? ""} old)"
                         .appText(fontSize: 12, textAlign: TextAlign.start),
                   ],
                 ),

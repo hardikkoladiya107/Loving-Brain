@@ -1,14 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/extra_methods.dart';
 import '../widget/base_button.dart';
 import 'bloc/new_behavior_cubit.dart';
 import 'bloc/new_behavior_state.dart';
@@ -40,75 +44,93 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
           );
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.images.icNewBehaviorBg.path),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  60.spaceH,
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.2),
-                          offset: Offset(1, 1),
-                          blurRadius: 5,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        12.spaceH,
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child:
-                                  "Log New Behavior for ${state.userModel?.childName ?? ""}"
-                                      .appText(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 13,
-                                      )
-                                      .appPadding(top: 16),
-                            ),
-                            Assets.icons.icLogNewBehavior.image(
-                              height: 70,
-                              width: 70,
-                            ),
-                          ],
-                        ),
-                        12.spaceH,
-                        _selectBehavior(state),
-                        12.spaceH,
-                        _tellUsMore(),
-                        12.spaceH,
-                        _logBehaviorButton(),
-                        12.spaceH,
-                      ],
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SingleChildScrollView(
+
+            child: Stack(
+              children: [
+                Assets.images.icNewBehaviorBg.image(
+                  height: context.height,
+                  width: context.width,
+                ),
+
+                Column(
+                  children: [
+                    60.spaceH,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.2),
+                            offset: Offset(1, 1),
+                            blurRadius: 5,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          12.spaceH,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child:
+                                    "Log New Behavior for ${state.userModel?.childName ?? ""}"
+                                        .appText(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 13,
+                                        )
+                                        .appPadding(top: 16),
+                              ),
+                              Assets.icons.icLogNewBehavior.image(
+                                height: 70,
+                                width: 70,
+                              ),
+                            ],
+                          ),
+                          12.spaceH,
+                          _selectBehavior(state),
+                          12.spaceH,
+                          _tellUsMore(),
+                          12.spaceH,
+                          _logBehaviorButton(),
+                          12.spaceH,
+                        ],
+                      ).appPadding(left: 30, right: 30),
                     ).appPadding(left: 30, right: 30),
-                  ).appPadding(left: 30, right: 30),
-                  20.spaceH,
-                  _lovingBrainInsight(),
-                  20.spaceH,
-                  _childRecentMoments(),
-                ],
-              ),
+                    20.spaceH,
+                    _lovingBrainInsight(),
+                    20.spaceH,
+                    _childRecentMoments(state),
+                  ],
+                ),
+              ],
             ),
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.addBehaviourApiResultStatus.whenOrNull(
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            showSnackBar(
+              message: LocaleKeys.behaviourLogged.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+            EasyLoading.dismiss();
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+          },
+        );
+      },
     );
   }
 
@@ -192,10 +214,10 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListView.builder(
-                itemCount: state.behaviourList.length,
+                itemCount: state.behaviourCategoryList.length,
                 padding: EdgeInsets.only(top: 4, bottom: 4),
                 itemBuilder: (context, index) {
-                  var behaviour = state.behaviourList[index];
+                  var behaviour = state.behaviourCategoryList[index];
                   return BaseButton(
                     onTap: () {
                       close.call();
@@ -262,6 +284,18 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
             ),
           ),
         ),
+        if ((state.behaviourError ?? "").isNotEmpty) ...[
+          4.spaceH,
+          Row(
+            children: [
+              (state.behaviourError ?? "").appText(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: Colors.red,
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -293,14 +327,30 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
     );
   }
 
-  Widget _childRecentMoments() {
+  Widget _childRecentMoments(NewBehaviorState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(),
         "Rohan’s Recent Moments".appText(fontWeight: FontWeight.w700),
         10.spaceH,
-        _momentItem(
+        ListView.builder(
+          itemCount: state.behaviourList.length,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          padding: EdgeInsets.only(bottom: 50.h),
+          itemBuilder: (context, index) {
+            var behaviour = state.behaviourList[index];
+            return _momentItem(
+              title: behaviour.behaviour.toString(),
+              description: behaviour.note ?? "",
+              date: 'Date: ${getStringDate(behaviour.timeStamp!)}',
+              time: getStringTime(behaviour.timeStamp!),
+              icon: Assets.icons.icTantrumIcon,
+            ).appPadding(top: 10);
+          },
+        ),
+        /*_momentItem(
           title: 'Tantrum',
           description: 'Scremed for candy at grocery store',
           date: 'Date: 31/2/2025',
@@ -323,7 +373,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
           time: '2 :30PM',
           icon: Assets.icons.icPositiveBehavior,
         ),
-        20.spaceH,
+        20.spaceH,*/
       ],
     ).appPadding(left: 30, right: 30);
   }
@@ -336,7 +386,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
     required AssetGenImage icon,
   }) {
     return Container(
-      height: 90,
+      height: 110,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -367,30 +417,43 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
             ),
           ),
           20.spaceW,
-          icon.image(width: 30),
+          icon.image(width: 25),
           20.spaceW,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                title.appText(
-                  textAlign: TextAlign.start,
-                  fontWeight: FontWeight.w600,
+                Row(
+                  children: [
+                    Expanded(
+                      child: title.appText(
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    time.appText(fontSize: 10, fontWeight: FontWeight.w500),
+                  ],
                 ),
-                description.appText(textAlign: TextAlign.start, fontSize: 12),
+                description.appText(
+                  textAlign: TextAlign.start,
+                  fontSize: 12,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 date.appText(
                   textAlign: TextAlign.start,
                   fontSize: 12,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
               ],
             ),
           ),
-          Column(children: [10.spaceH, time.appText(fontSize: 12)]),
+
           20.spaceW,
         ],
-      ),
+      ).padding(top: 8, bottom: 8),
     );
   }
 
@@ -401,6 +464,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
       title: LocaleKeys.tellUsMore.tr(),
       hint: LocaleKeys.describeWhatHappenedWhenAndWhereAndHowRohanFelt.tr(),
       maxLines: 4,
+        contentPadding : EdgeInsets.symmetric(horizontal: 12,vertical: 6),
       onChanged: (value) {
         context.read<NewBehaviorCubit>().changeProps(tellUsMoreText: value);
       },

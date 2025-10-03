@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/extra_methods.dart';
 
+import '../../../model/child_model.dart';
 import '../../../model/user_model.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/auth_repo.dart';
@@ -23,10 +24,12 @@ class HomeCubit extends Cubit<HomeState> {
     UserModel? userModel,
     ApiResultStatus? apiResultStatus,
     bool? moodLoggedForToday,
+    ChildModel? childModel,
   }) {
     emit(
       state.copyWith(
         userModel: userModel ?? state.userModel,
+        childModel: childModel ?? state.childModel,
         moodLoggedForToday: moodLoggedForToday ?? state.moodLoggedForToday,
         apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
       ),
@@ -35,6 +38,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   StreamSubscription? profileSubscription;
   StreamSubscription? moodSubscription;
+  StreamSubscription? childSubscription;
 
   void _listenToUser() {
     if ((state.userModel?.uid ?? "").isNotEmpty) {
@@ -44,7 +48,10 @@ class HomeCubit extends Cubit<HomeState> {
           .snapshots()
           .listen((event) {
             if (event.data() != null) {
-              changeProps(userModel: UserModel.fromJson(event.data()));
+              var userModel = UserModel.fromJson(event.data()!);
+              preferences.saveUserModel(userModel);
+              _listenToChild(userModel.defaultChild);
+              changeProps(userModel: userModel);
             }
           });
 
@@ -61,6 +68,17 @@ class HomeCubit extends Cubit<HomeState> {
             }
           });
     }
+  }
+
+  void _listenToChild(DocumentReference<Object?>? defaultChild) {
+    childSubscription?.cancel();
+    childSubscription = defaultChild?.snapshots().listen((event) {
+      if (event.data() != null) {
+        changeProps(
+          childModel: ChildModel.fromJson(event.data() as Map<String, dynamic>),
+        );
+      }
+    });
   }
 
   void dispose() {

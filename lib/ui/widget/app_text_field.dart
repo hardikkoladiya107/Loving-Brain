@@ -98,7 +98,7 @@ class _AppTextFieldState extends State<AppTextField> {
             minLines: widget.minLines,
             obscureText: widget.obscureText,
             onChanged: widget.onChanged,
-            style: getTextStyle(),
+            style: getTextStyle(fontSize: 14),
             inputFormatters: widget.inputFormatters,
             decoration: InputDecoration(
               contentPadding:

@@ -229,7 +229,9 @@
   "chatHistory": "Chat History",
   "deleteChat": "Delete Chat",
   "areYouSureToDeleteChat": "Are you sure you want to delete this chat?",
-  "chatDeleted": "Chat Deleted!"
+  "chatDeleted": "Chat Deleted!",
+  "pleaseSelectBehaviour": "Please select behaviour",
+  "behaviourLogged": "Behaviour Logged"
 
 
 

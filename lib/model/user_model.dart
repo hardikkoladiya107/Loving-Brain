@@ -22,6 +22,8 @@ class UserModel {
     String? relationshipToChild,
     String? parentEmail,
     int? streak,
+    List<DocumentReference>? children,
+    DocumentReference? defaultChild,
   }) {
     _uid = uid;
     _platform = platform;
@@ -43,9 +45,14 @@ class UserModel {
     _relationshipToChild = relationshipToChild;
     _parentEmail = parentEmail;
     _streak = streak;
+    _children = children;
+    _defaultChild = defaultChild;
   }
 
-  UserModel.fromJson(dynamic jsonObject, {bool fromConvert = false}) {
+  UserModel.fromJson(
+    Map<String, dynamic> jsonObject, {
+    bool fromConvert = false,
+  }) {
     _uid = jsonObject['uid'];
     _platform = jsonObject['platform'];
     _productId = jsonObject['product_id'];
@@ -62,6 +69,41 @@ class UserModel {
     _relationshipToChild = jsonObject['relationship_to_child'];
     _parentEmail = jsonObject['parent_email'];
     _streak = jsonObject['streak'];
+
+    try {
+      if (fromConvert) {
+        _defaultChild = FirebaseFirestore.instance.doc(
+          jsonObject['default_child'],
+        );
+      } else {
+        if (jsonObject['default_child'] != null &&
+            jsonObject['default_child'] is DocumentReference) {
+          _defaultChild = jsonObject['default_child'] as DocumentReference;
+        }
+      }
+    } catch (e) {
+      e;
+    }
+
+    try {
+      if (fromConvert) {
+        if ((jsonObject['children'] is List<String>)) {
+          var paths = (jsonObject['children'] as List<String>);
+          _children?.clear();
+          _children?.addAll(
+            paths.map((e) => FirebaseFirestore.instance.doc(e)).toList(),
+          );
+        }
+      } else {
+        if (jsonObject['children'] != null) {
+          _children = List<DocumentReference>.from(
+            jsonObject['children'] ?? [],
+          );
+        }
+      }
+    } catch (e) {
+      e;
+    }
 
     try {
       if (fromConvert) {
@@ -145,6 +187,8 @@ class UserModel {
   DateTime? _updatedDate;
   DateTime? _lastOpened;
   int? _streak;
+  List<DocumentReference>? _children;
+  DocumentReference? _defaultChild;
 
   UserModel copyWith({
     String? uid,
@@ -167,6 +211,8 @@ class UserModel {
     DateTime? parentDateOfBirth,
     String? parentEmail,
     int? streak,
+    List<DocumentReference>? children,
+    DocumentReference? defaultChild,
   }) {
     return UserModel(
       uid: uid ?? _uid,
@@ -189,6 +235,8 @@ class UserModel {
       parentEmail: parentEmail ?? _parentEmail,
       relationshipToChild: relationshipToChild ?? _relationshipToChild,
       streak: streak ?? _streak,
+      children: children ?? _children,
+      defaultChild: defaultChild ?? _defaultChild,
     );
   }
 
@@ -211,6 +259,7 @@ class UserModel {
   String? get purchaseToken => _purchaseToken;
 
   DateTime? get updatedDate => _updatedDate;
+
   DateTime? get lastOpened => _lastOpened;
 
   DateTime? get freeTaskUseTime => _freeTaskUseTime;
@@ -228,7 +277,12 @@ class UserModel {
   String? get childAge => _childAge;
 
   String? get relationshipToChild => _relationshipToChild;
+
   int? get streak => _streak;
+
+  List<DocumentReference>? get children => _children;
+
+  DocumentReference? get defaultChild => _defaultChild;
 
   Map<String, dynamic> toJson({
     bool forConvert = false,
@@ -252,6 +306,8 @@ class UserModel {
     map['child_age'] = _childAge;
     map['relationship_to_child'] = _relationshipToChild;
     map['streak'] = _streak;
+    map['children'] = _children?.map((e) => e.path).toList();
+    map['default_child'] = _defaultChild?.path;
 
     try {
       if (forConvert) {

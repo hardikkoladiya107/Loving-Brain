@@ -228,5 +228,7 @@ abstract class  LocaleKeys {
   static const deleteChat = 'deleteChat';
   static const areYouSureToDeleteChat = 'areYouSureToDeleteChat';
   static const chatDeleted = 'chatDeleted';
+  static const pleaseSelectBehaviour = 'pleaseSelectBehaviour';
+  static const behaviourLogged = 'behaviourLogged';
 
 }

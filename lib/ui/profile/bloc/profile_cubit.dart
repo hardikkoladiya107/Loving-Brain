@@ -60,7 +60,7 @@ class ProfileCubit extends Cubit<ProfileState> {
           .snapshots()
           .listen((event) {
             if (event.data() != null) {
-              changeProps(userModel: UserModel.fromJson(event.data()));
+              changeProps(userModel: UserModel.fromJson(event.data() as Map<String, dynamic>));
             }
           });
     }

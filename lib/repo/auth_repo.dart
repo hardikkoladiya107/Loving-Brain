@@ -22,7 +22,7 @@ class AuthRepo {
   static AuthRepo get instance => _instance;
 
   var userCollection = FirebaseFirestore.instance.collection('users');
-  var childsCollection = FirebaseFirestore.instance.collection('children');
+  var childrenCollection = FirebaseFirestore.instance.collection('children');
 
   Future<bool> currentUserExist({required String uId}) async {
     try {
@@ -43,7 +43,7 @@ class AuthRepo {
     try {
       var user = await userCollection.doc(uId).get();
       if (user.data() != null) {
-        return UserModel.fromJson(user.data());
+        return UserModel.fromJson(user.data()!);
       } else {
         return null;
       }
@@ -422,12 +422,13 @@ class AuthRepo {
     required Map<String, String> request,
   }) async {
     try {
-      var documentReference = await childsCollection.add(request);
+      var documentReference = await childrenCollection.add(request);
       var tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
         await userCollection.doc(tUid).update({
           "default_child": documentReference,
           "children": [documentReference],
+          ...request
         });
         return ApiResultStatus.data(data: tUid);
       } else {

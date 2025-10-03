@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
+import '../../../model/behaviour_category_model.dart';
 import '../../../model/behaviour_model.dart';
 import '../../../model/user_model.dart';
 
@@ -13,8 +14,10 @@ abstract class NewBehaviorState with _$NewBehaviorState {
     @Default("") String tellUsMoreText,
     @Default("") String tellUsMoreError,
     @Default("") String behaviourError,
+    @Default([]) List<BehaviourCategoryModel> behaviourCategoryList,
     @Default([]) List<BehaviourModel> behaviourList,
     UserModel? userModel,
     @Default(ApiResultStatus.initial()) ApiResultStatus getBehaviourApiResultStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus addBehaviourApiResultStatus,
   }) = _NewBehaviorState;
 }

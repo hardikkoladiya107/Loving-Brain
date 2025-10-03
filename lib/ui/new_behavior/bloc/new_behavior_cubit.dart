@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
+import '../../../model/behaviour_category_model.dart';
 import '../../../model/behaviour_model.dart';
 import '../../../model/user_model.dart';
 import '../../../other/preferances.dart';
@@ -13,25 +17,30 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
   void init() {
     emit(NewBehaviorState(userModel: preferences.getUserModel()));
     _getAllBehaviours();
+    _listenToBehaviours();
   }
 
   void changeProps({
+    List<BehaviourCategoryModel>? behaviourCategoryList,
     List<BehaviourModel>? behaviourList,
     ApiResultStatus? getBehaviourApiResultStatus,
+    ApiResultStatus? addBehaviourApiResultStatus,
     UserModel? userModel,
     String? selectedBehaviour,
     String? tellUsMoreText,
-    String? tellUsMoreError,
     String? behaviourError,
   }) {
     emit(
       state.copyWith(
+        behaviourCategoryList:
+            behaviourCategoryList ?? state.behaviourCategoryList,
         behaviourList: behaviourList ?? state.behaviourList,
         tellUsMoreText: tellUsMoreText ?? state.tellUsMoreText,
         selectedBehaviour: selectedBehaviour ?? state.selectedBehaviour,
         userModel: userModel ?? state.userModel,
-        tellUsMoreError: tellUsMoreError ?? state.tellUsMoreError,
         behaviourError: behaviourError ?? state.behaviourError,
+        addBehaviourApiResultStatus:
+            addBehaviourApiResultStatus ?? ApiResultStatus.initial(),
         getBehaviourApiResultStatus:
             getBehaviourApiResultStatus ?? ApiResultStatus.initial(),
       ),
@@ -40,26 +49,54 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
 
   Future<void> _getAllBehaviours() async {
     changeProps(getBehaviourApiResultStatus: ApiResultStatus.loading());
-    var apiResultStatus = await BehavioursRepo.instance.getAllBehaviours();
+    var apiResultStatus = await BehavioursRepo.instance
+        .getAllBehaviourCategories();
     changeProps(getBehaviourApiResultStatus: apiResultStatus);
     apiResultStatus.whenOrNull(
       data: (data) {
-        if (data is List<BehaviourModel>) {
-          changeProps(behaviourList: data);
+        if (data is List<BehaviourCategoryModel>) {
+          changeProps(behaviourCategoryList: data);
         }
       },
     );
   }
 
   bool _isValidate() {
+    if (state.selectedBehaviour.isEmpty) {
+      changeProps(behaviourError: LocaleKeys.pleaseSelectBehaviour.tr());
+      return false;
+    }
+    changeProps(behaviourError: "");
     return true;
   }
 
-
-
-  void logBehaviour() {
+  Future<void> logBehaviour() async {
     if (_isValidate()) {
+      changeProps(addBehaviourApiResultStatus: ApiResultStatus.loading());
+      var apiResultStatus = await BehavioursRepo.instance.addChildBehaviour(
+        id: state.userModel?.defaultChild?.id,
+        request: {
+          "behaviour": state.selectedBehaviour,
+          "note": state.tellUsMoreText,
+          "time_stamp": Timestamp.now(),
+        },
+      );
+      changeProps(addBehaviourApiResultStatus: apiResultStatus);
+    }
+  }
 
+  void _listenToBehaviours() {
+    if (state.userModel?.defaultChild != null) {
+      state.userModel?.defaultChild!
+          .collection("behaviours")
+          .snapshots()
+          .listen((event) {
+            changeProps(
+              behaviourList: event.docs
+                  .map((e) => BehaviourModel.fromJson(e.data()))
+                  .toList(),
+            );
+          });
     }
   }
 }

@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
 import '../generated/locale_keys.g.dart';
-import '../model/behaviour_model.dart';
+import '../model/behaviour_category_model.dart';
 
 class BehavioursRepo {
   BehavioursRepo._();
@@ -20,18 +20,41 @@ class BehavioursRepo {
     'behaviours',
   );
 
-  Future<ApiResultStatus> getAllBehaviours() async {
+  var childrenCollection = FirebaseFirestore.instance.collection('children');
+
+  Future<ApiResultStatus> getAllBehaviourCategories() async {
     try {
       var behaviours = await behavioursCollection.get();
       if (behaviours.docs.isNotEmpty) {
         return ApiResultStatus.data(
-          data: behaviours.docs.map((e) => BehaviourModel.fromJson(e)).toList(),
+          data: behaviours.docs.map((e) => BehaviourCategoryModel.fromJson(e)).toList(),
         );
       } else {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> addChildBehaviour({
+    required String? id,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var behaviours = await childrenCollection
+          .doc(id)
+          .collection("behaviours")
+          .add(request);
+      return ApiResultStatus.data(data: behaviours.id);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
