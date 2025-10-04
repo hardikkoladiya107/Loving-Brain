@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
         10.spaceW,
         Expanded(
           child: _thirdCardItem(
-            title: LocaleKeys.sleep.tr(),
+            title: LocaleKeys.familySync.tr(),
             asset: Assets.images.imgSleep,
             onTap: () {},
           ),

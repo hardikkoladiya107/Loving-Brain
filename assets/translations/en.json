@@ -134,11 +134,9 @@
   "markAsDone": "Mark as Done",
   "whatHappened": "What Happened?",
   "tellUsMore": "Tell us More ?",
-  "describeWhatHappenedWhenAndWhereAndHowRohanFelt": "Describe what happened, when, and where and how Rohan Felt? ....",
   "logBehavior": "Log Behavior",
   "selectBehavior": "Select a Behavior",
   "lovingBrainInsight": "Loving Brain Insight",
-  "getPersonalizedRecentLoggedBehaviors": "Get a personalized insight based on Rohan's recent logged behaviors.",
   "selectDateOfBirth": "Select date of birth",
   "enterChildName": "Enter child name",
   "selectRelationship": "Select relationship",
@@ -231,7 +229,18 @@
   "areYouSureToDeleteChat": "Are you sure you want to delete this chat?",
   "chatDeleted": "Chat Deleted!",
   "pleaseSelectBehaviour": "Please select behaviour",
-  "behaviourLogged": "Behaviour Logged"
+  "behaviourLogged": "Behaviour Logged",
+  "logNewBehaviorFor": "Log New Behavior for",
+  "getAIInsightFor": "Get AI Insight for",
+  "recentMoments": "Recent Moments",
+  "pleaseSelectTime": "Please select time",
+  "pleaseEnterDescription": "Please enter description",
+  "pleaseSelectType": "Please select type",
+  "selectTime": "--- Select Time ---",
+  "selectType": "--- Select Type ---",
+  "enterDescription": "Enter description",
+  "familySync": "Family Sync",
+  "routineAddedSuccessfully": "Routine added successfully"
 
 
 

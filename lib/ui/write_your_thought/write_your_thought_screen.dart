@@ -15,6 +15,7 @@ import '../../model/journal_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
 import '../../other/snack_bar.dart';
+import '../chat_detail/chat_detail_screen.dart';
 import '../thought_list/thought_list_scren.dart';
 import 'bloc/write_your_thought_cubit.dart';
 import 'bloc/write_your_thought_state.dart';
@@ -103,7 +104,19 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                             ),
                           ),
                           BaseButton(
-                            onTap: () {},
+                            onTap: () {
+                              if (context
+                                  .read<WriteYourThoughtCubit>()
+                                  .isValidate()) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatDetailScreen(
+                                      initialChat: state.thoughtsText,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                             child: Container(
                               width: 150.w,
                               height: 40.h,
@@ -123,7 +136,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                         ],
                       ).appPadding(left: 20, right: 20),
 
-                      if(state.journalList.isNotEmpty)...[
+                      if (state.journalList.isNotEmpty) ...[
                         16.spaceH,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,7 +154,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                    const ThoughtListScreen(),
+                                        const ThoughtListScreen(),
                                   ),
                                 );
                               },
@@ -162,7 +175,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                             ).appPadding(bottom: 10);
                           },
                         ),
-                      ]
+                      ],
                     ],
                   ),
                 ],

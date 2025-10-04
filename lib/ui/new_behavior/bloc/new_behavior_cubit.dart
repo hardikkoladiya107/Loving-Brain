@@ -88,7 +88,7 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
   void _listenToBehaviours() {
     if (state.userModel?.defaultChild != null) {
       state.userModel?.defaultChild!
-          .collection("behaviours")
+          .collection("behaviours").orderBy("time_stamp",descending: true)
           .snapshots()
           .listen((event) {
             changeProps(

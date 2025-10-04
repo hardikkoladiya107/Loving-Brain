@@ -136,11 +136,9 @@ abstract class  LocaleKeys {
   static const markAsDone = 'markAsDone';
   static const whatHappened = 'whatHappened';
   static const tellUsMore = 'tellUsMore';
-  static const describeWhatHappenedWhenAndWhereAndHowRohanFelt = 'describeWhatHappenedWhenAndWhereAndHowRohanFelt';
   static const logBehavior = 'logBehavior';
   static const selectBehavior = 'selectBehavior';
   static const lovingBrainInsight = 'lovingBrainInsight';
-  static const getPersonalizedRecentLoggedBehaviors = 'getPersonalizedRecentLoggedBehaviors';
   static const selectDateOfBirth = 'selectDateOfBirth';
   static const enterChildName = 'enterChildName';
   static const selectRelationship = 'selectRelationship';
@@ -230,5 +228,16 @@ abstract class  LocaleKeys {
   static const chatDeleted = 'chatDeleted';
   static const pleaseSelectBehaviour = 'pleaseSelectBehaviour';
   static const behaviourLogged = 'behaviourLogged';
+  static const logNewBehaviorFor = 'logNewBehaviorFor';
+  static const getAIInsightFor = 'getAIInsightFor';
+  static const recentMoments = 'recentMoments';
+  static const pleaseSelectTime = 'pleaseSelectTime';
+  static const pleaseEnterDescription = 'pleaseEnterDescription';
+  static const pleaseSelectType = 'pleaseSelectType';
+  static const selectTime = 'selectTime';
+  static const selectType = 'selectType';
+  static const enterDescription = 'enterDescription';
+  static const familySync = 'familySync';
+  static const routineAddedSuccessfully = 'routineAddedSuccessfully';
 
 }

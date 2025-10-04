@@ -8,7 +8,6 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
-
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
@@ -47,14 +46,12 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
         return Scaffold(
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
-
             child: Stack(
               children: [
                 Assets.images.icNewBehaviorBg.image(
                   height: context.height,
                   width: context.width,
                 ),
-
                 Column(
                   children: [
                     60.spaceH,
@@ -80,7 +77,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                             children: [
                               Expanded(
                                 child:
-                                    "Log New Behavior for ${state.userModel?.childName ?? ""}"
+                                    "${LocaleKeys.logNewBehaviorFor.tr()} ${state.userModel?.childName ?? ""}"
                                         .appText(
                                           fontWeight: FontWeight.w800,
                                           fontSize: 13,
@@ -96,7 +93,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                           12.spaceH,
                           _selectBehavior(state),
                           12.spaceH,
-                          _tellUsMore(),
+                          _tellUsMore(state),
                           12.spaceH,
                           _logBehaviorButton(),
                           12.spaceH,
@@ -104,7 +101,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                       ).appPadding(left: 30, right: 30),
                     ).appPadding(left: 30, right: 30),
                     20.spaceH,
-                    _lovingBrainInsight(),
+                    _lovingBrainInsight(state),
                     20.spaceH,
                     _childRecentMoments(state),
                   ],
@@ -134,7 +131,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
     );
   }
 
-  Widget _lovingBrainInsight() {
+  Widget _lovingBrainInsight(NewBehaviorState state) {
     return Container(
       decoration: BoxDecoration(
         color: buttonColor2,
@@ -162,19 +159,18 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
             ],
           ).appPadding(left: 20, right: 20),
           8.spaceH,
-          LocaleKeys.getPersonalizedRecentLoggedBehaviors
-              .tr()
+          "Get a personalized insight based on ${state.userModel?.parentName}'s recent logged behaviors."
               .appText(textAlign: TextAlign.start, fontSize: 14)
               .appPadding(left: 20, right: 20),
           15.spaceH,
-          _getAIInsightForChildButton(),
+          _getAIInsightForChildButton(state),
           15.spaceH,
         ],
       ),
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget _getAIInsightForChildButton() {
+  Widget _getAIInsightForChildButton(NewBehaviorState state) {
     return BaseButton(
       child: Container(
         decoration: BoxDecoration(
@@ -184,9 +180,10 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            "Get AI Insight for Rohan".appText(
+            "${LocaleKeys.getAIInsightFor.tr()} ${state.userModel?.childName}".appText(
               fontWeight: FontWeight.w600,
               color: Colors.white,
+              maxLines: 1
             ),
           ],
         ).appPadding(top: 8, bottom: 8),
@@ -332,7 +329,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(),
-        "Rohan’s Recent Moments".appText(fontWeight: FontWeight.w700),
+        "${state.userModel?.childName}’s ${LocaleKeys.recentMoments.tr()}".appText(fontWeight: FontWeight.w700),
         10.spaceH,
         ListView.builder(
           itemCount: state.behaviourList.length,
@@ -457,12 +454,12 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
     );
   }
 
-  Widget _tellUsMore() {
+  Widget _tellUsMore(NewBehaviorState state) {
     return AppTextField(
       controller: tellUsMoreController,
       fillColor: aiQuestionCardColor2,
       title: LocaleKeys.tellUsMore.tr(),
-      hint: LocaleKeys.describeWhatHappenedWhenAndWhereAndHowRohanFelt.tr(),
+      hint: "Describe what happened, when, and where and how ${state.userModel?.childName} Felt? ....",
       maxLines: 4,
         contentPadding : EdgeInsets.symmetric(horizontal: 12,vertical: 6),
       onChanged: (value) {

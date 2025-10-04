@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailyRoutineState {
 
- String get message;
+ UserModel? get userModel; DateTime? get selectedDateTime; String get descriptionText; String get selectedType; String get timeError; String get descriptionError; String get typeError; ApiResultStatus get getRoutineTypeApiResult; ApiResultStatus get addRoutineApiResult; List<RoutineCategoryModel> get routineCategoryList; List<RoutineModel> get routinesList;
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DailyRoutineStateCopyWith<DailyRoutineState> get copyWith => _$DailyRoutineStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyRoutineState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyRoutineState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.selectedDateTime, selectedDateTime) || other.selectedDateTime == selectedDateTime)&&(identical(other.descriptionText, descriptionText) || other.descriptionText == descriptionText)&&(identical(other.selectedType, selectedType) || other.selectedType == selectedType)&&(identical(other.timeError, timeError) || other.timeError == timeError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.typeError, typeError) || other.typeError == typeError)&&(identical(other.getRoutineTypeApiResult, getRoutineTypeApiResult) || other.getRoutineTypeApiResult == getRoutineTypeApiResult)&&(identical(other.addRoutineApiResult, addRoutineApiResult) || other.addRoutineApiResult == addRoutineApiResult)&&const DeepCollectionEquality().equals(other.routineCategoryList, routineCategoryList)&&const DeepCollectionEquality().equals(other.routinesList, routinesList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,userModel,selectedDateTime,descriptionText,selectedType,timeError,descriptionError,typeError,getRoutineTypeApiResult,addRoutineApiResult,const DeepCollectionEquality().hash(routineCategoryList),const DeepCollectionEquality().hash(routinesList));
 
 @override
 String toString() {
-  return 'DailyRoutineState(message: $message)';
+  return 'DailyRoutineState(userModel: $userModel, selectedDateTime: $selectedDateTime, descriptionText: $descriptionText, selectedType: $selectedType, timeError: $timeError, descriptionError: $descriptionError, typeError: $typeError, getRoutineTypeApiResult: $getRoutineTypeApiResult, addRoutineApiResult: $addRoutineApiResult, routineCategoryList: $routineCategoryList, routinesList: $routinesList)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $DailyRoutineStateCopyWith<$Res>  {
   factory $DailyRoutineStateCopyWith(DailyRoutineState value, $Res Function(DailyRoutineState) _then) = _$DailyRoutineStateCopyWithImpl;
 @useResult
 $Res call({
- String message
+ UserModel? userModel, DateTime? selectedDateTime, String descriptionText, String selectedType, String timeError, String descriptionError, String typeError, ApiResultStatus getRoutineTypeApiResult, ApiResultStatus addRoutineApiResult, List<RoutineCategoryModel> routineCategoryList, List<RoutineModel> routinesList
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get getRoutineTypeApiResult;$ApiResultStatusCopyWith<dynamic, $Res> get addRoutineApiResult;
 
 }
 /// @nodoc
@@ -62,13 +62,41 @@ class _$DailyRoutineStateCopyWithImpl<$Res>
 
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? selectedDateTime = freezed,Object? descriptionText = null,Object? selectedType = null,Object? timeError = null,Object? descriptionError = null,Object? typeError = null,Object? getRoutineTypeApiResult = null,Object? addRoutineApiResult = null,Object? routineCategoryList = null,Object? routinesList = null,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,selectedDateTime: freezed == selectedDateTime ? _self.selectedDateTime : selectedDateTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,descriptionText: null == descriptionText ? _self.descriptionText : descriptionText // ignore: cast_nullable_to_non_nullable
+as String,selectedType: null == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
+as String,timeError: null == timeError ? _self.timeError : timeError // ignore: cast_nullable_to_non_nullable
+as String,descriptionError: null == descriptionError ? _self.descriptionError : descriptionError // ignore: cast_nullable_to_non_nullable
+as String,typeError: null == typeError ? _self.typeError : typeError // ignore: cast_nullable_to_non_nullable
+as String,getRoutineTypeApiResult: null == getRoutineTypeApiResult ? _self.getRoutineTypeApiResult : getRoutineTypeApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,addRoutineApiResult: null == addRoutineApiResult ? _self.addRoutineApiResult : addRoutineApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,routineCategoryList: null == routineCategoryList ? _self.routineCategoryList : routineCategoryList // ignore: cast_nullable_to_non_nullable
+as List<RoutineCategoryModel>,routinesList: null == routinesList ? _self.routinesList : routinesList // ignore: cast_nullable_to_non_nullable
+as List<RoutineModel>,
   ));
 }
-
+/// Create a copy of DailyRoutineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getRoutineTypeApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getRoutineTypeApiResult, (value) {
+    return _then(_self.copyWith(getRoutineTypeApiResult: value));
+  });
+}/// Create a copy of DailyRoutineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get addRoutineApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.addRoutineApiResult, (value) {
+    return _then(_self.copyWith(addRoutineApiResult: value));
+  });
+}
 }
 
 
@@ -150,10 +178,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DailyRoutineState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
   return orElse();
 
 }
@@ -171,10 +199,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)  $default,) {final _that = this;
 switch (_that) {
 case _DailyRoutineState():
-return $default(_that.message);case _:
+return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +219,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)?  $default,) {final _that = this;
 switch (_that) {
 case _DailyRoutineState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
   return null;
 
 }
@@ -206,10 +234,32 @@ return $default(_that.message);case _:
 
 
 class _DailyRoutineState implements DailyRoutineState {
-  const _DailyRoutineState({this.message = "message"});
+  const _DailyRoutineState({this.userModel, this.selectedDateTime, this.descriptionText = "", this.selectedType = "", this.timeError = "", this.descriptionError = "", this.typeError = "", this.getRoutineTypeApiResult = const ApiResultStatus.initial(), this.addRoutineApiResult = const ApiResultStatus.initial(), final  List<RoutineCategoryModel> routineCategoryList = const [], final  List<RoutineModel> routinesList = const []}): _routineCategoryList = routineCategoryList,_routinesList = routinesList;
   
 
-@override@JsonKey() final  String message;
+@override final  UserModel? userModel;
+@override final  DateTime? selectedDateTime;
+@override@JsonKey() final  String descriptionText;
+@override@JsonKey() final  String selectedType;
+@override@JsonKey() final  String timeError;
+@override@JsonKey() final  String descriptionError;
+@override@JsonKey() final  String typeError;
+@override@JsonKey() final  ApiResultStatus getRoutineTypeApiResult;
+@override@JsonKey() final  ApiResultStatus addRoutineApiResult;
+ final  List<RoutineCategoryModel> _routineCategoryList;
+@override@JsonKey() List<RoutineCategoryModel> get routineCategoryList {
+  if (_routineCategoryList is EqualUnmodifiableListView) return _routineCategoryList;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_routineCategoryList);
+}
+
+ final  List<RoutineModel> _routinesList;
+@override@JsonKey() List<RoutineModel> get routinesList {
+  if (_routinesList is EqualUnmodifiableListView) return _routinesList;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_routinesList);
+}
+
 
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +271,16 @@ _$DailyRoutineStateCopyWith<_DailyRoutineState> get copyWith => __$DailyRoutineS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyRoutineState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyRoutineState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.selectedDateTime, selectedDateTime) || other.selectedDateTime == selectedDateTime)&&(identical(other.descriptionText, descriptionText) || other.descriptionText == descriptionText)&&(identical(other.selectedType, selectedType) || other.selectedType == selectedType)&&(identical(other.timeError, timeError) || other.timeError == timeError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.typeError, typeError) || other.typeError == typeError)&&(identical(other.getRoutineTypeApiResult, getRoutineTypeApiResult) || other.getRoutineTypeApiResult == getRoutineTypeApiResult)&&(identical(other.addRoutineApiResult, addRoutineApiResult) || other.addRoutineApiResult == addRoutineApiResult)&&const DeepCollectionEquality().equals(other._routineCategoryList, _routineCategoryList)&&const DeepCollectionEquality().equals(other._routinesList, _routinesList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,userModel,selectedDateTime,descriptionText,selectedType,timeError,descriptionError,typeError,getRoutineTypeApiResult,addRoutineApiResult,const DeepCollectionEquality().hash(_routineCategoryList),const DeepCollectionEquality().hash(_routinesList));
 
 @override
 String toString() {
-  return 'DailyRoutineState(message: $message)';
+  return 'DailyRoutineState(userModel: $userModel, selectedDateTime: $selectedDateTime, descriptionText: $descriptionText, selectedType: $selectedType, timeError: $timeError, descriptionError: $descriptionError, typeError: $typeError, getRoutineTypeApiResult: $getRoutineTypeApiResult, addRoutineApiResult: $addRoutineApiResult, routineCategoryList: $routineCategoryList, routinesList: $routinesList)';
 }
 
 
@@ -241,11 +291,11 @@ abstract mixin class _$DailyRoutineStateCopyWith<$Res> implements $DailyRoutineS
   factory _$DailyRoutineStateCopyWith(_DailyRoutineState value, $Res Function(_DailyRoutineState) _then) = __$DailyRoutineStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ UserModel? userModel, DateTime? selectedDateTime, String descriptionText, String selectedType, String timeError, String descriptionError, String typeError, ApiResultStatus getRoutineTypeApiResult, ApiResultStatus addRoutineApiResult, List<RoutineCategoryModel> routineCategoryList, List<RoutineModel> routinesList
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get getRoutineTypeApiResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get addRoutineApiResult;
 
 }
 /// @nodoc
@@ -258,14 +308,42 @@ class __$DailyRoutineStateCopyWithImpl<$Res>
 
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,Object? selectedDateTime = freezed,Object? descriptionText = null,Object? selectedType = null,Object? timeError = null,Object? descriptionError = null,Object? typeError = null,Object? getRoutineTypeApiResult = null,Object? addRoutineApiResult = null,Object? routineCategoryList = null,Object? routinesList = null,}) {
   return _then(_DailyRoutineState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,selectedDateTime: freezed == selectedDateTime ? _self.selectedDateTime : selectedDateTime // ignore: cast_nullable_to_non_nullable
+as DateTime?,descriptionText: null == descriptionText ? _self.descriptionText : descriptionText // ignore: cast_nullable_to_non_nullable
+as String,selectedType: null == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
+as String,timeError: null == timeError ? _self.timeError : timeError // ignore: cast_nullable_to_non_nullable
+as String,descriptionError: null == descriptionError ? _self.descriptionError : descriptionError // ignore: cast_nullable_to_non_nullable
+as String,typeError: null == typeError ? _self.typeError : typeError // ignore: cast_nullable_to_non_nullable
+as String,getRoutineTypeApiResult: null == getRoutineTypeApiResult ? _self.getRoutineTypeApiResult : getRoutineTypeApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,addRoutineApiResult: null == addRoutineApiResult ? _self.addRoutineApiResult : addRoutineApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,routineCategoryList: null == routineCategoryList ? _self._routineCategoryList : routineCategoryList // ignore: cast_nullable_to_non_nullable
+as List<RoutineCategoryModel>,routinesList: null == routinesList ? _self._routinesList : routinesList // ignore: cast_nullable_to_non_nullable
+as List<RoutineModel>,
   ));
 }
 
-
+/// Create a copy of DailyRoutineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getRoutineTypeApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getRoutineTypeApiResult, (value) {
+    return _then(_self.copyWith(getRoutineTypeApiResult: value));
+  });
+}/// Create a copy of DailyRoutineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get addRoutineApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.addRoutineApiResult, (value) {
+    return _then(_self.copyWith(addRoutineApiResult: value));
+  });
+}
 }
 
 // dart format on

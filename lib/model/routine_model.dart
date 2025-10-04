@@ -1,18 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class BehaviourModel {
-  BehaviourModel({String? behaviour, String? note, DateTime? timeStamp}) {
-    _behaviour = behaviour;
-    _note = note;
+class RoutineModel {
+  RoutineModel({DateTime? timeStamp, String? description, String? type}) {
     _timeStamp = timeStamp;
+    _description = description;
+    _type = type;
   }
 
-  BehaviourModel.fromJson(
+  RoutineModel.fromJson(
     Map<String, dynamic> jsonObject, {
     bool fromConvert = false,
   }) {
-    _behaviour = jsonObject['behaviour'];
-    _note = jsonObject['note'];
+    _description = jsonObject['description'];
+    _type = jsonObject['type'];
     try {
       if (fromConvert) {
         if (jsonObject['time_stamp'] != null) {
@@ -28,33 +28,30 @@ class BehaviourModel {
     }
   }
 
-  String? _behaviour;
-  String? _note;
   DateTime? _timeStamp;
+  String? _description;
+  String? _type;
 
-  BehaviourModel copyWith({
-    String? behaviour,
-    String? note,
+  RoutineModel copyWith({
     DateTime? timeStamp,
-  }) => BehaviourModel(
-    behaviour: behaviour ?? _behaviour,
-    note: note ?? _note,
+    String? description,
+    String? type,
+  }) => RoutineModel(
     timeStamp: timeStamp ?? _timeStamp,
+    description: description ?? _description,
+    type: type ?? _type,
   );
-
-  String? get behaviour => _behaviour;
-
-  String? get note => _note;
 
   DateTime? get timeStamp => _timeStamp;
 
-  Map<String, dynamic> toJson({
-    bool forConvert = false,
+  String? get description => _description;
 
-  }) {
+  String? get type => _type;
+
+  Map<String, dynamic> toJson({bool forConvert = false}) {
     final map = <String, dynamic>{};
-    map['behaviour'] = _behaviour;
-    map['note'] = _note;
+    map['description'] = _description;
+    map['type'] = _type;
     try {
       if (forConvert) {
         if (_timeStamp != null) {

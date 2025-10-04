@@ -62,7 +62,7 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
   }
 
   Future<void> logThought() async {
-    if (_isValidate()) {
+    if (isValidate()) {
       changeProps(apiResultStatus: ApiResultStatus.loading());
       var apiResultStatus = await MoodRepo.instance.addJournal(
         request: {
@@ -74,7 +74,7 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
     }
   }
 
-  bool _isValidate() {
+  bool isValidate() {
     if (state.thoughtsText.isEmpty) {
       changeProps(thoughtsErrorText: LocaleKeys.pleaseEnterYourThoughts.tr());
       return false;
@@ -82,4 +82,6 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
     changeProps(thoughtsErrorText: "");
     return true;
   }
+
+
 }
