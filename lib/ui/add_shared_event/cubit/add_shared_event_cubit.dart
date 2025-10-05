@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 
+import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
 import '../../../other/preferances.dart';
 import 'add_shared_event_state.dart';
@@ -31,10 +34,14 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
     ApiResultStatus? requestApprovalApiResultStatus,
     ApiResultStatus? getChildApiResultStatus,
     ApiResultStatus? getCoParentApiResultStatus,
+    String? locationText,
+    String? locationError,
   }) {
     emit(
       state.copyWith(
         title: title ?? state.title,
+        locationText: locationText ?? state.locationText,
+        locationError: locationError ?? state.locationError,
         note: note ?? state.note,
         selectedDate: selectedDate ?? state.selectedDate,
         startTime: startTime ?? state.startTime,
@@ -50,35 +57,80 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
         selectedChildError: selectedChildError ?? state.selectedChildError,
         assignedToError: assignedToError ?? state.assignedToError,
         requestApprovalApiResultStatus:
-            requestApprovalApiResultStatus ??
-            state.requestApprovalApiResultStatus,
+            requestApprovalApiResultStatus ?? ApiResultStatus.initial(),
         getChildApiResultStatus:
-            getChildApiResultStatus ?? state.getChildApiResultStatus,
+            getChildApiResultStatus ?? ApiResultStatus.initial(),
         getCoParentApiResultStatus:
-            getCoParentApiResultStatus ?? state.getCoParentApiResultStatus,
+            getCoParentApiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
 
   bool isValidate() {
-    return false;
+    if (state.title.isEmpty ||
+        state.selectedDate == null ||
+        state.startTime == null ||
+        state.endTime == null ||
+        state.locationText.isEmpty ||
+        state.selectedChild.isEmpty ||
+        state.assignedTo.isEmpty) {
+      if (state.title.isEmpty) {
+        changeProps(titleError: LocaleKeys.pleaseEnterTitle.tr());
+      } else {
+        changeProps(titleError: "");
+      }
+      if (state.selectedDate == null) {
+        changeProps(dateError: LocaleKeys.pleaseSelectDate.tr());
+      } else {
+        changeProps(dateError: "");
+      }
+      if (state.startTime == null) {
+        changeProps(startTimeError: LocaleKeys.pleaseSelectStartTime.tr());
+      } else {
+        changeProps(startTimeError: "");
+      }
+      if (state.endTime == null) {
+        changeProps(endTimeError: LocaleKeys.pleaseSelectEndTime.tr());
+      } else {
+        changeProps(endTimeError: "");
+      }
+      if (state.locationText.isEmpty) {
+        changeProps(locationText: LocaleKeys.pleaseEnterLocation.tr());
+      } else {
+        changeProps(locationError: "");
+      }
+      if (state.selectedChild.isEmpty) {
+        changeProps(selectedChild: LocaleKeys.pleaseChooseChild.tr());
+      } else {
+        changeProps(selectedChildError: "");
+      }
+      if (state.assignedTo.isEmpty) {
+        changeProps(assignedTo: LocaleKeys.pleaseChooseAssignedTo.tr());
+      } else {
+        changeProps(assignedToError: "");
+      }
+      return false;
+    }
+    return true;
   }
 
   Future<void> requestApproval() async {
     if (isValidate()) {
+      changeProps(requestApprovalApiResultStatus: ApiResultStatus.loading());
       var apiResult = await CoParentRepo.instance.addSharedEvent(
         request: {
           "created_by": state.userModel?.uid,
           "assigned_to": "",
           "children": "",
-          "note": "",
-          "title": "",
-          "date": "",
-          "start_time": "",
-          "end_time": "",
-          "location": "",
+          "note": state.note,
+          "title": state.title,
+          "date": Timestamp.fromDate(state.selectedDate!),
+          "start_time": Timestamp.fromDate(state.startTime!),
+          "end_time": Timestamp.fromDate(state.endTime!),
+          "location": state.locationText,
         },
       );
+      changeProps(requestApprovalApiResultStatus: apiResult);
     }
   }
 }

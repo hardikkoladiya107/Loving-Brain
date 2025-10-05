@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/model/child_model.dart';
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
 import '../model/routine_category_model.dart';
@@ -46,8 +47,6 @@ class ChildRepo {
     }
   }
 
-
-
   Future<ApiResultStatus> addRoutine({
     required String? id,
     required Map<String, dynamic> request,
@@ -58,6 +57,28 @@ class ChildRepo {
           .collection("routines")
           .add(request);
       return ApiResultStatus.data(data: behaviours.id);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> getChildren({
+    required List<String> childrenIds,
+
+  }) async {
+    try {
+      var childrenResponse = await childrenCollection
+          .where(FieldPath.documentId, whereIn: childrenIds)
+          .get();
+      return ApiResultStatus.data(
+        data: childrenResponse.docs.map((e) => ChildModel.fromJson(e.data())),
+      );
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

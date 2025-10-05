@@ -21,10 +21,38 @@ class AddSharedEventScreen extends StatefulWidget {
 }
 
 class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
+
+
+  TextEditingController titleController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddSharedEventCubit, AddSharedEventState>(
       builder: (context, state) {
+
+        if (titleController.text != state.title) {
+          titleController.value = titleController.value.copyWith(
+            text: state.title ?? '',
+            selection: titleController.selection,
+          );
+        }
+
+        if (locationController.text != state.locationText) {
+          locationController.value = locationController.value.copyWith(
+            text: state.locationText ?? '',
+            selection: locationController.selection,
+          );
+        }
+
+        if (noteController.text != state.title) {
+          noteController.value = noteController.value.copyWith(
+            text: state.note ?? '',
+            selection: noteController.selection,
+          );
+        }
+
+
         return Scaffold(
           backgroundColor: addSharedEventBgColor,
           body: SingleChildScrollView(
@@ -50,20 +78,20 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                       fontSize: 18,
                     ),
                     20.h.spaceH,
-                    _titleTextField(),
+                    _titleTextField(state),
                     4.h.spaceH,
                     _schoolPickUp(),
                     20.h.spaceH,
                     _startEnd(),
                     20.h.spaceH,
-                    _location(),
+                    _location(state),
                     _children(),
                     10.h.spaceH,
                     _assignedTo(),
                     10.h.spaceH,
-                    _requireApproval(),
+                    _requireApproval(state),
                     10.h.spaceH,
-                    _note(),
+                    _note(state),
                     _attachDocument(),
                     20.h.spaceH,
                     _button(),
@@ -108,9 +136,11 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
   }
 
   Widget accessCard({
+    required bool switchValue,
     required bool isRequired,
     required String title,
     required String description,
+    required ValueChanged<bool> onChanged,
     bool showSwitch = true,
   }) {
     return Container(
@@ -145,7 +175,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           if (showSwitch)
             Transform.scale(
               scale: 0.7,
-              child: Switch(value: true, onChanged: (value) {}),
+              child: Switch(value: switchValue, onChanged: onChanged),
             ),
         ],
       ).appPadding(all: 10),
@@ -198,10 +228,15 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _titleTextField() {
+  Widget _titleTextField(AddSharedEventState state) {
     return AppTextField(
       title: LocaleKeys.title.tr(),
       hint: LocaleKeys.schoolPickUp.tr(),
+      error: state.titleError,
+      controller: titleController,
+      onChanged: (value) {
+        context.read<AddSharedEventCubit>().changeProps(title: value);
+      },
     );
   }
 
@@ -331,7 +366,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _location() {
+  Widget _location(AddSharedEventState state) {
     return AppTextField(
       title: LocaleKeys.location.tr(),
       hint: LocaleKeys.locationHint.tr(),
@@ -344,6 +379,11 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
               .padding(left: 8),
         ],
       ),
+      error: state.locationError,
+      controller: locationController,
+      onChanged: (value) {
+        context.read<AddSharedEventCubit>().changeProps(locationText: value);
+      },
     );
   }
 
@@ -395,11 +435,16 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _note() {
+  Widget _note(AddSharedEventState state) {
     return AppTextField(
       title: LocaleKeys.noteToCoParent.tr(),
       hint: LocaleKeys.anythingTheyShouldKnow.tr(),
       minLines: 5,
+      controller: noteController,
+      error: state.noteError,
+      onChanged: (value) {
+        context.read<AddSharedEventCubit>().changeProps(note: value);
+      },
     );
   }
 
@@ -412,11 +457,17 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _requireApproval() {
+  Widget _requireApproval(AddSharedEventState state) {
     return accessCard(
       isRequired: false,
       title: LocaleKeys.requireApproval.tr(),
       description: LocaleKeys.sendToCoParentForConfirmation.tr(),
+      onChanged: (value) {
+        context.read<AddSharedEventCubit>().changeProps(
+          requiredApproval: value,
+        );
+      },
+      switchValue: state.requiredApproval,
     );
   }
 

@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import '../../gen/assets.gen.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../widget/base_button.dart';
 import 'bloc/link_co_parent_cubit.dart';
@@ -16,16 +18,13 @@ class LinkCoParentScreen extends StatefulWidget {
   State<LinkCoParentScreen> createState() => _LinkCoParentScreenState();
 }
 
-class _LinkCoParentScreenState extends State<LinkCoParentScreen>
-    with SingleTickerProviderStateMixin {
-
-  late TabController _tabController;
-
+class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<LinkCoParentCubit>().init();
+    });
     super.initState();
-    context.read<LinkCoParentCubit>().init();
-    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -58,7 +57,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
                     32.h.spaceH,
                     _whatTheyllhaveAccessTo(),
                     32.h.spaceH,
-                    _sendInvite(text: 'Send Invite', onTap: () {}),
+                    _sendInvite(text: LocaleKeys.sendInvite.tr(), onTap: () {}),
                     12.h.spaceH,
                     _inviteDescriptionText(),
                     32.h.spaceH,
@@ -113,7 +112,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
           },
         ),
         12.w.spaceW,
-        "Link co‐parent".appText(fontWeight: FontWeight.w700),
+        LocaleKeys.linkCoParent.tr().appText(fontWeight: FontWeight.w700),
       ],
     ).appPadding(left: 20);
   }
@@ -143,7 +142,10 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
                     Column(),
                     Icon(Icons.email_outlined, size: 20),
                     8.spaceW,
-                    "Email".appText(fontWeight: FontWeight.w700, fontSize: 12),
+                    LocaleKeys.email.tr().appText(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
                   ],
                 ),
               ),
@@ -170,7 +172,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
                     Column(),
                     Icon(Icons.link, size: 24),
                     8.spaceW,
-                    "Invite Link".appText(
+                    LocaleKeys.inviteLink.tr().appText(
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
                     ),
@@ -193,8 +195,8 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
     return AppTextField(
       filled: true,
       fillColor: fillTextfieldColor,
-      title: "Co‐parent’s email",
-      hint: "name@email.com",
+      title: LocaleKeys.coParentEmail.tr(),
+      hint: LocaleKeys.coParentEmailHint.tr(),
       hintStyle: getTextStyle(fontSize: 12),
     ).appPadding(left: 20.w, right: 20.w);
   }
@@ -203,7 +205,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        "Share for Which child ?".appText(
+        LocaleKeys.shareForWhichChild.tr().appText(
           fontWeight: FontWeight.w700,
           fontSize: 14,
         ),
@@ -236,19 +238,19 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
       children: [
         accessCard(
           isRequired: true,
-          title: 'Calendar & events',
-          description: 'Create, approve, and change shared events',
+          title: LocaleKeys.calendarEvents.tr(),
+          description: LocaleKeys.createApproveAndChangeSharedEvents.tr(),
         ),
         20.h.spaceH,
         accessCard(
           isRequired: false,
-          title: 'Child’s Essentials',
-          description: 'Medical notes, school contacts, allergies',
+          title: LocaleKeys.childEssentials.tr(),
+          description: LocaleKeys.medicalNotesSchoolContactsAllergies.tr(),
         ),
         20.h.spaceH,
         accessCard(
           isRequired: false,
-          title: 'Event attachment',
+          title: LocaleKeys.eventAttachment.tr(),
           description: '',
           showSwitch: false,
         ),
@@ -280,7 +282,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
                     title.appText(fontSize: 14, fontWeight: FontWeight.w700),
                     if (isRequired) ...[
                       16.spaceW,
-                      "* Required".appText(
+                      LocaleKeys.starRequired.tr().appText(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                       ),
@@ -302,7 +304,8 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen>
   }
 
   Widget _inviteDescriptionText() {
-    return "Once accepted, you’ll both see the same shared calendar."
+    return LocaleKeys.onceAcceptedyouSameSharedCalendar
+        .tr()
         .appText(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w700)
         .appPadding(left: 20.w, right: 20.w);
   }

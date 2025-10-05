@@ -1,15 +1,47 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/repo/child_repo.dart';
+import '../../../model/api_result_status.dart';
+import '../../../other/preferances.dart';
 import 'link_co_parent_state.dart';
 
 class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   LinkCoParentCubit() : super(LinkCoParentState());
 
-  void changeProps({String? selectedTab}) {
-    emit(state.copyWith(selectedTab: selectedTab ?? state.selectedTab));
+  void changeProps({
+    String? selectedTab,
+    ApiResultStatus? getApiResultStatus,
+    List<ChildModel>? children,
+  }) {
+    emit(
+      state.copyWith(
+        selectedTab: selectedTab ?? state.selectedTab,
+        children: children ?? state.children,
+        getApiResultStatus: getApiResultStatus ?? ApiResultStatus.initial(),
+      ),
+    );
   }
 
   void init() {
-    emit(LinkCoParentState());
+    emit(LinkCoParentState(userModel: preferences.getUserModel()));
+    _getMyChildren();
+  }
+
+  Future<void> _getMyChildren() async {
+    changeProps(getApiResultStatus: ApiResultStatus.loading());
+    var apiResults = await ChildRepo.instance.getChildren(
+      childrenIds: state.userModel?.children?.map((e) => e.id).toList() ?? [],
+    );
+    changeProps(getApiResultStatus: apiResults);
+    apiResults.whenOrNull(
+      data: (data) {
+        if (data is List<ChildModel>) {
+          changeProps(children: data);
+        }
+      },
+    );
   }
 }

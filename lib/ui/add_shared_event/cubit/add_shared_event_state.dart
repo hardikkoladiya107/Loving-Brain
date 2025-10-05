@@ -24,6 +24,8 @@ abstract class AddSharedEventState with _$AddSharedEventState {
     @Default(false) bool requiredApproval,
     @Default("") String selectedChildError,
     @Default("") String assignedToError,
+    @Default("") String locationText,
+    @Default("") String locationError,
     @Default(ApiResultStatus.initial()) ApiResultStatus requestApprovalApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getChildApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getCoParentApiResultStatus,

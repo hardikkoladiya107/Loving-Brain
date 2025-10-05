@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AddSharedEventState {
 
- UserModel? get userModel; String get title; String get note; DateTime? get selectedDate; DateTime? get startTime; DateTime? get endTime; String get selectedChild; String get assignedTo; String get titleError; String get noteError; String get dateError; String get startTimeError; String get endTimeError; bool get requiredApproval; String get selectedChildError; String get assignedToError; ApiResultStatus get requestApprovalApiResultStatus; ApiResultStatus get getChildApiResultStatus; ApiResultStatus get getCoParentApiResultStatus;
+ UserModel? get userModel; String get title; String get note; DateTime? get selectedDate; DateTime? get startTime; DateTime? get endTime; String get selectedChild; String get assignedTo; String get titleError; String get noteError; String get dateError; String get startTimeError; String get endTimeError; bool get requiredApproval; String get selectedChildError; String get assignedToError; String get locationText; String get locationError; ApiResultStatus get requestApprovalApiResultStatus; ApiResultStatus get getChildApiResultStatus; ApiResultStatus get getCoParentApiResultStatus;
 /// Create a copy of AddSharedEventState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AddSharedEventStateCopyWith<AddSharedEventState> get copyWith => _$AddSharedEve
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddSharedEventState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.assignedTo, assignedTo) || other.assignedTo == assignedTo)&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.noteError, noteError) || other.noteError == noteError)&&(identical(other.dateError, dateError) || other.dateError == dateError)&&(identical(other.startTimeError, startTimeError) || other.startTimeError == startTimeError)&&(identical(other.endTimeError, endTimeError) || other.endTimeError == endTimeError)&&(identical(other.requiredApproval, requiredApproval) || other.requiredApproval == requiredApproval)&&(identical(other.selectedChildError, selectedChildError) || other.selectedChildError == selectedChildError)&&(identical(other.assignedToError, assignedToError) || other.assignedToError == assignedToError)&&(identical(other.requestApprovalApiResultStatus, requestApprovalApiResultStatus) || other.requestApprovalApiResultStatus == requestApprovalApiResultStatus)&&(identical(other.getChildApiResultStatus, getChildApiResultStatus) || other.getChildApiResultStatus == getChildApiResultStatus)&&(identical(other.getCoParentApiResultStatus, getCoParentApiResultStatus) || other.getCoParentApiResultStatus == getCoParentApiResultStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddSharedEventState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.assignedTo, assignedTo) || other.assignedTo == assignedTo)&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.noteError, noteError) || other.noteError == noteError)&&(identical(other.dateError, dateError) || other.dateError == dateError)&&(identical(other.startTimeError, startTimeError) || other.startTimeError == startTimeError)&&(identical(other.endTimeError, endTimeError) || other.endTimeError == endTimeError)&&(identical(other.requiredApproval, requiredApproval) || other.requiredApproval == requiredApproval)&&(identical(other.selectedChildError, selectedChildError) || other.selectedChildError == selectedChildError)&&(identical(other.assignedToError, assignedToError) || other.assignedToError == assignedToError)&&(identical(other.locationText, locationText) || other.locationText == locationText)&&(identical(other.locationError, locationError) || other.locationError == locationError)&&(identical(other.requestApprovalApiResultStatus, requestApprovalApiResultStatus) || other.requestApprovalApiResultStatus == requestApprovalApiResultStatus)&&(identical(other.getChildApiResultStatus, getChildApiResultStatus) || other.getChildApiResultStatus == getChildApiResultStatus)&&(identical(other.getCoParentApiResultStatus, getCoParentApiResultStatus) || other.getCoParentApiResultStatus == getCoParentApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,userModel,title,note,selectedDate,startTime,endTime,selectedChild,assignedTo,titleError,noteError,dateError,startTimeError,endTimeError,requiredApproval,selectedChildError,assignedToError,requestApprovalApiResultStatus,getChildApiResultStatus,getCoParentApiResultStatus]);
+int get hashCode => Object.hashAll([runtimeType,userModel,title,note,selectedDate,startTime,endTime,selectedChild,assignedTo,titleError,noteError,dateError,startTimeError,endTimeError,requiredApproval,selectedChildError,assignedToError,locationText,locationError,requestApprovalApiResultStatus,getChildApiResultStatus,getCoParentApiResultStatus]);
 
 @override
 String toString() {
-  return 'AddSharedEventState(userModel: $userModel, title: $title, note: $note, selectedDate: $selectedDate, startTime: $startTime, endTime: $endTime, selectedChild: $selectedChild, assignedTo: $assignedTo, titleError: $titleError, noteError: $noteError, dateError: $dateError, startTimeError: $startTimeError, endTimeError: $endTimeError, requiredApproval: $requiredApproval, selectedChildError: $selectedChildError, assignedToError: $assignedToError, requestApprovalApiResultStatus: $requestApprovalApiResultStatus, getChildApiResultStatus: $getChildApiResultStatus, getCoParentApiResultStatus: $getCoParentApiResultStatus)';
+  return 'AddSharedEventState(userModel: $userModel, title: $title, note: $note, selectedDate: $selectedDate, startTime: $startTime, endTime: $endTime, selectedChild: $selectedChild, assignedTo: $assignedTo, titleError: $titleError, noteError: $noteError, dateError: $dateError, startTimeError: $startTimeError, endTimeError: $endTimeError, requiredApproval: $requiredApproval, selectedChildError: $selectedChildError, assignedToError: $assignedToError, locationText: $locationText, locationError: $locationError, requestApprovalApiResultStatus: $requestApprovalApiResultStatus, getChildApiResultStatus: $getChildApiResultStatus, getCoParentApiResultStatus: $getCoParentApiResultStatus)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AddSharedEventStateCopyWith<$Res>  {
   factory $AddSharedEventStateCopyWith(AddSharedEventState value, $Res Function(AddSharedEventState) _then) = _$AddSharedEventStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, String title, String note, DateTime? selectedDate, DateTime? startTime, DateTime? endTime, String selectedChild, String assignedTo, String titleError, String noteError, String dateError, String startTimeError, String endTimeError, bool requiredApproval, String selectedChildError, String assignedToError, ApiResultStatus requestApprovalApiResultStatus, ApiResultStatus getChildApiResultStatus, ApiResultStatus getCoParentApiResultStatus
+ UserModel? userModel, String title, String note, DateTime? selectedDate, DateTime? startTime, DateTime? endTime, String selectedChild, String assignedTo, String titleError, String noteError, String dateError, String startTimeError, String endTimeError, bool requiredApproval, String selectedChildError, String assignedToError, String locationText, String locationError, ApiResultStatus requestApprovalApiResultStatus, ApiResultStatus getChildApiResultStatus, ApiResultStatus getCoParentApiResultStatus
 });
 
 
@@ -62,7 +62,7 @@ class _$AddSharedEventStateCopyWithImpl<$Res>
 
 /// Create a copy of AddSharedEventState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? title = null,Object? note = null,Object? selectedDate = freezed,Object? startTime = freezed,Object? endTime = freezed,Object? selectedChild = null,Object? assignedTo = null,Object? titleError = null,Object? noteError = null,Object? dateError = null,Object? startTimeError = null,Object? endTimeError = null,Object? requiredApproval = null,Object? selectedChildError = null,Object? assignedToError = null,Object? requestApprovalApiResultStatus = null,Object? getChildApiResultStatus = null,Object? getCoParentApiResultStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? title = null,Object? note = null,Object? selectedDate = freezed,Object? startTime = freezed,Object? endTime = freezed,Object? selectedChild = null,Object? assignedTo = null,Object? titleError = null,Object? noteError = null,Object? dateError = null,Object? startTimeError = null,Object? endTimeError = null,Object? requiredApproval = null,Object? selectedChildError = null,Object? assignedToError = null,Object? locationText = null,Object? locationError = null,Object? requestApprovalApiResultStatus = null,Object? getChildApiResultStatus = null,Object? getCoParentApiResultStatus = null,}) {
   return _then(_self.copyWith(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -80,6 +80,8 @@ as String,endTimeError: null == endTimeError ? _self.endTimeError : endTimeError
 as String,requiredApproval: null == requiredApproval ? _self.requiredApproval : requiredApproval // ignore: cast_nullable_to_non_nullable
 as bool,selectedChildError: null == selectedChildError ? _self.selectedChildError : selectedChildError // ignore: cast_nullable_to_non_nullable
 as String,assignedToError: null == assignedToError ? _self.assignedToError : assignedToError // ignore: cast_nullable_to_non_nullable
+as String,locationText: null == locationText ? _self.locationText : locationText // ignore: cast_nullable_to_non_nullable
+as String,locationError: null == locationError ? _self.locationError : locationError // ignore: cast_nullable_to_non_nullable
 as String,requestApprovalApiResultStatus: null == requestApprovalApiResultStatus ? _self.requestApprovalApiResultStatus : requestApprovalApiResultStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,getChildApiResultStatus: null == getChildApiResultStatus ? _self.getChildApiResultStatus : getChildApiResultStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,getCoParentApiResultStatus: null == getCoParentApiResultStatus ? _self.getCoParentApiResultStatus : getCoParentApiResultStatus // ignore: cast_nullable_to_non_nullable
@@ -195,10 +197,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  String title,  String note,  DateTime? selectedDate,  DateTime? startTime,  DateTime? endTime,  String selectedChild,  String assignedTo,  String titleError,  String noteError,  String dateError,  String startTimeError,  String endTimeError,  bool requiredApproval,  String selectedChildError,  String assignedToError,  ApiResultStatus requestApprovalApiResultStatus,  ApiResultStatus getChildApiResultStatus,  ApiResultStatus getCoParentApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  String title,  String note,  DateTime? selectedDate,  DateTime? startTime,  DateTime? endTime,  String selectedChild,  String assignedTo,  String titleError,  String noteError,  String dateError,  String startTimeError,  String endTimeError,  bool requiredApproval,  String selectedChildError,  String assignedToError,  String locationText,  String locationError,  ApiResultStatus requestApprovalApiResultStatus,  ApiResultStatus getChildApiResultStatus,  ApiResultStatus getCoParentApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AddSharedEventState() when $default != null:
-return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.startTime,_that.endTime,_that.selectedChild,_that.assignedTo,_that.titleError,_that.noteError,_that.dateError,_that.startTimeError,_that.endTimeError,_that.requiredApproval,_that.selectedChildError,_that.assignedToError,_that.requestApprovalApiResultStatus,_that.getChildApiResultStatus,_that.getCoParentApiResultStatus);case _:
+return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.startTime,_that.endTime,_that.selectedChild,_that.assignedTo,_that.titleError,_that.noteError,_that.dateError,_that.startTimeError,_that.endTimeError,_that.requiredApproval,_that.selectedChildError,_that.assignedToError,_that.locationText,_that.locationError,_that.requestApprovalApiResultStatus,_that.getChildApiResultStatus,_that.getCoParentApiResultStatus);case _:
   return orElse();
 
 }
@@ -216,10 +218,10 @@ return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  String title,  String note,  DateTime? selectedDate,  DateTime? startTime,  DateTime? endTime,  String selectedChild,  String assignedTo,  String titleError,  String noteError,  String dateError,  String startTimeError,  String endTimeError,  bool requiredApproval,  String selectedChildError,  String assignedToError,  ApiResultStatus requestApprovalApiResultStatus,  ApiResultStatus getChildApiResultStatus,  ApiResultStatus getCoParentApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  String title,  String note,  DateTime? selectedDate,  DateTime? startTime,  DateTime? endTime,  String selectedChild,  String assignedTo,  String titleError,  String noteError,  String dateError,  String startTimeError,  String endTimeError,  bool requiredApproval,  String selectedChildError,  String assignedToError,  String locationText,  String locationError,  ApiResultStatus requestApprovalApiResultStatus,  ApiResultStatus getChildApiResultStatus,  ApiResultStatus getCoParentApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _AddSharedEventState():
-return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.startTime,_that.endTime,_that.selectedChild,_that.assignedTo,_that.titleError,_that.noteError,_that.dateError,_that.startTimeError,_that.endTimeError,_that.requiredApproval,_that.selectedChildError,_that.assignedToError,_that.requestApprovalApiResultStatus,_that.getChildApiResultStatus,_that.getCoParentApiResultStatus);case _:
+return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.startTime,_that.endTime,_that.selectedChild,_that.assignedTo,_that.titleError,_that.noteError,_that.dateError,_that.startTimeError,_that.endTimeError,_that.requiredApproval,_that.selectedChildError,_that.assignedToError,_that.locationText,_that.locationError,_that.requestApprovalApiResultStatus,_that.getChildApiResultStatus,_that.getCoParentApiResultStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -236,10 +238,10 @@ return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  String title,  String note,  DateTime? selectedDate,  DateTime? startTime,  DateTime? endTime,  String selectedChild,  String assignedTo,  String titleError,  String noteError,  String dateError,  String startTimeError,  String endTimeError,  bool requiredApproval,  String selectedChildError,  String assignedToError,  ApiResultStatus requestApprovalApiResultStatus,  ApiResultStatus getChildApiResultStatus,  ApiResultStatus getCoParentApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  String title,  String note,  DateTime? selectedDate,  DateTime? startTime,  DateTime? endTime,  String selectedChild,  String assignedTo,  String titleError,  String noteError,  String dateError,  String startTimeError,  String endTimeError,  bool requiredApproval,  String selectedChildError,  String assignedToError,  String locationText,  String locationError,  ApiResultStatus requestApprovalApiResultStatus,  ApiResultStatus getChildApiResultStatus,  ApiResultStatus getCoParentApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _AddSharedEventState() when $default != null:
-return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.startTime,_that.endTime,_that.selectedChild,_that.assignedTo,_that.titleError,_that.noteError,_that.dateError,_that.startTimeError,_that.endTimeError,_that.requiredApproval,_that.selectedChildError,_that.assignedToError,_that.requestApprovalApiResultStatus,_that.getChildApiResultStatus,_that.getCoParentApiResultStatus);case _:
+return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.startTime,_that.endTime,_that.selectedChild,_that.assignedTo,_that.titleError,_that.noteError,_that.dateError,_that.startTimeError,_that.endTimeError,_that.requiredApproval,_that.selectedChildError,_that.assignedToError,_that.locationText,_that.locationError,_that.requestApprovalApiResultStatus,_that.getChildApiResultStatus,_that.getCoParentApiResultStatus);case _:
   return null;
 
 }
@@ -251,7 +253,7 @@ return $default(_that.userModel,_that.title,_that.note,_that.selectedDate,_that.
 
 
 class _AddSharedEventState implements AddSharedEventState {
-  const _AddSharedEventState({this.userModel, this.title = "", this.note = "", this.selectedDate, this.startTime, this.endTime, this.selectedChild = "", this.assignedTo = "", this.titleError = "", this.noteError = "", this.dateError = "", this.startTimeError = "", this.endTimeError = "", this.requiredApproval = false, this.selectedChildError = "", this.assignedToError = "", this.requestApprovalApiResultStatus = const ApiResultStatus.initial(), this.getChildApiResultStatus = const ApiResultStatus.initial(), this.getCoParentApiResultStatus = const ApiResultStatus.initial()});
+  const _AddSharedEventState({this.userModel, this.title = "", this.note = "", this.selectedDate, this.startTime, this.endTime, this.selectedChild = "", this.assignedTo = "", this.titleError = "", this.noteError = "", this.dateError = "", this.startTimeError = "", this.endTimeError = "", this.requiredApproval = false, this.selectedChildError = "", this.assignedToError = "", this.locationText = "", this.locationError = "", this.requestApprovalApiResultStatus = const ApiResultStatus.initial(), this.getChildApiResultStatus = const ApiResultStatus.initial(), this.getCoParentApiResultStatus = const ApiResultStatus.initial()});
   
 
 @override final  UserModel? userModel;
@@ -270,6 +272,8 @@ class _AddSharedEventState implements AddSharedEventState {
 @override@JsonKey() final  bool requiredApproval;
 @override@JsonKey() final  String selectedChildError;
 @override@JsonKey() final  String assignedToError;
+@override@JsonKey() final  String locationText;
+@override@JsonKey() final  String locationError;
 @override@JsonKey() final  ApiResultStatus requestApprovalApiResultStatus;
 @override@JsonKey() final  ApiResultStatus getChildApiResultStatus;
 @override@JsonKey() final  ApiResultStatus getCoParentApiResultStatus;
@@ -284,16 +288,16 @@ _$AddSharedEventStateCopyWith<_AddSharedEventState> get copyWith => __$AddShared
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddSharedEventState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.assignedTo, assignedTo) || other.assignedTo == assignedTo)&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.noteError, noteError) || other.noteError == noteError)&&(identical(other.dateError, dateError) || other.dateError == dateError)&&(identical(other.startTimeError, startTimeError) || other.startTimeError == startTimeError)&&(identical(other.endTimeError, endTimeError) || other.endTimeError == endTimeError)&&(identical(other.requiredApproval, requiredApproval) || other.requiredApproval == requiredApproval)&&(identical(other.selectedChildError, selectedChildError) || other.selectedChildError == selectedChildError)&&(identical(other.assignedToError, assignedToError) || other.assignedToError == assignedToError)&&(identical(other.requestApprovalApiResultStatus, requestApprovalApiResultStatus) || other.requestApprovalApiResultStatus == requestApprovalApiResultStatus)&&(identical(other.getChildApiResultStatus, getChildApiResultStatus) || other.getChildApiResultStatus == getChildApiResultStatus)&&(identical(other.getCoParentApiResultStatus, getCoParentApiResultStatus) || other.getCoParentApiResultStatus == getCoParentApiResultStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddSharedEventState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.title, title) || other.title == title)&&(identical(other.note, note) || other.note == note)&&(identical(other.selectedDate, selectedDate) || other.selectedDate == selectedDate)&&(identical(other.startTime, startTime) || other.startTime == startTime)&&(identical(other.endTime, endTime) || other.endTime == endTime)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.assignedTo, assignedTo) || other.assignedTo == assignedTo)&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.noteError, noteError) || other.noteError == noteError)&&(identical(other.dateError, dateError) || other.dateError == dateError)&&(identical(other.startTimeError, startTimeError) || other.startTimeError == startTimeError)&&(identical(other.endTimeError, endTimeError) || other.endTimeError == endTimeError)&&(identical(other.requiredApproval, requiredApproval) || other.requiredApproval == requiredApproval)&&(identical(other.selectedChildError, selectedChildError) || other.selectedChildError == selectedChildError)&&(identical(other.assignedToError, assignedToError) || other.assignedToError == assignedToError)&&(identical(other.locationText, locationText) || other.locationText == locationText)&&(identical(other.locationError, locationError) || other.locationError == locationError)&&(identical(other.requestApprovalApiResultStatus, requestApprovalApiResultStatus) || other.requestApprovalApiResultStatus == requestApprovalApiResultStatus)&&(identical(other.getChildApiResultStatus, getChildApiResultStatus) || other.getChildApiResultStatus == getChildApiResultStatus)&&(identical(other.getCoParentApiResultStatus, getCoParentApiResultStatus) || other.getCoParentApiResultStatus == getCoParentApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,userModel,title,note,selectedDate,startTime,endTime,selectedChild,assignedTo,titleError,noteError,dateError,startTimeError,endTimeError,requiredApproval,selectedChildError,assignedToError,requestApprovalApiResultStatus,getChildApiResultStatus,getCoParentApiResultStatus]);
+int get hashCode => Object.hashAll([runtimeType,userModel,title,note,selectedDate,startTime,endTime,selectedChild,assignedTo,titleError,noteError,dateError,startTimeError,endTimeError,requiredApproval,selectedChildError,assignedToError,locationText,locationError,requestApprovalApiResultStatus,getChildApiResultStatus,getCoParentApiResultStatus]);
 
 @override
 String toString() {
-  return 'AddSharedEventState(userModel: $userModel, title: $title, note: $note, selectedDate: $selectedDate, startTime: $startTime, endTime: $endTime, selectedChild: $selectedChild, assignedTo: $assignedTo, titleError: $titleError, noteError: $noteError, dateError: $dateError, startTimeError: $startTimeError, endTimeError: $endTimeError, requiredApproval: $requiredApproval, selectedChildError: $selectedChildError, assignedToError: $assignedToError, requestApprovalApiResultStatus: $requestApprovalApiResultStatus, getChildApiResultStatus: $getChildApiResultStatus, getCoParentApiResultStatus: $getCoParentApiResultStatus)';
+  return 'AddSharedEventState(userModel: $userModel, title: $title, note: $note, selectedDate: $selectedDate, startTime: $startTime, endTime: $endTime, selectedChild: $selectedChild, assignedTo: $assignedTo, titleError: $titleError, noteError: $noteError, dateError: $dateError, startTimeError: $startTimeError, endTimeError: $endTimeError, requiredApproval: $requiredApproval, selectedChildError: $selectedChildError, assignedToError: $assignedToError, locationText: $locationText, locationError: $locationError, requestApprovalApiResultStatus: $requestApprovalApiResultStatus, getChildApiResultStatus: $getChildApiResultStatus, getCoParentApiResultStatus: $getCoParentApiResultStatus)';
 }
 
 
@@ -304,7 +308,7 @@ abstract mixin class _$AddSharedEventStateCopyWith<$Res> implements $AddSharedEv
   factory _$AddSharedEventStateCopyWith(_AddSharedEventState value, $Res Function(_AddSharedEventState) _then) = __$AddSharedEventStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, String title, String note, DateTime? selectedDate, DateTime? startTime, DateTime? endTime, String selectedChild, String assignedTo, String titleError, String noteError, String dateError, String startTimeError, String endTimeError, bool requiredApproval, String selectedChildError, String assignedToError, ApiResultStatus requestApprovalApiResultStatus, ApiResultStatus getChildApiResultStatus, ApiResultStatus getCoParentApiResultStatus
+ UserModel? userModel, String title, String note, DateTime? selectedDate, DateTime? startTime, DateTime? endTime, String selectedChild, String assignedTo, String titleError, String noteError, String dateError, String startTimeError, String endTimeError, bool requiredApproval, String selectedChildError, String assignedToError, String locationText, String locationError, ApiResultStatus requestApprovalApiResultStatus, ApiResultStatus getChildApiResultStatus, ApiResultStatus getCoParentApiResultStatus
 });
 
 
@@ -321,7 +325,7 @@ class __$AddSharedEventStateCopyWithImpl<$Res>
 
 /// Create a copy of AddSharedEventState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,Object? title = null,Object? note = null,Object? selectedDate = freezed,Object? startTime = freezed,Object? endTime = freezed,Object? selectedChild = null,Object? assignedTo = null,Object? titleError = null,Object? noteError = null,Object? dateError = null,Object? startTimeError = null,Object? endTimeError = null,Object? requiredApproval = null,Object? selectedChildError = null,Object? assignedToError = null,Object? requestApprovalApiResultStatus = null,Object? getChildApiResultStatus = null,Object? getCoParentApiResultStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,Object? title = null,Object? note = null,Object? selectedDate = freezed,Object? startTime = freezed,Object? endTime = freezed,Object? selectedChild = null,Object? assignedTo = null,Object? titleError = null,Object? noteError = null,Object? dateError = null,Object? startTimeError = null,Object? endTimeError = null,Object? requiredApproval = null,Object? selectedChildError = null,Object? assignedToError = null,Object? locationText = null,Object? locationError = null,Object? requestApprovalApiResultStatus = null,Object? getChildApiResultStatus = null,Object? getCoParentApiResultStatus = null,}) {
   return _then(_AddSharedEventState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -339,6 +343,8 @@ as String,endTimeError: null == endTimeError ? _self.endTimeError : endTimeError
 as String,requiredApproval: null == requiredApproval ? _self.requiredApproval : requiredApproval // ignore: cast_nullable_to_non_nullable
 as bool,selectedChildError: null == selectedChildError ? _self.selectedChildError : selectedChildError // ignore: cast_nullable_to_non_nullable
 as String,assignedToError: null == assignedToError ? _self.assignedToError : assignedToError // ignore: cast_nullable_to_non_nullable
+as String,locationText: null == locationText ? _self.locationText : locationText // ignore: cast_nullable_to_non_nullable
+as String,locationError: null == locationError ? _self.locationError : locationError // ignore: cast_nullable_to_non_nullable
 as String,requestApprovalApiResultStatus: null == requestApprovalApiResultStatus ? _self.requestApprovalApiResultStatus : requestApprovalApiResultStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,getChildApiResultStatus: null == getChildApiResultStatus ? _self.getChildApiResultStatus : getChildApiResultStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,getCoParentApiResultStatus: null == getCoParentApiResultStatus ? _self.getCoParentApiResultStatus : getCoParentApiResultStatus // ignore: cast_nullable_to_non_nullable

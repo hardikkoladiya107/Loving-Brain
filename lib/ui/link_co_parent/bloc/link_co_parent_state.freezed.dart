@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LinkCoParentState {
 
- String get selectedTab; String? get coParentEmail; bool get calenderAndEvent; bool get childEssentials; String get selectedChild;
+ String get selectedTab; String? get coParentEmail; bool get calenderAndEvent; bool get childEssentials; String get selectedChild; ApiResultStatus get getApiResultStatus; UserModel? get userModel; List<ChildModel> get children;
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $LinkCoParentStateCopyWith<LinkCoParentState> get copyWith => _$LinkCoParentStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.getApiResultStatus, getApiResultStatus) || other.getApiResultStatus == getApiResultStatus)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.children, children));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,calenderAndEvent,childEssentials,selectedChild);
+int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,calenderAndEvent,childEssentials,selectedChild,getApiResultStatus,userModel,const DeepCollectionEquality().hash(children));
 
 @override
 String toString() {
-  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild)';
+  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild, getApiResultStatus: $getApiResultStatus, userModel: $userModel, children: $children)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $LinkCoParentStateCopyWith<$Res>  {
   factory $LinkCoParentStateCopyWith(LinkCoParentState value, $Res Function(LinkCoParentState) _then) = _$LinkCoParentStateCopyWithImpl;
 @useResult
 $Res call({
- String selectedTab, String? coParentEmail, bool calenderAndEvent, bool childEssentials, String selectedChild
+ String selectedTab, String? coParentEmail, bool calenderAndEvent, bool childEssentials, String selectedChild, ApiResultStatus getApiResultStatus, UserModel? userModel, List<ChildModel> children
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get getApiResultStatus;
 
 }
 /// @nodoc
@@ -62,17 +62,29 @@ class _$LinkCoParentStateCopyWithImpl<$Res>
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,Object? getApiResultStatus = null,Object? userModel = freezed,Object? children = null,}) {
   return _then(_self.copyWith(
 selectedTab: null == selectedTab ? _self.selectedTab : selectedTab // ignore: cast_nullable_to_non_nullable
 as String,coParentEmail: freezed == coParentEmail ? _self.coParentEmail : coParentEmail // ignore: cast_nullable_to_non_nullable
 as String?,calenderAndEvent: null == calenderAndEvent ? _self.calenderAndEvent : calenderAndEvent // ignore: cast_nullable_to_non_nullable
 as bool,childEssentials: null == childEssentials ? _self.childEssentials : childEssentials // ignore: cast_nullable_to_non_nullable
 as bool,selectedChild: null == selectedChild ? _self.selectedChild : selectedChild // ignore: cast_nullable_to_non_nullable
-as String,
+as String,getApiResultStatus: null == getApiResultStatus ? _self.getApiResultStatus : getApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,children: null == children ? _self.children : children // ignore: cast_nullable_to_non_nullable
+as List<ChildModel>,
   ));
 }
-
+/// Create a copy of LinkCoParentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getApiResultStatus, (value) {
+    return _then(_self.copyWith(getApiResultStatus: value));
+  });
+}
 }
 
 
@@ -154,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  bool calenderAndEvent,  bool childEssentials,  String selectedChild)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  UserModel? userModel,  List<ChildModel> children)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LinkCoParentState() when $default != null:
-return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild);case _:
+return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.userModel,_that.children);case _:
   return orElse();
 
 }
@@ -175,10 +187,10 @@ return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  bool calenderAndEvent,  bool childEssentials,  String selectedChild)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  UserModel? userModel,  List<ChildModel> children)  $default,) {final _that = this;
 switch (_that) {
 case _LinkCoParentState():
-return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild);case _:
+return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.userModel,_that.children);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +207,10 @@ return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedTab,  String? coParentEmail,  bool calenderAndEvent,  bool childEssentials,  String selectedChild)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedTab,  String? coParentEmail,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  UserModel? userModel,  List<ChildModel> children)?  $default,) {final _that = this;
 switch (_that) {
 case _LinkCoParentState() when $default != null:
-return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild);case _:
+return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.userModel,_that.children);case _:
   return null;
 
 }
@@ -210,7 +222,7 @@ return $default(_that.selectedTab,_that.coParentEmail,_that.calenderAndEvent,_th
 
 
 class _LinkCoParentState implements LinkCoParentState {
-  const _LinkCoParentState({this.selectedTab = "EMAIL", this.coParentEmail = "", this.calenderAndEvent = false, this.childEssentials = false, this.selectedChild = ""});
+  const _LinkCoParentState({this.selectedTab = "EMAIL", this.coParentEmail = "", this.calenderAndEvent = false, this.childEssentials = false, this.selectedChild = "", this.getApiResultStatus = const ApiResultStatus.initial(), this.userModel, final  List<ChildModel> children = const []}): _children = children;
   
 
 @override@JsonKey() final  String selectedTab;
@@ -218,6 +230,15 @@ class _LinkCoParentState implements LinkCoParentState {
 @override@JsonKey() final  bool calenderAndEvent;
 @override@JsonKey() final  bool childEssentials;
 @override@JsonKey() final  String selectedChild;
+@override@JsonKey() final  ApiResultStatus getApiResultStatus;
+@override final  UserModel? userModel;
+ final  List<ChildModel> _children;
+@override@JsonKey() List<ChildModel> get children {
+  if (_children is EqualUnmodifiableListView) return _children;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_children);
+}
+
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
@@ -229,16 +250,16 @@ _$LinkCoParentStateCopyWith<_LinkCoParentState> get copyWith => __$LinkCoParentS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.getApiResultStatus, getApiResultStatus) || other.getApiResultStatus == getApiResultStatus)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._children, _children));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,calenderAndEvent,childEssentials,selectedChild);
+int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,calenderAndEvent,childEssentials,selectedChild,getApiResultStatus,userModel,const DeepCollectionEquality().hash(_children));
 
 @override
 String toString() {
-  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild)';
+  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild, getApiResultStatus: $getApiResultStatus, userModel: $userModel, children: $children)';
 }
 
 
@@ -249,11 +270,11 @@ abstract mixin class _$LinkCoParentStateCopyWith<$Res> implements $LinkCoParentS
   factory _$LinkCoParentStateCopyWith(_LinkCoParentState value, $Res Function(_LinkCoParentState) _then) = __$LinkCoParentStateCopyWithImpl;
 @override @useResult
 $Res call({
- String selectedTab, String? coParentEmail, bool calenderAndEvent, bool childEssentials, String selectedChild
+ String selectedTab, String? coParentEmail, bool calenderAndEvent, bool childEssentials, String selectedChild, ApiResultStatus getApiResultStatus, UserModel? userModel, List<ChildModel> children
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get getApiResultStatus;
 
 }
 /// @nodoc
@@ -266,18 +287,30 @@ class __$LinkCoParentStateCopyWithImpl<$Res>
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,Object? getApiResultStatus = null,Object? userModel = freezed,Object? children = null,}) {
   return _then(_LinkCoParentState(
 selectedTab: null == selectedTab ? _self.selectedTab : selectedTab // ignore: cast_nullable_to_non_nullable
 as String,coParentEmail: freezed == coParentEmail ? _self.coParentEmail : coParentEmail // ignore: cast_nullable_to_non_nullable
 as String?,calenderAndEvent: null == calenderAndEvent ? _self.calenderAndEvent : calenderAndEvent // ignore: cast_nullable_to_non_nullable
 as bool,childEssentials: null == childEssentials ? _self.childEssentials : childEssentials // ignore: cast_nullable_to_non_nullable
 as bool,selectedChild: null == selectedChild ? _self.selectedChild : selectedChild // ignore: cast_nullable_to_non_nullable
-as String,
+as String,getApiResultStatus: null == getApiResultStatus ? _self.getApiResultStatus : getApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,children: null == children ? _self._children : children // ignore: cast_nullable_to_non_nullable
+as List<ChildModel>,
   ));
 }
 
-
+/// Create a copy of LinkCoParentState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getApiResultStatus, (value) {
+    return _then(_self.copyWith(getApiResultStatus: value));
+  });
+}
 }
 
 // dart format on

@@ -259,5 +259,25 @@ abstract class  LocaleKeys {
   static const title = 'title';
   static const schoolPickUp = 'schoolPickUp';
   static const attachDocument = 'attachDocument';
+  static const pleaseEnterTitle = 'pleaseEnterTitle';
+  static const pleaseSelectDate = 'pleaseSelectDate';
+  static const pleaseSelectStartTime = 'pleaseSelectStartTime';
+  static const pleaseSelectEndTime = 'pleaseSelectEndTime';
+  static const pleaseEnterLocation = 'pleaseEnterLocation';
+  static const pleaseChooseChild = 'pleaseChooseChild';
+  static const pleaseChooseAssignedTo = 'pleaseChooseAssignedTo';
+  static const sendInvite = 'sendInvite';
+  static const linkCoParent = 'linkCoParent';
+  static const inviteLink = 'inviteLink';
+  static const coParentEmail = 'coParentEmail';
+  static const coParentEmailHint = 'coParentEmailHint';
+  static const shareForWhichChild = 'shareForWhichChild';
+  static const calendarEvents = 'calendarEvents';
+  static const createApproveAndChangeSharedEvents = 'createApproveAndChangeSharedEvents';
+  static const childEssentials = 'childEssentials';
+  static const medicalNotesSchoolContactsAllergies = 'medicalNotesSchoolContactsAllergies';
+  static const eventAttachment = 'eventAttachment';
+  static const starRequired = 'starRequired';
+  static const onceAcceptedyouSameSharedCalendar = 'onceAcceptedyouSameSharedCalendar';
 
 }

@@ -260,7 +260,27 @@
   "date": "Date",
   "title": "Title",
   "schoolPickUp": "School Pick Up",
-  "attachDocument": "Attach Document"
+  "attachDocument": "Attach Document",
+  "pleaseEnterTitle": "Please enter title",
+  "pleaseSelectDate": "Please select date",
+  "pleaseSelectStartTime": "Please select start time",
+  "pleaseSelectEndTime": "Please select end time",
+  "pleaseEnterLocation": "Please enter location",
+  "pleaseChooseChild": "Please choose child",
+  "pleaseChooseAssignedTo": "Please choose assigned to",
+  "sendInvite": "Send Invite",
+  "linkCoParent": "Link co‐parent",
+  "inviteLink": "Invite Link",
+  "coParentEmail": "Co‐parent’s email",
+  "coParentEmailHint": "name@email.com",
+  "shareForWhichChild": "Share for Which child ?",
+  "calendarEvents": "Calendar & events",
+  "createApproveAndChangeSharedEvents": "Create, approve, and change shared events",
+  "childEssentials": "Child’s Essentials",
+  "medicalNotesSchoolContactsAllergies": "Medical notes, school contacts, allergies",
+  "eventAttachment": "Event attachment",
+  "starRequired": "* Required",
+  "onceAcceptedyouSameSharedCalendar": "Once accepted, you’ll both see the same shared calendar."
 
 
 
