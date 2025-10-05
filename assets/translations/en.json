@@ -240,7 +240,27 @@
   "selectType": "--- Select Type ---",
   "enterDescription": "Enter description",
   "familySync": "Family Sync",
-  "routineAddedSuccessfully": "Routine added successfully"
+  "routineAddedSuccessfully": "Routine added successfully",
+  "pickFromCamera": "Camera",
+  "pickGallery": "Gallery",
+  "requestApproval": "Request Approval",
+  "requireApproval": "Require approval",
+  "sendToCoParentForConfirmation": "Send to co‐parent for confirmation",
+  "noteToCoParent": "Note to co‐parent (optional)",
+  "anythingTheyShouldKnow": "Anything they should know ?..",
+  "assignedTo": "Assigned to",
+  "child": "Child",
+  "location": "Location",
+  "locationHint": "St. Mary’s Primary – Front Gate",
+  "end": "End",
+  "endHint": "4:30 PM",
+  "startHint": "4:00 PM",
+  "start": "Start",
+  "chooseDate": "--- Choose Date ---",
+  "date": "Date",
+  "title": "Title",
+  "schoolPickUp": "School Pick Up",
+  "attachDocument": "Attach Document"
 
 
 

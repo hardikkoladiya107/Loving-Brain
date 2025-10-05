@@ -61,6 +61,7 @@ dependencies:
   intl: ^0.20.2
   flutter_local_notifications: ^19.4.2
   gpt_markdown: ^1.1.4
+  image_picker: ^1.2.0
 
 
 

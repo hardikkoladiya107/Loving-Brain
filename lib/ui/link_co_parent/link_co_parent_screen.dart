@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
-
 import '../../gen/assets.gen.dart';
 import '../../other/app_color.dart';
 import '../widget/base_button.dart';
@@ -19,11 +18,13 @@ class LinkCoParentScreen extends StatefulWidget {
 
 class _LinkCoParentScreenState extends State<LinkCoParentScreen>
     with SingleTickerProviderStateMixin {
+
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    context.read<LinkCoParentCubit>().init();
     _tabController = TabController(length: 2, vsync: this);
   }
 

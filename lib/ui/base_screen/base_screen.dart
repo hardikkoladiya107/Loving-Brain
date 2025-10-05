@@ -41,7 +41,8 @@ class _BaseScreenState extends State<BaseScreen> {
                   index: state.bottomNavigationIndex,
                   children: [
                     HomeScreen(),
-                    DailyRoutineScreen(),
+                    // DailyRoutineScreen(),
+                    ScheduleScreen(),
                     AiChatScreen(),
                     WriteYourThoughtScreen(),
                     ProfileScreen(),

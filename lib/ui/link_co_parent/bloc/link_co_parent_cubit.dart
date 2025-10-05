@@ -8,4 +8,8 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   void changeProps({String? selectedTab}) {
     emit(state.copyWith(selectedTab: selectedTab ?? state.selectedTab));
   }
+
+  void init() {
+    emit(LinkCoParentState());
+  }
 }

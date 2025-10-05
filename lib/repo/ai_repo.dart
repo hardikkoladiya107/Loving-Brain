@@ -9,9 +9,9 @@ class AiRepo {
   static final AiRepo _instance = AiRepo._();
 
   static final String secretKey =
-      " ";
+      "";
   static final String promptKey =
-      " ";
+      "";
 
   static final String conversationUrl =
       "https://api.openai.com/v1/conversations";

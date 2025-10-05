@@ -5,6 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/chat_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -37,7 +38,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         conversationId: widget.conversationId,
         initialChat: widget.initialChat,
       );
-
     });
     super.initState();
   }
@@ -208,7 +208,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _bottomTextField() {
     return Container(
-
       decoration: BoxDecoration(
         color: scheduleBgColor,
         boxShadow: [
@@ -236,7 +235,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 10.spaceW,
                 Icon(Icons.mic_outlined),
                 10.spaceW,
-                Icon(Icons.image_outlined),
+                _selectImage(),
                 10.spaceW,
               ],
             ),
@@ -329,6 +328,73 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
+  }
+
+  Widget _selectImage() {
+    return BaseButton(
+      child: Icon(Icons.image_outlined),
+      onTap: () {
+        _showImagePickerDropdown();
+      },
+    );
+  }
+
+  void _showImagePickerDropdown() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BaseButton(
+              child: Row(
+                children: [
+                  12.spaceW,
+                  Icon(Icons.camera_alt_outlined),
+                  12.spaceW,
+                  LocaleKeys.pickFromCamera.tr().appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ).padding(top: 12, bottom: 12),
+              onTap: () async {
+                _chooseImage(ImageSource.camera);
+              },
+            ),
+            BaseButton(
+              child: Row(
+                children: [
+                  12.spaceW,
+                  Icon(Icons.photo_size_select_actual_outlined),
+                  12.spaceW,
+                  LocaleKeys.pickGallery.tr().appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ).padding(top: 12, bottom: 12),
+              onTap: () async {
+                _chooseImage(ImageSource.gallery);
+              },
+            ),
+            20.spaceH,
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _chooseImage(ImageSource camera ) async {
+    final XFile? photo = await ImagePicker().pickImage(source: camera);
+    if(photo!=null){
+      photo;
     }
   }
 }

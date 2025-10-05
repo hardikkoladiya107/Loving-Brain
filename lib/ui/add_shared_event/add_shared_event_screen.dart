@@ -1,13 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
 import '../widget/base_button.dart';
+import 'cubit/add_shared_event_cubit.dart';
+import 'cubit/add_shared_event_state.dart';
 
 class AddSharedEventScreen extends StatefulWidget {
   const AddSharedEventScreen({super.key});
@@ -19,145 +23,58 @@ class AddSharedEventScreen extends StatefulWidget {
 class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: addSharedEventBgColor,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
+    return BlocConsumer<AddSharedEventCubit, AddSharedEventState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: addSharedEventBgColor,
+          body: SingleChildScrollView(
+            child: Stack(
               children: [
-                Assets.images.imgAddSharedBg.image(
-                  height: context.height,
-                  width: context.width,
-                  fit: BoxFit.cover,
+                Column(
+                  children: [
+                    Assets.images.imgAddSharedBg.image(
+                      height: context.height,
+                      width: context.width,
+                      fit: BoxFit.cover,
+                    ),
+                    Container(height: context.height / 2),
+                  ],
                 ),
-                Container(height: context.height / 2),
+                Column(
+                  children: [
+                    45.h.spaceH,
+                    _appBar(),
+                    60.h.spaceH,
+                    LocaleKeys.addSharedEvent.tr().appText(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                    ),
+                    20.h.spaceH,
+                    _titleTextField(),
+                    4.h.spaceH,
+                    _schoolPickUp(),
+                    20.h.spaceH,
+                    _startEnd(),
+                    20.h.spaceH,
+                    _location(),
+                    _children(),
+                    10.h.spaceH,
+                    _assignedTo(),
+                    10.h.spaceH,
+                    _requireApproval(),
+                    10.h.spaceH,
+                    _note(),
+                    _attachDocument(),
+                    20.h.spaceH,
+                    _button(),
+                  ],
+                ).appPadding(left: 20.w, right: 20.w),
               ],
             ),
-            Column(
-              children: [
-                45.h.spaceH,
-                _appBar(),
-                60.h.spaceH,
-                LocaleKeys.addSharedEvent.tr().appText(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 18,
-                ),
-                20.h.spaceH,
-                AppTextField(title: "Title", hint: "School Pick Up"),
-                AppTextField(
-                  title: "Date",
-                  hint: "School Pick Up",
-                  prefixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Assets.icons.icCalenderIcon3
-                          .image(height: 20, width: 20)
-                          .padding(left: 8),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppTextField(
-                        title: "Start",
-                        hint: "4:00 PM",
-                        prefixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Assets.icons.icTimerIcon
-                                .image(height: 20, width: 20)
-                                .padding(left: 8),
-                          ],
-                        ),
-                      ),
-                    ),
-                    10.spaceW,
-                    Expanded(
-                      child: AppTextField(
-                        title: "End",
-                        hint: "4:30 PM",
-                        prefixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Assets.icons.icTimerIcon
-                                .image(height: 20, width: 20)
-                                .padding(left: 8),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                AppTextField(
-                  title: "Location",
-                  hint: "St. Mary’s Primary – Front Gate",
-                  contentPadding: EdgeInsets.symmetric(horizontal: 2),
-                  prefixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Assets.icons.icLocationIcon
-                          .image(height: 20, width: 20)
-                          .padding(left: 8),
-                    ],
-                  ),
-                ),
-
-                Row(
-                  children: [
-                    "Child".appText(fontSize: 14, fontWeight: FontWeight.w600),
-                    10.w.spaceW,
-                    Assets.icons.icChildEmojiIcon.image(height: 25, width: 25),
-                  ],
-                ),
-                10.h.spaceH,
-                Row(
-                  children: [
-                    _chipWidget(text: 'Leo'),
-                    8.w.spaceW,
-                    _chipWidget(text: 'Ava'),
-                  ],
-                ),
-                10.h.spaceH,
-                Row(
-                  children: [
-                    "Assigned to".appText(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-                10.h.spaceH,
-                Row(
-                  children: [
-                    _chipWidget(text: 'You'),
-                    8.w.spaceW,
-                    _chipWidget(text: 'Priya'),
-                  ],
-                ),
-                10.h.spaceH,
-                accessCard(
-                  isRequired: false,
-                  title: 'Require approval',
-                  description: 'Send to co‐parent for confirmation',
-                ),
-                10.h.spaceH,
-
-                AppTextField(
-                  title: "Note to co‐parent (optional)",
-                  hint: "Anything they should know ?..",
-                  minLines: 5,
-                ),
-
-                _attachDocument(),
-                20.h.spaceH,
-                _requestApprovalButton(text: 'Request Approval', onTap: () {}),
-              ],
-            ).appPadding(left: 20.w, right: 20.w),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      listener: (context, state) {},
     );
   }
 
@@ -244,7 +161,8 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          "Attach Document"
+          LocaleKeys.attachDocument
+              .tr()
               .appText(fontWeight: FontWeight.w600, fontSize: 14)
               .appPadding(top: 6, bottom: 6),
           8.w.spaceW,
@@ -278,5 +196,277 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
         ),
       ),
     );
+  }
+
+  Widget _titleTextField() {
+    return AppTextField(
+      title: LocaleKeys.title.tr(),
+      hint: LocaleKeys.schoolPickUp.tr(),
+    );
+  }
+
+  Widget _schoolPickUp() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            LocaleKeys.date.tr().appText(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ],
+        ),
+        6.spaceH,
+        BaseButton(
+          onTap: () {
+            _showDatePicker();
+          },
+          child: Container(
+            height: 45,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Assets.icons.icCalenderIcon3
+                    .image(height: 20, width: 20)
+                    .padding(left: 8),
+                12.spaceW,
+                LocaleKeys.chooseDate.tr().appText(
+                  fontSize: 14,
+                  color: Colors.grey.shade400,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _startEnd() {
+    return Row(
+      children: [
+        Expanded(
+          child: BaseButton(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    LocaleKeys.start.tr().appText(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+                6.spaceH,
+                Container(
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Assets.icons.icTimerIcon
+                          .image(height: 20, width: 20)
+                          .padding(left: 8),
+                      12.spaceW,
+                      LocaleKeys.startHint.tr().appText(
+                        fontSize: 14,
+                        color: Colors.grey.shade400,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              _showStartTime();
+            },
+          ),
+        ),
+        10.spaceW,
+        Expanded(
+          child: BaseButton(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    LocaleKeys.end.tr().appText(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+                6.spaceH,
+                Container(
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Assets.icons.icTimerIcon
+                          .image(height: 20, width: 20)
+                          .padding(left: 8),
+                      12.spaceW,
+                      LocaleKeys.endHint.tr().appText(
+                        fontSize: 14,
+                        color: Colors.grey.shade400,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              _showEndTime();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _location() {
+    return AppTextField(
+      title: LocaleKeys.location.tr(),
+      hint: LocaleKeys.locationHint.tr(),
+      contentPadding: EdgeInsets.symmetric(horizontal: 2),
+      prefixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Assets.icons.icLocationIcon
+              .image(height: 20, width: 20)
+              .padding(left: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _children() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            LocaleKeys.child.tr().appText(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+            10.w.spaceW,
+            Assets.icons.icChildEmojiIcon.image(height: 25, width: 25),
+          ],
+        ),
+        10.h.spaceH,
+        Row(
+          children: [
+            _chipWidget(text: 'Leo'),
+            8.w.spaceW,
+            _chipWidget(text: 'Ava'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _assignedTo() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            LocaleKeys.assignedTo.tr().appText(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ],
+        ),
+        10.h.spaceH,
+        Row(
+          children: [
+            _chipWidget(text: 'You'),
+            8.w.spaceW,
+            _chipWidget(text: 'Priya'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _note() {
+    return AppTextField(
+      title: LocaleKeys.noteToCoParent.tr(),
+      hint: LocaleKeys.anythingTheyShouldKnow.tr(),
+      minLines: 5,
+    );
+  }
+
+  Widget _button() {
+    return _requestApprovalButton(
+      text: LocaleKeys.requestApproval.tr(),
+      onTap: () {
+        context.read<AddSharedEventCubit>().requestApproval();
+      },
+    );
+  }
+
+  Widget _requireApproval() {
+    return accessCard(
+      isRequired: false,
+      title: LocaleKeys.requireApproval.tr(),
+      description: LocaleKeys.sendToCoParentForConfirmation.tr(),
+    );
+  }
+
+  void _showStartTime() {
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
+      value,
+    ) {
+      if (value != null) {
+        DateTime now = DateTime.now();
+        navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
+          startTime: DateTime(
+            now.year,
+            now.month,
+            now.day,
+            value.hour,
+            value.minute,
+          ),
+        );
+      }
+    });
+  }
+
+  void _showEndTime() {
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
+      value,
+    ) {
+      if (value != null) {
+        DateTime now = DateTime.now();
+        navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
+          startTime: DateTime(
+            now.year,
+            now.month,
+            now.day,
+            value.hour,
+            value.minute,
+          ),
+        );
+      }
+    });
+  }
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      firstDate: DateTime(1971),
+      lastDate: DateTime.now(),
+    ).then((value) {
+      navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
+        selectedDate: value,
+      );
+    });
   }
 }

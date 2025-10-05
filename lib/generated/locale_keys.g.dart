@@ -239,5 +239,25 @@ abstract class  LocaleKeys {
   static const enterDescription = 'enterDescription';
   static const familySync = 'familySync';
   static const routineAddedSuccessfully = 'routineAddedSuccessfully';
+  static const pickFromCamera = 'pickFromCamera';
+  static const pickGallery = 'pickGallery';
+  static const requestApproval = 'requestApproval';
+  static const requireApproval = 'requireApproval';
+  static const sendToCoParentForConfirmation = 'sendToCoParentForConfirmation';
+  static const noteToCoParent = 'noteToCoParent';
+  static const anythingTheyShouldKnow = 'anythingTheyShouldKnow';
+  static const assignedTo = 'assignedTo';
+  static const child = 'child';
+  static const location = 'location';
+  static const locationHint = 'locationHint';
+  static const end = 'end';
+  static const endHint = 'endHint';
+  static const startHint = 'startHint';
+  static const start = 'start';
+  static const chooseDate = 'chooseDate';
+  static const date = 'date';
+  static const title = 'title';
+  static const schoolPickUp = 'schoolPickUp';
+  static const attachDocument = 'attachDocument';
 
 }

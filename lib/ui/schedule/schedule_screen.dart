@@ -8,6 +8,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/extra_methods.dart';
 import '../add_shared_event/add_shared_event_screen.dart';
 import '../daily_routine/daily_routine_screen.dart';
 import '../event_approval/event_approval_screen.dart';
@@ -24,6 +25,12 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
+  @override
+  void initState() {
+    context.read<ScheduleCubit>().init();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ScheduleCubit, ScheduleState>(
@@ -91,7 +98,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             child: IndexedStack(
                               index: state.tabIndex,
                               children: [
-                                _dailyRoutine(),
+                                _dailyRoutine(state),
                                 coParentingSchedule(),
                               ],
                             ),
@@ -140,22 +147,33 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  Widget _dailyRoutine() {
+  Widget _dailyRoutine(ScheduleState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(),
         10.spaceH,
-        "Rohan’s ${LocaleKeys.dailyRoutine.tr()}"
+        "${state.userModel?.childName}’s ${LocaleKeys.dailyRoutine.tr()}"
             .appText(
               color: blueTextColor,
               fontWeight: FontWeight.w700,
               fontSize: 14,
             )
             .appPadding(left: 16),
-        _routineItem(schedule: '7:am', label: 'Morning Nap', onTap: () {}),
-        _routineItem(schedule: '9.30 am', label: 'Morning Nap', onTap: () {}),
-        _routineItem(schedule: '9.30 am', label: 'Morning Nap', onTap: () {}),
+        ListView.builder(
+          itemCount: state.routineList.length,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          itemBuilder: (context, index) {
+            var routine = state.routineList[index];
+            return _routineItem(
+              schedule: getStringTime(routine.timeStamp),
+              label: routine.description ?? "",
+              onTap: () {},
+            );
+          },
+        ),
         16.spaceH,
         _scheduleButton(
           text: "+ ${LocaleKeys.addActivity.tr()}",
