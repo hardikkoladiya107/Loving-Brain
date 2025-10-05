@@ -53,7 +53,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
                     32.h.spaceH,
                     _coParentEmail(),
                     65.h.spaceH,
-                    _shareForWhichChild(),
+                    _shareForWhichChild(state),
                     32.h.spaceH,
                     _whatTheyllhaveAccessTo(),
                     32.h.spaceH,
@@ -201,7 +201,20 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     ).appPadding(left: 20.w, right: 20.w);
   }
 
-  Widget _shareForWhichChild() {
+  Widget _shareForWhichChild(LinkCoParentState state) {
+    List<Widget> widgetList = [];
+    for (int i = 0; i < state.children.length; i++) {
+      var child = state.children[i];
+      widgetList.add(
+        Row(
+          children: [
+            childNameCard(name: child.childName ?? ""),
+            15.w.spaceW,
+          ],
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -210,13 +223,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
           fontSize: 14,
         ),
         16.spaceH,
-        Row(
-          children: [
-            childNameCard(name: "Leo"),
-            15.w.spaceW,
-            childNameCard(name: "Ava"),
-          ],
-        ),
+        Row(children: [...widgetList]),
       ],
     ).appPadding(left: 20.w, right: 20.w);
   }

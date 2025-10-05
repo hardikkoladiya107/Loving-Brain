@@ -46,10 +46,10 @@ class HomeCubit extends Cubit<HomeState> {
       profileSubscription = AuthRepo.instance.userCollection
           .doc(state.userModel!.uid)
           .snapshots()
-          .listen((event) {
+          .listen((event) async {
             if (event.data() != null) {
               var userModel = UserModel.fromJson(event.data()!);
-              preferences.saveUserModel(userModel);
+              await preferences.saveUserModel(userModel);
               _listenToChild(userModel.defaultChild);
               changeProps(userModel: userModel);
             }

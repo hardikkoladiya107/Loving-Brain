@@ -6,12 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
 import '../../other/preferances.dart';
 import '../../other/snack_bar.dart';
@@ -96,11 +98,14 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           },
           data: (data) async {
             EasyLoading.dismiss();
-            context.read<ChildProfileCubit>().clearFields();
-            await preferences.putBool(SharedPreference.isLogin, true);
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => BaseScreen()),
-            );
+            if (navigatorKey.currentContext != null && data is UserModel) {
+              await preferences.saveUserModel(data);
+              navigatorKey.currentContext!.read<ChildProfileCubit>().clearFields();
+              await preferences.putBool(SharedPreference.isLogin, true);
+              Navigator.of(navigatorKey.currentContext!).pushReplacement(
+                MaterialPageRoute(builder: (context) => BaseScreen()),
+              );
+            }
           },
           error: (Exception error) {
             EasyLoading.dismiss();

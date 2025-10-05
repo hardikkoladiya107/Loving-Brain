@@ -77,7 +77,7 @@ class ChildRepo {
           .where(FieldPath.documentId, whereIn: childrenIds)
           .get();
       return ApiResultStatus.data(
-        data: childrenResponse.docs.map((e) => ChildModel.fromJson(e.data())),
+        data: childrenResponse.docs.map((e) => ChildModel.fromJson(e.data())).toList(),
       );
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(

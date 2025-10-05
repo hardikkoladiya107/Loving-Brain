@@ -27,7 +27,9 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
-    context.read<ScheduleCubit>().init();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<ScheduleCubit>().init();
+    });
     super.initState();
   }
 

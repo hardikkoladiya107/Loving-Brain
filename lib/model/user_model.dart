@@ -87,11 +87,11 @@ class UserModel {
 
     try {
       if (fromConvert) {
-        if ((jsonObject['children'] is List<String>)) {
-          var paths = (jsonObject['children'] as List<String>);
-          _children?.clear();
+        if ((jsonObject['children'] is List<dynamic>)) {
+          var paths = (jsonObject['children'] as List<dynamic>);
+          _children = [];
           _children?.addAll(
-            paths.map((e) => FirebaseFirestore.instance.doc(e)).toList(),
+            paths.map((e) => FirebaseFirestore.instance.doc(e.toString())).toList(),
           );
         }
       } else {
@@ -102,7 +102,7 @@ class UserModel {
         }
       }
     } catch (e) {
-      e;
+      print(e);
     }
 
     try {

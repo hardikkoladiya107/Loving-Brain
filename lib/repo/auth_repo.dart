@@ -428,9 +428,9 @@ class AuthRepo {
         await userCollection.doc(tUid).update({
           "default_child": documentReference,
           "children": [documentReference],
-          ...request
+          ...request,
         });
-        return ApiResultStatus.data(data: tUid);
+        return ApiResultStatus.data(data: await getUserFromUid(uId: tUid));
       } else {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
