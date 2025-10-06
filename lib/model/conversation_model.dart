@@ -1,5 +1,3 @@
-
-
 class ConversationModel {
   ConversationModel({
     String? object,
@@ -71,7 +69,6 @@ class ConversationModel {
   }
 }
 
-
 class ConversationItem {
   ConversationItem({
     String? id,
@@ -121,9 +118,13 @@ class ConversationItem {
   );
 
   String? get id => _id;
+
   String? get type => _type;
+
   String? get status => _status;
+
   List<AIContent>? get content => _content;
+
   String? get role => _role;
 
   Map<String, dynamic> toJson() {

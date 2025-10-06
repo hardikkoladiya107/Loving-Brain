@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/chat_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/widget/app_image.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
@@ -64,7 +68,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 20.spaceH,
                 _appBar(),
                 _chatList(state),
-                _bottomTextField(),
+                _bottomTextField(state),
               ],
             ),
           ),
@@ -98,6 +102,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             _scrollToBottom();
           },
         );
+
+        state.imageUploadApiResult.whenOrNull(
+          loading: () {
+            EasyLoading.show();
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+          },
+        );
       },
     );
   }
@@ -106,7 +123,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     if (chat.role != null && chat.role == "user") {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [userChatItem((chat.text ?? ""))],
+        children: [userChatItem((chat.text ?? ""), chat.networkImage ?? "")],
       ).appPadding(left: 16.w, right: 16.w, top: 16);
     } else {
       return Row(
@@ -179,34 +196,49 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget userChatItem(String item) {
-    return Container(
-      constraints: BoxConstraints(maxWidth: context.width * 0.8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            offset: Offset(1, 1),
-            blurRadius: 5,
-            spreadRadius: 4,
+  Widget userChatItem(String item, String networkImage) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if(networkImage.isNotEmpty)...[
+          AppImage(
+            imageUrl: networkImage,
+            height: 90.h,
+            width: 90.h,
+            shape: BoxShape.rectangle,
+            borderRadius: 12,
           ),
+          4.spaceH,
         ],
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-          topLeft: Radius.circular(12),
+        Container(
+          constraints: BoxConstraints(maxWidth: context.width * 0.8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.2),
+                offset: Offset(1, 1),
+                blurRadius: 5,
+                spreadRadius: 4,
+              ),
+            ],
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+              topLeft: Radius.circular(12),
+            ),
+          ),
+          child: GptMarkdown(
+            item,
+            textAlign: TextAlign.start,
+            style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ).padding(all: 8),
         ),
-      ),
-      child: GptMarkdown(
-        item,
-        textAlign: TextAlign.start,
-        style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-      ).padding(all: 8),
+      ],
     );
   }
 
-  Widget _bottomTextField() {
+  Widget _bottomTextField(ChatDetailState state) {
     return Container(
       decoration: BoxDecoration(
         color: scheduleBgColor,
@@ -221,6 +253,56 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       child: Column(
         children: [
+          10.spaceH,
+          if (state.selectedNetworkImage.isNotEmpty ||
+              state.selectedFile != null) ...[
+            Row(
+              children: [
+                16.spaceW,
+                Stack(
+                  children: [
+                    if (state.selectedNetworkImage.isNotEmpty) ...[
+                      AppImage(
+                        imageUrl: state.selectedNetworkImage,
+                        height: 80.h,
+                        width: 80.h,
+                        shape: BoxShape.rectangle,
+                        borderRadius: 12,
+                      ),
+                    ] else if (state.selectedFile != null) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          state.selectedFile!,
+                          height: 80.h,
+                          width: 80.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+
+                    Positioned(
+                      right: 0,
+                      child: BaseButton(
+                        child: Container(
+                          height: 25,
+                          width: 25,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.close, color: Colors.white),
+                        ),
+                        onTap: () {
+                          context.read<ChatDetailCubit>().removeSelectedImage();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
           10.spaceH,
           AppTextField(
             minLines: 1,
@@ -253,6 +335,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               context.read<ChatDetailCubit>().changeProps(chatText: value);
             },
           ).appPadding(left: 16, right: 16),
+          10.spaceH,
         ],
       ),
     );
@@ -365,6 +448,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ],
               ).padding(top: 12, bottom: 12),
               onTap: () async {
+                Navigator.of(context).pop();
                 _chooseImage(ImageSource.camera);
               },
             ),
@@ -381,6 +465,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ],
               ).padding(top: 12, bottom: 12),
               onTap: () async {
+                Navigator.of(context).pop();
                 _chooseImage(ImageSource.gallery);
               },
             ),
@@ -391,10 +476,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Future<void> _chooseImage(ImageSource camera ) async {
+  Future<void> _chooseImage(ImageSource camera) async {
     final XFile? photo = await ImagePicker().pickImage(source: camera);
-    if(photo!=null){
-      photo;
+    if (photo != null && navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!.read<ChatDetailCubit>().selectImage(
+        photo.path,
+      );
     }
   }
 }

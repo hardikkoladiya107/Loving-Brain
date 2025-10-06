@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
 
 import '../../main.dart';
 
@@ -21,10 +24,10 @@ class NotificationUtil {
 
     DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-    );
+          requestSoundPermission: true,
+          requestBadgePermission: true,
+          requestAlertPermission: true,
+        );
 
     InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
@@ -39,26 +42,41 @@ class NotificationUtil {
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) async {
-        if (Platform.isAndroid) {
-          await _localNotifications
-              .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-              ?.requestNotificationsPermission();
-        }
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      if (Platform.isAndroid) {
+        await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission();
+      }
 
-        showLocalNotification(
-          id: message.data.hashCode,
-          title: message.notification?.title ?? "",
-          body: message.notification?.body ?? "",
-          payload: message.toString(),
-        );
-      },
-    );
-    FirebaseMessaging.onMessageOpenedApp.listen(
-      (RemoteMessage message) {},
-    );
+      showLocalNotification(
+        id: message.data.hashCode,
+        title: message.notification?.title ?? "",
+        body: message.notification?.body ?? "",
+        payload: message.toString(),
+      );
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (navigatorKey.currentContext != null) {
+        _handleMessageClick(navigatorKey.currentContext!, message);
+      }
+    });
+    FirebaseMessaging.instance.getInitialMessage().then((value) {
+      if (value != null) {
+        if (navigatorKey.currentContext != null) {
+          _handleMessageClick(navigatorKey.currentContext!, value);
+        }
+      }
+    });
+  }
+
+  static void _handleMessageClick(BuildContext context, RemoteMessage message) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const YourStreakScreen()));
   }
 
   static Future<void> initializeBGNotifications() async {
@@ -96,31 +114,35 @@ class NotificationUtil {
       title,
       body,
       platformChannelSpecifics,
-     // payload: payload,
+      // payload: payload,
     );
   }
 
-  static Future<NotificationDetails> _notificationDetails(
-      {required String channelId,
-      required String channelName,
-      required String channelDesc,
-      bool sound = true,
-      bool vibration = true,
-      bool showProgress = false,
-      bool onlyAlertOnce = false,
-      int progress = 0,
-      int maxProgress = 0}) async {
+  static Future<NotificationDetails> _notificationDetails({
+    required String channelId,
+    required String channelName,
+    required String channelDesc,
+    bool sound = true,
+    bool vibration = true,
+    bool showProgress = false,
+    bool onlyAlertOnce = false,
+    int progress = 0,
+    int maxProgress = 0,
+  }) async {
     AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(channelId, channelName,
-            channelDescription: channelDesc,
-            importance: Importance.max,
-            priority: Priority.max,
-            playSound: sound,
-            showProgress: showProgress,
-            progress: progress,
-            maxProgress: maxProgress,
-            onlyAlertOnce: onlyAlertOnce,
-            enableVibration: vibration);
+        AndroidNotificationDetails(
+          channelId,
+          channelName,
+          channelDescription: channelDesc,
+          importance: Importance.max,
+          priority: Priority.max,
+          playSound: sound,
+          showProgress: showProgress,
+          progress: progress,
+          maxProgress: maxProgress,
+          onlyAlertOnce: onlyAlertOnce,
+          enableVibration: vibration,
+        );
 
     await _localNotifications.getNotificationAppLaunchDetails();
     NotificationDetails platformChannelSpecifics = NotificationDetails(
