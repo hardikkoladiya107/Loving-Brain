@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:io' as io;
 
 import 'package:dio/dio.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
 class AiRepo {
@@ -9,9 +11,9 @@ class AiRepo {
   static final AiRepo _instance = AiRepo._();
 
   static final String secretKey =
-      "";
+      " ";
   static final String promptKey =
-      "";
+      " ";
 
   static final String conversationUrl =
       "https://api.openai.com/v1/conversations";
@@ -39,7 +41,11 @@ class AiRepo {
         'file': multipartFile,
         'purpose': 'user_data',
       });
-      var response = await dio.post("files", data: formData);
+      var response = await dio.post(
+        "https://api.openai.com/v1/files",
+        data: formData,
+        options: Options(headers: headers),
+      );
       return ApiResultStatus.data(data: response.data);
     } on DioException catch (e) {
       return ApiResultStatus.error(error: e);
@@ -79,22 +85,57 @@ class AiRepo {
   Future<ApiResultStatus> createResponse({
     required String conversationId,
     required String messageText,
+    required String imageUrl,
   }) async {
     try {
       var response = await dio.post(
         "https://api.openai.com/v1/responses",
         data: {
           "model": "gpt-5",
-          "prompt": {"id": promptKey, "version": "6"},
+          "prompt": {"id": promptKey, "version": "8"},
           "conversation": {"id": conversationId},
           "input": [
-            {"role": "user", "content": messageText},
+            {
+              "role": "user",
+              "content": [
+                {"type": "input_text", "text": messageText},
+                if (imageUrl.isNotEmpty)
+                  {
+                    "type": "input_image",
+                    "image_url":
+                    imageUrl,
+                  },
+              ],
+            },
           ],
         },
         options: Options(headers: headers),
       );
       return ApiResultStatus.data(data: response.data);
     } on DioException catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> uploadFileToFirebaseStorage({
+    required File file,
+    required String? referenceId,
+  }) async {
+    try {
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('ai-chat-images')
+          .child(referenceId ?? "TEST")
+          .child('/${file.path.split("/").last}');
+      final metadata = SettableMetadata(
+        contentType: 'image/${file.path.split(".").last}',
+        customMetadata: {'picked-file-path': file.path},
+      );
+      var uploadTask = ref.putFile(io.File(file.path), metadata);
+      return ApiResultStatus.data(data: await Future.value(uploadTask));
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(error: e);
+    } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
     }
   }
