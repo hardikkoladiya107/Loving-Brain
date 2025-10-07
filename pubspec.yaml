@@ -63,6 +63,12 @@ dependencies:
   gpt_markdown: ^1.1.4
   image_picker: ^1.2.0
   firebase_storage: ^13.0.2
+  record: ^6.1.2
+  path_provider: ^2.1.5
+  audioplayers: ^6.5.1
+
+  flutter_audio_capture: ^1.1.11
+  flutter_audio_waveforms: ^1.2.1+8
 
 
 
