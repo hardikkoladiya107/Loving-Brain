@@ -15,7 +15,6 @@ class AiRepo {
   static final String promptKey =
       " ";
 
-
   static final String conversationUrl =
       "https://api.openai.com/v1/conversations";
 
@@ -87,6 +86,7 @@ class AiRepo {
     required String conversationId,
     required String messageText,
     required String imageUrl,
+    required String audioUrl,
   }) async {
     try {
       var response = await dio.post(
@@ -101,11 +101,9 @@ class AiRepo {
               "content": [
                 {"type": "input_text", "text": messageText},
                 if (imageUrl.isNotEmpty)
-                  {
-                    "type": "input_image",
-                    "image_url":
-                    imageUrl,
-                  },
+                  {"type": "input_image", "image_url": imageUrl},
+                if (audioUrl.isNotEmpty)
+                  {"type": "input_audio", "audio_url": audioUrl},
               ],
             },
           ],
@@ -130,6 +128,29 @@ class AiRepo {
           .child('/${file.path.split("/").last}');
       final metadata = SettableMetadata(
         contentType: 'image/${file.path.split(".").last}',
+        customMetadata: {'picked-file-path': file.path},
+      );
+      var uploadTask = ref.putFile(io.File(file.path), metadata);
+      return ApiResultStatus.data(data: await Future.value(uploadTask));
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(error: e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> uploadAudioFileToFirebaseStorage({
+    required File file,
+    required String? referenceId,
+  }) async {
+    try {
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('ai-chat-audio')
+          .child(referenceId ?? "TEST")
+          .child('/${file.path.split("/").last}');
+      final metadata = SettableMetadata(
+        contentType: 'audio/${file.path.split(".").last}',
         customMetadata: {'picked-file-path': file.path},
       );
       var uploadTask = ref.putFile(io.File(file.path), metadata);

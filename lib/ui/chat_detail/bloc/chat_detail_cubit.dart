@@ -12,6 +12,7 @@ import '../../../model/api_result_status.dart';
 import '../../../model/chat_model.dart';
 import '../../../model/create_conversation_model.dart';
 import '../../../model/user_model.dart';
+import '../../../other/app_utils.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/ai_repo.dart';
 import '../../../repo/auth_repo.dart';
@@ -45,9 +46,11 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     ApiResultStatus? getConversationApiResult,
     File? selectedFile,
     ApiResultStatus? imageUploadApiResult,
+    ApiResultStatus? audioUploadApiResult,
     String? selectedNetworkImage,
     String? selectedAudioUrl,
     Reference? firebaseFileReference,
+    Reference? firebaseAudioFileReference,
     bool? isRecording,
     File? audioRecordedFile,
     Duration? currentAudioDuration,
@@ -58,6 +61,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       state.copyWith(
         createConversationApiResult:
             createConversationApiResult ?? ApiResultStatus.initial(),
+        audioUploadApiResult: audioUploadApiResult ?? ApiResultStatus.initial(),
         createResponseApiResult:
             createResponseApiResult ?? ApiResultStatus.initial(),
         getConversationApiResult:
@@ -79,6 +83,8 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             selectedNetworkImage ?? state.selectedNetworkImage,
         firebaseFileReference:
             firebaseFileReference ?? state.firebaseFileReference,
+        firebaseAudioFileReference:
+            firebaseAudioFileReference ?? state.firebaseAudioFileReference,
       ),
     );
   }
@@ -166,6 +172,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       request: {
         "text": (chat.content ?? []).first.text,
         "network_image": state.selectedNetworkImage,
+        "audio_url": state.selectedAudioUrl,
         "role": chat.role,
         "time_stamp": Timestamp.now(),
       },
@@ -185,15 +192,18 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       );
       var textMessage = state.chatText;
       var networkImage = state.selectedNetworkImage;
+      var audioUrl = state.selectedAudioUrl;
       changeProps(
         createResponseApiResult: ApiResultStatus.loading(),
         chatText: "",
       );
       removeSelectedImage();
+      removeSelectedAudio();
       var allConversationResponse = await AiRepo.instance.createResponse(
         conversationId: state.conversationId!,
         messageText: textMessage,
         imageUrl: networkImage,
+        audioUrl: audioUrl,
       );
       allConversationResponse.whenOrNull(
         data: (data) async {
@@ -218,6 +228,8 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     changeProps(
       selectedNetworkImage: "",
       selectedFile: selectedFile,
+      selectedAudioUrl: "",
+      audioRecordedFile: null,
       imageUploadApiResult: ApiResultStatus.loading(),
     );
     var allConversationResponse = await AiRepo.instance
@@ -229,10 +241,41 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     allConversationResponse.whenOrNull(
       data: (data) async {
         if (data is TaskSnapshot) {
-          var downloadUrl = await data.ref.getDownloadURL();
+          var downloadUrl =
+              "${getFirebaseStorageBaseUrl()}/${data.ref.fullPath}";
           changeProps(
             selectedNetworkImage: downloadUrl,
             firebaseFileReference: data.ref,
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> selectAudio({
+    required bool isRecording,
+    required File audioRecordedFile,
+  }) async {
+    changeProps(
+      isRecording: false,
+      selectedAudioUrl: "",
+      audioRecordedFile: audioRecordedFile,
+      audioUploadApiResult: ApiResultStatus.loading(),
+    );
+    var audioUploadResponse = await AiRepo.instance
+        .uploadAudioFileToFirebaseStorage(
+          referenceId: state.userModel?.uid,
+          file: audioRecordedFile,
+        );
+    changeProps(audioUploadApiResult: audioUploadResponse);
+    audioUploadResponse.whenOrNull(
+      data: (data) async {
+        if (data is TaskSnapshot) {
+          var downloadUrl =
+              "${getFirebaseStorageBaseUrl()}/${data.ref.fullPath}";
+          changeProps(
+            selectedAudioUrl: downloadUrl,
+            firebaseAudioFileReference: data.ref,
           );
         }
       },
@@ -244,64 +287,15 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     await state.firebaseFileReference?.delete();
   }
 
-  void removeSelectedAudio() {
+  Future<void> removeSelectedAudio() async {
     emit(
       state.copyWith(
+        selectedAudioUrl: "",
         audioRecordedFile: null,
-        isRecording: false,
-        totalAudioDuration: Duration.zero,
         currentAudioDuration: Duration.zero,
+        totalAudioDuration: Duration.zero,
       ),
     );
-    // await state.firebaseFileReference?.delete();
+    await state.firebaseAudioFileReference?.delete();
   }
-
-  Future uploadAudio(File audioFile) async {
-    changeProps(
-      selectedNetworkImage: "",
-      audioRecordedFile: audioFile,
-      imageUploadApiResult: ApiResultStatus.loading(),
-    );
-    var allConversationResponse = await AiRepo.instance
-        .uploadFileToFirebaseStorage(
-          referenceId: state.userModel?.uid,
-          file: audioFile,
-        );
-    changeProps(imageUploadApiResult: allConversationResponse);
-    allConversationResponse.whenOrNull(
-      data: (data) async {
-        if (data is TaskSnapshot) {
-          var downloadUrl = await data.ref.getDownloadURL();
-          changeProps(
-            selectedNetworkImage: downloadUrl,
-            firebaseFileReference: data.ref,
-          );
-        }
-      },
-    );
-  }
-
-  // Future _getAllConversation() async {
-  //   changeProps(getAllConversationApiResult: ApiResultStatus.loading());
-  //   var allConversationResponse = await AiRepo.instance.getAllConversation(
-  //     conversationId: state.conversationId!,
-  //   );
-  //   allConversationResponse.whenOrNull(
-  //     data: (data) {
-  //       var conversationModel = ConversationModel.fromJson(data);
-  //       List<ConversationItem> tempConversationList = [];
-  //       tempConversationList.addAll(conversationModel.data ?? []);
-  //       tempConversationList.removeWhere(
-  //         (element) => element.type != "message",
-  //       );
-  //       changeProps(
-  //         conversationList: tempConversationList.reversed.toList(),
-  //         getAllConversationApiResult: allConversationResponse,
-  //       );
-  //     },
-  //     error: (error) {
-  //       changeProps(getAllConversationApiResult: allConversationResponse);
-  //     },
-  //   );
-  // }
 }

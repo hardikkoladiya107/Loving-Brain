@@ -121,6 +121,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             EasyLoading.dismiss();
           },
         );
+
+        state.audioUploadApiResult.whenOrNull(
+          loading: () {
+            EasyLoading.show();
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+          },
+        );
       },
     );
   }
@@ -286,7 +299,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                         ),
                       ),
                     ],
-
                     Positioned(
                       right: 0,
                       child: BaseButton(
@@ -309,7 +321,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
           ],
-          if (state.audioRecordedFile != null) ...[_audioPlayerWidget(state)],
+          if (state.audioRecordedFile != null) ...[
+            10.spaceH,
+            _audioPlayerWidget(state),
+          ],
           10.spaceH,
           AppTextField(
             minLines: 1,
@@ -554,11 +569,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   Future<void> _stopRecording() async {
     var recordedPath = await _recorder.stop();
     if ((recordedPath ?? "").isNotEmpty) {
-      navigatorKey.currentContext?.read<ChatDetailCubit>().changeProps(
+      navigatorKey.currentContext?.read<ChatDetailCubit>().selectAudio(
         isRecording: false,
         audioRecordedFile: File(recordedPath!),
       );
-      context.read<ChatDetailCubit>().uploadAudio(File(recordedPath!));
     }
   }
 

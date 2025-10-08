@@ -21,6 +21,7 @@ abstract class ChatDetailState with _$ChatDetailState {
     @Default(ApiResultStatus.initial()) ApiResultStatus createResponseApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus getConversationApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus imageUploadApiResult,
+    @Default(ApiResultStatus.initial()) ApiResultStatus audioUploadApiResult,
     @Default(Duration.zero) Duration currentAudioDuration,
     @Default(Duration.zero) Duration totalAudioDuration,
     @Default(false) bool isRecording,
@@ -28,6 +29,7 @@ abstract class ChatDetailState with _$ChatDetailState {
     File? selectedFile,
     UserModel? userModel,
     Reference? firebaseFileReference,
+    Reference? firebaseAudioFileReference,
     PlayerState? audioPlayerState
   }) = _ChatDetailState;
 }
