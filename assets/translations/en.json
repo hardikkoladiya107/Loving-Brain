@@ -280,6 +280,8 @@
   "medicalNotesSchoolContactsAllergies": "Medical notes, school contacts, allergies",
   "eventAttachment": "Event attachment",
   "starRequired": "* Required",
+  "stopRecording": "Stop Recording",
+  "startRecording": "Start Recording",
   "onceAcceptedyouSameSharedCalendar": "Once accepted, you’ll both see the same shared calendar."
 
 

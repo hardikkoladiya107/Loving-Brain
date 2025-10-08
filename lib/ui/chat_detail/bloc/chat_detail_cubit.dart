@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -34,7 +35,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     }
   }
 
-  void changeProps({
+  Future<void> changeProps({
     ApiResultStatus? createConversationApiResult,
     ApiResultStatus? createResponseApiResult,
     String? chatText,
@@ -45,8 +46,14 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     File? selectedFile,
     ApiResultStatus? imageUploadApiResult,
     String? selectedNetworkImage,
+    String? selectedAudioUrl,
     Reference? firebaseFileReference,
-  }) {
+    bool? isRecording,
+    File? audioRecordedFile,
+    Duration? currentAudioDuration,
+    Duration? totalAudioDuration,
+    PlayerState? audioPlayerState,
+  }) async {
     emit(
       state.copyWith(
         createConversationApiResult:
@@ -60,7 +67,14 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
         chatText: chatText ?? state.chatText,
         conversationId: conversationId ?? state.conversationId,
         userModel: userModel ?? state.userModel,
+        selectedAudioUrl: selectedAudioUrl ?? state.selectedAudioUrl,
+        isRecording: isRecording ?? state.isRecording,
         selectedFile: selectedFile ?? state.selectedFile,
+        audioRecordedFile: audioRecordedFile ?? state.audioRecordedFile,
+        currentAudioDuration:
+            currentAudioDuration ?? state.currentAudioDuration,
+        totalAudioDuration: totalAudioDuration ?? state.totalAudioDuration,
+        audioPlayerState: audioPlayerState ?? state.audioPlayerState,
         selectedNetworkImage:
             selectedNetworkImage ?? state.selectedNetworkImage,
         firebaseFileReference:
@@ -164,12 +178,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       await _addChatToConversation(
         ConversationItem(
           type: "message",
-          content: [
-            AIContent(
-              text: state.chatText,
-              type: "input_text",
-            ),
-          ],
+          content: [AIContent(text: state.chatText, type: "input_text")],
           role: "user",
           status: "completed",
         ),
@@ -233,6 +242,43 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
   Future<void> removeSelectedImage() async {
     emit(state.copyWith(selectedFile: null, selectedNetworkImage: ""));
     await state.firebaseFileReference?.delete();
+  }
+
+  void removeSelectedAudio() {
+    emit(
+      state.copyWith(
+        audioRecordedFile: null,
+        isRecording: false,
+        totalAudioDuration: Duration.zero,
+        currentAudioDuration: Duration.zero,
+      ),
+    );
+    // await state.firebaseFileReference?.delete();
+  }
+
+  Future uploadAudio(File audioFile) async {
+    changeProps(
+      selectedNetworkImage: "",
+      audioRecordedFile: audioFile,
+      imageUploadApiResult: ApiResultStatus.loading(),
+    );
+    var allConversationResponse = await AiRepo.instance
+        .uploadFileToFirebaseStorage(
+          referenceId: state.userModel?.uid,
+          file: audioFile,
+        );
+    changeProps(imageUploadApiResult: allConversationResponse);
+    allConversationResponse.whenOrNull(
+      data: (data) async {
+        if (data is TaskSnapshot) {
+          var downloadUrl = await data.ref.getDownloadURL();
+          changeProps(
+            selectedNetworkImage: downloadUrl,
+            firebaseFileReference: data.ref,
+          );
+        }
+      },
+    );
   }
 
   // Future _getAllConversation() async {

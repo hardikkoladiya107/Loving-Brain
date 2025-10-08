@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +13,11 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/chat_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/chat_detail/recording_widget.dart';
+import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
@@ -42,6 +47,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         conversationId: widget.conversationId,
         initialChat: widget.initialChat,
       );
+      _initAudioPlayer();
     });
     super.initState();
   }
@@ -200,7 +206,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if(networkImage.isNotEmpty)...[
+        if (networkImage.isNotEmpty) ...[
           AppImage(
             imageUrl: networkImage,
             height: 90.h,
@@ -303,6 +309,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
           ],
+          if (state.audioRecordedFile != null) ...[_audioPlayerWidget(state)],
           10.spaceH,
           AppTextField(
             minLines: 1,
@@ -315,7 +322,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 10.spaceW,
-                Icon(Icons.mic_outlined),
+                _recordAudio(state),
                 10.spaceW,
                 _selectImage(),
                 10.spaceW,
@@ -483,5 +490,201 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         photo.path,
       );
     }
+  }
+
+  Widget _recordAudio(ChatDetailState state) {
+    return BaseButton(
+      child: Icon(Icons.mic_outlined),
+      onTap: () {
+        showAppDialog(
+          child: (context) {
+            return BlocBuilder<ChatDetailCubit, ChatDetailState>(
+              builder: (context, state) {
+                return Dialog(
+                  child: SizedBox(
+                    height: 200.h,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RecordingAnimation(isRecording: state.isRecording),
+                        30.spaceH,
+                        BaseButton(
+                          child:
+                              (state.isRecording
+                                      ? LocaleKeys.stopRecording.tr()
+                                      : LocaleKeys.startRecording.tr())
+                                  .appText(fontWeight: FontWeight.w600),
+                          onTap: () {
+                            if (state.isRecording) {
+                              _stopRecording();
+                              Navigator.of(context).pop();
+                            } else {
+                              _startRecording();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  final _recorder = AudioRecorder();
+
+  Future<void> _startRecording() async {
+    if (navigatorKey.currentContext != null) {
+      if (await _recorder.hasPermission()) {
+        final dir = await getApplicationDocumentsDirectory();
+        final path =
+            '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
+        await _recorder.start(const RecordConfig(), path: path);
+        navigatorKey.currentContext?.read<ChatDetailCubit>().changeProps(
+          isRecording: true,
+        );
+      }
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    var recordedPath = await _recorder.stop();
+    if ((recordedPath ?? "").isNotEmpty) {
+      navigatorKey.currentContext?.read<ChatDetailCubit>().changeProps(
+        isRecording: false,
+        audioRecordedFile: File(recordedPath!),
+      );
+      context.read<ChatDetailCubit>().uploadAudio(File(recordedPath!));
+    }
+  }
+
+  final audioPlayer = AudioPlayer();
+
+  void _initAudioPlayer() {
+    audioPlayer.onPositionChanged.listen((event) {
+      if (navigatorKey.currentContext != null) {
+        navigatorKey.currentContext?.read<ChatDetailCubit>().changeProps(
+          currentAudioDuration: event,
+        );
+      }
+    });
+
+    audioPlayer.onDurationChanged.listen((event) {
+      if (navigatorKey.currentContext != null) {
+        navigatorKey.currentContext?.read<ChatDetailCubit>().changeProps(
+          totalAudioDuration: event,
+        );
+      }
+    });
+
+    audioPlayer.onPlayerStateChanged.listen((event) {
+      if (navigatorKey.currentContext != null) {
+        navigatorKey.currentContext?.read<ChatDetailCubit>().changeProps(
+          audioPlayerState: event,
+        );
+      }
+    });
+  }
+
+  Widget _audioPlayerWidget(ChatDetailState state) {
+    return Stack(
+      children: [
+        Container(
+          height: 60,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              8.spaceW,
+              Container(
+                height: 45,
+                width: 45,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.audiotrack, color: Colors.white),
+              ),
+              8.spaceW,
+              Expanded(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 2,
+                    overlayShape: SliderComponentShape.noOverlay,
+                    trackShape: const RoundedRectSliderTrackShape(),
+                    activeTrackColor: cardColor2,
+                    inactiveTrackColor: greyColor3,
+                  ),
+                  child: Slider(
+                    value: (state.currentAudioDuration.inMilliseconds ?? 0)
+                        .toDouble(),
+                    max: (state.totalAudioDuration.inMilliseconds ?? 0)
+                        .toDouble(),
+                    min: 0,
+                    onChanged: (value) {
+                      audioPlayer.seek(Duration(milliseconds: value.toInt()));
+                    },
+                  ),
+                ),
+              ),
+              8.spaceW,
+              BaseButton(
+                child: Icon(
+                  (state.audioPlayerState == PlayerState.stopped ||
+                          state.audioPlayerState == PlayerState.paused ||
+                          state.audioPlayerState == null)
+                      ? Icons.play_arrow
+                      : (state.audioPlayerState == PlayerState.completed)
+                      ? Icons.replay
+                      : Icons.pause,
+                  size: 28,
+                ),
+                onTap: () async {
+                  if (state.audioPlayerState == PlayerState.paused) {
+                    audioPlayer.resume();
+                  } else if (state.audioPlayerState == PlayerState.stopped ||
+                      state.audioPlayerState == null ||
+                      state.audioPlayerState == PlayerState.completed) {
+                    if ((state.audioRecordedFile?.path ?? "").isNotEmpty) {
+                      await audioPlayer.play(
+                        DeviceFileSource(state.audioRecordedFile!.path),
+                      );
+                    }
+                  } else if (state.audioPlayerState == PlayerState.playing) {
+                    audioPlayer.pause();
+                  }
+                },
+              ),
+              12.spaceW,
+              BaseButton(
+                child: Container(
+                  height: 20,
+                  width: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.close, color: Colors.white, size: 12),
+                ),
+                onTap: () async {
+                  await audioPlayer.stop();
+                  await audioPlayer.release();
+                  navigatorKey.currentContext
+                      ?.read<ChatDetailCubit>()
+                      .removeSelectedAudio();
+                },
+              ),
+              16.spaceW,
+            ],
+          ),
+        ),
+      ],
+    ).appPadding(left: 16.w, right: 16.w);
   }
 }
