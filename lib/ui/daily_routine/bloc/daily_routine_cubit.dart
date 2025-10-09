@@ -87,7 +87,7 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
         request: {
           "time_stamp": Timestamp.fromDate(state.selectedDateTime!),
           "description": state.descriptionText,
-          "type": "",
+          "type": state.selectedType,
         },
         id: state.userModel?.defaultChild?.id
       );

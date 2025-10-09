@@ -147,14 +147,14 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
             fontWeight: FontWeight.w600,
           ),
           8.spaceH,
-          if ( /*label == "PLAY"*/ true) _playButton() else _feedButton(),
+          _typeButton(routine.type ?? ""),
           6.spaceH,
         ],
       ),
     ).appPadding(left: 30, right: 30, top: 10);
   }
 
-  Widget _playButton() {
+  Widget _typeButton(String type) {
     return Container(
       decoration: BoxDecoration(
         color: greenPlayButtonColor,
@@ -164,9 +164,7 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           6.spaceW,
-          "Play".appText(fontSize: 12, fontWeight: FontWeight.w600),
-          6.spaceW,
-          Assets.icons.icPlayActivityIcon.image(height: 14),
+          type.appText(fontSize: 12, fontWeight: FontWeight.w600),
           6.spaceW,
         ],
       ).appPadding(left: 6, right: 6, top: 2, bottom: 2),

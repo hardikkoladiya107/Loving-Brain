@@ -180,11 +180,12 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            "${LocaleKeys.getAIInsightFor.tr()} ${state.userModel?.childName}".appText(
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-              maxLines: 1
-            ),
+            "${LocaleKeys.getAIInsightFor.tr()} ${state.userModel?.childName}"
+                .appText(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  maxLines: 1,
+                ),
           ],
         ).appPadding(top: 8, bottom: 8),
       ),
@@ -329,7 +330,8 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(),
-        "${state.userModel?.childName}’s ${LocaleKeys.recentMoments.tr()}".appText(fontWeight: FontWeight.w700),
+        "${state.userModel?.childName}’s ${LocaleKeys.recentMoments.tr()}"
+            .appText(fontWeight: FontWeight.w700),
         10.spaceH,
         ListView.builder(
           itemCount: state.behaviourList.length,
@@ -414,7 +416,9 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
             ),
           ),
           20.spaceW,
-          icon.image(width: 25),
+          // icon.image(width: 25),
+          if (title.characters.isNotEmpty)
+            title.characters.first.appText(fontSize: 30),
           20.spaceW,
           Expanded(
             child: Column(
@@ -424,11 +428,14 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: title.appText(
-                        textAlign: TextAlign.start,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                      child: title.characters
+                          .skip(1)
+                          .toString()
+                          .appText(
+                            textAlign: TextAlign.start,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                     ),
                     time.appText(fontSize: 10, fontWeight: FontWeight.w500),
                   ],
@@ -459,9 +466,10 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
       controller: tellUsMoreController,
       fillColor: aiQuestionCardColor2,
       title: LocaleKeys.tellUsMore.tr(),
-      hint: "Describe what happened, when, and where and how ${state.userModel?.childName} Felt? ....",
+      hint:
+          "Describe what happened, when, and where and how ${state.userModel?.childName} Felt? ....",
       maxLines: 4,
-        contentPadding : EdgeInsets.symmetric(horizontal: 12,vertical: 6),
+      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       onChanged: (value) {
         context.read<NewBehaviorCubit>().changeProps(tellUsMoreText: value);
       },

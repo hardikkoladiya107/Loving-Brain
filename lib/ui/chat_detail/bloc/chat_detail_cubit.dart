@@ -243,6 +243,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
         if (data is TaskSnapshot) {
           var downloadUrl =
               "${getFirebaseStorageBaseUrl()}/${data.ref.fullPath}";
+          // var downloadUrl = await data.ref.getDownloadURL();
           changeProps(
             selectedNetworkImage: downloadUrl,
             firebaseFileReference: data.ref,
@@ -273,6 +274,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
         if (data is TaskSnapshot) {
           var downloadUrl =
               "${getFirebaseStorageBaseUrl()}/${data.ref.fullPath}";
+          // var downloadUrl = await data.ref.getDownloadURL();
           changeProps(
             selectedAudioUrl: downloadUrl,
             firebaseAudioFileReference: data.ref,
