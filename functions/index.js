@@ -12,9 +12,11 @@ exports.sampleTest2 = onRequest((request, response) => {
 });
 
 
-///NEW CODE BELOW
+
 const admin = require("firebase-admin");
-admin.initializeApp();
+if (!admin.apps.length) admin.initializeApp();
+const db = admin.firestore();
+
 exports.sendNotificationToAll = onRequest(async (req, res) => {
   try {
     const usersSnapshot = await admin.firestore().collection("users").get();
@@ -110,6 +112,55 @@ exports.sendPushNotification = onRequest(async (req, res) => {
       success: false,
       error: error.message,
     });
+  }
+});
+
+
+
+exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
+  try {
+    const now = admin.firestore.Timestamp.now().toDate();
+
+    const startOfMinute = new Date(now);
+    startOfMinute.setSeconds(0, 0);
+
+    const endOfMinute = new Date(now);
+    endOfMinute.setSeconds(59, 999);
+
+    const childrenSnapshot = await db.collection("children").get();
+    const matchingChildren = [];
+
+    for (const childDoc of childrenSnapshot.docs) {
+      const childData = childDoc.data();
+      const routines = childData.routines || [];
+
+      const matchedRoutines = routines.filter((routine) => {
+        try {
+          if (!routine.time_stamp) return false;
+          const time =
+            routine.time_stamp.toDate?.() ?? new Date(routine.time_stamp);
+          return time >= startOfMinute && time <= endOfMinute;
+        } catch {
+          return false;
+        }
+      });
+
+      if (matchedRoutines.length > 0) {
+        matchingChildren.push({
+          childId: childDoc.id,
+          routines: matchedRoutines,
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      totalChildren: matchingChildren.length,
+      data: matchingChildren,
+    });
+  } catch (e) {
+    console.error("🔥 Function error:", e);
+    return res.status(500).json({ success: false, message: e.message });
   }
 });
 

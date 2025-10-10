@@ -163,15 +163,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             )
             .appPadding(left: 16),
         ListView.builder(
-          itemCount: state.routineList.length,
+          itemCount: (state.childModel?.routinesList??[]).length,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
           itemBuilder: (context, index) {
-            var routine = state.routineList[index];
+            var routine = state.childModel?.routinesList?[index];
             return _routineItem(
-              schedule: getStringTime(routine.timeStamp),
-              label: routine.description ?? "",
+              schedule: getStringTime(routine?.timeStamp),
+              label: routine?.description ?? "",
               onTap: () {},
             );
           },

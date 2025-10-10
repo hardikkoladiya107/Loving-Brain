@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/model/child_model.dart';
 
 import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
@@ -22,6 +25,7 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
 
   void changeProps({
     UserModel? userModel,
+    ChildModel? childModel,
     DateTime? selectedDateTime,
     String? descriptionText,
     String? selectedType,
@@ -32,11 +36,11 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
     ApiResultStatus? addRoutineApiResult,
     List<RoutineCategoryModel>? routineCategoryList,
     List<RoutineModel>? routinesList,
-
   }) {
     emit(
       state.copyWith(
         userModel: userModel ?? state.userModel,
+        childModel: childModel ?? state.childModel,
         selectedDateTime: selectedDateTime ?? state.selectedDateTime,
         descriptionText: descriptionText ?? state.descriptionText,
         selectedType: selectedType ?? state.selectedType,
@@ -47,8 +51,7 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
         routineCategoryList: routineCategoryList ?? state.routineCategoryList,
         getRoutineTypeApiResult:
             getRoutineTypeApiResult ?? ApiResultStatus.initial(),
-        addRoutineApiResult:
-        addRoutineApiResult ?? ApiResultStatus.initial(),
+        addRoutineApiResult: addRoutineApiResult ?? ApiResultStatus.initial(),
       ),
     );
   }
@@ -89,12 +92,11 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
           "description": state.descriptionText,
           "type": state.selectedType,
         },
-        id: state.userModel?.defaultChild?.id
+        id: state.userModel?.defaultChild?.id,
       );
       changeProps(addRoutineApiResult: apiResultStatus);
     }
   }
-
 
   Future<void> _fetchDailyRoutine() async {
     changeProps(getRoutineTypeApiResult: ApiResultStatus.loading());
@@ -109,18 +111,22 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
     );
   }
 
+  StreamSubscription? routineStreamSubscription;
+
   void _listenToRoutine() {
     if (state.userModel?.defaultChild != null) {
-      state.userModel?.defaultChild!
-          .collection("routines").orderBy("time_stamp",descending: true)
+      routineStreamSubscription?.cancel();
+      routineStreamSubscription = state.userModel?.defaultChild!
           .snapshots()
           .listen((event) {
-        changeProps(
-          routinesList: event.docs
-              .map((e) => RoutineModel.fromJson(e.data()))
-              .toList(),
-        );
-      });
+            if (event.data() != null) {
+              changeProps(
+                childModel: ChildModel.fromJson(
+                  event.data() as Map<String, dynamic>,event.reference
+                ),
+              );
+            }
+          });
     }
   }
 }

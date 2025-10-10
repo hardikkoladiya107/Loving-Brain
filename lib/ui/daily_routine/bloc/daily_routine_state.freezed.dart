@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailyRoutineState {
 
- UserModel? get userModel; DateTime? get selectedDateTime; String get descriptionText; String get selectedType; String get timeError; String get descriptionError; String get typeError; ApiResultStatus get getRoutineTypeApiResult; ApiResultStatus get addRoutineApiResult; List<RoutineCategoryModel> get routineCategoryList; List<RoutineModel> get routinesList;
+ UserModel? get userModel; ChildModel? get childModel; DateTime? get selectedDateTime; String get descriptionText; String get selectedType; String get timeError; String get descriptionError; String get typeError; ApiResultStatus get getRoutineTypeApiResult; ApiResultStatus get addRoutineApiResult; List<RoutineCategoryModel> get routineCategoryList; List<RoutineModel> get routinesList;
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DailyRoutineStateCopyWith<DailyRoutineState> get copyWith => _$DailyRoutineStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyRoutineState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.selectedDateTime, selectedDateTime) || other.selectedDateTime == selectedDateTime)&&(identical(other.descriptionText, descriptionText) || other.descriptionText == descriptionText)&&(identical(other.selectedType, selectedType) || other.selectedType == selectedType)&&(identical(other.timeError, timeError) || other.timeError == timeError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.typeError, typeError) || other.typeError == typeError)&&(identical(other.getRoutineTypeApiResult, getRoutineTypeApiResult) || other.getRoutineTypeApiResult == getRoutineTypeApiResult)&&(identical(other.addRoutineApiResult, addRoutineApiResult) || other.addRoutineApiResult == addRoutineApiResult)&&const DeepCollectionEquality().equals(other.routineCategoryList, routineCategoryList)&&const DeepCollectionEquality().equals(other.routinesList, routinesList));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyRoutineState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.selectedDateTime, selectedDateTime) || other.selectedDateTime == selectedDateTime)&&(identical(other.descriptionText, descriptionText) || other.descriptionText == descriptionText)&&(identical(other.selectedType, selectedType) || other.selectedType == selectedType)&&(identical(other.timeError, timeError) || other.timeError == timeError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.typeError, typeError) || other.typeError == typeError)&&(identical(other.getRoutineTypeApiResult, getRoutineTypeApiResult) || other.getRoutineTypeApiResult == getRoutineTypeApiResult)&&(identical(other.addRoutineApiResult, addRoutineApiResult) || other.addRoutineApiResult == addRoutineApiResult)&&const DeepCollectionEquality().equals(other.routineCategoryList, routineCategoryList)&&const DeepCollectionEquality().equals(other.routinesList, routinesList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,selectedDateTime,descriptionText,selectedType,timeError,descriptionError,typeError,getRoutineTypeApiResult,addRoutineApiResult,const DeepCollectionEquality().hash(routineCategoryList),const DeepCollectionEquality().hash(routinesList));
+int get hashCode => Object.hash(runtimeType,userModel,childModel,selectedDateTime,descriptionText,selectedType,timeError,descriptionError,typeError,getRoutineTypeApiResult,addRoutineApiResult,const DeepCollectionEquality().hash(routineCategoryList),const DeepCollectionEquality().hash(routinesList));
 
 @override
 String toString() {
-  return 'DailyRoutineState(userModel: $userModel, selectedDateTime: $selectedDateTime, descriptionText: $descriptionText, selectedType: $selectedType, timeError: $timeError, descriptionError: $descriptionError, typeError: $typeError, getRoutineTypeApiResult: $getRoutineTypeApiResult, addRoutineApiResult: $addRoutineApiResult, routineCategoryList: $routineCategoryList, routinesList: $routinesList)';
+  return 'DailyRoutineState(userModel: $userModel, childModel: $childModel, selectedDateTime: $selectedDateTime, descriptionText: $descriptionText, selectedType: $selectedType, timeError: $timeError, descriptionError: $descriptionError, typeError: $typeError, getRoutineTypeApiResult: $getRoutineTypeApiResult, addRoutineApiResult: $addRoutineApiResult, routineCategoryList: $routineCategoryList, routinesList: $routinesList)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $DailyRoutineStateCopyWith<$Res>  {
   factory $DailyRoutineStateCopyWith(DailyRoutineState value, $Res Function(DailyRoutineState) _then) = _$DailyRoutineStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, DateTime? selectedDateTime, String descriptionText, String selectedType, String timeError, String descriptionError, String typeError, ApiResultStatus getRoutineTypeApiResult, ApiResultStatus addRoutineApiResult, List<RoutineCategoryModel> routineCategoryList, List<RoutineModel> routinesList
+ UserModel? userModel, ChildModel? childModel, DateTime? selectedDateTime, String descriptionText, String selectedType, String timeError, String descriptionError, String typeError, ApiResultStatus getRoutineTypeApiResult, ApiResultStatus addRoutineApiResult, List<RoutineCategoryModel> routineCategoryList, List<RoutineModel> routinesList
 });
 
 
@@ -62,10 +62,11 @@ class _$DailyRoutineStateCopyWithImpl<$Res>
 
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? selectedDateTime = freezed,Object? descriptionText = null,Object? selectedType = null,Object? timeError = null,Object? descriptionError = null,Object? typeError = null,Object? getRoutineTypeApiResult = null,Object? addRoutineApiResult = null,Object? routineCategoryList = null,Object? routinesList = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? childModel = freezed,Object? selectedDateTime = freezed,Object? descriptionText = null,Object? selectedType = null,Object? timeError = null,Object? descriptionError = null,Object? typeError = null,Object? getRoutineTypeApiResult = null,Object? addRoutineApiResult = null,Object? routineCategoryList = null,Object? routinesList = null,}) {
   return _then(_self.copyWith(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
-as UserModel?,selectedDateTime: freezed == selectedDateTime ? _self.selectedDateTime : selectedDateTime // ignore: cast_nullable_to_non_nullable
+as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
+as ChildModel?,selectedDateTime: freezed == selectedDateTime ? _self.selectedDateTime : selectedDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,descriptionText: null == descriptionText ? _self.descriptionText : descriptionText // ignore: cast_nullable_to_non_nullable
 as String,selectedType: null == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
 as String,timeError: null == timeError ? _self.timeError : timeError // ignore: cast_nullable_to_non_nullable
@@ -178,10 +179,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DailyRoutineState() when $default != null:
-return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
+return $default(_that.userModel,_that.childModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
   return orElse();
 
 }
@@ -199,10 +200,10 @@ return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)  $default,) {final _that = this;
 switch (_that) {
 case _DailyRoutineState():
-return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
+return $default(_that.userModel,_that.childModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -219,10 +220,10 @@ return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  DateTime? selectedDateTime,  String descriptionText,  String selectedType,  String timeError,  String descriptionError,  String typeError,  ApiResultStatus getRoutineTypeApiResult,  ApiResultStatus addRoutineApiResult,  List<RoutineCategoryModel> routineCategoryList,  List<RoutineModel> routinesList)?  $default,) {final _that = this;
 switch (_that) {
 case _DailyRoutineState() when $default != null:
-return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
+return $default(_that.userModel,_that.childModel,_that.selectedDateTime,_that.descriptionText,_that.selectedType,_that.timeError,_that.descriptionError,_that.typeError,_that.getRoutineTypeApiResult,_that.addRoutineApiResult,_that.routineCategoryList,_that.routinesList);case _:
   return null;
 
 }
@@ -234,10 +235,11 @@ return $default(_that.userModel,_that.selectedDateTime,_that.descriptionText,_th
 
 
 class _DailyRoutineState implements DailyRoutineState {
-  const _DailyRoutineState({this.userModel, this.selectedDateTime, this.descriptionText = "", this.selectedType = "", this.timeError = "", this.descriptionError = "", this.typeError = "", this.getRoutineTypeApiResult = const ApiResultStatus.initial(), this.addRoutineApiResult = const ApiResultStatus.initial(), final  List<RoutineCategoryModel> routineCategoryList = const [], final  List<RoutineModel> routinesList = const []}): _routineCategoryList = routineCategoryList,_routinesList = routinesList;
+  const _DailyRoutineState({this.userModel, this.childModel, this.selectedDateTime, this.descriptionText = "", this.selectedType = "", this.timeError = "", this.descriptionError = "", this.typeError = "", this.getRoutineTypeApiResult = const ApiResultStatus.initial(), this.addRoutineApiResult = const ApiResultStatus.initial(), final  List<RoutineCategoryModel> routineCategoryList = const [], final  List<RoutineModel> routinesList = const []}): _routineCategoryList = routineCategoryList,_routinesList = routinesList;
   
 
 @override final  UserModel? userModel;
+@override final  ChildModel? childModel;
 @override final  DateTime? selectedDateTime;
 @override@JsonKey() final  String descriptionText;
 @override@JsonKey() final  String selectedType;
@@ -271,16 +273,16 @@ _$DailyRoutineStateCopyWith<_DailyRoutineState> get copyWith => __$DailyRoutineS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyRoutineState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.selectedDateTime, selectedDateTime) || other.selectedDateTime == selectedDateTime)&&(identical(other.descriptionText, descriptionText) || other.descriptionText == descriptionText)&&(identical(other.selectedType, selectedType) || other.selectedType == selectedType)&&(identical(other.timeError, timeError) || other.timeError == timeError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.typeError, typeError) || other.typeError == typeError)&&(identical(other.getRoutineTypeApiResult, getRoutineTypeApiResult) || other.getRoutineTypeApiResult == getRoutineTypeApiResult)&&(identical(other.addRoutineApiResult, addRoutineApiResult) || other.addRoutineApiResult == addRoutineApiResult)&&const DeepCollectionEquality().equals(other._routineCategoryList, _routineCategoryList)&&const DeepCollectionEquality().equals(other._routinesList, _routinesList));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyRoutineState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.selectedDateTime, selectedDateTime) || other.selectedDateTime == selectedDateTime)&&(identical(other.descriptionText, descriptionText) || other.descriptionText == descriptionText)&&(identical(other.selectedType, selectedType) || other.selectedType == selectedType)&&(identical(other.timeError, timeError) || other.timeError == timeError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.typeError, typeError) || other.typeError == typeError)&&(identical(other.getRoutineTypeApiResult, getRoutineTypeApiResult) || other.getRoutineTypeApiResult == getRoutineTypeApiResult)&&(identical(other.addRoutineApiResult, addRoutineApiResult) || other.addRoutineApiResult == addRoutineApiResult)&&const DeepCollectionEquality().equals(other._routineCategoryList, _routineCategoryList)&&const DeepCollectionEquality().equals(other._routinesList, _routinesList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,selectedDateTime,descriptionText,selectedType,timeError,descriptionError,typeError,getRoutineTypeApiResult,addRoutineApiResult,const DeepCollectionEquality().hash(_routineCategoryList),const DeepCollectionEquality().hash(_routinesList));
+int get hashCode => Object.hash(runtimeType,userModel,childModel,selectedDateTime,descriptionText,selectedType,timeError,descriptionError,typeError,getRoutineTypeApiResult,addRoutineApiResult,const DeepCollectionEquality().hash(_routineCategoryList),const DeepCollectionEquality().hash(_routinesList));
 
 @override
 String toString() {
-  return 'DailyRoutineState(userModel: $userModel, selectedDateTime: $selectedDateTime, descriptionText: $descriptionText, selectedType: $selectedType, timeError: $timeError, descriptionError: $descriptionError, typeError: $typeError, getRoutineTypeApiResult: $getRoutineTypeApiResult, addRoutineApiResult: $addRoutineApiResult, routineCategoryList: $routineCategoryList, routinesList: $routinesList)';
+  return 'DailyRoutineState(userModel: $userModel, childModel: $childModel, selectedDateTime: $selectedDateTime, descriptionText: $descriptionText, selectedType: $selectedType, timeError: $timeError, descriptionError: $descriptionError, typeError: $typeError, getRoutineTypeApiResult: $getRoutineTypeApiResult, addRoutineApiResult: $addRoutineApiResult, routineCategoryList: $routineCategoryList, routinesList: $routinesList)';
 }
 
 
@@ -291,7 +293,7 @@ abstract mixin class _$DailyRoutineStateCopyWith<$Res> implements $DailyRoutineS
   factory _$DailyRoutineStateCopyWith(_DailyRoutineState value, $Res Function(_DailyRoutineState) _then) = __$DailyRoutineStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, DateTime? selectedDateTime, String descriptionText, String selectedType, String timeError, String descriptionError, String typeError, ApiResultStatus getRoutineTypeApiResult, ApiResultStatus addRoutineApiResult, List<RoutineCategoryModel> routineCategoryList, List<RoutineModel> routinesList
+ UserModel? userModel, ChildModel? childModel, DateTime? selectedDateTime, String descriptionText, String selectedType, String timeError, String descriptionError, String typeError, ApiResultStatus getRoutineTypeApiResult, ApiResultStatus addRoutineApiResult, List<RoutineCategoryModel> routineCategoryList, List<RoutineModel> routinesList
 });
 
 
@@ -308,10 +310,11 @@ class __$DailyRoutineStateCopyWithImpl<$Res>
 
 /// Create a copy of DailyRoutineState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,Object? selectedDateTime = freezed,Object? descriptionText = null,Object? selectedType = null,Object? timeError = null,Object? descriptionError = null,Object? typeError = null,Object? getRoutineTypeApiResult = null,Object? addRoutineApiResult = null,Object? routineCategoryList = null,Object? routinesList = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,Object? childModel = freezed,Object? selectedDateTime = freezed,Object? descriptionText = null,Object? selectedType = null,Object? timeError = null,Object? descriptionError = null,Object? typeError = null,Object? getRoutineTypeApiResult = null,Object? addRoutineApiResult = null,Object? routineCategoryList = null,Object? routinesList = null,}) {
   return _then(_DailyRoutineState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
-as UserModel?,selectedDateTime: freezed == selectedDateTime ? _self.selectedDateTime : selectedDateTime // ignore: cast_nullable_to_non_nullable
+as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
+as ChildModel?,selectedDateTime: freezed == selectedDateTime ? _self.selectedDateTime : selectedDateTime // ignore: cast_nullable_to_non_nullable
 as DateTime?,descriptionText: null == descriptionText ? _self.descriptionText : descriptionText // ignore: cast_nullable_to_non_nullable
 as String,selectedType: null == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
 as String,timeError: null == timeError ? _self.timeError : timeError // ignore: cast_nullable_to_non_nullable

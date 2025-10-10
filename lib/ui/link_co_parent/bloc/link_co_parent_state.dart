@@ -17,5 +17,6 @@ abstract class LinkCoParentState with _$LinkCoParentState {
     @Default(ApiResultStatus.initial()) ApiResultStatus getApiResultStatus,
     UserModel? userModel,
     @Default([]) List<ChildModel> children,
+    @Default([]) List<ChildModel> selectedChildren,
   }) = _LinkCoParentState;
 }

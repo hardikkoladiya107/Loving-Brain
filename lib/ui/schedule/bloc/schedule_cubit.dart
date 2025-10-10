@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_state.dart';
+import '../../../model/child_model.dart';
 import '../../../model/routine_model.dart';
 import '../../../other/preferances.dart';
 
@@ -14,11 +15,12 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     _listenToSharedEvent();
   }
 
-  void changeProps({int? tabIndex, List<RoutineModel>? routineList}) {
+  void changeProps({int? tabIndex, ChildModel? childModel}) {
     emit(
       state.copyWith(
         tabIndex: tabIndex ?? state.tabIndex,
-        routineList: routineList ?? state.routineList,
+
+        childModel: childModel ?? state.childModel,
       ),
     );
   }
@@ -30,15 +32,15 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     if (state.userModel?.defaultChild != null) {
       routineStreamSubscription?.cancel();
       routineStreamSubscription = state.userModel?.defaultChild!
-          .collection("routines")
-          .orderBy("time_stamp", descending: true)
           .snapshots()
           .listen((event) {
-            changeProps(
-              routineList: event.docs
-                  .map((e) => RoutineModel.fromJson(e.data()))
-                  .toList(),
-            );
+            if (event.data() != null) {
+              changeProps(
+                childModel: ChildModel.fromJson(
+                  event.data() as Map<String, dynamic>,event.reference
+                ),
+              );
+            }
           });
     }
   }
@@ -47,8 +49,6 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     sharedEventStreamSubscription?.cancel();
     sharedEventStreamSubscription = CoParentRepo.instance
         .sharedEventListener()
-        .listen((event) {
-
-    });
+        .listen((event) {});
   }
 }

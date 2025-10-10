@@ -55,7 +55,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
                     65.h.spaceH,
                     _shareForWhichChild(state),
                     32.h.spaceH,
-                    _whatTheyllhaveAccessTo(),
+                    _whatTheyllhaveAccessTo(state),
                     32.h.spaceH,
                     _sendInvite(text: LocaleKeys.sendInvite.tr(), onTap: () {}),
                     12.h.spaceH,
@@ -206,11 +206,21 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     for (int i = 0; i < state.children.length; i++) {
       var child = state.children[i];
       widgetList.add(
-        Row(
-          children: [
-            childNameCard(name: child.childName ?? ""),
-            15.w.spaceW,
-          ],
+        BaseButton(
+          child: Row(
+            children: [
+              childNameCard(
+                name: child.childName ?? "",
+                selected: state.selectedChildren.any(
+                  (element) => element.reference?.id == child.reference?.id,
+                ),
+              ),
+              15.w.spaceW,
+            ],
+          ),
+          onTap: () {
+            context.read<LinkCoParentCubit>().selectChild(child);
+          },
         ),
       );
     }
@@ -228,11 +238,12 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     ).appPadding(left: 20.w, right: 20.w);
   }
 
-  Widget childNameCard({required String name}) {
+  Widget childNameCard({required String name, required bool selected}) {
     return Container(
       decoration: BoxDecoration(
         color: tabBarBgColor,
         borderRadius: BorderRadius.circular(20),
+        border: selected ? Border.all(color: primaryColor, width: 2) : null,
       ),
       child: name
           .appText(fontWeight: FontWeight.w700, fontSize: 14)
@@ -240,19 +251,31 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     );
   }
 
-  Widget _whatTheyllhaveAccessTo() {
+  Widget _whatTheyllhaveAccessTo(LinkCoParentState state) {
     return Column(
       children: [
         accessCard(
           isRequired: true,
           title: LocaleKeys.calendarEvents.tr(),
           description: LocaleKeys.createApproveAndChangeSharedEvents.tr(),
+          switchValue: state.calenderAndEvent,
+          onChanged: (value) {
+            context.read<LinkCoParentCubit>().changeProps(
+              calenderAndEvent: value,
+            );
+          },
         ),
         20.h.spaceH,
         accessCard(
           isRequired: false,
           title: LocaleKeys.childEssentials.tr(),
           description: LocaleKeys.medicalNotesSchoolContactsAllergies.tr(),
+          switchValue: state.childEssentials,
+          onChanged: (value) {
+            context.read<LinkCoParentCubit>().changeProps(
+              childEssentials: value,
+            );
+          },
         ),
         20.h.spaceH,
         accessCard(
@@ -270,6 +293,8 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     required String title,
     required String description,
     bool showSwitch = true,
+    bool switchValue = false,
+    ValueChanged<bool>? onChanged,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -303,7 +328,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
           if (showSwitch)
             Transform.scale(
               scale: 0.7,
-              child: Switch(value: true, onChanged: (value) {}),
+              child: Switch(value: switchValue, onChanged: onChanged),
             ),
         ],
       ).appPadding(all: 10),

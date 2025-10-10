@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,11 +16,17 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
     String? selectedTab,
     ApiResultStatus? getApiResultStatus,
     List<ChildModel>? children,
+    List<ChildModel>? selectedChildren,
+    bool? calenderAndEvent,
+    bool? childEssentials,
   }) {
     emit(
       state.copyWith(
         selectedTab: selectedTab ?? state.selectedTab,
         children: children ?? state.children,
+        selectedChildren: selectedChildren ?? state.selectedChildren,
+        calenderAndEvent: calenderAndEvent ?? state.calenderAndEvent,
+        childEssentials: childEssentials ?? state.childEssentials,
         getApiResultStatus: getApiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
@@ -43,5 +50,20 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
         }
       },
     );
+  }
+
+  void selectChild(ChildModel child) {
+    List<ChildModel> childrenList = [];
+    childrenList.addAll(state.selectedChildren ?? []);
+    if (childrenList.any(
+      (element) => element.reference?.id == child.reference?.id,
+    )) {
+      childrenList.removeWhere(
+        (element) => element.reference?.id == child.reference?.id,
+      );
+    } else {
+      childrenList.add(child);
+    }
+    changeProps(selectedChildren: childrenList);
   }
 }

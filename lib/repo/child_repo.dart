@@ -52,11 +52,15 @@ class ChildRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var behaviours = await childrenCollection
+      await childrenCollection.doc(id).update({
+        "routines": FieldValue.arrayUnion([request]),
+      });
+      return ApiResultStatus.data(data: "");
+      /* var behaviours = await childrenCollection
           .doc(id)
           .collection("routines")
           .add(request);
-      return ApiResultStatus.data(data: behaviours.id);
+      return ApiResultStatus.data(data: behaviours.id);*/
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -70,14 +74,15 @@ class ChildRepo {
 
   Future<ApiResultStatus> getChildren({
     required List<String> childrenIds,
-
   }) async {
     try {
       var childrenResponse = await childrenCollection
           .where(FieldPath.documentId, whereIn: childrenIds)
           .get();
       return ApiResultStatus.data(
-        data: childrenResponse.docs.map((e) => ChildModel.fromJson(e.data())).toList(),
+        data: childrenResponse.docs
+            .map((e) => ChildModel.fromJson(e.data(),e.reference))
+            .toList(),
       );
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(

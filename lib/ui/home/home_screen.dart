@@ -54,9 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
-      listener: (context, state) {
-
-      },
+      listener: (context, state) {},
     );
   }
 
@@ -280,18 +278,18 @@ class _HomeScreenState extends State<HomeScreen> {
             title: LocaleKeys.howAreWeFeeling.tr(),
             asset: Assets.images.imgHowAreWeFeeling,
             onTap: () {
-              if (!state.moodLoggedForToday) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const DailyMoodCheckInScreen(),
-                  ),
-                );
-              } else {
-                showSnackBar(
-                  message: LocaleKeys.youAlreadyLoggedYourMoodToday.tr(),
-                  type: SnackBarType.ERROR,
-                );
-              }
+              // if (!state.moodLoggedForToday) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const DailyMoodCheckInScreen(),
+                ),
+              );
+              // } else {
+              //   showSnackBar(
+              //     message: LocaleKeys.youAlreadyLoggedYourMoodToday.tr(),
+              //     type: SnackBarType.ERROR,
+              //   );
+              // }
             },
           ),
         ),

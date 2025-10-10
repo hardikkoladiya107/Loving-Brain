@@ -75,7 +75,7 @@ class HomeCubit extends Cubit<HomeState> {
     childSubscription = defaultChild?.snapshots().listen((event) {
       if (event.data() != null) {
         changeProps(
-          childModel: ChildModel.fromJson(event.data() as Map<String, dynamic>),
+          childModel: ChildModel.fromJson(event.data() as Map<String, dynamic>,event.reference),
         );
       }
     });
@@ -105,4 +105,6 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
   }
+
+
 }
