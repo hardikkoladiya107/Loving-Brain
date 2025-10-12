@@ -23,10 +23,12 @@ class ProfileCubit extends Cubit<ProfileState> {
     ApiResultStatus? logoutApiResultStatus,
     ApiResultStatus? deleteAccountApiResultStatus,
     UserModel? userModel,
+    bool? getReminderNotification
   }) {
     emit(
       state.copyWith(
         dailyEmotionCheck: dailyEmotionCheck ?? state.dailyEmotionCheck,
+        getReminderNotification: getReminderNotification ?? state.getReminderNotification,
         todaysPlayIdea: todaysPlayIdea ?? state.todaysPlayIdea,
         scheduleReminder: scheduleReminder ?? state.scheduleReminder,
         userModel: userModel ?? state.userModel,

@@ -196,7 +196,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: LocaleKeys.logOut
+                          child: LocaleKeys.delete
                               .tr()
                               .appText(
                                 fontWeight: FontWeight.w700,

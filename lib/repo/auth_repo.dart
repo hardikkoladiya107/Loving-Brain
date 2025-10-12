@@ -375,12 +375,39 @@ class AuthRepo {
     try {
       var tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
-        await userCollection
+        var charReferenceId  = await userCollection
             .doc(tUid)
             .collection("conversations")
             .doc(conversationId)
             .collection("chats")
             .add(request);
+        return ApiResultStatus.data(data: charReferenceId);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> updateChatToConversation({
+    required String conversationId,
+    required String chatReferenceId,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await userCollection
+            .doc(tUid)
+            .collection("conversations")
+            .doc(conversationId)
+            .collection("chats")
+            .doc(chatReferenceId).update(request);
         return ApiResultStatus.data(data: tUid);
       } else {
         return ApiResultStatus.error(

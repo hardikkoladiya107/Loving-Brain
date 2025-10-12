@@ -108,46 +108,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             _scrollToBottom();
           },
         );
-
-        state.imageUploadApiResult.whenOrNull(
-          loading: () {
-            EasyLoading.show();
-          },
-          error: (error) {
-            EasyLoading.dismiss();
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
-          },
-          data: (data) {
-            EasyLoading.dismiss();
-          },
-        );
-
-        state.audioUploadApiResult.whenOrNull(
-          loading: () {
-            EasyLoading.show();
-          },
-          error: (error) {
-            EasyLoading.dismiss();
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
-          },
-          data: (data) {
-            EasyLoading.dismiss();
-          },
-        );
       },
     );
   }
 
-  Widget _chatItem(ChatModel chat) {
+  Widget _chatItem(ChatModel chat, ChatDetailState state) {
     if (chat.role != null && chat.role == "user") {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: [userChatItem((chat.text ?? ""), chat.networkImage ?? "")],
+        children: [userChatItem(chat, state)],
       ).appPadding(left: 16.w, right: 16.w, top: 16);
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: [aiChatItem((chat.text ?? ""))],
+        children: [aiChatItem(chat)],
       ).appPadding(left: 16.w, right: 16.w, top: 16);
     }
   }
@@ -159,7 +133,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     ).appPadding(left: 16.w, right: 16.w, top: 16);
   }
 
-  Widget aiChatItem(String item) {
+  Widget aiChatItem(ChatModel chat) {
     return Container(
       constraints: BoxConstraints(maxWidth: context.width * 0.8),
       decoration: BoxDecoration(
@@ -178,7 +152,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           topRight: Radius.circular(12),
         ),
       ),
-      child: item
+      child: (chat.text ?? "")
           .appText(
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -215,20 +189,56 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  Widget userChatItem(String item, String networkImage) {
+  Widget userChatItem(ChatModel chat, ChatDetailState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if (networkImage.isNotEmpty) ...[
+        if ((chat.imageNetworkPath ?? "").isNotEmpty) ...[
           AppImage(
-            imageUrl: networkImage,
+            imageUrl: (chat.imageNetworkPath ?? ""),
             height: 90.h,
             width: 90.h,
             shape: BoxShape.rectangle,
             borderRadius: 12,
           ),
           4.spaceH,
+        ] else if ((chat.imageLocalPath ?? "").isNotEmpty) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.file(
+              File(chat.imageLocalPath!),
+              height: 90.h,
+              width: 90.h,
+              fit: BoxFit.cover,
+            ),
+          ),
+          4.spaceH,
         ],
+
+        if ((chat.audioLocalPath ?? "").isNotEmpty) ...[
+          10.spaceH,
+          SizedBox(
+            width: context.width - 100,
+            child: _audioPlayerWidget(
+              state,
+              ontap: () async {
+                if (state.audioPlayerState == PlayerState.paused) {
+                  audioPlayer.resume();
+                } else if (state.audioPlayerState == PlayerState.stopped ||
+                    state.audioPlayerState == null ||
+                    state.audioPlayerState == PlayerState.completed) {
+                  await audioPlayer.play(
+                    UrlSource(chat.audioLocalPath!),
+                  );
+                } else if (state.audioPlayerState == PlayerState.playing) {
+                  audioPlayer.pause();
+                }
+              },
+            ),
+          ),
+          4.spaceH,
+        ],
+
         Container(
           constraints: BoxConstraints(maxWidth: context.width * 0.8),
           decoration: BoxDecoration(
@@ -248,7 +258,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
           ),
           child: GptMarkdown(
-            item,
+            chat.text ?? "",
             textAlign: TextAlign.start,
             style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ).padding(all: 8),
@@ -273,32 +283,21 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       child: Column(
         children: [
           10.spaceH,
-          if (state.selectedNetworkImage.isNotEmpty ||
-              state.selectedFile != null) ...[
+          if (state.selectedImageFile != null) ...[
             Row(
               children: [
                 16.spaceW,
                 Stack(
                   children: [
-                    if (state.selectedNetworkImage.isNotEmpty) ...[
-                      AppImage(
-                        imageUrl: state.selectedNetworkImage,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.file(
+                        state.selectedImageFile!,
                         height: 80.h,
                         width: 80.h,
-                        shape: BoxShape.rectangle,
-                        borderRadius: 12,
+                        fit: BoxFit.cover,
                       ),
-                    ] else if (state.selectedFile != null) ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          state.selectedFile!,
-                          height: 80.h,
-                          width: 80.h,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ],
+                    ),
                     Positioned(
                       right: 0,
                       child: BaseButton(
@@ -321,9 +320,27 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
           ],
-          if (state.audioRecordedFile != null) ...[
+          if (state.selectedAudioRecordedFile != null) ...[
             10.spaceH,
-            _audioPlayerWidget(state),
+            _audioPlayerWidget(
+              state,
+              ontap: () async {
+                if (state.audioPlayerState == PlayerState.paused) {
+                  audioPlayer.resume();
+                } else if (state.audioPlayerState == PlayerState.stopped ||
+                    state.audioPlayerState == null ||
+                    state.audioPlayerState == PlayerState.completed) {
+                  if ((state.selectedAudioRecordedFile?.path ?? "")
+                      .isNotEmpty) {
+                    await audioPlayer.play(
+                      DeviceFileSource(state.selectedAudioRecordedFile!.path),
+                    );
+                  }
+                } else if (state.audioPlayerState == PlayerState.playing) {
+                  audioPlayer.pause();
+                }
+              },
+            ).appPadding(left: 16.w, right: 16.w),
           ],
           10.spaceH,
           AppTextField(
@@ -412,7 +429,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             return chatLoading();
           }
           var chat = state.chatList[index];
-          return _chatItem(chat);
+          return _chatItem(chat, state);
         },
       ),
     );
@@ -604,101 +621,85 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     });
   }
 
-  Widget _audioPlayerWidget(ChatDetailState state) {
-    return Stack(
-      children: [
-        Container(
-          height: 60,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+  Widget _audioPlayerWidget(
+    ChatDetailState state, {
+    required GestureTapCallback ontap,
+  }) {
+    return Container(
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          8.spaceW,
+          Container(
+            height: 45,
+            width: 45,
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.audiotrack, color: Colors.white),
           ),
-          child: Row(
-            children: [
-              8.spaceW,
-              Container(
-                height: 45,
-                width: 45,
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.audiotrack, color: Colors.white),
+          8.spaceW,
+          Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 2,
+                overlayShape: SliderComponentShape.noOverlay,
+                trackShape: const RoundedRectSliderTrackShape(),
+                activeTrackColor: cardColor2,
+                inactiveTrackColor: greyColor3,
               ),
-              8.spaceW,
-              Expanded(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 2,
-                    overlayShape: SliderComponentShape.noOverlay,
-                    trackShape: const RoundedRectSliderTrackShape(),
-                    activeTrackColor: cardColor2,
-                    inactiveTrackColor: greyColor3,
-                  ),
-                  child: Slider(
-                    value: (state.currentAudioDuration.inMilliseconds ?? 0)
-                        .toDouble(),
-                    max: (state.totalAudioDuration.inMilliseconds ?? 0)
-                        .toDouble(),
-                    min: 0,
-                    onChanged: (value) {
-                      audioPlayer.seek(Duration(milliseconds: value.toInt()));
-                    },
-                  ),
-                ),
-              ),
-              8.spaceW,
-              BaseButton(
-                child: Icon(
-                  (state.audioPlayerState == PlayerState.stopped ||
-                          state.audioPlayerState == PlayerState.paused ||
-                          state.audioPlayerState == null)
-                      ? Icons.play_arrow
-                      : (state.audioPlayerState == PlayerState.completed)
-                      ? Icons.replay
-                      : Icons.pause,
-                  size: 28,
-                ),
-                onTap: () async {
-                  if (state.audioPlayerState == PlayerState.paused) {
-                    audioPlayer.resume();
-                  } else if (state.audioPlayerState == PlayerState.stopped ||
-                      state.audioPlayerState == null ||
-                      state.audioPlayerState == PlayerState.completed) {
-                    if ((state.audioRecordedFile?.path ?? "").isNotEmpty) {
-                      await audioPlayer.play(
-                        DeviceFileSource(state.audioRecordedFile!.path),
-                      );
-                    }
-                  } else if (state.audioPlayerState == PlayerState.playing) {
-                    audioPlayer.pause();
-                  }
+              child: Slider(
+                value: (state.currentAudioDuration.inMilliseconds ?? 0)
+                    .toDouble(),
+                max: (state.totalAudioDuration.inMilliseconds ?? 0).toDouble(),
+                min: 0,
+                onChanged: (value) {
+                  audioPlayer.seek(Duration(milliseconds: value.toInt()));
                 },
               ),
-              12.spaceW,
-              BaseButton(
-                child: Container(
-                  height: 20,
-                  width: 20,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.close, color: Colors.white, size: 12),
-                ),
-                onTap: () async {
-                  await audioPlayer.stop();
-                  await audioPlayer.release();
-                  navigatorKey.currentContext
-                      ?.read<ChatDetailCubit>()
-                      .removeSelectedAudio();
-                },
-              ),
-              16.spaceW,
-            ],
+            ),
           ),
-        ),
-      ],
-    ).appPadding(left: 16.w, right: 16.w);
+          8.spaceW,
+          BaseButton(
+            onTap: ontap,
+            child: Icon(
+              (state.audioPlayerState == PlayerState.stopped ||
+                      state.audioPlayerState == PlayerState.paused ||
+                      state.audioPlayerState == null)
+                  ? Icons.play_arrow
+                  : (state.audioPlayerState == PlayerState.completed)
+                  ? Icons.replay
+                  : Icons.pause,
+              size: 28,
+            ),
+          ),
+          12.spaceW,
+          BaseButton(
+            child: Container(
+              height: 20,
+              width: 20,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.close, color: Colors.white, size: 12),
+            ),
+            onTap: () async {
+              await audioPlayer.stop();
+              await audioPlayer.release();
+              navigatorKey.currentContext
+                  ?.read<ChatDetailCubit>()
+                  .removeSelectedAudio();
+            },
+          ),
+          16.spaceW,
+        ],
+      ),
+    );
   }
 }

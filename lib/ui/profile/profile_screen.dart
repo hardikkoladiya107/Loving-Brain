@@ -73,7 +73,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: LocaleKeys.getGentleRemindersForPlay.tr(),
                   showCheckBox: true,
                   icon: Assets.icons.icReminderIcon2,
-                  iconColor: gentleReminderIconColor,
+                  iconColor: gentleReminderIconColor,check: state.getReminderNotification,
+                  onChanged: (value) {
+                    context.read<ProfileCubit>().changeProps(
+                      getReminderNotification: value,
+                    );
+                  },
                 ),
                 10.spaceH,
                 LocaleKeys.quickReminders

@@ -13,23 +13,17 @@ part 'chat_detail_state.freezed.dart';
 abstract class ChatDetailState with _$ChatDetailState {
   const factory ChatDetailState({
     @Default("") String chatText,
-    @Default("") String selectedAudioUrl,
-    @Default("") String selectedNetworkImage,
+    File? selectedImageFile,
+    File? selectedAudioRecordedFile,
     String? conversationId,
-    File? audioRecordedFile,
     @Default(ApiResultStatus.initial()) ApiResultStatus createConversationApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus createResponseApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus getConversationApiResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus imageUploadApiResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus audioUploadApiResult,
     @Default(Duration.zero) Duration currentAudioDuration,
     @Default(Duration.zero) Duration totalAudioDuration,
     @Default(false) bool isRecording,
     @Default([]) List<ChatModel> chatList,
-    File? selectedFile,
     UserModel? userModel,
-    Reference? firebaseFileReference,
-    Reference? firebaseAudioFileReference,
     PlayerState? audioPlayerState
   }) = _ChatDetailState;
 }
