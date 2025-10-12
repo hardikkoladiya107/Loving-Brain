@@ -24,6 +24,8 @@ abstract class ChatDetailState with _$ChatDetailState {
     @Default(false) bool isRecording,
     @Default([]) List<ChatModel> chatList,
     UserModel? userModel,
-    PlayerState? audioPlayerState
+    PlayerState? audioPlayerState,
+    @Default("") String currentPlayingItem,
+    @Default(false) bool currentAudioLoading
   }) = _ChatDetailState;
 }

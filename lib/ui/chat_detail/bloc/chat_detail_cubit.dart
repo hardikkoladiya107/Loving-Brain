@@ -49,6 +49,8 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     Duration? currentAudioDuration,
     Duration? totalAudioDuration,
     PlayerState? audioPlayerState,
+    String? currentPlayingItem,
+    bool? currentAudioLoading
   }) async {
     emit(
       state.copyWith(
@@ -60,8 +62,10 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             getConversationApiResult ?? ApiResultStatus.initial(),
         chatList: chatList ?? state.chatList,
         chatText: chatText ?? state.chatText,
+        currentAudioLoading: currentAudioLoading ?? state.currentAudioLoading,
         conversationId: conversationId ?? state.conversationId,
         userModel: userModel ?? state.userModel,
+        currentPlayingItem: currentPlayingItem ?? state.currentPlayingItem,
         isRecording: isRecording ?? state.isRecording,
         selectedImageFile: selectedImageFile ?? state.selectedImageFile,
         selectedAudioRecordedFile:
@@ -109,7 +113,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
           .listen((event) {
             changeProps(
               chatList: event.docs.map((e) {
-                return ChatModel.fromJson(e.data());
+                return ChatModel.fromJson(e.data(), e.reference);
               }).toList(),
               getConversationApiResult: ApiResultStatus.data(data: event.docs),
             );

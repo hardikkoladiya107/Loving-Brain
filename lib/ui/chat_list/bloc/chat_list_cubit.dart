@@ -51,6 +51,10 @@ class ChatListCubit extends Cubit<ChatListState> {
                     .map((e) => ConversationListItem.fromJson(e.data()))
                     .toList(),
               );
+            }else{
+              changeProps(
+                conversationList: [],
+              );
             }
           });
     }

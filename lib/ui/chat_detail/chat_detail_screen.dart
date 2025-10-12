@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -12,7 +13,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/chat_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/chat_detail/recording_widget.dart';
 import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
@@ -215,23 +215,102 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           4.spaceH,
         ],
 
-        if ((chat.audioLocalPath ?? "").isNotEmpty) ...[
+        if ((chat.audioNetworkPath ?? "").isNotEmpty) ...[
           10.spaceH,
           SizedBox(
             width: context.width - 100,
             child: _audioPlayerWidget(
               state,
+              chatReferenceId: chat.reference?.id ?? "",
               ontap: () async {
-                if (state.audioPlayerState == PlayerState.paused) {
-                  audioPlayer.resume();
-                } else if (state.audioPlayerState == PlayerState.stopped ||
-                    state.audioPlayerState == null ||
-                    state.audioPlayerState == PlayerState.completed) {
-                  await audioPlayer.play(
-                    UrlSource(chat.audioLocalPath!),
-                  );
-                } else if (state.audioPlayerState == PlayerState.playing) {
-                  audioPlayer.pause();
+                if (navigatorKey.currentContext != null) {
+                  if (state.currentPlayingItem != chat.reference?.id) {
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(
+                          currentAudioDuration: Duration.zero,
+                          totalAudioDuration: Duration.zero,
+                          currentPlayingItem: chat.reference?.id,
+                        );
+                    await audioPlayer.release();
+                    await audioPlayer.play(UrlSource(chat.audioNetworkPath!));
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: false);
+                    return;
+                  }
+
+                  navigatorKey.currentContext!
+                      .read<ChatDetailCubit>()
+                      .changeProps(currentPlayingItem: chat.reference?.id);
+                  if (state.audioPlayerState == PlayerState.paused) {
+                    audioPlayer.resume();
+                  } else if (state.audioPlayerState == PlayerState.stopped ||
+                      state.audioPlayerState == null ||
+                      state.audioPlayerState == PlayerState.completed) {
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: true);
+                    await audioPlayer.play(UrlSource(chat.audioNetworkPath!));
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: false);
+                  } else if (state.audioPlayerState == PlayerState.playing) {
+                    audioPlayer.pause();
+                  }
+                }
+              },
+            ),
+          ),
+          4.spaceH,
+        ] else if ((chat.audioLocalPath ?? "").isNotEmpty) ...[
+          10.spaceH,
+          SizedBox(
+            width: context.width - 100,
+            child: _audioPlayerWidget(
+              state,
+              chatReferenceId: chat.reference?.id ?? "",
+              ontap: () async {
+                if (navigatorKey.currentContext != null) {
+                  if (state.currentPlayingItem != chat.reference?.id) {
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(
+                          currentAudioDuration: Duration.zero,
+                          totalAudioDuration: Duration.zero,
+                          currentPlayingItem: chat.reference?.id,
+                          currentAudioLoading: true,
+                        );
+                    await audioPlayer.release();
+                    await audioPlayer.play(
+                      DeviceFileSource(chat.audioLocalPath!),
+                    );
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: false);
+                    return;
+                  }
+
+                  navigatorKey.currentContext!
+                      .read<ChatDetailCubit>()
+                      .changeProps(currentPlayingItem: chat.reference?.id);
+                  if (state.audioPlayerState == PlayerState.paused) {
+                    audioPlayer.resume();
+                  } else if (state.audioPlayerState == PlayerState.stopped ||
+                      state.audioPlayerState == null ||
+                      state.audioPlayerState == PlayerState.completed) {
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: true);
+                    await audioPlayer.play(
+                      DeviceFileSource(chat.audioLocalPath!),
+                    );
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: false);
+                  } else if (state.audioPlayerState == PlayerState.playing) {
+                    audioPlayer.pause();
+                  }
                 }
               },
             ),
@@ -324,6 +403,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             10.spaceH,
             _audioPlayerWidget(
               state,
+              chatReferenceId: "INPUTAUDIO",
               ontap: () async {
                 if (state.audioPlayerState == PlayerState.paused) {
                   audioPlayer.resume();
@@ -623,6 +703,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _audioPlayerWidget(
     ChatDetailState state, {
+    required String chatReferenceId,
     required GestureTapCallback ontap,
   }) {
     return Container(
@@ -654,9 +735,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 inactiveTrackColor: greyColor3,
               ),
               child: Slider(
-                value: (state.currentAudioDuration.inMilliseconds ?? 0)
-                    .toDouble(),
-                max: (state.totalAudioDuration.inMilliseconds ?? 0).toDouble(),
+                value: state.currentPlayingItem == chatReferenceId
+                    ? (state.currentAudioDuration.inMilliseconds ?? 0)
+                          .toDouble()
+                    : 0,
+                max: state.currentPlayingItem == chatReferenceId
+                    ? (state.totalAudioDuration.inMilliseconds ?? 0).toDouble()
+                    : 0,
                 min: 0,
                 onChanged: (value) {
                   audioPlayer.seek(Duration(milliseconds: value.toInt()));
@@ -665,18 +750,27 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
           ),
           8.spaceW,
+
           BaseButton(
             onTap: ontap,
-            child: Icon(
-              (state.audioPlayerState == PlayerState.stopped ||
-                      state.audioPlayerState == PlayerState.paused ||
-                      state.audioPlayerState == null)
-                  ? Icons.play_arrow
-                  : (state.audioPlayerState == PlayerState.completed)
-                  ? Icons.replay
-                  : Icons.pause,
-              size: 28,
-            ),
+            child:
+                state.currentPlayingItem == chatReferenceId &&
+                    state.currentAudioLoading
+                ? CupertinoActivityIndicator()
+                : Icon(
+                    state.currentPlayingItem == chatReferenceId
+                        ? (state.audioPlayerState == PlayerState.stopped ||
+                                  state.audioPlayerState ==
+                                      PlayerState.paused ||
+                                  state.audioPlayerState == null)
+                              ? Icons.play_arrow
+                              : (state.audioPlayerState ==
+                                    PlayerState.completed)
+                              ? Icons.replay
+                              : Icons.pause
+                        : Icons.play_arrow,
+                    size: 28,
+                  ),
           ),
           12.spaceW,
           BaseButton(

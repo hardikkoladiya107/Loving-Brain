@@ -9,6 +9,7 @@ class ChatModel {
     String? audioNetworkPath,
     String? imageLocalPath,
     String? audioLocalPath,
+    DocumentReference<Map<String, dynamic>>? reference,
   }) {
     _text = text;
     _role = role;
@@ -17,15 +18,21 @@ class ChatModel {
     _audioNetworkPath = audioNetworkPath;
     _imageLocalPath = imageLocalPath;
     _audioLocalPath = audioLocalPath;
+    _reference = reference;
   }
 
-  ChatModel.fromJson(dynamic json, {bool fromConvert = false}) {
+  ChatModel.fromJson(
+    dynamic json,
+    DocumentReference<Map<String, dynamic>> reference, {
+    bool fromConvert = false,
+  }) {
     _text = json['text'];
     _role = json['role'];
     _imageNetworkPath = json['image_network_path'];
     _audioNetworkPath = json['audio_network_path'];
     _imageLocalPath = json['image_local_path'];
     _audioLocalPath = json['audio_local_path'];
+    _reference = reference;
 
     try {
       if (fromConvert) {
@@ -49,6 +56,7 @@ class ChatModel {
   DateTime? _timeStamp;
   String? _imageLocalPath;
   String? _audioLocalPath;
+  DocumentReference<Map<String, dynamic>>? _reference;
 
   ChatModel copyWith({
     String? text,
@@ -58,6 +66,7 @@ class ChatModel {
     String? audioUrl,
     String? imageLocalPath,
     String? audioLocalPath,
+    DocumentReference<Map<String, dynamic>>? reference,
   }) => ChatModel(
     text: text ?? _text,
     timeStamp: timeStamp ?? _timeStamp,
@@ -66,6 +75,7 @@ class ChatModel {
     audioNetworkPath: audioUrl ?? _audioNetworkPath,
     imageLocalPath: imageLocalPath ?? _imageLocalPath,
     audioLocalPath: audioLocalPath ?? _audioLocalPath,
+    reference: reference ?? _reference,
   );
 
   String? get text => _text;
@@ -81,6 +91,8 @@ class ChatModel {
   String? get audioLocalPath => _audioLocalPath;
 
   DateTime? get timeStamp => _timeStamp;
+
+  DocumentReference<Map<String, dynamic>>? get reference => _reference;
 
   Map<String, dynamic> toJson({bool forConvert = false}) {
     final map = <String, dynamic>{};
