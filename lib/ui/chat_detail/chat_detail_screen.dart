@@ -318,30 +318,32 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           4.spaceH,
         ],
 
-        Container(
-          constraints: BoxConstraints(maxWidth: context.width * 0.8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.2),
-                offset: Offset(1, 1),
-                blurRadius: 5,
-                spreadRadius: 4,
+        if((chat.text ?? "").isNotEmpty)...[
+          Container(
+            constraints: BoxConstraints(maxWidth: context.width * 0.8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.2),
+                  offset: Offset(1, 1),
+                  blurRadius: 5,
+                  spreadRadius: 4,
+                ),
+              ],
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+                topLeft: Radius.circular(12),
               ),
-            ],
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(12),
-              bottomRight: Radius.circular(12),
-              topLeft: Radius.circular(12),
             ),
+            child: GptMarkdown(
+              chat.text ?? "",
+              textAlign: TextAlign.start,
+              style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ).padding(all: 8),
           ),
-          child: GptMarkdown(
-            chat.text ?? "",
-            textAlign: TextAlign.start,
-            style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ).padding(all: 8),
-        ),
+        ]
       ],
     );
   }
@@ -405,19 +407,47 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               state,
               chatReferenceId: "INPUTAUDIO",
               ontap: () async {
-                if (state.audioPlayerState == PlayerState.paused) {
-                  audioPlayer.resume();
-                } else if (state.audioPlayerState == PlayerState.stopped ||
-                    state.audioPlayerState == null ||
-                    state.audioPlayerState == PlayerState.completed) {
-                  if ((state.selectedAudioRecordedFile?.path ?? "")
-                      .isNotEmpty) {
+                if (navigatorKey.currentContext != null &&
+                    (state.selectedAudioRecordedFile?.path ?? "").isNotEmpty) {
+                  if (state.currentPlayingItem != "INPUTAUDIO") {
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(
+                          currentAudioDuration: Duration.zero,
+                          totalAudioDuration: Duration.zero,
+                          currentPlayingItem: "INPUTAUDIO",
+                          currentAudioLoading: true,
+                        );
+                    await audioPlayer.release();
                     await audioPlayer.play(
                       DeviceFileSource(state.selectedAudioRecordedFile!.path),
                     );
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: false);
+                    return;
                   }
-                } else if (state.audioPlayerState == PlayerState.playing) {
-                  audioPlayer.pause();
+
+                  navigatorKey.currentContext!
+                      .read<ChatDetailCubit>()
+                      .changeProps(currentPlayingItem: "INPUTAUDIO");
+                  if (state.audioPlayerState == PlayerState.paused) {
+                    audioPlayer.resume();
+                  } else if (state.audioPlayerState == PlayerState.stopped ||
+                      state.audioPlayerState == null ||
+                      state.audioPlayerState == PlayerState.completed) {
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: true);
+                    await audioPlayer.play(
+                      DeviceFileSource(state.selectedAudioRecordedFile!.path),
+                    );
+                    navigatorKey.currentContext!
+                        .read<ChatDetailCubit>()
+                        .changeProps(currentAudioLoading: false);
+                  } else if (state.audioPlayerState == PlayerState.playing) {
+                    audioPlayer.pause();
+                  }
                 }
               },
             ).appPadding(left: 16.w, right: 16.w),
@@ -628,6 +658,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   .appText(fontWeight: FontWeight.w600),
                           onTap: () {
                             if (state.isRecording) {
+
                               _stopRecording();
                               Navigator.of(context).pop();
                             } else {
@@ -670,6 +701,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         isRecording: false,
         audioRecordedFile: File(recordedPath!),
       );
+      navigatorKey.currentContext?.read<ChatDetailCubit>().createResponse();
     }
   }
 

@@ -50,7 +50,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
     Duration? totalAudioDuration,
     PlayerState? audioPlayerState,
     String? currentPlayingItem,
-    bool? currentAudioLoading
+    bool? currentAudioLoading,
   }) async {
     emit(
       state.copyWith(
@@ -79,7 +79,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
   }
 
   bool isValid() {
-    if (state.chatText.isEmpty) {
+    if (state.selectedAudioRecordedFile == null && state.chatText.isEmpty) {
       return false;
     }
     if (state.conversationId == null) {
@@ -160,6 +160,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       conversationId: state.conversationId!,
       request: {
         "text": (chat.content ?? []).first.text,
+        "type": (chat.content ?? []).first.type,
         "image_local_path": state.selectedImageFile?.path,
         "audio_local_path": state.selectedAudioRecordedFile?.path,
         "image_network_path": "",
