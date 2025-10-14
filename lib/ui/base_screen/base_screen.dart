@@ -62,13 +62,15 @@ class _BaseScreenState extends State<BaseScreen> {
     required String title,
     required AssetGenImage asset,
     required GestureTapCallback? onTap,
+    double height = 30,
+    double width = 30,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          asset.image(height: 30.h, width: 30.w),
+          asset.image(height: height.h, width: width.w),
           title.appText(fontSize: 14),
         ],
       ),
@@ -98,45 +100,35 @@ class _BaseScreenState extends State<BaseScreen> {
               title: "Home",
               asset: Assets.icons.icHomeIcon,
               onTap: () {
-                context.read<BaseCubit>().changeProps(
-                  bottomNavigationIndex: 0,
-                );
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 0);
               },
             ),
             _bottomNavigationItem(
               title: "Schedules",
               asset: Assets.icons.icScheduleIcon,
               onTap: () {
-                context.read<BaseCubit>().changeProps(
-                  bottomNavigationIndex: 1,
-                );
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
               },
             ),
             _bottomNavigationItem(
-              title: "Hugs AI",
-              asset: Assets.icons.icAiIcon,
+              title: "Brain AI",
+              asset: Assets.icons.icBrainAi,
               onTap: () {
-                context.read<BaseCubit>().changeProps(
-                  bottomNavigationIndex: 2,
-                );
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 2);
               },
             ),
             _bottomNavigationItem(
               title: "Journal",
               asset: Assets.icons.icJournalIcon,
               onTap: () {
-                context.read<BaseCubit>().changeProps(
-                  bottomNavigationIndex: 3,
-                );
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 3);
               },
             ),
             _bottomNavigationItem(
               title: "Profile",
               asset: Assets.icons.icProfileIcon,
               onTap: () {
-                context.read<BaseCubit>().changeProps(
-                  bottomNavigationIndex: 4,
-                );
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 4);
               },
             ),
           ],

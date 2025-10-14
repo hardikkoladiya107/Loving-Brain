@@ -38,6 +38,10 @@ class $AssetsIconsGen {
   AssetGenImage get icBackIcon =>
       const AssetGenImage('assets/icons/ic_back_icon.png');
 
+  /// File path: assets/icons/ic_brain_ai.png
+  AssetGenImage get icBrainAi =>
+      const AssetGenImage('assets/icons/ic_brain_ai.png');
+
   /// File path: assets/icons/ic_calender_icon.png
   AssetGenImage get icCalenderIcon =>
       const AssetGenImage('assets/icons/ic_calender_icon.png');
@@ -357,6 +361,7 @@ class $AssetsIconsGen {
     icApproveIcon,
     icAttachmentPin,
     icBackIcon,
+    icBrainAi,
     icCalenderIcon,
     icCalenderIcon2,
     icCalenderIcon3,

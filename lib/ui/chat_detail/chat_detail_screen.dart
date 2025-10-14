@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -15,6 +16,7 @@ import 'package:loving_brain/model/chat_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/chat_detail/recording_widget.dart';
 import 'package:loving_brain/ui/widget/app_dialogs.dart';
+import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -135,6 +137,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget aiChatItem(ChatModel chat) {
     return Container(
+      width: context.width * 0.8,
       constraints: BoxConstraints(maxWidth: context.width * 0.8),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -152,13 +155,58 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           topRight: Radius.circular(12),
         ),
       ),
-      child: (chat.text ?? "")
-          .appText(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            textAlign: TextAlign.start,
-          )
-          .appPadding(all: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: GptMarkdown(
+              chat.text ?? "",
+              textAlign: TextAlign.start,
+              style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ).padding(all: 8),
+          ),
+
+          AppDropDownButton(
+            offset: Offset(-140, 30),
+            dropdownWidth: 170.w,
+            dropDownWidget: (close) {
+              return BaseButton(
+                child: Container(
+                  height: 40.h,
+                  width: 170.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withValues(alpha: 0.2),
+                        offset: Offset(0, 1),
+                        spreadRadius: 5,
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      8.spaceW,
+                      Icon(Icons.bookmark),
+                      8.spaceW,
+                      LocaleKeys.saveToJournal.tr().appText(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ],
+                  ),
+                ),
+                onTap: () {
+                  close.call();
+                },
+              );
+            },
+            child: Icon(Icons.more_vert).padding(all: 5),
+          ),
+        ],
+      ),
     );
   }
 
@@ -318,7 +366,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           4.spaceH,
         ],
 
-        if((chat.text ?? "").isNotEmpty)...[
+        if ((chat.text ?? "").isNotEmpty) ...[
           Container(
             constraints: BoxConstraints(maxWidth: context.width * 0.8),
             decoration: BoxDecoration(
@@ -337,13 +385,22 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 topLeft: Radius.circular(12),
               ),
             ),
-            child: GptMarkdown(
-              chat.text ?? "",
-              textAlign: TextAlign.start,
-              style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ).padding(all: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GptMarkdown(
+                  chat.text ?? "",
+                  textAlign: TextAlign.start,
+                  style: getTextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ).padding(all: 8),
+                //Icon(Icons.more_vert)
+              ],
+            ),
           ),
-        ]
+        ],
       ],
     );
   }
@@ -658,7 +715,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                                   .appText(fontWeight: FontWeight.w600),
                           onTap: () {
                             if (state.isRecording) {
-
                               _stopRecording();
                               Navigator.of(context).pop();
                             } else {

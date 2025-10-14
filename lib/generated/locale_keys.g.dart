@@ -280,6 +280,7 @@ abstract class  LocaleKeys {
   static const starRequired = 'starRequired';
   static const stopRecording = 'stopRecording';
   static const startRecording = 'startRecording';
+  static const saveToJournal = 'saveToJournal';
   static const onceAcceptedyouSameSharedCalendar = 'onceAcceptedyouSameSharedCalendar';
 
 }

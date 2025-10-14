@@ -6,10 +6,12 @@ class AppDropDownButton extends StatefulWidget {
     required this.child,
     required this.dropDownWidget,
     this.offset = const Offset(0, 65),
+    this.dropdownWidth,
   });
 
   final Widget child;
   final Offset offset;
+  final double? dropdownWidth;
   final Widget Function(void Function() close) dropDownWidget;
 
   @override
@@ -23,48 +25,36 @@ class _AppDropDownButtonState extends State<AppDropDownButton> {
 
   void _showDropdown() {
     final RenderBox renderBox =
-        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
+    _dropdownKey.currentContext!.findRenderObject() as RenderBox;
 
     final Size widgetSize = renderBox.size;
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Stack(
-            children: [
-              GestureDetector(
-                child: Container(
+        return Stack(
+          children: [
+            GestureDetector(
+              onTap: _removeDropdown,
+              child: Container(color: Colors.transparent),
+            ),
+            Positioned(
+              width: widget.dropdownWidth ?? widgetSize.width, // 👈 static width
+              child: CompositedTransformFollower(
+                link: _layerLink,
+                showWhenUnlinked: false,
+                offset: widget.offset,
+                child: Material(
+                  elevation: 0,
                   color: Colors.transparent,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                ),
-                onTap: () {
-                  _removeDropdown();
-                },
-              ),
-              Positioned(
-                width: widgetSize.width,
-                child: CompositedTransformFollower(
-                  link: _layerLink,
-                  showWhenUnlinked: false,
-                  offset: widget.offset,
-                  child: Material(
-                    elevation: 0.0,
-                    surfaceTintColor: Colors.transparent,
-                    color: Colors.transparent,
-                    child: widget.dropDownWidget(() {
-                      _removeDropdown();
-                    }),
-                  ),
+                  child: widget.dropDownWidget(_removeDropdown),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
+
     Overlay.of(context).insert(_overlayEntry!);
   }
 
@@ -79,7 +69,6 @@ class _AppDropDownButtonState extends State<AppDropDownButton> {
       link: _layerLink,
       child: GestureDetector(
         key: _dropdownKey,
-        child: widget.child,
         onTap: () {
           if (_overlayEntry == null) {
             _showDropdown();
@@ -87,6 +76,7 @@ class _AppDropDownButtonState extends State<AppDropDownButton> {
             _removeDropdown();
           }
         },
+        child: widget.child,
       ),
     );
   }
