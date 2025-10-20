@@ -283,7 +283,8 @@
   "stopRecording": "Stop Recording",
   "startRecording": "Start Recording",
   "saveToJournal": "Save to journal",
-  "onceAcceptedyouSameSharedCalendar": "Once accepted, you’ll both see the same shared calendar."
+  "onceAcceptedyouSameSharedCalendar": "Once accepted, you’ll both see the same shared calendar.",
+  "pleaseEnterCoParentEmail": "Please enter co-parent email"
 
 
 

@@ -11,10 +11,12 @@ abstract class LinkCoParentState with _$LinkCoParentState {
   const factory LinkCoParentState({
     @Default("EMAIL") String selectedTab,
     @Default("") String? coParentEmail,
+    @Default("") String? coParentEmailError,
     @Default(false) bool calenderAndEvent,
     @Default(false) bool childEssentials,
     @Default("") String selectedChild,
     @Default(ApiResultStatus.initial()) ApiResultStatus getApiResultStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus createInvitation,
     UserModel? userModel,
     @Default([]) List<ChildModel> children,
     @Default([]) List<ChildModel> selectedChildren,

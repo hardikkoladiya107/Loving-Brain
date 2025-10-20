@@ -282,5 +282,6 @@ abstract class  LocaleKeys {
   static const startRecording = 'startRecording';
   static const saveToJournal = 'saveToJournal';
   static const onceAcceptedyouSameSharedCalendar = 'onceAcceptedyouSameSharedCalendar';
+  static const pleaseEnterCoParentEmail = 'pleaseEnterCoParentEmail';
 
 }

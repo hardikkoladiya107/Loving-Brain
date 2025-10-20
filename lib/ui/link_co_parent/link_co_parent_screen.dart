@@ -57,7 +57,12 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
                     32.h.spaceH,
                     _whatTheyllhaveAccessTo(state),
                     32.h.spaceH,
-                    _sendInvite(text: LocaleKeys.sendInvite.tr(), onTap: () {}),
+                    _sendInvite(
+                      text: LocaleKeys.sendInvite.tr(),
+                      onTap: () {
+                        context.read<LinkCoParentCubit>().sendInvite();
+                      },
+                    ),
                     12.h.spaceH,
                     _inviteDescriptionText(),
                     32.h.spaceH,

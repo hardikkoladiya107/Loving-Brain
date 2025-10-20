@@ -164,6 +164,3 @@ exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
   }
 });
 
-
-
-

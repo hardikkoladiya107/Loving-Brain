@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.app.loving_brain",
+      "sha256_cert_fingerprints": [
+        "C9:7F:E5:BE:B3:32:AE:96:E9:AB:89:A2:BC:06:0F:BF:DE:D0:F3:D2:22:E3:A9:50:CD:16:C4:FD:65:B0:AC:4D"
+      ]
+    }
+  }
+]

@@ -12,6 +12,7 @@ import 'package:loving_brain/ui/splash/splash_screen.dart';
 
 import 'firebase_options.dart';
 import 'generated/locale_keys.g.dart';
+import 'manager/deep_link/deep_link_manager.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
 import 'other/notification_util.dart';
 import 'other/preferances.dart';
@@ -68,6 +69,7 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initNotification();
       GoogleSignInManager.instance.initialise();
+      DeepLinkManager.instance.listenToLinks();
     });
     super.initState();
   }

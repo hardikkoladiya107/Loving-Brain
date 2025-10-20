@@ -19,6 +19,10 @@ class CoParentRepo {
     'shared_event',
   );
 
+  var coParentInvitationCollection = FirebaseFirestore.instance.collection(
+    'co-parent-invitation',
+  );
+
   Future<ApiResultStatus> addSharedEvent({
     required Map<String, dynamic> request,
   }) async {
@@ -42,5 +46,22 @@ class CoParentRepo {
 
   Stream<DocumentSnapshot> getSingleSharedEvent(String documentId) {
     return sharedEventCollection.doc(documentId).snapshots();
+  }
+
+  Future<ApiResultStatus> createInvitation({
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var invitationCollectionResult = await coParentInvitationCollection.add(request);
+      return ApiResultStatus.data(data: invitationCollectionResult.id);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
   }
 }
