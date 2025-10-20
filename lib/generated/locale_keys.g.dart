@@ -283,5 +283,10 @@ abstract class  LocaleKeys {
   static const saveToJournal = 'saveToJournal';
   static const onceAcceptedyouSameSharedCalendar = 'onceAcceptedyouSameSharedCalendar';
   static const pleaseEnterCoParentEmail = 'pleaseEnterCoParentEmail';
+  static const generateInviteLink = 'generateInviteLink';
+  static const pleaseSelectChild = 'pleaseSelectChild';
+  static const thisInvitationIsNotForYou = 'thisInvitationIsNotForYou';
+  static const coParentNotFound = 'coParentNotFound';
+  static const childrenNotFound = 'childrenNotFound';
 
 }

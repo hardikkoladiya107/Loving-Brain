@@ -69,7 +69,6 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initNotification();
       GoogleSignInManager.instance.initialise();
-      DeepLinkManager.instance.listenToLinks();
     });
     super.initState();
   }

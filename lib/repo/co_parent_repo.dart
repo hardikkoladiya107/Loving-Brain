@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/preferances.dart';
 
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
+import '../model/invitation_model.dart';
+import 'auth_repo.dart';
 
 class CoParentRepo {
   CoParentRepo._();
@@ -22,6 +26,8 @@ class CoParentRepo {
   var coParentInvitationCollection = FirebaseFirestore.instance.collection(
     'co-parent-invitation',
   );
+
+  var userCollection = FirebaseFirestore.instance.collection('users');
 
   Future<ApiResultStatus> addSharedEvent({
     required Map<String, dynamic> request,
@@ -52,9 +58,87 @@ class CoParentRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var invitationCollectionResult = await coParentInvitationCollection.add(request);
+      var invitationCollectionResult = await coParentInvitationCollection.add(
+        request,
+      );
       return ApiResultStatus.data(data: invitationCollectionResult.id);
     } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> updateInvitation({
+    required String referenceId,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      await coParentInvitationCollection.doc(referenceId).update(request);
+      return ApiResultStatus.data(data: "");
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> addUserAsCoParent(
+    String invitationReferenceId,
+  ) async {
+    try {
+      var response = await coParentInvitationCollection
+          .doc(invitationReferenceId)
+          .get();
+      var invitationModel = InvitationModel.fromJson(response.data());
+      var userModel = preferences.getUserModel();
+      if (userModel?.email == invitationModel.toParent &&
+          invitationModel.status == "REQUESTED") {
+        return updateInvitation(
+          referenceId: invitationReferenceId,
+          request: {"status": "ACCEPTED"},
+        );
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.thisInvitationIsNotForYou.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> getMyCoParents() async {
+    try {
+      var currentUserModel = preferences.getUserModel();
+      var response = await coParentInvitationCollection
+          .where("from_parent", isEqualTo: currentUserModel?.email ?? "")
+          .where("status", isEqualTo: "ACCEPTED")
+          .get();
+      if (response.docs.isNotEmpty) {
+        return ApiResultStatus.data(
+          data: response.docs.map((e) => UserModel.fromJson(e.data())).toList(),
+        );
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.coParentNotFound.tr()),
+        );
+      }
+    } on FirebaseException catch (_) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );

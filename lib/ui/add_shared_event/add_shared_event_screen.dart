@@ -1,8 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../gen/assets.gen.dart';
@@ -21,16 +24,22 @@ class AddSharedEventScreen extends StatefulWidget {
 }
 
 class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
-
-
   TextEditingController titleController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<AddSharedEventCubit>().init();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddSharedEventCubit, AddSharedEventState>(
       builder: (context, state) {
-
         if (titleController.text != state.title) {
           titleController.value = titleController.value.copyWith(
             text: state.title ?? '',
@@ -52,7 +61,6 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           );
         }
 
-
         return Scaffold(
           backgroundColor: addSharedEventBgColor,
           body: SingleChildScrollView(
@@ -70,7 +78,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                 ),
                 Column(
                   children: [
-                    45.h.spaceH,
+                    30.h.spaceH,
                     _appBar(),
                     60.h.spaceH,
                     LocaleKeys.addSharedEvent.tr().appText(
@@ -80,14 +88,15 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     20.h.spaceH,
                     _titleTextField(state),
                     4.h.spaceH,
-                    _schoolPickUp(),
+                    _schoolPickUp(state),
                     20.h.spaceH,
-                    _startEnd(),
+                    _startEnd(state),
                     20.h.spaceH,
                     _location(state),
-                    _children(),
+                    20.h.spaceH,
+                    _children(state),
                     10.h.spaceH,
-                    _assignedTo(),
+                    _assignedTo(state),
                     10.h.spaceH,
                     _requireApproval(state),
                     10.h.spaceH,
@@ -102,7 +111,33 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.getCoParentApiResultStatus.whenOrNull(
+          data: (data) {
+            EasyLoading.dismiss();
+          },
+          error: (error) {
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            EasyLoading.dismiss();
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+        );
+
+        state.getChildApiResultStatus.whenOrNull(
+          loading: () {
+            EasyLoading.show();
+          },
+          error: (error) {
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            EasyLoading.dismiss();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+          },
+        );
+      },
     );
   }
 
@@ -123,15 +158,23 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _chipWidget({required String text}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: tabBarBgColor,
-        borderRadius: BorderRadius.circular(20),
+  Widget _chipWidget({
+    required String text,
+    required GestureTapCallback? onTap,
+    required bool selected,
+  }) {
+    return BaseButton(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: tabBarBgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: selected ? Border.all(color: primaryColor, width: 2) : null,
+        ),
+        child: text
+            .appText(fontWeight: FontWeight.w700)
+            .appPadding(left: 16, right: 16, top: 8, bottom: 8),
       ),
-      child: text
-          .appText(fontWeight: FontWeight.w700)
-          .appPadding(left: 16, right: 16, top: 8, bottom: 8),
     );
   }
 
@@ -240,7 +283,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _schoolPickUp() {
+  Widget _schoolPickUp(AddSharedEventState state) {
     return Column(
       children: [
         Row(
@@ -276,11 +319,26 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
             ),
           ),
         ),
+        if (state.dateError.isNotEmpty)
+          Column(
+            children: [
+              4.spaceH,
+              Row(
+                children: [
+                  (state.dateError ?? "").appText(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }
 
-  Widget _startEnd() {
+  Widget _startEnd(AddSharedEventState state) {
     return Row(
       children: [
         Expanded(
@@ -315,6 +373,23 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     ],
                   ),
                 ),
+
+                if (state.startTimeError.isNotEmpty)
+                  Column(
+                    children: [
+                      4.spaceH,
+                      Row(
+                        children: [
+                          (state.startTimeError ?? "").appText(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
               ],
             ),
             onTap: () {
@@ -355,6 +430,21 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     ],
                   ),
                 ),
+                if (state.endTimeError.isNotEmpty)
+                  Column(
+                    children: [
+                      4.spaceH,
+                      Row(
+                        children: [
+                          (state.endTimeError ?? "").appText(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
               ],
             ),
             onTap: () {
@@ -387,7 +477,24 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _children() {
+  Widget _children(AddSharedEventState state) {
+    List<Widget> childrenWidgetList = [];
+
+    for (int i = 0; i < state.children.length; i++) {
+      var child = state.children[i];
+      childrenWidgetList.add(
+        _chipWidget(
+          text: child.childName ?? "",
+          selected: state.selectedChildren.any(
+            (element) => element.reference?.id == child.reference?.id,
+          ),
+          onTap: () {
+            context.read<AddSharedEventCubit>().selectChild(child);
+          },
+        ),
+      );
+    }
+
     return Column(
       children: [
         Row(
@@ -403,16 +510,59 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
         10.h.spaceH,
         Row(
           children: [
-            _chipWidget(text: 'Leo'),
-            8.w.spaceW,
-            _chipWidget(text: 'Ava'),
+            if (childrenWidgetList.isNotEmpty) ...[...childrenWidgetList],
           ],
         ),
+        if (state.selectedChildError.isNotEmpty)
+          Column(
+            children: [
+              4.spaceH,
+              Row(
+                children: [
+                  (state.selectedChildError ?? "").appText(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }
 
-  Widget _assignedTo() {
+  Widget _assignedTo(AddSharedEventState state) {
+    List<Widget> coParentWidgetList = [];
+    coParentWidgetList.add(
+      _chipWidget(
+        text: 'You',
+        selected: state.selectedCoParentList.any(
+          (element) => element.uid == state.userModel?.uid,
+        ),
+        onTap: () {
+          if (state.userModel != null) {
+            context.read<AddSharedEventCubit>().selectParent(state.userModel!);
+          }
+        },
+      ),
+    );
+
+    for (int i = 0; i < state.coParentList.length; i++) {
+      var user = state.coParentList[i];
+      coParentWidgetList.add(
+        _chipWidget(
+          text: user.parentName ?? "",
+          onTap: () {
+            context.read<AddSharedEventCubit>().selectParent(user);
+          },
+          selected: state.selectedCoParentList.any(
+            (element) => element.uid == user.uid,
+          ),
+        ),
+      );
+    }
+
     return Column(
       children: [
         Row(
@@ -424,13 +574,22 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           ],
         ),
         10.h.spaceH,
-        Row(
-          children: [
-            _chipWidget(text: 'You'),
-            8.w.spaceW,
-            _chipWidget(text: 'Priya'),
-          ],
-        ),
+        Row(children: [...coParentWidgetList]),
+        if (state.assignedToError.isNotEmpty)
+          Column(
+            children: [
+              4.spaceH,
+              Row(
+                children: [
+                  (state.assignedToError ?? "").appText(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+            ],
+          ),
       ],
     );
   }

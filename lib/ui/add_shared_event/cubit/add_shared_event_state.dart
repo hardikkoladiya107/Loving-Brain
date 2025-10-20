@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
+import '../../../model/child_model.dart';
 import '../../../model/user_model.dart';
 
 part 'add_shared_event_state.freezed.dart';
@@ -14,8 +15,8 @@ abstract class AddSharedEventState with _$AddSharedEventState {
     DateTime? selectedDate,
     DateTime? startTime,
     DateTime? endTime,
-    @Default("") String selectedChild,
-    @Default("") String assignedTo,
+
+
     @Default("") String titleError,
     @Default("") String noteError,
     @Default("") String dateError,
@@ -26,8 +27,13 @@ abstract class AddSharedEventState with _$AddSharedEventState {
     @Default("") String assignedToError,
     @Default("") String locationText,
     @Default("") String locationError,
+    @Default([]) List<UserModel> coParentList,
+    @Default([]) List<ChildModel> children,
+    @Default([]) List<ChildModel> selectedChildren,
+    @Default([]) List<UserModel> selectedCoParentList,
     @Default(ApiResultStatus.initial()) ApiResultStatus requestApprovalApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getChildApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getCoParentApiResultStatus,
+
   }) = _AddSharedEventState;
 }

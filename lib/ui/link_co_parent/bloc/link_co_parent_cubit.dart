@@ -19,6 +19,8 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   void changeProps({
     String? selectedTab,
     String? coParentEmailError,
+    String? selectChildrenError,
+    String? coParentEmail,
     ApiResultStatus? getApiResultStatus,
     ApiResultStatus? createInvitation,
     List<ChildModel>? children,
@@ -30,6 +32,8 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
       state.copyWith(
         selectedTab: selectedTab ?? state.selectedTab,
         coParentEmailError: coParentEmailError ?? state.coParentEmailError,
+        selectChildrenError: selectChildrenError ?? state.selectChildrenError,
+        coParentEmail: coParentEmail ?? state.coParentEmail,
         children: children ?? state.children,
         selectedChildren: selectedChildren ?? state.selectedChildren,
         calenderAndEvent: calenderAndEvent ?? state.calenderAndEvent,
@@ -76,12 +80,23 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   }
 
   bool _isValidate() {
-    if ((state.coParentEmail ?? "").isEmpty) {
-      changeProps(coParentEmailError: LocaleKeys.pleaseEnterCoParentEmail.tr());
+    if (state.selectedChildren.isEmpty || (state.coParentEmail ?? "").isEmpty) {
+      if (state.selectedChildren.isEmpty) {
+        changeProps(selectChildrenError: LocaleKeys.pleaseSelectChild.tr());
+      } else {
+        changeProps(selectChildrenError: "");
+      }
+
+      if ((state.coParentEmail ?? "").isEmpty) {
+        changeProps(
+          coParentEmailError: LocaleKeys.pleaseEnterCoParentEmail.tr(),
+        );
+      } else {
+        changeProps(coParentEmailError: "");
+      }
       return false;
-    } else {
-      changeProps(coParentEmailError: "");
     }
+    changeProps(coParentEmailError: "", selectChildrenError: "");
     return true;
   }
 
@@ -97,11 +112,7 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
           "children": state.selectedChildren
               .map((e) => e.reference?.id)
               .join(","),
-        },
-      );
-      apiResponse.whenOrNull(
-        data: (data) {
-          getInvitationLink(data.toString());
+          "status": "REQUESTED",
         },
       );
       changeProps(createInvitation: apiResponse);
@@ -109,7 +120,4 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   }
 
 
-  sendInvitationMail(){
-
-  }
 }

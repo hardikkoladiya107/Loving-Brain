@@ -12,6 +12,7 @@ abstract class LinkCoParentState with _$LinkCoParentState {
     @Default("EMAIL") String selectedTab,
     @Default("") String? coParentEmail,
     @Default("") String? coParentEmailError,
+    @Default("") String? selectChildrenError,
     @Default(false) bool calenderAndEvent,
     @Default(false) bool childEssentials,
     @Default("") String selectedChild,

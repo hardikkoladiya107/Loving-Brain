@@ -79,11 +79,17 @@ class ChildRepo {
       var childrenResponse = await childrenCollection
           .where(FieldPath.documentId, whereIn: childrenIds)
           .get();
-      return ApiResultStatus.data(
-        data: childrenResponse.docs
-            .map((e) => ChildModel.fromJson(e.data(),e.reference))
-            .toList(),
-      );
+      if (childrenResponse.docs.isNotEmpty) {
+        return ApiResultStatus.data(
+          data: childrenResponse.docs
+              .map((e) => ChildModel.fromJson(e.data(), e.reference))
+              .toList(),
+        );
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.childrenNotFound.tr()),
+        );
+      }
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

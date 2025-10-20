@@ -284,7 +284,12 @@
   "startRecording": "Start Recording",
   "saveToJournal": "Save to journal",
   "onceAcceptedyouSameSharedCalendar": "Once accepted, you’ll both see the same shared calendar.",
-  "pleaseEnterCoParentEmail": "Please enter co-parent email"
+  "pleaseEnterCoParentEmail": "Please enter co-parent email",
+  "generateInviteLink": "Generate Invite Link",
+  "pleaseSelectChild": "Please select child",
+  "thisInvitationIsNotForYou": "This invitation is not for you",
+  "coParentNotFound": "Co-parent not found",
+  "childrenNotFound": "Children not found"
 
 
 
