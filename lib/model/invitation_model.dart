@@ -1,28 +1,19 @@
-import 'dart:convert';
-/// calender_events : ""
-/// childs_essentials : ""
-/// from_parent : ""
-/// to_parent : ""
-/// children : ""
-/// status : "REQUESTED"
-
-InvitationModel invitationModelFromJson(String str) => InvitationModel.fromJson(json.decode(str));
-String invitationModelToJson(InvitationModel data) => json.encode(data.toJson());
 class InvitationModel {
   InvitationModel({
-      String? calenderEvents, 
-      String? childsEssentials, 
-      String? fromParent, 
-      String? toParent, 
-      String? children, 
-      String? status,}){
+    bool? calenderEvents,
+    bool? childsEssentials,
+    String? fromParent,
+    String? toParent,
+    String? children,
+    String? status,
+  }) {
     _calenderEvents = calenderEvents;
     _childsEssentials = childsEssentials;
     _fromParent = fromParent;
     _toParent = toParent;
     _children = children;
     _status = status;
-}
+  }
 
   InvitationModel.fromJson(dynamic json) {
     _calenderEvents = json['calender_events'];
@@ -32,30 +23,40 @@ class InvitationModel {
     _children = json['children'];
     _status = json['status'];
   }
-  String? _calenderEvents;
-  String? _childsEssentials;
+
+  bool? _calenderEvents;
+  bool? _childsEssentials;
   String? _fromParent;
   String? _toParent;
   String? _children;
   String? _status;
-InvitationModel copyWith({  String? calenderEvents,
-  String? childsEssentials,
-  String? fromParent,
-  String? toParent,
-  String? children,
-  String? status,
-}) => InvitationModel(  calenderEvents: calenderEvents ?? _calenderEvents,
-  childsEssentials: childsEssentials ?? _childsEssentials,
-  fromParent: fromParent ?? _fromParent,
-  toParent: toParent ?? _toParent,
-  children: children ?? _children,
-  status: status ?? _status,
-);
-  String? get calenderEvents => _calenderEvents;
-  String? get childsEssentials => _childsEssentials;
+
+  InvitationModel copyWith({
+    bool? calenderEvents,
+    bool? childsEssentials,
+    String? fromParent,
+    String? toParent,
+    String? children,
+    String? status,
+  }) => InvitationModel(
+    calenderEvents: calenderEvents ?? _calenderEvents,
+    childsEssentials: childsEssentials ?? _childsEssentials,
+    fromParent: fromParent ?? _fromParent,
+    toParent: toParent ?? _toParent,
+    children: children ?? _children,
+    status: status ?? _status,
+  );
+
+  bool? get calenderEvents => _calenderEvents;
+
+  bool? get childsEssentials => _childsEssentials;
+
   String? get fromParent => _fromParent;
+
   String? get toParent => _toParent;
+
   String? get children => _children;
+
   String? get status => _status;
 
   Map<String, dynamic> toJson() {
@@ -68,5 +69,4 @@ InvitationModel copyWith({  String? calenderEvents,
     map['status'] = _status;
     return map;
   }
-
 }

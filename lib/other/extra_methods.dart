@@ -88,3 +88,20 @@ String convertToMMMMDYYYY(DateTime? input) {
   String formatted = DateFormat('MMM d, yyyy').format(input);
   return formatted;
 }
+
+
+String coParentScheduleTime(DateTime? input) {
+  if (input == null) {
+    return "";
+  }
+  String formatted = DateFormat('MMM d - hh:mm a').format(input);
+  return formatted;
+}
+
+String coParentEventDetailTime(DateTime? input) {
+  if (input == null) {
+    return "";
+  }
+  String formatted = DateFormat('EEE, MMM d').format(input);
+  return formatted;
+}

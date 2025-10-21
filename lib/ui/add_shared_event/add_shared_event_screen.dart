@@ -12,6 +12,7 @@ import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
+import '../../other/extra_methods.dart';
 import '../widget/base_button.dart';
 import 'cubit/add_shared_event_cubit.dart';
 import 'cubit/add_shared_event_state.dart';
@@ -135,6 +136,19 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           },
           data: (data) {
             EasyLoading.dismiss();
+          },
+        );
+
+        state.requestApprovalApiResultStatus.whenOrNull(
+          data: (data) {
+            EasyLoading.dismiss();
+            Navigator.pop(context);
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+          },
+          loading: () {
+            EasyLoading.show();
           },
         );
       },
@@ -311,10 +325,15 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     .image(height: 20, width: 20)
                     .padding(left: 8),
                 12.spaceW,
-                LocaleKeys.chooseDate.tr().appText(
-                  fontSize: 14,
-                  color: Colors.grey.shade400,
-                ),
+                (state.selectedDate != null
+                        ? getStringDate(state.selectedDate)
+                        : LocaleKeys.chooseDate.tr())
+                    .appText(
+                      fontSize: 14,
+                      color: state.selectedDate != null
+                          ? Colors.black
+                          : Colors.grey.shade400,
+                    ),
               ],
             ),
           ),
@@ -366,14 +385,19 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                           .image(height: 20, width: 20)
                           .padding(left: 8),
                       12.spaceW,
-                      LocaleKeys.startHint.tr().appText(
-                        fontSize: 14,
-                        color: Colors.grey.shade400,
-                      ),
+
+                      (state.startTime != null
+                              ? getStringTime(state.startTime)
+                              : LocaleKeys.startHint.tr())
+                          .appText(
+                            fontSize: 14,
+                            color: state.startTime != null
+                                ? Colors.black
+                                : Colors.grey.shade400,
+                          ),
                     ],
                   ),
                 ),
-
                 if (state.startTimeError.isNotEmpty)
                   Column(
                     children: [
@@ -389,7 +413,6 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                       ),
                     ],
                   ),
-
               ],
             ),
             onTap: () {
@@ -423,10 +446,15 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                           .image(height: 20, width: 20)
                           .padding(left: 8),
                       12.spaceW,
-                      LocaleKeys.endHint.tr().appText(
-                        fontSize: 14,
-                        color: Colors.grey.shade400,
-                      ),
+                      (state.endTime != null
+                              ? getStringTime(state.endTime)
+                              : LocaleKeys.endHint.tr())
+                          .appText(
+                            fontSize: 14,
+                            color: state.endTime != null
+                                ? Colors.black
+                                : Colors.grey.shade400,
+                          ),
                     ],
                   ),
                 ),
@@ -656,7 +684,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
       if (value != null) {
         DateTime now = DateTime.now();
         navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
-          startTime: DateTime(
+          endTime: DateTime(
             now.year,
             now.month,
             now.day,

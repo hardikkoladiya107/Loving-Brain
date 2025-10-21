@@ -11,6 +11,7 @@ import 'package:loving_brain/ui/child_profile/bloc/child_profile_cubit.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/bloc/daily_mood_check_in_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
 import 'package:loving_brain/ui/essentials/bloc/essentials_cubit.dart';
+import 'package:loving_brain/ui/event_detail/bloc/event_detail_cubit.dart';
 import 'package:loving_brain/ui/forgot_password/bloc/forgot_password_cubit.dart';
 import 'package:loving_brain/ui/home/bloc/home_cubit.dart';
 import 'package:loving_brain/ui/link_co_parent/bloc/link_co_parent_cubit.dart';
@@ -84,7 +85,11 @@ var blocProvider = [
   ),
   BlocProvider<ChatDetailCubit>(
     create: (BuildContext context) => ChatDetailCubit(),
-  ),BlocProvider<ChatListCubit>(
+  ),
+  BlocProvider<ChatListCubit>(
     create: (BuildContext context) => ChatListCubit(),
+  ),
+  BlocProvider<EventDetailCubit>(
+    create: (BuildContext context) => EventDetailCubit(),
   ),
 ];

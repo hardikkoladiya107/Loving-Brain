@@ -4,6 +4,7 @@ import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_state.dart';
 import '../../../model/child_model.dart';
 import '../../../model/routine_model.dart';
+import '../../../model/shared_event_model.dart';
 import '../../../other/preferances.dart';
 
 class ScheduleCubit extends Cubit<ScheduleState> {
@@ -15,12 +16,16 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     _listenToSharedEvent();
   }
 
-  void changeProps({int? tabIndex, ChildModel? childModel}) {
+  void changeProps({
+    int? tabIndex,
+    ChildModel? childModel,
+    List<SharedEventModel>? sharedEventList,
+  }) {
     emit(
       state.copyWith(
         tabIndex: tabIndex ?? state.tabIndex,
-
         childModel: childModel ?? state.childModel,
+        sharedEventList: sharedEventList ?? state.sharedEventList,
       ),
     );
   }
@@ -37,7 +42,8 @@ class ScheduleCubit extends Cubit<ScheduleState> {
             if (event.data() != null) {
               changeProps(
                 childModel: ChildModel.fromJson(
-                  event.data() as Map<String, dynamic>,event.reference
+                  event.data() as Map<String, dynamic>,
+                  event.reference,
                 ),
               );
             }
@@ -49,6 +55,12 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     sharedEventStreamSubscription?.cancel();
     sharedEventStreamSubscription = CoParentRepo.instance
         .sharedEventListener()
-        .listen((event) {});
+        .listen((event) {
+          changeProps(
+            sharedEventList: event.docs
+                .map((e) => SharedEventModel.fromJson(e.data()))
+                .toList(),
+          );
+        });
   }
 }

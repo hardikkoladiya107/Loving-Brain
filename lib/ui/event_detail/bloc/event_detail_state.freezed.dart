@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EventDetailState {
 
- String get message;
+ String get message; ApiResultStatus get getAssigneeApiResult; ApiResultStatus get getChildrenResult; ApiResultStatus get getCreatedByUserApiResult; UserModel? get createdByUser; List<UserModel> get assignedUserList; List<ChildModel> get childrenList; SharedEventModel? get sharedEvent;
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $EventDetailStateCopyWith<EventDetailState> get copyWith => _$EventDetailStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventDetailState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventDetailState&&(identical(other.message, message) || other.message == message)&&(identical(other.getAssigneeApiResult, getAssigneeApiResult) || other.getAssigneeApiResult == getAssigneeApiResult)&&(identical(other.getChildrenResult, getChildrenResult) || other.getChildrenResult == getChildrenResult)&&(identical(other.getCreatedByUserApiResult, getCreatedByUserApiResult) || other.getCreatedByUserApiResult == getCreatedByUserApiResult)&&(identical(other.createdByUser, createdByUser) || other.createdByUser == createdByUser)&&const DeepCollectionEquality().equals(other.assignedUserList, assignedUserList)&&const DeepCollectionEquality().equals(other.childrenList, childrenList)&&(identical(other.sharedEvent, sharedEvent) || other.sharedEvent == sharedEvent));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,getAssigneeApiResult,getChildrenResult,getCreatedByUserApiResult,createdByUser,const DeepCollectionEquality().hash(assignedUserList),const DeepCollectionEquality().hash(childrenList),sharedEvent);
 
 @override
 String toString() {
-  return 'EventDetailState(message: $message)';
+  return 'EventDetailState(message: $message, getAssigneeApiResult: $getAssigneeApiResult, getChildrenResult: $getChildrenResult, getCreatedByUserApiResult: $getCreatedByUserApiResult, createdByUser: $createdByUser, assignedUserList: $assignedUserList, childrenList: $childrenList, sharedEvent: $sharedEvent)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $EventDetailStateCopyWith<$Res>  {
   factory $EventDetailStateCopyWith(EventDetailState value, $Res Function(EventDetailState) _then) = _$EventDetailStateCopyWithImpl;
 @useResult
 $Res call({
- String message
+ String message, ApiResultStatus getAssigneeApiResult, ApiResultStatus getChildrenResult, ApiResultStatus getCreatedByUserApiResult, UserModel? createdByUser, List<UserModel> assignedUserList, List<ChildModel> childrenList, SharedEventModel? sharedEvent
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get getAssigneeApiResult;$ApiResultStatusCopyWith<dynamic, $Res> get getChildrenResult;$ApiResultStatusCopyWith<dynamic, $Res> get getCreatedByUserApiResult;
 
 }
 /// @nodoc
@@ -62,13 +62,47 @@ class _$EventDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? getAssigneeApiResult = null,Object? getChildrenResult = null,Object? getCreatedByUserApiResult = null,Object? createdByUser = freezed,Object? assignedUserList = null,Object? childrenList = null,Object? sharedEvent = freezed,}) {
   return _then(_self.copyWith(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+as String,getAssigneeApiResult: null == getAssigneeApiResult ? _self.getAssigneeApiResult : getAssigneeApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,getChildrenResult: null == getChildrenResult ? _self.getChildrenResult : getChildrenResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,getCreatedByUserApiResult: null == getCreatedByUserApiResult ? _self.getCreatedByUserApiResult : getCreatedByUserApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,createdByUser: freezed == createdByUser ? _self.createdByUser : createdByUser // ignore: cast_nullable_to_non_nullable
+as UserModel?,assignedUserList: null == assignedUserList ? _self.assignedUserList : assignedUserList // ignore: cast_nullable_to_non_nullable
+as List<UserModel>,childrenList: null == childrenList ? _self.childrenList : childrenList // ignore: cast_nullable_to_non_nullable
+as List<ChildModel>,sharedEvent: freezed == sharedEvent ? _self.sharedEvent : sharedEvent // ignore: cast_nullable_to_non_nullable
+as SharedEventModel?,
   ));
 }
-
+/// Create a copy of EventDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getAssigneeApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getAssigneeApiResult, (value) {
+    return _then(_self.copyWith(getAssigneeApiResult: value));
+  });
+}/// Create a copy of EventDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getChildrenResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getChildrenResult, (value) {
+    return _then(_self.copyWith(getChildrenResult: value));
+  });
+}/// Create a copy of EventDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getCreatedByUserApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getCreatedByUserApiResult, (value) {
+    return _then(_self.copyWith(getCreatedByUserApiResult: value));
+  });
+}
 }
 
 
@@ -150,10 +184,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  ApiResultStatus getAssigneeApiResult,  ApiResultStatus getChildrenResult,  ApiResultStatus getCreatedByUserApiResult,  UserModel? createdByUser,  List<UserModel> assignedUserList,  List<ChildModel> childrenList,  SharedEventModel? sharedEvent)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventDetailState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.message,_that.getAssigneeApiResult,_that.getChildrenResult,_that.getCreatedByUserApiResult,_that.createdByUser,_that.assignedUserList,_that.childrenList,_that.sharedEvent);case _:
   return orElse();
 
 }
@@ -171,10 +205,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  ApiResultStatus getAssigneeApiResult,  ApiResultStatus getChildrenResult,  ApiResultStatus getCreatedByUserApiResult,  UserModel? createdByUser,  List<UserModel> assignedUserList,  List<ChildModel> childrenList,  SharedEventModel? sharedEvent)  $default,) {final _that = this;
 switch (_that) {
 case _EventDetailState():
-return $default(_that.message);case _:
+return $default(_that.message,_that.getAssigneeApiResult,_that.getChildrenResult,_that.getCreatedByUserApiResult,_that.createdByUser,_that.assignedUserList,_that.childrenList,_that.sharedEvent);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +225,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  ApiResultStatus getAssigneeApiResult,  ApiResultStatus getChildrenResult,  ApiResultStatus getCreatedByUserApiResult,  UserModel? createdByUser,  List<UserModel> assignedUserList,  List<ChildModel> childrenList,  SharedEventModel? sharedEvent)?  $default,) {final _that = this;
 switch (_that) {
 case _EventDetailState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.message,_that.getAssigneeApiResult,_that.getChildrenResult,_that.getCreatedByUserApiResult,_that.createdByUser,_that.assignedUserList,_that.childrenList,_that.sharedEvent);case _:
   return null;
 
 }
@@ -206,10 +240,29 @@ return $default(_that.message);case _:
 
 
 class _EventDetailState implements EventDetailState {
-  const _EventDetailState({this.message = ""});
+  const _EventDetailState({this.message = "", this.getAssigneeApiResult = const ApiResultStatus.initial(), this.getChildrenResult = const ApiResultStatus.initial(), this.getCreatedByUserApiResult = const ApiResultStatus.initial(), this.createdByUser, final  List<UserModel> assignedUserList = const [], final  List<ChildModel> childrenList = const [], this.sharedEvent}): _assignedUserList = assignedUserList,_childrenList = childrenList;
   
 
 @override@JsonKey() final  String message;
+@override@JsonKey() final  ApiResultStatus getAssigneeApiResult;
+@override@JsonKey() final  ApiResultStatus getChildrenResult;
+@override@JsonKey() final  ApiResultStatus getCreatedByUserApiResult;
+@override final  UserModel? createdByUser;
+ final  List<UserModel> _assignedUserList;
+@override@JsonKey() List<UserModel> get assignedUserList {
+  if (_assignedUserList is EqualUnmodifiableListView) return _assignedUserList;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_assignedUserList);
+}
+
+ final  List<ChildModel> _childrenList;
+@override@JsonKey() List<ChildModel> get childrenList {
+  if (_childrenList is EqualUnmodifiableListView) return _childrenList;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_childrenList);
+}
+
+@override final  SharedEventModel? sharedEvent;
 
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +274,16 @@ _$EventDetailStateCopyWith<_EventDetailState> get copyWith => __$EventDetailStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventDetailState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventDetailState&&(identical(other.message, message) || other.message == message)&&(identical(other.getAssigneeApiResult, getAssigneeApiResult) || other.getAssigneeApiResult == getAssigneeApiResult)&&(identical(other.getChildrenResult, getChildrenResult) || other.getChildrenResult == getChildrenResult)&&(identical(other.getCreatedByUserApiResult, getCreatedByUserApiResult) || other.getCreatedByUserApiResult == getCreatedByUserApiResult)&&(identical(other.createdByUser, createdByUser) || other.createdByUser == createdByUser)&&const DeepCollectionEquality().equals(other._assignedUserList, _assignedUserList)&&const DeepCollectionEquality().equals(other._childrenList, _childrenList)&&(identical(other.sharedEvent, sharedEvent) || other.sharedEvent == sharedEvent));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,getAssigneeApiResult,getChildrenResult,getCreatedByUserApiResult,createdByUser,const DeepCollectionEquality().hash(_assignedUserList),const DeepCollectionEquality().hash(_childrenList),sharedEvent);
 
 @override
 String toString() {
-  return 'EventDetailState(message: $message)';
+  return 'EventDetailState(message: $message, getAssigneeApiResult: $getAssigneeApiResult, getChildrenResult: $getChildrenResult, getCreatedByUserApiResult: $getCreatedByUserApiResult, createdByUser: $createdByUser, assignedUserList: $assignedUserList, childrenList: $childrenList, sharedEvent: $sharedEvent)';
 }
 
 
@@ -241,11 +294,11 @@ abstract mixin class _$EventDetailStateCopyWith<$Res> implements $EventDetailSta
   factory _$EventDetailStateCopyWith(_EventDetailState value, $Res Function(_EventDetailState) _then) = __$EventDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String message, ApiResultStatus getAssigneeApiResult, ApiResultStatus getChildrenResult, ApiResultStatus getCreatedByUserApiResult, UserModel? createdByUser, List<UserModel> assignedUserList, List<ChildModel> childrenList, SharedEventModel? sharedEvent
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get getAssigneeApiResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get getChildrenResult;@override $ApiResultStatusCopyWith<dynamic, $Res> get getCreatedByUserApiResult;
 
 }
 /// @nodoc
@@ -258,14 +311,48 @@ class __$EventDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of EventDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? getAssigneeApiResult = null,Object? getChildrenResult = null,Object? getCreatedByUserApiResult = null,Object? createdByUser = freezed,Object? assignedUserList = null,Object? childrenList = null,Object? sharedEvent = freezed,}) {
   return _then(_EventDetailState(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+as String,getAssigneeApiResult: null == getAssigneeApiResult ? _self.getAssigneeApiResult : getAssigneeApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,getChildrenResult: null == getChildrenResult ? _self.getChildrenResult : getChildrenResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,getCreatedByUserApiResult: null == getCreatedByUserApiResult ? _self.getCreatedByUserApiResult : getCreatedByUserApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,createdByUser: freezed == createdByUser ? _self.createdByUser : createdByUser // ignore: cast_nullable_to_non_nullable
+as UserModel?,assignedUserList: null == assignedUserList ? _self._assignedUserList : assignedUserList // ignore: cast_nullable_to_non_nullable
+as List<UserModel>,childrenList: null == childrenList ? _self._childrenList : childrenList // ignore: cast_nullable_to_non_nullable
+as List<ChildModel>,sharedEvent: freezed == sharedEvent ? _self.sharedEvent : sharedEvent // ignore: cast_nullable_to_non_nullable
+as SharedEventModel?,
   ));
 }
 
-
+/// Create a copy of EventDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getAssigneeApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getAssigneeApiResult, (value) {
+    return _then(_self.copyWith(getAssigneeApiResult: value));
+  });
+}/// Create a copy of EventDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getChildrenResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getChildrenResult, (value) {
+    return _then(_self.copyWith(getChildrenResult: value));
+  });
+}/// Create a copy of EventDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getCreatedByUserApiResult {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getCreatedByUserApiResult, (value) {
+    return _then(_self.copyWith(getCreatedByUserApiResult: value));
+  });
+}
 }
 
 // dart format on

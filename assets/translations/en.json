@@ -289,7 +289,12 @@
   "pleaseSelectChild": "Please select child",
   "thisInvitationIsNotForYou": "This invitation is not for you",
   "coParentNotFound": "Co-parent not found",
-  "childrenNotFound": "Children not found"
+  "childrenNotFound": "Children not found",
+  "thisEventAppearsInBothCalendars": "This event appears in both calendars. Changes will ask for approval",
+  "premiumFeature": "Premium feature",
+  "attachDocumentsToEventsWithLovingBrainPremium": "Attach documents to events with Loving Brain Premium.",
+  "addAttachment": "Add Attachment",
+  "attachment": "Attachment"
 
 
 

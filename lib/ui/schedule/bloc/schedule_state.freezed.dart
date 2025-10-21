@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ScheduleState {
 
- String get message; int get tabIndex; UserModel? get userModel; ChildModel? get childModel;
+ String get message; int get tabIndex; List<SharedEventModel> get sharedEventList; UserModel? get userModel; ChildModel? get childModel;
 /// Create a copy of ScheduleState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ScheduleStateCopyWith<ScheduleState> get copyWith => _$ScheduleStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&const DeepCollectionEquality().equals(other.sharedEventList, sharedEventList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,tabIndex,userModel,childModel);
+int get hashCode => Object.hash(runtimeType,message,tabIndex,const DeepCollectionEquality().hash(sharedEventList),userModel,childModel);
 
 @override
 String toString() {
-  return 'ScheduleState(message: $message, tabIndex: $tabIndex, userModel: $userModel, childModel: $childModel)';
+  return 'ScheduleState(message: $message, tabIndex: $tabIndex, sharedEventList: $sharedEventList, userModel: $userModel, childModel: $childModel)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ScheduleStateCopyWith<$Res>  {
   factory $ScheduleStateCopyWith(ScheduleState value, $Res Function(ScheduleState) _then) = _$ScheduleStateCopyWithImpl;
 @useResult
 $Res call({
- String message, int tabIndex, UserModel? userModel, ChildModel? childModel
+ String message, int tabIndex, List<SharedEventModel> sharedEventList, UserModel? userModel, ChildModel? childModel
 });
 
 
@@ -62,11 +62,12 @@ class _$ScheduleStateCopyWithImpl<$Res>
 
 /// Create a copy of ScheduleState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? tabIndex = null,Object? userModel = freezed,Object? childModel = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? tabIndex = null,Object? sharedEventList = null,Object? userModel = freezed,Object? childModel = freezed,}) {
   return _then(_self.copyWith(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,tabIndex: null == tabIndex ? _self.tabIndex : tabIndex // ignore: cast_nullable_to_non_nullable
-as int,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as int,sharedEventList: null == sharedEventList ? _self.sharedEventList : sharedEventList // ignore: cast_nullable_to_non_nullable
+as List<SharedEventModel>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,
   ));
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  int tabIndex,  UserModel? userModel,  ChildModel? childModel)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScheduleState() when $default != null:
-return $default(_that.message,_that.tabIndex,_that.userModel,_that.childModel);case _:
+return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userModel,_that.childModel);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.message,_that.tabIndex,_that.userModel,_that.childModel);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  int tabIndex,  UserModel? userModel,  ChildModel? childModel)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel)  $default,) {final _that = this;
 switch (_that) {
 case _ScheduleState():
-return $default(_that.message,_that.tabIndex,_that.userModel,_that.childModel);case _:
+return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userModel,_that.childModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.message,_that.tabIndex,_that.userModel,_that.childModel);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  int tabIndex,  UserModel? userModel,  ChildModel? childModel)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel)?  $default,) {final _that = this;
 switch (_that) {
 case _ScheduleState() when $default != null:
-return $default(_that.message,_that.tabIndex,_that.userModel,_that.childModel);case _:
+return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userModel,_that.childModel);case _:
   return null;
 
 }
@@ -209,11 +210,18 @@ return $default(_that.message,_that.tabIndex,_that.userModel,_that.childModel);c
 
 
 class _ScheduleState implements ScheduleState {
-  const _ScheduleState({this.message = "message", this.tabIndex = 0, this.userModel, this.childModel});
+  const _ScheduleState({this.message = "message", this.tabIndex = 0, final  List<SharedEventModel> sharedEventList = const [], this.userModel, this.childModel}): _sharedEventList = sharedEventList;
   
 
 @override@JsonKey() final  String message;
 @override@JsonKey() final  int tabIndex;
+ final  List<SharedEventModel> _sharedEventList;
+@override@JsonKey() List<SharedEventModel> get sharedEventList {
+  if (_sharedEventList is EqualUnmodifiableListView) return _sharedEventList;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_sharedEventList);
+}
+
 @override final  UserModel? userModel;
 @override final  ChildModel? childModel;
 
@@ -227,16 +235,16 @@ _$ScheduleStateCopyWith<_ScheduleState> get copyWith => __$ScheduleStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&const DeepCollectionEquality().equals(other._sharedEventList, _sharedEventList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,tabIndex,userModel,childModel);
+int get hashCode => Object.hash(runtimeType,message,tabIndex,const DeepCollectionEquality().hash(_sharedEventList),userModel,childModel);
 
 @override
 String toString() {
-  return 'ScheduleState(message: $message, tabIndex: $tabIndex, userModel: $userModel, childModel: $childModel)';
+  return 'ScheduleState(message: $message, tabIndex: $tabIndex, sharedEventList: $sharedEventList, userModel: $userModel, childModel: $childModel)';
 }
 
 
@@ -247,7 +255,7 @@ abstract mixin class _$ScheduleStateCopyWith<$Res> implements $ScheduleStateCopy
   factory _$ScheduleStateCopyWith(_ScheduleState value, $Res Function(_ScheduleState) _then) = __$ScheduleStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message, int tabIndex, UserModel? userModel, ChildModel? childModel
+ String message, int tabIndex, List<SharedEventModel> sharedEventList, UserModel? userModel, ChildModel? childModel
 });
 
 
@@ -264,11 +272,12 @@ class __$ScheduleStateCopyWithImpl<$Res>
 
 /// Create a copy of ScheduleState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? tabIndex = null,Object? userModel = freezed,Object? childModel = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? tabIndex = null,Object? sharedEventList = null,Object? userModel = freezed,Object? childModel = freezed,}) {
   return _then(_ScheduleState(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,tabIndex: null == tabIndex ? _self.tabIndex : tabIndex // ignore: cast_nullable_to_non_nullable
-as int,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as int,sharedEventList: null == sharedEventList ? _self._sharedEventList : sharedEventList // ignore: cast_nullable_to_non_nullable
+as List<SharedEventModel>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,
   ));

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 
 import '../generated/locale_keys.g.dart';
@@ -53,6 +54,8 @@ class AuthRepo {
       return null;
     }
   }
+
+
 
   Future<bool> isAccountExistWithEmail({required String email}) async {
     try {
@@ -375,7 +378,7 @@ class AuthRepo {
     try {
       var tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
-        var charReferenceId  = await userCollection
+        var charReferenceId = await userCollection
             .doc(tUid)
             .collection("conversations")
             .doc(conversationId)
@@ -407,7 +410,8 @@ class AuthRepo {
             .collection("conversations")
             .doc(conversationId)
             .collection("chats")
-            .doc(chatReferenceId).update(request);
+            .doc(chatReferenceId)
+            .update(request);
         return ApiResultStatus.data(data: tUid);
       } else {
         return ApiResultStatus.error(
@@ -467,6 +471,42 @@ class AuthRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> getUsersFromList(List<String> users) async {
+    try {
+      var response = await userCollection.where("uid", whereIn: users).get();
+      return ApiResultStatus.data(
+        data: response.docs.map((e) => UserModel.fromJson(e.data())).toList(),
+      );
+    } on FirebaseException catch (_) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> getChildrenFromList(List<String> users) async {
+    try {
+      final response = await childrenCollection
+          .where(FieldPath.documentId, whereIn: users)
+          .get();
+      return ApiResultStatus.data(
+        data: response.docs.map((e) => ChildModel.fromJson(e.data(),e.reference)).toList(),
+      );
+    } on FirebaseException catch (_) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
     }
   }
 }

@@ -27,7 +27,6 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
     DateTime? startTime,
     DateTime? endTime,
 
-
     String? titleError,
     String? noteError,
     String? dateError,
@@ -177,6 +176,12 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
           "start_time": Timestamp.fromDate(state.startTime!),
           "end_time": Timestamp.fromDate(state.endTime!),
           "location": state.locationText,
+          "required_approval": state.requiredApproval,
+          if (state.requiredApproval) ...{
+            "status": "REQUESTED",
+          } else ...{
+            "status": "NONE",
+          },
         },
       );
       changeProps(requestApprovalApiResultStatus: apiResult);

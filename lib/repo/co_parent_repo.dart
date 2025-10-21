@@ -125,13 +125,21 @@ class CoParentRepo {
   Future<ApiResultStatus> getMyCoParents() async {
     try {
       var currentUserModel = preferences.getUserModel();
-      var response = await coParentInvitationCollection
+      var coParentInvitationResponse = await coParentInvitationCollection
           .where("from_parent", isEqualTo: currentUserModel?.email ?? "")
           .where("status", isEqualTo: "ACCEPTED")
           .get();
-      if (response.docs.isNotEmpty) {
+      if (coParentInvitationResponse.docs.isNotEmpty) {
+        var invitationList = coParentInvitationResponse.docs
+            .map((e) => InvitationModel.fromJson(e.data()))
+            .toList();
+        var userResponse = await userCollection
+            .where("email", whereIn: invitationList.map((e) => e.toParent))
+            .get();
         return ApiResultStatus.data(
-          data: response.docs.map((e) => UserModel.fromJson(e.data())).toList(),
+          data: userResponse.docs
+              .map((e) => UserModel.fromJson(e.data()))
+              .toList(),
         );
       } else {
         return ApiResultStatus.error(

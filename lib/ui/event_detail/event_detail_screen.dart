@@ -1,13 +1,24 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/shared_event_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/subscription/subscription_screen.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../gen/assets.gen.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
+import '../../other/extra_methods.dart';
 import '../widget/base_button.dart';
+import 'bloc/event_detail_cubit.dart';
+import 'bloc/event_detail_state.dart';
 
 class EventDetailScreen extends StatefulWidget {
-  const EventDetailScreen({super.key});
+  const EventDetailScreen({super.key, required this.sharedEvent});
+
+  final SharedEventModel sharedEvent;
 
   @override
   State<EventDetailScreen> createState() => _EventDetailScreenState();
@@ -15,101 +26,123 @@ class EventDetailScreen extends StatefulWidget {
 
 class _EventDetailScreenState extends State<EventDetailScreen> {
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<EventDetailCubit>().init(widget.sharedEvent);
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: addSharedEventBgColor,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
+    return BlocConsumer<EventDetailCubit, EventDetailState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: addSharedEventBgColor,
+          body: SingleChildScrollView(
+            child: Stack(
               children: [
-                Assets.images.imgEventDetailBg.image(
-                  height: context.height,
-                  width: context.width,
-                  fit: BoxFit.cover,
+                Column(
+                  children: [
+                    Assets.images.imgEventDetailBg.image(
+                      height: context.height,
+                      width: context.width,
+                      fit: BoxFit.cover,
+                    ),
+                    Container(height: context.height / 2),
+                  ],
                 ),
-                Container(height: context.height / 2),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    45.h.spaceH,
+                    _appBar(),
+                    30.h.spaceH,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          (state.sharedEvent?.title ?? "").appText(
+                            fontWeight: FontWeight.w800,
+                          ),
+                          "For ${_getChildName(state)} • Created by ${_getCreatedByName(state)}"
+                              .appText(fontSize: 14),
+                        ],
+                      ).appPadding(all: 8),
+                    ),
+                    40.h.spaceH,
+                    Row(
+                      children: [
+                        Assets.icons.icCalenderIcon3.image(
+                          height: 20,
+                          width: 20,
+                        ),
+                        12.w.spaceW,
+                        coParentEventDetailTime(
+                          state.sharedEvent?.date,
+                        ).appText(fontWeight: FontWeight.w600, fontSize: 14),
+                      ],
+                    ).appPadding(left: 12.w),
+                    16.h.spaceH,
+                    Row(
+                      children: [
+                        Assets.icons.icTimerIcon.image(height: 24, width: 24),
+                        12.w.spaceW,
+                        "${getStringTime(state.sharedEvent?.startTime)} – ${getStringTime(state.sharedEvent?.endTime)}"
+                            .appText(fontWeight: FontWeight.w600, fontSize: 14),
+                      ],
+                    ).appPadding(left: 12.w),
+                    16.h.spaceH,
+                    Row(
+                      children: [
+                        Assets.icons.icLocationIcon.image(
+                          height: 24,
+                          width: 24,
+                        ),
+                        12.w.spaceW,
+                        (state.sharedEvent?.location ?? "").appText(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ],
+                    ).appPadding(left: 12.w),
+                    16.h.spaceH,
+                    Row(
+                      children: [
+                        Assets.icons.icUserIcon.image(height: 24, width: 24),
+                        12.w.spaceW,
+                        _getAssignee(
+                          state,
+                        ).appText(fontWeight: FontWeight.w600, fontSize: 14),
+                      ],
+                    ).appPadding(left: 12.w),
+                    45.h.spaceH,
+                    if ((state.sharedEvent?.note ?? "").isNotEmpty) ...[
+                      _note(state.sharedEvent?.note),
+                      10.h.spaceH,
+                    ],
+                    _attachments(),
+                    10.h.spaceH,
+                    _history(),
+                    30.h.spaceH,
+                    _bottomButtons(state),
+                    30.h.spaceH,
+                    LocaleKeys.thisEventAppearsInBothCalendars.tr().appText(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ],
+                ).appPadding(left: 20.w, right: 20.w),
               ],
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                45.h.spaceH,
-                _appBar(),
-                30.h.spaceH,
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      "School Pick‐up".appText(fontWeight: FontWeight.w800),
-                      "For Leo • Created by David".appText(fontSize: 14),
-                    ],
-                  ).appPadding(all: 8),
-                ),
-                40.h.spaceH,
-                Row(
-                  children: [
-                    Assets.icons.icCalenderIcon3.image(height: 20, width: 20),
-                    12.w.spaceW,
-                    "Mon, Aug 5".appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ],
-                ).appPadding(left: 12.w),
-                16.h.spaceH,
-                Row(
-                  children: [
-                    Assets.icons.icTimerIcon.image(height: 24, width: 24),
-                    12.w.spaceW,
-                    "4:00 PM – 4:30 PM".appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ],
-                ).appPadding(left: 12.w),
-                16.h.spaceH,
-                Row(
-                  children: [
-                    Assets.icons.icLocationIcon.image(height: 24, width: 24),
-                    12.w.spaceW,
-                    "St. Mary’s Primary – Front Gate".appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ],
-                ).appPadding(left: 12.w),
-                16.h.spaceH,
-                Row(
-                  children: [
-                    Assets.icons.icUserIcon.image(height: 24, width: 24),
-                    12.w.spaceW,
-                    "Sarah (you), David".appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ],
-                ).appPadding(left: 12.w),
-                45.h.spaceH,
-                _note(),
-                10.h.spaceH,
-                _attachments(),
-                10.h.spaceH,
-                _history(),
-                30.h.spaceH,
-                _bottomButtons(),
-                30.h.spaceH,
-                "This event appears in both calendars. Changes will ask for approval."
-                    .appText(fontSize: 10, fontWeight: FontWeight.w700),
-              ],
-            ).appPadding(left: 20.w, right: 20.w),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      listener: (context, state) {},
     );
   }
 
@@ -132,7 +165,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-  Widget _note() {
+  Widget _note(String? note) {
     return Container(
       decoration: BoxDecoration(
         color: aiQuestionCardColor1,
@@ -142,7 +175,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           "Note".appText(color: cardColor2, fontWeight: FontWeight.w700),
-          "I’ll be on campus by 3:55 PM. Call me if gates are busy.".appText(
+          (note ?? "").appText(
             fontSize: 12,
             textAlign: TextAlign.start,
             fontWeight: FontWeight.w600,
@@ -152,66 +185,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-  Widget _attachments() {
-    return Container(
-      decoration: BoxDecoration(
-        color: fillTextfieldColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          8.h.spaceH,
-          Row(
-            children: [
-              10.w.spaceW,
-              Assets.icons.icAttachmentPin.image(height: 20, width: 20),
-              10.w.spaceW,
-              "Attachment".appText(fontSize: 10, fontWeight: FontWeight.w700),
-              Spacer(),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: "Add Attachment"
-                    .appText(fontSize: 10, fontWeight: FontWeight.w700)
-                    .appPadding(left: 6, right: 6, top: 4, bottom: 4),
-              ),
-              10.w.spaceW,
-            ],
-          ),
-          8.h.spaceH,
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                10.h.spaceH,
-                "Premium feature".appText(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                "Attach documents to events with Loving Brain Premium.".appText(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 10,
-                ),
-                10.h.spaceH,
-                _upgradeButton(),
-                10.h.spaceH,
-              ],
-            ),
-          ).appPadding(all: 20),
-        ],
-      ),
-    );
-  }
 
   Widget _upgradeButton() {
     return BaseButton(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: primaryColor,
@@ -304,7 +285,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-  Widget _bottomButtons() {
+  Widget _bottomButtons(EventDetailState state) {
     return Row(
       children: [
         Expanded(
@@ -316,9 +297,94 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         ),
         10.w.spaceW,
         Expanded(
-          child: _bottomButton(onTap: () {}, text: 'Share'),
+          child: _bottomButton(
+            onTap: () {
+              SharePlus.instance.share(
+                ShareParams(text: _getShareMessage(state)),
+              );
+            },
+            text: 'Share',
+          ),
         ),
       ],
     );
   }
+
+  String _getAssignee(EventDetailState state) {
+    return state.assignedUserList
+        .map((e) => (e.parentName ?? ""))
+        .toList()
+        .join();
+  }
+
+  String _getChildName(EventDetailState state) {
+    return state.childrenList.map((e) => e.childName ?? "").toList().join(",");
+  }
+
+  String _getCreatedByName(EventDetailState state) {
+    return state.createdByUser?.parentName ?? "";
+  }
+
+  String? _getShareMessage(EventDetailState state) {
+    return "";
+  }
+
+  Widget _attachments() {
+    return Container(
+      decoration: BoxDecoration(
+        color: fillTextfieldColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          8.h.spaceH,
+          Row(
+            children: [
+              10.w.spaceW,
+              Assets.icons.icAttachmentPin.image(height: 20, width: 20),
+              10.w.spaceW,
+              LocaleKeys.attachment.tr().appText(fontSize: 10, fontWeight: FontWeight.w700),
+              Spacer(),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: LocaleKeys.addAttachment.tr()
+                    .appText(fontSize: 10, fontWeight: FontWeight.w700)
+                    .appPadding(left: 6, right: 6, top: 4, bottom: 4),
+              ),
+              10.w.spaceW,
+            ],
+          ),
+          8.h.spaceH,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                10.h.spaceH,
+                LocaleKeys.premiumFeature.tr().appText(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+                LocaleKeys.attachDocumentsToEventsWithLovingBrainPremium.tr().appText(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 10,
+                ),
+                10.h.spaceH,
+                _upgradeButton(),
+                10.h.spaceH,
+              ],
+            ),
+          ).appPadding(all: 20),
+        ],
+      ),
+    );
+  }
+
+
 }

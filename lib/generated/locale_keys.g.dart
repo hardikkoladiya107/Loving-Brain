@@ -288,5 +288,10 @@ abstract class  LocaleKeys {
   static const thisInvitationIsNotForYou = 'thisInvitationIsNotForYou';
   static const coParentNotFound = 'coParentNotFound';
   static const childrenNotFound = 'childrenNotFound';
+  static const thisEventAppearsInBothCalendars = 'thisEventAppearsInBothCalendars';
+  static const premiumFeature = 'premiumFeature';
+  static const attachDocumentsToEventsWithLovingBrainPremium = 'attachDocumentsToEventsWithLovingBrainPremium';
+  static const addAttachment = 'addAttachment';
+  static const attachment = 'attachment';
 
 }

@@ -101,7 +101,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               index: state.tabIndex,
                               children: [
                                 _dailyRoutine(state),
-                                coParentingSchedule(),
+                                coParentingSchedule(state),
                               ],
                             ),
                           ),
@@ -163,7 +163,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             )
             .appPadding(left: 16),
         ListView.builder(
-          itemCount: (state.childModel?.routinesList??[]).length,
+          itemCount: (state.childModel?.routinesList ?? []).length,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
@@ -191,7 +191,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  Widget coParentingSchedule() {
+  Widget coParentingSchedule(ScheduleState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -205,7 +205,30 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             )
             .appPadding(left: 16),
         10.spaceH,
-        _routineItem(
+
+        ListView.builder(
+          itemCount: state.sharedEventList.length,
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            var sharedEvent = state.sharedEventList[index];
+            return _routineItem(
+              schedule: coParentScheduleTime(sharedEvent.date),
+              label: sharedEvent.title ?? "",
+              status: sharedEvent.status,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>   EventDetailScreen(sharedEvent: sharedEvent,),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+
+        /* _routineItem(
           schedule: 'Aug 5 - 4:00 PM',
           label: 'School Pick-up (Priya)',
           status: LocaleKeys.approved.tr(),
@@ -228,7 +251,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               ),
             );
           },
-        ),
+        ),*/
         16.spaceH,
         _scheduleButton(
           text: "+ ${LocaleKeys.addSharedEvent.tr()}",
@@ -262,6 +285,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     String? status,
   }) {
     return BaseButton(
+      onTap: onTap,
       child: Container(
         height: 65,
         decoration: BoxDecoration(
@@ -284,39 +308,39 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ],
               ),
             ),
-            if (status != null)
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if ((status ?? "").isNotEmpty && status != "NONE")
                   Container(
                     decoration: BoxDecoration(
-                      color: status == LocaleKeys.approved.tr()
+                      color: status == "APPROVED"
                           ? approvedColor
-                          : status == LocaleKeys.pending.tr()
+                          : status == "REQUESTED"
                           ? pendingColor
                           : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: status
+                    child: status!
                         .appText(fontSize: 9, fontWeight: FontWeight.w800)
                         .appPadding(left: 6, right: 6, top: 2, bottom: 2),
                   ),
-                  10.spaceH,
-                  BaseButton(
-                    child: "${LocaleKeys.proposeChange.tr()} >".appText(
-                      fontSize: 9,
-                      color: blueColor1,
-                      fontWeight: FontWeight.w800,
-                    ),
-                    onTap: () {},
+                10.spaceH,
+                BaseButton(
+                  child: "${LocaleKeys.proposeChange.tr()} >".appText(
+                    fontSize: 9,
+                    color: blueColor1,
+                    fontWeight: FontWeight.w800,
                   ),
-                ],
-              ),
+                  onTap: () {},
+                ),
+              ],
+            ),
             10.spaceW,
           ],
         ),
       ),
-      onTap: onTap,
     ).appPadding(left: 12, right: 12, top: 10);
   }
 
