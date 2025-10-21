@@ -1,9 +1,10 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
-
 import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
 import '../../../model/child_model.dart';
@@ -26,7 +27,6 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
     DateTime? selectedDate,
     DateTime? startTime,
     DateTime? endTime,
-
     String? titleError,
     String? noteError,
     String? dateError,
@@ -35,6 +35,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
     bool? requiredApproval,
     String? selectedChildError,
     String? assignedToError,
+    ApiResultStatus? uploadDocumentApiResultStatus,
     ApiResultStatus? requestApprovalApiResultStatus,
     ApiResultStatus? getChildApiResultStatus,
     ApiResultStatus? getCoParentApiResultStatus,
@@ -44,11 +45,13 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
     List<UserModel>? selectedCoParentList,
     List<ChildModel>? children,
     List<ChildModel>? selectedChildren,
+    List<String>? documentsList,
   }) {
     emit(
       state.copyWith(
         title: title ?? state.title,
         coParentList: coParentList ?? state.coParentList,
+        documentsList: documentsList ?? state.documentsList,
         selectedCoParentList:
             selectedCoParentList ?? state.selectedCoParentList,
         locationText: locationText ?? state.locationText,
@@ -67,6 +70,8 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
         assignedToError: assignedToError ?? state.assignedToError,
         children: children ?? state.children,
         selectedChildren: selectedChildren ?? state.selectedChildren,
+        uploadDocumentApiResultStatus:
+            uploadDocumentApiResultStatus ?? ApiResultStatus.initial(),
         requestApprovalApiResultStatus:
             requestApprovalApiResultStatus ?? ApiResultStatus.initial(),
         getChildApiResultStatus:
@@ -176,6 +181,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
           "start_time": Timestamp.fromDate(state.startTime!),
           "end_time": Timestamp.fromDate(state.endTime!),
           "location": state.locationText,
+          "documents": state.documentsList,
           "required_approval": state.requiredApproval,
           if (state.requiredApproval) ...{
             "status": "REQUESTED",
@@ -215,4 +221,36 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
       },
     );
   }
+
+  Future<void> uploadToFirebaseStorage(String? fileLocalPath) async {
+    if (fileLocalPath != null) {
+      changeProps(uploadDocumentApiResultStatus: ApiResultStatus.loading());
+      var uploadedFilePath = await CoParentRepo.instance
+          .uploadFileToFirebaseStorage(
+            file: File(fileLocalPath),
+            referenceId: state.userModel?.uid,
+          );
+      uploadedFilePath.whenOrNull(
+        data: (data) async {
+          changeProps(
+            uploadDocumentApiResultStatus: ApiResultStatus.data(data: ""),
+          );
+          if (data is TaskSnapshot) {
+            var imageNetworkUrl = await data.ref.getDownloadURL();
+            List<String> documentsList = [];
+            documentsList.addAll(state.documentsList);
+            documentsList.add(imageNetworkUrl);
+            changeProps(documentsList: documentsList);
+          }
+        },
+        error: (error) {
+          changeProps(
+            uploadDocumentApiResultStatus: ApiResultStatus.error(error: error),
+          );
+        },
+      );
+    }
+  }
+
+
 }

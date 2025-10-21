@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -102,7 +103,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     _requireApproval(state),
                     10.h.spaceH,
                     _note(state),
-                    _attachDocument(),
+                    _attachDocument(state),
                     20.h.spaceH,
                     _button(),
                   ],
@@ -145,6 +146,18 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
             Navigator.pop(context);
           },
           error: (error) {
+            EasyLoading.dismiss();
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+        );
+
+        state.uploadDocumentApiResultStatus.whenOrNull(
+          error: (error) {
+            EasyLoading.dismiss();
+          },
+          data: (data) {
             EasyLoading.dismiss();
           },
           loading: () {
@@ -239,24 +252,45 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     );
   }
 
-  Widget _attachDocument() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LocaleKeys.attachDocument
-              .tr()
-              .appText(fontWeight: FontWeight.w600, fontSize: 14)
-              .appPadding(top: 6, bottom: 6),
-          8.w.spaceW,
-          Assets.icons.icPremiumIcon.image(height: 20, width: 20),
-        ],
-      ),
+  Widget _attachDocument(AddSharedEventState state) {
+    return Column(
+      children: [
+        BaseButton(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LocaleKeys.attachDocument
+                    .tr()
+                    .appText(fontWeight: FontWeight.w600, fontSize: 14)
+                    .appPadding(top: 6, bottom: 6),
+                8.w.spaceW,
+                Assets.icons.icPremiumIcon.image(height: 20, width: 20),
+              ],
+            ),
+          ),
+          onTap: () {
+            _chooseImage(state);
+          },
+        ),
+        ...state.documentsList.map(
+          (e) => Row(children: [Icon(Icons.file_copy), e.toString().appText()]),
+        ),
+      ],
     );
+  }
+
+  Future<void> _chooseImage(AddSharedEventState state) async {
+    final XFile? photo = await ImagePicker().pickMedia();
+    if (photo != null && navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!
+          .read<AddSharedEventCubit>()
+          .uploadToFirebaseStorage(photo.path);
+    }
   }
 
   Widget _requestApprovalButton({

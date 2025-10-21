@@ -294,8 +294,11 @@
   "premiumFeature": "Premium feature",
   "attachDocumentsToEventsWithLovingBrainPremium": "Attach documents to events with Loving Brain Premium.",
   "addAttachment": "Add Attachment",
-  "attachment": "Attachment"
-
+  "attachment": "Attachment",
+  "reminder": "Reminder",
+  "share": "Share",
+  "viewSchedule": "View Schedule",
+  "nextSchedule": "Next Schedule"
 
 
 

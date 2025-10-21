@@ -13,6 +13,7 @@ class SharedEventModel {
     String? location,
     bool? requiredApproval,
     String? status,
+    List<String>? documents,
   }) {
     _createdBy = createdBy;
     _assignedTo = assignedTo;
@@ -25,6 +26,7 @@ class SharedEventModel {
     _location = location;
     _requiredApproval = requiredApproval;
     _status = status;
+    _documents = documents;
   }
 
   SharedEventModel.fromJson(dynamic jsonObject, {bool fromConvert = false}) {
@@ -36,6 +38,12 @@ class SharedEventModel {
     _location = jsonObject['location'];
     _requiredApproval = jsonObject['required_approval'];
     _status = jsonObject['status'];
+
+    if (jsonObject['documents'] != null &&
+        jsonObject['documents'] is List<String>) {
+      _documents = [];
+      _documents?.addAll(jsonObject['documents']);
+    }
 
     try {
       if (fromConvert) {
@@ -91,6 +99,7 @@ class SharedEventModel {
   String? _location;
   bool? _requiredApproval;
   String? _status;
+  List<String>? _documents;
 
   SharedEventModel copyWith({
     String? createdBy,
@@ -104,6 +113,7 @@ class SharedEventModel {
     String? location,
     bool? requiredApproval,
     String? status,
+    List<String>? documents,
   }) => SharedEventModel(
     createdBy: createdBy ?? _createdBy,
     assignedTo: assignedTo ?? _assignedTo,
@@ -116,6 +126,7 @@ class SharedEventModel {
     location: location ?? _location,
     requiredApproval: requiredApproval ?? _requiredApproval,
     status: status ?? _status,
+    documents: documents ?? _documents,
   );
 
   String? get createdBy => _createdBy;
@@ -153,6 +164,7 @@ class SharedEventModel {
     map['location'] = _location;
     map['required_approval'] = _requiredApproval;
     map['status'] = _status;
+    map['documents'] = _documents;
     return map;
   }
 }

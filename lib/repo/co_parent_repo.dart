@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:io' as io;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 
@@ -156,4 +160,32 @@ class CoParentRepo {
       );
     }
   }
+
+
+  Future<ApiResultStatus> uploadFileToFirebaseStorage({
+    required File file,
+    required String? referenceId,
+  }) async {
+    try {
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('shared-event-documents')
+          .child(referenceId ?? "TEST")
+          .child('/${file.path.split("/").last}');
+      final metadata = SettableMetadata(
+        contentType: 'image/${file.path.split(".").last}',
+        customMetadata: {'picked-file-path': file.path},
+      );
+      var uploadTask = ref.putFile(io.File(file.path), metadata);
+      return ApiResultStatus.data(data: await Future.value(uploadTask));
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(error: e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+
+
 }
+

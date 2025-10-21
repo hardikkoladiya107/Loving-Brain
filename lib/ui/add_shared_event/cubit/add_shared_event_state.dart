@@ -15,8 +15,6 @@ abstract class AddSharedEventState with _$AddSharedEventState {
     DateTime? selectedDate,
     DateTime? startTime,
     DateTime? endTime,
-
-
     @Default("") String titleError,
     @Default("") String noteError,
     @Default("") String dateError,
@@ -31,9 +29,10 @@ abstract class AddSharedEventState with _$AddSharedEventState {
     @Default([]) List<ChildModel> children,
     @Default([]) List<ChildModel> selectedChildren,
     @Default([]) List<UserModel> selectedCoParentList,
+    @Default([]) List<String> documentsList,
     @Default(ApiResultStatus.initial()) ApiResultStatus requestApprovalApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getChildApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getCoParentApiResultStatus,
-
+    @Default(ApiResultStatus.initial()) ApiResultStatus uploadDocumentApiResultStatus,
   }) = _AddSharedEventState;
 }

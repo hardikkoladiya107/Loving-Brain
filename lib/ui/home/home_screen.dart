@@ -12,6 +12,7 @@ import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
+import '../base_screen/bloc/base_cubit.dart';
 import '../choose_your_calm/choose_your_calm_screen.dart';
 import '../module/module_screen.dart';
 import '../new_behavior/new_behavior_screen.dart';
@@ -105,18 +106,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    "Next Schedule".appText(
+
+                    LocaleKeys.nextSchedule.tr().appText(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
                     "3:00PM".appText(fontSize: 12),
                     "Rohan's Nap Time".appText(fontSize: 12),
+
+
+
                     Row(
                       children: [
-                        "View Schedule".appText(
-                          fontWeight: FontWeight.w700,
-                          color: sliderTrackColor2,
-                          fontSize: 14,
+                        BaseButton(
+                          child: LocaleKeys.viewSchedule.tr().appText(
+                            fontWeight: FontWeight.w700,
+                            color: sliderTrackColor2,
+                            fontSize: 14,
+                          ),
+                          onTap: () {
+                            context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
+                          },
                         ),
                       ],
                     ),

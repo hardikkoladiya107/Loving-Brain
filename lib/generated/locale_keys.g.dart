@@ -293,5 +293,9 @@ abstract class  LocaleKeys {
   static const attachDocumentsToEventsWithLovingBrainPremium = 'attachDocumentsToEventsWithLovingBrainPremium';
   static const addAttachment = 'addAttachment';
   static const attachment = 'attachment';
+  static const reminder = 'reminder';
+  static const share = 'share';
+  static const viewSchedule = 'viewSchedule';
+  static const nextSchedule = 'nextSchedule';
 
 }

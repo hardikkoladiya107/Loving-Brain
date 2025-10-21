@@ -171,6 +171,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             var routine = state.childModel?.routinesList?[index];
             return _routineItem(
               schedule: getStringTime(routine?.timeStamp),
+              showProposeChange: false,
               label: routine?.description ?? "",
               onTap: () {},
             );
@@ -217,10 +218,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               schedule: coParentScheduleTime(sharedEvent.date),
               label: sharedEvent.title ?? "",
               status: sharedEvent.status,
+              showProposeChange: true,
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) =>   EventDetailScreen(sharedEvent: sharedEvent,),
+                    builder: (context) =>
+                        EventDetailScreen(sharedEvent: sharedEvent),
                   ),
                 );
               },
@@ -283,6 +286,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     required String label,
     required GestureTapCallback? onTap,
     String? status,
+    bool showProposeChange = false,
   }) {
     return BaseButton(
       onTap: onTap,
@@ -308,7 +312,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ],
               ),
             ),
-
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -327,14 +330,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         .appPadding(left: 6, right: 6, top: 2, bottom: 2),
                   ),
                 10.spaceH,
-                BaseButton(
-                  child: "${LocaleKeys.proposeChange.tr()} >".appText(
-                    fontSize: 9,
-                    color: blueColor1,
-                    fontWeight: FontWeight.w800,
+
+                if (showProposeChange)
+                  BaseButton(
+                    child: "${LocaleKeys.proposeChange.tr()} >".appText(
+                      fontSize: 9,
+                      color: blueColor1,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    onTap: () {},
                   ),
-                  onTap: () {},
-                ),
               ],
             ),
             10.spaceW,

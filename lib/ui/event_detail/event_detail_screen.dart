@@ -185,7 +185,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-
   Widget _upgradeButton() {
     return BaseButton(
       onTap: () {
@@ -289,11 +288,16 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Row(
       children: [
         Expanded(
-          child: _bottomButton(onTap: () {}, text: 'Propose change'),
+          child: _bottomButton(
+            onTap: () {
+              _proposeChangeDialog();
+            },
+            text: LocaleKeys.proposeChange.tr(),
+          ),
         ),
         10.w.spaceW,
         Expanded(
-          child: _bottomButton(onTap: () {}, text: 'Reminder'),
+          child: _bottomButton(onTap: () {}, text: LocaleKeys.reminder.tr()),
         ),
         10.w.spaceW,
         Expanded(
@@ -303,7 +307,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 ShareParams(text: _getShareMessage(state)),
               );
             },
-            text: 'Share',
+            text: LocaleKeys.share.tr(),
           ),
         ),
       ],
@@ -314,7 +318,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return state.assignedUserList
         .map((e) => (e.parentName ?? ""))
         .toList()
-        .join();
+        .join(", ");
   }
 
   String _getChildName(EventDetailState state) {
@@ -326,7 +330,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   String? _getShareMessage(EventDetailState state) {
-    return "";
+    return "dd";
   }
 
   Widget _attachments() {
@@ -343,14 +347,18 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               10.w.spaceW,
               Assets.icons.icAttachmentPin.image(height: 20, width: 20),
               10.w.spaceW,
-              LocaleKeys.attachment.tr().appText(fontSize: 10, fontWeight: FontWeight.w700),
+              LocaleKeys.attachment.tr().appText(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+              ),
               Spacer(),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: LocaleKeys.addAttachment.tr()
+                child: LocaleKeys.addAttachment
+                    .tr()
                     .appText(fontSize: 10, fontWeight: FontWeight.w700)
                     .appPadding(left: 6, right: 6, top: 4, bottom: 4),
               ),
@@ -371,10 +379,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),
-                LocaleKeys.attachDocumentsToEventsWithLovingBrainPremium.tr().appText(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 10,
-                ),
+                LocaleKeys.attachDocumentsToEventsWithLovingBrainPremium
+                    .tr()
+                    .appText(fontWeight: FontWeight.w600, fontSize: 10),
                 10.h.spaceH,
                 _upgradeButton(),
                 10.h.spaceH,
@@ -386,5 +393,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-
+  void _proposeChangeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(child: Container(height: 250.h));
+      },
+    );
+  }
 }
