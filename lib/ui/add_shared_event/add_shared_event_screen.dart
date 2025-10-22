@@ -277,8 +277,17 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
             _chooseImage(state);
           },
         ),
+        20.spaceH,
         ...state.documentsList.map(
-          (e) => Row(children: [Icon(Icons.file_copy), e.toString().appText()]),
+          (e) => Row(
+            children: [
+              Icon(Icons.file_copy_outlined),
+              10.spaceW,
+              Expanded(
+                child: _getFileName(e).appText(textAlign: TextAlign.start),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -734,11 +743,17 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     showDatePicker(
       context: context,
       firstDate: DateTime(1971),
-      lastDate: DateTime.now(),
+      lastDate: DateTime(2030),
     ).then((value) {
       navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
         selectedDate: value,
       );
     });
+  }
+
+  String _getFileName(String e) {
+    var finalPath = e.split("?").first.toString();
+    var fileName = finalPath.split("%2F").last;
+    return fileName.toString();
   }
 }

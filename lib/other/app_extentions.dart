@@ -12,6 +12,7 @@ extension extOnString on String {
     FontStyle? fontStyle,
     int? maxLines,
     TextOverflow? overflow,
+    TextDecoration? textDecoration,
   }) {
     return Text(
       this,
@@ -22,6 +23,7 @@ extension extOnString on String {
         fontSize: (fontSize ?? 16).sp,
         color: color,
         fontStyle: fontStyle,
+        textDecoration: textDecoration,
         fontWeight: fontWeight ?? FontWeight.normal,
         letterSpacing: letterSpacing ?? 1,
       ),
@@ -88,10 +90,12 @@ TextStyle getTextStyle({
   FontWeight? fontWeight,
   double? letterSpacing,
   FontStyle? fontStyle,
+  TextDecoration? textDecoration,
 }) {
   return GoogleFonts.quicksand(
     fontSize: fontSize ?? 16,
     fontStyle: fontStyle,
+    decoration: textDecoration,
     color: color,
     fontWeight: fontWeight ?? FontWeight.normal,
     letterSpacing: letterSpacing ?? 1,

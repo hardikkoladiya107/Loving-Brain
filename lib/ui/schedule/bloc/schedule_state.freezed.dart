@@ -210,7 +210,7 @@ return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userMod
 
 
 class _ScheduleState implements ScheduleState {
-  const _ScheduleState({this.message = "message", this.tabIndex = 0, final  List<SharedEventModel> sharedEventList = const [], this.userModel, this.childModel}): _sharedEventList = sharedEventList;
+  const _ScheduleState({this.message = "", this.tabIndex = 0, final  List<SharedEventModel> sharedEventList = const [], this.userModel, this.childModel}): _sharedEventList = sharedEventList;
   
 
 @override@JsonKey() final  String message;

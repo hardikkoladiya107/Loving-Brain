@@ -171,7 +171,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
       var apiResult = await CoParentRepo.instance.addSharedEvent(
         request: {
           "created_by": state.userModel?.uid,
-          "assigned_to": state.selectedCoParentList.map((e) => e.uid).join(","),
+          "assigned_to": state.selectedCoParentList.map((e) => e.uid), //
           "children": state.selectedChildren
               .map((e) => e.reference?.id)
               .join(","),
@@ -183,6 +183,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
           "location": state.locationText,
           "documents": state.documentsList,
           "required_approval": state.requiredApproval,
+          "created_date": Timestamp.now(),
           if (state.requiredApproval) ...{
             "status": "REQUESTED",
           } else ...{

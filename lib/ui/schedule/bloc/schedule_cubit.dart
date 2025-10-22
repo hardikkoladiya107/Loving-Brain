@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_state.dart';
+import 'package:rxdart/rxdart.dart';
 import '../../../model/child_model.dart';
 import '../../../model/routine_model.dart';
 import '../../../model/shared_event_model.dart';
@@ -13,7 +15,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
   void init() {
     emit(ScheduleState(userModel: preferences.getUserModel()));
     _listenToRoutine();
-    _listenToSharedEvent();
+    _listenToSharedEvent(state);
   }
 
   void changeProps({
@@ -51,16 +53,28 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     }
   }
 
-  void _listenToSharedEvent() {
+  void _listenToSharedEvent(ScheduleState state) {
     sharedEventStreamSubscription?.cancel();
-    sharedEventStreamSubscription = CoParentRepo.instance
-        .sharedEventListener()
-        .listen((event) {
-          changeProps(
-            sharedEventList: event.docs
-                .map((e) => SharedEventModel.fromJson(e.data()))
-                .toList(),
-          );
-        });
+
+    final createdByStream = CoParentRepo.instance.sharedEventCollection
+        .where("created_by", isEqualTo: state.userModel?.uid)
+        .snapshots();
+    final assignedToStream = CoParentRepo.instance.sharedEventCollection
+        .where("assigned_to", arrayContains: state.userModel?.uid)
+        .snapshots();
+
+    sharedEventStreamSubscription = Rx.combineLatest2(
+      createdByStream,
+      assignedToStream,
+          (QuerySnapshot createdSnap, QuerySnapshot assignedSnap) {
+        final allDocs = {...createdSnap.docs, ...assignedSnap.docs}; // merge unique docs
+        final list = allDocs.map((e) => SharedEventModel.fromJson(e.data(),e.reference)).toList();
+        list.sort((a, b) => b.createdDate!.compareTo(a.createdDate!));
+        return list;
+      },
+    ).listen((sharedEventList) {
+      changeProps(sharedEventList: sharedEventList);
+    });
+
   }
 }

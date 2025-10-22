@@ -297,5 +297,12 @@ abstract class  LocaleKeys {
   static const share = 'share';
   static const viewSchedule = 'viewSchedule';
   static const nextSchedule = 'nextSchedule';
+  static const coParentingColander = 'coParentingColander';
+  static const eventApproval = 'eventApproval';
+  static const reviewAndConfirmTheSharedEvent = 'reviewAndConfirmTheSharedEvent';
+  static const yourResponseUpdatesEventForBothParents = 'yourResponseUpdatesEventForBothParents';
+  static const approve = 'approve';
+  static const propose = 'propose';
+  static const decline = 'decline';
 
 }

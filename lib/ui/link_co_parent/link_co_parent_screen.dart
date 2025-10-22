@@ -62,11 +62,9 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
                   children: [
                     45.h.spaceH,
                     _appBar(),
-                    48.h.spaceH,
-                    _headerTabBar(state),
-                    32.h.spaceH,
+                    160.h.spaceH,
                     _coParentEmail(state),
-                    65.h.spaceH,
+                    20.h.spaceH,
                     _shareForWhichChild(state),
                     32.h.spaceH,
                     _whatTheyllhaveAccessTo(state),

@@ -10,7 +10,7 @@ part 'schedule_state.freezed.dart';
 @freezed
 abstract class ScheduleState with _$ScheduleState {
   const factory ScheduleState({
-    @Default("message") String message,
+    @Default("") String message,
     @Default(0) int tabIndex,
     @Default([]) List<SharedEventModel> sharedEventList,
     UserModel? userModel,

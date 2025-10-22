@@ -10,7 +10,6 @@ import 'package:loving_brain/other/preferances.dart';
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
 import '../model/invitation_model.dart';
-import 'auth_repo.dart';
 
 class CoParentRepo {
   CoParentRepo._();
@@ -50,9 +49,25 @@ class CoParentRepo {
     }
   }
 
-  Stream<QuerySnapshot> sharedEventListener() {
-    return sharedEventCollection.snapshots();
+  Future<ApiResultStatus> updateSharedEvent({
+    required String documentReference,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var eventCollection = await sharedEventCollection.doc(documentReference).update(request);
+      return ApiResultStatus.data(data: "");
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
   }
+
+
 
   Stream<DocumentSnapshot> getSingleSharedEvent(String documentId) {
     return sharedEventCollection.doc(documentId).snapshots();

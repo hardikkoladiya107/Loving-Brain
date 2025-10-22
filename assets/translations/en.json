@@ -298,7 +298,14 @@
   "reminder": "Reminder",
   "share": "Share",
   "viewSchedule": "View Schedule",
-  "nextSchedule": "Next Schedule"
+  "nextSchedule": "Next Schedule",
+  "coParentingColander": "Co- parenting Colander",
+  "eventApproval": "Event Approval",
+  "reviewAndConfirmTheSharedEvent": "Review and confirm the shared event",
+  "yourResponseUpdatesEventForBothParents": "Your response updates the event for both parents.",
+  "approve": "Approve",
+  "propose": "Propose",
+  "decline": "Decline"
 
 
 

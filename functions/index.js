@@ -118,9 +118,6 @@ exports.sendPushNotification = onRequest(async (req, res) => {
 exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
   try {
     const usersSnapshot = await admin.firestore().collection("children").get();
-
-
-
     const tokens = [];
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
@@ -134,6 +131,8 @@ exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
     if (tokens.length === 0) {
       return res.status(400).send({error: "No valid FCM tokens found"});
     }
+
+
     const message = {
       tokens: tokens,
       notification: {

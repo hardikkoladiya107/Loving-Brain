@@ -1,14 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/shared_event_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
 import '../widget/base_button.dart';
@@ -125,7 +131,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       _note(state.sharedEvent?.note),
                       10.h.spaceH,
                     ],
-                    _attachments(),
+                    _attachments(state),
                     10.h.spaceH,
                     _history(),
                     30.h.spaceH,
@@ -142,7 +148,20 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.uploadDocumentApiResultStatus.whenOrNull(
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+        );
+      },
     );
   }
 
@@ -333,7 +352,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return "dd";
   }
 
-  Widget _attachments() {
+  Widget _attachments(EventDetailState state) {
     return Container(
       decoration: BoxDecoration(
         color: fillTextfieldColor,
@@ -352,42 +371,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 fontWeight: FontWeight.w700,
               ),
               Spacer(),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: LocaleKeys.addAttachment
-                    .tr()
-                    .appText(fontSize: 10, fontWeight: FontWeight.w700)
-                    .appPadding(left: 6, right: 6, top: 4, bottom: 4),
-              ),
+              _addAttachment(),
               10.w.spaceW,
             ],
           ),
-          8.h.spaceH,
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                10.h.spaceH,
-                LocaleKeys.premiumFeature.tr().appText(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-                LocaleKeys.attachDocumentsToEventsWithLovingBrainPremium
-                    .tr()
-                    .appText(fontWeight: FontWeight.w600, fontSize: 10),
-                10.h.spaceH,
-                _upgradeButton(),
-                10.h.spaceH,
-              ],
-            ),
-          ).appPadding(all: 20),
+          _filesWidget(state),
         ],
       ),
     );
@@ -400,5 +388,105 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         return Dialog(child: Container(height: 250.h));
       },
     );
+  }
+
+  String _getFileName(String e) {
+    var finalPath = e.split("?").first.toString();
+    var fileName = finalPath.split("%2F").last;
+    return fileName.toString();
+  }
+
+  Widget _fileNameWidget(String e) {
+    return Row(
+      children: [
+        Icon(Icons.file_copy_outlined, size: 20, color: primaryColor),
+        10.spaceW,
+        Expanded(
+          child: BaseButton(
+            child: _getFileName(e).appText(
+              textAlign: TextAlign.start,
+              fontSize: 14,
+              color: primaryColor,
+              fontWeight: FontWeight.w600,
+              textDecoration: TextDecoration.underline,
+            ),
+            onTap: () async {
+              if (!await launchUrl(Uri.parse(e))) {
+                showSnackBar(
+                  message: LocaleKeys.somethingWentWrong.tr(),
+                  type: SnackBarType.ERROR,
+                );
+              }
+            },
+          ),
+        ),
+      ],
+    ).appPadding(left: 20, right: 20);
+  }
+
+  Widget _filesWidget(EventDetailState state) {
+    if (true) {
+      return Column(
+        children: [
+          20.spaceH,
+          ...(state.sharedEvent?.documents ?? []).map(
+            (e) => _fileNameWidget(e),
+          ),
+          20.spaceH,
+        ],
+      );
+    }
+
+    ///TODO
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          10.h.spaceH,
+          LocaleKeys.premiumFeature.tr().appText(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+          LocaleKeys.attachDocumentsToEventsWithLovingBrainPremium.tr().appText(
+            fontWeight: FontWeight.w600,
+            fontSize: 10,
+          ),
+          10.h.spaceH,
+          _upgradeButton(),
+          10.h.spaceH,
+        ],
+      ),
+    ).appPadding(all: 20);
+  }
+
+  Widget _addAttachment() {
+    return BaseButton(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: LocaleKeys.addAttachment
+            .tr()
+            .appText(fontSize: 10, fontWeight: FontWeight.w700)
+            .appPadding(left: 6, right: 6, top: 4, bottom: 4),
+      ),
+      onTap: () {
+        _chooseImage();
+      },
+    );
+  }
+
+  Future<void> _chooseImage() async {
+    final XFile? photo = await ImagePicker().pickMedia();
+    if (photo != null && navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!
+          .read<EventDetailCubit>()
+          .uploadToFirebaseStorage(photo.path);
+    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SharedEventModel {
   SharedEventModel({
     String? createdBy,
-    String? assignedTo,
+    List<String>? assignedTo,
     String? children,
     String? note,
     String? title,
@@ -14,6 +14,8 @@ class SharedEventModel {
     bool? requiredApproval,
     String? status,
     List<String>? documents,
+    DateTime? createdDate,
+    DocumentReference<Object?>? reference,
   }) {
     _createdBy = createdBy;
     _assignedTo = assignedTo;
@@ -27,11 +29,17 @@ class SharedEventModel {
     _requiredApproval = requiredApproval;
     _status = status;
     _documents = documents;
+    _createdDate = createdDate;
+    _reference = reference;
   }
 
-  SharedEventModel.fromJson(dynamic jsonObject, {bool fromConvert = false}) {
+  SharedEventModel.fromJson(
+    dynamic jsonObject,
+    DocumentReference<Object?> reference, {
+    bool fromConvert = false,
+  }) {
+    _reference = reference;
     _createdBy = jsonObject['created_by'];
-    _assignedTo = jsonObject['assigned_to'];
     _children = jsonObject['children'];
     _note = jsonObject['note'];
     _title = jsonObject['title'];
@@ -39,10 +47,33 @@ class SharedEventModel {
     _requiredApproval = jsonObject['required_approval'];
     _status = jsonObject['status'];
 
-    if (jsonObject['documents'] != null &&
-        jsonObject['documents'] is List<String>) {
+    try {
+      if (fromConvert) {
+        if (jsonObject['created_date'] != null) {
+          _createdDate = DateTime.parse(jsonObject['created_date']);
+        }
+      } else {
+        if (jsonObject['created_date'] != null) {
+          _createdDate = (jsonObject['created_date'] as Timestamp).toDate();
+        }
+      }
+    } catch (e) {
+      e;
+    }
+
+    if (jsonObject['assigned_to'] != null &&
+        jsonObject['assigned_to'] is List) {
+      _assignedTo = [];
+      _assignedTo?.addAll(
+        (jsonObject['assigned_to'] as List).map((e) => e.toString()),
+      );
+    }
+
+    if (jsonObject['documents'] != null && jsonObject['documents'] is List) {
       _documents = [];
-      _documents?.addAll(jsonObject['documents']);
+      _documents?.addAll(
+        (jsonObject['documents'] as List).map((e) => e.toString()),
+      );
     }
 
     try {
@@ -89,7 +120,7 @@ class SharedEventModel {
   }
 
   String? _createdBy;
-  String? _assignedTo;
+  List<String>? _assignedTo;
   String? _children;
   String? _note;
   String? _title;
@@ -100,10 +131,12 @@ class SharedEventModel {
   bool? _requiredApproval;
   String? _status;
   List<String>? _documents;
+  DateTime? _createdDate;
+  DocumentReference<Object?>? _reference;
 
   SharedEventModel copyWith({
     String? createdBy,
-    String? assignedTo,
+    List<String>? assignedTo,
     String? children,
     String? note,
     String? title,
@@ -114,8 +147,11 @@ class SharedEventModel {
     bool? requiredApproval,
     String? status,
     List<String>? documents,
+    DateTime? createdDate,
+    DocumentReference<Object?>? reference,
   }) => SharedEventModel(
     createdBy: createdBy ?? _createdBy,
+    reference: reference ?? _reference,
     assignedTo: assignedTo ?? _assignedTo,
     children: children ?? _children,
     note: note ?? _note,
@@ -127,11 +163,12 @@ class SharedEventModel {
     requiredApproval: requiredApproval ?? _requiredApproval,
     status: status ?? _status,
     documents: documents ?? _documents,
+    createdDate: createdDate ?? _createdDate,
   );
 
   String? get createdBy => _createdBy;
 
-  String? get assignedTo => _assignedTo;
+  List<String>? get assignedTo => _assignedTo;
 
   String? get children => _children;
 
@@ -151,6 +188,12 @@ class SharedEventModel {
 
   String? get status => _status;
 
+  DateTime? get createdDate => _createdDate;
+
+  List<String>? get documents => _documents;
+
+  DocumentReference<Object?>? get reference => _reference;
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['created_by'] = _createdBy;
@@ -165,6 +208,7 @@ class SharedEventModel {
     map['required_approval'] = _requiredApproval;
     map['status'] = _status;
     map['documents'] = _documents;
+    map['documents'] = _createdDate;
     return map;
   }
 }

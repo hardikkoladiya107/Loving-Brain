@@ -198,7 +198,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       children: [
         Row(),
         10.spaceH,
-        "Co- parenting Colander"
+        LocaleKeys.coParentingColander
+            .tr()
             .appText(
               color: blueTextColor,
               fontWeight: FontWeight.w700,
@@ -220,12 +221,32 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               status: sharedEvent.status,
               showProposeChange: true,
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        EventDetailScreen(sharedEvent: sharedEvent),
-                  ),
-                );
+                if (sharedEvent.createdBy == state.userModel?.uid ||
+                    ((sharedEvent.assignedTo?.any(
+                                  (element) => element == state.userModel?.uid,
+                                ) ??
+                                false) &&
+                            (sharedEvent.status == "APPROVED" ||
+                            sharedEvent.status == "NONE"))) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EventDetailScreen(sharedEvent: sharedEvent),
+                    ),
+                  );
+                } else if ((sharedEvent.assignedTo?.any(
+                          (element) => element == state.userModel?.uid,
+                        ) ??
+                        false) &&
+                    sharedEvent.requiredApproval == true &&
+                    sharedEvent.status == "REQUESTED") {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EventApprovalScreen(sharedEvent: sharedEvent),
+                    ),
+                  );
+                }
               },
             );
           },
