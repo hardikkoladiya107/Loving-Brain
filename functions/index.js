@@ -117,50 +117,88 @@ exports.sendPushNotification = onRequest(async (req, res) => {
 
 exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
   try {
+   const now = new Date();
     const usersSnapshot = await admin.firestore().collection("children").get();
-    const tokens = [];
+    const dates = [];
+    const matched = [];
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
-      if (userData.fcm_token && userData.fcm_token.trim() !== "") {
-        tokens.push(userData.fcm_token);
-      }
+      const routines = userData.routines || []; // ✅ safely handle undefined
+      routines.forEach((routine) => {
+        const ts = routine.time_stamp?.toDate?.();
+         dates.push(ts);
+         if (/*ts.getDate() === now.getDate() &&
+             ts.getMonth() === now.getMonth() &&*/
+             ts.getHours() === now.getHours() &&
+             ts.getMinutes() === now.getMinutes()) {
+                   matched.push({
+                     childId: doc.id,
+                     routine,
+                   });
+                 }
+      });
+    });
+
+    const usersRef = db.collection("users");
+    const usersDocs = await usersRef.get();
+    const usersWithMatchedChildren = [];
+    const fcmTokens = [];
+
+    matched.forEach((match) => {
+          usersDocs.forEach((userDoc) => {
+            const userData = userDoc.data();
+            const childRefs = userData.children || [];
+            const hasChild = childRefs.some(
+              (ref) => ref.id === match.childId
+            );
+
+            if (hasChild) {
+             fcmTokens.push(userData.fcm_token);
+              usersWithMatchedChildren.push({
+                userId: userDoc.id,
+                childId: match.childId,
+                routine: match.routine,
+                fcm_token: userData.fcm_token,
+              });
+            }
+          });
     });
 
 
-
-    if (tokens.length === 0) {
-      return res.status(400).send({error: "No valid FCM tokens found"});
+    if (fcmTokens.length === 0) {
+       return res.status(400).send({error: "No valid FCM tokens found"});
     }
 
-
-    const message = {
-      tokens: tokens,
-      notification: {
-        title: "Streak Update!!",
-        body: "Don’t forget to check in today to keep your streak alive!",
-      },
-      data: {},
-      android: {
-        priority: "high",
-        notification: {
-          sound: "default",
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            sound: "default",
+     const message = {
+          tokens: fcmTokens,
+          notification: {
+            title: "Daily Routine Notification",
+            body: "Daily Routine Notification",
           },
-        },
-      },
-    };
-    const response = await admin.messaging().sendEachForMulticast(message);
-    logger.info("Notifications sent", { response });
-    return res.status(200).send({
-      success: true,
-      successCount: response.successCount,
-      failureCount: response.failureCount,
-      responses: response.responses,
+          data: {},
+          android: {
+            priority: "high",
+            notification: {
+              sound: "default",
+            },
+          },
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+              },
+            },
+          },
+        };
+     const response = await admin.messaging().sendEachForMulticast(message);
+     return res.status(200).send({
+        success: true,
+        dates: dates,
+        matched: matched,
+        now: now,
+        usersWithMatchedChildren: usersWithMatchedChildren,
+        fcmTokens: fcmTokens,
+        response: response,
     });
   } catch (error) {
     logger.error("Error sending notifications", { error });
