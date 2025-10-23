@@ -56,11 +56,27 @@ class ChildRepo {
         "routines": FieldValue.arrayUnion([request]),
       });
       return ApiResultStatus.data(data: "");
-      /* var behaviours = await childrenCollection
-          .doc(id)
-          .collection("routines")
-          .add(request);
-      return ApiResultStatus.data(data: behaviours.id);*/
+
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> removeRoutine({
+    required String? id,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      await childrenCollection.doc(id).update({
+        "routines": FieldValue.arrayRemove([request]),
+      });
+      return ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

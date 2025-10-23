@@ -17,6 +17,7 @@ import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
+import '../propose_change/propose_change_screen.dart';
 import '../widget/base_button.dart';
 import 'bloc/event_detail_cubit.dart';
 import 'bloc/event_detail_state.dart';
@@ -309,7 +310,11 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         Expanded(
           child: _bottomButton(
             onTap: () {
-              _proposeChangeDialog();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProposeChangeScreen(),
+                ),
+              );
             },
             text: LocaleKeys.proposeChange.tr(),
           ),
@@ -381,14 +386,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-  void _proposeChangeDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(child: Container(height: 250.h));
-      },
-    );
-  }
 
   String _getFileName(String e) {
     var finalPath = e.split("?").first.toString();

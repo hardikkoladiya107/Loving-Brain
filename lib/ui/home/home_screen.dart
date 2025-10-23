@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
+import 'package:loving_brain/ui/essentials/essentials_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
@@ -112,10 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontSize: 14,
                     ),
                     "3:00PM".appText(fontSize: 12),
-                    "Rohan's Nap Time".appText(fontSize: 12),
-
-
-
+                    "${state.childModel?.childName ?? ""}'s Nap Time".appText(fontSize: 12),
                     Row(
                       children: [
                         BaseButton(
@@ -279,7 +277,13 @@ class _HomeScreenState extends State<HomeScreen> {
           child: _thirdCardItem(
             title: LocaleKeys.familySync.tr(),
             asset: Assets.images.imgSleep,
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const EssentialsScreen(),
+                ),
+              );
+            },
           ),
         ),
         10.spaceW,

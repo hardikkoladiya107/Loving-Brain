@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 
 import '../../../model/child_model.dart';
 import '../../../model/routine_model.dart';
@@ -15,5 +16,6 @@ abstract class ScheduleState with _$ScheduleState {
     @Default([]) List<SharedEventModel> sharedEventList,
     UserModel? userModel,
     ChildModel? childModel,
+    @Default(ApiResultStatus.initial()) ApiResultStatus deleteRoutineApiResultStatus,
   }) = _ScheduleState;
 }

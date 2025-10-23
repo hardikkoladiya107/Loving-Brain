@@ -304,5 +304,6 @@ abstract class  LocaleKeys {
   static const approve = 'approve';
   static const propose = 'propose';
   static const decline = 'decline';
+  static const areYouSureYouWantToRemoveRoutine = 'areYouSureYouWantToRemoveRoutine';
 
 }

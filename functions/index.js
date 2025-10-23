@@ -166,7 +166,7 @@ exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
 
 
     if (fcmTokens.length === 0) {
-       return res.status(400).send({error: "No valid FCM tokens found"});
+       return res.status(200).send({message: "No valid FCM tokens found"});
     }
 
      const message = {

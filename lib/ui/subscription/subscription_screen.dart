@@ -346,14 +346,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     ).appPadding(left: 25, right: 25, bottom: 25);
   }
 
-  Widget _backgroundImage() {
-    return Column(
-      children: [
-        Assets.images.imgSubscriptionBg.image(height: context.height),
-        Container(height: context.height / 2),
-      ],
-    );
-  }
+    Widget _backgroundImage() {
+      return Column(
+        children: [
+          Assets.images.imgSubscriptionBg.image(height: context.height),
+          Container(height: context.height / 2),
+        ],
+      );
+    }
 
   Widget _headerText() {
     return LocaleKeys.getMoreFromLovingBrain

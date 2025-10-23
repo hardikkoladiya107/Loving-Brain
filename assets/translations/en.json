@@ -305,7 +305,9 @@
   "yourResponseUpdatesEventForBothParents": "Your response updates the event for both parents.",
   "approve": "Approve",
   "propose": "Propose",
-  "decline": "Decline"
+  "decline": "Decline",
+  "areYouSureYouWantToRemoveRoutine": "Are you sure you want to remove this routine"
+
 
 
 
