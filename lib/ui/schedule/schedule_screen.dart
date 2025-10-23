@@ -280,6 +280,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   );
                 }
               },
+              proposeChangeButtonTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProposeChangeScreen(sharedEvent: sharedEvent),
+                  ),
+                );
+              },
               showDeleteIcon: sharedEvent.createdBy == state.userModel?.uid,
               onDeleteIconTap: () {
                 _showDeleteRoutineDialog(
@@ -347,6 +355,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     required String label,
     required GestureTapCallback? onTap,
     required GestureTapCallback? onDeleteIconTap,
+    GestureTapCallback? proposeChangeButtonTap,
     String? status,
     bool showProposeChange = false,
     bool showDeleteIcon = false,
@@ -395,18 +404,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 10.spaceH,
                 if (showProposeChange)
                   BaseButton(
+                    onTap: proposeChangeButtonTap,
                     child: "${LocaleKeys.proposeChange.tr()} >".appText(
                       fontSize: 9,
                       color: blueColor1,
                       fontWeight: FontWeight.w800,
                     ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ProposeChangeScreen(),
-                        ),
-                      );
-                    },
                   ),
               ],
             ),

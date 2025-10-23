@@ -310,11 +310,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         Expanded(
           child: _bottomButton(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ProposeChangeScreen(),
-                ),
-              );
+              if (state.sharedEvent != null) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProposeChangeScreen(sharedEvent: state.sharedEvent!),
+                  ),
+                );
+              }
             },
             text: LocaleKeys.proposeChange.tr(),
           ),
@@ -385,7 +388,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       ),
     );
   }
-
 
   String _getFileName(String e) {
     var finalPath = e.split("?").first.toString();

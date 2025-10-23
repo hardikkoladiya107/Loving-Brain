@@ -49,12 +49,14 @@ class CoParentRepo {
     }
   }
 
-  Future<ApiResultStatus> updateSharedEvent({
-    required String documentReference,
+  Future<ApiResultStatus> addProposeToSharedEvent({
+    required String docId,
     required Map<String, dynamic> request,
   }) async {
     try {
-      var eventCollection = await sharedEventCollection.doc(documentReference).update(request);
+      await sharedEventCollection.doc(docId).update({
+        "propose": FieldValue.arrayUnion([request]),
+      });
       return ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
@@ -67,7 +69,25 @@ class CoParentRepo {
     }
   }
 
-
+  Future<ApiResultStatus> updateSharedEvent({
+    required String documentReference,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var eventCollection = await sharedEventCollection
+          .doc(documentReference)
+          .update(request);
+      return ApiResultStatus.data(data: "");
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
 
   Stream<DocumentSnapshot> getSingleSharedEvent(String documentId) {
     return sharedEventCollection.doc(documentId).snapshots();
@@ -176,7 +196,6 @@ class CoParentRepo {
     }
   }
 
-
   Future<ApiResultStatus> uploadFileToFirebaseStorage({
     required File file,
     required String? referenceId,
@@ -199,8 +218,4 @@ class CoParentRepo {
       return ApiResultStatus.error(error: e);
     }
   }
-
-
-
 }
-

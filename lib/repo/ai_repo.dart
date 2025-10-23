@@ -4,6 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
+import '../model/ai_file_upload_model.dart';
+import '../model/transcribe_model.dart';
+
 class AiRepo {
   AiRepo._();
 
@@ -12,8 +15,7 @@ class AiRepo {
   static final String secretKey =
       "";
   static final String promptKey =
-      " ";
-
+      "";
   static final String conversationUrl =
       "https://api.openai.com/v1/conversations";
 
@@ -42,6 +44,27 @@ class AiRepo {
       });
       var response = await dio.post(
         "https://api.openai.com/v1/files",
+        data: formData,
+        options: Options(headers: headers),
+      );
+      return ApiResultStatus.data(data: response.data);
+    } on DioException catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> transcribeAudio({required File file}) async {
+    try {
+      final multipartFile = await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split("/").last,
+      );
+      final formData = FormData.fromMap({
+        'file': multipartFile,
+        'model': 'whisper-1',
+      });
+      var response = await dio.post(
+        "https://api.openai.com/v1/audio/transcriptions",
         data: formData,
         options: Options(headers: headers),
       );
@@ -84,10 +107,37 @@ class AiRepo {
   Future<ApiResultStatus> createResponse({
     required String conversationId,
     required String messageText,
-    required String imageUrl,
-    required String audioUrl,
+    File? imageFile,
+    File? audioFile,
   }) async {
     try {
+      AiFileUploadModel? imageFileModel;
+      TranscribeModel? transcribeModel;
+
+      if (imageFile != null) {
+        var imageFileResponse = await uploadFile(file: imageFile);
+        imageFileResponse.whenOrNull(
+          data: (data) {
+            imageFileModel = AiFileUploadModel.fromJson(data);
+          },
+          error: (error) {
+            return imageFileResponse;
+          },
+        );
+      }
+
+      if (audioFile != null) {
+        var audioFileResponse = await transcribeAudio(file: audioFile);
+        audioFileResponse.whenOrNull(
+          data: (data) {
+            transcribeModel = TranscribeModel.fromJson(data);
+          },
+          error: (error) {
+            return audioFileResponse;
+          },
+        );
+      }
+
       var response = await dio.post(
         "https://api.openai.com/v1/responses",
         data: {
@@ -99,10 +149,10 @@ class AiRepo {
               "role": "user",
               "content": [
                 {"type": "input_text", "text": messageText},
-                if (imageUrl.isNotEmpty)
-                  {"type": "input_image", "image_url": imageUrl},
-                if (audioUrl.isNotEmpty)
-                  {"type": "input_audio", "audio_url": audioUrl},
+                if (imageFileModel != null)
+                  {"type": "input_image", "file_id": imageFileModel?.id},
+                if (transcribeModel != null)
+                  {"type": "input_text", "text": transcribeModel?.text},
               ],
             },
           ],
@@ -137,6 +187,7 @@ class AiRepo {
       return ApiResultStatus.error(error: e);
     }
   }
+
 
   Future<ApiResultStatus> uploadAudioFileToFirebaseStorage({
     required File file,

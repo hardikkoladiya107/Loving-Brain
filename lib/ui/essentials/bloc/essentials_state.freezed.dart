@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EssentialsState {
 
- String get xyz;
+ String get xyz; UserModel? get userModel; ChildModel? get childModel;
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $EssentialsStateCopyWith<EssentialsState> get copyWith => _$EssentialsStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EssentialsState&&(identical(other.xyz, xyz) || other.xyz == xyz));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EssentialsState&&(identical(other.xyz, xyz) || other.xyz == xyz)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,xyz);
+int get hashCode => Object.hash(runtimeType,xyz,userModel,childModel);
 
 @override
 String toString() {
-  return 'EssentialsState(xyz: $xyz)';
+  return 'EssentialsState(xyz: $xyz, userModel: $userModel, childModel: $childModel)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $EssentialsStateCopyWith<$Res>  {
   factory $EssentialsStateCopyWith(EssentialsState value, $Res Function(EssentialsState) _then) = _$EssentialsStateCopyWithImpl;
 @useResult
 $Res call({
- String xyz
+ String xyz, UserModel? userModel, ChildModel? childModel
 });
 
 
@@ -62,10 +62,12 @@ class _$EssentialsStateCopyWithImpl<$Res>
 
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? xyz = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? xyz = null,Object? userModel = freezed,Object? childModel = freezed,}) {
   return _then(_self.copyWith(
 xyz: null == xyz ? _self.xyz : xyz // ignore: cast_nullable_to_non_nullable
-as String,
+as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
+as ChildModel?,
   ));
 }
 
@@ -150,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String xyz)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String xyz,  UserModel? userModel,  ChildModel? childModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EssentialsState() when $default != null:
-return $default(_that.xyz);case _:
+return $default(_that.xyz,_that.userModel,_that.childModel);case _:
   return orElse();
 
 }
@@ -171,10 +173,10 @@ return $default(_that.xyz);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String xyz)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String xyz,  UserModel? userModel,  ChildModel? childModel)  $default,) {final _that = this;
 switch (_that) {
 case _EssentialsState():
-return $default(_that.xyz);case _:
+return $default(_that.xyz,_that.userModel,_that.childModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +193,10 @@ return $default(_that.xyz);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String xyz)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String xyz,  UserModel? userModel,  ChildModel? childModel)?  $default,) {final _that = this;
 switch (_that) {
 case _EssentialsState() when $default != null:
-return $default(_that.xyz);case _:
+return $default(_that.xyz,_that.userModel,_that.childModel);case _:
   return null;
 
 }
@@ -206,10 +208,12 @@ return $default(_that.xyz);case _:
 
 
 class _EssentialsState implements EssentialsState {
-  const _EssentialsState({this.xyz = ""});
+  const _EssentialsState({this.xyz = "", this.userModel, this.childModel});
   
 
 @override@JsonKey() final  String xyz;
+@override final  UserModel? userModel;
+@override final  ChildModel? childModel;
 
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +225,16 @@ _$EssentialsStateCopyWith<_EssentialsState> get copyWith => __$EssentialsStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EssentialsState&&(identical(other.xyz, xyz) || other.xyz == xyz));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EssentialsState&&(identical(other.xyz, xyz) || other.xyz == xyz)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,xyz);
+int get hashCode => Object.hash(runtimeType,xyz,userModel,childModel);
 
 @override
 String toString() {
-  return 'EssentialsState(xyz: $xyz)';
+  return 'EssentialsState(xyz: $xyz, userModel: $userModel, childModel: $childModel)';
 }
 
 
@@ -241,7 +245,7 @@ abstract mixin class _$EssentialsStateCopyWith<$Res> implements $EssentialsState
   factory _$EssentialsStateCopyWith(_EssentialsState value, $Res Function(_EssentialsState) _then) = __$EssentialsStateCopyWithImpl;
 @override @useResult
 $Res call({
- String xyz
+ String xyz, UserModel? userModel, ChildModel? childModel
 });
 
 
@@ -258,10 +262,12 @@ class __$EssentialsStateCopyWithImpl<$Res>
 
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? xyz = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? xyz = null,Object? userModel = freezed,Object? childModel = freezed,}) {
   return _then(_EssentialsState(
 xyz: null == xyz ? _self.xyz : xyz // ignore: cast_nullable_to_non_nullable
-as String,
+as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
+as ChildModel?,
   ));
 }
 

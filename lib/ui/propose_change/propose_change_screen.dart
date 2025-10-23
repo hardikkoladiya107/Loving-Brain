@@ -1,18 +1,26 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/shared_event_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
+import '../../other/extra_methods.dart';
 import '../widget/base_button.dart';
 import 'bloc/propose_change_cubit.dart';
 import 'bloc/propose_change_state.dart';
 
 class ProposeChangeScreen extends StatefulWidget {
-  const ProposeChangeScreen({super.key});
+  const ProposeChangeScreen({super.key, required this.sharedEvent});
+
+  final SharedEventModel sharedEvent;
 
   @override
   State<ProposeChangeScreen> createState() => _ProposeChangeScreenState();
@@ -20,25 +28,61 @@ class ProposeChangeScreen extends StatefulWidget {
 
 class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
   @override
+  void initState() {
+    context.read<ProposeChangeCubit>().init(widget.sharedEvent);
+    super.initState();
+  }
+
+  TextEditingController noteForCoParentTextEditingController =
+      TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProposeChangeCubit, ProposeChangeState>(
       builder: (context, state) {
+
+        if (noteForCoParentTextEditingController.text !=
+            state.noteForCoParent) {
+          noteForCoParentTextEditingController.value =
+              noteForCoParentTextEditingController.value.copyWith(
+                text: state.noteForCoParent ?? '',
+                selection: noteForCoParentTextEditingController.selection,
+              );
+        }
+
         return Scaffold(
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
-            child: Stack(children: [_backgroundImage(), _screenBody()]),
+            child: Stack(children: [_backgroundImage(), _screenBody(state)]),
           ),
         );
       },
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.sendProposalApiResultStatus.whenOrNull(
+          error: (error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+            Navigator.of(context).pop();
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+        );
+      },
     );
   }
 
   Widget _backgroundImage() {
     return Column(
       children: [
-        Assets.images.imgEssentialsBg.image(height: context.height,fit: BoxFit.cover),
+        Assets.images.imgEssentialsBg.image(
+          height: context.height,
+          fit: BoxFit.cover,
+        ),
         Container(height: context.height / 2),
       ],
     );
@@ -66,21 +110,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
     );
   }
 
-  Widget _startEndTextField() {
-    return Row(
-      children: [
-        Expanded(
-          child: AppTextField(fillColor: Colors.grey.withValues(alpha: 0.2)),
-        ),
-        20.spaceW,
-        Expanded(
-          child: AppTextField(fillColor: Colors.grey.withValues(alpha: 0.2)),
-        ),
-      ],
-    );
-  }
-
-  Widget _youAreProposing() {
+  Widget _youAreProposing(ProposeChangeState state) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.withValues(alpha: 0.2),
@@ -90,54 +120,116 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           10.spaceH,
-          "Current"
+          LocaleKeys.current
+              .tr()
               .appText(fontSize: 14, fontWeight: FontWeight.w600)
               .appPadding(left: 20.w),
           4.spaceH,
-          _timeWidget(),
+          _timeWidget(
+            coParentEventDetailTime(state.sharedEvent?.date),
+            "${getStringTime(state.sharedEvent?.startTime)} - ${getStringTime(state.sharedEvent?.endTime)}",
+          ),
           10.spaceH,
-          "Proposed"
+          LocaleKeys.proposed
+              .tr()
               .appText(fontSize: 14, fontWeight: FontWeight.w600)
               .appPadding(left: 20.w),
           4.spaceH,
-          _timeWidget(),
+          _timeWidget(
+            coParentEventDetailTime(state.selectedDate),
+            "${getStringTime(state.startTime)} - ${getStringTime(state.endTime)}",
+          ),
           10.spaceH,
         ],
       ),
     );
   }
 
-  Widget _timeWidget() {
+  Widget _timeWidget(String start, String end) {
     return Container(
       height: 30.h,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          start
+              .appText(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                textAlign: TextAlign.start,
+              )
+              .appPadding(left: 10.w),
+          end
+              .appText(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                textAlign: TextAlign.end,
+              )
+              .appPadding(right: 10.w),
+        ],
+      ),
     ).appPadding(left: 20, right: 20);
   }
 
-  Widget _newDate() {
-    return AppTextField(fillColor: Colors.grey.withValues(alpha: 0.2));
-  }
-
-  Widget _startEndHeader() {
-    return Row(
+  Widget _newDate(ProposeChangeState state) {
+    return Column(
       children: [
-        Expanded(
-          child: "Start".appText(
-            fontWeight: FontWeight.w600,
-            textAlign: TextAlign.start,
-            fontSize: 14,
+        Row(
+          children: [
+            LocaleKeys.date.tr().appText(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ],
+        ),
+        6.spaceH,
+        BaseButton(
+          onTap: () {
+            _showDatePicker();
+          },
+          child: Container(
+            height: 45,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Assets.icons.icCalenderIcon3
+                    .image(height: 20, width: 20)
+                    .padding(left: 8),
+                12.spaceW,
+                (state.selectedDate != null
+                        ? getStringDate(state.selectedDate)
+                        : LocaleKeys.chooseDate.tr())
+                    .appText(
+                      fontSize: 14,
+                      color: state.selectedDate != null
+                          ? Colors.black
+                          : Colors.grey.shade400,
+                    ),
+              ],
+            ),
           ),
         ),
-        Expanded(
-          child: "End".appText(
-            fontWeight: FontWeight.w600,
-            textAlign: TextAlign.start,
-            fontSize: 14,
+        if (state.dateError.isNotEmpty)
+          Column(
+            children: [
+              4.spaceH,
+              Row(
+                children: [
+                  (state.dateError ?? "").appText(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ],
+              ),
+            ],
           ),
-        ),
       ],
     );
   }
@@ -146,7 +238,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        "Note to co‐parent (optional)".appText(
+        LocaleKeys.noteToCoParent.tr().appText(
           fontWeight: FontWeight.w600,
           textAlign: TextAlign.start,
           fontSize: 14,
@@ -154,40 +246,51 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
         10.h.spaceH,
         AppTextField(
           minLines: 3,
+          controller: noteForCoParentTextEditingController,
           fillColor: Colors.grey.withValues(alpha: 0.2),
+          onChanged: (value) {
+            context.read<ProposeChangeCubit>().changeProps(
+              noteForCoParent: value,
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _screenBody() {
+  Widget _screenBody(ProposeChangeState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       children: [
         45.h.spaceH,
         _appBar(),
-
         80.spaceH,
         _header(),
         130.spaceH,
         Row(),
-        "You're proposing".appText(fontWeight: FontWeight.w600),
+        LocaleKeys.youProposing.tr().appText(fontWeight: FontWeight.w600),
         10.h.spaceH,
-        _youAreProposing(),
+        _youAreProposing(state),
         10.h.spaceH,
-        "New date".appText(fontWeight: FontWeight.w600, fontSize: 14),
+        LocaleKeys.newDate.tr().appText(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
         10.h.spaceH,
-        _newDate(),
-        _startEndHeader(),
+        _newDate(state),
         10.h.spaceH,
-        _startEndTextField(),
-        10.h.spaceH,
-        _quickWidget(),
-        10.h.spaceH,
+        _startEnd(state),
+        20.h.spaceH,
+        _quickWidget(state),
+        20.h.spaceH,
         _noteToCoParent(),
         10.h.spaceH,
-        proposeButton(text: 'Send Proposal', onTap: () {}),
+        proposeButton(
+          text: LocaleKeys.sendProposal.tr(),
+          onTap: () {
+            context.read<ProposeChangeCubit>().sendProposal(state);
+          },
+        ),
       ],
     ).appPadding(left: 20.w, right: 20.w);
   }
@@ -201,7 +304,133 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
             Navigator.pop(context);
           },
         ),
+      ],
+    );
+  }
 
+  Widget _startEnd(ProposeChangeState state) {
+    return Row(
+      children: [
+        Expanded(
+          child: BaseButton(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    LocaleKeys.start.tr().appText(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+                6.spaceH,
+                Container(
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Assets.icons.icTimerIcon
+                          .image(height: 20, width: 20)
+                          .padding(left: 8),
+                      12.spaceW,
+
+                      (state.startTime != null
+                              ? getStringTime(state.startTime)
+                              : LocaleKeys.startHint.tr())
+                          .appText(
+                            fontSize: 14,
+                            color: state.startTime != null
+                                ? Colors.black
+                                : Colors.grey.shade400,
+                          ),
+                    ],
+                  ),
+                ),
+                if (state.startTimeError.isNotEmpty)
+                  Column(
+                    children: [
+                      4.spaceH,
+                      Row(
+                        children: [
+                          (state.startTimeError ?? "").appText(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            onTap: () {
+              _showStartTime();
+            },
+          ),
+        ),
+        10.spaceW,
+        Expanded(
+          child: BaseButton(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    LocaleKeys.end.tr().appText(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ],
+                ),
+                6.spaceH,
+                Container(
+                  height: 45,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Assets.icons.icTimerIcon
+                          .image(height: 20, width: 20)
+                          .padding(left: 8),
+                      12.spaceW,
+                      (state.endTime != null
+                              ? getStringTime(state.endTime)
+                              : LocaleKeys.endHint.tr())
+                          .appText(
+                            fontSize: 14,
+                            color: state.endTime != null
+                                ? Colors.black
+                                : Colors.grey.shade400,
+                          ),
+                    ],
+                  ),
+                ),
+                if (state.endTimeError.isNotEmpty)
+                  Column(
+                    children: [
+                      4.spaceH,
+                      Row(
+                        children: [
+                          (state.endTimeError ?? "").appText(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+            onTap: () {
+              _showEndTime();
+            },
+          ),
+        ),
       ],
     );
   }
@@ -232,20 +461,58 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
     ).appPadding(left: 15, right: 15);
   }
 
-  Widget _quickWidget() {
+  Widget _quickWidget(ProposeChangeState state) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        "Quick:".appText(fontWeight: FontWeight.w600, fontSize: 14),
-        _quickItem(label: "+15"),
-        _quickItem(label: "+30"),
-        _quickItem(label: "Move to Tomorrow"),
+        LocaleKeys.quick.tr().appText(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+        _quickItem(
+          label: "+15",
+          onTap: () {
+            var startTime = state.startTime ?? state.sharedEvent?.startTime;
+            var endTime = state.endTime ?? state.sharedEvent?.endTime;
+            context.read<ProposeChangeCubit>().changeProps(
+              startTime: startTime?.add(Duration(minutes: 15)),
+              endTime: endTime?.add(Duration(minutes: 15)),
+              selectedDate: state.selectedDate ?? state.sharedEvent?.date,
+            );
+          },
+        ),
+        _quickItem(
+          label: "+30",
+          onTap: () {
+            var startTime = state.startTime ?? state.sharedEvent?.startTime;
+            var endTime = state.endTime ?? state.sharedEvent?.endTime;
+            context.read<ProposeChangeCubit>().changeProps(
+              startTime: startTime?.add(Duration(minutes: 30)),
+              endTime: endTime?.add(Duration(minutes: 30)),
+              selectedDate: state.selectedDate ?? state.sharedEvent?.date,
+            );
+          },
+        ),
+        _quickItem(
+          label: LocaleKeys.moveToTomorrow.tr(),
+          onTap: () {
+            var date = state.selectedDate ?? state.sharedEvent?.date;
+            var startTime = state.startTime ?? state.sharedEvent?.startTime;
+            var endTime = state.endTime ?? state.sharedEvent?.endTime;
+            context.read<ProposeChangeCubit>().changeProps(
+              startTime: startTime,
+              endTime: endTime,
+              selectedDate: date?.add(Duration(days: 1)),
+            );
+          },
+        ),
       ],
     );
   }
 
-  Widget _quickItem({required String label}) {
+  Widget _quickItem({required String label, GestureTapCallback? onTap}) {
     return BaseButton(
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey.withValues(alpha: 0.2),
@@ -255,7 +522,56 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
             .appText(fontWeight: FontWeight.w600, fontSize: 14)
             .appPadding(all: 8),
       ),
-      onTap: () {},
     );
+  }
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      firstDate: DateTime(1971),
+      lastDate: DateTime(2030),
+    ).then((value) {
+      navigatorKey.currentContext?.read<ProposeChangeCubit>().changeProps(
+        selectedDate: value,
+      );
+    });
+  }
+
+  void _showStartTime() {
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
+      value,
+    ) {
+      if (value != null) {
+        DateTime now = DateTime.now();
+        navigatorKey.currentContext?.read<ProposeChangeCubit>().changeProps(
+          startTime: DateTime(
+            now.year,
+            now.month,
+            now.day,
+            value.hour,
+            value.minute,
+          ),
+        );
+      }
+    });
+  }
+
+  void _showEndTime() {
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
+      value,
+    ) {
+      if (value != null) {
+        DateTime now = DateTime.now();
+        navigatorKey.currentContext?.read<ProposeChangeCubit>().changeProps(
+          endTime: DateTime(
+            now.year,
+            now.month,
+            now.day,
+            value.hour,
+            value.minute,
+          ),
+        );
+      }
+    });
   }
 }

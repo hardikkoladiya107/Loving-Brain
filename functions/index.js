@@ -208,3 +208,98 @@ exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
     });
   }
 });
+
+
+
+exports.sharedEventReminderNotification = onRequest(async (req, res) => {
+  try {
+     const now = new Date();
+    const shared_event_snapshot = await admin.firestore().collection("shared_event").get();
+     const allSharedEventImpData = [];
+      const matched = [];
+     shared_event_snapshot.forEach((doc) => {
+          const userData = doc.data();
+          const assigned_to = userData.assigned_to || [];
+          const created_by = userData.created_by;
+          const start_time = userData.start_time;
+          const end_time = userData.end_time;
+          const selectedDate = userData.date;
+          const eventDate = selectedDate?.toDate?.();
+          const eventStartTime = start_time?.toDate?.();
+          const istOffset = 5.5 * 60 * 60 * 1000; // +5:30 hours
+          const eventDateIST = new Date(eventDate.getTime() + istOffset);
+          const eventStartTimeIST = new Date(eventStartTime.getTime() + istOffset);
+          const nowInIst = new Date(now.getTime() + istOffset);
+          if (eventDateIST.getDate() === nowInIst.getDate() &&
+                eventDateIST.getMonth() === nowInIst.getMonth() &&
+                eventStartTimeIST.getHours() === nowInIst.getHours() &&
+                eventStartTimeIST.getMinutes() === nowInIst.getMinutes()) {
+                    matched.push(...assigned_to);
+                    matched.push(created_by);
+                }
+
+          allSharedEventImpData.push({
+             created_by: created_by,
+             assigned_to: assigned_to,
+             eventDate: eventDate,
+             eventStartTime: eventStartTime,
+             now:nowInIst,
+             eventDateIST: eventDateIST,
+             eventStartTimeIST: eventStartTimeIST,
+             matched: matched,
+          });
+        });
+
+         if (matched.length === 0) {
+            return res.status(200).send({message: "no matched found"});
+         }
+        const fcmTokens = [];
+        const uniqueMatched = [...new Set(matched)];
+        const usersSnapshot = await admin.firestore()
+          .collection("users")
+          .where("uid", "in", uniqueMatched)
+          .get();
+        usersSnapshot.forEach((doc) => {
+        const userData = doc.data();
+          fcmTokens.push(userData.fcm_token)
+        });
+        const uniqueFcmTokens = [...new Set(fcmTokens)];
+        if (uniqueFcmTokens.length === 0) {
+             return res.status(200).send({message: "No valid FCM tokens found"});
+        }
+        const message = {
+              tokens: uniqueFcmTokens,
+              notification: {
+                title: "Shared Event Notification",
+                body: "Shared Event Notification",
+              },
+              data: {},
+              android: {
+                priority: "high",
+                notification: {
+                  sound: "default",
+                },
+              },
+              apns: {
+                payload: {
+                  aps: {
+                    sound: "default",
+                  },
+                },
+              },
+            };
+     const response = await admin.messaging().sendEachForMulticast(message);
+     return res.status(200).send({
+        success: true,
+        response: response,
+        allSharedEventImpData: allSharedEventImpData,
+        fcmTokens: uniqueFcmTokens,
+    });
+  } catch (error) {
+    logger.error("Error sending notifications", { error });
+    return res.status(500).send({
+      success: false,
+      error: error.message,
+    });
+  }
+});

@@ -179,7 +179,7 @@
   "pleaseEnterChildAge": "Please enter child age",
   "pleaseEnterChildName": "Please enter child name",
   "userNotFound": "User not found!!",
-  "sharedInformationBothParentsSamePage": "Shared information to keep both parents on the same\n page",
+  "sharedInformationBothParentsSamePage": "Shared information to keep both parents on the same page",
   "hi": "Hi",
   "howYourHeartTodayTakeMomentReflect": "how is your heart today? Take a moment to reflect on your parenting journey.",
   "writeYourThoughts": "Write your Thoughts",
@@ -306,7 +306,17 @@
   "approve": "Approve",
   "propose": "Propose",
   "decline": "Decline",
-  "areYouSureYouWantToRemoveRoutine": "Are you sure you want to remove this routine"
+  "areYouSureYouWantToRemoveRoutine": "Are you sure you want to remove this routine",
+  "current": "Current",
+  "proposed": "Proposed",
+  "start": "Start",
+  "end": "End",
+  "noteToCoParent": "Note to co‐parent (optional)",
+  "youProposing": "You're proposing",
+  "newDate": "New date",
+  "sendProposal": "Send Proposal",
+  "quick": "Quick:",
+  "moveToTomorrow": "Move to Tomorrow"
 
 
 

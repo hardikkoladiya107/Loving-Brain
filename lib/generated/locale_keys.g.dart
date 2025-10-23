@@ -305,5 +305,12 @@ abstract class  LocaleKeys {
   static const propose = 'propose';
   static const decline = 'decline';
   static const areYouSureYouWantToRemoveRoutine = 'areYouSureYouWantToRemoveRoutine';
+  static const current = 'current';
+  static const proposed = 'proposed';
+  static const youProposing = 'youProposing';
+  static const newDate = 'newDate';
+  static const sendProposal = 'sendProposal';
+  static const quick = 'quick';
+  static const moveToTomorrow = 'moveToTomorrow';
 
 }
