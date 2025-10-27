@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
 import 'package:loving_brain/ui/essentials/essentials_screen.dart';
+import 'package:loving_brain/ui/notification_screen/notification_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
@@ -93,7 +93,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               10.spaceW,
-              Icon(CupertinoIcons.bell),
+              BaseButton(
+                child: Icon(CupertinoIcons.bell),
+                onTap: () async {
+                  // var response = await CoParentRepo
+                  //     .instance
+                  //     .coParentInvitationCollection
+                  //     .doc("nvnLhKZrz7Yp00Kimc6u")
+                  //     .get();
+                  // var invitationModel = InvitationModel.fromJson(
+                  //   response.data(),
+                  // );
+                  // DeepLinkManager.instance.showSuccessMessage(
+                  //   ApiResultStatus.data(data: invitationModel),
+                  // );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationScreen(),
+                    ),
+                  );
+                },
+              ),
+
               10.spaceW,
             ],
           ),
@@ -107,13 +128,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-
                     LocaleKeys.nextSchedule.tr().appText(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
                     "3:00PM".appText(fontSize: 12),
-                    "${state.childModel?.childName ?? ""}'s Nap Time".appText(fontSize: 12),
+                    "${state.childModel?.childName ?? ""}'s Nap Time".appText(
+                      fontSize: 12,
+                    ),
                     Row(
                       children: [
                         BaseButton(
@@ -123,7 +145,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontSize: 14,
                           ),
                           onTap: () {
-                            context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
+                            context.read<BaseCubit>().changeProps(
+                              bottomNavigationIndex: 1,
+                            );
                           },
                         ),
                       ],

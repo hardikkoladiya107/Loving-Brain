@@ -2,7 +2,7 @@
 
 // ignore_for_file: constant_identifier_names
 
-abstract class  LocaleKeys {
+abstract class LocaleKeys {
   static const appName = 'appName';
   static const yourPersonalParentingCoPilot = 'yourPersonalParentingCoPilot';
   static const notSupportedInThisDevice = 'notSupportedInThisDevice';
@@ -10,16 +10,21 @@ abstract class  LocaleKeys {
   static const lovingBrain = 'lovingBrain';
   static const login = 'login';
   static const getStarted = 'getStarted';
-  static const becauseEveryChildDeservesTheBestVersionOfYou = 'becauseEveryChildDeservesTheBestVersionOfYou';
+  static const becauseEveryChildDeservesTheBestVersionOfYou =
+      'becauseEveryChildDeservesTheBestVersionOfYou';
   static const dailyMindfulMoments = 'dailyMindfulMoments';
   static const parentingInsights = 'parentingInsights';
   static const stressSOS = 'stressSOS';
-  static const twoMinExercisesToResetAndRecharge = 'twoMinExercisesToResetAndRecharge';
-  static const expertBackedTipsTailoredForYourNeeds = 'expertBackedTipsTailoredForYourNeeds';
-  static const quickToolsForCalmingInToughMoments = 'quickToolsForCalmingInToughMoments';
+  static const twoMinExercisesToResetAndRecharge =
+      'twoMinExercisesToResetAndRecharge';
+  static const expertBackedTipsTailoredForYourNeeds =
+      'expertBackedTipsTailoredForYourNeeds';
+  static const quickToolsForCalmingInToughMoments =
+      'quickToolsForCalmingInToughMoments';
   static const evenSuperheroesRequireSupport = 'evenSuperheroesRequireSupport';
   static const next = 'next';
-  static const letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs = 'letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs';
+  static const letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs =
+      'letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs';
   static const youMadeTt = 'youMadeTt';
   static const personalizedParentSupport = 'personalizedParentSupport';
   static const justTapAway = 'justTapAway';
@@ -30,7 +35,8 @@ abstract class  LocaleKeys {
   static const dailySchedulePlanner = 'dailySchedulePlanner';
   static const shareResponsibilityFairly = 'shareResponsibilityFairly';
   static const coParentingCalendar = 'coParentingCalendar';
-  static const coordinateChildRoutinesMealsSchoolPlaytimeTherapy = 'coordinateChildRoutinesMealsSchoolPlaytimeTherapy';
+  static const coordinateChildRoutinesMealsSchoolPlaytimeTherapy =
+      'coordinateChildRoutinesMealsSchoolPlaytimeTherapy';
   static const mindfulness = 'mindfulness';
   static const overallWellbeing = 'overallWellbeing';
   static const parentSupport = 'parentSupport';
@@ -38,7 +44,8 @@ abstract class  LocaleKeys {
   static const donHaveAnAccount = 'donHaveAnAccount';
   static const signUp = 'signUp';
   static const forgotPassword = 'forgotPassword';
-  static const createYourAccountToBeginYourParentingJourney = 'createYourAccountToBeginYourParentingJourney';
+  static const createYourAccountToBeginYourParentingJourney =
+      'createYourAccountToBeginYourParentingJourney';
   static const calmCorner = 'calmCorner';
   static const challenges = 'challenges';
   static const trackKidBehaviour = 'trackKidBehaviour';
@@ -54,24 +61,31 @@ abstract class  LocaleKeys {
   static const signInWithApple = 'signInWithApple';
   static const startMyJourney = 'startMyJourney';
   static const chooseYourCalm = 'chooseYourCalm';
-  static const selectExerciseFindMomentOfPeaceForYouAnd = 'selectExerciseFindMomentOfPeaceForYouAnd';
+  static const selectExerciseFindMomentOfPeaceForYouAnd =
+      'selectExerciseFindMomentOfPeaceForYouAnd';
   static const diaperChangeBreath = 'diaperChangeBreath';
   static const mindfulFeedingAnchor = 'mindfulFeedingAnchor';
   static const sunnyBreathForKids = 'sunnyBreathForKids';
   static const sleepDeprivationRest = 'sleepDeprivationRest';
-  static const aQuickCalmingBreathFindSerenityBusyMoments = 'aQuickCalmingBreathFindSerenityBusyMoments';
-  static const focusOnSensationsDuringFeedingConnectWithYourBaby = 'focusOnSensationsDuringFeedingConnectWithYourBaby';
+  static const aQuickCalmingBreathFindSerenityBusyMoments =
+      'aQuickCalmingBreathFindSerenityBusyMoments';
+  static const focusOnSensationsDuringFeedingConnectWithYourBaby =
+      'focusOnSensationsDuringFeedingConnectWithYourBaby';
   static const feelTheSunshineEnveloping = 'feelTheSunshineEnveloping';
-  static const aQuickMentalRefreshForTiredParents = 'aQuickMentalRefreshForTiredParents';
+  static const aQuickMentalRefreshForTiredParents =
+      'aQuickMentalRefreshForTiredParents';
   static const postpartumCalmMeditation = 'postpartumCalmMeditation';
-  static const aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm = 'aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm';
-  static const moreExercisesAvailableInFutureChallenges = 'moreExercisesAvailableInFutureChallenges';
+  static const aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm =
+      'aSoothingMeditationForMothersToAlleviateAnxietyAndOverwhelm';
+  static const moreExercisesAvailableInFutureChallenges =
+      'moreExercisesAvailableInFutureChallenges';
   static const moduleDescription = 'moduleDescription';
   static const description = 'description';
   static const type = 'type';
   static const sleepDescription = 'sleepDescription';
   static const postpartumCalmConnection = 'postpartumCalmConnection';
-  static const postpartumCalmConnectionDescription = 'postpartumCalmConnectionDescription';
+  static const postpartumCalmConnectionDescription =
+      'postpartumCalmConnectionDescription';
   static const toddlerEmotionalUnderstanding = 'toddlerEmotionalUnderstanding';
   static const forParents1To3YearsOld = 'forParents1To3YearsOld';
   static const buildingFamilyConnection = 'buildingFamilyConnection';
@@ -87,17 +101,20 @@ abstract class  LocaleKeys {
   static const privacyPolicy = 'privacyPolicy';
   static const and = 'and';
   static const termsOfUse = 'termsOfUse';
-  static const forMoreInformationPleaseVisitOur = 'forMoreInformationPleaseVisitOur';
+  static const forMoreInformationPleaseVisitOur =
+      'forMoreInformationPleaseVisitOur';
   static const subsTermsTextAndroid = 'subsTermsTextAndroid';
   static const subsTermsTextIOS = 'subsTermsTextIOS';
   static const free = 'free';
   static const oneExercisePerDay = 'oneExercisePerDay';
   static const premiumAnnual = 'premiumAnnual';
-  static const unlimitedAccessToMoodBasedExercises = 'unlimitedAccessToMoodBasedExercises';
+  static const unlimitedAccessToMoodBasedExercises =
+      'unlimitedAccessToMoodBasedExercises';
   static const premiumMonthly = 'premiumMonthly';
   static const subscribe = 'subscribe';
   static const stayFlexibleWithMonthlyAccess = 'stayFlexibleWithMonthlyAccess';
-  static const personalizedQuotesExercisesAnytimeEveryMood = 'personalizedQuotesExercisesAnytimeEveryMood';
+  static const personalizedQuotesExercisesAnytimeEveryMood =
+      'personalizedQuotesExercisesAnytimeEveryMood';
   static const subscription = 'subscription';
   static const easeAnxiety = 'easeAnxiety';
   static const scanBody = 'scanBody';
@@ -113,25 +130,33 @@ abstract class  LocaleKeys {
   static const currentDailyRoutine = 'currentDailyRoutine';
   static const feed = 'feed';
   static const startActivity = 'startActivity';
-  static const aSimplePowerfulHugDeepenConnectionAndCalm = 'aSimplePowerfulHugDeepenConnectionAndCalm';
+  static const aSimplePowerfulHugDeepenConnectionAndCalm =
+      'aSimplePowerfulHugDeepenConnectionAndCalm';
   static const todayPlayIdea = 'todayPlayIdea';
   static const musicalMovementDance = 'musicalMovementDance';
   static const yourParagraphText = 'yourParagraphText';
-  static const crawlHopAndStompLikeAnimalsMoveLaughAndPlayTogether = 'crawlHopAndStompLikeAnimalsMoveLaughAndPlayTogether';
+  static const crawlHopAndStompLikeAnimalsMoveLaughAndPlayTogether =
+      'crawlHopAndStompLikeAnimalsMoveLaughAndPlayTogether';
   static const animalWalkChallenge = 'animalWalkChallenge';
   static const storyBuilderDiceCards = 'storyBuilderDiceCards';
-  static const pickPromptBuildFunStoryTogetherImagineCreateConnect = 'pickPromptBuildFunStoryTogetherImagineCreateConnect';
-  static const whatAreSomeTipsForConsistentInfantSleep = 'whatAreSomeTipsForConsistentInfantSleep';
-  static const myNewbornIsCryingContinuouslyWhatStepsShouldITake = 'myNewbornIsCryingContinuouslyWhatStepsShouldITake';
-  static const howCanIEncourageMyChildExpressTheirFeelings = 'howCanIEncourageMyChildExpressTheirFeelings';
-  static const howCanIHandleToddlerTantrumInPublic = 'howCanIHandleToddlerTantrumInPublic';
+  static const pickPromptBuildFunStoryTogetherImagineCreateConnect =
+      'pickPromptBuildFunStoryTogetherImagineCreateConnect';
+  static const whatAreSomeTipsForConsistentInfantSleep =
+      'whatAreSomeTipsForConsistentInfantSleep';
+  static const myNewbornIsCryingContinuouslyWhatStepsShouldITake =
+      'myNewbornIsCryingContinuouslyWhatStepsShouldITake';
+  static const howCanIEncourageMyChildExpressTheirFeelings =
+      'howCanIEncourageMyChildExpressTheirFeelings';
+  static const howCanIHandleToddlerTantrumInPublic =
+      'howCanIHandleToddlerTantrumInPublic';
   static const activityCompleted = 'activityCompleted';
   static const youveAddedToYourStreak = 'youveAddedToYourStreak';
   static const brainStreaks = 'brainStreaks';
   static const getAIPlayInsight = 'getAIPlayInsight';
   static const getAIPlayInsightDescription = 'getAIPlayInsightDescription';
   static const reflectInJournal = 'reflectInJournal';
-  static const thisHugReleasesOxytocinTheBondingHormoneForBothOfYou = 'thisHugReleasesOxytocinTheBondingHormoneForBothOfYou';
+  static const thisHugReleasesOxytocinTheBondingHormoneForBothOfYou =
+      'thisHugReleasesOxytocinTheBondingHormoneForBothOfYou';
   static const parentingTip = 'parentingTip';
   static const markAsDone = 'markAsDone';
   static const whatHappened = 'whatHappened';
@@ -161,26 +186,31 @@ abstract class  LocaleKeys {
   static const confirmPassword = 'confirmPassword';
   static const enterConfirmPassword = 'enterConfirmPassword';
   static const createYourAccount = 'createYourAccount';
-  static const secureYourSpotLovingBrainCommunity = 'secureYourSpotLovingBrainCommunity';
+  static const secureYourSpotLovingBrainCommunity =
+      'secureYourSpotLovingBrainCommunity';
   static const register = 'register';
   static const accountAlreadyExists = 'accountAlreadyExists';
   static const pleaseEnterEmailAddress = 'pleaseEnterEmailAddress';
   static const pleaseEnterPassword = 'pleaseEnterPassword';
   static const pleaseEnterConfirmPassword = 'pleaseEnterConfirmPassword';
-  static const passwordAndConfirmPasswordShouldSame = 'passwordAndConfirmPasswordShouldSame';
+  static const passwordAndConfirmPasswordShouldSame =
+      'passwordAndConfirmPasswordShouldSame';
   static const pleaseEnterValidEmail = 'pleaseEnterValidEmail';
   static const passwordShouldBeMoreLetters = 'passwordShouldBeMoreLetters';
   static const sendResetEmail = 'sendResetEmail';
   static const pleaseEnterParentName = 'pleaseEnterParentName';
   static const pleaseEnterParentGender = 'pleaseEnterParentGender';
   static const pleaseEnterParentDateOfBirth = 'pleaseEnterParentDateOfBirth';
-  static const pleaseEnterRelationshipToChild = 'pleaseEnterRelationshipToChild';
+  static const pleaseEnterRelationshipToChild =
+      'pleaseEnterRelationshipToChild';
   static const pleaseEnterChildAge = 'pleaseEnterChildAge';
   static const pleaseEnterChildName = 'pleaseEnterChildName';
   static const userNotFound = 'userNotFound';
-  static const sharedInformationBothParentsSamePage = 'sharedInformationBothParentsSamePage';
+  static const sharedInformationBothParentsSamePage =
+      'sharedInformationBothParentsSamePage';
   static const hi = 'hi';
-  static const howYourHeartTodayTakeMomentReflect = 'howYourHeartTodayTakeMomentReflect';
+  static const howYourHeartTodayTakeMomentReflect =
+      'howYourHeartTodayTakeMomentReflect';
   static const writeYourThoughts = 'writeYourThoughts';
   static const typeYourThoughtsHere = 'typeYourThoughtsHere';
   static const saveEntry = 'saveEntry';
@@ -197,17 +227,20 @@ abstract class  LocaleKeys {
   static const shareThisApp = 'shareThisApp';
   static const quickReminders = 'quickReminders';
   static const getMoreFromLovingBrain = 'getMoreFromLovingBrain';
-  static const unlockAllChallengesToolsAndInsightsForAMoreConfident = 'unlockAllChallengesToolsAndInsightsForAMoreConfident';
+  static const unlockAllChallengesToolsAndInsightsForAMoreConfident =
+      'unlockAllChallengesToolsAndInsightsForAMoreConfident';
   static const restore = 'restore';
   static const deleteAccount = 'deleteAccount';
   static const logOut = 'logOut';
   static const areYouSureYouWantToLogout = 'areYouSureYouWantToLogout';
-  static const areYouSureYouWantToDeleteAccount = 'areYouSureYouWantToDeleteAccount';
+  static const areYouSureYouWantToDeleteAccount =
+      'areYouSureYouWantToDeleteAccount';
   static const cancel = 'cancel';
   static const delete = 'delete';
   static const connectWithBrainAI = 'connectWithBrainAI';
   static const schedule = 'schedule';
-  static const googleSignInNotSupportsThisPlatform = 'googleSignInNotSupportsThisPlatform';
+  static const googleSignInNotSupportsThisPlatform =
+      'googleSignInNotSupportsThisPlatform';
   static const continueWithGoogle = 'continueWithGoogle';
   static const continueWithApple = 'continueWithApple';
   static const logMoodsLabel = 'logMoodsLabel';
@@ -218,7 +251,8 @@ abstract class  LocaleKeys {
   static const pleaseEnterYourThoughts = 'pleaseEnterYourThoughts';
   static const viewAll = 'viewAll';
   static const thoughtsList = 'thoughtsList';
-  static const weSentYouMailToResetYourPassword = 'weSentYouMailToResetYourPassword';
+  static const weSentYouMailToResetYourPassword =
+      'weSentYouMailToResetYourPassword';
   static const failToCreateConversation = 'failToCreateConversation';
   static const askToAI = 'askToAI';
   static const noChatAvailable = 'noChatAvailable';
@@ -273,38 +307,54 @@ abstract class  LocaleKeys {
   static const coParentEmailHint = 'coParentEmailHint';
   static const shareForWhichChild = 'shareForWhichChild';
   static const calendarEvents = 'calendarEvents';
-  static const createApproveAndChangeSharedEvents = 'createApproveAndChangeSharedEvents';
+  static const createApproveAndChangeSharedEvents =
+      'createApproveAndChangeSharedEvents';
   static const childEssentials = 'childEssentials';
-  static const medicalNotesSchoolContactsAllergies = 'medicalNotesSchoolContactsAllergies';
+  static const medicalNotesSchoolContactsAllergies =
+      'medicalNotesSchoolContactsAllergies';
   static const eventAttachment = 'eventAttachment';
   static const starRequired = 'starRequired';
   static const stopRecording = 'stopRecording';
   static const startRecording = 'startRecording';
   static const saveToJournal = 'saveToJournal';
-  static const onceAcceptedyouSameSharedCalendar = 'onceAcceptedyouSameSharedCalendar';
+  static const save = 'save';
+  static const onceAcceptedyouSameSharedCalendar =
+      'onceAcceptedyouSameSharedCalendar';
   static const pleaseEnterCoParentEmail = 'pleaseEnterCoParentEmail';
   static const generateInviteLink = 'generateInviteLink';
   static const pleaseSelectChild = 'pleaseSelectChild';
   static const thisInvitationIsNotForYou = 'thisInvitationIsNotForYou';
   static const coParentNotFound = 'coParentNotFound';
   static const childrenNotFound = 'childrenNotFound';
-  static const thisEventAppearsInBothCalendars = 'thisEventAppearsInBothCalendars';
+  static const thisEventAppearsInBothCalendars =
+      'thisEventAppearsInBothCalendars';
   static const premiumFeature = 'premiumFeature';
-  static const attachDocumentsToEventsWithLovingBrainPremium = 'attachDocumentsToEventsWithLovingBrainPremium';
+  static const attachDocumentsToEventsWithLovingBrainPremium =
+      'attachDocumentsToEventsWithLovingBrainPremium';
   static const addAttachment = 'addAttachment';
+  static const addEssentialNote = 'addEssentialNote';
+  static const essentialTitle = 'essentialTitle';
+  static const enterEssentialTitle = 'enterEssentialTitle';
+  static const essentialDescription = 'essentialDescription';
+  static const enterEssentialDescription = 'enterEssentialDescription';
+  static const uploadDocument = 'uploadDocument ';
   static const attachment = 'attachment';
+  static const attachedDocuments = 'attachedDocuments';
   static const reminder = 'reminder';
   static const share = 'share';
   static const viewSchedule = 'viewSchedule';
   static const nextSchedule = 'nextSchedule';
   static const coParentingColander = 'coParentingColander';
   static const eventApproval = 'eventApproval';
-  static const reviewAndConfirmTheSharedEvent = 'reviewAndConfirmTheSharedEvent';
-  static const yourResponseUpdatesEventForBothParents = 'yourResponseUpdatesEventForBothParents';
+  static const reviewAndConfirmTheSharedEvent =
+      'reviewAndConfirmTheSharedEvent';
+  static const yourResponseUpdatesEventForBothParents =
+      'yourResponseUpdatesEventForBothParents';
   static const approve = 'approve';
   static const propose = 'propose';
   static const decline = 'decline';
-  static const areYouSureYouWantToRemoveRoutine = 'areYouSureYouWantToRemoveRoutine';
+  static const areYouSureYouWantToRemoveRoutine =
+      'areYouSureYouWantToRemoveRoutine';
   static const current = 'current';
   static const proposed = 'proposed';
   static const youProposing = 'youProposing';
@@ -312,5 +362,4 @@ abstract class  LocaleKeys {
   static const sendProposal = 'sendProposal';
   static const quick = 'quick';
   static const moveToTomorrow = 'moveToTomorrow';
-
 }

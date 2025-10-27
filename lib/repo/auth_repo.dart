@@ -55,8 +55,6 @@ class AuthRepo {
     }
   }
 
-
-
   Future<bool> isAccountExistWithEmail({required String email}) async {
     try {
       var allUsers = await userCollection.get();
@@ -497,7 +495,9 @@ class AuthRepo {
           .where(FieldPath.documentId, whereIn: users)
           .get();
       return ApiResultStatus.data(
-        data: response.docs.map((e) => ChildModel.fromJson(e.data(),e.reference)).toList(),
+        data: response.docs
+            .map((e) => ChildModel.fromJson(e.data(), e.reference))
+            .toList(),
       );
     } on FirebaseException catch (_) {
       return ApiResultStatus.error(

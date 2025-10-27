@@ -51,6 +51,25 @@ extension extOnString on String {
   }
 }
 
+extension FirebaseUrlUtils on String {
+  /// Extracts file name (with extension) from a Firebase Storage URL
+  String get firebaseFileName {
+    try {
+      // Decode URL to handle %2F etc.
+      final decoded = Uri.decodeFull(this);
+      // Split by '/' and get the last part (file name with extension)
+      final parts = decoded.split('/');
+      if (parts.isNotEmpty) {
+        // Remove query parameters if present
+        return parts.last.split('?').first;
+      }
+      return '';
+    } catch (_) {
+      return '';
+    }
+  }
+}
+
 String removeTagBlockContainingText(
   String input,
   String keyword, {

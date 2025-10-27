@@ -622,6 +622,10 @@ class $AssetsImagesGen {
   AssetGenImage get imgSubscriptionBg =>
       const AssetGenImage('assets/images/img_subscription_bg.png');
 
+  /// File path: assets/images/img_success_cartoon.png
+  AssetGenImage get imgSuccessCartoon =>
+      const AssetGenImage('assets/images/img_success_cartoon.png');
+
   /// File path: assets/images/img_tip_card_bg.png
   AssetGenImage get imgTipCardBg =>
       const AssetGenImage('assets/images/img_tip_card_bg.png');
@@ -684,6 +688,7 @@ class $AssetsImagesGen {
     imgSleep,
     imgSplashBg,
     imgSubscriptionBg,
+    imgSuccessCartoon,
     imgTipCardBg,
     imgWriteYourThoughtBg,
     imgYearlyBg,

@@ -21,23 +21,19 @@ class _ChooseYourCalmScreenState extends State<ChooseYourCalmScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: calmCornerBgColor,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Assets.images.imgChooseYourCalmBg.image(
-                  height: context.height,
-                  width: context.width,
-                ),
-                SizedBox(height: context.height / 2, width: context.width),
-              ],
-            ),
-            Column(
+      body: Stack(
+        children: [
+          Assets.images.imgChooseYourCalmBg.image(
+            height: context.height,
+            width: context.width,
+          ),
+
+          SingleChildScrollView(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(),
-                60.spaceH,
+                80.spaceH,
+
                 _header(),
                 10.spaceH,
                 _headerDescription(),
@@ -57,8 +53,18 @@ class _ChooseYourCalmScreenState extends State<ChooseYourCalmScreen> {
                     ),
               ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 60,
+            left: 20,
+            child: BaseButton(
+              child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

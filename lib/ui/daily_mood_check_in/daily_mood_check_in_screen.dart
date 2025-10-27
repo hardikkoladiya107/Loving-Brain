@@ -58,6 +58,16 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
                     _parentFeeling(state),
                   ],
                 ),
+                Positioned(
+                  top: 60,
+                  left: 20,
+                  child: BaseButton(
+                    child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
               ],
             ),
           ),

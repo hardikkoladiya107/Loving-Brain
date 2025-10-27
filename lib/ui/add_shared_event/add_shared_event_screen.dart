@@ -81,7 +81,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                 Column(
                   children: [
                     30.h.spaceH,
-                    _appBar(),
+
                     60.h.spaceH,
                     LocaleKeys.addSharedEvent.tr().appText(
                       fontWeight: FontWeight.w800,
@@ -108,6 +108,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     _button(),
                   ],
                 ).appPadding(left: 20.w, right: 20.w),
+                _appBar(),
               ],
             ),
           ),
@@ -169,19 +170,15 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
   }
 
   Widget _appBar() {
-    return Row(
-      children: [
-        BaseButton(
-          child: Assets.icons.icBackIcon.image(
-            height: 36,
-            width: 36,
-            color: Colors.black.withValues(alpha: 0.8),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-      ],
+    return Positioned(
+      top: 60,
+      left: 20,
+      child: BaseButton(
+        child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
     );
   }
 

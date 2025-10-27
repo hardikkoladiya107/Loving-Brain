@@ -8,6 +8,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
+
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
@@ -105,6 +106,16 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                     20.spaceH,
                     _childRecentMoments(state),
                   ],
+                ),
+                Positioned(
+                  top: 60,
+                  left: 20,
+                  child: BaseButton(
+                    child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
               ],
             ),

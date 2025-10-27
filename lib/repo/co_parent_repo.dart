@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:io' as io;
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -115,10 +115,11 @@ class CoParentRepo {
   Future<ApiResultStatus> updateInvitation({
     required String referenceId,
     required Map<String, dynamic> request,
+    required InvitationModel invitationModel,
   }) async {
     try {
       await coParentInvitationCollection.doc(referenceId).update(request);
-      return ApiResultStatus.data(data: "");
+      return ApiResultStatus.data(data: invitationModel);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -144,6 +145,7 @@ class CoParentRepo {
         return updateInvitation(
           referenceId: invitationReferenceId,
           request: {"status": "ACCEPTED"},
+          invitationModel: invitationModel,
         );
       } else {
         return ApiResultStatus.error(

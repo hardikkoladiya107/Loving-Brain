@@ -10,6 +10,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
@@ -58,8 +59,22 @@ class _DailyRoutineScreenState extends State<DailyRoutineScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(),
-                  100.spaceH,
+                  40.spaceH,
+                  Row(
+                    children: [
+                      20.spaceW,
+                      BaseButton(
+                        child: Assets.icons.icBackIcon.image(
+                          height: 36,
+                          width: 36,
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                  40.spaceH,
                   _header(),
                   80.spaceH,
                   Container(

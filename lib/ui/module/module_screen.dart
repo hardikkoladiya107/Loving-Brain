@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -76,6 +77,16 @@ class _ModuleScreenState extends State<ModuleScreen> {
                     .appText(fontSize: 10)
                     .appPadding(left: 20, right: 20),
               ],
+            ),
+            Positioned(
+              top: 60,
+              left: 20,
+              child: BaseButton(
+                child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
             ),
           ],
         ),
