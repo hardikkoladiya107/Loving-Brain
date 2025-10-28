@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/essential_model.dart';
@@ -15,16 +16,19 @@ import 'essentials_state.dart';
 class EssentialsCubit extends Cubit<EssentialsState> {
   EssentialsCubit() : super(EssentialsState());
 
-  void init() {
+  void init() async {
     emit(EssentialsState(userModel: preferences.getUserModel()));
-    _listenToChild();
+    await loadChildren();
+    fetchChildFromFirestore();
   }
 
   void changeProps({
     ChildModel? childModel,
+    List<ChildModel>? children,
     UserModel? userModel,
     ApiResultStatus? addEssentialsApiResult,
     ApiResultStatus? uploadDocumentApiResultStatus,
+    ApiResultStatus? childrenListApiResult,
     String? titleError,
     String? descriptionError,
 
@@ -38,30 +42,47 @@ class EssentialsCubit extends Cubit<EssentialsState> {
             addEssentialsApiResult ?? ApiResultStatus.initial(),
         uploadDocumentApiResultStatus:
             uploadDocumentApiResultStatus ?? ApiResultStatus.initial(),
+        childrenListApiResult:
+            childrenListApiResult ?? ApiResultStatus.initial(),
         titleError: titleError ?? "",
         descriptionError: descriptionError ?? "",
         documentsList: documentsList ?? state.documentsList,
+        childList: children ?? state.childList,
       ),
     );
   }
 
-  StreamSubscription? sharedEventStreamSubscription;
+  // StreamSubscription? sharedEventStreamSubscription;
 
-  void _listenToChild() {
-    if (state.userModel?.defaultChild != null) {
-      sharedEventStreamSubscription?.cancel();
-      sharedEventStreamSubscription = state.userModel?.defaultChild!
-          .snapshots()
-          .listen((event) {
-            if (event.data() != null) {
-              changeProps(
-                childModel: ChildModel.fromJson(
-                  event.data() as Map<String, dynamic>,
-                  event.reference,
-                ),
-              );
-            }
-          });
+  // void _listenToChild() {
+  //   if (state.userModel?.defaultChild != null) {
+  //     sharedEventStreamSubscription?.cancel();
+  //     sharedEventStreamSubscription = state.userModel?.defaultChild!
+  //         .snapshots()
+  //         .listen((event) {
+  //           if (event.data() != null) {
+  //             changeProps(
+  //               childModel: ChildModel.fromJson(
+  //                 event.data() as Map<String, dynamic>,
+  //                 event.reference,
+  //               ),
+  //             );
+  //           }
+  //         });
+  //   }
+
+  Future<void> fetchChildFromFirestore({DocumentReference? refVal}) async {
+    try {
+      DocumentReference ref = refVal ?? state.userModel!.defaultChild!;
+      final snapshot = await ref.get();
+      final data = snapshot.data();
+      if (data != null) {
+        changeProps(
+          childModel: ChildModel.fromJson(data as Map<String, dynamic>, ref),
+        );
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch child: $e');
     }
   }
 
@@ -91,9 +112,10 @@ class EssentialsCubit extends Cubit<EssentialsState> {
     changeProps(addEssentialsApiResult: ApiResultStatus.loading());
     var apiResultStatus = await ChildRepo.instance.addEssential(
       request: {"title": title, "description": description},
-      id: state.userModel?.defaultChild?.id,
+      id: state.childModel?.reference?.id,
     );
     changeProps(addEssentialsApiResult: apiResultStatus);
+    fetchChildFromFirestore(refVal: state.childModel?.reference);
   }
 
   Future<void> editEssentialNote(
@@ -114,6 +136,8 @@ class EssentialsCubit extends Cubit<EssentialsState> {
       request: {'essentials': data},
     );
     changeProps(addEssentialsApiResult: apiResultStatus);
+
+    fetchChildFromFirestore(refVal: state.childModel?.reference);
   }
 
   Future<void> deleteEssentialNote({required int index}) async {
@@ -127,6 +151,8 @@ class EssentialsCubit extends Cubit<EssentialsState> {
       },
     );
     changeProps(addEssentialsApiResult: ApiResultStatus.initial());
+
+    fetchChildFromFirestore(refVal: state.childModel?.reference);
   }
 
   Future<void> deleteDocument({required int index}) async {
@@ -143,6 +169,8 @@ class EssentialsCubit extends Cubit<EssentialsState> {
       },
     );
     changeProps(uploadDocumentApiResultStatus: apiResultStatus);
+
+    fetchChildFromFirestore(refVal: state.childModel?.reference);
   }
 
   Future<void> uploadToFirebaseStorage(String? fileLocalPath) async {
@@ -160,6 +188,8 @@ class EssentialsCubit extends Cubit<EssentialsState> {
           );
           if (data is String) {
             _updateDocuments(data);
+
+            fetchChildFromFirestore(refVal: state.childModel?.reference);
             // List<String> documentsList = [];
             // documentsList.addAll(state.documentsList);
             // documentsList.add(data);
@@ -170,6 +200,8 @@ class EssentialsCubit extends Cubit<EssentialsState> {
           changeProps(
             uploadDocumentApiResultStatus: ApiResultStatus.error(error: error),
           );
+
+          fetchChildFromFirestore(refVal: state.childModel?.reference);
         },
       );
     }
@@ -181,6 +213,29 @@ class EssentialsCubit extends Cubit<EssentialsState> {
         documentReference: state.childModel?.reference!.id,
         request: {
           'documents': FieldValue.arrayUnion([fileNetworkUrl]),
+        },
+      );
+    }
+  }
+
+  Future<void> loadChildren() async {
+    changeProps(childrenListApiResult: ApiResultStatus.loading(), children: []);
+    if (state.userModel != null) {
+      ApiResultStatus childrenListApiResult = await ChildRepo.instance
+          .getAllChildren(state.userModel!);
+      childrenListApiResult.whenOrNull(
+        data: (data) {
+          changeProps(
+            childrenListApiResult: ApiResultStatus.data(data: data),
+            children: data,
+          );
+        },
+        error: (error) {
+          changeProps(
+            childrenListApiResult: ApiResultStatus.error(
+              error: Exception("Failed to load children"),
+            ),
+          );
         },
       );
     }

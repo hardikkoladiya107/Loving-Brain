@@ -12,6 +12,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_dialogs.dart';
+import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -51,6 +52,20 @@ class _EssentialsScreenState extends State<EssentialsScreen> {
           data: (data) {
             EasyLoading.dismiss();
             Navigator.pop(context);
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+          initial: () {
+            EasyLoading.dismiss();
+          },
+        );
+        state.childrenListApiResult.whenOrNull(
+          data: (data) {
+            EasyLoading.dismiss();
           },
           error: (error) {
             EasyLoading.dismiss();
@@ -111,7 +126,7 @@ class _EssentialsScreenState extends State<EssentialsScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         45.h.spaceH,
-        _appBar(),
+        _appBar(state),
         80.spaceH,
         _header(state),
         130.spaceH,
@@ -251,14 +266,87 @@ class _EssentialsScreenState extends State<EssentialsScreen> {
     );
   }
 
-  Widget _appBar() {
+  Widget _appBar(EssentialsState state) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         BaseButton(
           child: Assets.icons.icBackIcon.image(height: 36, width: 36),
           onTap: () {
             Navigator.pop(context);
           },
+        ),
+
+        AppDropDownButton(
+          offset: Offset(0, 40),
+          dropdownWidth: 170.w,
+          dropDownWidget: (close) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+              ),
+              child: Column(
+                children: List.generate(state.childList.length, (index) {
+                  return BaseButton(
+                    child: Container(
+                      height: 40.h,
+                      width: 170.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                            offset: Offset(0, 1),
+                            spreadRadius: 2,
+                            // blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: (state.childList[index].childName ?? "").appText(
+                          fontWeight: FontWeight.w600,
+
+                          fontSize: 14,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      context.read<EssentialsCubit>().changeProps(
+                        childModel: state.childList[index],
+                      );
+                      context.read<EssentialsCubit>().fetchChildFromFirestore(
+                        refVal: state.childList[index].reference,
+                      );
+                      close.call();
+                    },
+                  );
+                }),
+              ),
+            );
+          },
+          child: Container(
+            height: 40,
+            width: 170.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                8.spaceW,
+                Expanded(
+                  child: state.childModel != null
+                      ? (state.childModel?.childName ?? "").appText()
+                      : SizedBox(),
+                ),
+                Icon(Icons.arrow_drop_down),
+                8.spaceW,
+              ],
+            ),
+          ),
         ),
       ],
     );

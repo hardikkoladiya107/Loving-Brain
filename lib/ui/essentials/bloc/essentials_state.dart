@@ -14,8 +14,10 @@ abstract class EssentialsState with _$EssentialsState {
     @Default("") String descriptionError,
     UserModel? userModel,
     ChildModel? childModel,
+    @Default([]) List<ChildModel> childList,
     @Default([]) List<String> documentsList,
     @Default(ApiResultStatus.initial()) ApiResultStatus addEssentialsApiResult,
+    @Default(ApiResultStatus.initial()) ApiResultStatus childrenListApiResult,
     @Default(ApiResultStatus.initial())
     ApiResultStatus uploadDocumentApiResultStatus,
   }) = _EssentialsState;
