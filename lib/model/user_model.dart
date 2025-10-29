@@ -13,6 +13,7 @@ class UserModel {
     DateTime? freeTaskUseTime,
     DateTime? updatedDate,
     DateTime? lastOpened,
+    DateTime? lastStreakUpdate,
     String? displayName,
     String? parentName,
     String? parentGender,
@@ -34,6 +35,7 @@ class UserModel {
     _freeTaskUseTime = freeTaskUseTime;
     _updatedDate = updatedDate;
     _lastOpened = lastOpened;
+    _lastStreakUpdate = lastStreakUpdate;
     _transactionId = transactionId;
     _purchaseToken = purchaseToken;
     _displayName = displayName;
@@ -91,7 +93,9 @@ class UserModel {
           var paths = (jsonObject['children'] as List<dynamic>);
           _children = [];
           _children?.addAll(
-            paths.map((e) => FirebaseFirestore.instance.doc(e.toString())).toList(),
+            paths
+                .map((e) => FirebaseFirestore.instance.doc(e.toString()))
+                .toList(),
           );
         }
       } else {
@@ -150,6 +154,20 @@ class UserModel {
     }
     try {
       if (fromConvert) {
+        if (jsonObject['last_streak_update'] != null) {
+          _lastStreakUpdate = DateTime.parse(jsonObject['last_streak_update']);
+        }
+      } else {
+        if (jsonObject['last_streak_update'] != null) {
+          _lastStreakUpdate = (jsonObject['last_streak_update'] as Timestamp)
+              .toDate();
+        }
+      }
+    } catch (e) {
+      e;
+    }
+    try {
+      if (fromConvert) {
         if (jsonObject['free_task_use_time'] != null) {
           _freeTaskUseTime = DateTime.parse(jsonObject['free_task_use_time']);
         }
@@ -186,6 +204,7 @@ class UserModel {
   DateTime? _freeTaskUseTime;
   DateTime? _updatedDate;
   DateTime? _lastOpened;
+  DateTime? _lastStreakUpdate;
   int? _streak;
   List<DocumentReference>? _children;
   DocumentReference? _defaultChild;
@@ -202,6 +221,7 @@ class UserModel {
     DateTime? freeTaskUseTime,
     DateTime? updatedDate,
     DateTime? lastOpened,
+    DateTime? lastStreakUpdate,
     String? displayName,
     String? parentName,
     String? parentGender,
@@ -224,6 +244,7 @@ class UserModel {
       freeTaskUseTime: freeTaskUseTime ?? _freeTaskUseTime,
       updatedDate: updatedDate ?? _updatedDate,
       lastOpened: lastOpened ?? _lastOpened,
+      lastStreakUpdate: lastStreakUpdate ?? _lastStreakUpdate,
       transactionId: transactionId ?? _transactionId,
       purchaseToken: purchaseToken ?? _purchaseToken,
       displayName: displayName ?? _displayName,
@@ -261,6 +282,8 @@ class UserModel {
   DateTime? get updatedDate => _updatedDate;
 
   DateTime? get lastOpened => _lastOpened;
+
+  DateTime? get lastStreakUpdate => _lastStreakUpdate;
 
   DateTime? get freeTaskUseTime => _freeTaskUseTime;
 
@@ -351,6 +374,21 @@ class UserModel {
         if (_lastOpened != null) {
           Timestamp ts = Timestamp.fromDate(_lastOpened!);
           map['last_opened'] = ts;
+        }
+      }
+    } catch (e) {
+      e;
+    }
+    try {
+      if (forConvert) {
+        if (_lastStreakUpdate != null) {
+          Timestamp ts = Timestamp.fromDate(_lastStreakUpdate!);
+          map['last_streak_update'] = ts.toDate().toIso8601String();
+        }
+      } else {
+        if (_lastStreakUpdate != null) {
+          Timestamp ts = Timestamp.fromDate(_lastStreakUpdate!);
+          map['last_streak_update'] = ts;
         }
       }
     } catch (e) {

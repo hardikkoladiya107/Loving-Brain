@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../generated/locale_keys.g.dart';
@@ -84,6 +85,7 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
               message: LocaleKeys.greatJobCheckingIn.tr(),
               type: SnackBarType.SUCCESS,
             );
+            UserRepo.instance.updateUserStreak();
             EasyLoading.dismiss();
             Navigator.of(context).pop();
           },

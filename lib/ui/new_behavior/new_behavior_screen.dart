@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
@@ -132,6 +133,8 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
               message: LocaleKeys.behaviourLogged.tr(),
               type: SnackBarType.SUCCESS,
             );
+
+            UserRepo.instance.updateUserStreak();
             EasyLoading.dismiss();
           },
           error: (error) {
