@@ -8,9 +8,11 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
+import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
+import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
 import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -73,11 +75,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: LocaleKeys.getGentleRemindersForPlay.tr(),
                   showCheckBox: true,
                   icon: Assets.icons.icReminderIcon2,
-                  iconColor: gentleReminderIconColor,check: state.getReminderNotification,
+                  iconColor: gentleReminderIconColor,
+                  check: state.userModel?.getReminderNotification ?? false,
                   onChanged: (value) {
-                    context.read<ProfileCubit>().changeProps(
-                      getReminderNotification: value,
-                    );
+                    context.read<ProfileCubit>().updateGentleReminder();
                   },
                 ),
                 10.spaceH,
@@ -92,11 +93,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Assets.icons.icDailyEmotionCheckIcon,
                   iconColor: dailyEmotionCheckIconColor,
                   showCheckBox: true,
-                  check: state.dailyEmotionCheck,
+                  check: state.userModel?.dailyEmotionCheck ?? false,
                   onChanged: (value) {
-                    context.read<ProfileCubit>().changeProps(
-                      dailyEmotionCheck: value,
-                    );
+                    context.read<ProfileCubit>().updateDailyEmotion();
                   },
                 ),
                 _settingItem(
@@ -104,11 +103,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   showCheckBox: true,
                   icon: Assets.icons.icTodaysPlayIdeaIcon,
                   iconColor: todayPlayIdeaIconColor,
-                  check: state.todaysPlayIdea,
+                  check: state.userModel?.todaysPlayIdea ?? false,
                   onChanged: (value) {
-                    context.read<ProfileCubit>().changeProps(
-                      todaysPlayIdea: value,
-                    );
+                    context.read<ProfileCubit>().updateTodaysPlayIdea();
                   },
                 ),
                 _settingItem(
@@ -117,11 +114,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   showCheckBox: true,
                   icon: Assets.icons.icScheduleReminderIcon,
                   iconColor: scheduleReminderIconColor,
-                  check: state.scheduleReminder,
+                  check: state.userModel?.scheduleReminder ?? false,
                   onChanged: (value) {
-                    context.read<ProfileCubit>().changeProps(
-                      scheduleReminder: value,
-                    );
+                    context.read<ProfileCubit>().updateScheduleReminder();
                   },
                 ),
                 _settingItem(
@@ -140,21 +135,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: LocaleKeys.termsConditions.tr(),
                   icon: Assets.icons.icTermsAndConditionIcon,
                   iconColor: termsAndConditionIconColor,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const TermsAndConditionsScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _settingItem(
                   title: LocaleKeys.privacyPolicy.tr(),
                   icon: Assets.icons.icPrivacyPolicyIcon,
                   iconColor: privacyPolicyIconColor,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen(),
+                      ),
+                    );
+                  },
                 ),
                 _settingItem(
                   title: LocaleKeys.rateThisApp.tr(),
                   icon: Assets.icons.icRateThisAppIcon,
                   iconColor: rateThisAppIconColor,
+                  onTap: () {
+                    context.read<ProfileCubit>().rateApp();
+                  },
                 ),
                 _settingItem(
                   title: LocaleKeys.shareThisApp.tr(),
                   icon: Assets.icons.icShareThisAppIcon,
                   iconColor: shareThisAppIconColor,
+                  onTap: () {
+                    context.read<ProfileCubit>().shareApp();
+                  },
                 ),
                 _settingItem(
                   title: LocaleKeys.deleteAccount.tr(),

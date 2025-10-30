@@ -84,4 +84,118 @@ class UserRepo {
       print("⚠️ Failed to sync streak to Firestore: $e");
     }
   }
+
+  Future<void> updateGentleReminder() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Get user from local preferences
+    final localUser = preferences.getUserModel();
+    if (localUser == null) {
+      print("⚠️ No local user found");
+      return;
+    }
+
+    // ✅ Update locally first
+    final updatedUser = localUser.copyWith(
+      getReminderNotification: !(localUser.getReminderNotification ?? false),
+    );
+    await preferences.saveUserModel(updatedUser);
+
+    // ✅ Then update Firestore in background
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(localUser.uid)
+          .update({
+            'get_reminder_notification': updatedUser.getReminderNotification,
+          });
+    } catch (e) {
+      print("⚠️ Failed to update to Firestore: $e");
+    }
+  }
+
+  Future<void> updateScheduleReminder() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Get user from local preferences
+    final localUser = preferences.getUserModel();
+    if (localUser == null) {
+      print("⚠️ No local user found");
+      return;
+    }
+
+    // ✅ Update locally first
+    final updatedUser = localUser.copyWith(
+      scheduleReminder: !(localUser.scheduleReminder ?? false),
+    );
+    await preferences.saveUserModel(updatedUser);
+
+    // ✅ Then update Firestore in background
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(localUser.uid)
+          .update({'schedule_reminder': updatedUser.scheduleReminder});
+    } catch (e) {
+      print("⚠️ Failed to update to Firestore: $e");
+    }
+  }
+
+  Future<void> updateDailyEmotion() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Get user from local preferences
+    final localUser = preferences.getUserModel();
+    if (localUser == null) {
+      print("⚠️ No local user found");
+      return;
+    }
+
+    // ✅ Update locally first
+    final updatedUser = localUser.copyWith(
+      dailyEmotionCheck: !(localUser.dailyEmotionCheck ?? false),
+    );
+    await preferences.saveUserModel(updatedUser);
+
+    // ✅ Then update Firestore in background
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(localUser.uid)
+          .update({'daily_emotion_check': updatedUser.dailyEmotionCheck});
+    } catch (e) {
+      print("⚠️ Failed to update to Firestore: $e");
+    }
+  }
+
+  Future<void> updateTodaysPlayIdea() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Get user from local preferences
+    final localUser = preferences.getUserModel();
+    if (localUser == null) {
+      print("⚠️ No local user found");
+      return;
+    }
+
+    // ✅ Update locally first
+    final updatedUser = localUser.copyWith(
+      todaysPlayIdea: !(localUser.todaysPlayIdea ?? false),
+    );
+    await preferences.saveUserModel(updatedUser);
+
+    // ✅ Then update Firestore in background
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(localUser.uid)
+          .update({'todays_play_idea': updatedUser.todaysPlayIdea});
+    } catch (e) {
+      print("⚠️ Failed to update to Firestore: $e");
+    }
+  }
 }

@@ -25,6 +25,10 @@ class UserModel {
     int? streak,
     List<DocumentReference>? children,
     DocumentReference? defaultChild,
+    bool? getReminderNotification,
+    bool? dailyEmotionCheck,
+    bool? todaysPlayIdea,
+    bool? scheduleReminder,
   }) {
     _uid = uid;
     _platform = platform;
@@ -49,6 +53,10 @@ class UserModel {
     _streak = streak;
     _children = children;
     _defaultChild = defaultChild;
+    _getReminderNotification = getReminderNotification;
+    _dailyEmotionCheck = dailyEmotionCheck;
+    _todaysPlayIdea = todaysPlayIdea;
+    _scheduleReminder = scheduleReminder;
   }
 
   UserModel.fromJson(
@@ -71,6 +79,10 @@ class UserModel {
     _relationshipToChild = jsonObject['relationship_to_child'];
     _parentEmail = jsonObject['parent_email'];
     _streak = jsonObject['streak'];
+    _getReminderNotification = jsonObject['get_reminder_notification'];
+    _dailyEmotionCheck = jsonObject['daily_emotion_check'];
+    _todaysPlayIdea = jsonObject['todays_play_idea'];
+    _scheduleReminder = jsonObject['schedule_reminder'];
 
     try {
       if (fromConvert) {
@@ -208,6 +220,10 @@ class UserModel {
   int? _streak;
   List<DocumentReference>? _children;
   DocumentReference? _defaultChild;
+  bool? _getReminderNotification;
+  bool? _dailyEmotionCheck;
+  bool? _todaysPlayIdea;
+  bool? _scheduleReminder;
 
   UserModel copyWith({
     String? uid,
@@ -233,6 +249,10 @@ class UserModel {
     int? streak,
     List<DocumentReference>? children,
     DocumentReference? defaultChild,
+    bool? getReminderNotification,
+    bool? dailyEmotionCheck,
+    bool? todaysPlayIdea,
+    bool? scheduleReminder,
   }) {
     return UserModel(
       uid: uid ?? _uid,
@@ -258,6 +278,11 @@ class UserModel {
       streak: streak ?? _streak,
       children: children ?? _children,
       defaultChild: defaultChild ?? _defaultChild,
+      getReminderNotification:
+          getReminderNotification ?? _getReminderNotification,
+      dailyEmotionCheck: dailyEmotionCheck ?? _dailyEmotionCheck,
+      todaysPlayIdea: todaysPlayIdea ?? _todaysPlayIdea,
+      scheduleReminder: scheduleReminder ?? _scheduleReminder,
     );
   }
 
@@ -303,6 +328,11 @@ class UserModel {
 
   int? get streak => _streak;
 
+  bool? get getReminderNotification => _getReminderNotification;
+  bool? get dailyEmotionCheck => _dailyEmotionCheck;
+  bool? get todaysPlayIdea => _todaysPlayIdea;
+  bool? get scheduleReminder => _scheduleReminder;
+
   List<DocumentReference>? get children => _children;
 
   DocumentReference? get defaultChild => _defaultChild;
@@ -329,6 +359,10 @@ class UserModel {
     map['child_age'] = _childAge;
     map['relationship_to_child'] = _relationshipToChild;
     map['streak'] = _streak;
+    map['get_reminder_notification'] = _getReminderNotification;
+    map['daily_emotion_check'] = _dailyEmotionCheck;
+    map['todays_play_idea'] = _todaysPlayIdea;
+    map['schedule_reminder'] = _scheduleReminder;
     map['children'] = _children?.map((e) => e.path).toList();
     map['default_child'] = _defaultChild?.path;
 
