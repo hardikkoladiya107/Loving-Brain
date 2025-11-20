@@ -324,7 +324,10 @@
   "newDate": "New date",
   "sendProposal": "Send Proposal",
   "quick": "Quick:",
-  "moveToTomorrow": "Move to Tomorrow"
+  "moveToTomorrow": "Move to Tomorrow",
+  "dailyParentingTip": "Daily Parenting Tip",
+  "noSleepLogsYet": "No Sleep Logs Yet...",
+  "startByLoggingYourChildBedtime": "Start by logging your child's bedtime and wake time to monitor their rest."
 
 
 

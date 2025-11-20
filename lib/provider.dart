@@ -9,6 +9,7 @@ import 'package:loving_brain/ui/chat_detail/bloc/chat_detail_cubit.dart';
 import 'package:loving_brain/ui/chat_list/bloc/chat_list_cubit.dart';
 import 'package:loving_brain/ui/child_profile/bloc/child_profile_cubit.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/bloc/daily_mood_check_in_cubit.dart';
+import 'package:loving_brain/ui/daily_mood_log/bloc/daily_mood_log_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
 import 'package:loving_brain/ui/essentials/bloc/essentials_cubit.dart';
 import 'package:loving_brain/ui/event_approval/bloc/event_approval_cubit.dart';
@@ -22,8 +23,10 @@ import 'package:loving_brain/ui/parent_profile/bloc/parent_profile_cubit.dart';
 import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/propose_change/bloc/propose_change_cubit.dart';
+import 'package:loving_brain/ui/reflect_your_emotions/bloc/reflect_emotion_cubit.dart';
 import 'package:loving_brain/ui/register/bloc/register_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
+import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
 import 'package:loving_brain/ui/thought_list/bloc/thought_list_cubit.dart';
 import 'package:loving_brain/ui/write_your_thought/bloc/write_your_thought_cubit.dart';
@@ -99,5 +102,14 @@ var blocProvider = [
   ),
   BlocProvider<ProposeChangeCubit>(
     create: (BuildContext context) => ProposeChangeCubit(),
+  ),
+  BlocProvider<DailyMoodLogCubit>(
+    create: (BuildContext context) => DailyMoodLogCubit(),
+  ),
+  BlocProvider<ReflectEmotionCubit>(
+    create: (BuildContext context) => ReflectEmotionCubit(),
+  ),
+  BlocProvider<SleepSummaryCubit>(
+    create: (BuildContext context) => SleepSummaryCubit(),
   ),
 ];

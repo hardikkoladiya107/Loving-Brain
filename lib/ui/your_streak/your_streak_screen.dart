@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../other/app_color.dart';
@@ -62,6 +63,17 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
         ),
         12.w.spaceW,
         "Your Streak !".appText(fontWeight: FontWeight.w700),
+        Spacer(),
+        BaseButton(
+          child: Icon(Icons.bar_chart),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ReflectYourEmotions(),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

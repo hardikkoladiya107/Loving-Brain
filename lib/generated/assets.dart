@@ -10,6 +10,7 @@ class Assets {
   static const String iconsIcAttachmentPin =
       'assets/icons/ic_attachment_pin.png';
   static const String iconsIcBackIcon = 'assets/icons/ic_back_icon.png';
+  static const String iconsIcBestDayEver = 'assets/icons/ic_best_day_ever.png';
   static const String iconsIcBrainAi = 'assets/icons/ic_brain_ai.png';
   static const String iconsIcCalenderIcon = 'assets/icons/ic_calender_icon.png';
   static const String iconsIcCalenderIcon2 =
@@ -106,6 +107,7 @@ class Assets {
   static const String iconsIcSleepIssue = 'assets/icons/ic_sleep_issue.png';
   static const String iconsIcStoryBuilderDice =
       'assets/icons/ic_story_builder_dice.png';
+  static const String iconsIcStreakFire = 'assets/icons/ic_streak_fire.png';
   static const String iconsIcStreakIcon = 'assets/icons/ic_streak_icon.png';
   static const String iconsIcStreakMailIcon =
       'assets/icons/ic_streak_mail_icon.png';
@@ -183,6 +185,12 @@ class Assets {
   static const String imagesImgModulesScreenBg =
       'assets/images/img_modules_screen_bg.png';
   static const String imagesImgMonthlyBg = 'assets/images/img_monthly_bg.png';
+  static const String imagesImgMoodCalm = 'assets/images/img_mood_calm.png';
+  static const String imagesImgMoodHappy = 'assets/images/img_mood_happy.png';
+  static const String imagesImgMoodMad = 'assets/images/img_mood_mad.png';
+  static const String imagesImgMoodSad = 'assets/images/img_mood_sad.png';
+  static const String imagesImgMoodWorried =
+      'assets/images/img_mood_worried.png';
   static const String imagesImgOnBoardingBg1 =
       'assets/images/img_on_boarding_bg1.png';
   static const String imagesImgOnBoardingBg2 =
@@ -204,6 +212,12 @@ class Assets {
       'assets/images/img_scan_body_bg.png';
   static const String imagesImgScheduleBg = 'assets/images/img_schedule_bg.png';
   static const String imagesImgSleep = 'assets/images/img_sleep.png';
+  static const String imagesImgSleepBackground =
+      'assets/images/img_sleep_background.png';
+  static const String imagesImgSleepHomeBackground =
+      'assets/images/img_sleep_home_background.png';
+  static const String imagesImgSleepMoon = 'assets/images/img_sleep_moon.png';
+  static const String imagesImgSleepTeddy = 'assets/images/img_sleep_teddy.png';
   static const String imagesImgSplashBg = 'assets/images/img_splash_bg.png';
   static const String imagesImgSubscriptionBg =
       'assets/images/img_subscription_bg.png';

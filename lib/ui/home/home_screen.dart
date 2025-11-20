@@ -3,11 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/routine_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
 import 'package:loving_brain/ui/essentials/essentials_screen.dart';
 import 'package:loving_brain/ui/notification_screen/notification_screen.dart';
+import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -15,10 +18,8 @@ import '../../main.dart';
 import '../../other/app_color.dart';
 import '../base_screen/bloc/base_cubit.dart';
 import '../choose_your_calm/choose_your_calm_screen.dart';
-import '../module/module_screen.dart';
 import '../new_behavior/new_behavior_screen.dart';
 import '../play_and_connect/play_and_connect_screen.dart';
-import '../your_streak/your_streak_screen.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -50,7 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 _secondCard(),
                 10.spaceH,
                 _thirdCard(state),
-                _reminder(),
+                10.spaceH,
+                _fourthCardItem(state),
+                10.spaceH,
+                _fifthCardItem(),
+
+                // 10.spaceH,
+                // _reminder(),
               ],
             ),
           ),
@@ -61,10 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _topCard(HomeState state) {
+    RoutineModel? routine = _getNextRoutine(state);
     return Container(
-      height: 200.h,
+      // height: 200.h,
       decoration: BoxDecoration(
-        color: greyColor,
+        color: aiQuestionCardColor3,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -118,139 +126,159 @@ class _HomeScreenState extends State<HomeScreen> {
               10.spaceW,
             ],
           ),
-          Spacer(),
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               10.spaceW,
+
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    // if (routine != null)
                     LocaleKeys.nextSchedule.tr().appText(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
-                    "3:00PM".appText(fontSize: 12),
-                    "${state.childModel?.childName ?? ""}'s Nap Time".appText(
-                      fontSize: 12,
-                    ),
-                    Row(
-                      children: [
-                        BaseButton(
-                          child: LocaleKeys.viewSchedule.tr().appText(
-                            fontWeight: FontWeight.w700,
-                            color: sliderTrackColor2,
-                            fontSize: 14,
-                          ),
-                          onTap: () {
-                            context.read<BaseCubit>().changeProps(
-                              bottomNavigationIndex: 1,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+
+                    if (routine != null)
+                      DateFormat(
+                        'hh:mm a',
+                      ).format(routine.timeStamp!).appText(fontSize: 12),
+
+                    if (routine != null)
+                      routine.description!.appText(fontSize: 12),
                   ],
                 ),
               ),
               10.spaceW,
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Assets.icons.icStreakIcon.image(),
-                      5.spaceW,
-                      (state.userModel?.streak ?? 0).toString().appText(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ],
-                  ),
-                  "Streak!".appText(fontWeight: FontWeight.w600),
-                  12.spaceH,
-                  BaseButton(
-                    child: Assets.icons.icCalenderIcon.image(
-                      height: 50,
-                      width: 50,
+              BaseButton(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const YourStreakScreen(),
                     ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const YourStreakScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  );
+                },
+                child: Stack(
+                  children: [
+                    Assets.icons.icStreakFire.image(height: 100, width: 80),
+                    Positioned(
+                      bottom: 10,
+                      right: 0,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          ((state.userModel?.streak ?? 0).toString()).appText(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          ((state.userModel?.streak ?? 0) >= 1 ? "Day" : "Days")
+                              .appText(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              )
+                              .padding(bottom: 18),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: "Streak!".appText(fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
               ),
+
+              // Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     ,
+              //
+              //     // 12.spaceH,
+              //     // BaseButton(
+              //     //   child: Assets.icons.icCalenderIcon.image(
+              //     //     height: 50,
+              //     //     width: 50,
+              //     //   ),
+              //     //   onTap: () {
+              //     //     Navigator.of(context).push(
+              //     //       MaterialPageRoute(
+              //     //         builder: (context) => const YourStreakScreen(),
+              //     //       ),
+              //     //     );
+              //     //   },
+              //     // ),
+              //   ],
+              // ),
               20.spaceW,
             ],
           ),
-          10.spaceH,
+
+          8.spaceH,
+
+          Row(
+            children: [
+              8.spaceW,
+              BaseButton(
+                child: LocaleKeys.viewSchedule.tr().appText(
+                  fontWeight: FontWeight.w700,
+                  color: sliderTrackColor2,
+                  fontSize: 14,
+                ),
+                onTap: () {
+                  context.read<BaseCubit>().changeProps(
+                    bottomNavigationIndex: 1,
+                  );
+                },
+              ),
+
+              12.spaceW,
+              Icon(Icons.arrow_circle_right),
+            ],
+          ),
+          8.spaceH,
         ],
       ),
     ).appPadding(left: 20, right: 20);
   }
 
   Widget _secondCard() {
-    return Container(
-      height: 160.h,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(Assets.images.imgHomeCardBg.path),
+    return Row(
+      children: [
+        8.spaceW,
+        Expanded(
+          child: _secondCardItem(
+            title: LocaleKeys.calmCorner.tr(),
+            asset: Assets.icons.icCalmCorner,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ChooseYourCalmScreen(),
+                ),
+              );
+            },
+          ),
         ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          8.spaceW,
-          Expanded(
-            child: _secondCardItem(
-              title: LocaleKeys.calmCorner.tr(),
-              asset: Assets.icons.icCalmCorner,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ChooseYourCalmScreen(),
-                  ),
-                );
-              },
-            ),
+        20.spaceW,
+        Expanded(
+          child: _secondCardItem(
+            title: LocaleKeys.trackKidBehaviour.tr(),
+            asset: Assets.icons.icTrackKidBehaviour,
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const NewBehaviorScreen(),
+                ),
+              );
+            },
           ),
-          8.spaceW,
-          Expanded(
-            child: _secondCardItem(
-              title: LocaleKeys.challenges.tr(),
-              asset: Assets.icons.icChallengesIcon,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ModuleScreen()),
-                );
-              },
-            ),
-          ),
-          8.spaceW,
-          Expanded(
-            child: _secondCardItem(
-              title: LocaleKeys.trackKidBehaviour.tr(),
-              asset: Assets.icons.icTrackKidBehaviour,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const NewBehaviorScreen(),
-                  ),
-                );
-              },
-            ),
-          ),
-          8.spaceW,
-        ],
-      ).appPadding(bottom: 20),
+        ),
+        8.spaceW,
+      ],
     ).appPadding(left: 20, right: 20);
   }
 
@@ -348,14 +376,98 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 100.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: AssetImage(asset.path),
-          ),
+          color: aiQuestionCardColor2,
+          // image: DecorationImage(
+          //   fit: BoxFit.cover,
+          //   image: AssetImage(asset.path),
+          // ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [title.appText(fontWeight: FontWeight.w700, fontSize: 14)],
+        ),
+      ),
+    );
+  }
+
+  Widget _fourthCardItem(HomeState state) {
+    return BaseButton(
+      onTap: () {},
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: greyColor,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            LocaleKeys.dailyParentingTip.tr().appText(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: state.todayParentingTip.appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _fifthCardItem() {
+    return BaseButton(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const SleepSummaryScreen()),
+        );
+        // Navigator.of(context).push(
+        //   MaterialPageRoute(builder: (context) => const ReflectYourEmotions()),
+        // );
+      },
+      child: Container(
+        height: 80.h,
+
+        margin: EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: yellowColor5,
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: 0,
+              bottom: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width - 80) * 0.8,
+                    // height: 80,
+                    child: Assets.images.imgSleepHomeBackground.image(
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Center(
+              child: LocaleKeys.sleep.appText(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -454,5 +566,37 @@ class _HomeScreenState extends State<HomeScreen> {
       navigatorKey.currentContext!.read<HomeCubit>().dispose();
     }
     super.dispose();
+  }
+
+  RoutineModel? _getNextRoutine(HomeState state) {
+    final routines = state.childModel?.routinesList ?? [];
+
+    // Filter only routines that have a valid timestamp
+    final validRoutines = routines.where((r) => r.timeStamp != null).toList();
+    if (validRoutines.isEmpty) return null;
+
+    final now = DateTime.now();
+
+    // Get only future routines
+    final futureRoutines = validRoutines
+        .where((r) => r.timeStamp!.isAfter(now))
+        .toList();
+    if (futureRoutines.isEmpty) return null;
+
+    // Return the routine with the smallest timestamp
+    futureRoutines.sort((a, b) => a.timeStamp!.compareTo(b.timeStamp!));
+    return futureRoutines.first;
+  }
+
+  DateTime? getNearestUpcomingTime(List<DateTime> timestamps) {
+    final now = DateTime.now();
+
+    // Filter only future times
+    final futureTimes = timestamps.where((t) => t.isAfter(now)).toList();
+    if (futureTimes.isEmpty) return null;
+
+    // Sort and return nearest
+    futureTimes.sort((a, b) => a.compareTo(b));
+    return futureTimes.first;
   }
 }

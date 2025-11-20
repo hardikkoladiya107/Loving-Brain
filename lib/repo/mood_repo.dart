@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
@@ -61,6 +62,33 @@ class MoodRepo {
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> fetchAllMoodLogs() async {
+    try {
+      final tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+
+      final snap = await userCollection
+          .doc(tUid)
+          .collection("mood")
+          .orderBy("log_time", descending: true)
+          .get();
+
+      final list = snap.docs
+          .map((d) => MoodLogModel.fromMap(d.data()))
+          .toList();
+
+      return ApiResultStatus.data(data: list);
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } on Exception catch (e) {

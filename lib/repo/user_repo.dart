@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -7,6 +9,9 @@ class UserRepo {
 
   static final UserRepo _instance = UserRepo._();
   var userCollection = FirebaseFirestore.instance.collection('users');
+  var dailyParentingTipsCollection = FirebaseFirestore.instance.collection(
+    'dailyParentingTips',
+  );
 
   factory UserRepo() {
     return _instance;
@@ -75,10 +80,10 @@ class UserRepo {
 
     // ✅ Then update Firestore in background
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(localUser.uid)
-          .update({'streak': newStreak, 'last_streak_update': today});
+      await userCollection.doc(localUser.uid).update({
+        'streak': newStreak,
+        'last_streak_update': today,
+      });
       print("☁️ Synced streak with Firestore successfully");
     } catch (e) {
       print("⚠️ Failed to sync streak to Firestore: $e");
@@ -104,12 +109,9 @@ class UserRepo {
 
     // ✅ Then update Firestore in background
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(localUser.uid)
-          .update({
-            'get_reminder_notification': updatedUser.getReminderNotification,
-          });
+      await userCollection.doc(localUser.uid).update({
+        'get_reminder_notification': updatedUser.getReminderNotification,
+      });
     } catch (e) {
       print("⚠️ Failed to update to Firestore: $e");
     }
@@ -134,10 +136,9 @@ class UserRepo {
 
     // ✅ Then update Firestore in background
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(localUser.uid)
-          .update({'schedule_reminder': updatedUser.scheduleReminder});
+      await userCollection.doc(localUser.uid).update({
+        'schedule_reminder': updatedUser.scheduleReminder,
+      });
     } catch (e) {
       print("⚠️ Failed to update to Firestore: $e");
     }
@@ -162,10 +163,9 @@ class UserRepo {
 
     // ✅ Then update Firestore in background
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(localUser.uid)
-          .update({'daily_emotion_check': updatedUser.dailyEmotionCheck});
+      await userCollection.doc(localUser.uid).update({
+        'daily_emotion_check': updatedUser.dailyEmotionCheck,
+      });
     } catch (e) {
       print("⚠️ Failed to update to Firestore: $e");
     }
@@ -190,12 +190,57 @@ class UserRepo {
 
     // ✅ Then update Firestore in background
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(localUser.uid)
-          .update({'todays_play_idea': updatedUser.todaysPlayIdea});
+      await userCollection.doc(localUser.uid).update({
+        'todays_play_idea': updatedUser.todaysPlayIdea,
+      });
     } catch (e) {
       print("⚠️ Failed to update to Firestore: $e");
     }
+  }
+
+  Future<String> getTipOfTheDay() async {
+    final today = DateTime(
+      DateTime.now().year,
+      DateTime.now().month,
+      DateTime.now().day,
+    );
+
+    // Step 1: check if today's tip already exists
+    final todayQuery = await dailyParentingTipsCollection
+        .where('is_tip_of_the_day', isEqualTo: true)
+        .get();
+
+    if (todayQuery.docs.isNotEmpty) {
+      final doc = todayQuery.docs.first;
+      final tipDate = (doc['tip_date'] as Timestamp).toDate();
+
+      final isSameDay =
+          tipDate.year == today.year &&
+          tipDate.month == today.month &&
+          tipDate.day == today.day;
+
+      if (isSameDay) {
+        return doc['tip'];
+      }
+    }
+
+    // Step 2: expired → clear old flag
+    final allDocs = await dailyParentingTipsCollection.get();
+
+    for (final doc in allDocs.docs) {
+      if ((doc.data()['is_tip_of_the_day'] ?? false) == true) {
+        await doc.reference.update({'is_tip_of_the_day': false});
+      }
+    }
+
+    // Step 3: choose a new random tip
+    final randomDoc = allDocs.docs[Random().nextInt(allDocs.docs.length)];
+
+    await randomDoc.reference.update({
+      'is_tip_of_the_day': true,
+      'tip_date': Timestamp.fromDate(today),
+    });
+
+    return randomDoc['tip'];
   }
 }

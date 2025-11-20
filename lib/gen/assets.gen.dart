@@ -38,6 +38,10 @@ class $AssetsIconsGen {
   AssetGenImage get icBackIcon =>
       const AssetGenImage('assets/icons/ic_back_icon.png');
 
+  /// File path: assets/icons/ic_best_day_ever.png
+  AssetGenImage get icBestDayEver =>
+      const AssetGenImage('assets/icons/ic_best_day_ever.png');
+
   /// File path: assets/icons/ic_brain_ai.png
   AssetGenImage get icBrainAi =>
       const AssetGenImage('assets/icons/ic_brain_ai.png');
@@ -298,6 +302,10 @@ class $AssetsIconsGen {
   AssetGenImage get icStoryBuilderDice =>
       const AssetGenImage('assets/icons/ic_story_builder_dice.png');
 
+  /// File path: assets/icons/ic_streak_fire.png
+  AssetGenImage get icStreakFire =>
+      const AssetGenImage('assets/icons/ic_streak_fire.png');
+
   /// File path: assets/icons/ic_streak_icon.png
   AssetGenImage get icStreakIcon =>
       const AssetGenImage('assets/icons/ic_streak_icon.png');
@@ -361,6 +369,7 @@ class $AssetsIconsGen {
     icApproveIcon,
     icAttachmentPin,
     icBackIcon,
+    icBestDayEver,
     icBrainAi,
     icCalenderIcon,
     icCalenderIcon2,
@@ -426,6 +435,7 @@ class $AssetsIconsGen {
     icSleepDeprivationRest,
     icSleepIssue,
     icStoryBuilderDice,
+    icStreakFire,
     icStreakIcon,
     icStreakMailIcon,
     icStressSosIcon,
@@ -566,6 +576,26 @@ class $AssetsImagesGen {
   AssetGenImage get imgMonthlyBg =>
       const AssetGenImage('assets/images/img_monthly_bg.png');
 
+  /// File path: assets/images/img_mood_calm.png
+  AssetGenImage get imgMoodCalm =>
+      const AssetGenImage('assets/images/img_mood_calm.png');
+
+  /// File path: assets/images/img_mood_happy.png
+  AssetGenImage get imgMoodHappy =>
+      const AssetGenImage('assets/images/img_mood_happy.png');
+
+  /// File path: assets/images/img_mood_mad.png
+  AssetGenImage get imgMoodMad =>
+      const AssetGenImage('assets/images/img_mood_mad.png');
+
+  /// File path: assets/images/img_mood_sad.png
+  AssetGenImage get imgMoodSad =>
+      const AssetGenImage('assets/images/img_mood_sad.png');
+
+  /// File path: assets/images/img_mood_worried.png
+  AssetGenImage get imgMoodWorried =>
+      const AssetGenImage('assets/images/img_mood_worried.png');
+
   /// File path: assets/images/img_on_boarding_bg1.png
   AssetGenImage get imgOnBoardingBg1 =>
       const AssetGenImage('assets/images/img_on_boarding_bg1.png');
@@ -613,6 +643,22 @@ class $AssetsImagesGen {
   /// File path: assets/images/img_sleep.png
   AssetGenImage get imgSleep =>
       const AssetGenImage('assets/images/img_sleep.png');
+
+  /// File path: assets/images/img_sleep_background.png
+  AssetGenImage get imgSleepBackground =>
+      const AssetGenImage('assets/images/img_sleep_background.png');
+
+  /// File path: assets/images/img_sleep_home_background.png
+  AssetGenImage get imgSleepHomeBackground =>
+      const AssetGenImage('assets/images/img_sleep_home_background.png');
+
+  /// File path: assets/images/img_sleep_moon.png
+  AssetGenImage get imgSleepMoon =>
+      const AssetGenImage('assets/images/img_sleep_moon.png');
+
+  /// File path: assets/images/img_sleep_teddy.png
+  AssetGenImage get imgSleepTeddy =>
+      const AssetGenImage('assets/images/img_sleep_teddy.png');
 
   /// File path: assets/images/img_splash_bg.png
   AssetGenImage get imgSplashBg =>
@@ -674,6 +720,11 @@ class $AssetsImagesGen {
     imgModuleCardBg4,
     imgModulesScreenBg,
     imgMonthlyBg,
+    imgMoodCalm,
+    imgMoodHappy,
+    imgMoodMad,
+    imgMoodSad,
+    imgMoodWorried,
     imgOnBoardingBg1,
     imgOnBoardingBg2,
     imgOnBoardingBg3,
@@ -686,6 +737,10 @@ class $AssetsImagesGen {
     imgScanBodyBg,
     imgScheduleBg,
     imgSleep,
+    imgSleepBackground,
+    imgSleepHomeBackground,
+    imgSleepMoon,
+    imgSleepTeddy,
     imgSplashBg,
     imgSubscriptionBg,
     imgSuccessCartoon,

@@ -13,5 +13,6 @@ abstract class HomeState with _$HomeState {
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
     ChildModel? childModel,
     @Default(false) bool moodLoggedForToday,
+    @Default("") String todayParentingTip,
   }) = _HomeState;
 }

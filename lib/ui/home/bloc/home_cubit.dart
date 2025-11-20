@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/extra_methods.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 
 import '../../../model/child_model.dart';
 import '../../../model/user_model.dart';
@@ -18,6 +19,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeState(userModel: preferences.getUserModel()));
     _listenToUser();
     _updateStreak();
+    _loadTodayParentingTip();
   }
 
   void changeProps({
@@ -25,6 +27,7 @@ class HomeCubit extends Cubit<HomeState> {
     ApiResultStatus? apiResultStatus,
     bool? moodLoggedForToday,
     ChildModel? childModel,
+    String? todayParentingTip,
   }) {
     emit(
       state.copyWith(
@@ -32,6 +35,7 @@ class HomeCubit extends Cubit<HomeState> {
         childModel: childModel ?? state.childModel,
         moodLoggedForToday: moodLoggedForToday ?? state.moodLoggedForToday,
         apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
+        todayParentingTip: todayParentingTip ?? state.todayParentingTip,
       ),
     );
   }
@@ -75,7 +79,10 @@ class HomeCubit extends Cubit<HomeState> {
     childSubscription = defaultChild?.snapshots().listen((event) {
       if (event.data() != null) {
         changeProps(
-          childModel: ChildModel.fromJson(event.data() as Map<String, dynamic>,event.reference),
+          childModel: ChildModel.fromJson(
+            event.data() as Map<String, dynamic>,
+            event.reference,
+          ),
         );
       }
     });
@@ -106,5 +113,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-
+  Future<void> _loadTodayParentingTip() async {
+    changeProps(todayParentingTip: await UserRepo.instance.getTipOfTheDay());
+  }
 }

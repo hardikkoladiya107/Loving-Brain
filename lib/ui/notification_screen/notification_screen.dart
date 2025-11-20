@@ -12,6 +12,7 @@ class NotificationScreen extends StatelessWidget {
     Widget _appBar() {
       return Row(
         children: [
+          20.spaceW,
           BaseButton(
             child: Assets.icons.icBackIcon.image(
               height: 36,
@@ -23,11 +24,65 @@ class NotificationScreen extends StatelessWidget {
             },
           ),
           12.w.spaceW,
-          "Your Streak !".appText(fontWeight: FontWeight.w700),
+          "Notifications".appText(fontWeight: FontWeight.w700),
         ],
       );
     }
 
-    return Scaffold(body: Column(children: [_appBar()]));
+    return Scaffold(
+      // backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          40.spaceH,
+          _appBar(),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 10,
+              shrinkWrap: true,
+
+              itemBuilder: (context, index) => ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                leading: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.notifications,
+                    size: 22,
+                    color: Colors.blue,
+                  ),
+                ),
+                title: "test".appText(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: "description".appText(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: Colors.grey.shade400,
+                  size: 20,
+                ),
+                tileColor: Colors.white,
+              ).padding(left: 16, right: 16, bottom: 8, top: 8),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

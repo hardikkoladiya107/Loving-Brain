@@ -71,7 +71,16 @@ String getStringDate(DateTime? input) {
 
   String formattedTime = DateFormat('yyyy-MM-dd').format(input);
   return formattedTime;
- }
+}
+
+String getStringDateTime(DateTime? input) {
+  if (input == null) {
+    return "";
+  }
+
+  String formattedTime = DateFormat('yyyy-MM-dd hh:mm a').format(input);
+  return formattedTime;
+}
 
 String getStringTime(DateTime? input) {
   if (input == null) {
@@ -88,7 +97,6 @@ String convertToMMMMDYYYY(DateTime? input) {
   String formatted = DateFormat('MMM d, yyyy').format(input);
   return formatted;
 }
-
 
 String coParentScheduleTime(DateTime? input) {
   if (input == null) {

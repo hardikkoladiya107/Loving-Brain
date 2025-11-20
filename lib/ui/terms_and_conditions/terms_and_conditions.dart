@@ -14,7 +14,7 @@ class TermsAndConditionsScreen extends StatefulWidget {
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   late final WebViewController _controller;
-
+  
   @override
   void initState() {
     super.initState();

@@ -51,6 +51,31 @@ extension extOnString on String {
   }
 }
 
+extension DateTimeAgo on DateTime {
+  String timeAgo() {
+    final Duration diff = DateTime.now().difference(this);
+
+    if (diff.inSeconds < 60) {
+      return "just now";
+    } else if (diff.inMinutes < 60) {
+      final m = diff.inMinutes;
+      return "$m minute${m == 1 ? '' : 's'} ago";
+    } else if (diff.inHours < 24) {
+      final h = diff.inHours;
+      return "$h hour${h == 1 ? '' : 's'} ago";
+    } else if (diff.inDays < 30) {
+      final d = diff.inDays;
+      return "$d day${d == 1 ? '' : 's'} ago";
+    } else if (diff.inDays < 365) {
+      final m = (diff.inDays / 30).floor();
+      return "$m month${m == 1 ? '' : 's'} ago";
+    } else {
+      final y = (diff.inDays / 365).floor();
+      return "$y year${y == 1 ? '' : 's'} ago";
+    }
+  }
+}
+
 extension FirebaseUrlUtils on String {
   /// Extracts file name (with extension) from a Firebase Storage URL
   String get firebaseFileName {

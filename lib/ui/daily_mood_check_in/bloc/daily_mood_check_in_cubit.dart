@@ -5,7 +5,6 @@ import 'package:loving_brain/other/preferances.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
 import '../../../model/user_model.dart';
-import '../../../other/extra_methods.dart';
 import '../../../repo/mood_repo.dart';
 import 'daily_mood_check_in_state.dart';
 
@@ -36,7 +35,7 @@ class DailyMoodCheckInCubit extends Cubit<DailyMoodCheckInState> {
     if (_isValidate()) {
       changeProps(apiResultStatus: ApiResultStatus.loading());
       var apiResultStatus = await MoodRepo.instance.addMood(
-        date: getStringDate(DateTime.now()),
+        date: DateTime.now().microsecondsSinceEpoch.toString(),
         request: {
           "child_mood": state.childMood,
           "parent_mood": state.parentMood,

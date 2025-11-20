@@ -7,6 +7,7 @@ import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/repo/user_repo.dart';
+import 'package:loving_brain/ui/daily_mood_log/daily_mood_log.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../generated/locale_keys.g.dart';
@@ -100,8 +101,9 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
 
   Widget _header() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        70.spaceW,
         Container(
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.5),
@@ -115,6 +117,16 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
               )
               .appPadding(all: 8),
         ),
+        Spacer(),
+        BaseButton(
+          child: Icon(Icons.list),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const DailyMoodLog()),
+            );
+          },
+        ),
+        20.spaceW,
       ],
     );
   }

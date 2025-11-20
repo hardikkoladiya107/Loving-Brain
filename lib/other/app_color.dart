@@ -13,6 +13,7 @@ const yellowTextColor3 = Color(0xFFF7F772);
 const yellowButtonStartColor = Color(0xFF62BFD4);
 const yellowButtonEndColor = Color(0xFFF1DD76);
 const yellowTextColor2 = Color(0xFFFDE466);
+const yellowTextColor4 = Color(0xFFF4D20C);
 const blackTextColor = Color(0xFF545454);
 
 const sliderTrackColor1 = Color(0xFFFFB58A);
@@ -56,6 +57,8 @@ const orangeColor2 = Color(0xFFff972a);
 const yellowColor2 = Color(0xFFffd62e);
 const yellowColor3 = Color(0xFFEABE5C);
 const yellowColor4 = Color(0xFFFDE466);
+const yellowColor5 = Color(0xFFfeeb3a);
+const yellowColor6 = Color(0xFFFFED79);
 
 const gentleReminderIconColor = Color(0xFF06CB5B);
 const dailyEmotionCheckIconColor = Color(0xFFF5DB48);
@@ -67,6 +70,7 @@ const rateThisAppIconColor = Color(0xFF8C52FF);
 const shareThisAppIconColor = Color(0xFFFF66C4);
 const logoutAppIconColor = Color(0xFFFF7684);
 const deleteAccountIconColor = Color(0xFF8C52FF);
+const sleepSummaryBackgroundColor = Color(0xFF357696);
 
 const subscriptionColor = Color(0xFF6C79BF);
 const tabBarBgColor = Color(0xFFECF4A6);

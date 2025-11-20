@@ -30,6 +30,7 @@ class AppTextField extends StatefulWidget {
     this.hintStyle,
     this.obscureText = false,
     this.showError = true,
+    this.onFieldTap,
   });
 
   final String? title;
@@ -49,6 +50,7 @@ class AppTextField extends StatefulWidget {
   final Color fillColor;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
+  final Function? onFieldTap;
   final GestureTapCallback? onAddButtonTap;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
@@ -92,12 +94,18 @@ class _AppTextFieldState extends State<AppTextField> {
           child: TextField(
             textAlignVertical: TextAlignVertical.center,
             readOnly: widget.readOnly ?? false,
+            enabled: !(widget.readOnly ?? false),
             keyboardType: widget.keyboardType,
             controller: widget.controller,
             maxLines: widget.maxLines,
             minLines: widget.minLines,
             obscureText: widget.obscureText,
             onChanged: widget.onChanged,
+            onTap: () {
+              if (widget.onFieldTap != null) {
+                widget.onFieldTap!();
+              }
+            },
             style: getTextStyle(fontSize: 14),
             inputFormatters: widget.inputFormatters,
             decoration: InputDecoration(
