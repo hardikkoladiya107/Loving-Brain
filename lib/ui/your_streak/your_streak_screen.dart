@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -5,6 +7,7 @@ import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart
 
 import '../../gen/assets.gen.dart';
 import '../../other/app_color.dart';
+import '../daily_mood_log/daily_mood_log.dart';
 import '../widget/base_button.dart';
 
 class YourStreakScreen extends StatefulWidget {
@@ -166,24 +169,31 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
             ).appPadding(all: 12),
           ).appPadding(left: 16.w, right: 16.w),
           20.h.spaceH,
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    "Your Mood History".appText(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 14,
-                    ),
-                  ],
-                ),
-              ],
-            ).appPadding(all: 12),
-          ).appPadding(left: 16.w, right: 16.w),
+          BaseButton(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const DailyMoodLog()),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      "Your Mood History".appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                      ),
+                    ],
+                  ),
+                ],
+              ).appPadding(all: 12),
+            ).appPadding(left: 16.w, right: 16.w),
+          ),
           20.h.spaceH,
           "Don't miss your daily mood check-in to keep the streak going!"
               .appText(fontWeight: FontWeight.w700, fontSize: 10)

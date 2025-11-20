@@ -79,29 +79,26 @@ class _AddSleepLogState extends State<AddSleepLog> {
                                 12.spaceH,
                                 "Add Sleep Log".appText(fontSize: 20),
                                 16.spaceH,
-                                GestureDetector(
+                                BaseButton(
                                   onTap: () async {
                                     DateTime? date = await _showDatePicker();
                                     context
                                         .read<SleepSummaryCubit>()
                                         .changeProps(date: date);
                                   },
-                                  child: AppTextField(
+                                  child: _dateField(
                                     title: 'Date',
+                                    value: state.date != null
+                                        ? formatDate(state.date!)
+                                        : "",
                                     hint: "Select Date",
-                                    controller: TextEditingController(
-                                      text: state.date != null
-                                          ? formatDate(state.date!)
-                                          : "",
-                                    ),
-                                    readOnly: true,
                                   ),
                                 ),
                                 16.spaceH,
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: GestureDetector(
+                                      child: BaseButton(
                                         onTap: () async {
                                           DateTime? date = await pickDateTime(
                                             context,
@@ -110,36 +107,20 @@ class _AddSleepLogState extends State<AddSleepLog> {
                                               .read<SleepSummaryCubit>()
                                               .changeProps(bedTime: date);
                                         },
-                                        child: AppTextField(
-                                          contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                          ),
+                                        child: _dateField(
                                           title: 'Bed Time',
+                                          value: state.bedTime != null
+                                              ? coParentScheduleTime(
+                                                  state.bedTime!,
+                                                )
+                                              : "",
                                           hint: "Select Date & time",
-                                          readOnly: true,
-                                          onFieldTap: () async {
-                                            DateTime? date = await pickDateTime(
-                                              context,
-                                            );
-                                            if (date != null) {
-                                              context
-                                                  .read<SleepSummaryCubit>()
-                                                  .changeProps();
-                                            }
-                                          },
-                                          controller: TextEditingController(
-                                            text: state.bedTime != null
-                                                ? coParentScheduleTime(
-                                                    state.bedTime!,
-                                                  )
-                                                : "",
-                                          ),
                                         ),
                                       ),
                                     ),
                                     6.spaceW,
                                     Expanded(
-                                      child: GestureDetector(
+                                      child: BaseButton(
                                         onTap: () async {
                                           DateTime? date = await pickDateTime(
                                             context,
@@ -148,30 +129,14 @@ class _AddSleepLogState extends State<AddSleepLog> {
                                               .read<SleepSummaryCubit>()
                                               .changeProps(wakeTime: date);
                                         },
-                                        child: AppTextField(
+                                        child: _dateField(
                                           title: 'Wake-Up Time',
+                                          value: state.wakeTime != null
+                                              ? coParentScheduleTime(
+                                                  state.wakeTime!,
+                                                )
+                                              : "",
                                           hint: "Select Date & time",
-                                          contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                          ),
-                                          readOnly: true,
-                                          controller: TextEditingController(
-                                            text: state.wakeTime != null
-                                                ? coParentScheduleTime(
-                                                    state.wakeTime!,
-                                                  )
-                                                : "",
-                                          ),
-                                          onFieldTap: () async {
-                                            DateTime? date = await pickDateTime(
-                                              context,
-                                            );
-                                            if (date != null) {
-                                              context
-                                                  .read<SleepSummaryCubit>()
-                                                  .changeProps(wakeTime: date);
-                                            }
-                                          },
                                         ),
                                       ),
                                     ),
@@ -290,6 +255,46 @@ class _AddSleepLogState extends State<AddSleepLog> {
       pickedDate.day,
       pickedTime.hour,
       pickedTime.minute,
+    );
+  }
+
+  Widget _dateField({required String hint, String? value, String? title}) {
+
+
+    return Column(
+      children: [
+        if (title != null)
+          Column(
+            children: [
+              Row(
+                children: [
+                  (title ?? "").appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+              6.spaceH,
+            ],
+          ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          height: 55,
+          child: Row(
+            children: [
+              10.spaceW,
+              ((value ?? "").isNotEmpty ? value : hint).toString().appText(
+                color: (value ?? "").isNotEmpty ? Colors.black : Colors.grey,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -13,6 +14,8 @@ import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_state.dart';
 import 'package:loving_brain/ui/widget/app_bar_graph.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+
+import '../../generated/locale_keys.g.dart';
 
 class SleepSummaryScreen extends StatefulWidget {
   const SleepSummaryScreen({super.key});
@@ -55,15 +58,18 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
             children: [
               Column(
                 children: [
-                  6.spaceH,
-                  "Sleep Summary for ${state.childModel?.childName}".appText(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                  if (state.sleepLogs.isNotEmpty)
-                    _sleepSummaryChart(state)
-                  else
+                  55.spaceH,
+                  "${LocaleKeys.sleepSummaryFor.tr()} ${state.childModel?.childName}"
+                      .appText(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                  if (state.sleepLogs.isEmpty) ...[
                     _noSleepSummary(),
+                  ] else ...[
+                    _sleepSummaryChart(state),
+                  ],
                 ],
               ),
               _appBar(),
@@ -124,10 +130,11 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                 Expanded(
                   child: Column(
                     children: [
-                      "No Sleep Logs Yet..".appText(fontSize: 20),
+                      LocaleKeys.noSleepLogsYet.tr().appText(fontSize: 20),
                       12.spaceH,
-                      "Start by logging your child's bedtime and wake time to monitor their rest."
-                          .appText(fontSize: 12),
+                      LocaleKeys.startByLoggingYourChildBedtime.tr().appText(
+                        fontSize: 12,
+                      ),
                       12.spaceH,
                       Row(children: [_addButton()]),
                     ],
@@ -150,97 +157,31 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
           margin: EdgeInsets.only(left: 12, right: 12, top: 80),
-
           child: Column(
             children: [
               60.spaceH,
               Assets.images.imgSleepMoon.image(width: 120),
-
               16.spaceH,
               _addButton().padding(left: 20, right: 20),
-
               16.spaceH,
-              SizedBox(
-                width: 170,
-                child: AppDropDownButton(
-                  offset: Offset(0, 20.h),
-                  // dropdownWidth: 200,
-                  dropDownWidget: (close) {
-                    List<Widget> widgetsList = [];
-                    for (int i = 0; i < state.weeks.length; i++) {
-                      var week = state.weeks[i];
-                      widgetsList.add(
-                        BaseButton(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(),
-                              8.spaceH,
-                              week.getFormattedRange
-                                  .appText(fontWeight: FontWeight.w500)
-                                  .appPadding(left: 16),
-                              if (i < state.weeks.length - 1) 8.spaceH,
-                              if (i < state.weeks.length - 1)
-                                Divider(height: 0.1, thickness: 0.5),
-                            ],
-                          ),
-                          onTap: () {
-                            close.call();
-                            context.read<SleepSummaryCubit>().changeProps(
-                              selectedWeek: week,
-                            );
-                          },
-                        ),
-                      );
-                    }
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withValues(alpha: 0.1),
-                            blurRadius: 2,
-                            spreadRadius: 2,
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: widgetsList,
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.black),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        (state.selectedWeek?.getFormattedRange ?? "").appText(
-                          color: Colors.black,
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down_outlined,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ).padding(all: 4),
-                  ),
-                ),
+              _weeklyDropdown(state),
+              16.spaceH,
+              LocaleKeys.viewWeeklyTrend.tr().appText(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-              16.spaceH,
-              "View weekly Trend".appText(color: Colors.black, fontSize: 20),
               20.spaceH,
-              "${state.childModel?.childName} Slept ${context.read<SleepSummaryCubit>().getTotalSleepStringForWeek()} well done"
-                  .appText(color: yellowTextColor4, fontSize: 20),
+              "${state.childModel?.childName} ${LocaleKeys.slept.tr()} ${context.read<SleepSummaryCubit>().getTotalSleepStringForWeek()} well done"
+                  .appText(
+                    color: yellowTextColor4,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
               20.spaceH,
-              "Bed Time : ${context.read<SleepSummaryCubit>().getAverageBedTimeString()}"
+              "${LocaleKeys.bedTime.tr()} : ${context.read<SleepSummaryCubit>().getAverageBedTimeString()}"
                   .appText(color: Colors.black, fontSize: 12),
-              "Wake Up : ${context.read<SleepSummaryCubit>().getAverageWakeTimeString()}"
+              "${LocaleKeys.wakeUp.tr()} : ${context.read<SleepSummaryCubit>().getAverageWakeTimeString()}"
                   .appText(color: Colors.black, fontSize: 12),
               if (state.selectedWeek != null)
                 AppBarGraph(
@@ -285,6 +226,78 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
           ),
         ],
       ).appPadding(left: 20),
+    );
+  }
+
+  Widget _weeklyDropdown(SleepSummaryState state) {
+    return SizedBox(
+      width: 170,
+      child: AppDropDownButton(
+        offset: Offset(0, 30.h),
+        dropDownWidget: (close) {
+          List<Widget> widgetsList = [];
+          for (int i = 0; i < state.weeks.length; i++) {
+            var week = state.weeks[i];
+            widgetsList.add(
+              BaseButton(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(),
+                    8.spaceH,
+                    week.getFormattedRange
+                        .appText(fontWeight: FontWeight.w500, fontSize: 14)
+                        .appPadding(left: 16),
+                    8.spaceH,
+                    Divider(height: 0.1, thickness: 0.5),
+                  ],
+                ),
+                onTap: () {
+                  close.call();
+                  context.read<SleepSummaryCubit>().changeProps(
+                    selectedWeek: week,
+                  );
+                },
+              ),
+            );
+          }
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 2,
+                  spreadRadius: 2,
+                  offset: Offset(1, 1),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widgetsList,
+            ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Colors.black),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              (state.selectedWeek?.getFormattedRange ?? "").appText(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              Icon(Icons.arrow_drop_down_outlined, color: Colors.black),
+            ],
+          ).padding(all: 4),
+        ),
+      ),
     );
   }
 }

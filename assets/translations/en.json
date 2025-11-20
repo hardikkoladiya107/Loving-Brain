@@ -327,7 +327,13 @@
   "moveToTomorrow": "Move to Tomorrow",
   "dailyParentingTip": "Daily Parenting Tip",
   "noSleepLogsYet": "No Sleep Logs Yet...",
-  "startByLoggingYourChildBedtime": "Start by logging your child's bedtime and wake time to monitor their rest."
+  "startByLoggingYourChildBedtime": "Start by logging your child's bedtime and wake time to monitor their rest.",
+  "viewWeeklyTrend": "View weekly Trend",
+  "bedTime": "Bed Time",
+  "wakeUp": "Wake Up",
+  "slept": "Slept",
+  "sleepSummaryFor": "Sleep Summary for"
+
 
 
 

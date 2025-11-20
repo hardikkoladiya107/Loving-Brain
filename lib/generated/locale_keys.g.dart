@@ -323,5 +323,10 @@ abstract class  LocaleKeys {
   static const dailyParentingTip = 'dailyParentingTip';
   static const noSleepLogsYet = 'noSleepLogsYet';
   static const startByLoggingYourChildBedtime = 'startByLoggingYourChildBedtime';
+  static const viewWeeklyTrend = 'viewWeeklyTrend';
+  static const bedTime = 'bedTime';
+  static const wakeUp = 'wakeUp';
+  static const slept = 'slept';
+  static const sleepSummaryFor = 'sleepSummaryFor';
 
 }

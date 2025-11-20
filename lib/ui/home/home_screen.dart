@@ -55,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 _fourthCardItem(state),
                 10.spaceH,
                 _fifthCardItem(),
-
                 // 10.spaceH,
                 // _reminder(),
               ],
@@ -70,7 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _topCard(HomeState state) {
     RoutineModel? routine = _getNextRoutine(state);
     return Container(
-      // height: 200.h,
       decoration: BoxDecoration(
         color: aiQuestionCardColor3,
         borderRadius: BorderRadius.circular(20),
@@ -131,23 +129,20 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               10.spaceW,
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // if (routine != null)
-                    LocaleKeys.nextSchedule.tr().appText(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                    ),
-
+                    if (routine != null)
+                      LocaleKeys.nextSchedule.tr().appText(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
                     if (routine != null)
                       DateFormat(
                         'hh:mm a',
                       ).format(routine.timeStamp!).appText(fontSize: 12),
-
                     if (routine != null)
                       routine.description!.appText(fontSize: 12),
                   ],
@@ -429,13 +424,9 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const SleepSummaryScreen()),
         );
-        // Navigator.of(context).push(
-        //   MaterialPageRoute(builder: (context) => const ReflectYourEmotions()),
-        // );
       },
       child: Container(
         height: 80.h,
-
         margin: EdgeInsets.symmetric(horizontal: 20),
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
@@ -453,7 +444,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   SizedBox(
                     width: (MediaQuery.of(context).size.width - 80) * 0.8,
-                    // height: 80,
                     child: Assets.images.imgSleepHomeBackground.image(
                       fit: BoxFit.fill,
                     ),
