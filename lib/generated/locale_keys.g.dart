@@ -325,8 +325,25 @@ abstract class  LocaleKeys {
   static const startByLoggingYourChildBedtime = 'startByLoggingYourChildBedtime';
   static const viewWeeklyTrend = 'viewWeeklyTrend';
   static const bedTime = 'bedTime';
+  static const averageBedTime = 'averageBedTime';
+  static const averageWakeUp = 'averageWakeUp';
   static const wakeUp = 'wakeUp';
   static const slept = 'slept';
   static const sleepSummaryFor = 'sleepSummaryFor';
+  static const addFirstSleepLog = 'addFirstSleepLog';
+  static const addSleepLog = 'addSleepLog';
+  static const selectDate = 'selectDate';
+  static const selectDateTime = 'selectDateTime';
+  static const wakeUpTime = 'wakeUpTime';
+  static const notes = 'notes';
+  static const enterAnyNotes = 'enterAnyNotes';
+  static const logMood = 'logMood';
+  static const yourStreak = 'yourStreak';
+  static const youreOnRoll = 'youreOnRoll';
+  static const currentStreak = 'currentStreak';
+  static const bestStreak = 'bestStreak';
+  static const nextMilestone = 'nextMilestone';
+  static const yourMoodHistory = 'yourMoodHistory';
+  static const donMissYourDailyMoodToKeepTheStreakGoing = 'donMissYourDailyMoodToKeepTheStreakGoing';
 
 }

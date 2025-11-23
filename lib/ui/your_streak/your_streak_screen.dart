@@ -1,11 +1,10 @@
-
-
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart';
-
 import '../../gen/assets.gen.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../daily_mood_log/daily_mood_log.dart';
 import '../widget/base_button.dart';
@@ -42,7 +41,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
                 40.h.spaceH,
                 _currentStreakCard(),
                 40.h.spaceH,
-                _logMood(text: 'Log Mood', onTap: () {}),
+                _logMood(text: LocaleKeys.logMood.tr(), onTap: () {}),
               ],
             ).appPadding(left: 20.w, right: 20.w),
           ],
@@ -65,7 +64,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           },
         ),
         12.w.spaceW,
-        "Your Streak !".appText(fontWeight: FontWeight.w700),
+        "${LocaleKeys.yourStreak.tr()} !".appText(fontWeight: FontWeight.w700),
         Spacer(),
         BaseButton(
           child: Icon(Icons.bar_chart),
@@ -90,7 +89,9 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          "You're on a roll, Sarah!".appText(fontWeight: FontWeight.w900),
+          "${LocaleKeys.youreOnRoll.tr()}, Sarah!".appText(
+            fontWeight: FontWeight.w900,
+          ),
         ],
       ).appPadding(top: 6.h, bottom: 6.h),
     );
@@ -112,7 +113,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              "Current Streak".appText(
+              LocaleKeys.currentStreak.tr().appText(
                 fontWeight: FontWeight.w700,
                 fontSize: 18,
               ),
@@ -129,7 +130,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              "Best streak: 12 days".appText(
+              "${LocaleKeys.bestStreak.tr()}: 12 days".appText(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
               ),
@@ -147,7 +148,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
                   children: [
                     Assets.icons.icFlagIcon.image(height: 24, width: 24),
                     10.w.spaceW,
-                    "Next Milestone".appText(
+                    LocaleKeys.nextMilestone.tr().appText(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -184,7 +185,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
                 children: [
                   Row(
                     children: [
-                      "Your Mood History".appText(
+                      LocaleKeys.yourMoodHistory.tr().appText(
                         fontWeight: FontWeight.w800,
                         fontSize: 14,
                       ),
@@ -195,7 +196,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
             ).appPadding(left: 16.w, right: 16.w),
           ),
           20.h.spaceH,
-          "Don't miss your daily mood check-in to keep the streak going!"
+          LocaleKeys.donMissYourDailyMoodToKeepTheStreakGoing.tr()
               .appText(fontWeight: FontWeight.w700, fontSize: 10)
               .appPadding(left: 20, right: 20),
         ],

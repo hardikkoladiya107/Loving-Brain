@@ -330,9 +330,27 @@
   "startByLoggingYourChildBedtime": "Start by logging your child's bedtime and wake time to monitor their rest.",
   "viewWeeklyTrend": "View weekly Trend",
   "bedTime": "Bed Time",
+  "averageBedTime": "Average Bed Time",
+  "averageWakeUp": "Average Wake Up",
   "wakeUp": "Wake Up",
   "slept": "Slept",
-  "sleepSummaryFor": "Sleep Summary for"
+  "sleepSummaryFor": "Sleep Summary for",
+  "addFirstSleepLog": "+ Add First Sleep Log",
+  "addSleepLog": "Add Sleep Log",
+  "selectDate": "Select Date",
+  "selectDateTime": "Select Date & time",
+  "wakeUpTime": "Wake-Up Time",
+  "notes": "Notes",
+  "enterAnyNotes": "Enter any notes...",
+  "logMood": "Log Mood",
+  "yourStreak": "Your Streak",
+  "youreOnRoll": "You're on a roll",
+  "currentStreak": "Current Streak",
+  "bestStreak": "Best streak",
+  "nextMilestone": "Next Milestone",
+  "yourMoodHistory": "Your Mood History",
+  "donMissYourDailyMoodToKeepTheStreakGoing": "Don't miss your daily mood check-in to keep the streak going!"
+
 
 
 

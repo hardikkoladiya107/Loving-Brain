@@ -8,7 +8,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/repo/sleep_log_repo.dart';
-import 'package:loving_brain/ui/sleep_summary/add_sleep_log.dart';
+import 'package:loving_brain/ui/sleep_summary/add_sleep_log_screen.dart';
 import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_cubit.dart';
 import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_state.dart';
 import 'package:loving_brain/ui/widget/app_bar_graph.dart';
@@ -85,10 +85,9 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
       onTap: () {
         Navigator.of(
           context,
-        ).push(MaterialPageRoute(builder: (context) => AddSleepLog()));
+        ).push(MaterialPageRoute(builder: (context) => AddSleepLogScreen()));
       },
       child: Container(
-        // width: MediaQuery.of(context).size.width * 0.6,
         decoration: BoxDecoration(
           color: blueColor2,
           borderRadius: BorderRadius.circular(20),
@@ -96,7 +95,8 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            "+ Add First Sleep Log"
+            LocaleKeys.addFirstSleepLog
+                .tr()
                 .appText(
                   color: Colors.white,
                   fontSize: 14,
@@ -179,28 +179,19 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                     fontWeight: FontWeight.w600,
                   ),
               20.spaceH,
-              "${LocaleKeys.bedTime.tr()} : ${context.read<SleepSummaryCubit>().getAverageBedTimeString()}"
-                  .appText(color: Colors.black, fontSize: 12),
-              "${LocaleKeys.wakeUp.tr()} : ${context.read<SleepSummaryCubit>().getAverageWakeTimeString()}"
-                  .appText(color: Colors.black, fontSize: 12),
-              if (state.selectedWeek != null)
-                AppBarGraph(
-                  height: 200,
-                  titles: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-
-                  values: SleepLogRepo.instance.getWeeklySleepHoursOffline(
-                    state.sleepLogs,
-                    state.selectedWeek!,
-                  ),
-                  interval: 4,
-                  showBest: false,
-                  showTitles: true,
-                  textColor: Colors.black,
-                  hrTitlesWidget: (val, meta) => val.toInt().toString().appText(
+              "${LocaleKeys.averageBedTime.tr()} : ${context.read<SleepSummaryCubit>().getAverageBedTimeString()}"
+                  .appText(
                     color: Colors.black,
                     fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
-                ),
+              "${LocaleKeys.averageWakeUp.tr()} : ${context.read<SleepSummaryCubit>().getAverageWakeTimeString()}"
+                  .appText(
+                    color: Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+              _graph(state),
             ],
           ),
         ),
@@ -298,6 +289,27 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
           ).padding(all: 4),
         ),
       ),
+    );
+  }
+
+  Widget _graph(SleepSummaryState state) {
+    return AppBarGraph(
+      height: 200.h,
+      titles: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+      values: SleepLogRepo.instance.getWeeklySleepHoursOffline(
+        state.sleepLogs,
+        state.selectedWeek!,
+      ),
+      interval: 4,
+      showBest: false,
+      showTitles: true,
+      textColor: Colors.black,
+      hrTitlesWidget: (val, meta) {
+        return val.toInt().toString().appText(
+          color: Colors.black,
+          fontSize: 12,
+        );
+      },
     );
   }
 }

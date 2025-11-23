@@ -45,11 +45,15 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     String? titleError,
     String? descriptionError,
     List<String>? documentsList,
-    DateTime? date,
-    DateTime? bedTime,
-    DateTime? wakeTime,
+
+    DateTime? selectedDate,
+    DateTime? selectedBedTime,
+    DateTime? selectedWakeTime,
     String? notes,
-    String? msg,
+    String? bedTimeError,
+    String? selectedDateError,
+    String? wakeUpTimeError,
+    String? notesError,
   }) {
     emit(
       state.copyWith(
@@ -61,14 +65,17 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
         getSleepLogsApiResult:
             getSleepLogsApiResult ?? ApiResultStatus.initial(),
         childList: children ?? state.childList,
-        date: date ?? state.date,
-        bedTime: bedTime ?? state.bedTime,
-        wakeTime: wakeTime ?? state.wakeTime,
-        notes: notes ?? state.notes,
         sleepLogs: sleepLogs ?? state.sleepLogs,
         selectedWeek: selectedWeek ?? state.selectedWeek,
         weeks: weeks ?? state.weeks,
-        msg: msg,
+        selectedDate: selectedDate ?? state.selectedDate,
+        selectedBedTime: selectedBedTime ?? state.selectedBedTime,
+        selectedWakeTime: selectedWakeTime ?? state.selectedWakeTime,
+        notes: notes ?? state.notes,
+        bedTimeError: bedTimeError ?? state.bedTimeError,
+        selectedDateError: selectedDateError ?? state.selectedDateError,
+        wakeUpTimeError: wakeUpTimeError ?? state.wakeUpTimeError,
+        notesError: notesError ?? state.notesError,
       ),
     );
   }
@@ -130,46 +137,64 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     }
   }
 
-  void clearSleepLogForm() {
-    emit(state.copyWith(date: null, bedTime: null, wakeTime: null, notes: ""));
+  bool _validateSleepLog() {
+    if (state.selectedDate == null ||
+        state.selectedBedTime == null ||
+        state.selectedWakeTime == null ||
+        (state.notes ?? "").isEmpty) {
+      if (state.selectedDate == null) {
+        changeProps(selectedDateError: "Please select Date");
+      } else {
+        changeProps(selectedDateError: "");
+      }
+
+      if (state.selectedBedTime == null) {
+        changeProps(bedTimeError: "Please select bed time");
+      } else {
+        changeProps(bedTimeError: "");
+      }
+
+      if (state.selectedWakeTime == null) {
+        changeProps(wakeUpTimeError: "Please select bed time");
+      } else {
+        changeProps(wakeUpTimeError: "");
+      }
+
+      if ((state.notes ?? "").isEmpty) {
+        changeProps(notesError: "Please select notes");
+      } else {
+        changeProps(notesError: "");
+      }
+    }
+    changeProps(
+      notesError: "",
+      wakeUpTimeError: "",
+      bedTimeError: "",
+      selectedDateError: "",
+    );
+    return false;
   }
 
   Future<void> addSleepLog() async {
-    changeProps(msg: "");
-    if (state.childModel == null) {
-      changeProps(msg: "No child selected");
-
-      return;
-    }
-    if (state.date == null) {
-      changeProps(msg: "Please Select Date");
-
-      return;
-    }
-    if (state.bedTime == null) {
-      changeProps(msg: "Please Select Bed Time");
-      return;
-    }
-    if (state.wakeTime == null) {
-      changeProps(msg: "Please Select Wake-up Time");
-      return;
-    }
-    changeProps(addSleepLogApiResult: ApiResultStatus.loading());
-    try {
-      ApiResultStatus apiResultStatus = await SleepLogRepo.instance.addSleepLog(
-        state.childModel!,
-        SleepLogModel(
-          id: "",
-          ref: null,
-          date: state.date!,
-          bedTime: state.bedTime!,
-          wakeTime: state.wakeTime!,
-          notes: state.notes,
-        ),
-      );
-      changeProps(addSleepLogApiResult: apiResultStatus);
-    } catch (e) {
-      changeProps(addSleepLogApiResult: ApiResultStatus.initial());
+    if (_validateSleepLog()) {
+      changeProps(addSleepLogApiResult: ApiResultStatus.loading());
+      try {
+        ApiResultStatus apiResultStatus = await SleepLogRepo.instance
+            .addSleepLog(
+              state.childModel!,
+              SleepLogModel(
+                id: "",
+                ref: null,
+                date: state.selectedDate!,
+                bedTime: state.selectedBedTime!,
+                wakeTime: state.selectedWakeTime!,
+                notes: state.notes,
+              ),
+            );
+        changeProps(addSleepLogApiResult: apiResultStatus);
+      } catch (e) {
+        changeProps(addSleepLogApiResult: ApiResultStatus.initial());
+      }
     }
   }
 

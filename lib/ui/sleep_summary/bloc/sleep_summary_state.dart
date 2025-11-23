@@ -11,13 +11,16 @@ part 'sleep_summary_state.freezed.dart';
 @freezed
 abstract class SleepSummaryState with _$SleepSummaryState {
   const factory SleepSummaryState({
+    DateTime? selectedDate,
+    DateTime? selectedBedTime,
+    DateTime? selectedWakeTime,
+    @Default("") String? notes,
+    @Default("") String? bedTimeError,
+    @Default("") String? selectedDateError,
+    @Default("") String? wakeUpTimeError,
+    @Default("") String? notesError,
     UserModel? userModel,
     ChildModel? childModel,
-    DateTime? date,
-    DateTime? bedTime,
-    DateTime? wakeTime,
-    String? notes,
-    String? msg,
     WeekRange? selectedWeek,
     @Default([]) List<ChildModel> childList,
     @Default([]) List<WeekRange> weeks,
@@ -26,7 +29,6 @@ abstract class SleepSummaryState with _$SleepSummaryState {
     @Default(ApiResultStatus.initial()) ApiResultStatus childrenListApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus addSleepLogApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus getSleepLogsApiResult,
-
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
   }) = _SleepSummaryState;
 }

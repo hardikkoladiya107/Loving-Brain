@@ -1,0 +1,300 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/extra_methods.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_cubit.dart';
+import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_state.dart';
+import 'package:loving_brain/ui/widget/app_text_field.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
+
+import '../../main.dart';
+
+class AddSleepLogScreen extends StatefulWidget {
+  const AddSleepLogScreen({super.key});
+
+  @override
+  State<AddSleepLogScreen> createState() => _AddSleepLogScreenState();
+}
+
+class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<SleepSummaryCubit>().init();
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<SleepSummaryCubit, SleepSummaryState>(
+      listener: (context, state) {
+        state.addSleepLogApiResult.whenOrNull(
+          initial: () {
+            EasyLoading.dismiss();
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+            Navigator.pop(context);
+            context.read<SleepSummaryCubit>().reload();
+          },
+        );
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: sleepSummaryBackgroundColor,
+          body: Stack(
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          60.spaceH,
+                          Assets.images.imgSleepMoon.image(width: 120),
+                          16.spaceH,
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: aiQuestionCardColor1,
+                            ),
+                            margin: EdgeInsets.all(12),
+                            padding: EdgeInsets.all(12),
+                            child: Column(
+                              children: [
+                                12.spaceH,
+                                LocaleKeys.addSleepLog.tr().appText(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                16.spaceH,
+                                _selectDate(state),
+                                16.spaceH,
+                                _bedTimeWakeUpTime(state),
+                                16.spaceH,
+                                _notes(),
+                                12.spaceH,
+                                _saveButton(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              _appBar(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _saveButton() {
+    return BaseButton(
+      onTap: () {
+        context.read<SleepSummaryCubit>().addSleepLog();
+      },
+      child: Container(
+        height: 40.h,
+        decoration: BoxDecoration(
+          color: blueColor2,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Center(
+          child: LocaleKeys.save.tr().appText(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _appBar() {
+    return Positioned(
+      top: 60,
+      left: 16,
+      child: Row(
+        children: [
+          BaseButton(
+            child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ).appPadding(left: 20),
+    );
+  }
+
+  Future<DateTime?> _showDatePicker() async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1971),
+      lastDate: DateTime(2030),
+    );
+    if (date != null) {
+      return date;
+    }
+  }
+
+  Future<DateTime?> pickDateTime(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1971),
+      lastDate: DateTime(2030),
+      initialDate: DateTime.now(),
+    );
+    if (pickedDate == null) return null;
+    if (navigatorKey.currentContext != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: navigatorKey.currentContext!,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime == null) return null;
+      return DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+    }
+    return null;
+  }
+
+  Widget _dateField({required String hint, String? value, String? title}) {
+    return Column(
+      children: [
+        if (title != null)
+          Column(
+            children: [
+              Row(
+                children: [
+                  (title ?? "").appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ),
+              6.spaceH,
+            ],
+          ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          height: 55,
+          child: Row(
+            children: [
+              10.spaceW,
+              ((value ?? "").isNotEmpty ? value : hint).toString().appText(
+                color: (value ?? "").isNotEmpty ? Colors.black : Colors.grey,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _selectDate(SleepSummaryState state) {
+    return BaseButton(
+      onTap: () async {
+        DateTime? date = await _showDatePicker();
+        if (navigatorKey.currentContext != null) {
+          navigatorKey.currentContext!.read<SleepSummaryCubit>().changeProps(
+            selectedDate: date,
+          );
+        }
+      },
+      child: _dateField(
+        title: LocaleKeys.date.tr(),
+        value: state.selectedDate != null
+            ? formatDate(state.selectedDate!)
+            : "",
+        hint: LocaleKeys.selectDate.tr(),
+      ),
+    );
+  }
+
+  Widget _bedTimeWakeUpTime(SleepSummaryState state) {
+    return Row(
+      children: [
+        Expanded(
+          child: BaseButton(
+            onTap: () async {
+              DateTime? date = await pickDateTime(context);
+              if (navigatorKey.currentContext != null) {
+                navigatorKey.currentContext!
+                    .read<SleepSummaryCubit>()
+                    .changeProps(selectedBedTime: date);
+              }
+            },
+            child: _dateField(
+              title: LocaleKeys.bedTime.tr(),
+              value: state.selectedBedTime != null
+                  ? coParentScheduleTime(state.selectedBedTime!)
+                  : "",
+              hint: LocaleKeys.selectDateTime.tr(),
+            ),
+          ),
+        ),
+        6.spaceW,
+        Expanded(
+          child: BaseButton(
+            onTap: () async {
+              DateTime? date = await pickDateTime(context);
+              if (navigatorKey.currentContext != null) {
+                navigatorKey.currentContext!
+                    .read<SleepSummaryCubit>()
+                    .changeProps(selectedWakeTime: date);
+              }
+            },
+            child: _dateField(
+              title: LocaleKeys.wakeUpTime.tr(),
+              value: state.selectedWakeTime != null
+                  ? coParentScheduleTime(state.selectedWakeTime!)
+                  : "",
+              hint: LocaleKeys.selectDateTime.tr(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _notes() {
+    return AppTextField(
+      title: LocaleKeys.notes.tr(),
+      hint: LocaleKeys.enterAnyNotes.tr(),
+      contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      onChanged: (value) {
+        context.read<SleepSummaryCubit>().changeProps(notes: value);
+      },
+      maxLines: 3,
+    );
+  }
+}

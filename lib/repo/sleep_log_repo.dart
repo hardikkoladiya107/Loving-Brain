@@ -19,10 +19,10 @@ class SleepLogRepo {
   static SleepLogRepo get instance => _instance;
 
   var childrenCollection = FirebaseFirestore.instance.collection('children');
+
   CollectionReference _childSleepCollection(String childId) =>
       childrenCollection.doc(childId).collection('sleep_logs');
 
-  // ---------- Add ----------
   Future<ApiResultStatus> addSleepLog(
     ChildModel child,
     SleepLogModel log,
@@ -42,7 +42,7 @@ class SleepLogRepo {
     }
   }
 
-  // ---------- Edit ----------
+
   Future<ApiResultStatus<void>> editSleepLog(
     ChildModel child,
     SleepLogModel log,
