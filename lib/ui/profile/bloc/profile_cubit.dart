@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:loving_brain/model/user_model.dart';
@@ -10,6 +13,7 @@ import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../model/api_result_status.dart';
+import '../../../repo/ai_repo.dart';
 import '../../../repo/auth_repo.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -72,20 +76,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     profileSubscription?.cancel();
   }
 
-  updateGentleReminder() {
+  void updateGentleReminder() {
     UserRepo.instance.updateGentleReminder();
-  }
-
-  updateScheduleReminder() {
-    UserRepo.instance.updateScheduleReminder();
-  }
-
-  updateDailyEmotion() {
-    UserRepo.instance.updateDailyEmotion();
-  }
-
-  updateTodaysPlayIdea() {
-    UserRepo.instance.updateTodaysPlayIdea();
   }
 
   void shareApp() {
@@ -106,6 +98,32 @@ class ProfileCubit extends Cubit<ProfileState> {
       showSnackBar(
         message: "No app available on store",
         type: SnackBarType.ERROR,
+      );
+    }
+  }
+
+  void selectImage(String path) {
+    uploadToFirebaseStorage(path);
+  }
+
+  Future<void> uploadToFirebaseStorage(String? imageLocalPath) async {
+    if (imageLocalPath != null) {
+      var uploadedFilePath = await UserRepo.instance
+          .uploadFileToFirebaseStorage(
+            file: File(imageLocalPath),
+            referenceId: state.userModel?.uid,
+          );
+      uploadedFilePath.whenOrNull(
+        data: (data) async {
+          if (data is TaskSnapshot) {
+            data.ref.fullPath;
+            var imageNetworkUrl = await data.ref.getDownloadURL();
+            UserRepo.instance.updateUserToFireStore(
+              request: {"profile_image": imageNetworkUrl},
+            );
+          }
+        },
+        error: (error) {},
       );
     }
   }

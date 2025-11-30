@@ -3,11 +3,14 @@ import 'dart:io' as io;
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 
+import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
+import '../other/extra_methods.dart';
 
 class UserRepo {
   UserRepo._();
@@ -23,6 +26,7 @@ class UserRepo {
   }
 
   static UserRepo get instance => _instance;
+
   Future<UserModel?> getUserFromEmail({required String email}) async {
     try {
       final querySnapshot = await userCollection
@@ -122,87 +126,6 @@ class UserRepo {
     }
   }
 
-  Future<void> updateScheduleReminder() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    // Get user from local preferences
-    final localUser = preferences.getUserModel();
-    if (localUser == null) {
-      print("⚠️ No local user found");
-      return;
-    }
-
-    // ✅ Update locally first
-    final updatedUser = localUser.copyWith(
-      scheduleReminder: !(localUser.scheduleReminder ?? false),
-    );
-    await preferences.saveUserModel(updatedUser);
-
-    // ✅ Then update Firestore in background
-    try {
-      await userCollection.doc(localUser.uid).update({
-        'schedule_reminder': updatedUser.scheduleReminder,
-      });
-    } catch (e) {
-      print("⚠️ Failed to update to Firestore: $e");
-    }
-  }
-
-  Future<void> updateDailyEmotion() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    // Get user from local preferences
-    final localUser = preferences.getUserModel();
-    if (localUser == null) {
-      print("⚠️ No local user found");
-      return;
-    }
-
-    // ✅ Update locally first
-    final updatedUser = localUser.copyWith(
-      dailyEmotionCheck: !(localUser.dailyEmotionCheck ?? false),
-    );
-    await preferences.saveUserModel(updatedUser);
-
-    // ✅ Then update Firestore in background
-    try {
-      await userCollection.doc(localUser.uid).update({
-        'daily_emotion_check': updatedUser.dailyEmotionCheck,
-      });
-    } catch (e) {
-      print("⚠️ Failed to update to Firestore: $e");
-    }
-  }
-
-  Future<void> updateTodaysPlayIdea() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    // Get user from local preferences
-    final localUser = preferences.getUserModel();
-    if (localUser == null) {
-      print("⚠️ No local user found");
-      return;
-    }
-
-    // ✅ Update locally first
-    final updatedUser = localUser.copyWith(
-      todaysPlayIdea: !(localUser.todaysPlayIdea ?? false),
-    );
-    await preferences.saveUserModel(updatedUser);
-
-    // ✅ Then update Firestore in background
-    try {
-      await userCollection.doc(localUser.uid).update({
-        'todays_play_idea': updatedUser.todaysPlayIdea,
-      });
-    } catch (e) {
-      print("⚠️ Failed to update to Firestore: $e");
-    }
-  }
-
   Future<String> getTipOfTheDay() async {
     final today = DateTime(
       DateTime.now().year,
@@ -249,7 +172,6 @@ class UserRepo {
     return randomDoc['tip'];
   }
 
-
   Future<ApiResultStatus> uploadFileToFirebaseStorage({
     required File file,
     required String? referenceId,
@@ -268,6 +190,27 @@ class UserRepo {
       return ApiResultStatus.data(data: await Future.value(uploadTask));
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<ApiResultStatus> updateUserToFireStore({
+    String? uId,
+    required Map<String, dynamic> request,
+  }) async {
+    try {
+      var tUid = uId ?? preferences.getUserModel()?.uid ?? "";
+      if (tUid.isNotEmpty) {
+        await userCollection.doc(tUid).update(request);
+        return ApiResultStatus.data(data: tUid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
     }

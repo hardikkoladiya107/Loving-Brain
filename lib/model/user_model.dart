@@ -29,6 +29,7 @@ class UserModel {
     bool? dailyEmotionCheck,
     bool? todaysPlayIdea,
     bool? scheduleReminder,
+    String? profileImage,
   }) {
     _uid = uid;
     _platform = platform;
@@ -57,6 +58,7 @@ class UserModel {
     _dailyEmotionCheck = dailyEmotionCheck;
     _todaysPlayIdea = todaysPlayIdea;
     _scheduleReminder = scheduleReminder;
+    _profileImage = profileImage;
   }
 
   UserModel.fromJson(
@@ -83,6 +85,7 @@ class UserModel {
     _dailyEmotionCheck = jsonObject['daily_emotion_check'];
     _todaysPlayIdea = jsonObject['todays_play_idea'];
     _scheduleReminder = jsonObject['schedule_reminder'];
+    _profileImage = jsonObject['profile_image'];
 
     try {
       if (fromConvert) {
@@ -224,6 +227,7 @@ class UserModel {
   bool? _dailyEmotionCheck;
   bool? _todaysPlayIdea;
   bool? _scheduleReminder;
+  String? _profileImage;
 
   UserModel copyWith({
     String? uid,
@@ -253,6 +257,7 @@ class UserModel {
     bool? dailyEmotionCheck,
     bool? todaysPlayIdea,
     bool? scheduleReminder,
+    String? profileImage,
   }) {
     return UserModel(
       uid: uid ?? _uid,
@@ -283,6 +288,7 @@ class UserModel {
       dailyEmotionCheck: dailyEmotionCheck ?? _dailyEmotionCheck,
       todaysPlayIdea: todaysPlayIdea ?? _todaysPlayIdea,
       scheduleReminder: scheduleReminder ?? _scheduleReminder,
+      profileImage: profileImage ?? _profileImage,
     );
   }
 
@@ -332,6 +338,7 @@ class UserModel {
   bool? get dailyEmotionCheck => _dailyEmotionCheck;
   bool? get todaysPlayIdea => _todaysPlayIdea;
   bool? get scheduleReminder => _scheduleReminder;
+  String? get profileImage => _profileImage;
 
   List<DocumentReference>? get children => _children;
 
@@ -365,6 +372,7 @@ class UserModel {
     map['schedule_reminder'] = _scheduleReminder;
     map['children'] = _children?.map((e) => e.path).toList();
     map['default_child'] = _defaultChild?.path;
+    map['profile_image'] = _profileImage;
 
     try {
       if (forConvert) {

@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/repo/auth_repo.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
@@ -52,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Column(
                       children: [
-                        _profileImageWidget(),
+                        _profileImageWidget(state.userModel),
                         10.h.spaceH,
                         (state.userModel?.parentName ?? "").appText(
                           color: Colors.black,
@@ -460,11 +467,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Widget _profileImageWidget() {
+  Widget _profileImageWidget(UserModel? userModel) {
     return Stack(
       children: [
         AppImage(
-          imageUrl: 'https://picsum.photos/200/300',
+          imageUrl: (userModel?.profileImage ?? "").isNotEmpty
+              ? userModel!.profileImage!
+              : 'https://picsum.photos/200/300',
           height: 100.h,
           width: 100.h,
           shape: BoxShape.circle,
@@ -474,7 +483,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           right: 0,
           child: BaseButton(
             onTap: () {
-
+              _showImagePickerDropdown();
             },
             child: Container(
               decoration: BoxDecoration(
@@ -491,5 +500,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ],
     );
+  }
+
+  void _showImagePickerDropdown() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BaseButton(
+              child: Row(
+                children: [
+                  12.spaceW,
+                  Icon(Icons.camera_alt_outlined),
+                  12.spaceW,
+                  LocaleKeys.pickFromCamera.tr().appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ).padding(top: 12, bottom: 12),
+              onTap: () async {
+                Navigator.of(context).pop();
+                _chooseImage(ImageSource.camera);
+              },
+            ),
+            BaseButton(
+              child: Row(
+                children: [
+                  12.spaceW,
+                  Icon(Icons.photo_size_select_actual_outlined),
+                  12.spaceW,
+                  LocaleKeys.pickGallery.tr().appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ],
+              ).padding(top: 12, bottom: 12),
+              onTap: () async {
+                Navigator.of(context).pop();
+                _chooseImage(ImageSource.gallery);
+              },
+            ),
+            20.spaceH,
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _chooseImage(ImageSource camera) async {
+    final XFile? photo = await ImagePicker().pickImage(source: camera);
+    if (photo != null && navigatorKey.currentContext != null) {
+      navigatorKey.currentContext!.read<ProfileCubit>().selectImage(
+        photo.path,
+      );
+    }
   }
 }
