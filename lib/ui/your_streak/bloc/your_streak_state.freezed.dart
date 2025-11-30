@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$YourStreakState {
 
- String get message;
+ UserModel? get userModel;
 /// Create a copy of YourStreakState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $YourStreakStateCopyWith<YourStreakState> get copyWith => _$YourStreakStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is YourStreakState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is YourStreakState&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,userModel);
 
 @override
 String toString() {
-  return 'YourStreakState(message: $message)';
+  return 'YourStreakState(userModel: $userModel)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $YourStreakStateCopyWith<$Res>  {
   factory $YourStreakStateCopyWith(YourStreakState value, $Res Function(YourStreakState) _then) = _$YourStreakStateCopyWithImpl;
 @useResult
 $Res call({
- String message
+ UserModel? userModel
 });
 
 
@@ -62,10 +62,10 @@ class _$YourStreakStateCopyWithImpl<$Res>
 
 /// Create a copy of YourStreakState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,
   ));
 }
 
@@ -150,10 +150,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _YourStreakState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.userModel);case _:
   return orElse();
 
 }
@@ -171,10 +171,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel)  $default,) {final _that = this;
 switch (_that) {
 case _YourStreakState():
-return $default(_that.message);case _:
+return $default(_that.userModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +191,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel)?  $default,) {final _that = this;
 switch (_that) {
 case _YourStreakState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.userModel);case _:
   return null;
 
 }
@@ -206,10 +206,10 @@ return $default(_that.message);case _:
 
 
 class _YourStreakState implements YourStreakState {
-  const _YourStreakState({this.message = ""});
+  const _YourStreakState({this.userModel});
   
 
-@override@JsonKey() final  String message;
+@override final  UserModel? userModel;
 
 /// Create a copy of YourStreakState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +221,16 @@ _$YourStreakStateCopyWith<_YourStreakState> get copyWith => __$YourStreakStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _YourStreakState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _YourStreakState&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,userModel);
 
 @override
 String toString() {
-  return 'YourStreakState(message: $message)';
+  return 'YourStreakState(userModel: $userModel)';
 }
 
 
@@ -241,7 +241,7 @@ abstract mixin class _$YourStreakStateCopyWith<$Res> implements $YourStreakState
   factory _$YourStreakStateCopyWith(_YourStreakState value, $Res Function(_YourStreakState) _then) = __$YourStreakStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ UserModel? userModel
 });
 
 
@@ -258,10 +258,10 @@ class __$YourStreakStateCopyWithImpl<$Res>
 
 /// Create a copy of YourStreakState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userModel = freezed,}) {
   return _then(_YourStreakState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as UserModel?,
   ));
 }
 

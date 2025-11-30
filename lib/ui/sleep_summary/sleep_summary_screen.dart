@@ -14,7 +14,6 @@ import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_state.dart';
 import 'package:loving_brain/ui/widget/app_bar_graph.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
-
 import '../../generated/locale_keys.g.dart';
 
 class SleepSummaryScreen extends StatefulWidget {

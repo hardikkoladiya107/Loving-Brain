@@ -19,14 +19,14 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
 
   void init() async {
     emit(SleepSummaryState(userModel: preferences.getUserModel()));
-    await loadChildren();
-    await fetchChildFromFirestore();
-    await loadSleepLogs();
+    await _loadChildren();
+    await _fetchChildFromFirestore();
+    await _loadSleepLogs();
     await _selectInitialWeek();
   }
 
   Future<void> reload() async {
-    await loadSleepLogs();
+    await _loadSleepLogs();
     await _selectInitialWeek();
   }
 
@@ -45,7 +45,6 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     String? titleError,
     String? descriptionError,
     List<String>? documentsList,
-
     DateTime? selectedDate,
     DateTime? selectedBedTime,
     DateTime? selectedWakeTime,
@@ -80,7 +79,7 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     );
   }
 
-  Future<void> fetchChildFromFirestore({DocumentReference? refVal}) async {
+  Future<void> _fetchChildFromFirestore({DocumentReference? refVal}) async {
     try {
       DocumentReference ref = refVal ?? state.userModel!.defaultChild!;
       final snapshot = await ref.get();
@@ -113,9 +112,12 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     return true;
   }
 
-  Future<void> loadChildren() async {
-    changeProps(childrenListApiResult: ApiResultStatus.loading(), children: []);
+  Future<void> _loadChildren() async {
     if (state.userModel != null) {
+      changeProps(
+        childrenListApiResult: ApiResultStatus.loading(),
+        children: [],
+      );
       ApiResultStatus childrenListApiResult = await ChildRepo.instance
           .getAllChildren(state.userModel!);
       childrenListApiResult.whenOrNull(
@@ -165,6 +167,7 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
       } else {
         changeProps(notesError: "");
       }
+      return false;
     }
     changeProps(
       notesError: "",
@@ -172,7 +175,7 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
       bedTimeError: "",
       selectedDateError: "",
     );
-    return false;
+    return true;
   }
 
   Future<void> addSleepLog() async {
@@ -198,17 +201,18 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     }
   }
 
-  Future<void> loadSleepLogs() async {
-    changeProps(getSleepLogsApiResult: ApiResultStatus.loading());
-    ApiResultStatus apiResultStatus = await SleepLogRepo.instance
-        .getSleepLogsForChild(state.childModel!);
-
-    changeProps(getSleepLogsApiResult: apiResultStatus);
-    apiResultStatus.whenOrNull(
-      data: (data) {
-        changeProps(sleepLogs: data);
-      },
-    );
+  Future<void> _loadSleepLogs() async {
+    if (state.childModel != null) {
+      changeProps(getSleepLogsApiResult: ApiResultStatus.loading());
+      ApiResultStatus apiResultStatus = await SleepLogRepo.instance
+          .getSleepLogsForChild(state.childModel!);
+      changeProps(getSleepLogsApiResult: apiResultStatus);
+      apiResultStatus.whenOrNull(
+        data: (data) {
+          changeProps(sleepLogs: data);
+        },
+      );
+    }
   }
 
   Future<void> _selectInitialWeek() async {

@@ -52,12 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Column(
                       children: [
-                        AppImage(
-                          imageUrl: 'https://picsum.photos/200/300',
-                          height: 100.h,
-                          width: 100.h,
-                          shape: BoxShape.circle,
-                        ),
+                        _profileImageWidget(),
                         10.h.spaceH,
                         (state.userModel?.parentName ?? "").appText(
                           color: Colors.black,
@@ -87,38 +82,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .appText(fontWeight: FontWeight.w800)
                     .appPadding(left: 20.w),
                 10.spaceH,
-                _settingItem(
-                  title: LocaleKeys.dailyEmotionCheckIn.tr(),
-                  description: LocaleKeys.darkLight.tr(),
-                  icon: Assets.icons.icDailyEmotionCheckIcon,
-                  iconColor: dailyEmotionCheckIconColor,
-                  showCheckBox: true,
-                  check: state.userModel?.dailyEmotionCheck ?? false,
-                  onChanged: (value) {
-                    context.read<ProfileCubit>().updateDailyEmotion();
-                  },
-                ),
-                _settingItem(
-                  title: LocaleKeys.todayPlayIdea.tr(),
-                  showCheckBox: true,
-                  icon: Assets.icons.icTodaysPlayIdeaIcon,
-                  iconColor: todayPlayIdeaIconColor,
-                  check: state.userModel?.todaysPlayIdea ?? false,
-                  onChanged: (value) {
-                    context.read<ProfileCubit>().updateTodaysPlayIdea();
-                  },
-                ),
-                _settingItem(
-                  title: LocaleKeys.scheduleReminders.tr(),
-                  description: LocaleKeys.eventsFromCoParentingCalendar.tr(),
-                  showCheckBox: true,
-                  icon: Assets.icons.icScheduleReminderIcon,
-                  iconColor: scheduleReminderIconColor,
-                  check: state.userModel?.scheduleReminder ?? false,
-                  onChanged: (value) {
-                    context.read<ProfileCubit>().updateScheduleReminder();
-                  },
-                ),
+                // _settingItem(
+                //   title: LocaleKeys.dailyEmotionCheckIn.tr(),
+                //   description: LocaleKeys.darkLight.tr(),
+                //   icon: Assets.icons.icDailyEmotionCheckIcon,
+                //   iconColor: dailyEmotionCheckIconColor,
+                //   showCheckBox: true,
+                //   check: state.userModel?.dailyEmotionCheck ?? false,
+                //   onChanged: (value) {
+                //     context.read<ProfileCubit>().updateDailyEmotion();
+                //   },
+                // ),
+                // _settingItem(
+                //   title: LocaleKeys.todayPlayIdea.tr(),
+                //   showCheckBox: true,
+                //   icon: Assets.icons.icTodaysPlayIdeaIcon,
+                //   iconColor: todayPlayIdeaIconColor,
+                //   check: state.userModel?.todaysPlayIdea ?? false,
+                //   onChanged: (value) {
+                //     context.read<ProfileCubit>().updateTodaysPlayIdea();
+                //   },
+                // ),
+                // _settingItem(
+                //   title: LocaleKeys.scheduleReminders.tr(),
+                //   description: LocaleKeys.eventsFromCoParentingCalendar.tr(),
+                //   showCheckBox: true,
+                //   icon: Assets.icons.icScheduleReminderIcon,
+                //   iconColor: scheduleReminderIconColor,
+                //   check: state.userModel?.scheduleReminder ?? false,
+                //   onChanged: (value) {
+                //     context.read<ProfileCubit>().updateScheduleReminder();
+                //   },
+                // ),
                 _settingItem(
                   title: LocaleKeys.subscription.tr(),
                   icon: Assets.icons.icCrownIcon,
@@ -463,5 +458,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       navigatorKey.currentContext!.read<ProfileCubit>().dispose();
     }
     super.dispose();
+  }
+
+  Widget _profileImageWidget() {
+    return Stack(
+      children: [
+        AppImage(
+          imageUrl: 'https://picsum.photos/200/300',
+          height: 100.h,
+          width: 100.h,
+          shape: BoxShape.circle,
+        ),
+        Container(height: 20, width: 20, child: Icon(Icons.edit)),
+      ],
+    );
   }
 }

@@ -113,6 +113,10 @@ class $AssetsIconsGen {
   AssetGenImage get icEmailPrefixIcon =>
       const AssetGenImage('assets/icons/ic_email_prefix_icon.png');
 
+  /// File path: assets/icons/ic_family_feel_meter.png
+  AssetGenImage get icFamilyFeelMeter =>
+      const AssetGenImage('assets/icons/ic_family_feel_meter.png');
+
   /// File path: assets/icons/ic_feed_icon.png
   AssetGenImage get icFeedIcon =>
       const AssetGenImage('assets/icons/ic_feed_icon.png');
@@ -388,6 +392,7 @@ class $AssetsIconsGen {
     icDeclineIcon,
     icDiaperChangeBreath,
     icEmailPrefixIcon,
+    icFamilyFeelMeter,
     icFeedIcon,
     icFlagIcon,
     icForwardArrow,

@@ -20,6 +20,7 @@ import '../base_screen/bloc/base_cubit.dart';
 import '../choose_your_calm/choose_your_calm_screen.dart';
 import '../new_behavior/new_behavior_screen.dart';
 import '../play_and_connect/play_and_connect_screen.dart';
+import '../reflect_your_emotions/reflect_your_emotions.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -55,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _fourthCardItem(state),
                 10.spaceH,
                 _fifthCardItem(),
+                _sixthCardItem(),
+                20.spaceH,
                 // 10.spaceH,
                 // _reminder(),
               ],
@@ -99,27 +102,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               10.spaceW,
-              BaseButton(
-                child: Icon(CupertinoIcons.bell),
-                onTap: () async {
-                  // var response = await CoParentRepo
-                  //     .instance
-                  //     .coParentInvitationCollection
-                  //     .doc("nvnLhKZrz7Yp00Kimc6u")
-                  //     .get();
-                  // var invitationModel = InvitationModel.fromJson(
-                  //   response.data(),
-                  // );
-                  // DeepLinkManager.instance.showSuccessMessage(
-                  //   ApiResultStatus.data(data: invitationModel),
-                  // );
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationScreen(),
-                    ),
-                  );
-                },
-              ),
+              // BaseButton(
+              //   child: Icon(CupertinoIcons.bell),
+              //   onTap: () async {
+              //     // var response = await CoParentRepo
+              //     //     .instance
+              //     //     .coParentInvitationCollection
+              //     //     .doc("nvnLhKZrz7Yp00Kimc6u")
+              //     //     .get();
+              //     // var invitationModel = InvitationModel.fromJson(
+              //     //   response.data(),
+              //     // );
+              //     // DeepLinkManager.instance.showSuccessMessage(
+              //     //   ApiResultStatus.data(data: invitationModel),
+              //     // );
+              //     Navigator.of(context).push(
+              //       MaterialPageRoute(
+              //         builder: (context) => const NotificationScreen(),
+              //       ),
+              //     );
+              //   },
+              // ),
 
               10.spaceW,
             ],
@@ -588,5 +591,56 @@ class _HomeScreenState extends State<HomeScreen> {
     // Sort and return nearest
     futureTimes.sort((a, b) => a.compareTo(b));
     return futureTimes.first;
+  }
+
+  Widget _sixthCardItem() {
+    return BaseButton(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ReflectYourEmotions(),
+          ),
+        );
+      },
+      child: Stack(
+        children: [
+          Container(
+            height: 80.h,
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: cardColor2,
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: "Family Feel Meter".appText(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ).appPadding(top: 20),
+
+          Positioned(
+            top: -0,
+            left: 30,
+            child: Row(
+              children: [
+                SizedBox(
+                  child: Assets.icons.icFamilyFeelMeter.image(
+                    fit: BoxFit.fill,
+                    height: 90.r,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
