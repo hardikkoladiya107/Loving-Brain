@@ -469,7 +469,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: 100.h,
           shape: BoxShape.circle,
         ),
-        Container(height: 20, width: 20, child: Icon(Icons.edit)),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: BaseButton(
+            onTap: () {
+
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.edit,
+                color: Colors.white,
+                size: 14,
+              ).appPadding(all: 10),
+            ),
+          ),
+        ),
       ],
     );
   }
