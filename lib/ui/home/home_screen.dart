@@ -248,14 +248,27 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: [
         8.spaceW,
+        // Expanded(
+        //   child: _secondCardItem(
+        //     title: LocaleKeys.calmCorner.tr(),
+        //     asset: Assets.icons.icCalmCorner,
+        //     onTap: () {
+        //       Navigator.of(context).push(
+        //         MaterialPageRoute(
+        //           builder: (context) => const ChooseYourCalmScreen(),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ),
         Expanded(
           child: _secondCardItem(
-            title: LocaleKeys.calmCorner.tr(),
-            asset: Assets.icons.icCalmCorner,
+            title: LocaleKeys.learnPlay.tr(),
+            icon: Icons.games_outlined,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const ChooseYourCalmScreen(),
+                  builder: (context) => const PlayAndConnectScreen(),
                 ),
               );
             },
@@ -282,7 +295,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _secondCardItem({
     required String title,
-    required AssetGenImage asset,
+    AssetGenImage? asset,
+    IconData? icon,
     required GestureTapCallback onTap,
   }) {
     return BaseButton(
@@ -298,7 +312,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             title.appText(fontSize: 12, fontWeight: FontWeight.w600),
             8.spaceH,
-            asset.image(height: 35),
+            if (icon != null)
+              Icon(icon, size: 35, color: Colors.black87)
+            else if (asset != null)
+               asset.image(height: 35),
           ],
         ),
       ),
@@ -309,20 +326,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: [
         20.spaceW,
-        Expanded(
-          child: _thirdCardItem(
-            title: LocaleKeys.learnPlay.tr(),
-            asset: Assets.images.imgLearnAndPlay,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PlayAndConnectScreen(),
-                ),
-              );
-            },
-          ),
-        ),
-        10.spaceW,
+        // Expanded(
+        //   child: _thirdCardItem(
+        //     title: LocaleKeys.learnPlay.tr(),
+        //     asset: Assets.images.imgLearnAndPlay,
+        //     onTap: () {
+        //       Navigator.of(context).push(
+        //         MaterialPageRoute(
+        //           builder: (context) => const PlayAndConnectScreen(),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ),
+        // 10.spaceW,
         Expanded(
           child: _thirdCardItem(
             title: LocaleKeys.familySync.tr(),
