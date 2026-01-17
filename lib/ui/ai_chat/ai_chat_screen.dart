@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,12 +49,17 @@ class _AiChatScreenState extends State<AiChatScreen> {
             ),
           ),
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             backgroundColor: Colors.transparent,
             body: Stack(
               children: [
+                // Overlay for better text readability if needed
+                Positioned.fill(
+                  child: Container(color: Colors.black.withOpacity(0.1)),
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [Row(), 250.spaceH, _header(state), 20.spaceH],
+                  children: [Row(), 60.spaceH, _header(state), 20.spaceH],
                 ),
                 Positioned(
                   left: 20.w,
@@ -67,7 +74,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         MaterialPageRoute(
                           builder: (context) => ChatDetailScreen(
                             initialChat: LocaleKeys
-                                .whatAreSomeTipsForConsistentInfantSleep
+                                .myNewbornIsCryingContinuouslyWhatStepsShouldITake
                                 .tr(),
                           ),
                         ),
@@ -87,7 +94,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         MaterialPageRoute(
                           builder: (context) => ChatDetailScreen(
                             initialChat: LocaleKeys
-                                .whatAreSomeTipsForConsistentInfantSleep
+                                .howCanIEncourageMyChildExpressTheirFeelings
                                 .tr(),
                           ),
                         ),
@@ -106,7 +113,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         MaterialPageRoute(
                           builder: (context) => ChatDetailScreen(
                             initialChat: LocaleKeys
-                                .whatAreSomeTipsForConsistentInfantSleep
+                                .howCanIHandleToddlerTantrumInPublic
                                 .tr(),
                           ),
                         ),
@@ -146,14 +153,33 @@ class _AiChatScreenState extends State<AiChatScreen> {
   }
 
   Widget _header(AiChatState state) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.7),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withOpacity(0.5)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child:
+              "I’m here to assist you, ${state.userModel?.parentName ?? "User"}!"
+                  .appText(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+        ),
       ),
-      child: "I’m here to assist you, ${state.userModel?.parentName ?? ""}!"
-          .appText(fontWeight: FontWeight.w700, fontSize: 14)
-          .appPadding(left: 10, right: 10, top: 2, bottom: 2),
     );
   }
 
@@ -168,17 +194,54 @@ class _AiChatScreenState extends State<AiChatScreen> {
         height: 195.h,
         width: 140.w,
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            10.spaceH,
-            LocaleKeys.whatAreSomeTipsForConsistentInfantSleep
-                .tr()
-                .appText(fontSize: 12)
-                .appPadding(left: 10.w, right: 10.w),
+          color: color.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.4),
+              blurRadius: 12,
+              offset: Offset(0, 6),
+              spreadRadius: 2,
+            ),
           ],
+          border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // Decorative circle
+              Positioned(
+                top: -20,
+                right: -20,
+                child: Container(
+                  height: 80,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    text.appText(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+
+                      textAlign: TextAlign.center,
+                      maxLines: 6,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -195,14 +258,50 @@ class _AiChatScreenState extends State<AiChatScreen> {
         height: 110.h,
         width: 205.w,
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            10.spaceH,
-            text.appText(fontSize: 12).appPadding(left: 10.w, right: 10.w),
+          color: color.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.4),
+              blurRadius: 12,
+              offset: Offset(0, 6),
+              spreadRadius: 2,
+            ),
           ],
+          border: Border.all(color: Colors.white.withOpacity(0.6), width: 1.5),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            children: [
+              // Decorative circle
+              Positioned(
+                bottom: -20,
+                left: -20,
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                child: Center(
+                  child: text.appText(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -211,42 +310,88 @@ class _AiChatScreenState extends State<AiChatScreen> {
   Widget _bottomTextField(AiChatState state) {
     return Positioned(
       right: 20,
-      bottom: 0,
+      bottom: 20,
       left: 20,
-      child: AppTextField(
-        tfType: TFTYPE.FILLED,
-        controller: textEditingController,
-        onChanged: (value) {
-          context.read<AiChatCubit>().changeProps(chatText: value);
-        },
-        hint: LocaleKeys.connectWithBrainAI.tr(),
-        contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        prefixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            10.spaceW,
-            Icon(Icons.mic_outlined),
-            10.spaceW,
-            Icon(Icons.image_outlined),
-            10.spaceW,
-          ],
-        ),
-        suffixIcon: BaseButton(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [10.spaceW, Icon(Icons.search), 10.spaceW],
-          ),
-          onTap: () {
-            if ((state.chatText ?? "").isNotEmpty) {
-              var chatText = state.chatText;
-              context.read<AiChatCubit>().changeProps(chatText: "");
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => ChatDetailScreen(initialChat: chatText),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.85),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 15,
+                  offset: Offset(0, 5),
                 ),
-              );
-            }
-          },
+              ],
+              border: Border.all(color: Colors.white, width: 2),
+            ),
+            child: AppTextField(
+              tfType: TFTYPE.FILLED,
+              fillColor: Colors.transparent,
+              controller: textEditingController,
+              onChanged: (value) {
+                context.read<AiChatCubit>().changeProps(chatText: value);
+              },
+              hint: LocaleKeys.connectWithBrainAI.tr(),
+              hintStyle: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 20,
+              ),
+              prefixIcon: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  16.spaceW,
+                  Icon(Icons.mic_none_rounded, color: primaryColor),
+                  12.spaceW,
+                  Icon(Icons.image_outlined, color: primaryColor),
+                  12.spaceW,
+                ],
+              ),
+              suffixIcon: BaseButton(
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withOpacity(0.4),
+                        blurRadius: 8,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                onTap: () {
+                  if ((state.chatText ?? "").isNotEmpty) {
+                    var chatText = state.chatText;
+                    context.read<AiChatCubit>().changeProps(chatText: "");
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ChatDetailScreen(initialChat: chatText),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -255,9 +400,24 @@ class _AiChatScreenState extends State<AiChatScreen> {
   Widget _chatListButton() {
     return Positioned(
       right: 20,
-      top: 40,
+      top: 60,
       child: BaseButton(
-        child: Icon(Icons.list_outlined),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+            border: Border.all(color: Colors.white, width: 1.5),
+          ),
+          child: Icon(Icons.history_rounded, color: Colors.black87, size: 26),
+        ),
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const ChatListScreen()),

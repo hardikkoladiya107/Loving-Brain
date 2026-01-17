@@ -1,0 +1,120 @@
+# Build artifacts
+build/
+.dart_tool/
+*.iml
+*.ipr
+*.iws
+
+# Flutter/Dart
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+
+# Generated files (keep freezed files but ignore other generated)
+*.g.dart
+# Keep *.freezed.dart files - they are tracked
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+ui-debug.log
+
+# Dependencies
+node_modules/
+**/node_modules/
+**/Pods/
+**/Podfile.lock
+
+# Android
+android/.gradle/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/local.properties
+android/.cxx/
+android/.externalNativeBuild/
+android/app/build/
+android/build/
+android/.idea/
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/gradle-wrapper.jar
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+ios/.xcode.env.local
+ios/build/
+ios/DerivedData/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Functions
+functions/node_modules/
+functions/.env
+functions/.env.local
+
+# Coverage
+coverage/
+*.lcov
+
+# Test
+test_driver/
+integration_test/.dart_tool/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# Symbolication
+app.*.symbols
+app.*.map.json
+
+# Miscellaneous
+*.class
+*.pyc
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+

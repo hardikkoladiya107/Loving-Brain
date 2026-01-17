@@ -43,13 +43,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       builder: (context, state) {
         List<Widget> widgetsList = [];
 
-        if ((state.products ?? []).isNotEmpty &&
+        if (state.products.isNotEmpty &&
             (state.userModel?.productId ?? "").isEmpty) {
           widgetsList.add(
             _subscriptionItem(
               isShow: true,
               isSubscribed: true,
-              isSelected: true,
+              isSelected: state.selectedProduct == null,
               title: LocaleKeys.free.tr(),
               price: "",
               description: LocaleKeys.oneExercisePerDay.tr(),
@@ -63,17 +63,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           );
         }
 
-        for (int i = 0; i < (state.products ?? []).length; i++) {
+        for (int i = 0; i < state.products.length; i++) {
           var product = state.products[i];
           widgetsList.add(
             _subscriptionItem(
-              isShow:
-                  (state.userModel?.productId ?? "").isEmpty ||
-                  product.id == state.userModel?.productId,
+              isShow: true,
               isSubscribed: product.id == state.userModel?.productId,
-              isSelected:
-                  (product.id == state.userModel?.productId) ||
-                  state.selectedProduct?.id == product.id,
+              isSelected: state.selectedProduct?.id == product.id,
               title: product.id == monthlyPlan
                   ? LocaleKeys.premiumMonthly.tr()
                   : LocaleKeys.premiumAnnual.tr(),
@@ -127,35 +123,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           26.h.spaceH,
           _headerDescription(),
           150.h.spaceH,
+          if (widgetsList.isEmpty)
+             _buildEmptyState(),
           ...widgetsList,
-          // _subscriptionItem(
-          //   isShow: true,
-          //   isSubscribed: false,
-          //   isSelected: false,
-          //   title: LocaleKeys.premiumAnnual.tr(),
-          //   price: "100\$/month",
-          //   description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
-          //   onTap: () {},
-          //   bgImage: Assets.images.imgMonthlyBg,
-          // ),
-          // 16.h.spaceH,
-          // _subscriptionItem(
-          //   isShow: true,
-          //   isSubscribed: true,
-          //   isSelected: true,
-          //   title: LocaleKeys.premiumAnnual.tr(),
-          //   price: "100\$/month",
-          //   description: LocaleKeys.stayFlexibleWithMonthlyAccess.tr(),
-          //   onTap: () {},
-          //   bgImage: Assets.images.imgYearlyBg,
-          // ),
           32.h.spaceH,
+          if (widgetsList.isNotEmpty)
           AppButton(
             onTap: () {
+              if (context.read<SubscriptionCubit>().state.selectedProduct == null) {
+                 showSnackBar(message: "Please select a plan", type: SnackBarType.ERROR);
+                 return;
+              }
               context.read<SubscriptionCubit>().buyProduct();
             },
             title: LocaleKeys.subscribe.tr(),
-            backgroundColor: blueButtonColor,
+            backgroundColor: context.read<SubscriptionCubit>().state.selectedProduct == null 
+                ? Colors.grey 
+                : blueButtonColor,
             height: 42.h,
           ),
           16.h.spaceH,
@@ -164,13 +148,32 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               color: blueButtonColor,
               fontWeight: FontWeight.w800,
             ),
-            onTap: () {},
+            onTap: () {
+               context.read<SubscriptionCubit>().restorePurchase();
+            },
           ),
           32.h.spaceH,
           termsAndConditionText(),
         ],
       ),
     );
+  }
+
+  Widget _buildEmptyState() {
+     return Column(
+       children: [
+         Text("No subscription available", style: TextStyle(color: Colors.black)),
+         10.h.spaceH,
+         AppButton(
+           onTap: () {
+             context.read<SubscriptionCubit>().init();
+           },
+           title: "Retry",
+           backgroundColor: blueButtonColor,
+           height: 40.h,
+         )
+       ],
+     );
   }
 
   Widget _subscriptionItem({
@@ -198,9 +201,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               width: 350.w,
               decoration: BoxDecoration(
                 color: Colors.transparent,
-                // color: isSubscribed
-                //     ? Colors.green.withValues(alpha: 0.3)
-                //     : cardColorPrimary,
                 border: isSelected
                     ? Border.all(
                         color: appButtonColor,
@@ -208,14 +208,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       )
                     : null,
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  // BoxShadow(
-                  //   color: Colors.grey.withValues(alpha: 0.3),
-                  //   offset: Offset(1, 1),
-                  //   blurRadius: 5,
-                  //   spreadRadius: 1,
-                  // ),
-                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -308,7 +300,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
                     if (!await launchUrl(Uri.parse(termsOfUseWebUrl))) {
-                      throw Exception('Could not launch $termsOfUseWebUrl');
+                      throw Exception('Could not launch \$termsOfUseWebUrl');
                     }
                   },
                 style: getTextStyle(
@@ -326,7 +318,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
                     if (!await launchUrl(Uri.parse(privacyPolicyUrl))) {
-                      throw Exception('Could not launch $privacyPolicyUrl');
+                      throw Exception('Could not launch \$privacyPolicyUrl');
                     }
                   },
                 style: getTextStyle(

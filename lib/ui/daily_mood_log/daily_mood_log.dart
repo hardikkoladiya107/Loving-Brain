@@ -83,7 +83,7 @@ class _DailyMoodLogState extends State<DailyMoodLog> {
         shrinkWrap: true,
         itemBuilder: (context, index) => _logTile(
           state.logs[index],
-        ).padding(left: 16, right: 16, bottom: 8, top: 8),
+        ).appPadding(left: 16, right: 16, bottom: 8, top: 8),
       ),
     );
   }

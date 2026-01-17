@@ -141,7 +141,7 @@ class AppBarGraph extends StatelessWidget {
                     )
                   : null,
             ),
-          ).padding(top: topPAdding),
+          ).appPadding(top: topPAdding),
           if (showBest && values.any((v) => v > 0))
             // 🏆 Add PNG for Best Day (WED)
             Positioned(

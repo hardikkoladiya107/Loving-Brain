@@ -78,7 +78,7 @@ class NotificationScreen extends StatelessWidget {
                   size: 20,
                 ),
                 tileColor: Colors.white,
-              ).padding(left: 16, right: 16, bottom: 8, top: 8),
+              ).appPadding(left: 16, right: 16, bottom: 8, top: 8),
             ),
           ),
         ],

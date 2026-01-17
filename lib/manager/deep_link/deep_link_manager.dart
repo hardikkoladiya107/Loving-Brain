@@ -56,7 +56,7 @@ class DeepLinkManager {
               if (data is List<ChildModel>) {
                 if (data.isNotEmpty) {
                   ChildModel child = data[0];
-                  if (fromParent != null) {
+                  if (fromParent != null && navigatorKey.currentContext != null) {
                     Navigator.of(navigatorKey.currentContext!).push(
                       MaterialPageRoute(
                         builder: (context) => SucessScreen(

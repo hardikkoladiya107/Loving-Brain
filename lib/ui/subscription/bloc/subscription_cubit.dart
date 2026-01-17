@@ -322,6 +322,11 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       changeProps(
         subsProductDetails: tempSubsProductDetails,
         products: tempProducts,
+        selectedProduct: tempProducts.isNotEmpty
+            ? (tempProducts.any((element) => element.id == yearly)
+                ? tempProducts.firstWhere((element) => element.id == yearly)
+                : tempProducts.first)
+            : null,
       );
 
       for (var element in state.products) {

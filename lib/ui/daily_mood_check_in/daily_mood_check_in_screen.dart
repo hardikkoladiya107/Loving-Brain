@@ -267,7 +267,7 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
             child:
                 "${LocaleKeys.howAreYouFeeling.tr()}, ${state.userModel?.parentName ?? ""}?"
                     .appText(fontWeight: FontWeight.w600, color: blueTextColor)
-                    .padding(all: 5),
+                    .appPadding(all: 5),
           ),
           40.spaceH,
           Row(
@@ -351,7 +351,7 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
                   LocaleKeys.logMoodsLabel
                       .tr()
                       .appText(fontWeight: FontWeight.w800)
-                      .padding(left: 16, right: 16, top: 8, bottom: 8),
+                      .appPadding(left: 16, right: 16, top: 8, bottom: 8),
                 ],
               ),
             ),

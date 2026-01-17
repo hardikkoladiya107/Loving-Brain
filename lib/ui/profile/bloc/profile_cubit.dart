@@ -27,15 +27,18 @@ class ProfileCubit extends Cubit<ProfileState> {
   void changeProps({
     ApiResultStatus? logoutApiResultStatus,
     ApiResultStatus? deleteAccountApiResultStatus,
+    ApiResultStatus? uploadFileApiResultStatus,
     UserModel? userModel,
   }) {
     emit(
       state.copyWith(
         userModel: userModel ?? state.userModel,
+        uploadFileApiResultStatus:
+            uploadFileApiResultStatus ?? ApiResultStatus.initial(),
         logoutApiResultStatus:
-            logoutApiResultStatus ?? state.logoutApiResultStatus,
+            logoutApiResultStatus ?? ApiResultStatus.initial(),
         deleteAccountApiResultStatus:
-            deleteAccountApiResultStatus ?? state.deleteAccountApiResultStatus,
+            deleteAccountApiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
@@ -102,18 +105,16 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void selectImage(String path) {
-    uploadToFirebaseStorage(path);
-  }
-
-  Future<void> uploadToFirebaseStorage(String? imageLocalPath) async {
+  Future<void> selectImage(String? imageLocalPath) async {
     if (imageLocalPath != null) {
-      var uploadedFilePath = await UserRepo.instance
+      changeProps(uploadFileApiResultStatus: ApiResultStatus.loading());
+      var uploadFileApiResultStatus = await UserRepo.instance
           .uploadFileToFirebaseStorage(
             file: File(imageLocalPath),
             referenceId: state.userModel?.uid,
           );
-      uploadedFilePath.whenOrNull(
+      changeProps(uploadFileApiResultStatus: uploadFileApiResultStatus);
+      uploadFileApiResultStatus.whenOrNull(
         data: (data) async {
           if (data is TaskSnapshot) {
             data.ref.fullPath;

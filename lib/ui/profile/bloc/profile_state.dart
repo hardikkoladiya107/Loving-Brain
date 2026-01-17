@@ -16,5 +16,6 @@ abstract class ProfileState with _$ProfileState {
     @Default(ApiResultStatus.initial())
     ApiResultStatus deleteAccountApiResultStatus,
     UserModel? userModel,
+    @Default(ApiResultStatus.initial()) ApiResultStatus uploadFileApiResultStatus,
   }) = _ProfileState;
 }

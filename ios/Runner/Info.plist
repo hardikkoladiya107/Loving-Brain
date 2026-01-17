@@ -71,5 +71,7 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
     <string>This app needs access to the microphone to record audio.</string>
+    <key>FlutterDeepLinkingEnabled</key>
+    <true/>
 </dict>
 </plist>

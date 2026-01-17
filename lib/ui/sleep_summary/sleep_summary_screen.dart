@@ -161,7 +161,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
               60.spaceH,
               Assets.images.imgSleepMoon.image(width: 120),
               16.spaceH,
-              _addButton().padding(left: 20, right: 20),
+              _addButton().appPadding(left: 20, right: 20),
               16.spaceH,
               _weeklyDropdown(state),
               16.spaceH,
@@ -285,7 +285,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
               ),
               Icon(Icons.arrow_drop_down_outlined, color: Colors.black),
             ],
-          ).padding(all: 4),
+          ).appPadding(all: 4),
         ),
       ),
     );

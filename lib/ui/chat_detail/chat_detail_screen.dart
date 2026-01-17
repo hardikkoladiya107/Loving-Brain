@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,7 +67,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         }
 
         return Scaffold(
-          backgroundColor: scheduleBgColor,
+          backgroundColor: scheduleBgColor, // Use a clean background color
           body: SafeArea(
             bottom: false,
             child: Column(
@@ -141,27 +142,27 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            offset: Offset(1, 1),
-            blurRadius: 5,
-            spreadRadius: 4,
+            color: Colors.black.withOpacity(0.05),
+            offset: Offset(0, 2),
+            blurRadius: 8,
+            spreadRadius: 1,
           ),
         ],
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-          topRight: Radius.circular(12),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
+          Expanded( // Added Expanded to fix overflow
             child: GptMarkdown(
               chat.text ?? "",
               textAlign: TextAlign.start,
-              style: getTextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ).padding(all: 8),
+              style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87),
+            ).appPadding(all: 12),
           ),
 
           AppDropDownButton(
@@ -201,7 +202,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 },
               );
             },
-            child: Icon(Icons.more_vert).padding(all: 5),
+            child: Icon(Icons.more_vert, color: Colors.grey).appPadding(all: 5),
           ),
         ],
       ),
@@ -365,39 +366,46 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ],
 
         if ((chat.text ?? "").isNotEmpty) ...[
+        if ((chat.text ?? "").isNotEmpty) ...[
           Container(
             constraints: BoxConstraints(maxWidth: context.width * 0.8),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: primaryColor,
+              gradient: LinearGradient(
+                colors: [primaryColor, primaryColor.withOpacity(0.9)]
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.2),
-                  offset: Offset(1, 1),
-                  blurRadius: 5,
-                  spreadRadius: 4,
+                  color: primaryColor.withOpacity(0.3),
+                  offset: Offset(0, 4),
+                  blurRadius: 10,
+                  spreadRadius: 1,
                 ),
               ],
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12),
-                bottomRight: Radius.circular(12),
-                topLeft: Radius.circular(12),
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+                topLeft: Radius.circular(20),
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GptMarkdown(
-                  chat.text ?? "",
-                  textAlign: TextAlign.start,
-                  style: getTextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ).padding(all: 8),
-                //Icon(Icons.more_vert)
+                Expanded(
+                  child: GptMarkdown(
+                    chat.text ?? "",
+                    textAlign: TextAlign.start,
+                    style: getTextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white 
+                    ),
+                  ).appPadding(all: 12),
+                ),
               ],
             ),
           ),
+        ],
         ],
       ],
     );
@@ -406,19 +414,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   Widget _bottomTextField(ChatDetailState state) {
     return Container(
       decoration: BoxDecoration(
-        color: scheduleBgColor,
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            offset: Offset(1, 1),
-            blurRadius: 5,
-            spreadRadius: 4,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, -2),
           ),
         ],
       ),
+      padding: EdgeInsets.only(bottom: 20, top: 10),
       child: Column(
         children: [
-          10.spaceH,
           if (state.selectedImageFile != null) ...[
             Row(
               children: [
@@ -455,9 +463,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ),
               ],
             ),
+            10.spaceH,
           ],
           if (state.selectedAudioRecordedFile != null) ...[
-            10.spaceH,
             _audioPlayerWidget(
               state,
               chatReferenceId: "INPUTAUDIO",
@@ -506,15 +514,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 }
               },
             ).appPadding(left: 16.w, right: 16.w),
+            10.spaceH,
           ],
-          10.spaceH,
           AppTextField(
             minLines: 1,
             maxLines: 3,
             tfType: TFTYPE.FILLED,
+            fillColor: Colors.grey.shade100,
             controller: textEditingController,
             hint: LocaleKeys.connectWithBrainAI.tr(),
-            contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            hintStyle: TextStyle(color: Colors.grey.shade600),
+            contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             prefixIcon: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -526,38 +536,70 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ],
             ),
             suffixIcon: BaseButton(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [10.spaceW, Icon(Icons.send), 10.spaceW],
-              ),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                     BoxShadow(
+                       color: primaryColor.withOpacity(0.3), 
+                       blurRadius: 6, 
+                       offset: Offset(0, 2)
+                     )
+                  ]
+                ),
+                child: Icon(Icons.arrow_upward, color: Colors.white, size: 20),
+              ).appPadding(right: 8),
               onTap: () {
                 context.read<ChatDetailCubit>().createResponse();
-                //_scrollToBottomAnimated();
               },
             ),
             onChanged: (value) {
               context.read<ChatDetailCubit>().changeProps(chatText: value);
             },
           ).appPadding(left: 16, right: 16),
-          10.spaceH,
         ],
       ),
     );
   }
 
   Widget _appBar() {
-    return Row(
-      children: [
-        BaseButton(
-          child: Assets.icons.icBackIcon.image(height: 36, width: 36),
-          onTap: () {
-            Navigator.pop(context);
-          },
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
-        12.w.spaceW,
-        LocaleKeys.askToAI.tr().appText(fontWeight: FontWeight.w700),
-      ],
-    ).appPadding(left: 20);
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            BaseButton(
+              child: Assets.icons.icBackIcon.image(height: 32, width: 32),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            12.w.spaceW,
+            LocaleKeys.askToAI.tr().appText(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                  fontSize: 16,
+                ),
+            20.spaceW,
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -650,7 +692,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ],
-              ).padding(top: 12, bottom: 12),
+              ).appPadding(top: 12, bottom: 12),
               onTap: () async {
                 Navigator.of(context).pop();
                 _chooseImage(ImageSource.camera);
@@ -667,7 +709,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ],
-              ).padding(top: 12, bottom: 12),
+              ).appPadding(top: 12, bottom: 12),
               onTap: () async {
                 Navigator.of(context).pop();
                 _chooseImage(ImageSource.gallery);

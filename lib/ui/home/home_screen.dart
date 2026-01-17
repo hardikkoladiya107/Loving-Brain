@@ -178,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                               )
-                              .padding(bottom: 18),
+                              .appPadding(bottom: 18),
                         ],
                       ),
                     ),

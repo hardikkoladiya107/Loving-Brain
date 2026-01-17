@@ -181,23 +181,7 @@ extension extOnInt on int {
 }
 
 extension extOnWidget on Widget {
-  Widget padding({
-    double? all,
-    double? left,
-    double? right,
-    double? top,
-    double? bottom,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(
-        left: all ?? left ?? 0.0,
-        right: all ?? right ?? 0.0,
-        top: all ?? top ?? 0.0,
-        bottom: all ?? bottom ?? 0.0,
-      ),
-      child: this,
-    );
-  }
+
 
   Widget appPadding({
     double? all,

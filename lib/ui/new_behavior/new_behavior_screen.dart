@@ -471,7 +471,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
 
           20.spaceW,
         ],
-      ).padding(top: 8, bottom: 8),
+      ).appPadding(top: 8, bottom: 8),
     );
   }
 

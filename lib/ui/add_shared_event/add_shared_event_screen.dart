@@ -363,7 +363,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
               children: [
                 Assets.icons.icCalenderIcon3
                     .image(height: 20, width: 20)
-                    .padding(left: 8),
+                    .appPadding(left: 8),
                 12.spaceW,
                 (state.selectedDate != null
                         ? getStringDate(state.selectedDate)
@@ -423,7 +423,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     children: [
                       Assets.icons.icTimerIcon
                           .image(height: 20, width: 20)
-                          .padding(left: 8),
+                          .appPadding(left: 8),
                       12.spaceW,
 
                       (state.startTime != null
@@ -484,7 +484,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     children: [
                       Assets.icons.icTimerIcon
                           .image(height: 20, width: 20)
-                          .padding(left: 8),
+                          .appPadding(left: 8),
                       12.spaceW,
                       (state.endTime != null
                               ? getStringTime(state.endTime)
@@ -534,7 +534,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
         children: [
           Assets.icons.icLocationIcon
               .image(height: 20, width: 20)
-              .padding(left: 8),
+              .appPadding(left: 8),
         ],
       ),
       error: state.locationError,

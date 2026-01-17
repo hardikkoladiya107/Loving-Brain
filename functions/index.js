@@ -1,14 +1,14 @@
-const { onRequest } = require("firebase-functions/v2/https");
+const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
+const {sendNotification, sendMulticastNotification} = require("./notification");
 exports.sampleTest = onRequest((request, response) => {
-    logger.info("Hello logs!", { structuredData: true });
-    response.send("Hello from Firebase! Test");
+  logger.info("Hello logs!", {structuredData: true});
+  response.send("Hello from Firebase! Test");
 });
 exports.sampleTest2 = onRequest((request, response) => {
-    logger.info("Hello logs!", { structuredData: true });
-    response.send("Hello from Firebase! Test");
+  logger.info("Hello logs!", {structuredData: true});
+  response.send("Hello from Firebase! Test");
 });
-
 
 
 const admin = require("firebase-admin");
@@ -25,40 +25,29 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
         tokens.push(userData.fcm_token);
       }
     });
+
     if (tokens.length === 0) {
       return res.status(400).send({error: "No valid FCM tokens found"});
     }
-    const message = {
-      tokens: tokens,
-      notification: {
-        title: "Streak Update!!",
-        body: "Don’t forget to check in today to keep your streak alive!",
-      },
-      data: {},
-      android: {
-        priority: "high",
-        notification: {
-          sound: "default",
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            sound: "default",
-          },
-        },
-      },
-    };
-    const response = await admin.messaging().sendEachForMulticast(message);
-    logger.info("Notifications sent", { response });
+
+    const result = await sendMulticastNotification(
+        tokens,
+        "Streak Update!!",
+        "Don’t forget to check in today to keep your streak alive!",
+    );
+
+    if (!result.success) {
+      throw result.error;
+    }
+
     return res.status(200).send({
       success: true,
-      successCount: response.successCount,
-      failureCount: response.failureCount,
-      responses: response.responses,
+      successCount: result.successCount,
+      failureCount: result.failureCount,
+      responses: result.responses,
     });
   } catch (error) {
-    logger.error("Error sending notifications", { error });
+    logger.error("Error sending notifications", {error});
     return res.status(500).send({
       success: false,
       error: error.message,
@@ -69,43 +58,27 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
 exports.sendPushNotification = onRequest(async (req, res) => {
   try {
     if (req.method !== "POST") {
-      return res.status(405).send({ error: "Only POST requests are allowed" });
+      return res.status(405).send({error: "Only POST requests are allowed"});
     }
-    const { token, title, body, data } = req.body;
+    const {token, title, body, data} = req.body;
     if (!token || !title || !body) {
       return res.status(400).send({
         error: "Missing required fields: token, title, and body are mandatory",
       });
     }
-    const message = {
-      token: token,
-      notification: {
-        title: title,
-        body: body,
-      },
-      data: data || {},
-      android: {
-        priority: "high",
-        notification: {
-          sound: "default",
-        },
-      },
-      apns: {
-        payload: {
-          aps: {
-            sound: "default",
-          },
-        },
-      },
-    };
-    const response = await admin.messaging().send(message);
-    logger.info("Notification sent successfully", { response });
+
+    const result = await sendNotification(token, title, body, data);
+
+    if (!result.success) {
+      throw result.error;
+    }
+
     return res.status(200).send({
       success: true,
-      messageId: response,
+      messageId: result.response,
     });
   } catch (error) {
-    logger.error("Error sending notification", { error });
+    logger.error("Error sending notification", {error});
     return res.status(500).send({
       success: false,
       error: error.message,
@@ -114,28 +87,29 @@ exports.sendPushNotification = onRequest(async (req, res) => {
 });
 
 
-
 exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
   try {
-   const now = new Date();
+    const now = new Date();
     const usersSnapshot = await admin.firestore().collection("children").get();
     const dates = [];
     const matched = [];
     usersSnapshot.forEach((doc) => {
       const userData = doc.data();
-      const routines = userData.routines || []; // ✅ safely handle undefined
+      // safely handle undefined
+      const routines = userData.routines || [];
       routines.forEach((routine) => {
-        const ts = routine.time_stamp?.toDate?.();
-         dates.push(ts);
-         if (/*ts.getDate() === now.getDate() &&
+        const ts = routine.time_stamp && routine.time_stamp.toDate ?
+            routine.time_stamp.toDate() : null;
+        dates.push(ts);
+        if (/* ts.getDate() === now.getDate() &&
              ts.getMonth() === now.getMonth() &&*/
-             ts.getHours() === now.getHours() &&
+          ts.getHours() === now.getHours() &&
              ts.getMinutes() === now.getMinutes()) {
-                   matched.push({
-                     childId: doc.id,
-                     routine,
-                   });
-                 }
+          matched.push({
+            childId: doc.id,
+            routine,
+          });
+        }
       });
     });
 
@@ -145,63 +119,52 @@ exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
     const fcmTokens = [];
 
     matched.forEach((match) => {
-          usersDocs.forEach((userDoc) => {
-            const userData = userDoc.data();
-            const childRefs = userData.children || [];
-            const hasChild = childRefs.some(
-              (ref) => ref.id === match.childId
-            );
+      usersDocs.forEach((userDoc) => {
+        const userData = userDoc.data();
+        const childRefs = userData.children || [];
+        const hasChild = childRefs.some(
+            (ref) => ref.id === match.childId,
+        );
 
-            if (hasChild) {
-             fcmTokens.push(userData.fcm_token);
-              usersWithMatchedChildren.push({
-                userId: userDoc.id,
-                childId: match.childId,
-                routine: match.routine,
-                fcm_token: userData.fcm_token,
-              });
-            }
+        if (hasChild) {
+          fcmTokens.push(userData.fcm_token);
+          usersWithMatchedChildren.push({
+            userId: userDoc.id,
+            childId: match.childId,
+            routine: match.routine,
+            fcm_token: userData.fcm_token,
           });
+        }
+      });
     });
 
 
     if (fcmTokens.length === 0) {
-       return res.status(200).send({message: "No valid FCM tokens found"});
+      return res.status(200).send({message: "No valid FCM tokens found"});
     }
 
-     const message = {
-          tokens: fcmTokens,
-          notification: {
-            title: "Daily Routine Notification",
-            body: "Daily Routine Notification",
-          },
-          data: {},
-          android: {
-            priority: "high",
-            notification: {
-              sound: "default",
-            },
-          },
-          apns: {
-            payload: {
-              aps: {
-                sound: "default",
-              },
-            },
-          },
-        };
-     const response = await admin.messaging().sendEachForMulticast(message);
-     return res.status(200).send({
-        success: true,
-        dates: dates,
-        matched: matched,
-        now: now,
-        usersWithMatchedChildren: usersWithMatchedChildren,
-        fcmTokens: fcmTokens,
-        response: response,
+    const result = await sendMulticastNotification(
+        fcmTokens,
+        "Daily Routine Notification",
+        "Daily Routine Notification",
+    );
+
+    return res.status(200).send({
+      success: result.success,
+      dates: dates,
+      matched: matched,
+      now: now,
+      usersWithMatchedChildren: usersWithMatchedChildren,
+      fcmTokens: fcmTokens,
+      response: result.success ?
+         {
+           successCount: result.successCount,
+           failureCount: result.failureCount,
+         } :
+         result.error,
     });
   } catch (error) {
-    logger.error("Error sending notifications", { error });
+    logger.error("Error sending notifications", {error});
     return res.status(500).send({
       success: false,
       error: error.message,
@@ -210,93 +173,86 @@ exports.dailyRoutineReminderNotification = onRequest(async (req, res) => {
 });
 
 
-
 exports.sharedEventReminderNotification = onRequest(async (req, res) => {
   try {
-     const now = new Date();
-    const shared_event_snapshot = await admin.firestore().collection("shared_event").get();
-     const allSharedEventImpData = [];
-      const matched = [];
-     shared_event_snapshot.forEach((doc) => {
-          const userData = doc.data();
-          const assigned_to = userData.assigned_to || [];
-          const created_by = userData.created_by;
-          const start_time = userData.start_time;
-          const end_time = userData.end_time;
-          const selectedDate = userData.date;
-          const eventDate = selectedDate?.toDate?.();
-          const eventStartTime = start_time?.toDate?.();
-          const istOffset = 5.5 * 60 * 60 * 1000; // +5:30 hours
-          const eventDateIST = new Date(eventDate.getTime() + istOffset);
-          const eventStartTimeIST = new Date(eventStartTime.getTime() + istOffset);
-          const nowInIst = new Date(now.getTime() + istOffset);
-          if (eventDateIST.getDate() === nowInIst.getDate() &&
-                eventDateIST.getMonth() === nowInIst.getMonth() &&
-                eventStartTimeIST.getHours() === nowInIst.getHours() &&
-                eventStartTimeIST.getMinutes() === nowInIst.getMinutes()) {
-                    matched.push(...assigned_to);
-                    matched.push(created_by);
-                }
+    const now = new Date();
+    const sharedEventSnapshot = await admin.firestore()
+        .collection("shared_event").get();
+    const allSharedEventImpData = [];
+    const matched = [];
+    sharedEventSnapshot.forEach((doc) => {
+      const userData = doc.data();
+      const assignedTo = userData.assigned_to || [];
+      const createdBy = userData.created_by;
+      const startTime = userData.start_time;
+      const selectedDate = userData.date;
+      const eventDate = selectedDate && selectedDate.toDate ?
+          selectedDate.toDate() : null;
+      const eventStartTime = startTime && startTime.toDate ?
+          startTime.toDate() : null;
+      const istOffset = 5.5 * 60 * 60 * 1000; // +5:30 hours
+      const eventDateIST = new Date(eventDate.getTime() + istOffset);
+      const eventStartTimeIST = new Date(
+          eventStartTime.getTime() + istOffset,
+      );
+      const nowInIst = new Date(now.getTime() + istOffset);
+      if (eventDateIST.getDate() === nowInIst.getDate() &&
+          eventDateIST.getMonth() === nowInIst.getMonth() &&
+          eventStartTimeIST.getHours() === nowInIst.getHours() &&
+          eventStartTimeIST.getMinutes() === nowInIst.getMinutes()) {
+        matched.push(...assignedTo);
+        matched.push(createdBy);
+      }
 
-          allSharedEventImpData.push({
-             created_by: created_by,
-             assigned_to: assigned_to,
-             eventDate: eventDate,
-             eventStartTime: eventStartTime,
-             now:nowInIst,
-             eventDateIST: eventDateIST,
-             eventStartTimeIST: eventStartTimeIST,
-             matched: matched,
-          });
-        });
+      allSharedEventImpData.push({
+        created_by: createdBy,
+        assigned_to: assignedTo,
+        eventDate: eventDate,
+        eventStartTime: eventStartTime,
+        now: nowInIst,
+        eventDateIST: eventDateIST,
+        eventStartTimeIST: eventStartTimeIST,
+        matched: matched,
+      });
+    });
 
-         if (matched.length === 0) {
-            return res.status(200).send({message: "no matched found"});
-         }
-        const fcmTokens = [];
-        const uniqueMatched = [...new Set(matched)];
-        const usersSnapshot = await admin.firestore()
-          .collection("users")
-          .where("uid", "in", uniqueMatched)
-          .get();
-        usersSnapshot.forEach((doc) => {
-        const userData = doc.data();
-          fcmTokens.push(userData.fcm_token)
-        });
-        const uniqueFcmTokens = [...new Set(fcmTokens)];
-        if (uniqueFcmTokens.length === 0) {
-             return res.status(200).send({message: "No valid FCM tokens found"});
-        }
-        const message = {
-              tokens: uniqueFcmTokens,
-              notification: {
-                title: "Shared Event Notification",
-                body: "Shared Event Notification",
-              },
-              data: {},
-              android: {
-                priority: "high",
-                notification: {
-                  sound: "default",
-                },
-              },
-              apns: {
-                payload: {
-                  aps: {
-                    sound: "default",
-                  },
-                },
-              },
-            };
-     const response = await admin.messaging().sendEachForMulticast(message);
-     return res.status(200).send({
-        success: true,
-        response: response,
-        allSharedEventImpData: allSharedEventImpData,
-        fcmTokens: uniqueFcmTokens,
+    if (matched.length === 0) {
+      return res.status(200).send({message: "no matched found"});
+    }
+    const fcmTokens = [];
+    const uniqueMatched = [...new Set(matched)];
+    const usersSnapshot = await admin.firestore()
+        .collection("users")
+        .where("uid", "in", uniqueMatched)
+        .get();
+    usersSnapshot.forEach((doc) => {
+      const userData = doc.data();
+      fcmTokens.push(userData.fcm_token);
+    });
+    const uniqueFcmTokens = [...new Set(fcmTokens)];
+    if (uniqueFcmTokens.length === 0) {
+      return res.status(200).send({message: "No valid FCM tokens found"});
+    }
+
+    const result = await sendMulticastNotification(
+        uniqueFcmTokens,
+        "Shared Event Notification",
+        "Shared Event Notification",
+    );
+
+    return res.status(200).send({
+      success: result.success,
+      response: result.success ?
+             {
+               successCount: result.successCount,
+               failureCount: result.failureCount,
+             } :
+             result.error,
+      allSharedEventImpData: allSharedEventImpData,
+      fcmTokens: uniqueFcmTokens,
     });
   } catch (error) {
-    logger.error("Error sending notifications", { error });
+    logger.error("Error sending notifications", {error});
     return res.status(500).send({
       success: false,
       error: error.message,

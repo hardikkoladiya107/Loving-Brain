@@ -200,7 +200,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
               children: [
                 Assets.icons.icCalenderIcon3
                     .image(height: 20, width: 20)
-                    .padding(left: 8),
+                    .appPadding(left: 8),
                 12.spaceW,
                 (state.selectedDate != null
                         ? getStringDate(state.selectedDate)
@@ -334,7 +334,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
                     children: [
                       Assets.icons.icTimerIcon
                           .image(height: 20, width: 20)
-                          .padding(left: 8),
+                          .appPadding(left: 8),
                       12.spaceW,
 
                       (state.startTime != null
@@ -395,7 +395,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
                     children: [
                       Assets.icons.icTimerIcon
                           .image(height: 20, width: 20)
-                          .padding(left: 8),
+                          .appPadding(left: 8),
                       12.spaceW,
                       (state.endTime != null
                               ? getStringTime(state.endTime)

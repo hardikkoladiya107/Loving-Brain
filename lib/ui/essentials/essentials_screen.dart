@@ -260,7 +260,7 @@ class _EssentialsScreenState extends State<EssentialsScreen> {
               );
             },
           ),
-          _uploadDocButton(state).padding(all: 8),
+          _uploadDocButton(state).appPadding(all: 8),
         ],
       ),
     );
@@ -469,7 +469,7 @@ class _EssentialsScreenState extends State<EssentialsScreen> {
                     ),
                   ),
                 ],
-              ).padding(all: 12),
+              ).appPadding(all: 12),
             );
           },
         );

@@ -227,6 +227,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
           },
         );
+
+        state.uploadFileApiResultStatus.whenOrNull(
+          data: (data) {
+            EasyLoading.dismiss();
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+          },
+        );
       },
     );
   }
@@ -470,14 +482,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _profileImageWidget(UserModel? userModel) {
     return Stack(
       children: [
-        AppImage(
-          imageUrl: (userModel?.profileImage ?? "").isNotEmpty
-              ? userModel!.profileImage!
-              : 'https://picsum.photos/200/300',
-          height: 100.h,
-          width: 100.h,
-          shape: BoxShape.circle,
-        ),
+        _profileImage(userModel),
         Positioned(
           bottom: 0,
           right: 0,
@@ -525,7 +530,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ],
-              ).padding(top: 12, bottom: 12),
+              ).appPadding(top: 12, bottom: 12),
               onTap: () async {
                 Navigator.of(context).pop();
                 _chooseImage(ImageSource.camera);
@@ -542,7 +547,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ],
-              ).padding(top: 12, bottom: 12),
+              ).appPadding(top: 12, bottom: 12),
               onTap: () async {
                 Navigator.of(context).pop();
                 _chooseImage(ImageSource.gallery);
@@ -558,9 +563,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _chooseImage(ImageSource camera) async {
     final XFile? photo = await ImagePicker().pickImage(source: camera);
     if (photo != null && navigatorKey.currentContext != null) {
-      navigatorKey.currentContext!.read<ProfileCubit>().selectImage(
-        photo.path,
+      navigatorKey.currentContext!.read<ProfileCubit>().selectImage(photo.path);
+    }
+  }
+
+  Widget _profileImage(UserModel? userModel) {
+    if ((userModel?.profileImage ?? "").isEmpty) {
+      return Container(
+        height: 100.r,
+        width: 100.r,
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 0.2),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(Icons.person, size: 30.r),
       );
     }
+    return AppImage(
+      imageUrl: userModel!.profileImage!,
+      height: 100.r,
+      width: 100.r,
+      shape: BoxShape.circle,
+    );
   }
 }
