@@ -35,7 +35,7 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                 Column(
                   children: [
                     Container(
-                      height: context.height * 0.40, // Reduced height
+                      height: context.height * 0.35, // Slightly reduced
                       width: context.width,
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -69,7 +69,7 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                               20.spaceH,
                               "Learn & Play".appText(
                                 fontWeight: FontWeight.w800,
-                                fontSize: 32,
+                                fontSize: 24, // Smaller
                                 color: const Color(0xFFFFD54F),
                               ),
                               10.spaceH,
@@ -77,7 +77,7 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                                 padding: const EdgeInsets.symmetric(horizontal: 20),
                                 child: state.currentPrompt.appText(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 18,
+                                  fontSize: 16, // Smaller
                                   color: Colors.white,
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
@@ -107,9 +107,9 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                                Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Assets.icons.icBrainAi.image(height: 50),
+                                  Assets.icons.icBrainAi.image(height: 40),
                                   10.spaceW,
-                                  Assets.icons.icHeartIcon.image(height: 50),
+                                  Assets.icons.icHeartIcon.image(height: 40),
                                 ],
                               ),
                             ],
@@ -182,9 +182,8 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                           ),
                           20.spaceH,
                           
-                          BaseButton(
                             child: Container(
-                              height: 55,
+                              height: 48,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: const Color(0xFF9C27B0), // Purple color
@@ -200,7 +199,7 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                               child: "I'm Finished!".appText(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
+                                fontSize: 16,
                               ),
                             ),
                             onTap: () {
@@ -251,15 +250,15 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
     return GestureDetector(
       onTap: () => context.read<ConnectDetailCubit>().changeColor(color),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 32,
+        height: 32,
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
-          border: isSelected ? Border.all(color: Colors.black, width: 3) : Border.all(color: Colors.grey.shade300),
-          boxShadow: isSelected ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 8)] : [],
+          border: isSelected ? Border.all(color: Colors.black, width: 2) : Border.all(color: Colors.grey.shade300),
+          boxShadow: isSelected ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 4)] : [],
         ),
-        child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 20) : null,
+        child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 16) : null,
       ),
     );
   }
@@ -269,14 +268,14 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
     return GestureDetector(
       onTap: () => context.read<ConnectDetailCubit>().changeColor(Colors.white),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 32,
+        height: 32,
         decoration: BoxDecoration(
           color: Colors.white,
           shape: BoxShape.circle,
-          border: isSelected ? Border.all(color: Colors.black, width: 3) : Border.all(color: Colors.grey.shade300),
+          border: isSelected ? Border.all(color: Colors.black, width: 2) : Border.all(color: Colors.grey.shade300),
         ),
-        child: const Icon(Icons.cleaning_services_rounded, color: Colors.black54, size: 20),
+        child: const Icon(Icons.cleaning_services_rounded, color: Colors.black54, size: 16),
       ),
     );
   }
