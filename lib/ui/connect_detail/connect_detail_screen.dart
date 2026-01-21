@@ -182,6 +182,7 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                           ),
                           20.spaceH,
                           
+                          BaseButton(
                             child: Container(
                               height: 48,
                               alignment: Alignment.center,
