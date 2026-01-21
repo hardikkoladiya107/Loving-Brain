@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ConnectDetailState {
 
- String get message;
+ String get currentPrompt; Color get selectedColor; List<DrawingStroke> get allStrokes; DrawingStroke? get currentStroke;
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $ConnectDetailStateCopyWith<ConnectDetailState> get copyWith => _$ConnectDetailS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ConnectDetailState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ConnectDetailState&&(identical(other.currentPrompt, currentPrompt) || other.currentPrompt == currentPrompt)&&(identical(other.selectedColor, selectedColor) || other.selectedColor == selectedColor)&&const DeepCollectionEquality().equals(other.allStrokes, allStrokes)&&(identical(other.currentStroke, currentStroke) || other.currentStroke == currentStroke));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,currentPrompt,selectedColor,const DeepCollectionEquality().hash(allStrokes),currentStroke);
 
 @override
 String toString() {
-  return 'ConnectDetailState(message: $message)';
+  return 'ConnectDetailState(currentPrompt: $currentPrompt, selectedColor: $selectedColor, allStrokes: $allStrokes, currentStroke: $currentStroke)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $ConnectDetailStateCopyWith<$Res>  {
   factory $ConnectDetailStateCopyWith(ConnectDetailState value, $Res Function(ConnectDetailState) _then) = _$ConnectDetailStateCopyWithImpl;
 @useResult
 $Res call({
- String message
+ String currentPrompt, Color selectedColor, List<DrawingStroke> allStrokes, DrawingStroke? currentStroke
 });
 
 
@@ -62,10 +62,13 @@ class _$ConnectDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? currentPrompt = null,Object? selectedColor = null,Object? allStrokes = null,Object? currentStroke = freezed,}) {
   return _then(_self.copyWith(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+currentPrompt: null == currentPrompt ? _self.currentPrompt : currentPrompt // ignore: cast_nullable_to_non_nullable
+as String,selectedColor: null == selectedColor ? _self.selectedColor : selectedColor // ignore: cast_nullable_to_non_nullable
+as Color,allStrokes: null == allStrokes ? _self.allStrokes : allStrokes // ignore: cast_nullable_to_non_nullable
+as List<DrawingStroke>,currentStroke: freezed == currentStroke ? _self.currentStroke : currentStroke // ignore: cast_nullable_to_non_nullable
+as DrawingStroke?,
   ));
 }
 
@@ -150,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String currentPrompt,  Color selectedColor,  List<DrawingStroke> allStrokes,  DrawingStroke? currentStroke)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ConnectDetailState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.currentStroke);case _:
   return orElse();
 
 }
@@ -171,10 +174,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String currentPrompt,  Color selectedColor,  List<DrawingStroke> allStrokes,  DrawingStroke? currentStroke)  $default,) {final _that = this;
 switch (_that) {
 case _ConnectDetailState():
-return $default(_that.message);case _:
+return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.currentStroke);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -191,10 +194,10 @@ return $default(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String currentPrompt,  Color selectedColor,  List<DrawingStroke> allStrokes,  DrawingStroke? currentStroke)?  $default,) {final _that = this;
 switch (_that) {
 case _ConnectDetailState() when $default != null:
-return $default(_that.message);case _:
+return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.currentStroke);case _:
   return null;
 
 }
@@ -206,10 +209,19 @@ return $default(_that.message);case _:
 
 
 class _ConnectDetailState implements ConnectDetailState {
-  const _ConnectDetailState({this.message = "message"});
+  const _ConnectDetailState({this.currentPrompt = "Draw what makes you feel calm", this.selectedColor = Colors.blue, final  List<DrawingStroke> allStrokes = const [], this.currentStroke}): _allStrokes = allStrokes;
   
 
-@override@JsonKey() final  String message;
+@override@JsonKey() final  String currentPrompt;
+@override@JsonKey() final  Color selectedColor;
+ final  List<DrawingStroke> _allStrokes;
+@override@JsonKey() List<DrawingStroke> get allStrokes {
+  if (_allStrokes is EqualUnmodifiableListView) return _allStrokes;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_allStrokes);
+}
+
+@override final  DrawingStroke? currentStroke;
 
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,16 +233,16 @@ _$ConnectDetailStateCopyWith<_ConnectDetailState> get copyWith => __$ConnectDeta
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConnectDetailState&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConnectDetailState&&(identical(other.currentPrompt, currentPrompt) || other.currentPrompt == currentPrompt)&&(identical(other.selectedColor, selectedColor) || other.selectedColor == selectedColor)&&const DeepCollectionEquality().equals(other._allStrokes, _allStrokes)&&(identical(other.currentStroke, currentStroke) || other.currentStroke == currentStroke));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,currentPrompt,selectedColor,const DeepCollectionEquality().hash(_allStrokes),currentStroke);
 
 @override
 String toString() {
-  return 'ConnectDetailState(message: $message)';
+  return 'ConnectDetailState(currentPrompt: $currentPrompt, selectedColor: $selectedColor, allStrokes: $allStrokes, currentStroke: $currentStroke)';
 }
 
 
@@ -241,7 +253,7 @@ abstract mixin class _$ConnectDetailStateCopyWith<$Res> implements $ConnectDetai
   factory _$ConnectDetailStateCopyWith(_ConnectDetailState value, $Res Function(_ConnectDetailState) _then) = __$ConnectDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message
+ String currentPrompt, Color selectedColor, List<DrawingStroke> allStrokes, DrawingStroke? currentStroke
 });
 
 
@@ -258,10 +270,13 @@ class __$ConnectDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? currentPrompt = null,Object? selectedColor = null,Object? allStrokes = null,Object? currentStroke = freezed,}) {
   return _then(_ConnectDetailState(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+currentPrompt: null == currentPrompt ? _self.currentPrompt : currentPrompt // ignore: cast_nullable_to_non_nullable
+as String,selectedColor: null == selectedColor ? _self.selectedColor : selectedColor // ignore: cast_nullable_to_non_nullable
+as Color,allStrokes: null == allStrokes ? _self._allStrokes : allStrokes // ignore: cast_nullable_to_non_nullable
+as List<DrawingStroke>,currentStroke: freezed == currentStroke ? _self.currentStroke : currentStroke // ignore: cast_nullable_to_non_nullable
+as DrawingStroke?,
   ));
 }
 

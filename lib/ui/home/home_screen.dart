@@ -1,5 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,9 +17,9 @@ import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
 import '../base_screen/bloc/base_cubit.dart';
-import '../choose_your_calm/choose_your_calm_screen.dart';
+
 import '../new_behavior/new_behavior_screen.dart';
-import '../play_and_connect/play_and_connect_screen.dart';
+import '../connect_detail/connect_detail_screen.dart';
 import '../reflect_your_emotions/reflect_your_emotions.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
@@ -264,11 +264,11 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: _secondCardItem(
             title: LocaleKeys.learnPlay.tr(),
-            icon: Icons.games_outlined,
+            icon: Icons.palette_outlined, // Changed icon to palette for drawing
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const PlayAndConnectScreen(),
+                  builder: (context) => const ConnectDetailScreen(),
                 ),
               );
             },
@@ -483,92 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _reminder() {
-    return Stack(
-      children: [
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 160.h,
-            decoration: BoxDecoration(
-              color: yellowColor4,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(100),
-                topRight: Radius.circular(100),
-              ),
-            ),
-          ),
-        ),
 
-        Container(height: 200.h),
-
-        Positioned(
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BaseButton(
-                child: Container(
-                  height: 100.h,
-                  width: 270.w,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(Assets.images.imgReminderBg.path),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          "Remember to re-evaluate".appText(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          "Tantrum strategies in 3 days".appText(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          Row(
-                            children: [
-                              "Take action".appText(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              10.spaceW,
-                              Assets.icons.icForwardArrow.image(
-                                height: 22.h,
-                                width: 22.w,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      10.spaceW,
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Assets.icons.icReminderIcon.image(
-                            height: 25.h,
-                            width: 25.w,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                onTap: () {},
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
   @override
   void dispose() {

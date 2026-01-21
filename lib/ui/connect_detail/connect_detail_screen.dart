@@ -5,10 +5,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/connect_detail/bloc/connect_detail_cubit.dart';
 import 'package:loving_brain/ui/connect_detail/bloc/connect_detail_state.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
-
 import '../../gen/assets.gen.dart';
-
-
 
 class ConnectDetailScreen extends StatefulWidget {
   const ConnectDetailScreen({super.key});
@@ -32,12 +29,13 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
       builder: (context, state) {
         return Scaffold(
           body: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(), // Prevent scrolling while drawing
             child: Stack(
               children: [
                 Column(
                   children: [
                     Container(
-                      height: context.height * 0.45,
+                      height: context.height * 0.40, // Reduced height
                       width: context.width,
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -69,16 +67,21 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               20.spaceH,
-                              "Color & Calm".appText(
+                              "Learn & Play".appText(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 32,
                                 color: const Color(0xFFFFD54F),
                               ),
                               10.spaceH,
-                              "Draw what makes you feel calm".appText(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.white,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                child: state.currentPrompt.appText(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                ),
                               ),
                               20.spaceH,
                               Container(
@@ -94,24 +97,19 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                                     width: 1.5,
                                   ),
                                 ),
-                                child: "What feels Peaceful? Nature? A favourite toy?".appText(
+                                child: "Use your finger to draw!".appText(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.white,
                                 ),
                               ),
                               20.spaceH,
-                              Row(
+                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Assets.icons.icBrainAi.image(height: 50),
-                                      10.spaceW,
-                                      Assets.icons.icHeartIcon.image(height: 50),
-                                    ],
-                                  ),
+                                  Assets.icons.icBrainAi.image(height: 50),
+                                  10.spaceW,
+                                  Assets.icons.icHeartIcon.image(height: 50),
                                 ],
                               ),
                             ],
@@ -126,37 +124,64 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          "We will utilize plenty of hints.".appText(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18,
-                            color: Colors.black87,
-                            textAlign: TextAlign.center,
-                          ),
-                          20.spaceH,
+                          // Color Palette
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _hintCard("A Sunny day", Assets.icons.icHappyIcon), // Placeholder icon
-                              _hintCard("A cozy teddy bear", Assets.images.imgSleepTeddy),
-                              _hintCard("A favorite toy", Assets.icons.icStoryBuilderDice), // Placeholder
+                              _colorButton(context, state, Colors.red),
+                              _colorButton(context, state, Colors.blue),
+                              _colorButton(context, state, Colors.green),
+                              _colorButton(context, state, const Color(0xFFFFEB3B)), // Yellow
+                              _colorButton(context, state, Colors.purple),
+                              _eraserButton(context, state),
                             ],
                           ),
-                          30.spaceH,
-                          Container(
-                            height: 300,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF5F5F5),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey.shade300),
-                            ),
-                            alignment: Alignment.center,
-                            child: "Draw Here".appText(
-                              color: Colors.grey.shade400,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
+                          20.spaceH,
+                          
+                          // Drawing Canvas
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              height: context.height * 0.40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.grey.shade300, width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withValues(alpha: 0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ]
+                              ),
+                              child: GestureDetector(
+                                onPanStart: (details) {
+                                  final box = context.findRenderObject() as RenderBox;
+                                  final point = box.globalToLocal(details.globalPosition);
+                                  // Adjust for headers etc. simplified: pass local position
+                                  // Since this is inside lists/stacks, simpler to use RepaintBoundary or similar,
+                                  // but localPosition from details works relative to the widget receiving the gesture.
+                                  context.read<ConnectDetailCubit>().startStroke(details.localPosition);
+                                },
+                                onPanUpdate: (details) {
+                                  context.read<ConnectDetailCubit>().updateStroke(details.localPosition);
+                                },
+                                onPanEnd: (details) {
+                                  context.read<ConnectDetailCubit>().endStroke();
+                                },
+                                child: CustomPaint(
+                                  painter: ConnectDetailPainter(
+                                    state.allStrokes,
+                                    state.currentStroke,
+                                  ),
+                                  size: Size.infinite,
+                                ),
+                              ),
                             ),
                           ),
-                          30.spaceH,
+                          20.spaceH,
+                          
                           BaseButton(
                             child: Container(
                               height: 55,
@@ -172,23 +197,15 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                                   ),
                                 ],
                               ),
-                              child: "All Done !".appText(
+                              child: "I'm Finished!".appText(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
                             ),
                             onTap: () {
-                              // Handle completion
-                              Navigator.pop(context);
+                              _showCompletionDialog(context);
                             },
-                          ),
-                          20.spaceH,
-                          "We will cherish this drawing as a serene moment.".appText(
-                            color: Colors.grey.shade600,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            textAlign: TextAlign.center,
                           ),
                           20.spaceH,
                         ],
@@ -200,7 +217,21 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                   top: 50,
                   left: 20,
                   child: BaseButton(
-                    child: Assets.icons.icBackIcon.image(height: 38, width: 38),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Assets.icons.icBackIcon.image(height: 24, width: 24),
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                     },
@@ -215,32 +246,160 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
     );
   }
 
-  Widget _hintCard(String title, dynamic iconAsset) {
-    return Container(
-      width: 100,
-      height: 120,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFE082), // Mustard yellow
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (iconAsset is AssetGenImage)
-            iconAsset.image(height: 40, width: 40)
-          else
-             Icon(Icons.image, size: 40, color: Colors.brown), // Fallback
-          10.spaceH,
-          title.appText(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: Colors.brown.shade800,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-          ),
-        ],
+  Widget _colorButton(BuildContext context, ConnectDetailState state, Color color) {
+    final isSelected = state.selectedColor == color;
+    return GestureDetector(
+      onTap: () => context.read<ConnectDetailCubit>().changeColor(color),
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: isSelected ? Border.all(color: Colors.black, width: 3) : Border.all(color: Colors.grey.shade300),
+          boxShadow: isSelected ? [BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 8)] : [],
+        ),
+        child: isSelected ? const Icon(Icons.check, color: Colors.white, size: 20) : null,
       ),
     );
+  }
+
+  Widget _eraserButton(BuildContext context, ConnectDetailState state) {
+    final isSelected = state.selectedColor == Colors.white;
+    return GestureDetector(
+      onTap: () => context.read<ConnectDetailCubit>().changeColor(Colors.white),
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: isSelected ? Border.all(color: Colors.black, width: 3) : Border.all(color: Colors.grey.shade300),
+        ),
+        child: const Icon(Icons.cleaning_services_rounded, color: Colors.black54, size: 20),
+      ),
+    );
+  }
+
+  void _showCompletionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Assets.icons.icHappyIcon.image(height: 80),
+              20.spaceH,
+              "That was beautiful!".appText(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                textAlign: TextAlign.center,
+              ),
+              10.spaceH,
+              "You drew your happy feeling!".appText(
+                fontSize: 16,
+                color: Colors.grey,
+                textAlign: TextAlign.center,
+              ),
+              30.spaceH,
+              Row(
+                children: [
+                  Expanded(
+                    child: BaseButton(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        alignment: Alignment.center,
+                        child: "Done for Today".appText(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      onTap: () {
+                        // Pop dialog then pop screen
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  10.spaceW,
+                  Expanded(
+                     // "Save to Journal" could be added here
+                     child: BaseButton(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF9C27B0),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        alignment: Alignment.center,
+                        child: "Save".appText(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onTap: () {
+                         // Save placeholder logic
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ConnectDetailPainter extends CustomPainter {
+  final List<DrawingStroke> strokes;
+  final DrawingStroke? currentStroke;
+
+  ConnectDetailPainter(this.strokes, this.currentStroke);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Draw all saved strokes
+    for (final stroke in strokes) {
+      _paintStroke(canvas, stroke);
+    }
+    // Draw current stroke
+    if (currentStroke != null) {
+      _paintStroke(canvas, currentStroke!);
+    }
+  }
+
+  void _paintStroke(Canvas canvas, DrawingStroke stroke) {
+    if (stroke.points.isEmpty) return;
+
+    final paint = Paint()
+      ..color = stroke.color
+      ..strokeWidth = stroke.width
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke;
+
+    final path = Path();
+    path.moveTo(stroke.points.first.dx, stroke.points.first.dy);
+    for (int i = 1; i < stroke.points.length; i++) {
+        path.lineTo(stroke.points[i].dx, stroke.points[i].dy);
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant ConnectDetailPainter oldDelegate) {
+    return true; // Simple approach, always repaint on updates
   }
 }
