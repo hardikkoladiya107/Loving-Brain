@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,17 +6,14 @@ import 'package:loving_brain/model/routine_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
 import 'package:loving_brain/ui/essentials/essentials_screen.dart';
-import 'package:loving_brain/ui/notification_screen/notification_screen.dart';
 import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
-
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
 import '../base_screen/bloc/base_cubit.dart';
-
 import '../new_behavior/new_behavior_screen.dart';
 import '../connect_detail/connect_detail_screen.dart';
 import '../reflect_your_emotions/reflect_your_emotions.dart';
@@ -52,14 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 _secondCard(),
                 10.spaceH,
                 _thirdCard(state),
-                10.spaceH,
+                8.spaceH,
                 _fourthCardItem(state),
-                10.spaceH,
+                8.spaceH,
                 _fifthCardItem(),
+                8.spaceH,
                 _sixthCardItem(),
                 20.spaceH,
-                // 10.spaceH,
-                // _reminder(),
               ],
             ),
           ),
@@ -73,82 +68,115 @@ class _HomeScreenState extends State<HomeScreen> {
     RoutineModel? routine = _getNextRoutine(state);
     return Container(
       decoration: BoxDecoration(
-        color: aiQuestionCardColor3,
-        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            aiQuestionCardColor3,
+            aiQuestionCardColor3.withValues(alpha: 0.7),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          10.spaceH,
+          14.spaceH,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              10.spaceW,
-              Assets.icons.icProfileIcon2.image(
-                height: 50,
-                width: 50,
-                fit: BoxFit.contain,
+              14.spaceW,
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Assets.icons.icProfileIcon2.image(
+                  height: 54,
+                  width: 54,
+                  fit: BoxFit.contain,
+                ),
               ),
-              10.spaceW,
+              14.spaceW,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     "Hello, ${state.userModel?.parentName ?? ""}!".appText(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: Colors.black87,
                     ),
+                    4.spaceH,
                     "Ready to nurture ${state.childModel?.childName ?? ""}'s journey?\n(Child: ${state.childModel?.childName ?? ""}, ${state.childModel?.childAge ?? ""} old)"
-                        .appText(fontSize: 12, textAlign: TextAlign.start),
+                        .appText(
+                          fontSize: 13,
+                          textAlign: TextAlign.start,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ],
                 ),
               ),
               10.spaceW,
-              // BaseButton(
-              //   child: Icon(CupertinoIcons.bell),
-              //   onTap: () async {
-              //     // var response = await CoParentRepo
-              //     //     .instance
-              //     //     .coParentInvitationCollection
-              //     //     .doc("nvnLhKZrz7Yp00Kimc6u")
-              //     //     .get();
-              //     // var invitationModel = InvitationModel.fromJson(
-              //     //   response.data(),
-              //     // );
-              //     // DeepLinkManager.instance.showSuccessMessage(
-              //     //   ApiResultStatus.data(data: invitationModel),
-              //     // );
-              //     Navigator.of(context).push(
-              //       MaterialPageRoute(
-              //         builder: (context) => const NotificationScreen(),
-              //       ),
-              //     );
-              //   },
-              // ),
-
-              10.spaceW,
             ],
           ),
-
+          10.spaceH,
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              10.spaceW,
+              14.spaceW,
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (routine != null)
-                      LocaleKeys.nextSchedule.tr().appText(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                      ),
-                    if (routine != null)
-                      DateFormat(
-                        'hh:mm a',
-                      ).format(routine.timeStamp!).appText(fontSize: 12),
-                    if (routine != null)
-                      routine.description!.appText(fontSize: 12),
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (routine != null)
+                        LocaleKeys.nextSchedule.tr().appText(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
+                      if (routine != null) ...[
+                        4.spaceH,
+                        DateFormat(
+                          'hh:mm a',
+                        ).format(routine.timeStamp!).appText(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          color: primaryColor,
+                        ),
+                        routine.description!.appText(
+                          fontSize: 12,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ] else
+                        "No upcoming routines".appText(
+                          fontSize: 12,
+                          color: Colors.black45,
+                          fontWeight: FontWeight.w500,
+                        ),
+                    ],
+                  ),
                 ),
               ),
               10.spaceW,
@@ -164,68 +192,76 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Assets.icons.icStreakFire.image(height: 100, width: 80),
                     Positioned(
-                      bottom: 10,
+                      bottom: 15,
                       right: 0,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          ((state.userModel?.streak ?? 0).toString()).appText(
-                            fontSize: 40,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          ((state.userModel?.streak ?? 0) >= 1 ? "Day" : "Days")
-                              .appText(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              )
-                              .appPadding(bottom: 18),
-                        ],
+                      left: 0,
+                      child: Center(
+                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            ((state.userModel?.streak ?? 0).toString()).appText(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            2.spaceW,
+                            ((state.userModel?.streak ?? 0) >= 1 ? "Day" : "Days")
+                                .appText(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ],
+                        ),
                       ),
                     ),
                     Positioned(
-                      bottom: 0,
+                      bottom: 2,
+                      left: 0,
                       right: 0,
-                      child: "Streak!".appText(fontWeight: FontWeight.w600),
+                      child: Center(
+                        child: "Streak!".appText(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          color: Colors.orange.shade800,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-
-              // Column(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     ,
-              //
-              //     // 12.spaceH,
-              //     // BaseButton(
-              //     //   child: Assets.icons.icCalenderIcon.image(
-              //     //     height: 50,
-              //     //     width: 50,
-              //     //   ),
-              //     //   onTap: () {
-              //     //     Navigator.of(context).push(
-              //     //       MaterialPageRoute(
-              //     //         builder: (context) => const YourStreakScreen(),
-              //     //       ),
-              //     //     );
-              //     //   },
-              //     // ),
-              //   ],
-              // ),
               20.spaceW,
             ],
           ),
-
-          8.spaceH,
-
+          12.spaceH,
           Row(
             children: [
-              8.spaceW,
+              14.spaceW,
               BaseButton(
-                child: LocaleKeys.viewSchedule.tr().appText(
-                  fontWeight: FontWeight.w700,
-                  color: sliderTrackColor2,
-                  fontSize: 14,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      LocaleKeys.viewSchedule.tr().appText(
+                        fontWeight: FontWeight.w700,
+                        color: sliderTrackColor2,
+                        fontSize: 13,
+                      ),
+                      8.spaceW,
+                      Icon(Icons.arrow_forward_rounded, size: 16, color: sliderTrackColor2),
+                    ],
+                  ),
                 ),
                 onTap: () {
                   context.read<BaseCubit>().changeProps(
@@ -233,12 +269,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-
-              12.spaceW,
-              Icon(Icons.arrow_circle_right),
             ],
           ),
-          8.spaceH,
+          14.spaceH,
         ],
       ),
     ).appPadding(left: 20, right: 20);
@@ -248,23 +281,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: [
         8.spaceW,
-        // Expanded(
-        //   child: _secondCardItem(
-        //     title: LocaleKeys.calmCorner.tr(),
-        //     asset: Assets.icons.icCalmCorner,
-        //     onTap: () {
-        //       Navigator.of(context).push(
-        //         MaterialPageRoute(
-        //           builder: (context) => const ChooseYourCalmScreen(),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // ),
         Expanded(
           child: _secondCardItem(
             title: LocaleKeys.learnPlay.tr(),
-            icon: Icons.palette_outlined, // Changed icon to palette for drawing
+            icon: Icons.palette_outlined,
+            gradient: const LinearGradient(
+              colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            iconColor: Colors.blue.shade700,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -279,6 +305,12 @@ class _HomeScreenState extends State<HomeScreen> {
           child: _secondCardItem(
             title: LocaleKeys.trackKidBehaviour.tr(),
             asset: Assets.icons.icTrackKidBehaviour,
+            gradient: const LinearGradient(
+              colors: [Color(0xFFE8F5E9), Color(0xFFC8E6C9)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            iconColor: Colors.green.shade700,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -298,24 +330,33 @@ class _HomeScreenState extends State<HomeScreen> {
     AssetGenImage? asset,
     IconData? icon,
     required GestureTapCallback onTap,
+    Gradient? gradient,
+    Color? iconColor,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Container(
-        height: 100,
+        height: 90.h,
         decoration: BoxDecoration(
-          color: greyColor,
-          borderRadius: BorderRadius.circular(12),
+          gradient: gradient ?? LinearGradient(colors: [greyColor, Colors.grey.shade300]),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            title.appText(fontSize: 12, fontWeight: FontWeight.w600),
-            8.spaceH,
+            title.appText(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
+            10.spaceH,
             if (icon != null)
-              Icon(icon, size: 35, color: Colors.black87)
+              Icon(icon, size: 30.r, color: iconColor ?? Colors.black87)
             else if (asset != null)
-               asset.image(height: 35),
+              asset.image(height: 30.r),
           ],
         ),
       ),
@@ -326,24 +367,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       children: [
         20.spaceW,
-        // Expanded(
-        //   child: _thirdCardItem(
-        //     title: LocaleKeys.learnPlay.tr(),
-        //     asset: Assets.images.imgLearnAndPlay,
-        //     onTap: () {
-        //       Navigator.of(context).push(
-        //         MaterialPageRoute(
-        //           builder: (context) => const PlayAndConnectScreen(),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // ),
-        // 10.spaceW,
         Expanded(
           child: _thirdCardItem(
             title: LocaleKeys.familySync.tr(),
             asset: Assets.images.imgSleep,
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFF3E0), Color(0xFFFFE0B2)], // Soft orange
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -358,19 +390,17 @@ class _HomeScreenState extends State<HomeScreen> {
           child: _thirdCardItem(
             title: LocaleKeys.howAreWeFeeling.tr(),
             asset: Assets.images.imgHowAreWeFeeling,
+            gradient: const LinearGradient(
+              colors: [Color(0xFFF3E5F5), Color(0xFFE1BEE7)], // Soft Purple
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             onTap: () {
-              // if (!state.moodLoggedForToday) {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => const DailyMoodCheckInScreen(),
                 ),
               );
-              // } else {
-              //   showSnackBar(
-              //     message: LocaleKeys.youAlreadyLoggedYourMoodToday.tr(),
-              //     type: SnackBarType.ERROR,
-              //   );
-              // }
             },
           ),
         ),
@@ -383,6 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String title,
     required AssetGenImage asset,
     required GestureTapCallback? onTap,
+    Gradient? gradient,
   }) {
     return BaseButton(
       onTap: onTap,
@@ -390,16 +421,21 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 100.h,
         width: 100.w,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: aiQuestionCardColor2,
-          // image: DecorationImage(
-          //   fit: BoxFit.cover,
-          //   image: AssetImage(asset.path),
-          // ),
+          borderRadius: BorderRadius.circular(20),
+          gradient: gradient ?? LinearGradient(colors: [aiQuestionCardColor2, aiQuestionCardColor2]),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [title.appText(fontWeight: FontWeight.w700, fontSize: 14)],
+          children: [
+            title.appText(fontWeight: FontWeight.w700, fontSize: 13, color: Colors.black87),
+          ],
         ),
       ),
     );
@@ -409,25 +445,39 @@ class _HomeScreenState extends State<HomeScreen> {
     return BaseButton(
       onTap: () {},
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 20),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: greyColor,
+          gradient: const LinearGradient(
+            colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)], // Cyan/Teal
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+             BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+             ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             LocaleKeys.dailyParentingTip.tr().appText(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: Colors.teal.shade800,
             ),
+            4.spaceH,
             Row(
               children: [
                 Expanded(
                   child: state.todayParentingTip.appText(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
+                    color: Colors.teal.shade900,
                   ),
                 ),
               ],
@@ -446,12 +496,23 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
       child: Container(
-        height: 80.h,
-        margin: EdgeInsets.symmetric(horizontal: 20),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        height: 70.h,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: yellowColor5,
+          gradient: const LinearGradient(
+              colors: [Color(0xFFFFF9C4), Color(0xFFFFF59D)], // Light Yellow
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+             BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+             ),
+          ],
         ),
         child: Stack(
           children: [
@@ -473,8 +534,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Center(
               child: LocaleKeys.sleep.appText(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Colors.brown.shade700,
               ),
             ),
           ],
@@ -482,8 +544,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-
 
   @override
   void dispose() {
@@ -537,20 +597,31 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Stack(
         children: [
           Container(
-            height: 80.h,
-            margin: EdgeInsets.symmetric(horizontal: 20),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            height: 70.h,
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: cardColor2,
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFEBEE), Color(0xFFFFCDD2)], // Red/Pink
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                 BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                 ),
+              ],
             ),
             child: Stack(
               children: [
                 Center(
                   child: "Family Feel Meter".appText(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.red.shade900,
                   ),
                 ),
               ],
@@ -565,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   child: Assets.icons.icFamilyFeelMeter.image(
                     fit: BoxFit.fill,
-                    height: 90.r,
+                    height: 80.r,
                   ),
                 ),
               ],
