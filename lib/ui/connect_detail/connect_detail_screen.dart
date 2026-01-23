@@ -1,16 +1,20 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/connect_detail/bloc/connect_detail_cubit.dart';
 import 'package:loving_brain/ui/connect_detail/bloc/connect_detail_state.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
+import '../../main.dart';
 import '../../other/app_color.dart';
 
 class ConnectDetailScreen extends StatefulWidget {
@@ -346,6 +350,24 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
             EasyLoading.dismiss();
           },
         );
+        state.saveDrawingApiResultStatus.whenOrNull(
+          error: (error) {
+            EasyLoading.dismiss();
+            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+          },
+          loading: () {
+            EasyLoading.show();
+          },
+          data: (data) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: "Saved Successfully",
+              type: SnackBarType.SUCCESS,
+            );
+            Navigator.pop(context);
+
+          },
+        );
       },
     );
   }
@@ -592,15 +614,16 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                     fontSize: 15,
                   ),
                 ),
-                  onTap: () async {
-                    if (Navigator.canPop(context)) Navigator.pop(context);
-                    final bytes = await _capturePng();
-                    if (bytes != null) {
-                       // ignore: use_build_context_synchronously
-                       context.read<ConnectDetailCubit>().saveDrawing(bytes);
-                    }
-                  },
-                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final bytes = await _capturePng();
+                  if (bytes != null && navigatorKey.currentContext != null) {
+                    navigatorKey.currentContext!
+                        .read<ConnectDetailCubit>()
+                        .saveDrawing(bytes);
+                  }
+                },
+              ),
 
               8.spaceH,
               BaseButton(
@@ -628,29 +651,25 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
       ),
     );
   }
-  }
 
   Future<Uint8List?> _capturePng() async {
     try {
       if (_globalKey.currentContext == null) return null;
-      
       EasyLoading.show(status: "Capturing...");
-      RenderRepaintBoundary? boundary = _globalKey.currentContext!
-          .findRenderObject() as RenderRepaintBoundary?;
-      
+      RenderRepaintBoundary? boundary =
+          _globalKey.currentContext!.findRenderObject()
+              as RenderRepaintBoundary?;
       if (boundary == null) return null;
-      
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
       ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,
       );
-      
       return byteData?.buffer.asUint8List();
     } catch (e) {
       debugPrint("Error capturing png: $e");
       return null;
     } finally {
-       EasyLoading.dismiss();
+      EasyLoading.dismiss();
     }
   }
 }

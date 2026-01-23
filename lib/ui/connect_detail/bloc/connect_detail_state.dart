@@ -13,6 +13,7 @@ abstract class ConnectDetailState with _$ConnectDetailState {
     @Default(Colors.blue) Color selectedColor,
     @Default([]) List<DrawingStroke> allStrokes,
     @Default(ApiResultStatus.initial()) ApiResultStatus getPromptApiResultStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus saveDrawingApiResultStatus,
     DrawingStroke? currentStroke,
   }) = _ConnectDetailState;
 }

@@ -13,8 +13,6 @@ import 'connect_detail_state.dart';
 class ConnectDetailCubit extends Cubit<ConnectDetailState> {
   ConnectDetailCubit() : super(const ConnectDetailState());
 
-
-
   final List<String> _fallbackPrompts = [
     "Draw something that made you smile today.",
     "Draw your favorite place to play.",
@@ -28,6 +26,7 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
     List<DrawingStroke>? allStrokes,
     DrawingStroke? currentStroke,
     ApiResultStatus? getPromptApiResultStatus,
+    ApiResultStatus? saveDrawingApiResultStatus,
   }) {
     emit(
       state.copyWith(
@@ -38,6 +37,8 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
         currentStroke: currentStroke ?? state.currentStroke,
         getPromptApiResultStatus:
             getPromptApiResultStatus ?? state.getPromptApiResultStatus,
+        saveDrawingApiResultStatus:
+            saveDrawingApiResultStatus ?? state.saveDrawingApiResultStatus,
       ),
     );
   }
@@ -50,7 +51,8 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
   Future<void> _fetchAllPrompts() async {
     try {
       changeProps(getPromptApiResultStatus: ApiResultStatus.loading());
-      final getAllPromptsApiResultStatus = await PromptsRepo.instance.getAllPrompts();
+      final getAllPromptsApiResultStatus = await PromptsRepo.instance
+          .getAllPrompts();
       changeProps(getPromptApiResultStatus: getAllPromptsApiResultStatus);
       getAllPromptsApiResultStatus.whenOrNull(
         data: (data) {
@@ -71,7 +73,8 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
       PromptModel? selected;
 
       // 2a. Check if we already have a prompt for today
-      final todayPromptId = await PromptsRepo.instance.getLastSeenPromptIdSinceToday();
+      final todayPromptId = await PromptsRepo.instance
+          .getLastSeenPromptIdSinceToday();
       if (todayPromptId != null) {
         // Find it in the list
         try {
@@ -86,17 +89,18 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
         // 2b. If no prompt for today, pick a new one
         // Fetch IDs of prompts seen in last 15 days
         final recentIds = await PromptsRepo.instance.getRecentPromptIds(15);
-        
+
         final availablePrompts = allPrompts
             .where((p) => !recentIds.contains(p.id))
             .toList();
-        
+
         if (availablePrompts.isNotEmpty) {
-          selected = availablePrompts[Random().nextInt(availablePrompts.length)];
+          selected =
+              availablePrompts[Random().nextInt(availablePrompts.length)];
         } else {
           selected = allPrompts[Random().nextInt(allPrompts.length)];
         }
-        
+
         // Mark as seen for today
         await PromptsRepo.instance.markPromptAsSeen(selected.id);
       }
@@ -120,8 +124,6 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
     );
     changeProps(currentPrompt: promptText, promptModel: fallbackModel);
   }
-
-
 
   void startStroke(Offset point) {
     final newStroke = DrawingStroke(
@@ -168,23 +170,17 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
   Future<void> saveDrawing(Uint8List bytes) async {
     try {
       changeProps(saveDrawingApiResultStatus: ApiResultStatus.loading());
-
-      // 1. Upload Image
       final refId = DateTime.now().millisecondsSinceEpoch.toString();
       final ref = FirebaseStorage.instance
           .ref()
           .child('journal_images')
           .child('$refId.png');
-
       final metadata = SettableMetadata(
         contentType: 'image/png',
         customMetadata: {'picked-file-path': 'canvas_drawing'},
       );
-
       await ref.putData(bytes, metadata);
       final downloadUrl = await ref.getDownloadURL();
-
-      // 2. Save to Journal
       final journal = JournalModel(
         thoughtText: "Drawn from Connect & Play: ${state.currentPrompt}",
         logTime: DateTime.now(),
@@ -193,27 +189,21 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
         hint1: state.promptModel?.hint1 ?? "",
         hint2: state.promptModel?.hint2 ?? "",
       );
-
       final result = await MoodRepo.instance.addJournal(
         request: journal.toJson(),
       );
-
       changeProps(saveDrawingApiResultStatus: result);
-      
       result.whenOrNull(
         data: (data) {
           clearCanvas();
-          // Additional success handling if needed (e.g. snackbar shown by UI listener)
         },
       );
-      
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint("Error saving drawing: $e");
       changeProps(saveDrawingApiResultStatus: ApiResultStatus.error(error: e));
     }
   }
 }
-
 
 class DrawingStroke {
   final List<Offset> points;

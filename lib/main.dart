@@ -12,6 +12,7 @@ import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'firebase_options.dart';
 import 'generated/locale_keys.g.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
+import 'other/app_extentions.dart';
 import 'other/notification_util.dart';
 import 'other/preferances.dart';
 
@@ -99,19 +100,44 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+
+
 void configLoading() {
+  final bool isDark = false;
+  final Color indicatorColor = isDark ? const Color(0xFFCE63E2) : const Color(0xFF9F35B1);
+  final Color backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+  final Color textColor = isDark ? const Color(0xFFEDEDED) : const Color(0xFF1A1A1A);
+  final Color maskColor = isDark ? const Color(0x80000000) : const Color(0x80FFFFFF);
+
   EasyLoading.instance
-    ..radius = 10.0
-    ..indicatorWidget = Container(
-      height: 100,
-      width: 100,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: SpinKitFadingCircle(color: Colors.black),
-    )
-    ..contentPadding = EdgeInsets.zero
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorSize = 50.0
+    ..radius = 12.0
+    ..progressColor = indicatorColor
+    ..backgroundColor = backgroundColor
+    ..indicatorColor = indicatorColor
+    ..textColor = textColor
+    ..maskColor = maskColor
     ..userInteractions = false
-    ..dismissOnTap = false;
+    ..dismissOnTap = false
+    ..textStyle = getTextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+      letterSpacing: 0.3,
+    )
+    ..contentPadding = const EdgeInsets.symmetric(horizontal: 24, vertical: 20)
+    ..textPadding = const EdgeInsets.only(top: 12)
+    ..boxShadow = [
+      BoxShadow(
+        color: isDark
+            ? Colors.black.withValues(alpha: 0.5)
+            : Colors.black.withValues(alpha: 0.15),
+        blurRadius: 20.0,
+        spreadRadius: 2.0,
+        offset: const Offset(0, 4),
+      ),
+    ];
 }
