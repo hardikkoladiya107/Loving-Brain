@@ -25,7 +25,6 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
   ];
 
   void init() {
-    // Pick a random prompt or based on day of year
     final random = Random();
     final prompt = _prompts[random.nextInt(_prompts.length)];
     emit(state.copyWith(currentPrompt: prompt));

@@ -202,6 +202,7 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
     String? value,
     String? title,
     IconData? icon,
+    GestureTapCallback? onTap,
   }) {
     return Column(
       children: [
@@ -220,33 +221,35 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
               8.spaceH,
             ],
           ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              if (icon != null) ...[
-                Icon(icon, color: blueColor2, size: 20),
-                12.spaceW,
+        BaseButton(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, color: blueColor2, size: 20),
+                  12.spaceW,
+                ],
+                Expanded(
+                  child: ((value ?? "").isNotEmpty ? value : hint)
+                      .toString()
+                      .appText(
+                        color: (value ?? "").isNotEmpty
+                            ? Colors.black87
+                            : Colors.grey,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                Icon(Icons.arrow_drop_down_rounded, color: Colors.grey),
               ],
-              Expanded(
-                child: ((value ?? "").isNotEmpty ? value : hint)
-                    .toString()
-                    .appText(
-                      color:
-                          (value ?? "").isNotEmpty
-                              ? Colors.black87
-                              : Colors.grey,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-              Icon(Icons.arrow_drop_down_rounded, color: Colors.grey),
-            ],
+            ),
           ),
         ),
       ],
@@ -254,7 +257,11 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
   }
 
   Widget _selectDate(SleepSummaryState state) {
-    return BaseButton(
+    return _dateField(
+      title: LocaleKeys.date.tr(),
+      value: state.selectedDate != null ? formatDate(state.selectedDate!) : "",
+      hint: LocaleKeys.selectDate.tr(),
+      icon: Icons.calendar_today_rounded,
       onTap: () async {
         DateTime? date = await _showDatePicker();
         if (navigatorKey.currentContext != null) {
@@ -263,13 +270,6 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
           );
         }
       },
-      child: _dateField(
-        title: LocaleKeys.date.tr(),
-        value:
-            state.selectedDate != null ? formatDate(state.selectedDate!) : "",
-        hint: LocaleKeys.selectDate.tr(),
-        icon: Icons.calendar_today_rounded,
-      ),
     );
   }
 
@@ -277,7 +277,13 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
     return Row(
       children: [
         Expanded(
-          child: BaseButton(
+          child: _dateField(
+            title: LocaleKeys.bedTime.tr(),
+            value: state.selectedBedTime != null
+                ? coParentScheduleTime(state.selectedBedTime!)
+                : "",
+            hint: LocaleKeys.selectDateTime.tr(),
+            icon: Icons.nights_stay_rounded,
             onTap: () async {
               DateTime? date = await pickDateTime(context);
               if (navigatorKey.currentContext != null) {
@@ -286,20 +292,17 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
                     .changeProps(selectedBedTime: date);
               }
             },
-            child: _dateField(
-              title: LocaleKeys.bedTime.tr(),
-              value:
-                  state.selectedBedTime != null
-                      ? coParentScheduleTime(state.selectedBedTime!)
-                      : "",
-              hint: LocaleKeys.selectDateTime.tr(),
-              icon: Icons.nights_stay_rounded,
-            ),
           ),
         ),
         12.spaceW,
         Expanded(
-          child: BaseButton(
+          child: _dateField(
+            title: LocaleKeys.wakeUpTime.tr(),
+            value: state.selectedWakeTime != null
+                ? coParentScheduleTime(state.selectedWakeTime!)
+                : "",
+            hint: LocaleKeys.selectDateTime.tr(),
+            icon: Icons.wb_sunny_rounded,
             onTap: () async {
               DateTime? date = await pickDateTime(context);
               if (navigatorKey.currentContext != null) {
@@ -308,15 +311,6 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
                     .changeProps(selectedWakeTime: date);
               }
             },
-            child: _dateField(
-              title: LocaleKeys.wakeUpTime.tr(),
-              value:
-                  state.selectedWakeTime != null
-                      ? coParentScheduleTime(state.selectedWakeTime!)
-                      : "",
-              hint: LocaleKeys.selectDateTime.tr(),
-              icon: Icons.wb_sunny_rounded,
-            ),
           ),
         ),
       ],
