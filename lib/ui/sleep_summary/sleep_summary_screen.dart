@@ -58,7 +58,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
               Column(
                 children: [
                   55.spaceH,
-                  "${LocaleKeys.sleepSummaryFor.tr()} ${state.childModel?.childName}"
+                  "${LocaleKeys.sleepSummaryFor.tr()} ${state.childModel?.childName ?? ""}"
                       .appText(
                         color: Colors.white,
                         fontSize: 16,

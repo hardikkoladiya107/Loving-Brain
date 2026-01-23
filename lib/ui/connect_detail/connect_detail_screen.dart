@@ -23,145 +23,202 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ConnectDetailCubit, ConnectDetailState>(
       builder: (context, state) {
+        if (state.isLoading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
         return Scaffold(
           body: SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(), // Prevent scrolling while drawing
+            physics: const ClampingScrollPhysics(),
             child: Stack(
               children: [
+                // Background Image
+                Container(
+                  height: context.height,
+                  width: context.width,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(Assets.images.imgSleepBackground.path),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                
+                // Content
                 Column(
                   children: [
-                    Container(
-                      height: context.height * 0.35, // Slightly reduced
-                      width: context.width,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(Assets.images.imgSleepBackground.path),
-                          fit: BoxFit.cover,
+                    // Top Section with Prompt
+                    SafeArea(
+                      bottom: false,
+                      child: Padding(
+                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        child: Column(
+                          children: [
+                             // Header Title
+                             Row(
+                               mainAxisAlignment: MainAxisAlignment.center,
+                               children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(30),
+                                      border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                    ),
+                                    child: "Learn & Play".appText(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                               ],
+                             ),
+                             24.spaceH,
+
+                             // Prompt Card
+                             Container(
+                               width: double.infinity,
+                               padding: const EdgeInsets.all(24),
+                               decoration: BoxDecoration(
+                                 color: Colors.white.withOpacity(0.15),
+                                 borderRadius: BorderRadius.circular(24),
+                                 border: Border.all(color: Colors.white.withOpacity(0.4), width: 1.5),
+                                 boxShadow: [
+                                   BoxShadow(
+                                     color: Colors.black.withOpacity(0.1),
+                                     blurRadius: 20,
+                                     offset: const Offset(0, 10),
+                                   ),
+                                 ],
+                               ),
+                               child: Column(
+                                 children: [
+                                    // Main Prompt
+                                    state.currentPrompt.appText(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      textAlign: TextAlign.center,
+                                      height: 1.3,
+                                    ),
+                                    
+                                    if (state.promptModel != null) ...[
+                                      16.spaceH,
+                                      Divider(color: Colors.white.withOpacity(0.3), thickness: 1),
+                                      16.spaceH,
+                                      // Hints
+                                      if (state.promptModel!.hint1.isNotEmpty)
+                                        _buildHintParams("Hint 1", state.promptModel!.hint1),
+                                      if (state.promptModel!.hint2.isNotEmpty) ...[
+                                         12.spaceH,
+                                        _buildHintParams("Hint 2", state.promptModel!.hint2),
+                                      ],
+                                    ],
+                                 ],
+                               ),
+                             ),
+                          ],
                         ),
                       ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              height: 100,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    const Color(0xFFE0F7FA).withValues(alpha: 0.3),
-                                  ],
-                                ),
-                              ),
-                            ),
+                    ),
+                    
+                    20.spaceH,
+                    
+                    // Drawing Area Container - White Sheet Effect
+                    Container(
+                      width: context.width,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 30,
+                            offset: Offset(0, -10),
                           ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              20.spaceH,
-                              "Learn & Play".appText(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 24, // Smaller
-                                color: const Color(0xFFFFD54F),
-                              ),
-                              10.spaceH,
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: state.currentPrompt.appText(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16, // Smaller
-                                  color: Colors.white,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                ),
-                              ),
-                              20.spaceH,
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.4),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: "Use your finger to draw!".appText(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              20.spaceH,
-                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Assets.icons.icBrainAi.image(height: 40),
-                                  10.spaceW,
-                                  Assets.icons.icHeartIcon.image(height: 40),
-                                ],
-                              ),
-                            ],
-                          ).appPadding(top: 40),
                         ],
                       ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      width: context.width,
-                      padding: const EdgeInsets.all(20),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Color Palette
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _colorButton(context, state, Colors.red),
-                              _colorButton(context, state, Colors.blue),
-                              _colorButton(context, state, Colors.green),
-                              _colorButton(context, state, const Color(0xFFFFEB3B)), // Yellow
-                              _colorButton(context, state, Colors.purple),
-                              _eraserButton(context, state),
-                            ],
+                          24.spaceH,
+                          // Tools Row
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                "Your Canvas".appText(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                ),
+                                Row(
+                                  children: [
+                                     _eraserButton(context, state),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          20.spaceH,
+                          16.spaceH,
                           
-                          // Drawing Canvas
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              height: context.height * 0.40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey.shade300, width: 2),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withValues(alpha: 0.1),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  )
-                                ]
-                              ),
+                          // Color Palette
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Row(
+                              children: [
+                                _colorButton(context, state, Colors.red),
+                                12.spaceW,
+                                _colorButton(context, state, Colors.blue),
+                                12.spaceW,
+                                _colorButton(context, state, Colors.green),
+                                12.spaceW,
+                                _colorButton(context, state, const Color(0xFFFFEB3B)), // Yellow
+                                12.spaceW,
+                                _colorButton(context, state, Colors.purple),
+                                12.spaceW,
+                                _colorButton(context, state, Colors.orange),
+                                12.spaceW,
+                                _colorButton(context, state, Colors.teal),
+                                12.spaceW,
+                                _colorButton(context, state, Colors.black),
+                              ],
+                            ),
+                          ),
+                          24.spaceH,
+
+                          // Canvas
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            height: context.height * 0.45,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              border: Border.all(color: Colors.grey.shade200, width: 2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.08),
+                                  blurRadius: 15,
+                                  spreadRadius: 5,
+                                  offset: const Offset(0, 5),
+                                )
+                              ]
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(24),
                               child: GestureDetector(
                                 onPanStart: (details) {
-                                  final box = context.findRenderObject() as RenderBox;
-                                  final point = box.globalToLocal(details.globalPosition);
-                                  // Adjust for headers etc. simplified: pass local position
-                                  // Since this is inside lists/stacks, simpler to use RepaintBoundary or similar,
-                                  // but localPosition from details works relative to the widget receiving the gesture.
                                   context.read<ConnectDetailCubit>().startStroke(details.localPosition);
                                 },
                                 onPanUpdate: (details) {
@@ -180,57 +237,68 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                               ),
                             ),
                           ),
-                          20.spaceH,
                           
-                          BaseButton(
-                            child: Container(
-                              height: 48,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF9C27B0), // Purple color
-                                borderRadius: BorderRadius.circular(30),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.purple.withValues(alpha: 0.3),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                          32.spaceH,
+                          
+                          // Finish Button
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: BaseButton(
+                              child: Container(
+                                height: 56,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFAB47BC), Color(0xFF8E24AA)],
                                   ),
-                                ],
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF8E24AA).withOpacity(0.4),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.check_circle_outline, color: Colors.white),
+                                    10.spaceW,
+                                    "I'm Finished!".appText(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: "I'm Finished!".appText(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                              onTap: () {
+                                _showCompletionDialog(context);
+                              },
                             ),
-                            onTap: () {
-                              _showCompletionDialog(context);
-                            },
                           ),
-                          20.spaceH,
+                          40.spaceH,
                         ],
                       ),
                     ),
                   ],
                 ),
-                 Positioned(
+
+                // Back Button (Floating)
+                Positioned(
                   top: 50,
                   left: 20,
                   child: BaseButton(
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.white.withOpacity(0.2),
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                        border: Border.all(color: Colors.white.withOpacity(0.5)),
                       ),
-                      child: Assets.icons.icBackIcon.image(height: 24, width: 24),
+                      child: Assets.icons.icBackIcon.image(height: 24, width: 24, color: Colors.white),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -245,6 +313,36 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
       listener: (context, state) {},
     );
   }
+  
+  Widget _buildHintParams(String label, String text) {
+     return Row(
+       crossAxisAlignment: CrossAxisAlignment.start,
+       children: [
+         Container(
+           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+           decoration: BoxDecoration(
+             color: Colors.white.withOpacity(0.3),
+             borderRadius: BorderRadius.circular(8),
+           ),
+           child: label.appText(
+             fontSize: 12,
+             fontWeight: FontWeight.w700,
+             color: Colors.white,
+           ),
+         ),
+         10.spaceW,
+         Expanded(
+           child: text.appText(
+             fontSize: 14, 
+             fontWeight: FontWeight.w500,
+             color: Colors.white.withOpacity(0.9),
+             height: 1.4,
+           ),
+         )
+       ],
+     );
+  }
+
 
   Widget _colorButton(BuildContext context, ConnectDetailState state, Color color) {
     final isSelected = state.selectedColor == color;
