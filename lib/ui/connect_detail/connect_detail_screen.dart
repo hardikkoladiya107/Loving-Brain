@@ -1,4 +1,5 @@
-import 'dart:ui';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,8 @@ class ConnectDetailScreen extends StatefulWidget {
 }
 
 class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
+  final GlobalKey _globalKey = GlobalKey();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -208,30 +211,36 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                                 ),
                               ],
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: GestureDetector(
-                                onPanStart: (details) {
-                                  context
-                                      .read<ConnectDetailCubit>()
-                                      .startStroke(details.localPosition);
-                                },
-                                onPanUpdate: (details) {
-                                  context
-                                      .read<ConnectDetailCubit>()
-                                      .updateStroke(details.localPosition);
-                                },
-                                onPanEnd: (details) {
-                                  context
-                                      .read<ConnectDetailCubit>()
-                                      .endStroke();
-                                },
-                                child: CustomPaint(
-                                  painter: ConnectDetailPainter(
-                                    state.allStrokes,
-                                    state.currentStroke,
+                            child: RepaintBoundary(
+                              key: _globalKey,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16),
+                                child: Container(
+                                  color: Colors.white,
+                                  child: GestureDetector(
+                                    onPanStart: (details) {
+                                      context
+                                          .read<ConnectDetailCubit>()
+                                          .startStroke(details.localPosition);
+                                    },
+                                    onPanUpdate: (details) {
+                                      context
+                                          .read<ConnectDetailCubit>()
+                                          .updateStroke(details.localPosition);
+                                    },
+                                    onPanEnd: (details) {
+                                      context
+                                          .read<ConnectDetailCubit>()
+                                          .endStroke();
+                                    },
+                                    child: CustomPaint(
+                                      painter: ConnectDetailPainter(
+                                        state.allStrokes,
+                                        state.currentStroke,
+                                      ),
+                                      size: Size.infinite,
+                                    ),
                                   ),
-                                  size: Size.infinite,
                                 ),
                               ),
                             ),
@@ -583,10 +592,15 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
                     fontSize: 15,
                   ),
                 ),
-                onTap: () {
-                  context.read<ConnectDetailCubit>().saveDrawing();
-                },
-              ),
+                  onTap: () async {
+                    if (Navigator.canPop(context)) Navigator.pop(context);
+                    final bytes = await _capturePng();
+                    if (bytes != null) {
+                       // ignore: use_build_context_synchronously
+                       context.read<ConnectDetailCubit>().saveDrawing(bytes);
+                    }
+                  },
+                ),
 
               8.spaceH,
               BaseButton(
@@ -613,6 +627,31 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
         ),
       ),
     );
+  }
+  }
+
+  Future<Uint8List?> _capturePng() async {
+    try {
+      if (_globalKey.currentContext == null) return null;
+      
+      EasyLoading.show(status: "Capturing...");
+      RenderRepaintBoundary? boundary = _globalKey.currentContext!
+          .findRenderObject() as RenderRepaintBoundary?;
+      
+      if (boundary == null) return null;
+      
+      ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+      ByteData? byteData = await image.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      debugPrint("Error capturing png: $e");
+      return null;
+    } finally {
+       EasyLoading.dismiss();
+    }
   }
 }
 

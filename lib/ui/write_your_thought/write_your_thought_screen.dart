@@ -7,6 +7,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/widget/app_image.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -329,6 +330,28 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
             ],
           ),
           12.spaceH,
+          if ((journal.imageUrl ?? "").isNotEmpty) ...[
+             ClipRRect(
+               borderRadius: BorderRadius.circular(12),
+               child: AppImage(
+                 imageUrl: journal.imageUrl!,
+                 height: 150.h,
+                 width: double.infinity,
+                 fit: BoxFit.cover,
+               ),
+             ),
+             12.spaceH,
+          ],
+          if ((journal.prompt ?? "").isNotEmpty) ...[
+             "Prompt: ${journal.prompt}".appText(
+               fontWeight: FontWeight.w600,
+               fontSize: 12,
+               color: Colors.black87,
+               textAlign: TextAlign.start,
+             ),
+             8.spaceH,
+          ],
+          if ((journal.thoughtText ?? "").isNotEmpty)
           (journal.thoughtText ?? "").appText(
             fontWeight: FontWeight.w500,
             fontSize: 13,

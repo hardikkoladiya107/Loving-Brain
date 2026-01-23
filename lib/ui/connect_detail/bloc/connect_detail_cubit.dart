@@ -1,8 +1,12 @@
 import 'dart:math';
+import 'dart:typed_data';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/journal_model.dart';
 import 'package:loving_brain/model/prompt_model.dart';
+import 'package:loving_brain/repo/mood_repo.dart';
 import 'package:loving_brain/repo/prompts_repo.dart';
 import 'connect_detail_state.dart';
 
@@ -161,8 +165,55 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
     }
   }
 
-  void saveDrawing() {}
+  Future<void> saveDrawing(Uint8List bytes) async {
+    try {
+      changeProps(saveDrawingApiResultStatus: ApiResultStatus.loading());
+
+      // 1. Upload Image
+      final refId = DateTime.now().millisecondsSinceEpoch.toString();
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('journal_images')
+          .child('$refId.png');
+
+      final metadata = SettableMetadata(
+        contentType: 'image/png',
+        customMetadata: {'picked-file-path': 'canvas_drawing'},
+      );
+
+      await ref.putData(bytes, metadata);
+      final downloadUrl = await ref.getDownloadURL();
+
+      // 2. Save to Journal
+      final journal = JournalModel(
+        thoughtText: "Drawn from Connect & Play: ${state.currentPrompt}",
+        logTime: DateTime.now(),
+        imageUrl: downloadUrl,
+        prompt: state.currentPrompt,
+        hint1: state.promptModel?.hint1 ?? "",
+        hint2: state.promptModel?.hint2 ?? "",
+      );
+
+      final result = await MoodRepo.instance.addJournal(
+        request: journal.toJson(),
+      );
+
+      changeProps(saveDrawingApiResultStatus: result);
+      
+      result.whenOrNull(
+        data: (data) {
+          clearCanvas();
+          // Additional success handling if needed (e.g. snackbar shown by UI listener)
+        },
+      );
+      
+    } catch (e) {
+      debugPrint("Error saving drawing: $e");
+      changeProps(saveDrawingApiResultStatus: ApiResultStatus.error(error: e));
+    }
+  }
 }
+
 
 class DrawingStroke {
   final List<Offset> points;
