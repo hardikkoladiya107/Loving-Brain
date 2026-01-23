@@ -70,25 +70,32 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
                           16.spaceH,
                           Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: aiQuestionCardColor1,
+                              borderRadius: BorderRadius.circular(24),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 20,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
                             ),
-                            margin: EdgeInsets.all(12),
-                            padding: EdgeInsets.all(12),
+                            margin: EdgeInsets.all(20),
+                            padding: EdgeInsets.all(24),
                             child: Column(
                               children: [
                                 12.spaceH,
                                 LocaleKeys.addSleepLog.tr().appText(
-                                  fontSize: 20,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                 ),
-                                16.spaceH,
+                                24.spaceH,
                                 _selectDate(state),
-                                16.spaceH,
+                                20.spaceH,
                                 _bedTimeWakeUpTime(state),
-                                16.spaceH,
+                                20.spaceH,
                                 _notes(),
-                                12.spaceH,
+                                30.spaceH,
                                 _saveButton(),
                               ],
                             ),
@@ -113,16 +120,24 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
         context.read<SleepSummaryCubit>().addSleepLog();
       },
       child: Container(
-        height: 40.h,
+        height: 50.h,
+        width: double.infinity,
         decoration: BoxDecoration(
           color: blueColor2,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: blueColor2.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
         child: Center(
           child: LocaleKeys.save.tr().appText(
             color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w800,
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -182,7 +197,12 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
     return null;
   }
 
-  Widget _dateField({required String hint, String? value, String? title}) {
+  Widget _dateField({
+    required String hint,
+    String? value,
+    String? title,
+    IconData? icon,
+  }) {
     return Column(
       children: [
         if (title != null)
@@ -193,26 +213,39 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
                   (title ?? "").appText(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
                   ),
                 ],
               ),
-              6.spaceH,
+              8.spaceH,
             ],
           ),
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
           ),
-          height: 55,
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              10.spaceW,
-              ((value ?? "").isNotEmpty ? value : hint).toString().appText(
-                color: (value ?? "").isNotEmpty ? Colors.black : Colors.grey,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
+              if (icon != null) ...[
+                Icon(icon, color: blueColor2, size: 20),
+                12.spaceW,
+              ],
+              Expanded(
+                child: ((value ?? "").isNotEmpty ? value : hint)
+                    .toString()
+                    .appText(
+                      color:
+                          (value ?? "").isNotEmpty
+                              ? Colors.black87
+                              : Colors.grey,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
+              Icon(Icons.arrow_drop_down_rounded, color: Colors.grey),
             ],
           ),
         ),
@@ -232,10 +265,10 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
       },
       child: _dateField(
         title: LocaleKeys.date.tr(),
-        value: state.selectedDate != null
-            ? formatDate(state.selectedDate!)
-            : "",
+        value:
+            state.selectedDate != null ? formatDate(state.selectedDate!) : "",
         hint: LocaleKeys.selectDate.tr(),
+        icon: Icons.calendar_today_rounded,
       ),
     );
   }
@@ -255,14 +288,16 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
             },
             child: _dateField(
               title: LocaleKeys.bedTime.tr(),
-              value: state.selectedBedTime != null
-                  ? coParentScheduleTime(state.selectedBedTime!)
-                  : "",
+              value:
+                  state.selectedBedTime != null
+                      ? coParentScheduleTime(state.selectedBedTime!)
+                      : "",
               hint: LocaleKeys.selectDateTime.tr(),
+              icon: Icons.nights_stay_rounded,
             ),
           ),
         ),
-        6.spaceW,
+        12.spaceW,
         Expanded(
           child: BaseButton(
             onTap: () async {
@@ -275,10 +310,12 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
             },
             child: _dateField(
               title: LocaleKeys.wakeUpTime.tr(),
-              value: state.selectedWakeTime != null
-                  ? coParentScheduleTime(state.selectedWakeTime!)
-                  : "",
+              value:
+                  state.selectedWakeTime != null
+                      ? coParentScheduleTime(state.selectedWakeTime!)
+                      : "",
               hint: LocaleKeys.selectDateTime.tr(),
+              icon: Icons.wb_sunny_rounded,
             ),
           ),
         ),

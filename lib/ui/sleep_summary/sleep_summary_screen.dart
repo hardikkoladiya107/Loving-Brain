@@ -89,19 +89,27 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: blueColor2,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: blueColor2.withValues(alpha: 0.3),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
         ),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            LocaleKeys.addFirstSleepLog
-                .tr()
-                .appText(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w900,
-                )
-                .appPadding(all: 8),
+            Icon(Icons.add_rounded, color: Colors.white, size: 20),
+            8.spaceW,
+            LocaleKeys.addFirstSleepLog.tr().appText(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
           ],
         ),
       ),
@@ -112,33 +120,39 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
         children: [
           Container(
-            height: 222,
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: yellowColor6,
-              borderRadius: BorderRadius.all(Radius.elliptical(30, 40)),
-            ),
-            padding: EdgeInsets.all(20),
-            margin: EdgeInsets.all(8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Assets.images.imgSleepTeddy.image(width: 140),
-                Expanded(
-                  child: Column(
-                    children: [
-                      LocaleKeys.noSleepLogsYet.tr().appText(fontSize: 20),
-                      12.spaceH,
-                      LocaleKeys.startByLoggingYourChildBedtime.tr().appText(
-                        fontSize: 12,
-                      ),
-                      12.spaceH,
-                      Row(children: [_addButton()]),
-                    ],
-                  ),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: Offset(0, 4),
                 ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Assets.images.imgSleepTeddy.image(width: 160),
+                24.spaceH,
+                LocaleKeys.noSleepLogsYet.tr().appText(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+                12.spaceH,
+                LocaleKeys.startByLoggingYourChildBedtime.tr().appText(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  textAlign: TextAlign.center,
+                ),
+                24.spaceH,
+                _addButton(),
               ],
             ),
           ),
@@ -152,48 +166,182 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
       child: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
-            color: selectedTabColor,
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
           ),
-          margin: EdgeInsets.only(left: 12, right: 12, top: 80),
+          margin: EdgeInsets.only(top: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
           child: Column(
             children: [
-              60.spaceH,
-              Assets.images.imgSleepMoon.image(width: 120),
-              16.spaceH,
-              _addButton().appPadding(left: 20, right: 20),
-              16.spaceH,
-              _weeklyDropdown(state),
-              16.spaceH,
-              LocaleKeys.viewWeeklyTrend.tr().appText(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              _addButton(),
+              24.spaceH,
+              Container(
+                decoration: BoxDecoration(
+                  color: selectedTabColor.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        LocaleKeys.viewWeeklyTrend.tr().appText(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        _weeklyDropdown(state),
+                      ],
+                    ),
+                    24.spaceH,
+                    _graph(state),
+                  ],
+                ),
               ),
-              20.spaceH,
-              "${state.childModel?.childName} ${LocaleKeys.slept.tr()} ${context.read<SleepSummaryCubit>().getTotalSleepStringForWeek()} well done"
-                  .appText(
-                    color: yellowTextColor4,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+              24.spaceH,
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.amber.withValues(alpha: 0.3),
+                    width: 1,
                   ),
-              20.spaceH,
-              "${LocaleKeys.averageBedTime.tr()} : ${context.read<SleepSummaryCubit>().getAverageBedTimeString()}"
-                  .appText(
-                    color: Colors.black,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Assets.images.imgSleepMoon.image(width: 24),
+                    ),
+                    12.spaceH,
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "${state.childModel?.childName} ",
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            TextSpan(
+                              text: LocaleKeys.slept.tr(),
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  " ${context.read<SleepSummaryCubit>().getTotalSleepStringForWeek()} ",
+                              style: TextStyle(
+                                color: Colors.amber[800],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "well done",
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              24.spaceH,
+              Row(
+                children: [
+                  Expanded(
+                    child: _statCard(
+                      LocaleKeys.averageBedTime.tr(),
+                      context.read<SleepSummaryCubit>().getAverageBedTimeString(),
+                      Icons.bedtime_rounded,
+                      Colors.indigo,
+                    ),
                   ),
-              "${LocaleKeys.averageWakeUp.tr()} : ${context.read<SleepSummaryCubit>().getAverageWakeTimeString()}"
-                  .appText(
-                    color: Colors.black,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                  16.spaceW,
+                  Expanded(
+                    child: _statCard(
+                      LocaleKeys.averageWakeUp.tr(),
+                      context.read<SleepSummaryCubit>().getAverageWakeTimeString(),
+                      Icons.wb_sunny_rounded,
+                      Colors.orange,
+                    ),
                   ),
-              _graph(state),
+                ],
+              ),
+              40.spaceH,
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _statCard(
+    String title,
+    String value,
+    IconData icon,
+    Color iconColor,
+  ) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
+          ),
+          12.spaceH,
+          title.appText(
+            color: Colors.grey[600],
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+          4.spaceH,
+          value.appText(
+            color: Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+          ),
+        ],
       ),
     );
   }
