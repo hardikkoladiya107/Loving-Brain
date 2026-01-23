@@ -38,22 +38,22 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: BlocConsumer<ReflectEmotionCubit, ReflectEmotionState>(
                   builder: (context, state) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         "Reflect Your Emotions".appText(
-                          fontSize: 24.sp,
+                          fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
-                        20.verticalSpace,
+                        16.verticalSpace,
                         _buildChildSection(state),
-                        20.verticalSpace,
+                        16.verticalSpace,
                         _buildParentSection(state),
-                        40.verticalSpace,
+                        30.verticalSpace,
                       ],
                     );
                   },
@@ -76,13 +76,13 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
 
   Widget _appBar() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           BaseButton(
             child: Container(
-              padding: EdgeInsets.all(8.r),
+              padding: EdgeInsets.all(6.r),
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -94,7 +94,7 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
                   ),
                 ],
               ),
-              child: Assets.icons.icBackIcon.image(height: 24.w, width: 24.w),
+              child: Assets.icons.icBackIcon.image(height: 20.w, width: 20.w),
             ),
             onTap: () => Navigator.pop(context),
           ),
@@ -171,7 +171,7 @@ class _EmotionSummaryCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -180,7 +180,7 @@ class _EmotionSummaryCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -188,7 +188,7 @@ class _EmotionSummaryCard extends StatelessWidget {
             children: [
               Container(
                 width: 4.w,
-                height: 24.h,
+                height: 20.h,
                 decoration: BoxDecoration(
                   color: primaryColor,
                   borderRadius: BorderRadius.circular(2),
@@ -196,21 +196,21 @@ class _EmotionSummaryCard extends StatelessWidget {
               ),
               8.horizontalSpace,
               title.appText(
-                 fontSize: 18.sp,
+                 fontSize: 16.sp,
                  fontWeight: FontWeight.bold,
                  color: Colors.black87,
               ),
             ],
           ),
-          12.verticalSpace,
+          8.verticalSpace,
           subtitle.appText(
-            fontSize: 14.sp,
+            fontSize: 12.sp,
             fontWeight: FontWeight.w500,
             color: Colors.black54,
           ),
-          20.verticalSpace,
+          16.verticalSpace,
           _buildMoodRow(moodCounts),
-          20.verticalSpace,
+          16.verticalSpace,
           Container(
             height: 1,
             decoration: DottedDecoration(
@@ -220,7 +220,7 @@ class _EmotionSummaryCard extends StatelessWidget {
               dash: const [4, 4],
             ),
           ),
-          20.verticalSpace,
+          16.verticalSpace,
           _buildChartSection(days),
         ],
       ),
@@ -252,20 +252,20 @@ class _EmotionSummaryCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   "Mood Activity".appText(
-                    fontSize: 16.sp, 
+                    fontSize: 14.sp, 
                     fontWeight: FontWeight.bold,
                     color: Colors.black87
                   ),
                   if (weekRange != null)
                    weekRange!.getFormattedRange.appText(
-                     fontSize: 12.sp,
+                     fontSize: 10.sp,
                      color: Colors.grey,
                      fontWeight: FontWeight.w500
                    ),
                 ],
               ),
               Container(
-                height: 36.h,
+                height: 32.h,
                 padding: EdgeInsets.symmetric(horizontal: 4.w),
                 decoration: BoxDecoration(
                    color: buttonColor2,
@@ -275,14 +275,14 @@ class _EmotionSummaryCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                      IconButton(
-                       icon: Icon(Icons.chevron_left, size: 20.sp, color: Colors.black87),
+                       icon: Icon(Icons.chevron_left, size: 18.sp, color: Colors.black87),
                        padding: EdgeInsets.zero,
                        constraints: const BoxConstraints(),
                        onPressed: onPrevWeek,
                      ),
-                     Container(width: 1, height: 16.h, color: Colors.grey.withValues(alpha: 0.3)),
+                     Container(width: 1, height: 14.h, color: Colors.grey.withValues(alpha: 0.3)),
                      IconButton(
-                       icon: Icon(Icons.chevron_right, size: 20.sp, color: Colors.black87),
+                       icon: Icon(Icons.chevron_right, size: 18.sp, color: Colors.black87),
                        padding: EdgeInsets.zero,
                        constraints: const BoxConstraints(),
                        onPressed: onNextWeek,
@@ -292,9 +292,9 @@ class _EmotionSummaryCard extends StatelessWidget {
               )
            ],
          ),
-         20.verticalSpace,
+         16.verticalSpace,
          AppBarGraph(
-            height: 200.h,
+            height: 180.h,
             titles: days,
             values: chartData,
             showBest: true,
@@ -316,29 +316,29 @@ class _MoodItem extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.all(8.r),
+          padding: EdgeInsets.all(6.r),
           decoration: BoxDecoration(
              color: _getMoodColorRaw(mood).withValues(alpha: 0.1),
              shape: BoxShape.circle,
           ),
-          child: _getMoodImage(mood).image(height: 32.w, width: 32.w),
+          child: _getMoodImage(mood).image(height: 28.w, width: 28.w),
         ),
-        8.verticalSpace,
+        6.verticalSpace,
         mood.appText(
-           fontSize: 12.sp,
+           fontSize: 11.sp,
            fontWeight: FontWeight.w600,
            color: Colors.black54,
         ),
-        4.verticalSpace,
+        2.verticalSpace,
         Container(
-           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
            decoration: BoxDecoration(
               color: Colors.grey[100],
               borderRadius: BorderRadius.circular(8.r),
               border: Border.all(color: Colors.grey[300]!)
            ),
            child: count.toString().appText(
-              fontSize: 10.sp,
+              fontSize: 9.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87
            ),

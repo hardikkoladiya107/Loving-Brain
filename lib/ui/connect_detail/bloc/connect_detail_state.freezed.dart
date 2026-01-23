@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ConnectDetailState {
 
- String get currentPrompt; Color get selectedColor; List<DrawingStroke> get allStrokes; DrawingStroke? get currentStroke;
+ String get currentPrompt;// Keeping as fallback or while loading/error
+ PromptModel? get promptModel; Color get selectedColor; List<DrawingStroke> get allStrokes; ApiResultStatus get getPromptApiResultStatus; DrawingStroke? get currentStroke;
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $ConnectDetailStateCopyWith<ConnectDetailState> get copyWith => _$ConnectDetailS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ConnectDetailState&&(identical(other.currentPrompt, currentPrompt) || other.currentPrompt == currentPrompt)&&(identical(other.selectedColor, selectedColor) || other.selectedColor == selectedColor)&&const DeepCollectionEquality().equals(other.allStrokes, allStrokes)&&(identical(other.currentStroke, currentStroke) || other.currentStroke == currentStroke));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ConnectDetailState&&(identical(other.currentPrompt, currentPrompt) || other.currentPrompt == currentPrompt)&&(identical(other.promptModel, promptModel) || other.promptModel == promptModel)&&(identical(other.selectedColor, selectedColor) || other.selectedColor == selectedColor)&&const DeepCollectionEquality().equals(other.allStrokes, allStrokes)&&(identical(other.getPromptApiResultStatus, getPromptApiResultStatus) || other.getPromptApiResultStatus == getPromptApiResultStatus)&&(identical(other.currentStroke, currentStroke) || other.currentStroke == currentStroke));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,currentPrompt,selectedColor,const DeepCollectionEquality().hash(allStrokes),currentStroke);
+int get hashCode => Object.hash(runtimeType,currentPrompt,promptModel,selectedColor,const DeepCollectionEquality().hash(allStrokes),getPromptApiResultStatus,currentStroke);
 
 @override
 String toString() {
-  return 'ConnectDetailState(currentPrompt: $currentPrompt, selectedColor: $selectedColor, allStrokes: $allStrokes, currentStroke: $currentStroke)';
+  return 'ConnectDetailState(currentPrompt: $currentPrompt, promptModel: $promptModel, selectedColor: $selectedColor, allStrokes: $allStrokes, getPromptApiResultStatus: $getPromptApiResultStatus, currentStroke: $currentStroke)';
 }
 
 
@@ -45,11 +46,11 @@ abstract mixin class $ConnectDetailStateCopyWith<$Res>  {
   factory $ConnectDetailStateCopyWith(ConnectDetailState value, $Res Function(ConnectDetailState) _then) = _$ConnectDetailStateCopyWithImpl;
 @useResult
 $Res call({
- String currentPrompt, Color selectedColor, List<DrawingStroke> allStrokes, DrawingStroke? currentStroke
+ String currentPrompt, PromptModel? promptModel, Color selectedColor, List<DrawingStroke> allStrokes, ApiResultStatus getPromptApiResultStatus, DrawingStroke? currentStroke
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get getPromptApiResultStatus;
 
 }
 /// @nodoc
@@ -62,16 +63,27 @@ class _$ConnectDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? currentPrompt = null,Object? selectedColor = null,Object? allStrokes = null,Object? currentStroke = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? currentPrompt = null,Object? promptModel = freezed,Object? selectedColor = null,Object? allStrokes = null,Object? getPromptApiResultStatus = null,Object? currentStroke = freezed,}) {
   return _then(_self.copyWith(
 currentPrompt: null == currentPrompt ? _self.currentPrompt : currentPrompt // ignore: cast_nullable_to_non_nullable
-as String,selectedColor: null == selectedColor ? _self.selectedColor : selectedColor // ignore: cast_nullable_to_non_nullable
+as String,promptModel: freezed == promptModel ? _self.promptModel : promptModel // ignore: cast_nullable_to_non_nullable
+as PromptModel?,selectedColor: null == selectedColor ? _self.selectedColor : selectedColor // ignore: cast_nullable_to_non_nullable
 as Color,allStrokes: null == allStrokes ? _self.allStrokes : allStrokes // ignore: cast_nullable_to_non_nullable
-as List<DrawingStroke>,currentStroke: freezed == currentStroke ? _self.currentStroke : currentStroke // ignore: cast_nullable_to_non_nullable
+as List<DrawingStroke>,getPromptApiResultStatus: null == getPromptApiResultStatus ? _self.getPromptApiResultStatus : getPromptApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,currentStroke: freezed == currentStroke ? _self.currentStroke : currentStroke // ignore: cast_nullable_to_non_nullable
 as DrawingStroke?,
   ));
 }
-
+/// Create a copy of ConnectDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getPromptApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getPromptApiResultStatus, (value) {
+    return _then(_self.copyWith(getPromptApiResultStatus: value));
+  });
+}
 }
 
 
@@ -153,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String currentPrompt,  Color selectedColor,  List<DrawingStroke> allStrokes,  DrawingStroke? currentStroke)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String currentPrompt,  PromptModel? promptModel,  Color selectedColor,  List<DrawingStroke> allStrokes,  ApiResultStatus getPromptApiResultStatus,  DrawingStroke? currentStroke)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ConnectDetailState() when $default != null:
-return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.currentStroke);case _:
+return $default(_that.currentPrompt,_that.promptModel,_that.selectedColor,_that.allStrokes,_that.getPromptApiResultStatus,_that.currentStroke);case _:
   return orElse();
 
 }
@@ -174,10 +186,10 @@ return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String currentPrompt,  Color selectedColor,  List<DrawingStroke> allStrokes,  DrawingStroke? currentStroke)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String currentPrompt,  PromptModel? promptModel,  Color selectedColor,  List<DrawingStroke> allStrokes,  ApiResultStatus getPromptApiResultStatus,  DrawingStroke? currentStroke)  $default,) {final _that = this;
 switch (_that) {
 case _ConnectDetailState():
-return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.currentStroke);case _:
+return $default(_that.currentPrompt,_that.promptModel,_that.selectedColor,_that.allStrokes,_that.getPromptApiResultStatus,_that.currentStroke);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +206,10 @@ return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String currentPrompt,  Color selectedColor,  List<DrawingStroke> allStrokes,  DrawingStroke? currentStroke)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String currentPrompt,  PromptModel? promptModel,  Color selectedColor,  List<DrawingStroke> allStrokes,  ApiResultStatus getPromptApiResultStatus,  DrawingStroke? currentStroke)?  $default,) {final _that = this;
 switch (_that) {
 case _ConnectDetailState() when $default != null:
-return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.currentStroke);case _:
+return $default(_that.currentPrompt,_that.promptModel,_that.selectedColor,_that.allStrokes,_that.getPromptApiResultStatus,_that.currentStroke);case _:
   return null;
 
 }
@@ -209,10 +221,12 @@ return $default(_that.currentPrompt,_that.selectedColor,_that.allStrokes,_that.c
 
 
 class _ConnectDetailState implements ConnectDetailState {
-  const _ConnectDetailState({this.currentPrompt = "Draw what makes you feel calm", this.selectedColor = Colors.blue, final  List<DrawingStroke> allStrokes = const [], this.currentStroke}): _allStrokes = allStrokes;
+  const _ConnectDetailState({this.currentPrompt = "Draw what makes you feel calm", this.promptModel, this.selectedColor = Colors.blue, final  List<DrawingStroke> allStrokes = const [], this.getPromptApiResultStatus = const ApiResultStatus.initial(), this.currentStroke}): _allStrokes = allStrokes;
   
 
 @override@JsonKey() final  String currentPrompt;
+// Keeping as fallback or while loading/error
+@override final  PromptModel? promptModel;
 @override@JsonKey() final  Color selectedColor;
  final  List<DrawingStroke> _allStrokes;
 @override@JsonKey() List<DrawingStroke> get allStrokes {
@@ -221,6 +235,7 @@ class _ConnectDetailState implements ConnectDetailState {
   return EqualUnmodifiableListView(_allStrokes);
 }
 
+@override@JsonKey() final  ApiResultStatus getPromptApiResultStatus;
 @override final  DrawingStroke? currentStroke;
 
 /// Create a copy of ConnectDetailState
@@ -233,16 +248,16 @@ _$ConnectDetailStateCopyWith<_ConnectDetailState> get copyWith => __$ConnectDeta
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConnectDetailState&&(identical(other.currentPrompt, currentPrompt) || other.currentPrompt == currentPrompt)&&(identical(other.selectedColor, selectedColor) || other.selectedColor == selectedColor)&&const DeepCollectionEquality().equals(other._allStrokes, _allStrokes)&&(identical(other.currentStroke, currentStroke) || other.currentStroke == currentStroke));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConnectDetailState&&(identical(other.currentPrompt, currentPrompt) || other.currentPrompt == currentPrompt)&&(identical(other.promptModel, promptModel) || other.promptModel == promptModel)&&(identical(other.selectedColor, selectedColor) || other.selectedColor == selectedColor)&&const DeepCollectionEquality().equals(other._allStrokes, _allStrokes)&&(identical(other.getPromptApiResultStatus, getPromptApiResultStatus) || other.getPromptApiResultStatus == getPromptApiResultStatus)&&(identical(other.currentStroke, currentStroke) || other.currentStroke == currentStroke));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,currentPrompt,selectedColor,const DeepCollectionEquality().hash(_allStrokes),currentStroke);
+int get hashCode => Object.hash(runtimeType,currentPrompt,promptModel,selectedColor,const DeepCollectionEquality().hash(_allStrokes),getPromptApiResultStatus,currentStroke);
 
 @override
 String toString() {
-  return 'ConnectDetailState(currentPrompt: $currentPrompt, selectedColor: $selectedColor, allStrokes: $allStrokes, currentStroke: $currentStroke)';
+  return 'ConnectDetailState(currentPrompt: $currentPrompt, promptModel: $promptModel, selectedColor: $selectedColor, allStrokes: $allStrokes, getPromptApiResultStatus: $getPromptApiResultStatus, currentStroke: $currentStroke)';
 }
 
 
@@ -253,11 +268,11 @@ abstract mixin class _$ConnectDetailStateCopyWith<$Res> implements $ConnectDetai
   factory _$ConnectDetailStateCopyWith(_ConnectDetailState value, $Res Function(_ConnectDetailState) _then) = __$ConnectDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- String currentPrompt, Color selectedColor, List<DrawingStroke> allStrokes, DrawingStroke? currentStroke
+ String currentPrompt, PromptModel? promptModel, Color selectedColor, List<DrawingStroke> allStrokes, ApiResultStatus getPromptApiResultStatus, DrawingStroke? currentStroke
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get getPromptApiResultStatus;
 
 }
 /// @nodoc
@@ -270,17 +285,28 @@ class __$ConnectDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ConnectDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? currentPrompt = null,Object? selectedColor = null,Object? allStrokes = null,Object? currentStroke = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? currentPrompt = null,Object? promptModel = freezed,Object? selectedColor = null,Object? allStrokes = null,Object? getPromptApiResultStatus = null,Object? currentStroke = freezed,}) {
   return _then(_ConnectDetailState(
 currentPrompt: null == currentPrompt ? _self.currentPrompt : currentPrompt // ignore: cast_nullable_to_non_nullable
-as String,selectedColor: null == selectedColor ? _self.selectedColor : selectedColor // ignore: cast_nullable_to_non_nullable
+as String,promptModel: freezed == promptModel ? _self.promptModel : promptModel // ignore: cast_nullable_to_non_nullable
+as PromptModel?,selectedColor: null == selectedColor ? _self.selectedColor : selectedColor // ignore: cast_nullable_to_non_nullable
 as Color,allStrokes: null == allStrokes ? _self._allStrokes : allStrokes // ignore: cast_nullable_to_non_nullable
-as List<DrawingStroke>,currentStroke: freezed == currentStroke ? _self.currentStroke : currentStroke // ignore: cast_nullable_to_non_nullable
+as List<DrawingStroke>,getPromptApiResultStatus: null == getPromptApiResultStatus ? _self.getPromptApiResultStatus : getPromptApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus,currentStroke: freezed == currentStroke ? _self.currentStroke : currentStroke // ignore: cast_nullable_to_non_nullable
 as DrawingStroke?,
   ));
 }
 
-
+/// Create a copy of ConnectDetailState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get getPromptApiResultStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.getPromptApiResultStatus, (value) {
+    return _then(_self.copyWith(getPromptApiResultStatus: value));
+  });
+}
 }
 
 // dart format on

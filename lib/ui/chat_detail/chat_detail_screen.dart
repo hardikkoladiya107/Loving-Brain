@@ -118,12 +118,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [userChatItem(chat, state)],
-      ).appPadding(left: 16.w, right: 16.w, top: 16);
+      ).appPadding(left: 16.w, right: 16.w, top: 12);
     } else {
       return Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [aiChatItem(chat)],
-      ).appPadding(left: 16.w, right: 16.w, top: 16);
+      ).appPadding(left: 16.w, right: 16.w, top: 12);
     }
   }
 
@@ -131,7 +131,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [loadingItem()],
-    ).appPadding(left: 16.w, right: 16.w, top: 16);
+    ).appPadding(left: 16.w, right: 16.w, top: 12);
   }
 
   Widget aiChatItem(ChatModel chat) {
@@ -566,38 +566,38 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   Widget _appBar() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 10,
-              offset: Offset(0, 4),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BaseButton(
+            child: Container(
+              padding: EdgeInsets.all(8.r),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Assets.icons.icBackIcon.image(height: 24.w, width: 24.w),
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BaseButton(
-              child: Assets.icons.icBackIcon.image(height: 32, width: 32),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            12.w.spaceW,
-            LocaleKeys.askToAI.tr().appText(
-                  fontWeight: FontWeight.w700,
+            onTap: () => Navigator.pop(context),
+          ),
+          Expanded(
+            child: LocaleKeys.askToAI.tr().appText(
+                  fontWeight: FontWeight.bold,
                   color: Colors.black87,
-                  fontSize: 16,
+                  fontSize: 18.sp,
+                  textAlign: TextAlign.center,
                 ),
-            20.spaceW,
-          ],
-        ),
+          ),
+          SizedBox(width: 40.w), // To balance the back button for centering
+        ],
       ),
     );
   }
@@ -630,7 +630,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         itemCount: (state.createResponseApiResult == ApiResultStatus.loading())
             ? state.chatList.length + 1
             : state.chatList.length,
-        padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
+        padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
         itemBuilder: (context, index) {
           if (index == state.chatList.length) {
             return chatLoading();

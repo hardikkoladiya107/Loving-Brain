@@ -71,9 +71,9 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      155.spaceH,
+                      130.spaceH,
                       _header(),
-                      20.spaceH,
+                      10.spaceH,
                       _description(),
                       20.spaceH,
                       _typeYourThoughtsHere(state),
@@ -88,27 +88,20 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                   .logThought();
                             },
                             child: Container(
-                              width: 150.w,
-                              height: 48.h, // Slightly taller for better touch target
+                              width: 145.w,
+                              height: 44.h,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [yellowButtonStartColor, yellowButtonEndColor],
+                                  colors: [yellowColor3, yellowColor3],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                borderRadius: BorderRadius.circular(24), // Pill shape
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: yellowButtonEndColor.withValues(alpha: 0.4),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
+                                borderRadius: BorderRadius.circular(22),
                               ),
                               child: Center(
                                 child: LocaleKeys.saveEntry.tr().appText(
                                   color: Colors.white,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -129,27 +122,20 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                               }
                             },
                             child: Container(
-                              width: 150.w,
-                              height: 48.h,
+                              width: 145.w,
+                              height: 44.h,
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
-                                  colors: [Colors.purpleAccent.withValues(alpha: 0.8), primaryColor], // AI button distinction
+                                  colors: [yellowColor3, yellowColor3],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                borderRadius: BorderRadius.circular(24),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: primaryColor.withValues(alpha: 0.4),
-                                    blurRadius: 10,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
+                                borderRadius: BorderRadius.circular(22),
                               ),
                               child: Center(
                                 child: LocaleKeys.getAIReflection.tr().appText(
                                   color: Colors.white,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -244,9 +230,9 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
           .appText(
             color: primaryColor,
             fontWeight: FontWeight.w800,
-            fontSize: 22,
+            fontSize: 20,
           )
-          .appPadding(left: 24, right: 24, top: 12, bottom: 12),
+          .appPadding(left: 20, right: 20, top: 10, bottom: 10),
     );
   }
 
@@ -265,8 +251,12 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
       ),
       child:
           "${LocaleKeys.hi.tr()}, ${LocaleKeys.howYourHeartTodayTakeMomentReflect.tr()}"
-              .appText(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87)
-              .appPadding(left: 20, right: 20, top: 12, bottom: 12),
+              .appText(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              )
+              .appPadding(left: 16, right: 16, top: 10, bottom: 10),
     ).appPadding(left: 16, right: 16);
   }
 
@@ -288,13 +278,19 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
         fillColor: Colors.transparent,
         filled: true,
         minLines: 6,
-        contentPadding: EdgeInsets.all(20),
-        hintStyle: getTextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.grey[600]),
+        contentPadding: EdgeInsets.all(16),
+        hintStyle: getTextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 13,
+          color: Colors.grey[600],
+        ),
         hint: LocaleKeys.typeYourThoughtsHere.tr(),
         error: state.thoughtsErrorText,
         maxLines: 8,
         onChanged: (value) {
-          context.read<WriteYourThoughtCubit>().changeProps(thoughtsText: value);
+          context.read<WriteYourThoughtCubit>().changeProps(
+            thoughtsText: value,
+          );
         },
       ),
     ).appPadding(left: 20, right: 20);
@@ -319,21 +315,27 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
         children: [
           Row(
             children: [
-               Icon(Icons.calendar_today_outlined, size: 14, color: primaryColor),
-               8.spaceW,
-               convertToMMMMDYYYY(
-                 journal.logTime,
-               ).appText(fontWeight: FontWeight.w700, fontSize: 13, color: primaryColor),
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 14,
+                color: primaryColor,
+              ),
+              8.spaceW,
+              convertToMMMMDYYYY(journal.logTime).appText(
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                color: primaryColor,
+              ),
             ],
           ),
           12.spaceH,
           (journal.thoughtText ?? "").appText(
             fontWeight: FontWeight.w500,
-            fontSize: 14,
+            fontSize: 13,
             textAlign: TextAlign.start,
             maxLines: 5,
             overflow: TextOverflow.ellipsis,
-            color: Colors.black87
+            color: Colors.black87,
           ),
           /*8.spaceH,
           "\"Parenting is not about perfection, but connection.\"".appText(
@@ -342,7 +344,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
             textAlign: TextAlign.center,
           ),*/
         ],
-      ).appPadding(all: 16),
+      ).appPadding(all: 12),
     ).appPadding(left: 20.w, right: 20.w);
   }
 
