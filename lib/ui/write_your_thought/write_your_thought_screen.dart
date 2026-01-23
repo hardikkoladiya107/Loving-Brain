@@ -334,8 +334,9 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
               borderRadius: BorderRadius.circular(12),
               child: AppImage(
                 imageUrl: journal.imageUrl!,
-                height: 150.h,
+                height: 180.h,
                 width: double.infinity,
+                boxFit: BoxFit.cover,
               ),
             ),
             12.spaceH,
@@ -349,7 +350,9 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
             ),
             8.spaceH,
           ],
-          if ((journal.thoughtText ?? "").isNotEmpty)
+          if ((journal.thoughtText ?? "").isNotEmpty &&
+              journal.thoughtText != "Drawing Entry" &&
+              !journal.thoughtText!.startsWith("Drawn from Connect & Play:"))
             (journal.thoughtText ?? "").appText(
               fontWeight: FontWeight.w500,
               fontSize: 13,

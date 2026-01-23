@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,300 +40,305 @@ class _ConnectDetailScreenState extends State<ConnectDetailScreen> {
       builder: (context, state) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          body: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            child: Stack(
-              children: [
-                // Background
-                Container(
-                  height: context.height,
-                  width: context.width,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(Assets.images.imgSleepBackground.path),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                    child: Container(color: Colors.black.withOpacity(0.2)),
+          body: Stack(
+            children: [
+              // Background
+              Container(
+                height: context.height,
+                width: context.width,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(Assets.images.imgSleepBackground.path),
+                    fit: BoxFit.cover,
                   ),
                 ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(color: Colors.black.withOpacity(0.2)),
+                ),
+              ),
 
-                Column(
+              SafeArea(
+                bottom: false,
+                child: Column(
                   children: [
-                    SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 6,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 6,
+                      ),
+                      child: Column(
+                        children: [
+                          60.spaceH,
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 16,
+                              horizontal: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.white.withOpacity(0.25),
+                                  Colors.white.withOpacity(0.08),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.25),
+                                width: 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                state.currentPrompt.appText(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  textAlign: TextAlign.center,
+                                  height: 1.25,
+                                ),
+                                if (state.promptModel != null) ...[
+                                  Divider(
+                                    color: Colors.white.withOpacity(0.15),
+                                    thickness: 1,
+                                  ),
+                                  if (state.promptModel!.hint1.isNotEmpty)
+                                    _buildHintParams(
+                                      "Hint 1",
+                                      state.promptModel!.hint1,
+                                    ),
+                                  if (state.promptModel!.hint2.isNotEmpty) ...[
+                                    6.spaceH,
+                                    _buildHintParams(
+                                      "Hint 2",
+                                      state.promptModel!.hint2,
+                                    ),
+                                  ],
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    4.spaceH,
+                    Expanded(
+                      child: Container(
+                        width: context.width,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(32),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 30,
+                              offset: Offset(0, -5),
+                            ),
+                          ],
                         ),
                         child: Column(
                           children: [
-                            60.spaceH,
-                            Container(
-                              width: double.infinity,
+                            16.spaceH,
+                            // Tools Row
+                            Padding(
                               padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
+                                horizontal: 20,
                               ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.white.withOpacity(0.25),
-                                    Colors.white.withOpacity(0.08),
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.25),
-                                  width: 1,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  state.currentPrompt.appText(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                    textAlign: TextAlign.center,
-                                    height: 1.25,
-                                  ),
-                                  if (state.promptModel != null) ...[
-                                    Divider(
-                                      color: Colors.white.withOpacity(0.15),
-                                      thickness: 1,
-                                    ),
-                                    if (state.promptModel!.hint1.isNotEmpty)
-                                      _buildHintParams(
-                                        "Hint 1",
-                                        state.promptModel!.hint1,
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.palette_outlined,
+                                        size: 18,
+                                        color: Colors.grey,
                                       ),
-                                    if (state
-                                        .promptModel!
-                                        .hint2
-                                        .isNotEmpty) ...[
-                                      6.spaceH,
-                                      _buildHintParams(
-                                        "Hint 2",
-                                        state.promptModel!.hint2,
+                                      8.spaceW,
+                                      "Your Canvas".appText(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black87,
                                       ),
                                     ],
-                                  ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      _colorPickerTrigger(context, state),
+                                      12.spaceW,
+                                      _undoButton(context, state),
+                                      12.spaceW,
+                                      _eraserButton(context, state),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
+                            16.spaceH,
+
+                            // Canvas - Expanded
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.grey.shade100,
+                                    width: 4,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      blurRadius: 15,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: RepaintBoundary(
+                                  key: _globalKey,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: GestureDetector(
+                                        onPanStart: (details) {
+                                          context
+                                              .read<ConnectDetailCubit>()
+                                              .startStroke(
+                                                details.localPosition,
+                                              );
+                                        },
+                                        onPanUpdate: (details) {
+                                          context
+                                              .read<ConnectDetailCubit>()
+                                              .updateStroke(
+                                                details.localPosition,
+                                              );
+                                        },
+                                        onPanEnd: (details) {
+                                          context
+                                              .read<ConnectDetailCubit>()
+                                              .endStroke();
+                                        },
+                                        child: CustomPaint(
+                                          painter: ConnectDetailPainter(
+                                            state.allStrokes,
+                                            state.currentStroke,
+                                          ),
+                                          size: Size.infinite,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            20.spaceH,
+
+                            // Finish Button
+                            BaseButton(
+                              child: Container(
+                                height: 48,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      rateThisAppIconColor,
+                                      rateThisAppIconColor,
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(25),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(
+                                        0xFF8E24AA,
+                                      ).withOpacity(0.4),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.check_circle_outline,
+                                      color: Colors.white,
+                                      size: 18,
+                                    ),
+                                    8.spaceW,
+                                    "I'm Finished!".appText(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onTap: () {
+                                _showCompletionDialog(context);
+                              },
+                            ).appPadding(left: 24.w, right: 24.w),
+                            10.spaceH,
+                            "We will cherish this drawing as a serene moment."
+                                .appText(fontSize: 12),
+                            // Safe area bottom padding if needed, or just space
+                            (MediaQuery.of(context).padding.bottom + 10).spaceH,
                           ],
                         ),
                       ),
                     ),
-                    4.spaceH,
-                    Container(
-                      width: context.width,
-                      constraints: BoxConstraints(
-                        minHeight: context.height * 0.72,
-                      ),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(32),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 30,
-                            offset: Offset(0, -5),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          16.spaceH,
-                          // Tools Row
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.palette_outlined,
-                                      size: 18,
-                                      color: Colors.grey,
-                                    ),
-                                    8.spaceW,
-                                    "Your Canvas".appText(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    _colorPickerTrigger(context, state),
-                                    12.spaceW,
-                                    _undoButton(context, state),
-                                    12.spaceW,
-                                    _eraserButton(context, state),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          16.spaceH,
-
-                          // Canvas - Expanded
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
-                            height: context.height * 0.50,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.grey.shade100,
-                                width: 4,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  blurRadius: 15,
-                                  spreadRadius: 2,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: RepaintBoundary(
-                              key: _globalKey,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Container(
-                                  color: Colors.white,
-                                  child: GestureDetector(
-                                    onPanStart: (details) {
-                                      context
-                                          .read<ConnectDetailCubit>()
-                                          .startStroke(details.localPosition);
-                                    },
-                                    onPanUpdate: (details) {
-                                      context
-                                          .read<ConnectDetailCubit>()
-                                          .updateStroke(details.localPosition);
-                                    },
-                                    onPanEnd: (details) {
-                                      context
-                                          .read<ConnectDetailCubit>()
-                                          .endStroke();
-                                    },
-                                    child: CustomPaint(
-                                      painter: ConnectDetailPainter(
-                                        state.allStrokes,
-                                        state.currentStroke,
-                                      ),
-                                      size: Size.infinite,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          20.spaceH,
-
-                          // Finish Button
-                          BaseButton(
-                            child: Container(
-                              height: 48,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    rateThisAppIconColor,
-                                    rateThisAppIconColor,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(25),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFF8E24AA,
-                                    ).withOpacity(0.4),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.check_circle_outline,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                  8.spaceW,
-                                  "I'm Finished!".appText(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onTap: () {
-                              _showCompletionDialog(context);
-                            },
-                          ).appPadding(left: 24.w, right: 24.w),
-                          10.spaceH,
-                          "We will cherish this drawing as a serene moment."
-                              .appText(fontSize: 12),
-                          70.spaceH,
-                        ],
-                      ),
-                    ),
                   ],
                 ),
+              ),
 
-                Positioned(
-                  top: 50,
-                  left: 16,
-                  child: BaseButton(
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.4),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                        size: 20,
+              Positioned(
+                top: 50,
+                left: 16,
+                child: BaseButton(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.4),
                       ),
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

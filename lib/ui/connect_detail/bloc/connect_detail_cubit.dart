@@ -8,6 +8,7 @@ import 'package:loving_brain/model/journal_model.dart';
 import 'package:loving_brain/model/prompt_model.dart';
 import 'package:loving_brain/repo/mood_repo.dart';
 import 'package:loving_brain/repo/prompts_repo.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 import 'connect_detail_state.dart';
 
 class ConnectDetailCubit extends Cubit<ConnectDetailState> {
@@ -182,7 +183,7 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
       await ref.putData(bytes, metadata);
       final downloadUrl = await ref.getDownloadURL();
       final journal = JournalModel(
-        thoughtText: "Drawn from Connect & Play: ${state.currentPrompt}",
+        thoughtText: "Drawing Entry",
         logTime: DateTime.now(),
         imageUrl: downloadUrl,
         prompt: state.currentPrompt,
@@ -192,6 +193,14 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
       final result = await MoodRepo.instance.addJournal(
         request: journal.toJson(),
       );
+      
+      // Update streak on successful save
+      result.whenOrNull(
+        data: (data) async {
+           await UserRepo.instance.updateUserStreak();
+        },
+      );
+
       changeProps(saveDrawingApiResultStatus: result);
       result.whenOrNull(
         data: (data) {
