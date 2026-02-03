@@ -158,6 +158,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                   ).appPadding(left: 30, right: 30),
+                  10.spaceH,
+                  _termsAndConditions(state),
                   60.spaceH,
                   _registerButton(),
                   60.spaceH,
@@ -222,5 +224,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context.read<RegisterCubit>().register();
       },
     );
+  }
+
+  Widget _termsAndConditions(RegisterState state) {
+    return Row(
+      children: [
+        Checkbox(
+          value: state.isTermsAndConditionAccepted,
+          activeColor: pinkColor1,
+          onChanged: (value) {
+            context.read<RegisterCubit>().changeProps(
+                  isTermsAndConditionAccepted: value,
+                );
+          },
+        ),
+        Expanded(
+          child: Row(
+            children: [
+               "I accept ".appText(fontSize: 14),
+              LocaleKeys.termsConditions.tr().appText(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ],
+          ),
+        ),
+      ],
+    ).appPadding(left: 20, right: 20);
   }
 }

@@ -19,6 +19,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     String? emailAddressError,
     String? passwordError,
     String? confirmPasswordError,
+    bool? isTermsAndConditionAccepted,
     ApiResultStatus? apiResultStatus,
   }) {
     emit(
@@ -34,6 +35,8 @@ class RegisterCubit extends Cubit<RegisterState> {
         apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
         confirmPasswordError:
             confirmPasswordError ?? state.confirmPasswordError,
+        isTermsAndConditionAccepted:
+            isTermsAndConditionAccepted ?? state.isTermsAndConditionAccepted,
       ),
     );
   }
@@ -44,7 +47,8 @@ class RegisterCubit extends Cubit<RegisterState> {
         state.password.trim().isEmpty ||
         state.password.length < 6 ||
         state.confirmPassword.trim().isEmpty ||
-        state.password.trim() != state.confirmPassword) {
+        state.password.trim() != state.confirmPassword ||
+        !state.isTermsAndConditionAccepted) {
       if (state.emailAddress.trim().isEmpty) {
         changeProps(emailAddressError: LocaleKeys.pleaseEnterEmailAddress.tr());
       } else if (!state.emailAddress.trim().isValidEmail) {
@@ -75,6 +79,9 @@ class RegisterCubit extends Cubit<RegisterState> {
         changeProps(confirmPasswordError: "");
       }
 
+      if (!state.isTermsAndConditionAccepted) {
+        changeProps(apiResultStatus: ApiResultStatus.error(error: Exception("Please accept Terms and Conditions")));
+      }
       return false;
     }
 

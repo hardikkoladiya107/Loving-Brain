@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  156.spaceH,
+                  120.spaceH,
                   _loginIcon(),
                   60.spaceH,
                   _email(state),
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.3),
+            color: Colors.white.withOpacity(0.3),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(

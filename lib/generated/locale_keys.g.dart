@@ -170,6 +170,7 @@ abstract class  LocaleKeys {
   static const passwordAndConfirmPasswordShouldSame = 'passwordAndConfirmPasswordShouldSame';
   static const pleaseEnterValidEmail = 'pleaseEnterValidEmail';
   static const passwordShouldBeMoreLetters = 'passwordShouldBeMoreLetters';
+  static const invalidPassword = 'invalidPassword';
   static const sendResetEmail = 'sendResetEmail';
   static const pleaseEnterParentName = 'pleaseEnterParentName';
   static const pleaseEnterParentGender = 'pleaseEnterParentGender';

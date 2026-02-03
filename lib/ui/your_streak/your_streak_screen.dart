@@ -101,17 +101,25 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
   Widget _youAreOnRole(YourStreakState state) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           "${LocaleKeys.youreOnRoll.tr()}, ${state.userModel?.parentName}!".appText(
             fontWeight: FontWeight.w900,
+            fontSize: 16
           ),
         ],
-      ).appPadding(top: 6.h, bottom: 6.h),
+      ).appPadding(top: 12.h, bottom: 12.h, left: 16.w, right: 16.w),
     );
   }
 
@@ -119,11 +127,18 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
     return Container(
       height: 350.h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
           fit: BoxFit.cover,
           image: AssetImage(Assets.images.imgCurrentStreakCard.path),
         ),
+        boxShadow: [
+           BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ]
       ),
       child: Column(
         children: [
@@ -141,53 +156,13 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              (state.userModel?.streak ??"").toString().appText(fontWeight: FontWeight.w900, fontSize: 32),
-              Assets.icons.icStreakIcon.image(height: 35, width: 35),
+              (state.userModel?.displayStreak ?? 0).toString().appText(fontWeight: FontWeight.w900, fontSize: 48),
+              8.w.spaceW,
+              Assets.icons.icStreakIcon.image(height: 40, width: 40),
             ],
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     "${LocaleKeys.bestStreak.tr()}: 12 days".appText(
-          //       fontWeight: FontWeight.w500,
-          //       fontSize: 14,
-          //     ),
-          //   ],
-          // ),
-          20.h.spaceH,
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Assets.icons.icFlagIcon.image(height: 24, width: 24),
-                    10.w.spaceW,
-                    LocaleKeys.nextMilestone.tr().appText(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ],
-                ),
-                12.h.spaceH,
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 10,
-                    overlayShape: SliderComponentShape.noOverlay,
-                    thumbShape: SliderComponentShape.noThumb,
-                    trackShape: const RoundedRectSliderTrackShape(),
-                    activeTrackColor: cardColor2,
-                    inactiveTrackColor: greyColor3,
-                  ),
-                  child: Slider(value: 8, onChanged: (value) {}, max: 10),
-                ),
-              ],
-            ).appPadding(all: 12),
-          ).appPadding(left: 16.w, right: 16.w),
-          20.h.spaceH,
+          Spacer(),
+         
           BaseButton(
             onTap: () {
               Navigator.of(context).push(
@@ -197,27 +172,38 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       LocaleKeys.yourMoodHistory.tr().appText(
                         fontWeight: FontWeight.w800,
-                        fontSize: 14,
+                        fontSize: 15,
                       ),
+                       8.w.spaceW,
+                       Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.black54,)
                     ],
                   ),
                 ],
-              ).appPadding(all: 12),
-            ).appPadding(left: 16.w, right: 16.w),
+              ).appPadding(all: 16),
+            ).appPadding(left: 20.w, right: 20.w),
           ),
-          20.h.spaceH,
+          25.h.spaceH,
           LocaleKeys.donMissYourDailyMoodToKeepTheStreakGoing
               .tr()
-              .appText(fontWeight: FontWeight.w700, fontSize: 10)
-              .appPadding(left: 20, right: 20),
+              .appText(fontWeight: FontWeight.w600, fontSize: 11, color: Colors.black54, textAlign: TextAlign.center)
+              .appPadding(left: 24, right: 24),
+           20.h.spaceH,   
         ],
       ),
     );
@@ -227,10 +213,17 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
     return BaseButton(
       onTap: onTap,
       child: Container(
-        height: 40,
+        height: 50,
         decoration: BoxDecoration(
           color: cardColor2,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+             BoxShadow(
+              color: cardColor2.withValues(alpha: 0.4),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -238,7 +231,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
             text.appText(
               color: Colors.white,
               fontWeight: FontWeight.w800,
-              fontSize: 14,
+              fontSize: 16,
             ),
           ],
         ),

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/intl.dart';
 
+import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
 
 Future<String> getUniqueDeviceId() async {
@@ -27,20 +29,44 @@ String formatDate(DateTime dateOfBirth) {
 
 ApiResultStatus onFirebaseException(FirebaseException e) {
   if (e.code == 'permission-denied') {
-    return ApiResultStatus.error(error: Exception("Permission denied."));
+    return ApiResultStatus.error(error: Exception(LocaleKeys.somethingWentWrong.tr()));
   } else if (e.code == 'unavailable') {
     return ApiResultStatus.error(
-      error: Exception("Service unavailable. Try again later."),
+      error: Exception(LocaleKeys.somethingWentWrong.tr()),
     );
   } else if (e.code == 'not-found') {
-    return ApiResultStatus.error(error: Exception("Document not found."));
+    return ApiResultStatus.error(error: Exception(LocaleKeys.somethingWentWrong.tr()));
   } else if (e.code == 'invalid-email') {
     return ApiResultStatus.error(
-      error: Exception("Email address is not valid!"),
+      error: Exception(LocaleKeys.pleaseEnterValidEmail.tr()),
+    );
+  } else if (e.code == 'user-disabled') {
+    return ApiResultStatus.error(
+      error: Exception("User has been disabled."),
+    );
+  } else if (e.code == 'user-not-found') {
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.userNotFound.tr()),
+    );
+  } else if (e.code == 'wrong-password') {
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.invalidPassword.tr()),
+    );
+  } else if (e.code == 'email-already-in-use') {
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.accountAlreadyExists.tr()),
+    );
+  } else if (e.code == 'weak-password') {
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.passwordShouldBeMoreLetters.tr()),
+    );
+  } else if (e.code == 'invalid-credential') {
+    return ApiResultStatus.error(
+        error: Exception(LocaleKeys.invalidPassword.tr())
     );
   } else {
     return ApiResultStatus.error(
-      error: Exception("FireStore error: ${e.message}"),
+      error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
     );
   }
 }

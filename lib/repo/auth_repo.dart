@@ -78,7 +78,7 @@ class AuthRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      userCollection.doc(uId).set(request);
+      await userCollection.doc(uId).set(request);
       return ApiResultStatus.data(data: uId);
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
@@ -182,7 +182,8 @@ class AuthRepo {
         await FirebaseAuth.instance.currentUser?.delete();
         return ApiResultStatus.data(data: "");
       } else {
-        return ApiResultStatus.error(error: Exception("Exception"));
+        return ApiResultStatus.error(
+            error: Exception(LocaleKeys.somethingWentWrong.tr()));
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
