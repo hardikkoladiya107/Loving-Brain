@@ -71,13 +71,13 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
         children: children ?? state.children,
         selectedChildren: selectedChildren ?? state.selectedChildren,
         uploadDocumentApiResultStatus:
-            uploadDocumentApiResultStatus ?? state.uploadDocumentApiResultStatus,
+            uploadDocumentApiResultStatus ?? ApiResultStatus.initial(),
         requestApprovalApiResultStatus:
-            requestApprovalApiResultStatus ?? state.requestApprovalApiResultStatus,
+            requestApprovalApiResultStatus ?? ApiResultStatus.initial(),
         getChildApiResultStatus:
-            getChildApiResultStatus ?? state.getChildApiResultStatus,
+            getChildApiResultStatus ?? ApiResultStatus.initial(),
         getCoParentApiResultStatus:
-            getCoParentApiResultStatus ?? state.getCoParentApiResultStatus,
+            getCoParentApiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }

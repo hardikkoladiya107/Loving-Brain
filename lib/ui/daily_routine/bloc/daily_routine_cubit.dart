@@ -50,7 +50,7 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
         routinesList: routinesList ?? state.routinesList,
         routineCategoryList: routineCategoryList ?? state.routineCategoryList,
         getRoutineTypeApiResult:
-            getRoutineTypeApiResult ?? state.getRoutineTypeApiResult,
+            getRoutineTypeApiResult ?? ApiResultStatus.initial(),
         addRoutineApiResult: addRoutineApiResult ?? state.addRoutineApiResult,
       ),
     );

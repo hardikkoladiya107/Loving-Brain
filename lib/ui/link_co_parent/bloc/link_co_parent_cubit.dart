@@ -33,8 +33,8 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
         selectedChildren: selectedChildren ?? state.selectedChildren,
         calenderAndEvent: calenderAndEvent ?? state.calenderAndEvent,
         childEssentials: childEssentials ?? state.childEssentials,
-        getApiResultStatus: getApiResultStatus ?? state.getApiResultStatus,
-        createInvitation: createInvitation ?? state.createInvitation,
+        getApiResultStatus: getApiResultStatus ?? ApiResultStatus.initial(),
+        createInvitation: createInvitation ?? ApiResultStatus.initial(),
       ),
     );
   }
@@ -60,7 +60,9 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   }
 
   void selectChild(ChildModel child) {
-    final List<ChildModel> childrenList = List<ChildModel>.from(state.selectedChildren);
+    final List<ChildModel> childrenList = List<ChildModel>.from(
+      state.selectedChildren,
+    );
     if (childrenList.any(
       (element) => element.reference?.id == child.reference?.id,
     )) {
@@ -97,21 +99,20 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   Future<void> sendInvite() async {
     if (_isValidate()) {
       changeProps(createInvitation: ApiResultStatus.loading());
-      final ApiResultStatus apiResponse = await CoParentRepo.instance.createInvitation(
-        request: {
-          "calender_events": state.calenderAndEvent,
-          "childs_essentials": state.childEssentials,
-          "from_parent": state.userModel?.email ?? "",
-          "to_parent": state.coParentEmail,
-          "children": state.selectedChildren
-              .map((e) => e.reference?.id)
-              .join(","),
-          "status": "REQUESTED",
-        },
-      );
+      final ApiResultStatus apiResponse = await CoParentRepo.instance
+          .createInvitation(
+            request: {
+              "calender_events": state.calenderAndEvent,
+              "childs_essentials": state.childEssentials,
+              "from_parent": state.userModel?.email ?? "",
+              "to_parent": state.coParentEmail,
+              "children": state.selectedChildren
+                  .map((e) => e.reference?.id)
+                  .join(","),
+              "status": "REQUESTED",
+            },
+          );
       changeProps(createInvitation: apiResponse);
     }
   }
-
-
 }
