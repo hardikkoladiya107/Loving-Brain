@@ -54,24 +54,40 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
       listener: (context, state) {
         state.getCoParentApiResultStatus.whenOrNull(
           loading: () => EasyLoading.show(),
-          data: (_) => EasyLoading.dismiss(),
+          data: (_) {
+            EasyLoading.dismiss();
+            context.read<AddSharedEventCubit>().changeProps(
+                  getCoParentApiResultStatus: ApiResultStatus.initial(),
+                );
+          },
           error: (Exception error) {
             EasyLoading.dismiss();
             showSnackBar(
               message: error.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
             );
+            context.read<AddSharedEventCubit>().changeProps(
+                  getCoParentApiResultStatus: ApiResultStatus.initial(),
+                );
           },
         );
         state.getChildApiResultStatus.whenOrNull(
           loading: () => EasyLoading.show(),
-          data: (_) => EasyLoading.dismiss(),
+          data: (_) {
+            EasyLoading.dismiss();
+            context.read<AddSharedEventCubit>().changeProps(
+                  getChildApiResultStatus: ApiResultStatus.initial(),
+                );
+          },
           error: (Exception error) {
             EasyLoading.dismiss();
             showSnackBar(
               message: error.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
             );
+            context.read<AddSharedEventCubit>().changeProps(
+                  getChildApiResultStatus: ApiResultStatus.initial(),
+                );
           },
         );
         state.requestApprovalApiResultStatus.whenOrNull(
@@ -82,6 +98,9 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
               message: 'sharedEventCreated'.tr(),
               type: SnackBarType.SUCCESS,
             );
+            context.read<AddSharedEventCubit>().changeProps(
+                  requestApprovalApiResultStatus: ApiResultStatus.initial(),
+                );
             Navigator.pop(context);
           },
           error: (Exception error) {
@@ -90,17 +109,28 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
               message: error.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
             );
+            context.read<AddSharedEventCubit>().changeProps(
+                  requestApprovalApiResultStatus: ApiResultStatus.initial(),
+                );
           },
         );
         state.uploadDocumentApiResultStatus.whenOrNull(
           loading: () => EasyLoading.show(),
-          data: (_) => EasyLoading.dismiss(),
+          data: (_) {
+            EasyLoading.dismiss();
+            context.read<AddSharedEventCubit>().changeProps(
+                  uploadDocumentApiResultStatus: ApiResultStatus.initial(),
+                );
+          },
           error: (Exception error) {
             EasyLoading.dismiss();
             showSnackBar(
               message: error.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
             );
+            context.read<AddSharedEventCubit>().changeProps(
+                  uploadDocumentApiResultStatus: ApiResultStatus.initial(),
+                );
           },
         );
       },
@@ -153,6 +183,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                     bottom: 32.h,
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       56.h.spaceH,
                       LocaleKeys.addSharedEvent.tr().appText(
@@ -655,6 +686,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         LocaleKeys.assignedTo.tr().appText(
           fontSize: 14.sp,
@@ -662,7 +694,12 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           color: blackTextColor,
         ),
         10.h.spaceH,
-        Wrap(spacing: 8.w, runSpacing: 8.h, children: chips),
+        Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: chips,
+        ),
         if (state.assignedToError.isNotEmpty) ...[
           8.h.spaceH,
           state.assignedToError.appText(

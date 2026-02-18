@@ -83,8 +83,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   }
 
   void selectChild(ChildModel child) {
-    List<ChildModel> childrenList = [];
-    childrenList.addAll(state.selectedChildren ?? []);
+    final List<ChildModel> childrenList = List<ChildModel>.from(state.selectedChildren);
     if (childrenList.any(
       (element) => element.reference?.id == child.reference?.id,
     )) {
@@ -98,8 +97,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   }
 
   void selectParent(UserModel user) {
-    List<UserModel> coParentList = [];
-    coParentList.addAll(state.selectedCoParentList ?? []);
+    final List<UserModel> coParentList = List<UserModel>.from(state.selectedCoParentList);
     if (coParentList.any((element) => element.uid == user.uid)) {
       coParentList.removeWhere((element) => element.uid == user.uid);
     } else {

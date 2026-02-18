@@ -1,14 +1,9 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/repo/child_repo.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
-import '../../../other/app_utils.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/co_parent_repo.dart';
 import 'link_co_parent_state.dart';
@@ -65,8 +60,7 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   }
 
   void selectChild(ChildModel child) {
-    List<ChildModel> childrenList = [];
-    childrenList.addAll(state.selectedChildren ?? []);
+    final List<ChildModel> childrenList = List<ChildModel>.from(state.selectedChildren);
     if (childrenList.any(
       (element) => element.reference?.id == child.reference?.id,
     )) {

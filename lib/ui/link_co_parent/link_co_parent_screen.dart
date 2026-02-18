@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../gen/assets.gen.dart';
@@ -180,80 +182,6 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
         ),
       ],
     );
-  }
-
-  Widget _headerTabBar(LinkCoParentState state) {
-    return Container(
-      width: 250.w,
-      height: 50.h,
-      decoration: BoxDecoration(
-        color: tabBarBgColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: BaseButton(
-              child: Container(
-                decoration: state.selectedTab == "EMAIL"
-                    ? BoxDecoration(
-                        color: selectedTabColor,
-                        borderRadius: BorderRadius.circular(12),
-                      )
-                    : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(),
-                    Icon(Icons.email_outlined, size: 20),
-                    8.spaceW,
-                    LocaleKeys.email.tr().appText(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                    ),
-                  ],
-                ),
-              ),
-              onTap: () {
-                context.read<LinkCoParentCubit>().changeProps(
-                  selectedTab: "EMAIL",
-                );
-              },
-            ),
-          ),
-          8.spaceW,
-          Expanded(
-            child: BaseButton(
-              child: Container(
-                decoration: state.selectedTab == "INVITE_LINK"
-                    ? BoxDecoration(
-                        color: selectedTabColor,
-                        borderRadius: BorderRadius.circular(12),
-                      )
-                    : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(),
-                    Icon(Icons.link, size: 24),
-                    8.spaceW,
-                    LocaleKeys.inviteLink.tr().appText(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                    ),
-                  ],
-                ),
-              ),
-              onTap: () {
-                context.read<LinkCoParentCubit>().changeProps(
-                  selectedTab: "INVITE_LINK",
-                );
-              },
-            ),
-          ),
-        ],
-      ).appPadding(all: 6),
-    ).appPadding(left: 20.w, right: 20.w);
   }
 
   Widget _coParentEmail(LinkCoParentState state) {
