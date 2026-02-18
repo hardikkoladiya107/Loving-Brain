@@ -21,7 +21,6 @@ class YourStreakScreen extends StatefulWidget {
 
 class _YourStreakScreenState extends State<YourStreakScreen> {
 
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

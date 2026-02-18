@@ -100,8 +100,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
-
 void configLoading() {
   final bool isDark = false;
   final Color indicatorColor = isDark ? const Color(0xFFCE63E2) : const Color(0xFF9F35B1);
