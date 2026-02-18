@@ -23,88 +23,109 @@ class LinkCoParentScreen extends StatefulWidget {
 }
 
 class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
-  TextEditingController linkCoParentEmailController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LinkCoParentCubit>().init();
     });
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LinkCoParentCubit, LinkCoParentState>(
+      listener: (context, state) {
+        state.createInvitation.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (dynamic data) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: 'inviteLinkReadyToShare'.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+            final String invitationLink = getInvitationLink(data.toString());
+            SharePlus.instance.share(
+              ShareParams(
+                text:
+                    'Please join as co-parent using this link\n$invitationLink',
+              ),
+            );
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
       builder: (context, state) {
-        if (linkCoParentEmailController.text != state.coParentEmail) {
-          linkCoParentEmailController.value = linkCoParentEmailController.value
-              .copyWith(
-                text: state.coParentEmail ?? '',
-                selection: linkCoParentEmailController.selection,
-              );
+        if (_emailController.text != (state.coParentEmail ?? '')) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _emailController.value = _emailController.value.copyWith(
+              text: state.coParentEmail ?? '',
+              selection: _emailController.selection,
+            );
+          });
         }
 
         return Scaffold(
-          body: SingleChildScrollView(
+          body: SafeArea(
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Assets.images.imgCoParentBg.image(
-                      height: context.height,
-                      width: context.width,
-                    ),
-                    Container(height: 250.h),
-                  ],
+                Positioned.fill(
+                  child: Assets.images.imgCoParentBg.image(
+                    fit: BoxFit.cover,
+                    width: context.width,
+                    height: context.height,
+                  ),
                 ),
-                Column(
-                  children: [
-                    45.h.spaceH,
-                    _appBar(),
-                    160.h.spaceH,
-                    _coParentEmail(state),
-                    20.h.spaceH,
-                    _shareForWhichChild(state),
-                    32.h.spaceH,
-                    _whatTheyllhaveAccessTo(state),
-                    32.h.spaceH,
-                    _sendInvite(
-                      text: state.selectedTab == "EMAIL"
-                          ? LocaleKeys.sendInvite.tr()
-                          : LocaleKeys.generateInviteLink.tr(),
-                      onTap: () {
-                        context.read<LinkCoParentCubit>().sendInvite();
-                      },
-                    ),
-                    12.h.spaceH,
-                    _inviteDescriptionText(),
-                    32.h.spaceH,
-                  ],
+                SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: 20.w,
+                    right: 20.w,
+                    top: 8.h,
+                    bottom: 32.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      8.h.spaceH,
+                      _appBar(),
+                      24.h.spaceH,
+                      _coParentEmail(state),
+                      20.h.spaceH,
+                      _shareForWhichChild(state),
+                      24.h.spaceH,
+                      _whatTheyllhaveAccessTo(state),
+                      28.h.spaceH,
+                      _sendInvite(
+                        text: state.selectedTab == 'EMAIL'
+                            ? LocaleKeys.sendInvite.tr()
+                            : LocaleKeys.generateInviteLink.tr(),
+                        onTap: () {
+                          context.read<LinkCoParentCubit>().sendInvite();
+                        },
+                      ),
+                      16.h.spaceH,
+                      _inviteDescriptionText(),
+                      24.h.spaceH,
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        );
-      },
-      listener: (context, state) {
-        state.createInvitation.whenOrNull(
-          loading: () {
-            EasyLoading.show();
-          },
-          error: (error) {
-            EasyLoading.dismiss();
-          },
-          data: (data) {
-            EasyLoading.dismiss();
-            var invitationLink = getInvitationLink(data.toString());
-            SharePlus.instance.share(
-              ShareParams(
-                text:
-                    'Please join as co-parent using this link\n $invitationLink',
-              ),
-            );
-          },
         );
       },
     );
@@ -112,47 +133,53 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
 
   Widget _sendInvite({
     required String text,
-    required GestureTapCallback? onTap,
+    required VoidCallback? onTap,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Container(
-        height: 45,
+        width: double.infinity,
+        height: 48.h,
         decoration: BoxDecoration(
           color: blueColor2,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            text.appText(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 14,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: blueColor2.withValues(alpha: 0.35),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
+        alignment: Alignment.center,
+        child: text.appText(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          fontSize: 15.sp,
+        ),
       ),
-    ).appPadding(left: 15, right: 15);
+    );
   }
 
   Widget _appBar() {
     return Row(
       children: [
         BaseButton(
+          onTap: () => Navigator.pop(context),
           child: Assets.icons.icBackIcon.image(
-            height: 36,
-            width: 36,
+            height: 36.h,
+            width: 36.w,
             color: Colors.black.withValues(alpha: 0.8),
           ),
-          onTap: () {
-            Navigator.pop(context);
-          },
         ),
         12.w.spaceW,
-        LocaleKeys.linkCoParent.tr().appText(fontWeight: FontWeight.w700),
+        LocaleKeys.linkCoParent.tr().appText(
+          fontWeight: FontWeight.w700,
+          fontSize: 18.sp,
+          color: blackTextColor,
+        ),
       ],
-    ).appPadding(left: 20);
+    );
   }
 
   Widget _headerTabBar(LinkCoParentState state) {
@@ -235,118 +262,118 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
       fillColor: fillTextfieldColor,
       title: LocaleKeys.coParentEmail.tr(),
       hint: LocaleKeys.coParentEmailHint.tr(),
-      hintStyle: getTextStyle(fontSize: 12),
+      hintStyle: getTextStyle(fontSize: 12.sp),
       error: state.coParentEmailError,
-      onChanged: (value) {
+      controller: _emailController,
+      onChanged: (String value) {
         context.read<LinkCoParentCubit>().changeProps(coParentEmail: value);
       },
-    ).appPadding(left: 20.w, right: 20.w);
+    );
   }
 
   Widget _shareForWhichChild(LinkCoParentState state) {
-    List<Widget> widgetList = [];
-    for (int i = 0; i < state.children.length; i++) {
-      var child = state.children[i];
-      widgetList.add(
-        BaseButton(
-          child: Row(
-            children: [
-              childNameCard(
-                name: child.childName ?? "",
-                selected: state.selectedChildren.any(
-                  (element) => element.reference?.id == child.reference?.id,
-                ),
-              ),
-              15.w.spaceW,
-            ],
-          ),
-          onTap: () {
-            context.read<LinkCoParentCubit>().selectChild(child);
-          },
-        ),
-      );
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         LocaleKeys.shareForWhichChild.tr().appText(
           fontWeight: FontWeight.w700,
-          fontSize: 14,
+          fontSize: 14.sp,
+          color: blackTextColor,
         ),
-        16.spaceH,
-        Row(children: [...widgetList]),
-        if ((state.selectChildrenError ?? "").isNotEmpty) ...[
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (state.selectChildrenError ?? "").appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
+        12.h.spaceH,
+        Wrap(
+          spacing: 10.w,
+          runSpacing: 10.h,
+          children: state.children
+              .map(
+                (ChildModel child) => BaseButton(
+                  onTap: () {
+                    context.read<LinkCoParentCubit>().selectChild(child);
+                  },
+                  child: _childNameChip(
+                    name: child.childName ?? '',
+                    selected: state.selectedChildren.any(
+                      (ChildModel e) =>
+                          e.reference?.id == child.reference?.id,
+                    ),
                   ),
-                ],
-              ),
-            ],
+                ),
+              )
+              .toList(),
+        ),
+        if ((state.selectChildrenError ?? '').isNotEmpty) ...[
+          8.h.spaceH,
+          (state.selectChildrenError ?? '').appText(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: redColor,
           ),
         ],
       ],
-    ).appPadding(left: 20.w, right: 20.w);
+    );
   }
 
-  Widget childNameCard({required String name, required bool selected}) {
+  Widget _childNameChip({required String name, required bool selected}) {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: tabBarBgColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         border: selected ? Border.all(color: primaryColor, width: 2) : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: name
-          .appText(fontWeight: FontWeight.w700, fontSize: 14)
-          .appPadding(all: 12),
+      child: name.appText(
+        fontWeight: FontWeight.w700,
+        fontSize: 14.sp,
+        color: blackTextColor,
+      ),
     );
   }
 
   Widget _whatTheyllhaveAccessTo(LinkCoParentState state) {
     return Column(
       children: [
-        accessCard(
+        _accessCard(
           isRequired: true,
           title: LocaleKeys.calendarEvents.tr(),
           description: LocaleKeys.createApproveAndChangeSharedEvents.tr(),
           switchValue: state.calenderAndEvent,
-          onChanged: (value) {
+          onChanged: (bool value) {
             context.read<LinkCoParentCubit>().changeProps(
-              calenderAndEvent: value,
-            );
+                  calenderAndEvent: value,
+                );
           },
         ),
-        20.h.spaceH,
-        accessCard(
+        14.h.spaceH,
+        _accessCard(
           isRequired: false,
           title: LocaleKeys.childEssentials.tr(),
           description: LocaleKeys.medicalNotesSchoolContactsAllergies.tr(),
           switchValue: state.childEssentials,
-          onChanged: (value) {
+          onChanged: (bool value) {
             context.read<LinkCoParentCubit>().changeProps(
-              childEssentials: value,
-            );
+                  childEssentials: value,
+                );
           },
         ),
-        20.h.spaceH,
-        accessCard(
+        14.h.spaceH,
+        _accessCard(
           isRequired: false,
           title: LocaleKeys.eventAttachment.tr(),
           description: '',
           showSwitch: false,
         ),
       ],
-    ).appPadding(left: 20.w, right: 20.w);
+    );
   }
 
-  Widget accessCard({
+  Widget _accessCard({
     required bool isRequired,
     required String title,
     required String description,
@@ -355,9 +382,17 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     ValueChanged<bool>? onChanged,
   }) {
     return Container(
+      padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
         color: fillTextfieldColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -367,36 +402,45 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    title.appText(fontSize: 14, fontWeight: FontWeight.w700),
+                    title.appText(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: blackTextColor,
+                    ),
                     if (isRequired) ...[
-                      16.spaceW,
+                      8.w.spaceW,
                       LocaleKeys.starRequired.tr().appText(
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w900,
                       ),
                     ],
                   ],
                 ),
-                description.appText(fontSize: 10, fontWeight: FontWeight.w700),
+                4.h.spaceH,
+                description.appText(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: greyColor1,
+                ),
               ],
             ),
           ),
           if (showSwitch)
             Transform.scale(
-              scale: 0.7,
+              scale: 0.8,
               child: Switch(value: switchValue, onChanged: onChanged),
             ),
         ],
-      ).appPadding(all: 10),
+      ),
     );
   }
 
   Widget _inviteDescriptionText() {
-    return LocaleKeys.onceAcceptedyouSameSharedCalendar
-        .tr()
-        .appText(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w700)
-        .appPadding(left: 20.w, right: 20.w);
+    return LocaleKeys.onceAcceptedyouSameSharedCalendar.tr().appText(
+      color: blackTextColor,
+      fontSize: 12.sp,
+      fontWeight: FontWeight.w600,
+    );
   }
 }

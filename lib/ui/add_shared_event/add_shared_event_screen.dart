@@ -12,6 +12,8 @@ import 'package:loving_brain/ui/widget/app_text_field.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
+import '../../model/child_model.dart';
+import '../../model/user_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
 import '../widget/base_button.dart';
@@ -26,165 +28,182 @@ class AddSharedEventScreen extends StatefulWidget {
 }
 
 class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AddSharedEventCubit>().init();
     });
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _locationController.dispose();
+    _noteController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddSharedEventCubit, AddSharedEventState>(
+      listener: (context, state) {
+        state.getCoParentApiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) => EasyLoading.dismiss(),
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+        state.getChildApiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) => EasyLoading.dismiss(),
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+        state.requestApprovalApiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: 'sharedEventCreated'.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+            Navigator.pop(context);
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+        state.uploadDocumentApiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) => EasyLoading.dismiss(),
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
       builder: (context, state) {
-        if (titleController.text != state.title) {
-          titleController.value = titleController.value.copyWith(
-            text: state.title ?? '',
-            selection: titleController.selection,
-          );
+        if (_titleController.text != (state.title)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _titleController.value = _titleController.value.copyWith(
+              text: state.title,
+              selection: _titleController.selection,
+            );
+          });
         }
-
-        if (locationController.text != state.locationText) {
-          locationController.value = locationController.value.copyWith(
-            text: state.locationText ?? '',
-            selection: locationController.selection,
-          );
+        if (_locationController.text != (state.locationText)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _locationController.value = _locationController.value.copyWith(
+              text: state.locationText,
+              selection: _locationController.selection,
+            );
+          });
         }
-
-        if (noteController.text != state.title) {
-          noteController.value = noteController.value.copyWith(
-            text: state.note ?? '',
-            selection: noteController.selection,
-          );
+        if (_noteController.text != (state.note)) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _noteController.value = _noteController.value.copyWith(
+              text: state.note,
+              selection: _noteController.selection,
+            );
+          });
         }
 
         return Scaffold(
           backgroundColor: addSharedEventBgColor,
-          body: SingleChildScrollView(
+          body: SafeArea(
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Assets.images.imgAddSharedBg.image(
-                      height: context.height,
-                      width: context.width,
-                      fit: BoxFit.cover,
-                    ),
-                    Container(height: context.height / 2),
-                  ],
+                Positioned.fill(
+                  child: Assets.images.imgAddSharedBg.image(
+                    fit: BoxFit.cover,
+                    width: context.width,
+                    height: context.height,
+                  ),
                 ),
-                Column(
-                  children: [
-                    30.h.spaceH,
-
-                    60.h.spaceH,
-                    LocaleKeys.addSharedEvent.tr().appText(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
+                SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    left: 20.w,
+                    right: 20.w,
+                    top: 8.h,
+                    bottom: 32.h,
+                  ),
+                  child: Column(
+                    children: [
+                      56.h.spaceH,
+                      LocaleKeys.addSharedEvent.tr().appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20.sp,
+                        color: blackTextColor,
+                      ),
+                      20.h.spaceH,
+                      _titleTextField(state),
+                      12.h.spaceH,
+                      _schoolPickUp(state),
+                      16.h.spaceH,
+                      _startEnd(state),
+                      16.h.spaceH,
+                      _location(state),
+                      16.h.spaceH,
+                      _children(state),
+                      12.h.spaceH,
+                      _assignedTo(state),
+                      12.h.spaceH,
+                      _requireApproval(state),
+                      12.h.spaceH,
+                      _note(state),
+                      _attachDocument(state),
+                      20.h.spaceH,
+                      _button(),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 8.h,
+                  left: 12.w,
+                  child: BaseButton(
+                    onTap: () => Navigator.pop(context),
+                    child: Assets.icons.icBackIcon.image(
+                      height: 36.h,
+                      width: 36.w,
                     ),
-                    20.h.spaceH,
-                    _titleTextField(state),
-                    4.h.spaceH,
-                    _schoolPickUp(state),
-                    20.h.spaceH,
-                    _startEnd(state),
-                    20.h.spaceH,
-                    _location(state),
-                    20.h.spaceH,
-                    _children(state),
-                    10.h.spaceH,
-                    _assignedTo(state),
-                    10.h.spaceH,
-                    _requireApproval(state),
-                    10.h.spaceH,
-                    _note(state),
-                    _attachDocument(state),
-                    20.h.spaceH,
-                    _button(),
-                  ],
-                ).appPadding(left: 20.w, right: 20.w),
-                _appBar(),
+                  ),
+                ),
               ],
             ),
           ),
         );
       },
-      listener: (context, state) {
-        state.getCoParentApiResultStatus.whenOrNull(
-          data: (data) {
-            EasyLoading.dismiss();
-          },
-          error: (error) {
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
-            EasyLoading.dismiss();
-          },
-          loading: () {
-            EasyLoading.show();
-          },
-        );
-
-        state.getChildApiResultStatus.whenOrNull(
-          loading: () {
-            EasyLoading.show();
-          },
-          error: (error) {
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
-            EasyLoading.dismiss();
-          },
-          data: (data) {
-            EasyLoading.dismiss();
-          },
-        );
-
-        state.requestApprovalApiResultStatus.whenOrNull(
-          data: (data) {
-            EasyLoading.dismiss();
-            Navigator.pop(context);
-          },
-          error: (error) {
-            EasyLoading.dismiss();
-          },
-          loading: () {
-            EasyLoading.show();
-          },
-        );
-
-        state.uploadDocumentApiResultStatus.whenOrNull(
-          error: (error) {
-            EasyLoading.dismiss();
-          },
-          data: (data) {
-            EasyLoading.dismiss();
-          },
-          loading: () {
-            EasyLoading.show();
-          },
-        );
-      },
-    );
-  }
-
-  Widget _appBar() {
-    return Positioned(
-      top: 60,
-      left: 20,
-      child: BaseButton(
-        child: Assets.icons.icBackIcon.image(height: 36, width: 36),
-        onTap: () {
-          Navigator.pop(context);
-        },
-      ),
     );
   }
 
   Widget _chipWidget({
     required String text,
-    required GestureTapCallback? onTap,
+    required VoidCallback? onTap,
     required bool selected,
   }) {
     return BaseButton(
@@ -192,17 +211,17 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: tabBarBgColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: selected ? Border.all(color: primaryColor, width: 2) : null,
         ),
         child: text
-            .appText(fontWeight: FontWeight.w700)
-            .appPadding(left: 16, right: 16, top: 8, bottom: 8),
+            .appText(fontWeight: FontWeight.w700, fontSize: 13.sp)
+            .appPadding(left: 16.w, right: 16.w, top: 8.h, bottom: 8.h),
       ),
     );
   }
 
-  Widget accessCard({
+  Widget _accessCard({
     required bool switchValue,
     required bool isRequired,
     required String title,
@@ -213,8 +232,16 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
+      padding: EdgeInsets.all(14.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -223,67 +250,89 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    title.appText(fontSize: 14, fontWeight: FontWeight.w700),
+                    title.appText(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: blackTextColor,
+                    ),
                     if (isRequired) ...[
-                      16.spaceW,
-                      "* Required".appText(
-                        fontSize: 10,
+                      8.w.spaceW,
+                      LocaleKeys.starRequired.tr().appText(
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w900,
                       ),
                     ],
                   ],
                 ),
-                description.appText(fontSize: 10, fontWeight: FontWeight.w700),
+                4.h.spaceH,
+                description.appText(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: greyColor1,
+                ),
               ],
             ),
           ),
           if (showSwitch)
             Transform.scale(
-              scale: 0.7,
+              scale: 0.8,
               child: Switch(value: switchValue, onChanged: onChanged),
             ),
         ],
-      ).appPadding(all: 10),
+      ),
     );
   }
 
   Widget _attachDocument(AddSharedEventState state) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BaseButton(
+          onTap: () => _chooseImage(state),
           child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 LocaleKeys.attachDocument
                     .tr()
-                    .appText(fontWeight: FontWeight.w600, fontSize: 14)
-                    .appPadding(top: 6, bottom: 6),
+                    .appText(fontWeight: FontWeight.w600, fontSize: 14.sp),
                 8.w.spaceW,
-                Assets.icons.icPremiumIcon.image(height: 20, width: 20),
+                Assets.icons.icPremiumIcon.image(height: 20.h, width: 20.w),
               ],
             ),
           ),
-          onTap: () {
-            _chooseImage(state);
-          },
         ),
-        20.spaceH,
+        12.h.spaceH,
         ...state.documentsList.map(
-          (e) => Row(
-            children: [
-              Icon(Icons.file_copy_outlined),
-              10.spaceW,
-              Expanded(
-                child: _getFileName(e).appText(textAlign: TextAlign.start),
-              ),
-            ],
+          (String url) => Padding(
+            padding: EdgeInsets.only(bottom: 6.h),
+            child: Row(
+              children: [
+                Icon(Icons.insert_drive_file_outlined, size: 22.sp),
+                10.w.spaceW,
+                Expanded(
+                  child: _getFileName(url).appText(
+                    fontSize: 12.sp,
+                    textAlign: TextAlign.start,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -301,25 +350,29 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
 
   Widget _requestApprovalButton({
     required String text,
-    required GestureTapCallback? onTap,
+    required VoidCallback? onTap,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Container(
-        height: 45,
+        width: double.infinity,
+        height: 48.h,
         decoration: BoxDecoration(
           color: yellowColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            text.appText(
-              color: cardColor2,
-              fontWeight: FontWeight.w800,
-              fontSize: 14,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: yellowColor.withValues(alpha: 0.4),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
+        ),
+        alignment: Alignment.center,
+        child: text.appText(
+          color: cardColor2,
+          fontWeight: FontWeight.w800,
+          fontSize: 15.sp,
         ),
       ),
     );
@@ -330,8 +383,8 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
       title: LocaleKeys.title.tr(),
       hint: LocaleKeys.schoolPickUp.tr(),
       error: state.titleError,
-      controller: titleController,
-      onChanged: (value) {
+      controller: _titleController,
+      onChanged: (String value) {
         context.read<AddSharedEventCubit>().changeProps(title: value);
       },
     );
@@ -339,185 +392,171 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
 
   Widget _schoolPickUp(AddSharedEventState state) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            LocaleKeys.date.tr().appText(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
+        LocaleKeys.date.tr().appText(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+          color: blackTextColor,
         ),
-        6.spaceH,
+        8.h.spaceH,
         BaseButton(
-          onTap: () {
-            _showDatePicker();
-          },
+          onTap: _showDatePicker,
           child: Container(
-            height: 45,
+            height: 48.h,
+            padding: EdgeInsets.symmetric(horizontal: 14.w),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               children: [
                 Assets.icons.icCalenderIcon3
-                    .image(height: 20, width: 20)
-                    .appPadding(left: 8),
-                12.spaceW,
+                    .image(height: 22.h, width: 22.w),
+                12.w.spaceW,
                 (state.selectedDate != null
                         ? getStringDate(state.selectedDate)
                         : LocaleKeys.chooseDate.tr())
                     .appText(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: state.selectedDate != null
-                          ? Colors.black
-                          : Colors.grey.shade400,
+                          ? blackTextColor
+                          : greyColor1,
                     ),
               ],
             ),
           ),
         ),
-        if (state.dateError.isNotEmpty)
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (state.dateError ?? "").appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ],
+        if (state.dateError.isNotEmpty) ...[
+          6.h.spaceH,
+          state.dateError.appText(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: redColor,
           ),
+        ],
       ],
     );
   }
 
   Widget _startEnd(AddSharedEventState state) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: BaseButton(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    LocaleKeys.start.tr().appText(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-                6.spaceH,
-                Container(
-                  height: 45,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LocaleKeys.start.tr().appText(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                color: blackTextColor,
+              ),
+              8.h.spaceH,
+              BaseButton(
+                onTap: _showStartTime,
+                child: Container(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
-                      Assets.icons.icTimerIcon
-                          .image(height: 20, width: 20)
-                          .appPadding(left: 8),
-                      12.spaceW,
-
+                      Assets.icons.icTimerIcon.image(height: 22.h, width: 22.w),
+                      12.w.spaceW,
                       (state.startTime != null
                               ? getStringTime(state.startTime)
                               : LocaleKeys.startHint.tr())
                           .appText(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             color: state.startTime != null
-                                ? Colors.black
-                                : Colors.grey.shade400,
+                                ? blackTextColor
+                                : greyColor1,
                           ),
                     ],
                   ),
                 ),
-                if (state.startTimeError.isNotEmpty)
-                  Column(
-                    children: [
-                      4.spaceH,
-                      Row(
-                        children: [
-                          (state.startTimeError ?? "").appText(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.red,
-                          ),
-                        ],
+              ),
+              if (state.startTimeError.isNotEmpty) ...[
+                6.h.spaceH,
+                state.startTimeError.appText(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: redColor,
+                ),
+              ],
+            ],
+          ),
+        ),
+        12.w.spaceW,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LocaleKeys.end.tr().appText(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                color: blackTextColor,
+              ),
+              8.h.spaceH,
+              BaseButton(
+                onTap: _showEndTime,
+                child: Container(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-              ],
-            ),
-            onTap: () {
-              _showStartTime();
-            },
-          ),
-        ),
-        10.spaceW,
-        Expanded(
-          child: BaseButton(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    LocaleKeys.end.tr().appText(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-                6.spaceH,
-                Container(
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
                   child: Row(
                     children: [
-                      Assets.icons.icTimerIcon
-                          .image(height: 20, width: 20)
-                          .appPadding(left: 8),
-                      12.spaceW,
+                      Assets.icons.icTimerIcon.image(height: 22.h, width: 22.w),
+                      12.w.spaceW,
                       (state.endTime != null
                               ? getStringTime(state.endTime)
                               : LocaleKeys.endHint.tr())
                           .appText(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             color: state.endTime != null
-                                ? Colors.black
-                                : Colors.grey.shade400,
+                                ? blackTextColor
+                                : greyColor1,
                           ),
                     ],
                   ),
                 ),
-                if (state.endTimeError.isNotEmpty)
-                  Column(
-                    children: [
-                      4.spaceH,
-                      Row(
-                        children: [
-                          (state.endTimeError ?? "").appText(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+              ),
+              if (state.endTimeError.isNotEmpty) ...[
+                6.h.spaceH,
+                state.endTimeError.appText(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: redColor,
+                ),
               ],
-            ),
-            onTap: () {
-              _showEndTime();
-            },
+            ],
           ),
         ),
       ],
@@ -528,85 +567,72 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     return AppTextField(
       title: LocaleKeys.location.tr(),
       hint: LocaleKeys.locationHint.tr(),
-      contentPadding: EdgeInsets.symmetric(horizontal: 2),
+      contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       prefixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Assets.icons.icLocationIcon
-              .image(height: 20, width: 20)
-              .appPadding(left: 8),
+          Assets.icons.icLocationIcon.image(height: 22.h, width: 22.w),
         ],
       ),
       error: state.locationError,
-      controller: locationController,
-      onChanged: (value) {
+      controller: _locationController,
+      onChanged: (String value) {
         context.read<AddSharedEventCubit>().changeProps(locationText: value);
       },
     );
   }
 
   Widget _children(AddSharedEventState state) {
-    List<Widget> childrenWidgetList = [];
-
-    for (int i = 0; i < state.children.length; i++) {
-      var child = state.children[i];
-      childrenWidgetList.add(
-        _chipWidget(
-          text: child.childName ?? "",
-          selected: state.selectedChildren.any(
-            (element) => element.reference?.id == child.reference?.id,
-          ),
-          onTap: () {
-            context.read<AddSharedEventCubit>().selectChild(child);
-          },
-        ),
-      );
-    }
-
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             LocaleKeys.child.tr().appText(
-              fontSize: 14,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
+              color: blackTextColor,
             ),
-            10.w.spaceW,
-            Assets.icons.icChildEmojiIcon.image(height: 25, width: 25),
+            8.w.spaceW,
+            Assets.icons.icChildEmojiIcon.image(height: 24.h, width: 24.w),
           ],
         ),
         10.h.spaceH,
-        Row(
-          children: [
-            if (childrenWidgetList.isNotEmpty) ...[...childrenWidgetList],
-          ],
-        ),
-        if (state.selectedChildError.isNotEmpty)
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (state.selectedChildError ?? "").appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
+        Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: state.children
+              .map(
+                (ChildModel child) => _chipWidget(
+                  text: child.childName ?? '',
+                  selected: state.selectedChildren.any(
+                    (ChildModel e) => e.reference?.id == child.reference?.id,
                   ),
-                ],
-              ),
-            ],
+                  onTap: () {
+                    context.read<AddSharedEventCubit>().selectChild(child);
+                  },
+                ),
+              )
+              .toList(),
+        ),
+        if (state.selectedChildError.isNotEmpty) ...[
+          8.h.spaceH,
+          state.selectedChildError.appText(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: redColor,
           ),
+        ],
       ],
     );
   }
 
   Widget _assignedTo(AddSharedEventState state) {
-    List<Widget> coParentWidgetList = [];
-    coParentWidgetList.add(
+    final List<Widget> chips = <Widget>[
       _chipWidget(
-        text: 'You',
+        text: 'you'.tr(),
         selected: state.selectedCoParentList.any(
-          (element) => element.uid == state.userModel?.uid,
+          (UserModel e) => e.uid == state.userModel?.uid,
         ),
         onTap: () {
           if (state.userModel != null) {
@@ -614,50 +640,37 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           }
         },
       ),
-    );
-
-    for (int i = 0; i < state.coParentList.length; i++) {
-      var user = state.coParentList[i];
-      coParentWidgetList.add(
-        _chipWidget(
-          text: user.parentName ?? "",
+      ...state.coParentList.map(
+        (UserModel user) => _chipWidget(
+          text: user.parentName ?? '',
+          selected: state.selectedCoParentList.any(
+            (UserModel e) => e.uid == user.uid,
+          ),
           onTap: () {
             context.read<AddSharedEventCubit>().selectParent(user);
           },
-          selected: state.selectedCoParentList.any(
-            (element) => element.uid == user.uid,
-          ),
         ),
-      );
-    }
+      ),
+    ];
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            LocaleKeys.assignedTo.tr().appText(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ],
+        LocaleKeys.assignedTo.tr().appText(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+          color: blackTextColor,
         ),
         10.h.spaceH,
-        Row(children: [...coParentWidgetList]),
-        if (state.assignedToError.isNotEmpty)
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (state.assignedToError ?? "").appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ],
+        Wrap(spacing: 8.w, runSpacing: 8.h, children: chips),
+        if (state.assignedToError.isNotEmpty) ...[
+          8.h.spaceH,
+          state.assignedToError.appText(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: redColor,
           ),
+        ],
       ],
     );
   }
@@ -666,10 +679,11 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
     return AppTextField(
       title: LocaleKeys.noteToCoParent.tr(),
       hint: LocaleKeys.anythingTheyShouldKnow.tr(),
-      minLines: 5,
-      controller: noteController,
+      minLines: 4,
+      maxLines: 5,
+      controller: _noteController,
       error: state.noteError,
-      onChanged: (value) {
+      onChanged: (String value) {
         context.read<AddSharedEventCubit>().changeProps(note: value);
       },
     );
@@ -685,7 +699,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
   }
 
   Widget _requireApproval(AddSharedEventState state) {
-    return accessCard(
+    return _accessCard(
       isRequired: false,
       title: LocaleKeys.requireApproval.tr(),
       description: LocaleKeys.sendToCoParentForConfirmation.tr(),
@@ -699,41 +713,41 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
   }
 
   void _showStartTime() {
-    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
-      value,
-    ) {
-      if (value != null) {
-        DateTime now = DateTime.now();
-        navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
-          startTime: DateTime(
-            now.year,
-            now.month,
-            now.day,
-            value.hour,
-            value.minute,
-          ),
-        );
-      }
-    });
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then(
+      (TimeOfDay? value) {
+        if (value != null && navigatorKey.currentContext != null) {
+          final DateTime now = DateTime.now();
+          navigatorKey.currentContext!.read<AddSharedEventCubit>().changeProps(
+                startTime: DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  value.hour,
+                  value.minute,
+                ),
+              );
+        }
+      },
+    );
   }
 
   void _showEndTime() {
-    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
-      value,
-    ) {
-      if (value != null) {
-        DateTime now = DateTime.now();
-        navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
-          endTime: DateTime(
-            now.year,
-            now.month,
-            now.day,
-            value.hour,
-            value.minute,
-          ),
-        );
-      }
-    });
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then(
+      (TimeOfDay? value) {
+        if (value != null && navigatorKey.currentContext != null) {
+          final DateTime now = DateTime.now();
+          navigatorKey.currentContext!.read<AddSharedEventCubit>().changeProps(
+                endTime: DateTime(
+                  now.year,
+                  now.month,
+                  now.day,
+                  value.hour,
+                  value.minute,
+                ),
+              );
+        }
+      },
+    );
   }
 
   void _showDatePicker() {
@@ -741,16 +755,18 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
       context: context,
       firstDate: DateTime(1971),
       lastDate: DateTime(2030),
-    ).then((value) {
-      navigatorKey.currentContext?.read<AddSharedEventCubit>().changeProps(
-        selectedDate: value,
-      );
+    ).then((DateTime? value) {
+      if (value != null && navigatorKey.currentContext != null) {
+        navigatorKey.currentContext!.read<AddSharedEventCubit>().changeProps(
+              selectedDate: value,
+            );
+      }
     });
   }
 
-  String _getFileName(String e) {
-    var finalPath = e.split("?").first.toString();
-    var fileName = finalPath.split("%2F").last;
-    return fileName.toString();
+  String _getFileName(String url) {
+    final String path = url.split('?').first;
+    final List<String> parts = path.split('%2F');
+    return parts.isNotEmpty ? parts.last : url;
   }
 }

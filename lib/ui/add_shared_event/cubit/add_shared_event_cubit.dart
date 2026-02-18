@@ -71,13 +71,13 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
         children: children ?? state.children,
         selectedChildren: selectedChildren ?? state.selectedChildren,
         uploadDocumentApiResultStatus:
-            uploadDocumentApiResultStatus ?? ApiResultStatus.initial(),
+            uploadDocumentApiResultStatus ?? state.uploadDocumentApiResultStatus,
         requestApprovalApiResultStatus:
-            requestApprovalApiResultStatus ?? ApiResultStatus.initial(),
+            requestApprovalApiResultStatus ?? state.requestApprovalApiResultStatus,
         getChildApiResultStatus:
-            getChildApiResultStatus ?? ApiResultStatus.initial(),
+            getChildApiResultStatus ?? state.getChildApiResultStatus,
         getCoParentApiResultStatus:
-            getCoParentApiResultStatus ?? ApiResultStatus.initial(),
+            getCoParentApiResultStatus ?? state.getCoParentApiResultStatus,
       ),
     );
   }
@@ -168,7 +168,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   Future<void> requestApproval() async {
     if (isValidate()) {
       changeProps(requestApprovalApiResultStatus: ApiResultStatus.loading());
-      var apiResult = await CoParentRepo.instance.addSharedEvent(
+      final ApiResultStatus apiResult = await CoParentRepo.instance.addSharedEvent(
         request: {
           "created_by": state.userModel?.uid,
           "assigned_to": state.selectedCoParentList.map((e) => e.uid), //
@@ -197,7 +197,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
 
   Future<void> _getMyCoParent() async {
     changeProps(getCoParentApiResultStatus: ApiResultStatus.loading());
-    var response = await CoParentRepo.instance.getMyCoParents();
+    final ApiResultStatus response = await CoParentRepo.instance.getMyCoParents();
     changeProps(getCoParentApiResultStatus: response);
     response.whenOrNull(
       data: (data) {
@@ -210,7 +210,7 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
 
   Future<void> _getMyChildren() async {
     changeProps(getChildApiResultStatus: ApiResultStatus.loading());
-    var apiResults = await ChildRepo.instance.getChildren(
+    final ApiResultStatus apiResults = await ChildRepo.instance.getChildren(
       childrenIds: state.userModel?.children?.map((e) => e.id).toList() ?? [],
     );
     changeProps(getChildApiResultStatus: apiResults);
@@ -226,19 +226,19 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   Future<void> uploadToFirebaseStorage(String? fileLocalPath) async {
     if (fileLocalPath != null) {
       changeProps(uploadDocumentApiResultStatus: ApiResultStatus.loading());
-      var uploadedFilePath = await CoParentRepo.instance
+      final ApiResultStatus uploadedFilePath = await CoParentRepo.instance
           .uploadFileToFirebaseStorage(
             file: File(fileLocalPath),
             referenceId: state.userModel?.uid,
           );
       uploadedFilePath.whenOrNull(
-        data: (data) async {
+        data: (dynamic data) async {
           changeProps(
-            uploadDocumentApiResultStatus: ApiResultStatus.data(data: ""),
+            uploadDocumentApiResultStatus: ApiResultStatus.data(data: ''),
           );
           if (data is TaskSnapshot) {
-            var imageNetworkUrl = await data.ref.getDownloadURL();
-            List<String> documentsList = [];
+            final String imageNetworkUrl = await data.ref.getDownloadURL();
+            final List<String> documentsList = [];
             documentsList.addAll(state.documentsList);
             documentsList.add(imageNetworkUrl);
             changeProps(documentsList: documentsList);

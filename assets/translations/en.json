@@ -357,5 +357,10 @@
   "routineRemoved": "Routine removed",
   "successMessage": "Success",
   "coParentingCalendar": "Co-Parenting Calendar",
-  "areYouSureYouWantToRemoveSharedEvent": "Are you sure you want to remove this shared event?"
+  "areYouSureYouWantToRemoveSharedEvent": "Are you sure you want to remove this shared event?",
+  "noActivitiesInRoutineYet": "No activities yet",
+  "addActivitiesAboveToSeeThemHere": "Add activities above to see them here",
+  "sharedEventCreated": "Shared event created",
+  "inviteLinkReadyToShare": "Invite link ready to share",
+  "you": "You"
 }

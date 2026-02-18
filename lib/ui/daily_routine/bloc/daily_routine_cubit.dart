@@ -50,8 +50,8 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
         routinesList: routinesList ?? state.routinesList,
         routineCategoryList: routineCategoryList ?? state.routineCategoryList,
         getRoutineTypeApiResult:
-            getRoutineTypeApiResult ?? ApiResultStatus.initial(),
-        addRoutineApiResult: addRoutineApiResult ?? ApiResultStatus.initial(),
+            getRoutineTypeApiResult ?? state.getRoutineTypeApiResult,
+        addRoutineApiResult: addRoutineApiResult ?? state.addRoutineApiResult,
       ),
     );
   }
@@ -86,7 +86,7 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
   Future<void> addActivity() async {
     if (_isValid()) {
       changeProps(addRoutineApiResult: ApiResultStatus.loading());
-      var apiResultStatus = await ChildRepo.instance.addRoutine(
+      final ApiResultStatus apiResultStatus = await ChildRepo.instance.addRoutine(
         request: {
           "time_stamp": Timestamp.fromDate(state.selectedDateTime!),
           "description": state.descriptionText,
@@ -100,10 +100,11 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
 
   Future<void> _fetchDailyRoutine() async {
     changeProps(getRoutineTypeApiResult: ApiResultStatus.loading());
-    var apiResultStatus = await ChildRepo.instance.getAllRoutineCategories();
+    final ApiResultStatus apiResultStatus =
+        await ChildRepo.instance.getAllRoutineCategories();
     changeProps(getRoutineTypeApiResult: apiResultStatus);
     apiResultStatus.whenOrNull(
-      data: (data) {
+      data: (dynamic data) {
         if (data is List<RoutineCategoryModel>) {
           changeProps(routineCategoryList: data);
         }
@@ -120,13 +121,22 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
           .snapshots()
           .listen((event) {
             if (event.data() != null) {
+              final ChildModel childModel = ChildModel.fromJson(
+                event.data() as Map<String, dynamic>,
+                event.reference,
+              );
               changeProps(
-                childModel: ChildModel.fromJson(
-                  event.data() as Map<String, dynamic>,event.reference
-                ),
+                childModel: childModel,
+                routinesList: childModel.routinesList ?? [],
               );
             }
           });
     }
+  }
+
+  @override
+  Future<void> close() {
+    routineStreamSubscription?.cancel();
+    return super.close();
   }
 }

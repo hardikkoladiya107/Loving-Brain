@@ -38,8 +38,8 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
         selectedChildren: selectedChildren ?? state.selectedChildren,
         calenderAndEvent: calenderAndEvent ?? state.calenderAndEvent,
         childEssentials: childEssentials ?? state.childEssentials,
-        getApiResultStatus: getApiResultStatus ?? ApiResultStatus.initial(),
-        createInvitation: createInvitation ?? ApiResultStatus.initial(),
+        getApiResultStatus: getApiResultStatus ?? state.getApiResultStatus,
+        createInvitation: createInvitation ?? state.createInvitation,
       ),
     );
   }
@@ -51,7 +51,7 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
 
   Future<void> _getMyChildren() async {
     changeProps(getApiResultStatus: ApiResultStatus.loading());
-    var apiResults = await ChildRepo.instance.getChildren(
+    final ApiResultStatus apiResults = await ChildRepo.instance.getChildren(
       childrenIds: state.userModel?.children?.map((e) => e.id).toList() ?? [],
     );
     changeProps(getApiResultStatus: apiResults);
@@ -103,7 +103,7 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   Future<void> sendInvite() async {
     if (_isValidate()) {
       changeProps(createInvitation: ApiResultStatus.loading());
-      var apiResponse = await CoParentRepo.instance.createInvitation(
+      final ApiResultStatus apiResponse = await CoParentRepo.instance.createInvitation(
         request: {
           "calender_events": state.calenderAndEvent,
           "childs_essentials": state.childEssentials,
