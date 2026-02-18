@@ -25,6 +25,7 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     ChildModel? childModel,
     List<SharedEventModel>? sharedEventList,
     ApiResultStatus? deleteRoutineApiResultStatus,
+    ApiResultStatus? deleteSharedEventApiResultStatus,
   }) {
     emit(
       state.copyWith(
@@ -33,6 +34,8 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         sharedEventList: sharedEventList ?? state.sharedEventList,
         deleteRoutineApiResultStatus:
             deleteRoutineApiResultStatus ?? state.deleteRoutineApiResultStatus,
+        deleteSharedEventApiResultStatus: deleteSharedEventApiResultStatus ??
+            state.deleteSharedEventApiResultStatus,
       ),
     );
   }
@@ -87,10 +90,26 @@ class ScheduleCubit extends Cubit<ScheduleState> {
 
   Future<void> deleteRoutine(RoutineModel routine) async {
     changeProps(deleteRoutineApiResultStatus: ApiResultStatus.loading());
-    var response = await ChildRepo.instance.removeRoutine(
+    final ApiResultStatus response = await ChildRepo.instance.removeRoutine(
       id: state.childModel?.reference?.id,
       request: routine.toJson(),
     );
     changeProps(deleteRoutineApiResultStatus: response);
+  }
+
+  Future<void> deleteSharedEvent(SharedEventModel sharedEvent) async {
+    final String? docId = sharedEvent.reference?.id;
+    if (docId == null || docId.isEmpty) return;
+    changeProps(deleteSharedEventApiResultStatus: ApiResultStatus.loading());
+    final ApiResultStatus response =
+        await CoParentRepo.instance.deleteSharedEvent(documentId: docId);
+    changeProps(deleteSharedEventApiResultStatus: response);
+  }
+
+  @override
+  Future<void> close() {
+    routineStreamSubscription?.cancel();
+    sharedEventStreamSubscription?.cancel();
+    return super.close();
   }
 }

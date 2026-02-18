@@ -93,6 +93,23 @@ class CoParentRepo {
     return sharedEventCollection.doc(documentId).snapshots();
   }
 
+  Future<ApiResultStatus> deleteSharedEvent({
+    required String documentId,
+  }) async {
+    try {
+      await sharedEventCollection.doc(documentId).delete();
+      return ApiResultStatus.data(data: '');
+    } on FirebaseException catch (_) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
   Future<ApiResultStatus> createInvitation({
     required Map<String, dynamic> request,
   }) async {

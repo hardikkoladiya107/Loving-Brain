@@ -307,7 +307,7 @@
   "share": "Share",
   "viewSchedule": "View Schedule",
   "nextSchedule": "Next Schedule",
-  "coParentingColander": "Co- parenting Colander",
+  "coParentingColander": "Co-Parenting Calendar",
   "eventApproval": "Event Approval",
   "reviewAndConfirmTheSharedEvent": "Review and confirm the shared event",
   "yourResponseUpdatesEventForBothParents": "Your response updates the event for both parents.",
@@ -349,5 +349,13 @@
   "bestStreak": "Best streak",
   "nextMilestone": "Next Milestone",
   "yourMoodHistory": "Your Mood History",
-  "donMissYourDailyMoodToKeepTheStreakGoing": "Don't miss your daily mood check-in to keep the streak going!"
+  "donMissYourDailyMoodToKeepTheStreakGoing": "Don't miss your daily mood check-in to keep the streak going!",
+  "noRoutinesYet": "No routines yet",
+  "noSharedEventsYet": "No shared events yet",
+  "addFirstRoutine": "Add your first activity to the daily routine",
+  "addFirstSharedEvent": "Add a shared event or link a co-parent to get started",
+  "routineRemoved": "Routine removed",
+  "successMessage": "Success",
+  "coParentingCalendar": "Co-Parenting Calendar",
+  "areYouSureYouWantToRemoveSharedEvent": "Are you sure you want to remove this shared event?"
 }

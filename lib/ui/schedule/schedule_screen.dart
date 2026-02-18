@@ -10,6 +10,8 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
+import '../../model/routine_model.dart';
+import '../../model/shared_event_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
 import '../add_shared_event/add_shared_event_screen.dart';
@@ -32,88 +34,109 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ScheduleCubit>().init();
     });
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ScheduleCubit, ScheduleState>(
+      listener: (context, state) {
+        state.deleteRoutineApiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: 'routineRemoved'.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+        state.deleteSharedEventApiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: 'successMessage'.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
       builder: (context, state) {
         return Scaffold(
-          body: SingleChildScrollView(
+          body: SafeArea(
             child: Stack(
               children: [
-                Column(
-                  children: [
-                    Assets.images.imgScheduleBg.image(
-                      height: context.height,
-                      width: context.width,
-                      fit: BoxFit.cover,
-                    ),
-                    Container(height: context.height / 2),
-                  ],
+                Positioned.fill(
+                  child: Assets.images.imgScheduleBg.image(
+                    fit: BoxFit.cover,
+                    width: context.width,
+                    height: context.height,
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(),
-                    60.spaceH,
+                    24.h.spaceH,
                     LocaleKeys.schedule.tr().appText(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 22,
                       fontWeight: FontWeight.w700,
                     ),
-                    20.spaceH,
-                    Container(
-                      height: (context.height * 0.65).h,
-                      width: (context.width - 60).w,
-                      decoration: BoxDecoration(
-                        color: scheduleBgColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Column(
-                        children: [
-                          10.spaceH,
-                          Row(
+                    16.h.spaceH,
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 20.w),
+                        decoration: BoxDecoration(
+                          color: scheduleBgColor,
+                          borderRadius: BorderRadius.circular(20.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.06),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.r),
+                          child: Column(
                             children: [
-                              8.spaceW,
-                              _tabItem(
-                                label: LocaleKeys.dailyRoutine.tr(),
-                                isSelected: state.tabIndex == 0,
-                                onTap: () {
-                                  context.read<ScheduleCubit>().changeProps(
-                                    tabIndex: 0,
-                                  );
-                                },
+                              12.h.spaceH,
+                              _tabBar(context, state),
+                              8.h.spaceH,
+                              Expanded(
+                                child: IndexedStack(
+                                  index: state.tabIndex,
+                                  children: [
+                                    _dailyRoutineContent(context, state),
+                                    _coParentingContent(context, state),
+                                  ],
+                                ),
                               ),
-                              8.spaceW,
-                              _tabItem(
-                                label: LocaleKeys.coParentingSchedule.tr(),
-                                isSelected: state.tabIndex == 1,
-                                onTap: () {
-                                  context.read<ScheduleCubit>().changeProps(
-                                    tabIndex: 1,
-                                  );
-                                },
-                              ),
-                              8.spaceW,
                             ],
                           ),
-                          Expanded(
-                            child: IndexedStack(
-                              index: state.tabIndex,
-                              children: [
-                                _dailyRoutine(state),
-                                coParentingSchedule(state),
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
+                    16.h.spaceH,
                   ],
                 ),
               ],
@@ -121,46 +144,385 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ),
         );
       },
-      listener: (context, state) {
-        state.deleteRoutineApiResultStatus.whenOrNull(
-          loading: () {
-            EasyLoading.show();
-          },
-          data: (data) {
-            EasyLoading.dismiss();
-          },
-          error: (error) {
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
-            EasyLoading.dismiss();
-          },
-        );
-      },
+    );
+  }
+
+  Widget _tabBar(BuildContext context, ScheduleState state) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      child: Row(
+        children: [
+          Expanded(
+            child: _tabItem(
+              label: LocaleKeys.dailyRoutine.tr(),
+              isSelected: state.tabIndex == 0,
+              onTap: () =>
+                  context.read<ScheduleCubit>().changeProps(tabIndex: 0),
+            ),
+          ),
+          8.w.spaceW,
+          Expanded(
+            child: _tabItem(
+              label: LocaleKeys.coParentingSchedule.tr(),
+              isSelected: state.tabIndex == 1,
+              onTap: () =>
+                  context.read<ScheduleCubit>().changeProps(tabIndex: 1),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _tabItem({
     required String label,
     required bool isSelected,
-    required GestureTapCallback? onTap,
+    required VoidCallback? onTap,
   }) {
-    return Expanded(
+    return BaseButton(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        height: 48.h,
+        decoration: BoxDecoration(
+          color: isSelected ? null : Colors.white,
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [scheduleButtonColor1, scheduleButtonColor2],
+                )
+              : null,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: scheduleButtonColor1.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: getTextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w800,
+            color: isSelected ? Colors.white : blackTextColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _dailyRoutineContent(BuildContext context, ScheduleState state) {
+    final List<RoutineModel> routines =
+        state.childModel?.routinesList ?? const [];
+    final String childName =
+        state.childModel?.childName ?? state.userModel?.childName ?? '';
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (childName.isNotEmpty)
+            "$childName's ${LocaleKeys.dailyRoutine.tr()}"
+                .appText(
+                  color: blueTextColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+          12.h.spaceH,
+          if (routines.isEmpty)
+            _emptyState(
+              title: 'noRoutinesYet'.tr(),
+              subtitle: 'addFirstRoutine'.tr(),
+              icon: Icons.schedule_rounded,
+            )
+          else
+            ...routines.asMap().entries.map((entry) {
+              final RoutineModel routine = entry.value;
+              return _routineItem(
+                schedule: getStringTime(routine.timeStamp),
+                label: routine.description ?? '',
+                showProposeChange: false,
+                onTap: () {},
+                onDeleteIconTap: () {
+                  _showDeleteRoutineDialog(
+                    onDelete: () {
+                      Navigator.pop(context);
+                      context.read<ScheduleCubit>().deleteRoutine(routine);
+                    },
+                  );
+                },
+              );
+            }),
+          16.h.spaceH,
+          _scheduleButton(
+            text: "+ ${LocaleKeys.addActivity.tr()}",
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const DailyRoutineScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _coParentingContent(BuildContext context, ScheduleState state) {
+    final List<SharedEventModel> events = state.sharedEventList;
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LocaleKeys.coParentingColander
+              .tr()
+              .appText(
+                color: blueTextColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+          12.h.spaceH,
+          if (events.isEmpty)
+            _emptyState(
+              title: 'noSharedEventsYet'.tr(),
+              subtitle: 'addFirstSharedEvent'.tr(),
+              icon: Icons.event_note_rounded,
+            )
+          else
+            ...events.map((SharedEventModel sharedEvent) {
+              final bool isCreator =
+                  sharedEvent.createdBy == state.userModel?.uid;
+              final bool isAssigned = sharedEvent.assignedTo
+                      ?.any((String id) => id == state.userModel?.uid) ??
+                  false;
+              final bool canView = isCreator ||
+                  (isAssigned &&
+                      (sharedEvent.status == 'APPROVED' ||
+                          sharedEvent.status == 'NONE'));
+              final bool needsApproval = isAssigned &&
+                  (sharedEvent.requiredApproval == true) &&
+                  sharedEvent.status == 'REQUESTED';
+
+              return _routineItem(
+                schedule: coParentScheduleTime(
+                  sharedEvent.date ?? sharedEvent.startTime,
+                ),
+                label: sharedEvent.title ?? '',
+                status: sharedEvent.status,
+                showProposeChange: true,
+                showDeleteIcon: isCreator,
+                onTap: () {
+                  if (canView) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            EventDetailScreen(sharedEvent: sharedEvent),
+                      ),
+                    );
+                  } else if (needsApproval) {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            EventApprovalScreen(sharedEvent: sharedEvent),
+                      ),
+                    );
+                  }
+                },
+                proposeChangeButtonTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) =>
+                          ProposeChangeScreen(sharedEvent: sharedEvent),
+                    ),
+                  );
+                },
+                onDeleteIconTap: () {
+                  _showDeleteSharedEventDialog(
+                    onDelete: () {
+                      Navigator.pop(context);
+                      context
+                          .read<ScheduleCubit>()
+                          .deleteSharedEvent(sharedEvent);
+                    },
+                  );
+                },
+              );
+            }),
+          16.h.spaceH,
+          _scheduleButton(
+            text: "+ ${LocaleKeys.addSharedEvent.tr()}",
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const AddSharedEventScreen(),
+                ),
+              );
+            },
+          ),
+          12.h.spaceH,
+          _scheduleButton(
+            text: LocaleKeys.linkCoParent.tr(),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const LinkCoParentScreen(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _emptyState({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 24.w),
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            size: 48.sp,
+            color: greyColor2,
+          ),
+          16.h.spaceH,
+          title.appText(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            color: blackTextColor,
+          ),
+          8.h.spaceH,
+          subtitle.appText(
+            fontSize: 13,
+            color: greyColor1,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _routineItem({
+    required String schedule,
+    required String label,
+    required VoidCallback? onTap,
+    required VoidCallback? onDeleteIconTap,
+    VoidCallback? proposeChangeButtonTap,
+    String? status,
+    bool showProposeChange = false,
+    bool showDeleteIcon = true,
+  }) {
+    final bool hasStatus =
+        (status ?? '').isNotEmpty && status != 'NONE';
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.h),
       child: BaseButton(
         onTap: onTap,
         child: Container(
-          height: 50.h,
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: Colors.white,
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: [scheduleButtonColor1, scheduleButtonColor2],
-                  )
-                : null,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              label.appText(fontWeight: FontWeight.w900, fontSize: 13),
+              Assets.icons.icCalenderIcon2.image(
+                height: 28.h,
+                width: 28.w,
+              ),
+              14.w.spaceW,
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    schedule.appText(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: blackTextColor,
+                    ),
+                    4.h.spaceH,
+                    label.appText(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: blackTextColor,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              if (hasStatus || showProposeChange || showDeleteIcon) ...[
+                if (hasStatus)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: status == 'APPROVED'
+                          ? approvedColor
+                          : status == 'REQUESTED'
+                              ? pendingColor
+                              : Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: (status ?? '')
+                        .appText(fontSize: 10.sp, fontWeight: FontWeight.w800),
+                  ),
+                if (showProposeChange) ...[
+                  8.w.spaceW,
+                  BaseButton(
+                    onTap: proposeChangeButtonTap,
+                    child: "${LocaleKeys.proposeChange.tr()} >"
+                        .appText(
+                          fontSize: 10.sp,
+                          color: blueColor1,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ],
+                if (showDeleteIcon) ...[
+                  4.w.spaceW,
+                  BaseButton(
+                    onTap: onDeleteIconTap,
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      size: 22.sp,
+                      color: redColor,
+                    ),
+                  ),
+                ],
+              ],
             ],
           ),
         ),
@@ -168,361 +530,126 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  Widget _dailyRoutine(ScheduleState state) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(),
-          10.spaceH,
-          "${state.userModel?.childName}’s ${LocaleKeys.dailyRoutine.tr()}"
-              .appText(
-                color: blueTextColor,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              )
-              .appPadding(left: 16),
-          ListView.builder(
-            itemCount: (state.childModel?.routinesList ?? []).length,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            itemBuilder: (context, index) {
-              var routine = state.childModel?.routinesList?[index];
-              return _routineItem(
-                schedule: getStringTime(routine?.timeStamp),
-                showProposeChange: false,
-                label: routine?.description ?? "",
-                onTap: () {},
-                onDeleteIconTap: () {
-                  if (routine != null) {
-                    _showDeleteRoutineDialog(
-                      onDelete: () {
-                        Navigator.pop(context);
-                        context.read<ScheduleCubit>().deleteRoutine(routine!);
-                      },
-                    );
-                  }
-                },
-              );
-            },
-          ),
-          16.spaceH,
-          _scheduleButton(
-            text: "+ ${LocaleKeys.addActivity.tr()}",
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const DailyRoutineScreen(),
-                ),
-              );
-            },
-          ),
-          16.spaceH,
-        ],
-      ),
-    );
-  }
-
-  Widget coParentingSchedule(ScheduleState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(),
-        10.spaceH,
-        LocaleKeys.coParentingColander
-            .tr()
-            .appText(
-              color: blueTextColor,
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-            )
-            .appPadding(left: 16),
-        10.spaceH,
-
-        ListView.builder(
-          itemCount: state.sharedEventList.length,
-          physics: NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            var sharedEvent = state.sharedEventList[index];
-            return _routineItem(
-              schedule: coParentScheduleTime(sharedEvent.date),
-              label: sharedEvent.title ?? "",
-              status: sharedEvent.status,
-              showProposeChange: true,
-              onTap: () {
-                if (sharedEvent.createdBy == state.userModel?.uid ||
-                    ((sharedEvent.assignedTo?.any(
-                              (element) => element == state.userModel?.uid,
-                            ) ??
-                            false) &&
-                        (sharedEvent.status == "APPROVED" ||
-                            sharedEvent.status == "NONE"))) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          EventDetailScreen(sharedEvent: sharedEvent),
-                    ),
-                  );
-                } else if ((sharedEvent.assignedTo?.any(
-                          (element) => element == state.userModel?.uid,
-                        ) ??
-                        false) &&
-                    sharedEvent.requiredApproval == true &&
-                    sharedEvent.status == "REQUESTED") {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          EventApprovalScreen(sharedEvent: sharedEvent),
-                    ),
-                  );
-                }
-              },
-              proposeChangeButtonTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ProposeChangeScreen(sharedEvent: sharedEvent),
-                  ),
-                );
-              },
-              showDeleteIcon: sharedEvent.createdBy == state.userModel?.uid,
-              onDeleteIconTap: () {
-                _showDeleteRoutineDialog(
-                  onDelete: () {
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            );
-          },
-        ),
-
-        /* _routineItem(
-          schedule: 'Aug 5 - 4:00 PM',
-          label: 'School Pick-up (Priya)',
-          status: LocaleKeys.approved.tr(),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const EventDetailScreen(),
-              ),
-            );
-          },
-        ),
-        _routineItem(
-          schedule: 'Aug 5 - 4:00 PM',
-          label: 'School Pick-up (Priya)',
-          status: LocaleKeys.pending.tr(),
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const EventApprovalScreen(),
-              ),
-            );
-          },
-        ),*/
-        16.spaceH,
-        _scheduleButton(
-          text: "+ ${LocaleKeys.addSharedEvent.tr()}",
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const AddSharedEventScreen(),
-              ),
-            );
-          },
-        ),
-        16.spaceH,
-        _scheduleButton(
-          text: "Link co-parent",
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const LinkCoParentScreen(),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _routineItem({
-    required String schedule,
-    required String label,
-    required GestureTapCallback? onTap,
-    required GestureTapCallback? onDeleteIconTap,
-    GestureTapCallback? proposeChangeButtonTap,
-    String? status,
-    bool showProposeChange = false,
-    bool showDeleteIcon = false,
-  }) {
-    return BaseButton(
-      onTap: onTap,
-      child: Container(
-        height: 65,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            20.spaceW,
-            Assets.icons.icCalenderIcon2.image(height: 30),
-            16.spaceW,
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  schedule.appText(fontSize: 12, fontWeight: FontWeight.w700),
-                  2.spaceH,
-                  label.appText(fontSize: 10, fontWeight: FontWeight.w600),
-                ],
-              ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if ((status ?? "").isNotEmpty && status != "NONE")
-                  Container(
-                    decoration: BoxDecoration(
-                      color: status == "APPROVED"
-                          ? approvedColor
-                          : status == "REQUESTED"
-                          ? pendingColor
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: status!
-                        .appText(fontSize: 9, fontWeight: FontWeight.w800)
-                        .appPadding(left: 6, right: 6, top: 2, bottom: 2),
-                  ),
-                10.spaceH,
-                if (showProposeChange)
-                  BaseButton(
-                    onTap: proposeChangeButtonTap,
-                    child: "${LocaleKeys.proposeChange.tr()} >".appText(
-                      fontSize: 9,
-                      color: blueColor1,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-              ],
-            ),
-            10.spaceW,
-            if (showDeleteIcon)
-              BaseButton(
-                onTap: onDeleteIconTap,
-                child: Icon(
-                  Icons.delete_outline,
-                  size: 20,
-                  color: Colors.red,
-                ).appPadding(all: 5),
-              ),
-            10.spaceW,
-          ],
-        ),
-      ),
-    ).appPadding(left: 12, right: 12, top: 10);
-  }
-
   Widget _scheduleButton({
     required String text,
-    required GestureTapCallback? onTap,
+    required VoidCallback? onTap,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Container(
-        height: 40,
+        width: double.infinity,
+        height: 44.h,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: blueColor2,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            text.appText(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 14,
+          borderRadius: BorderRadius.circular(12.r),
+          boxShadow: [
+            BoxShadow(
+              color: blueColor2.withValues(alpha: 0.35),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
+        child: text.appText(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          fontSize: 14.sp,
+        ),
       ),
-    ).appPadding(left: 15, right: 15);
+    );
   }
 
-  void _showDeleteRoutineDialog({required GestureTapCallback? onDelete}) {
+  void _showDeleteRoutineDialog({required VoidCallback? onDelete}) {
+    _showDeleteConfirmDialog(
+      message: LocaleKeys.areYouSureYouWantToRemoveRoutine.tr(),
+      onDelete: onDelete,
+    );
+  }
+
+  void _showDeleteSharedEventDialog({required VoidCallback? onDelete}) {
+    _showDeleteConfirmDialog(
+      message: 'areYouSureYouWantToRemoveSharedEvent'.tr(),
+      onDelete: onDelete,
+    );
+  }
+
+  void _showDeleteConfirmDialog({
+    required String message,
+    required VoidCallback? onDelete,
+  }) {
     showAppDialog(
-      child: (context) {
+      child: (BuildContext dialogContext) {
         return Dialog(
-          insetPadding: EdgeInsets.only(left: 20.w, right: 20.w),
+          insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
           child: Container(
-            height: 200.h,
+            padding: EdgeInsets.all(24.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
               color: Colors.white,
+              borderRadius: BorderRadius.circular(16.r),
             ),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                20.h.spaceH,
                 "${LocaleKeys.delete.tr()}?".appText(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
+                  color: blackTextColor,
                 ),
-                20.h.spaceH,
-                LocaleKeys.areYouSureYouWantToRemoveRoutine.tr().appText(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                16.h.spaceH,
+                message.appText(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  color: greyColor1,
+                  textAlign: TextAlign.center,
                 ),
-                40.h.spaceH,
+                28.h.spaceH,
                 Row(
                   children: [
-                    20.w.spaceW,
                     Expanded(
                       child: BaseButton(
+                        onTap: () => Navigator.pop(dialogContext),
                         child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
                           decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(12),
+                            color: greyColor,
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
+                          alignment: Alignment.center,
                           child: LocaleKeys.cancel
                               .tr()
                               .appText(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
-                              )
-                              .appPadding(top: 10.h, bottom: 10.h),
+                                fontSize: 14.sp,
+                              ),
                         ),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
                       ),
                     ),
-                    10.w.spaceW,
+                    12.w.spaceW,
                     Expanded(
                       child: BaseButton(
                         onTap: onDelete,
                         child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
                           decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(12),
+                            color: redColor,
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
+                          alignment: Alignment.center,
                           child: LocaleKeys.delete
                               .tr()
                               .appText(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
-                              )
-                              .appPadding(top: 10.h, bottom: 10.h),
+                                fontSize: 14.sp,
+                              ),
                         ),
                       ),
                     ),
-                    20.w.spaceW,
                   ],
                 ),
               ],
