@@ -84,18 +84,28 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
   }
 
   Future<void> addActivity() async {
-    if (_isValid()) {
-      changeProps(addRoutineApiResult: ApiResultStatus.loading());
-      final ApiResultStatus apiResultStatus = await ChildRepo.instance.addRoutine(
-        request: {
-          "time_stamp": Timestamp.fromDate(state.selectedDateTime!),
-          "description": state.descriptionText,
-          "type": state.selectedType,
-        },
-        id: state.userModel?.defaultChild?.id,
+    if (!_isValid()) return;
+
+    final String? childId = state.userModel?.defaultChild?.id;
+    if (childId == null || childId.isEmpty) {
+      changeProps(
+        addRoutineApiResult: ApiResultStatus.error(
+          error: Exception(LocaleKeys.pleaseSelectChild.tr()),
+        ),
       );
-      changeProps(addRoutineApiResult: apiResultStatus);
+      return;
     }
+
+    changeProps(addRoutineApiResult: ApiResultStatus.loading());
+    final ApiResultStatus apiResultStatus = await ChildRepo.instance.addRoutine(
+      request: {
+        "time_stamp": Timestamp.fromDate(state.selectedDateTime!),
+        "description": state.descriptionText,
+        "type": state.selectedType,
+      },
+      id: childId,
+    );
+    changeProps(addRoutineApiResult: apiResultStatus);
   }
 
   Future<void> _fetchDailyRoutine() async {

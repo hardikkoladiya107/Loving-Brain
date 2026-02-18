@@ -59,6 +59,11 @@ class ChildRepo {
     required String? id,
     required Map<String, dynamic> request,
   }) async {
+    if (id == null || id.isEmpty) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.pleaseSelectChild.tr()),
+      );
+    }
     try {
       await childrenCollection.doc(id).update({
         "routines": FieldValue.arrayUnion([request]),
@@ -66,7 +71,7 @@ class ChildRepo {
       return ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
-        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
       );
     } catch (e) {
       return ApiResultStatus.error(
