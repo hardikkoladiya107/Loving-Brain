@@ -88,66 +88,64 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          body: SafeArea(
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Assets.images.imgScheduleBg.image(
-                    fit: BoxFit.cover,
-                    width: context.width,
-                    height: context.height,
-                  ),
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Assets.images.imgScheduleBg.image(
+                  fit: BoxFit.cover,
+                  width: context.width,
+                  height: context.height,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    24.h.spaceH,
-                    LocaleKeys.schedule.tr().appText(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    16.h.spaceH,
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 20.w),
-                        decoration: BoxDecoration(
-                          color: scheduleBgColor,
-                          borderRadius: BorderRadius.circular(20.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.06),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  24.h.spaceH,
+                  LocaleKeys.schedule.tr().appText(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  16.h.spaceH,
+                  Expanded(
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
+                      decoration: BoxDecoration(
+                        color: scheduleBgColor,
+                        borderRadius: BorderRadius.circular(20.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20.r),
+                        child: Column(
+                          children: [
+                            12.h.spaceH,
+                            _tabBar(context, state),
+                            8.h.spaceH,
+                            Expanded(
+                              child: IndexedStack(
+                                index: state.tabIndex,
+                                children: [
+                                  _dailyRoutineContent(context, state),
+                                  _coParentingContent(context, state),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.r),
-                          child: Column(
-                            children: [
-                              12.h.spaceH,
-                              _tabBar(context, state),
-                              8.h.spaceH,
-                              Expanded(
-                                child: IndexedStack(
-                                  index: state.tabIndex,
-                                  children: [
-                                    _dailyRoutineContent(context, state),
-                                    _coParentingContent(context, state),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                     ),
-                    16.h.spaceH,
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  16.h.spaceH,
+                ],
+              ),
+            ],
           ),
         );
       },
