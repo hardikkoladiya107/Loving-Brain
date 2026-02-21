@@ -208,7 +208,7 @@ class SharedEventModel {
     map['required_approval'] = _requiredApproval;
     map['status'] = _status;
     map['documents'] = _documents;
-    map['documents'] = _createdDate;
+    map['created_date'] = _createdDate;
     return map;
   }
 }

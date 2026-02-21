@@ -50,8 +50,9 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
         routinesList: routinesList ?? state.routinesList,
         routineCategoryList: routineCategoryList ?? state.routineCategoryList,
         getRoutineTypeApiResult:
-            getRoutineTypeApiResult ?? ApiResultStatus.initial(),
-        addRoutineApiResult: addRoutineApiResult ?? state.addRoutineApiResult,
+            getRoutineTypeApiResult ?? state.getRoutineTypeApiResult,
+        addRoutineApiResult:
+            addRoutineApiResult ?? state.addRoutineApiResult,
       ),
     );
   }
@@ -85,7 +86,6 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
 
   Future<void> addActivity() async {
     if (!_isValid()) return;
-
     final String? childId = state.userModel?.defaultChild?.id;
     if (childId == null || childId.isEmpty) {
       changeProps(
