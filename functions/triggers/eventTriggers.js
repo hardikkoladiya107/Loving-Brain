@@ -1,3 +1,8 @@
+/**
+ * Firestore trigger: when a shared_event document is written with a future
+ * start_time, schedule a Cloud Task at that time. The task will call
+ * sendScheduledNotification to push a reminder to creator and assigned users.
+ */
 const {onDocumentWritten} = require("firebase-functions/v2/firestore");
 const logger = require("firebase-functions/logger");
 const {scheduleTask, getSchedulingConfig} = require("../utils/scheduler");

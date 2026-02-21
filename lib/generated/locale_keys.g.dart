@@ -346,5 +346,18 @@ abstract class  LocaleKeys {
   static const nextMilestone = 'nextMilestone';
   static const yourMoodHistory = 'yourMoodHistory';
   static const donMissYourDailyMoodToKeepTheStreakGoing = 'donMissYourDailyMoodToKeepTheStreakGoing';
+  static const noRoutinesYet = 'noRoutinesYet';
+  static const noSharedEventsYet = 'noSharedEventsYet';
+  static const addFirstRoutine = 'addFirstRoutine';
+  static const addFirstSharedEvent = 'addFirstSharedEvent';
+  static const routineRemoved = 'routineRemoved';
+  static const successMessage = 'successMessage';
+  static const areYouSureYouWantToRemoveSharedEvent = 'areYouSureYouWantToRemoveSharedEvent';
+  static const noActivitiesInRoutineYet = 'noActivitiesInRoutineYet';
+  static const addActivitiesAboveToSeeThemHere = 'addActivitiesAboveToSeeThemHere';
+  static const sharedEventCreated = 'sharedEventCreated';
+  static const inviteLinkReadyToShare = 'inviteLinkReadyToShare';
+  static const you = 'you';
+  static const selectDefaultChildForRoutine = 'selectDefaultChildForRoutine';
 
 }

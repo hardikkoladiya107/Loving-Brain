@@ -362,5 +362,6 @@
   "addActivitiesAboveToSeeThemHere": "Add activities above to see them here",
   "sharedEventCreated": "Shared event created",
   "inviteLinkReadyToShare": "Invite link ready to share",
-  "you": "You"
+  "you": "You",
+  "selectDefaultChildForRoutine": "Select a default child in profile to add and view routines."
 }

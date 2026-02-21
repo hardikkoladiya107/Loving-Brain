@@ -1,7 +1,12 @@
 /**
- * Firebase Cloud Functions entry point.
- * Scheduling: onRoutineWrite / onSharedEventWrite schedule tasks;
- * sendScheduledNotification is the HTTP target for those tasks.
+ * Firebase Cloud Functions – entry point.
+ *
+ * Exports:
+ * - Triggers: onRoutineWrite, onSharedEventWrite (Firestore → Cloud Tasks)
+ * - HTTP: sendScheduledNotification (Tasks → FCM), sendNotificationToAll,
+ *   sendPushNotification
+ *
+ * See functions/README.md for folder structure and flow.
  */
 const {
   sendScheduledNotification,

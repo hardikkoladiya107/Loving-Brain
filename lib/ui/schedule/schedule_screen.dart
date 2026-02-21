@@ -1,3 +1,9 @@
+/// Schedule screen: two tabs – [Daily Routine] and [Co‑parenting Schedule].
+///
+/// - Daily routine: shows child's routines from Firestore; add/delete; navigates
+///   to [DailyRoutineScreen] to add an activity.
+/// - Co‑parenting: shows shared events (created by or assigned to user); add,
+///   link co‑parent, view detail / approval / propose change; delete if creator.
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +50,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ScheduleCubit, ScheduleState>(
       listener: (context, state) {
+        // Delete routine / shared event: show loading and result snackbar
         state.deleteRoutineApiResultStatus.whenOrNull(
           loading: () => EasyLoading.show(),
           data: (_) {
@@ -218,11 +225,13 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  /// Daily routine tab: list of routines for default child, add activity, delete.
   Widget _dailyRoutineContent(BuildContext context, ScheduleState state) {
     final List<RoutineModel> routines =
         state.childModel?.routinesList ?? const [];
     final String childName =
         state.childModel?.childName ?? state.userModel?.childName ?? '';
+    final bool hasDefaultChild = state.childModel != null;
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
@@ -239,8 +248,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           12.h.spaceH,
           if (routines.isEmpty)
             _emptyState(
-              title: 'noRoutinesYet'.tr(),
-              subtitle: 'addFirstRoutine'.tr(),
+              title: hasDefaultChild
+                  ? 'noRoutinesYet'.tr()
+                  : 'selectDefaultChildForRoutine'.tr(),
+              subtitle: hasDefaultChild
+                  ? 'addFirstRoutine'.tr()
+                  : 'pleaseSelectChild'.tr(),
               icon: Icons.schedule_rounded,
             )
           else
@@ -250,7 +263,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 schedule: getStringTime(routine.timeStamp),
                 label: routine.description ?? '',
                 showProposeChange: false,
-                onTap: () {},
+                onTap: () {}, // TODO: navigate to edit routine if screen supports it
                 onDeleteIconTap: () {
                   _showDeleteRoutineDialog(
                     onDelete: () {
@@ -277,6 +290,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
+  /// Co‑parenting tab: shared events (creator or assigned), add/link, view/approve/delete.
   Widget _coParentingContent(BuildContext context, ScheduleState state) {
     final List<SharedEventModel> events = state.sharedEventList;
 
@@ -285,7 +299,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LocaleKeys.coParentingColander
+          LocaleKeys.coParentingCalendar
               .tr()
               .appText(
                 color: blueTextColor,

@@ -1,3 +1,7 @@
+/**
+ * HTTP handlers: sendScheduledNotification (Tasks), sendNotificationToAll,
+ * sendPushNotification.
+ */
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
@@ -5,12 +9,43 @@ const {
   sendNotification,
   sendMulticastNotification,
 } = require("../notification");
+const {
+  FCM_MULTICAST_LIMIT,
+  NOTIFICATION_COPY,
+} = require("../config/constants");
 
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
-/** Max tokens per FCM multicast call (API limit). */
-const FCM_MULTICAST_LIMIT = 500;
+/**
+ * Builds notification title/body for routine.
+ * @param {string} description - Optional routine description from payload.
+ * @return {{title: string, body: string}}
+ */
+function getRoutineNotificationCopy(description) {
+  const copy = NOTIFICATION_COPY.ROUTINE;
+  const title = copy.TITLE;
+  const body = (description && description.trim()) ?
+      copy.BODY_WITH_DESCRIPTION.replace("{{description}}",
+          description.trim().slice(0, 80)) :
+      copy.BODY;
+  return {title, body};
+}
+
+/**
+ * Builds notification title/body for shared event.
+ * @param {string} eventTitle - Optional event title from Firestore.
+ * @return {{title: string, body: string}}
+ */
+function getSharedEventNotificationCopy(eventTitle) {
+  const copy = NOTIFICATION_COPY.SHARED_EVENT;
+  const title = copy.TITLE;
+  const body = (eventTitle && eventTitle.trim()) ?
+      copy.BODY_WITH_TITLE.replace(
+          "{{title}}", eventTitle.trim().slice(0, 80)) :
+      copy.BODY;
+  return {title, body};
+}
 
 exports.sendScheduledNotification = onRequest(async (req, res) => {
   try {
@@ -18,7 +53,7 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
       return res.status(405).send("Method not allowed");
     }
     const body = req.body || {};
-    const {type, docId, childId} = body;
+    const {type, docId, childId, description} = body;
 
     if (!type) {
       return res.status(400).send("Missing type");
@@ -52,10 +87,12 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
       });
 
       if (tokens.length > 0) {
+        const {title, body: notificationBody} =
+          getRoutineNotificationCopy(description);
         await sendMulticastBatched(
             tokens,
-            "Daily Routine Notification",
-            "Time for your routine!",
+            title,
+            notificationBody,
         );
       }
     } else if (type === "shared_event") {
@@ -94,10 +131,13 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
       }
       const uniqueTokens = [...new Set(tokens)];
       if (uniqueTokens.length > 0) {
+        const eventTitle = eventData.title || "";
+        const {title, body: notificationBody} =
+          getSharedEventNotificationCopy(eventTitle);
         await sendMulticastBatched(
             uniqueTokens,
-            "Shared Event Notification",
-            "You have a shared event coming up!",
+            title,
+            notificationBody,
         );
       }
     }
@@ -135,10 +175,11 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
       return res.status(400).send({error: "No valid FCM tokens found"});
     }
 
+    const {TITLE: streakTitle, BODY: streakBody} = NOTIFICATION_COPY.STREAK;
     await sendMulticastBatched(
         tokens,
-        "Streak Update!!",
-        "Don’t forget to check in today to keep your streak alive!",
+        streakTitle,
+        streakBody,
     );
 
     return res.status(200).send({

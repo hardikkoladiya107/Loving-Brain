@@ -1,3 +1,5 @@
+/// Cubit for the Schedule screen: listens to child doc (routines) and shared
+/// events, exposes delete actions for routine and shared event.
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,7 +83,15 @@ class ScheduleCubit extends Cubit<ScheduleState> {
           final list = allDocs
               .map((e) => SharedEventModel.fromJson(e.data(), e.reference))
               .toList();
-          list.sort((a, b) => b.createdDate!.compareTo(a.createdDate!));
+          // Upcoming first; null startTime last.
+          list.sort((SharedEventModel a, SharedEventModel b) {
+            final DateTime? at = a.startTime;
+            final DateTime? bt = b.startTime;
+            if (at == null && bt == null) return 0;
+            if (at == null) return 1;
+            if (bt == null) return -1;
+            return at.compareTo(bt);
+          });
           return list;
         }).listen((sharedEventList) {
           changeProps(sharedEventList: sharedEventList);

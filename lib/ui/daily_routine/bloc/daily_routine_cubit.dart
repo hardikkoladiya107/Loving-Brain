@@ -50,9 +50,8 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
         routinesList: routinesList ?? state.routinesList,
         routineCategoryList: routineCategoryList ?? state.routineCategoryList,
         getRoutineTypeApiResult:
-            getRoutineTypeApiResult ?? state.getRoutineTypeApiResult,
-        addRoutineApiResult:
-            addRoutineApiResult ?? state.addRoutineApiResult,
+            getRoutineTypeApiResult ?? ApiResultStatus.initial(),
+        addRoutineApiResult: addRoutineApiResult ?? ApiResultStatus.initial(),
       ),
     );
   }
@@ -110,8 +109,8 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
 
   Future<void> _fetchDailyRoutine() async {
     changeProps(getRoutineTypeApiResult: ApiResultStatus.loading());
-    final ApiResultStatus apiResultStatus =
-        await ChildRepo.instance.getAllRoutineCategories();
+    final ApiResultStatus apiResultStatus = await ChildRepo.instance
+        .getAllRoutineCategories();
     changeProps(getRoutineTypeApiResult: apiResultStatus);
     apiResultStatus.whenOrNull(
       data: (dynamic data) {

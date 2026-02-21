@@ -1,3 +1,8 @@
+/**
+ * Firestore trigger: when a child document is written, schedule a Cloud Task
+ * for each future routine time. The task will call sendScheduledNotification
+ * to push a reminder to users linked to that child.
+ */
 const {onDocumentWritten} = require("firebase-functions/v2/firestore");
 const logger = require("firebase-functions/logger");
 const {scheduleTask, getSchedulingConfig} = require("../utils/scheduler");
@@ -22,6 +27,7 @@ exports.onRoutineWrite = onDocumentWritten("children/{childId}",
 
         const scheduleTimeSeconds = Math.floor(routineTime.getTime() / 1000);
         const taskId = `rout_${childId}_${scheduleTimeSeconds}`;
+        const description = routine.description || "";
 
         try {
           await scheduleTask(
@@ -33,6 +39,7 @@ exports.onRoutineWrite = onDocumentWritten("children/{childId}",
                 type: "routine",
                 childId,
                 timestamp: scheduleTimeSeconds,
+                description,
               },
               scheduleTimeSeconds,
               taskId,
