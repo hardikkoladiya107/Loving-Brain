@@ -19,6 +19,7 @@ import 'package:loving_brain/ui/forgot_password/bloc/forgot_password_cubit.dart'
 import 'package:loving_brain/ui/home/bloc/home_cubit.dart';
 import 'package:loving_brain/ui/link_co_parent/bloc/link_co_parent_cubit.dart';
 import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
+import 'package:loving_brain/ui/manage_children/bloc/manage_children_cubit.dart';
 import 'package:loving_brain/ui/new_behavior/bloc/new_behavior_cubit.dart';
 import 'package:loving_brain/ui/parent_profile/bloc/parent_profile_cubit.dart';
 import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dart';
@@ -64,6 +65,9 @@ var blocProvider = [
   ),
   BlocProvider<ChildProfileCubit>(
     create: (BuildContext context) => ChildProfileCubit(),
+  ),
+  BlocProvider<ManageChildrenCubit>(
+    create: (BuildContext context) => ManageChildrenCubit(),
   ),
   BlocProvider<DailyMoodCheckInCubit>(
     create: (BuildContext context) => DailyMoodCheckInCubit(),

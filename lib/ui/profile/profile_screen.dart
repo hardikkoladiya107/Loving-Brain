@@ -15,6 +15,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
+import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
@@ -39,7 +40,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
-    context.read<ProfileCubit>().init();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<ProfileCubit>().init();
+    });
     super.initState();
   }
 
@@ -89,38 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     .appText(fontWeight: FontWeight.w800)
                     .appPadding(left: 20.w),
                 10.spaceH,
-                // _settingItem(
-                //   title: LocaleKeys.dailyEmotionCheckIn.tr(),
-                //   description: LocaleKeys.darkLight.tr(),
-                //   icon: Assets.icons.icDailyEmotionCheckIcon,
-                //   iconColor: dailyEmotionCheckIconColor,
-                //   showCheckBox: true,
-                //   check: state.userModel?.dailyEmotionCheck ?? false,
-                //   onChanged: (value) {
-                //     context.read<ProfileCubit>().updateDailyEmotion();
-                //   },
-                // ),
-                // _settingItem(
-                //   title: LocaleKeys.todayPlayIdea.tr(),
-                //   showCheckBox: true,
-                //   icon: Assets.icons.icTodaysPlayIdeaIcon,
-                //   iconColor: todayPlayIdeaIconColor,
-                //   check: state.userModel?.todaysPlayIdea ?? false,
-                //   onChanged: (value) {
-                //     context.read<ProfileCubit>().updateTodaysPlayIdea();
-                //   },
-                // ),
-                // _settingItem(
-                //   title: LocaleKeys.scheduleReminders.tr(),
-                //   description: LocaleKeys.eventsFromCoParentingCalendar.tr(),
-                //   showCheckBox: true,
-                //   icon: Assets.icons.icScheduleReminderIcon,
-                //   iconColor: scheduleReminderIconColor,
-                //   check: state.userModel?.scheduleReminder ?? false,
-                //   onChanged: (value) {
-                //     context.read<ProfileCubit>().updateScheduleReminder();
-                //   },
-                // ),
+
                 _settingItem(
                   title: LocaleKeys.subscription.tr(),
                   icon: Assets.icons.icCrownIcon,
@@ -129,6 +101,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const SubscriptionScreen(),
+                      ),
+                    );
+                  },
+                ),
+                _settingItem(
+                  title: LocaleKeys.children.tr(),
+                  icon: null,
+                  icon2: Icons.child_care,
+                  iconColor: primaryColor,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ManageChildrenScreen(),
                       ),
                     );
                   },
@@ -224,7 +209,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
           },
         );
 

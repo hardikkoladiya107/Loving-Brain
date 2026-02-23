@@ -64,6 +64,10 @@ ApiResultStatus onFirebaseException(FirebaseException e) {
     return ApiResultStatus.error(
         error: Exception(LocaleKeys.invalidPassword.tr())
     );
+  } else if (e.code == 'requires-recent-login') {
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.pleaseSignInAgainToDeleteAccount.tr()),
+    );
   } else {
     return ApiResultStatus.error(
       error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),

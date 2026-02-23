@@ -359,5 +359,15 @@ abstract class  LocaleKeys {
   static const inviteLinkReadyToShare = 'inviteLinkReadyToShare';
   static const you = 'you';
   static const selectDefaultChildForRoutine = 'selectDefaultChildForRoutine';
+  static const pleaseSignInAgainToDeleteAccount = 'pleaseSignInAgainToDeleteAccount';
+  static const children = 'children';
+  static const manageYourChildren = 'manageYourChildren';
+  static const addChild = 'addChild';
+  static const setAsDefault = 'setAsDefault';
+  static const defaultChild = 'defaultChild';
+  static const noChildrenYet = 'noChildrenYet';
+  static const addYourFirstChild = 'addYourFirstChild';
+  static const removeChild = 'removeChild';
+  static const areYouSureYouWantToRemoveChild = 'areYouSureYouWantToRemoveChild';
 
 }

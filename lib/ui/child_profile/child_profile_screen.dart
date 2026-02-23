@@ -23,9 +23,14 @@ import 'bloc/child_profile_cubit.dart';
 import 'bloc/child_profile_state.dart';
 
 class ChildProfileScreen extends StatefulWidget {
-  const ChildProfileScreen({super.key, required this.userId});
+  const ChildProfileScreen({
+    super.key,
+    required this.userId,
+    this.fromManageChildren = false,
+  });
 
   final String userId;
+  final bool fromManageChildren;
 
   @override
   State<ChildProfileScreen> createState() => _ChildProfileScreenState();
@@ -68,12 +73,13 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           ),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(),
-                  100.spaceH,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (widget.fromManageChildren) _backButton(),
+                    if (widget.fromManageChildren) 24.spaceH else 100.spaceH,
                   _header(),
                   80.spaceH,
                   _childName(state),
@@ -84,7 +90,8 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                   32.spaceH,
                   _startMyJourney(),
                   32.spaceH,
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -109,6 +116,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             }
             await preferences.saveUserModel(data);
             navigatorKey.currentContext!.read<ChildProfileCubit>().clearFields();
+            if (widget.fromManageChildren) {
+              Navigator.of(navigatorKey.currentContext!).pop(true);
+              return;
+            }
             await preferences.putBool(SharedPreference.isLogin, true);
             Navigator.of(navigatorKey.currentContext!).pushReplacement(
               MaterialPageRoute(builder: (context) => BaseScreen()),
@@ -124,6 +135,37 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
         );
       },
     );
+  }
+
+  Widget _backButton() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: BaseButton(
+        onTap: () => Navigator.of(context).pop(),
+        child: Padding(
+          padding: EdgeInsets.all(8.w),
+          child: Container(
+            padding: EdgeInsets.all(8.r),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.9),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              size: 20.sp,
+              color: primaryColor,
+            ),
+          ),
+        ),
+      ),
+    ).appPadding(left: 16.w);
   }
 
   Widget _header() {

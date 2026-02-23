@@ -116,4 +116,9 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> _loadTodayParentingTip() async {
     changeProps(todayParentingTip: await UserRepo.instance.getTipOfTheDay());
   }
+
+  /// Call from pull-to-refresh to reload tip and keep UI in sync.
+  Future<void> refresh() async {
+    await _loadTodayParentingTip();
+  }
 }

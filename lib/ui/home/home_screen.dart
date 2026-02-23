@@ -39,11 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocConsumer<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                60.spaceH,
-                _topCard(state),
+          body: RefreshIndicator(
+            onRefresh: () => context.read<HomeCubit>().refresh(),
+            color: primaryColor,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  60.spaceH,
+                  _topCard(state),
                 10.spaceH,
                 _secondCard(),
                 10.spaceH,
@@ -55,7 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 8.spaceH,
                 _sixthCardItem(),
                 20.spaceH,
-              ],
+                ],
+              ),
             ),
           ),
         );

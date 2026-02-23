@@ -24,6 +24,10 @@ class AuthRepo {
 
   var userCollection = FirebaseFirestore.instance.collection('users');
   var childrenCollection = FirebaseFirestore.instance.collection('children');
+  final _sharedEventCollection =
+      FirebaseFirestore.instance.collection('shared_event');
+  final _coParentInvitationCollection =
+      FirebaseFirestore.instance.collection('co-parent-invitation');
 
   Future<bool> currentUserExist({required String uId}) async {
     try {
@@ -175,20 +179,148 @@ class AuthRepo {
     }
   }
 
+  /// Deletes all Firestore data for the user, then deletes the Auth account.
+  /// Call while user is still signed in so Firestore rules allow deletion.
   Future<ApiResultStatus> deleteAccount() async {
     try {
-      //await FirebaseAuth.instance.signInAnonymously();
-      if (FirebaseAuth.instance.currentUser != null) {
-        await FirebaseAuth.instance.currentUser?.delete();
-        return ApiResultStatus.data(data: "");
-      } else {
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
         return ApiResultStatus.error(
-            error: Exception(LocaleKeys.somethingWentWrong.tr()));
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
       }
+      final String uid = currentUser.uid;
+      final UserModel? userModel = preferences.getUserModel();
+      final String? email = userModel?.email ?? currentUser.email;
+
+      await _deleteAllUserData(uid: uid, email: email, userModel: userModel);
+
+      await currentUser.delete();
+      await preferences.clearUser();
+      return ApiResultStatus.data(data: "");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.pleaseSignInAgainToDeleteAccount.tr()),
+        );
+      }
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    }
+  }
+
+  Future<void> _deleteAllUserData({
+    required String uid,
+    required String? email,
+    UserModel? userModel,
+  }) async {
+    final DocumentReference<Map<String, dynamic>> userRef =
+        userCollection.doc(uid);
+
+    await _deleteUserSubcollections(userRef);
+    await userRef.delete();
+
+    final List<DocumentReference<Object?>>? childRefs = userModel?.children;
+    if (childRefs != null && childRefs.isNotEmpty) {
+      for (final DocumentReference<Object?> ref in childRefs) {
+        await _deleteOrUnlinkChild(ref.id, uid);
+      }
+    }
+
+    if (email != null && email.isNotEmpty) {
+      await _deleteCoParentInvitations(email);
+    }
+    await _deleteSharedEventsByCreator(uid);
+  }
+
+  Future<void> _deleteUserSubcollections(
+    DocumentReference<Map<String, dynamic>> userRef,
+  ) async {
+    final List<String> subcollections = [
+      'conversations',
+      'journals',
+      'mood',
+      'connect_prompt_history',
+    ];
+    for (final String name in subcollections) {
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await userRef.collection(name).get();
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+        if (name == 'conversations') {
+          final CollectionReference<Map<String, dynamic>> chats =
+              doc.reference.collection('chats');
+          final QuerySnapshot<Map<String, dynamic>> chatSnap = await chats.get();
+          for (final DocumentSnapshot<Map<String, dynamic>> chat in chatSnap.docs) {
+            await chat.reference.delete();
+          }
+        }
+        await doc.reference.delete();
+      }
+    }
+  }
+
+  Future<void> _deleteOrUnlinkChild(String childId, String uid) async {
+    final DocumentSnapshot<Map<String, dynamic>> childSnap =
+        await childrenCollection.doc(childId).get();
+    if (!childSnap.exists || childSnap.data() == null) return;
+
+    final List<dynamic>? parentIds = childSnap.data()?['parent_reference_ids'];
+    final List<String> ids = parentIds
+            ?.map((e) => e?.toString() ?? '')
+            .where((s) => s.isNotEmpty)
+            .toList() ??
+        [];
+
+    if (ids.isEmpty || ids.length == 1 && ids.first == uid) {
+      final DocumentReference<Map<String, dynamic>> childRef =
+          childrenCollection.doc(childId);
+      final CollectionReference<Map<String, dynamic>> sleepLogs =
+          childRef.collection('sleep_logs');
+      final QuerySnapshot<Map<String, dynamic>> sleepSnap = await sleepLogs.get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d in sleepSnap.docs) {
+        await d.reference.delete();
+      }
+      final CollectionReference<Map<String, dynamic>> behaviours =
+          childRef.collection('behaviours');
+      final QuerySnapshot<Map<String, dynamic>> behSnap = await behaviours.get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d in behSnap.docs) {
+        await d.reference.delete();
+      }
+      await childRef.delete();
+    } else {
+      await childrenCollection.doc(childId).update({
+        'parent_reference_ids': FieldValue.arrayRemove([uid]),
+      });
+    }
+  }
+
+  Future<void> _deleteCoParentInvitations(String email) async {
+    final QuerySnapshot<Map<String, dynamic>> fromSnap =
+        await _coParentInvitationCollection
+            .where('from_parent', isEqualTo: email)
+            .get();
+    for (final DocumentSnapshot<Map<String, dynamic>> d in fromSnap.docs) {
+      await d.reference.delete();
+    }
+    final QuerySnapshot<Map<String, dynamic>> toSnap =
+        await _coParentInvitationCollection
+            .where('to_parent', isEqualTo: email)
+            .get();
+    for (final DocumentSnapshot<Map<String, dynamic>> d in toSnap.docs) {
+      await d.reference.delete();
+    }
+  }
+
+  Future<void> _deleteSharedEventsByCreator(String uid) async {
+    final QuerySnapshot<Map<String, dynamic>> snap =
+        await _sharedEventCollection.where('created_by', isEqualTo: uid).get();
+    for (final DocumentSnapshot<Map<String, dynamic>> d in snap.docs) {
+      await d.reference.delete();
     }
   }
 
@@ -448,9 +580,8 @@ class AuthRepo {
     }
   }
 
-  /// Adds a child to the current user: creates child doc, sets user's
-  /// [default_child] and [children], then returns the updated [UserModel].
-  /// Returns error if user uid is missing or if updated user cannot be read.
+  /// Adds a child to the current user: creates child doc, appends to [children]
+  /// and sets [default_child] to the new child. Returns updated [UserModel].
   Future<ApiResultStatus<UserModel>> addChild({
     required Map<String, String> request,
   }) async {
@@ -469,11 +600,17 @@ class AuthRepo {
         'parent_reference_ids': FieldValue.arrayUnion([tUid]),
       });
 
-      await userCollection.doc(tUid).update({
+      final Map<String, dynamic> userUpdate = {
         "default_child": documentReference,
-        "children": [documentReference],
         ...request,
-      });
+      };
+      final UserModel? currentUser = preferences.getUserModel();
+      if (currentUser?.children != null && currentUser!.children!.isNotEmpty) {
+        userUpdate["children"] = FieldValue.arrayUnion([documentReference]);
+      } else {
+        userUpdate["children"] = [documentReference];
+      }
+      await userCollection.doc(tUid).update(userUpdate);
 
       final UserModel? updatedUser = await getUserFromUid(uId: tUid);
       if (updatedUser == null) {
@@ -481,6 +618,87 @@ class AuthRepo {
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
+      return ApiResultStatus.data(data: updatedUser);
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e) as ApiResultStatus<UserModel>;
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  /// Sets the user's default child and saves updated user to preferences.
+  Future<ApiResultStatus<UserModel>> setDefaultChild(
+    DocumentReference<Object?> childRef,
+  ) async {
+    try {
+      final String tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      await userCollection.doc(tUid).update({
+        "default_child": childRef,
+      });
+      final UserModel? updatedUser = await getUserFromUid(uId: tUid);
+      if (updatedUser == null) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      await preferences.saveUserModel(updatedUser);
+      return ApiResultStatus.data(data: updatedUser);
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e) as ApiResultStatus<UserModel>;
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
+  /// Removes a child from the current user (children array and default_child if set),
+  /// then unlinks or deletes the child document. Returns updated [UserModel].
+  Future<ApiResultStatus<UserModel>> removeChildFromUser({
+    required String childId,
+    required DocumentReference<Object?> childRef,
+  }) async {
+    try {
+      final String tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final UserModel? currentUser = preferences.getUserModel();
+      if (currentUser == null) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final List<DocumentReference<Object?>>? currentChildren =
+          currentUser.children;
+      final bool wasDefault =
+          currentUser.defaultChild?.id == childRef.id;
+      final List<DocumentReference<Object?>> newChildren = (currentChildren ?? [])
+          .where((ref) => ref.id != childId)
+          .toList();
+
+      final Map<String, dynamic> userUpdate = <String, dynamic>{
+        'children': FieldValue.arrayRemove([childRef]),
+      };
+      if (wasDefault) {
+        userUpdate['default_child'] = newChildren.isNotEmpty
+            ? newChildren.first
+            : FieldValue.delete();
+      }
+      await userCollection.doc(tUid).update(userUpdate);
+      await _deleteOrUnlinkChild(childId, tUid);
+      final UserModel? updatedUser = await getUserFromUid(uId: tUid);
+      if (updatedUser == null) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      await preferences.saveUserModel(updatedUser);
       return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
       return onFirebaseException(e) as ApiResultStatus<UserModel>;
