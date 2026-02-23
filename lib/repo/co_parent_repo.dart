@@ -10,6 +10,7 @@ import 'package:loving_brain/other/preferances.dart';
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
 import '../model/invitation_model.dart';
+import 'child_repo.dart';
 
 class CoParentRepo {
   CoParentRepo._();
@@ -152,23 +153,46 @@ class CoParentRepo {
     String invitationReferenceId,
   ) async {
     try {
-      var response = await coParentInvitationCollection
+      final response = await coParentInvitationCollection
           .doc(invitationReferenceId)
           .get();
-      var invitationModel = InvitationModel.fromJson(response.data());
-      var userModel = preferences.getUserModel();
-      if (userModel?.email == invitationModel.toParent &&
-          invitationModel.status == "REQUESTED") {
-        return updateInvitation(
-          referenceId: invitationReferenceId,
-          request: {"status": "ACCEPTED"},
-          invitationModel: invitationModel,
-        );
-      } else {
+      final Map<String, dynamic>? data = response.data();
+      if (data == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.thisInvitationIsNotForYou.tr()),
         );
       }
+      final InvitationModel invitationModel = InvitationModel.fromJson(data);
+      final UserModel? userModel = preferences.getUserModel();
+      if (userModel?.email != invitationModel.toParent ||
+          invitationModel.status != "REQUESTED") {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.thisInvitationIsNotForYou.tr()),
+        );
+      }
+      final ApiResultStatus updateResult = await updateInvitation(
+        referenceId: invitationReferenceId,
+        request: {"status": "ACCEPTED"},
+        invitationModel: invitationModel,
+      );
+      final String? parentUid = userModel!.uid;
+      if (parentUid != null && parentUid.isNotEmpty) {
+        final String? childrenStr = invitationModel.children;
+        if (childrenStr != null && childrenStr.trim().isNotEmpty) {
+          final List<String> childIds = childrenStr
+              .split(',')
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList();
+          for (final String childId in childIds) {
+            await ChildRepo.instance.addParentReference(
+              childId: childId,
+              parentUid: parentUid,
+            );
+          }
+        }
+      }
+      return updateResult;
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

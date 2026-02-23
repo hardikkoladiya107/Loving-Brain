@@ -448,26 +448,42 @@ class AuthRepo {
     }
   }
 
-  Future<ApiResultStatus> addChild({
+  /// Adds a child to the current user: creates child doc, sets user's
+  /// [default_child] and [children], then returns the updated [UserModel].
+  /// Returns error if user uid is missing or if updated user cannot be read.
+  Future<ApiResultStatus<UserModel>> addChild({
     required Map<String, String> request,
   }) async {
     try {
-      var documentReference = await childrenCollection.add(request);
-      var tUid = preferences.getUserModel()?.uid ?? "";
-      if (tUid.isNotEmpty) {
-        await userCollection.doc(tUid).update({
-          "default_child": documentReference,
-          "children": [documentReference],
-          ...request,
-        });
-        return ApiResultStatus.data(data: await getUserFromUid(uId: tUid));
-      } else {
+      final String tUid = preferences.getUserModel()?.uid ?? "";
+      if (tUid.isEmpty) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
+
+      final DocumentReference<Map<String, dynamic>> documentReference =
+          await childrenCollection.add(request);
+
+      await documentReference.update({
+        'parent_reference_ids': FieldValue.arrayUnion([tUid]),
+      });
+
+      await userCollection.doc(tUid).update({
+        "default_child": documentReference,
+        "children": [documentReference],
+        ...request,
+      });
+
+      final UserModel? updatedUser = await getUserFromUid(uId: tUid);
+      if (updatedUser == null) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
-      return onFirebaseException(e);
+      return onFirebaseException(e) as ApiResultStatus<UserModel>;
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
     }

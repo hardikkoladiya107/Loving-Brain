@@ -98,18 +98,28 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           },
           data: (data) async {
             EasyLoading.dismiss();
-            if (navigatorKey.currentContext != null && data is UserModel) {
-              await preferences.saveUserModel(data);
-              navigatorKey.currentContext!.read<ChildProfileCubit>().clearFields();
-              await preferences.putBool(SharedPreference.isLogin, true);
-              Navigator.of(navigatorKey.currentContext!).pushReplacement(
-                MaterialPageRoute(builder: (context) => BaseScreen()),
-              );
+            if (data is! UserModel || navigatorKey.currentContext == null) {
+              if (data is! UserModel && data != null) {
+                showSnackBar(
+                  message: LocaleKeys.somethingWentWrong.tr(),
+                  type: SnackBarType.ERROR,
+                );
+              }
+              return;
             }
+            await preferences.saveUserModel(data);
+            navigatorKey.currentContext!.read<ChildProfileCubit>().clearFields();
+            await preferences.putBool(SharedPreference.isLogin, true);
+            Navigator.of(navigatorKey.currentContext!).pushReplacement(
+              MaterialPageRoute(builder: (context) => BaseScreen()),
+            );
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
           },
         );
       },

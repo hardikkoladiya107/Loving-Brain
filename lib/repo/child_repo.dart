@@ -140,10 +140,40 @@ class ChildRepo {
     }
   }
 
-  Future<ApiResultStatus> getChildren({
+  /// Appends a parent uid to the child's [parent_reference_ids] list.
+  /// Use when a co-parent accepts an invitation for this child.
+  Future<ApiResultStatus> addParentReference({
+    required String childId,
+    required String parentUid,
+  }) async {
+    try {
+      if (childId.isEmpty || parentUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      await childrenCollection.doc(childId).update({
+        'parent_reference_ids': FieldValue.arrayUnion([parentUid]),
+      });
+      return ApiResultStatus.data(data: '');
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus<List<ChildModel>>> getChildren({
     required List<String> childrenIds,
   }) async {
     try {
+      if (childrenIds.isEmpty) {
+        return ApiResultStatus.data(data: <ChildModel>[]);
+      }
       var childrenResponse = await childrenCollection
           .where(FieldPath.documentId, whereIn: childrenIds)
           .get();
@@ -153,14 +183,11 @@ class ChildRepo {
               .map((e) => ChildModel.fromJson(e.data(), e.reference))
               .toList(),
         );
-      } else {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.childrenNotFound.tr()),
-        );
       }
+      return ApiResultStatus.data(data: <ChildModel>[]);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
-        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
       );
     } catch (e) {
       return ApiResultStatus.error(
@@ -309,34 +336,27 @@ class ChildRepo {
     UserModel user,
   ) async {
     try {
-      // 1️⃣ Fetch both child lists
-      ApiResultStatus childApiResultStatus = await getChildren(
-        childrenIds: user.children?.map((e) => e.id).toList() ?? [],
-      );
+      final List<String> ownChildIds =
+          user.children?.map((e) => e.id).whereType<String>().toList() ?? [];
+      final ApiResultStatus<List<ChildModel>> childApiResultStatus =
+          await getChildren(childrenIds: ownChildIds);
 
-      ApiResultStatus coChildApiResultStatus = await getCoChildren(user);
-
-      // 2️⃣ Extract data from both (if available)
       final List<ChildModel> children = [];
       childApiResultStatus.whenOrNull(
-        data: (data) {
-          children.addAll(data);
-        },
-      );
-      coChildApiResultStatus.whenOrNull(
-        data: (data) {
+        data: (List<ChildModel> data) {
           children.addAll(data);
         },
       );
 
-      // 3️⃣ Return merged result
-      if (children.isNotEmpty) {
-        return ApiResultStatus.data(data: children);
-      } else {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.childrenNotFound.tr()),
-        );
-      }
+      final ApiResultStatus<List<ChildModel>> coChildApiResultStatus =
+          await getCoChildren(user);
+      coChildApiResultStatus.whenOrNull(
+        data: (List<ChildModel> data) {
+          children.addAll(data);
+        },
+      );
+
+      return ApiResultStatus.data(data: children);
     } on FirebaseException catch (_) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -348,7 +368,7 @@ class ChildRepo {
     }
   }
 
-  Future<ApiResultStatus> getCoChildren(UserModel user) async {
+  Future<ApiResultStatus<List<ChildModel>>> getCoChildren(UserModel user) async {
     try {
       var childrenResponse = await CoParentRepo
           .instance
@@ -358,23 +378,17 @@ class ChildRepo {
           .where('status', isEqualTo: 'ACCEPTED')
           .get();
 
-      if (childrenResponse.docs.isNotEmpty) {
-        List<InvitationModel> invitations = childrenResponse.docs
-            .map((doc) => InvitationModel.fromJson(doc.data()))
-            .toList();
-
-        return getChildren(
-          childrenIds: invitations
-              .map((e) => e.children ?? "")
-              .toList()
-              .where((element) => element.isNotEmpty)
-              .toList(),
-        );
-      } else {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.childrenNotFound.tr()),
-        );
+      if (childrenResponse.docs.isEmpty) {
+        return ApiResultStatus.data(data: <ChildModel>[]);
       }
+      List<InvitationModel> invitations = childrenResponse.docs
+          .map((doc) => InvitationModel.fromJson(doc.data()))
+          .toList();
+      final List<String> ids = invitations
+          .map((e) => e.children ?? "")
+          .where((element) => element.isNotEmpty)
+          .toList();
+      return getChildren(childrenIds: ids);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

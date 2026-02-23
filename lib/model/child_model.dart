@@ -14,6 +14,7 @@ class ChildModel {
     List<RoutineModel>? routinesList,
     List<EssentialNote>? essentials,
     List<String>? documents,
+    List<String>? parentReferenceIds,
     DocumentReference<Object?>? reference,
   }) {
     _childAge = childAge;
@@ -22,6 +23,7 @@ class ChildModel {
     _routinesList = routinesList;
     _essentialList = essentials;
     _documents = documents;
+    _parentReferenceIds = parentReferenceIds;
     _reference = reference;
   }
 
@@ -57,6 +59,12 @@ class ChildModel {
             .toList(),
       );
     }
+    if (jsonObject['parent_reference_ids'] is List<dynamic>) {
+      _parentReferenceIds = (jsonObject['parent_reference_ids'] as List<dynamic>)
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
   }
 
   String? _childAge;
@@ -65,6 +73,7 @@ class ChildModel {
   List<RoutineModel>? _routinesList;
   List<EssentialNote>? _essentialList;
   List<String>? _documents;
+  List<String>? _parentReferenceIds;
   DocumentReference<Object?>? _reference;
 
   // Getters
@@ -74,6 +83,7 @@ class ChildModel {
   List<RoutineModel>? get routinesList => _routinesList;
   List<EssentialNote>? get essentials => _essentialList;
   List<String>? get documents => _documents;
+  List<String>? get parentReferenceIds => _parentReferenceIds;
   DocumentReference<Object?>? get reference => _reference;
 
   // CopyWith method
@@ -84,16 +94,19 @@ class ChildModel {
     List<RoutineModel>? routinesList,
     List<EssentialNote>? essentials,
     List<String>? documents,
+    List<String>? parentReferenceIds,
     DocumentReference<Object?>? reference,
-  }) => ChildModel(
-    childAge: childAge ?? _childAge,
-    childName: childName ?? _childName,
-    relationshipToChild: relationshipToChild ?? _relationshipToChild,
-    routinesList: routinesList ?? _routinesList,
-    essentials: essentials ?? _essentialList,
-    documents: documents ?? _documents,
-    reference: reference ?? _reference,
-  );
+  }) =>
+      ChildModel(
+        childAge: childAge ?? _childAge,
+        childName: childName ?? _childName,
+        relationshipToChild: relationshipToChild ?? _relationshipToChild,
+        routinesList: routinesList ?? _routinesList,
+        essentials: essentials ?? _essentialList,
+        documents: documents ?? _documents,
+        parentReferenceIds: parentReferenceIds ?? _parentReferenceIds,
+        reference: reference ?? _reference,
+      );
 
   // Convert to JSON (for Firestore)
   Map<String, dynamic> toJson() {
@@ -104,6 +117,7 @@ class ChildModel {
     map['routines'] = _routinesList?.map((e) => e.toJson()).toList();
     map['essentials'] = _essentialList?.map((e) => e.toJson()).toList();
     map['documents'] = _documents?.map((e) => e.toString()).toList();
+    map['parent_reference_ids'] = _parentReferenceIds;
     return map;
   }
 }

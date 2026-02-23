@@ -24,11 +24,11 @@ class SleepLogRepo {
       childrenCollection.doc(childId).collection('sleep_logs');
 
   Future<ApiResultStatus> addSleepLog(
-    ChildModel child,
+    String childReferenceId,
     SleepLogModel log,
   ) async {
     try {
-      final col = _childSleepCollection(child.reference!.id);
+      final col = _childSleepCollection(childReferenceId);
       final docRef = await col.add(log.toMap());
       return ApiResultStatus.data(data: docRef.id);
     } on FirebaseException catch (_) {
@@ -41,7 +41,6 @@ class SleepLogRepo {
       );
     }
   }
-
 
   Future<ApiResultStatus<void>> editSleepLog(
     ChildModel child,
@@ -85,15 +84,14 @@ class SleepLogRepo {
     }
   }
 
-  // ---------- Get logs (optionally date range) ----------
   Future<ApiResultStatus<List<SleepLogModel>>> getSleepLogsForChild(
-    ChildModel child, {
+    String childReferenceId, {
     DateTime? fromInclusive,
     DateTime? toInclusive,
   }) async {
     try {
       Query colQuery = _childSleepCollection(
-        child.reference?.id ?? "",
+        childReferenceId,
       ).orderBy('date', descending: false);
 
       if (fromInclusive != null) {

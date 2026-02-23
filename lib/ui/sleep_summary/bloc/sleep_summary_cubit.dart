@@ -81,7 +81,9 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
 
   Future<void> _fetchChildFromFirestore({DocumentReference? refVal}) async {
     try {
-      DocumentReference ref = refVal ?? state.userModel!.defaultChild!;
+      final DocumentReference? ref =
+          refVal ?? state.userModel?.defaultChild;
+      if (ref == null) return;
       final snapshot = await ref.get();
       final data = snapshot.data();
       if (data != null) {
@@ -92,24 +94,6 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     } catch (e) {
       debugPrint('Failed to fetch child: $e');
     }
-  }
-
-  bool isValidate({required String title, required String description}) {
-    if (title.isEmpty) {
-      changeProps(
-        addEssentialsApiResult: ApiResultStatus.initial(),
-        titleError: "Please provide title",
-      );
-      return false;
-    }
-    if (description.isEmpty) {
-      changeProps(
-        addEssentialsApiResult: ApiResultStatus.initial(),
-        descriptionError: "Please provide description",
-      );
-      return false;
-    }
-    return true;
   }
 
   Future<void> _loadChildren() async {
@@ -179,12 +163,20 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
   }
 
   Future<void> addSleepLog() async {
+    if (state.childModel?.reference?.id == null) {
+      changeProps(
+        addSleepLogApiResult: ApiResultStatus.error(
+          error: Exception("Child not found"),
+        ),
+      );
+      return;
+    }
     if (_validateSleepLog()) {
       changeProps(addSleepLogApiResult: ApiResultStatus.loading());
       try {
         ApiResultStatus apiResultStatus = await SleepLogRepo.instance
             .addSleepLog(
-              state.childModel!,
+              state.childModel!.reference!.id,
               SleepLogModel(
                 id: "",
                 ref: null,
@@ -202,17 +194,19 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
   }
 
   Future<void> _loadSleepLogs() async {
-    if (state.childModel != null) {
-      changeProps(getSleepLogsApiResult: ApiResultStatus.loading());
-      ApiResultStatus apiResultStatus = await SleepLogRepo.instance
-          .getSleepLogsForChild(state.childModel!);
-      changeProps(getSleepLogsApiResult: apiResultStatus);
-      apiResultStatus.whenOrNull(
-        data: (data) {
-          changeProps(sleepLogs: data);
-        },
-      );
+    if (state.childModel?.reference?.id == null) {
+      return;
     }
+
+    changeProps(getSleepLogsApiResult: ApiResultStatus.loading());
+    ApiResultStatus apiResultStatus = await SleepLogRepo.instance
+        .getSleepLogsForChild(state.childModel!.reference!.id);
+    changeProps(getSleepLogsApiResult: apiResultStatus);
+    apiResultStatus.whenOrNull(
+      data: (data) {
+        changeProps(sleepLogs: data);
+      },
+    );
   }
 
   Future<void> _selectInitialWeek() async {

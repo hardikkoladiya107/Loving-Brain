@@ -89,13 +89,23 @@ class UserModel {
 
     try {
       if (fromConvert) {
-        _defaultChild = FirebaseFirestore.instance.doc(
-          jsonObject['default_child'],
-        );
+        final String? defaultChildPath = jsonObject['default_child']?.toString();
+        if (defaultChildPath != null &&
+            defaultChildPath.trim().isNotEmpty &&
+            defaultChildPath != 'null') {
+          _defaultChild =
+              FirebaseFirestore.instance.doc(defaultChildPath.trim());
+        }
       } else {
-        if (jsonObject['default_child'] != null &&
-            jsonObject['default_child'] is DocumentReference) {
-          _defaultChild = jsonObject['default_child'] as DocumentReference;
+        final dynamic rawDefaultChild = jsonObject['default_child'];
+        if (rawDefaultChild != null) {
+          if (rawDefaultChild is DocumentReference) {
+            _defaultChild = rawDefaultChild;
+          } else if (rawDefaultChild is String &&
+              rawDefaultChild.trim().isNotEmpty) {
+            _defaultChild =
+                FirebaseFirestore.instance.doc(rawDefaultChild.trim());
+          }
         }
       }
     } catch (e) {
@@ -104,20 +114,30 @@ class UserModel {
 
     try {
       if (fromConvert) {
-        if ((jsonObject['children'] is List<dynamic>)) {
-          var paths = (jsonObject['children'] as List<dynamic>);
-          _children = [];
-          _children?.addAll(
-            paths
-                .map((e) => FirebaseFirestore.instance.doc(e.toString()))
-                .toList(),
-          );
+        if (jsonObject['children'] is List<dynamic>) {
+          final List<dynamic> paths = jsonObject['children'] as List<dynamic>;
+          final List<DocumentReference> refs = [];
+          for (final dynamic e in paths) {
+            final String path = e?.toString() ?? '';
+            if (path.trim().isNotEmpty && path != 'null') {
+              refs.add(FirebaseFirestore.instance.doc(path.trim()));
+            }
+          }
+          _children = refs.isNotEmpty ? refs : null;
         }
       } else {
-        if (jsonObject['children'] != null) {
-          _children = List<DocumentReference>.from(
-            jsonObject['children'] ?? [],
-          );
+        if (jsonObject['children'] != null &&
+            jsonObject['children'] is List<dynamic>) {
+          final List<dynamic> raw = jsonObject['children'] as List<dynamic>;
+          final List<DocumentReference> refs = [];
+          for (final dynamic e in raw) {
+            if (e is DocumentReference) {
+              refs.add(e);
+            } else if (e is String && e.trim().isNotEmpty) {
+              refs.add(FirebaseFirestore.instance.doc(e.trim()));
+            }
+          }
+          _children = refs.isNotEmpty ? refs : null;
         }
       }
     } catch (e) {
