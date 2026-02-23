@@ -38,34 +38,36 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ManageChildrenCubit, ManageChildrenState>(
       listener: (context, state) {
-        state.setDefaultStatus.whenOrNull(
+        state.setDefaultStatus.maybeWhen(
           loading: () => EasyLoading.show(),
+          orElse: () => EasyLoading.dismiss(),
+        );
+        state.setDefaultStatus.whenOrNull(
           data: (_) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: LocaleKeys.successMessage.tr(),
               type: SnackBarType.SUCCESS,
             );
           },
           error: (Exception e) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: e.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
             );
           },
         );
-        state.deleteChildStatus.whenOrNull(
+        state.deleteChildStatus.maybeWhen(
           loading: () => EasyLoading.show(),
+          orElse: () => EasyLoading.dismiss(),
+        );
+        state.deleteChildStatus.whenOrNull(
           data: (_) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: LocaleKeys.successMessage.tr(),
               type: SnackBarType.SUCCESS,
             );
           },
           error: (Exception e) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: e.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
@@ -112,16 +114,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
   }
 
   Widget _buildBody(BuildContext context, ManageChildrenState state) {
-    final bool isLoading = state.loadStatus.maybeMap(
-          loading: (_) => true,
-          initial: (_) => true,
-          orElse: () => false,
-        );
-    if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: primaryColor),
-      );
-    }
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(

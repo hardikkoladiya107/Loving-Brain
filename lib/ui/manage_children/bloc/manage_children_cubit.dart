@@ -27,13 +27,15 @@ class ManageChildrenCubit extends Cubit<ManageChildrenState> {
     ApiResultStatus? setDefaultStatus,
     ApiResultStatus? deleteChildStatus,
   }) {
-    emit(state.copyWith(
-      userModel: userModel ?? state.userModel,
-      children: children ?? state.children,
-      loadStatus: loadStatus ?? ApiResultStatus.initial(),
-      setDefaultStatus: setDefaultStatus ??   ApiResultStatus.initial(),
-      deleteChildStatus: deleteChildStatus ?? ApiResultStatus.initial(),
-    ));
+    emit(
+      state.copyWith(
+        userModel: userModel ?? state.userModel,
+        children: children ?? state.children,
+        loadStatus: loadStatus ?? ApiResultStatus.initial(),
+        setDefaultStatus: setDefaultStatus ?? ApiResultStatus.initial(),
+        deleteChildStatus: deleteChildStatus ?? ApiResultStatus.initial(),
+      ),
+    );
   }
 
   Future<void> _loadChildren() async {
@@ -48,8 +50,8 @@ class ManageChildrenCubit extends Cubit<ManageChildrenState> {
       );
       return;
     }
-    final ApiResultStatus<List<ChildModel>> result =
-        await ChildRepo.instance.getChildren(childrenIds: ids);
+    ApiResultStatus<List<ChildModel>> result = await ChildRepo.instance
+        .getChildren(childrenIds: ids);
     result.whenOrNull(
       data: (List<ChildModel> list) {
         changeProps(
@@ -67,19 +69,27 @@ class ManageChildrenCubit extends Cubit<ManageChildrenState> {
     final DocumentReference<Object?>? ref = child.reference;
     if (ref == null) return;
     changeProps(setDefaultStatus: ApiResultStatus.loading());
-    final ApiResultStatus<UserModel> result =
-        await AuthRepo.instance.setDefaultChild(ref);
-    result.whenOrNull(
-      data: (UserModel user) {
-        changeProps(
-          userModel: user,
-          setDefaultStatus: ApiResultStatus.data(data: user),
-        );
-      },
-      error: (Exception e) {
-        changeProps(setDefaultStatus: ApiResultStatus.error(error: e));
-      },
-    );
+    try {
+      final ApiResultStatus<UserModel> result = await AuthRepo.instance
+          .setDefaultChild(ref);
+      result.whenOrNull(
+        data: (UserModel user) {
+          changeProps(
+            userModel: user,
+            setDefaultStatus: ApiResultStatus.data(data: user),
+          );
+        },
+        error: (Exception e) {
+          changeProps(setDefaultStatus: ApiResultStatus.error(error: e));
+        },
+      );
+    } catch (e) {
+      changeProps(
+        setDefaultStatus: ApiResultStatus.error(
+          error: e is Exception ? e : Exception(e.toString()),
+        ),
+      );
+    }
   }
 
   bool isDefaultChild(ChildModel child) {
@@ -93,16 +103,15 @@ class ManageChildrenCubit extends Cubit<ManageChildrenState> {
     final DocumentReference<Object?>? ref = child.reference;
     if (ref == null) return;
     changeProps(deleteChildStatus: ApiResultStatus.loading());
-    final ApiResultStatus<UserModel> result =
-        await AuthRepo.instance.removeChildFromUser(
-      childId: ref.id,
-      childRef: ref,
-    );
+    final ApiResultStatus<UserModel> result = await AuthRepo.instance
+        .removeChildFromUser(childId: ref.id, childRef: ref);
     result.whenOrNull(
       data: (UserModel user) {
         changeProps(
           userModel: user,
-          children: state.children.where((c) => c.reference?.id != ref.id).toList(),
+          children: state.children
+              .where((c) => c.reference?.id != ref.id)
+              .toList(),
           deleteChildStatus: ApiResultStatus.data(data: user),
         );
       },
