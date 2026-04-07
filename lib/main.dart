@@ -102,10 +102,10 @@ class _MyAppState extends State<MyApp> {
 
 void configLoading() {
   final bool isDark = false;
-  final Color indicatorColor = isDark ? const Color(0xFFCE63E2) : const Color(0xFF9F35B1);
-  final Color backgroundColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-  final Color textColor = isDark ? const Color(0xFFEDEDED) : const Color(0xFF1A1A1A);
-  final Color maskColor = isDark ? const Color(0x80000000) : const Color(0x80FFFFFF);
+  final Color indicatorColor = const Color(0xFF9F35B1);
+  final Color backgroundColor = Colors.white;
+  final Color textColor = const Color(0xFF1A1A1A);
+  final Color maskColor = const Color(0x80FFFFFF);
 
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)

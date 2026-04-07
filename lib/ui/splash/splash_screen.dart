@@ -7,7 +7,7 @@ import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/preferances.dart';
 import '../base_screen/base_screen.dart';
-import '../auth/on_boarding/on_boarding_screen1.dart';
+import '../auth/on_boarding/welcome_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
           } else {
             Navigator.of(navigatorKey.currentContext!).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => const OnBoardingScreen1(),
+                builder: (context) => const WelcomeScreen(),
               ),
             );
           }

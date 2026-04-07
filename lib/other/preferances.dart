@@ -14,6 +14,7 @@ class SharedPreference {
 
   static const user = "user";
   static const isLogin = "isLogin";
+  static const hasSeenOnboarding = "hasSeenOnboarding";
 
   bool? getBool(String key, {bool defValue = false}) {
     return _preferences == null

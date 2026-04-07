@@ -20,11 +20,14 @@ import '../../../main.dart';
 import '../../../other/app_color.dart';
 import '../../../other/snack_bar.dart';
 import '../../base_screen/base_screen.dart';
-import '../forgot_password/forgot_password_screen.dart';
 import '../../parent_profile/parent_profile_screen.dart';
-import '../register/register_screen.dart';
+import '../../privacy_policy/privacy_policy_screen.dart';
+import '../../terms_and_conditions/terms_and_conditions.dart';
 import '../../widget/base_button.dart';
+import '../forgot_password/forgot_password_screen.dart';
+import '../register/register_screen.dart';
 import 'bloc/login_state.dart';
+import 'package:flutter/gestures.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -121,6 +124,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   _signUpWithGoogle(),
                   16.spaceH,
                   if (Platform.isIOS) _signUpWithApple(),
+                  60.spaceH,
+                  _buildTermsText(),
                   40.spaceH,
                 ],
               ),
@@ -406,5 +411,53 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     }
+  }
+
+  Widget _buildTermsText() {
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: getTextStyle(
+          color: Colors.black87,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+        children: [
+          TextSpan(text: "By continuing, you agree to our\n"),
+          TextSpan(
+            text: "Terms & Conditions",
+            style: getTextStyle(
+               color: blueTextColor,
+               fontSize: 12,
+               fontWeight: FontWeight.bold,
+               textDecoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TermsAndConditionsScreen(),
+                ));
+              },
+          ),
+          TextSpan(text: " and "),
+          TextSpan(
+            text: "Privacy Policy",
+            style: getTextStyle(
+               color: blueTextColor,
+               fontSize: 12,
+               fontWeight: FontWeight.bold,
+               textDecoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const PrivacyPolicyScreen(),
+                ));
+              },
+          ),
+          TextSpan(text: "."),
+        ],
+      ),
+    ).appPadding(left: 24, right: 24);
   }
 }
