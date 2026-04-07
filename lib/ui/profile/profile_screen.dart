@@ -47,135 +47,146 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocConsumer<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF6F8FA),
+          backgroundColor: const Color(0xFFF4F6F9),
           body: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(state.userModel),
-                    24.h.spaceH,
-                    
-                    _buildSectionTitle("General Preferences"),
-                    _buildGroup([
-                      _settingItem(
-                        title: LocaleKeys.getGentleRemindersForPlay.tr(),
-                        showCheckBox: true,
-                        icon: LucideIcons.bell,
-                        iconBgColor: gentleReminderIconColor,
-                        check: state.userModel?.getReminderNotification ?? false,
-                        onChanged: (value) {
-                          context.read<ProfileCubit>().updateGentleReminder();
-                        },
-                        isLast: false,
-                      ),
-                      _settingItem(
-                        title: LocaleKeys.children.tr(),
-                        icon: LucideIcons.baby,
-                        iconBgColor: primaryColor,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const ManageChildrenScreen(),
-                            ),
-                          );
-                        },
-                        isLast: true,
-                      ),
-                    ]),
+                child: _buildHeader(state.userModel),
+              ),
+              SliverToBoxAdapter(
+                child: Container(
+                  transform: Matrix4.translationValues(0.0, -32.0, 0.0),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF4F6F9),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      30.h.spaceH,
+                      _buildSectionTitle("General Preferences"),
+                      _buildGroup([
+                        _settingItem(
+                          title: LocaleKeys.getGentleRemindersForPlay.tr(),
+                          showCheckBox: true,
+                          icon: LucideIcons.bell,
+                          iconBgColor: gentleReminderIconColor,
+                          check: state.userModel?.getReminderNotification ?? false,
+                          onChanged: (value) {
+                            context.read<ProfileCubit>().updateGentleReminder();
+                          },
+                          isLast: false,
+                        ),
+                        _settingItem(
+                          title: LocaleKeys.children.tr(),
+                          icon: LucideIcons.baby,
+                          iconBgColor: primaryColor,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const ManageChildrenScreen(),
+                              ),
+                            );
+                          },
+                          isLast: true,
+                        ),
+                      ]),
 
-                    _buildSectionTitle("Account & Plan"),
-                    _buildGroup([
-                      _settingItem(
-                        title: LocaleKeys.subscription.tr(),
-                        icon: LucideIcons.crown,
-                        iconBgColor: const Color(0xFFE5B02B),
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const SubscriptionScreen(),
-                            ),
-                          );
-                        },
-                        isLast: false,
-                      ),
-                      _settingItem(
-                        title: LocaleKeys.termsConditions.tr(),
-                        icon: LucideIcons.fileText,
-                        iconBgColor: termsAndConditionIconColor,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const TermsAndConditionsScreen(),
-                            ),
-                          );
-                        },
-                        isLast: false,
-                      ),
-                      _settingItem(
-                        title: LocaleKeys.privacyPolicy.tr(),
-                        icon: LucideIcons.shieldCheck,
-                        iconBgColor: privacyPolicyIconColor,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const PrivacyPolicyScreen(),
-                            ),
-                          );
-                        },
-                        isLast: true,
-                      ),
-                    ]),
+                      _buildSectionTitle("Account & Plan"),
+                      _buildGroup([
+                        _settingItem(
+                          title: LocaleKeys.subscription.tr(),
+                          icon: LucideIcons.crown,
+                          iconBgColor: const Color(0xFFE5B02B),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const SubscriptionScreen(),
+                              ),
+                            );
+                          },
+                          isLast: false,
+                        ),
+                        _settingItem(
+                          title: LocaleKeys.termsConditions.tr(),
+                          icon: LucideIcons.fileText,
+                          iconBgColor: termsAndConditionIconColor,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const TermsAndConditionsScreen(),
+                              ),
+                            );
+                          },
+                          isLast: false,
+                        ),
+                        _settingItem(
+                          title: LocaleKeys.privacyPolicy.tr(),
+                          icon: LucideIcons.shieldCheck,
+                          iconBgColor: privacyPolicyIconColor,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const PrivacyPolicyScreen(),
+                              ),
+                            );
+                          },
+                          isLast: true,
+                        ),
+                      ]),
 
-                    _buildSectionTitle("About Loving Brain"),
-                    _buildGroup([
-                      _settingItem(
-                        title: LocaleKeys.rateThisApp.tr(),
-                        icon: LucideIcons.star,
-                        iconBgColor: rateThisAppIconColor,
-                        onTap: () {
-                          context.read<ProfileCubit>().rateApp();
-                        },
-                        isLast: false,
-                      ),
-                      _settingItem(
-                        title: LocaleKeys.shareThisApp.tr(),
-                        icon: LucideIcons.share2,
-                        iconBgColor: shareThisAppIconColor,
-                        onTap: () {
-                          context.read<ProfileCubit>().shareApp();
-                        },
-                        isLast: true,
-                      ),
-                    ]),
+                      _buildSectionTitle("About Loving Brain"),
+                      _buildGroup([
+                        _settingItem(
+                          title: LocaleKeys.rateThisApp.tr(),
+                          icon: LucideIcons.star,
+                          iconBgColor: rateThisAppIconColor,
+                          onTap: () {
+                            context.read<ProfileCubit>().rateApp();
+                          },
+                          isLast: false,
+                        ),
+                        _settingItem(
+                          title: LocaleKeys.shareThisApp.tr(),
+                          icon: LucideIcons.share2,
+                          iconBgColor: shareThisAppIconColor,
+                          onTap: () {
+                            context.read<ProfileCubit>().shareApp();
+                          },
+                          isLast: true,
+                        ),
+                      ]),
 
-                    _buildSectionTitle("Danger Zone"),
-                    _buildGroup([
-                      _settingItem(
-                        title: LocaleKeys.deleteAccount.tr(),
-                        icon: LucideIcons.trash2,
-                        iconBgColor: Colors.redAccent,
-                        titleColor: Colors.redAccent,
-                        onTap: () {
-                          _deleteAccountDialog();
-                        },
-                        isLast: false,
-                      ),
-                      _settingItem(
-                        title: LocaleKeys.logOut.tr(),
-                        icon: LucideIcons.logOut,
-                        iconBgColor: logoutAppIconColor,
-                        titleColor: logoutAppIconColor,
-                        onTap: () {
-                          _logoutDialog();
-                        },
-                        isLast: true,
-                      ),
-                    ]),
-                    60.h.spaceH,
-                  ],
+                      _buildSectionTitle("Danger Zone"),
+                      _buildGroup([
+                        _settingItem(
+                          title: LocaleKeys.deleteAccount.tr(),
+                          icon: LucideIcons.trash2,
+                          iconBgColor: Colors.redAccent,
+                          titleColor: Colors.redAccent,
+                          onTap: () {
+                            _deleteAccountDialog();
+                          },
+                          isLast: false,
+                        ),
+                        _settingItem(
+                          title: LocaleKeys.logOut.tr(),
+                          icon: LucideIcons.logOut,
+                          iconBgColor: logoutAppIconColor,
+                          titleColor: logoutAppIconColor,
+                          onTap: () {
+                            _logoutDialog();
+                          },
+                          isLast: true,
+                        ),
+                      ]),
+                      100.h.spaceH,
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -234,39 +245,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildHeader(UserModel? userModel) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+      padding: EdgeInsets.only(bottom: 74.h, top: 40.h),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [primaryColor, Color(0xFF9D65E8), Color(0xFF894BCD)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
       child: SafeArea(
         bottom: false,
         child: Column(
           children: [
-            20.h.spaceH,
             _profileImageWidget(userModel),
-            16.h.spaceH,
-            (userModel?.parentName ?? "Profile").appText(
-              color: Colors.black87,
+            20.h.spaceH,
+            (userModel?.parentName ?? "Loving Brain Parent").appText(
+              color: Colors.white,
               fontWeight: FontWeight.w800,
-              fontSize: 24,
+              fontSize: 26,
+              letterSpacing: 0.5,
             ),
-            4.h.spaceH,
+            6.h.spaceH,
             (userModel?.email ?? "").appText(
-              color: Colors.grey.shade600,
+              color: Colors.white.withValues(alpha: 0.85),
               fontWeight: FontWeight.w500,
-              fontSize: 14,
+              fontSize: 15,
             ),
-            30.h.spaceH,
+            if (userModel != null && userModel.displayStreak > 0)
+              Padding(
+                padding: EdgeInsets.only(top: 18.h),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(LucideIcons.flame, color: const Color(0xFFFFD700), size: 18.w),
+                      8.spaceW,
+                      "${userModel.displayStreak} Day Streak!".appText(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -275,11 +303,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: EdgeInsets.only(left: 28.w, bottom: 8.h, top: 8.h),
-      child: title.appText(
+      padding: EdgeInsets.only(left: 36.w, bottom: 10.h, top: 12.h),
+      child: title.toUpperCase().appText(
         textAlign: TextAlign.start,
-        fontWeight: FontWeight.w700,
-        fontSize: 13,
+        fontWeight: FontWeight.w800,
+        fontSize: 12,
+        letterSpacing: 1.2,
         color: Colors.grey.shade500,
       ),
     );
@@ -287,15 +316,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildGroup(List<Widget> children) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 6.h),
+      margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF894BCD).withValues(alpha: 0.06),
+            blurRadius: 24,
+            spreadRadius: 2,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -321,48 +351,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
           decoration: BoxDecoration(
-            border: isLast ? null : Border(bottom: BorderSide(color: Colors.grey.withOpacity(0.06))),
+            border: isLast ? null : Border(bottom: BorderSide(color: Colors.grey.withValues(alpha: 0.08))),
           ),
           child: Row(
              children: [
               Container(
-                height: 42.w,
-                width: 42.w,
+                height: 48.w,
+                width: 48.w,
                 decoration: BoxDecoration(
-                  color: iconBgColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  color: iconBgColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
                   child: assetIcon != null
-                      ? assetIcon.image(height: 20.w, width: 20.w, color: iconBgColor)
-                      : Icon(icon, color: iconBgColor, size: 22.w),
+                      ? assetIcon.image(height: 24.w, width: 24.w, color: iconBgColor)
+                      : Icon(icon, color: iconBgColor, size: 24.w),
                 ),
               ),
-              16.spaceW,
+              18.spaceW,
               Expanded(
                 child: title.appText(
                   textAlign: TextAlign.start,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
                   color: titleColor,
                 ),
               ),
               if (showCheckBox)
                 Transform.scale(
-                  scale: 0.8,
+                  scale: 0.9,
                   child: Switch(
                     value: check,
                     onChanged: onChanged,
-                    activeThumbColor: primaryColor,
-                    activeTrackColor: primaryColor.withOpacity(0.3),
+                    activeThumbColor: Colors.white,
+                    activeTrackColor: primaryColor,
+                    inactiveThumbColor: Colors.white,
+                    inactiveTrackColor: Colors.grey.shade300,
+                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                   ),
                 )
               else
-                Icon(LucideIcons.chevronRight, color: Colors.grey.withOpacity(0.4), size: 20.w),
+                Icon(LucideIcons.chevronRight, color: Colors.grey.withValues(alpha: 0.4), size: 20.w),
             ],
           ),
         ),
@@ -374,39 +407,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showAppDialog(
       child: (context) {
         return Dialog(
-          insetPadding: EdgeInsets.only(left: 20.w, right: 20.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          insetPadding: EdgeInsets.only(left: 24.w, right: 24.w),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           child: Container(
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(28.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(32),
               color: Colors.white,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(18.w),
                   decoration: BoxDecoration(
                     color: Colors.red.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(LucideIcons.logOut, color: Colors.redAccent, size: 32.w),
+                  child: Icon(LucideIcons.logOut, color: Colors.redAccent, size: 36.w),
                 ),
-                20.h.spaceH,
+                24.h.spaceH,
                 "${LocaleKeys.logOut.tr()}?".appText(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
                   color: Colors.black87,
                 ),
                 12.h.spaceH,
                 LocaleKeys.areYouSureYouWantToLogout.tr().appText(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey.shade600,
                   textAlign: TextAlign.center,
                 ),
-                32.h.spaceH,
+                36.h.spaceH,
                 Row(
                   children: [
                     Expanded(
@@ -415,15 +448,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: LocaleKeys.cancel
                               .tr()
                               .appText(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black87,
+                                fontSize: 16,
                               )
-                              .appPadding(top: 14.h, bottom: 14.h),
+                              .appPadding(top: 16.h, bottom: 16.h),
                         ),
                         onTap: () {
                           Navigator.pop(context);
@@ -437,11 +471,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.redAccent,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.redAccent.withOpacity(0.3),
-                                blurRadius: 10,
+                                color: Colors.redAccent.withValues(alpha: 0.3),
+                                blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
                             ]
@@ -451,8 +485,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               .appText(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
+                                fontSize: 16,
                               )
-                              .appPadding(top: 14.h, bottom: 14.h),
+                              .appPadding(top: 16.h, bottom: 16.h),
                         ),
                         onTap: () {
                           context.read<ProfileCubit>().logout();
@@ -474,39 +509,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showAppDialog(
       child: (context) {
         return Dialog(
-          insetPadding: EdgeInsets.only(left: 20.w, right: 20.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          insetPadding: EdgeInsets.only(left: 24.w, right: 24.w),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           child: Container(
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(28.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(32),
               color: Colors.white,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(18.w),
                   decoration: BoxDecoration(
                     color: Colors.red.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(LucideIcons.trash2, color: Colors.redAccent, size: 32.w),
+                  child: Icon(LucideIcons.trash2, color: Colors.redAccent, size: 36.w),
                 ),
-                20.h.spaceH,
+                24.h.spaceH,
                 "${LocaleKeys.deleteAccount.tr()}?".appText(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
                   color: Colors.black87,
                 ),
                 12.h.spaceH,
                 LocaleKeys.areYouSureYouWantToDeleteAccount.tr().appText(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey.shade600,
                   textAlign: TextAlign.center,
                 ),
-                32.h.spaceH,
+                36.h.spaceH,
                 Row(
                   children: [
                     Expanded(
@@ -515,15 +550,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: LocaleKeys.cancel
                               .tr()
                               .appText(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black87,
+                                fontSize: 16,
                               )
-                              .appPadding(top: 14.h, bottom: 14.h),
+                              .appPadding(top: 16.h, bottom: 16.h),
                         ),
                         onTap: () {
                           Navigator.pop(context);
@@ -537,11 +573,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Colors.redAccent,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.redAccent.withOpacity(0.3),
-                                blurRadius: 10,
+                                color: Colors.redAccent.withValues(alpha: 0.3),
+                                blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
                             ]
@@ -551,8 +587,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               .appText(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
+                                fontSize: 16,
                               )
-                              .appPadding(top: 14.h, bottom: 14.h),
+                              .appPadding(top: 16.h, bottom: 16.h),
                         ),
                         onTap: () {
                           context.read<ProfileCubit>().deleteAccount();
@@ -597,22 +634,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              colors: [primaryColor, Color(0xFFFF66C4)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: primaryColor.withOpacity(0.3),
-                blurRadius: 15,
-                spreadRadius: 2,
-                offset: const Offset(0, 5),
-              ),
-            ],
+            color: Colors.white.withValues(alpha: 0.25),
           ),
           child: Container(
-            padding: const EdgeInsets.all(3),
+            padding: const EdgeInsets.all(4),
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -628,21 +653,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _showImagePickerDropdown();
             },
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: primaryColor,
                 shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2.5),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: const Icon(
                 LucideIcons.camera,
-                color: primaryColor,
+                color: Colors.white,
                 size: 16,
               ),
             ),
@@ -660,32 +686,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 20),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 30, top: 20),
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              12.spaceH,
               Container(
-                height: 5,
-                width: 40,
+                height: 6,
+                width: 50,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              20.spaceH,
+              24.spaceH,
               "Update Profile Picture".appText(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
                 color: Colors.black87,
               ),
-              16.spaceH,
+              30.spaceH,
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                    _buildPickerOption(
                     title: LocaleKeys.pickFromCamera.tr(),
@@ -696,6 +721,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _chooseImage(ImageSource.camera);
                     },
                   ),
+                  20.w.spaceW,
                   _buildPickerOption(
                     title: LocaleKeys.pickGallery.tr(),
                     icon: LucideIcons.image,
@@ -722,24 +748,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return BaseButton(
       onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            height: 60.w,
-            width: 60.w,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
+      child: Container(
+        width: 140.w,
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 24.h),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 40.w),
+            16.spaceH,
+            title.appText(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: color,
             ),
-            child: Icon(icon, color: color, size: 28.w),
-          ),
-          8.spaceH,
-          title.appText(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -754,19 +781,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _profileImage(UserModel? userModel) {
     if ((userModel?.profileImage ?? "").isEmpty) {
       return Container(
-        height: 100.r,
-        width: 100.r,
+        height: 110.r,
+        width: 110.r,
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.1),
+          color: Colors.grey.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
-        child: Icon(LucideIcons.user, size: 40.r, color: Colors.grey.shade400),
+        child: Icon(LucideIcons.user, size: 50.r, color: Colors.grey.shade400),
       );
     }
     return AppImage(
       imageUrl: userModel!.profileImage!,
-      height: 100.r,
-      width: 100.r,
+      height: 110.r,
+      width: 110.r,
       shape: BoxShape.circle,
     );
   }
