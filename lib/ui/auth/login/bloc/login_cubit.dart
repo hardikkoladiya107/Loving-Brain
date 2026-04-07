@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/manager/apple_sign_in/apple_signin_manager.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
-import '../../../generated/locale_keys.g.dart';
-import '../../../model/api_result_status.dart';
-import '../../../repo/auth_repo.dart';
+import '../../../../../generated/locale_keys.g.dart';
+import '../../../../../model/api_result_status.dart';
+import '../../../../../repo/auth_repo.dart';
 import 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {

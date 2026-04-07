@@ -14,7 +14,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/user_repo.dart';
-import 'package:loving_brain/ui/on_boarding/on_boarding_screen1.dart';
+import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen1.dart';
 import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';

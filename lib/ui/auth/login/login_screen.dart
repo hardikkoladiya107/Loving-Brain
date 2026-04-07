@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -10,19 +11,19 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
-import 'package:loving_brain/ui/login/bloc/login_cubit.dart';
+import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
-import '../../gen/assets.gen.dart';
-import '../../generated/locale_keys.g.dart';
-import '../../main.dart';
-import '../../other/app_color.dart';
-import '../../other/snack_bar.dart';
-import '../base_screen/base_screen.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../generated/locale_keys.g.dart';
+import '../../../main.dart';
+import '../../../other/app_color.dart';
+import '../../../other/snack_bar.dart';
+import '../../base_screen/base_screen.dart';
 import '../forgot_password/forgot_password_screen.dart';
-import '../parent_profile/parent_profile_screen.dart';
+import '../../parent_profile/parent_profile_screen.dart';
 import '../register/register_screen.dart';
-import '../widget/base_button.dart';
+import '../../widget/base_button.dart';
 import 'bloc/login_state.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -80,23 +81,47 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  120.spaceH,
+                  80.spaceH,
                   _loginIcon(),
-                  60.spaceH,
-                  _email(state),
-                  12.spaceH,
-                  _password(state),
-                  12.spaceH,
-                  _forgotPassword(),
-                  24.spaceH,
-                  _loginButton(),
-                  12.spaceH,
-                  _dontHaveAccount(),
-                  24.spaceH,
+                  40.spaceH,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 32),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 20,
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _email(state),
+                            12.spaceH,
+                            _password(state),
+                            4.spaceH,
+                            _forgotPassword(),
+                            16.spaceH,
+                            _loginButton(),
+                            16.spaceH,
+                            _dontHaveAccount(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ).appPadding(left: 20, right: 20),
+                  30.spaceH,
                   _signUpWithGoogle(),
-
-                  24.spaceH,
+                  16.spaceH,
                   if (Platform.isIOS) _signUpWithApple(),
+                  40.spaceH,
                 ],
               ),
             ),
@@ -126,8 +151,15 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         width: 300,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
             LocaleKeys.continueWithGoogle
                 .tr()
                 .appText(fontWeight: FontWeight.w700, fontSize: 14)
-                .appPadding(top: 8, bottom: 8),
+                .appPadding(top: 14, bottom: 14),
           ],
         ),
       ),
@@ -155,8 +187,15 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         width: 300,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.white.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
             LocaleKeys.continueWithApple
                 .tr()
                 .appText(fontWeight: FontWeight.w700, fontSize: 14)
-                .appPadding(top: 10, bottom: 10),
+                .appPadding(top: 14, bottom: 14),
           ],
         ),
       ),
@@ -177,25 +216,34 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(20),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+              ),
+              child: Column(
+                children: [
+                  LocaleKeys.login.tr().appText(
+                    color: blueTextColor,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.1,
+                  ),
+                  LocaleKeys.appName.tr().appText(
+                    color: blueTextColor,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.1,
+                  ),
+                ],
+              ).appPadding(left: 20, right: 20, top: 12, bottom: 12),
+            ),
           ),
-          child: Column(
-            children: [
-              LocaleKeys.login.tr().appText(
-                color: blueTextColor,
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-              ),
-              LocaleKeys.appName.tr().appText(
-                color: blueTextColor,
-                fontSize: 26,
-                fontWeight: FontWeight.w900,
-              ),
-            ],
-          ).appPadding(left: 16, right: 16, top: 8, bottom: 8),
         ),
       ],
     );
@@ -207,16 +255,25 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: BoxDecoration(
           color: blueButtonColor,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: blueButtonColor.withValues(alpha: 0.4),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             LocaleKeys.login.tr().appText(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              letterSpacing: 0.5,
               color: Colors.white,
             ),
           ],
-        ).appPadding(top: 10, bottom: 10),
+        ).appPadding(top: 14, bottom: 14),
       ),
       onTap: () {
         context.read<LoginCubit>().performLogin();

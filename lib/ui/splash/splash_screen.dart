@@ -7,7 +7,7 @@ import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/preferances.dart';
 import '../base_screen/base_screen.dart';
-import '../on_boarding/on_boarding_screen1.dart';
+import '../auth/on_boarding/on_boarding_screen1.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

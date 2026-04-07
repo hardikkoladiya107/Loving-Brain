@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/register/bloc/register_state.dart';
+import 'package:loving_brain/ui/auth/register/bloc/register_state.dart';
 
-import '../../../generated/locale_keys.g.dart';
-import '../../../repo/auth_repo.dart';
+import '../../../../../generated/locale_keys.g.dart';
+import '../../../../../repo/auth_repo.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit() : super(RegisterState());

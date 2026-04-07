@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
-import '../../../generated/locale_keys.g.dart';
-import '../../../model/api_result_status.dart';
-import '../../../repo/auth_repo.dart';
+import '../../../../../generated/locale_keys.g.dart';
+import '../../../../../model/api_result_status.dart';
+import '../../../../../repo/auth_repo.dart';
 import 'forgot_password_state.dart';
 
 class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {

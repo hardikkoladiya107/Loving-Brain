@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,12 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
-import '../../gen/assets.gen.dart';
-import '../../generated/locale_keys.g.dart';
-import '../../other/app_color.dart';
-import '../../other/snack_bar.dart';
-import '../widget/app_text_field.dart';
-import '../widget/base_button.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../generated/locale_keys.g.dart';
+import '../../../other/app_color.dart';
+import '../../../other/snack_bar.dart';
+import '../../widget/app_text_field.dart';
+import '../../widget/base_button.dart';
 import 'bloc/forgot_password_cubit.dart';
 import 'bloc/forgot_password_state.dart';
 
@@ -51,10 +52,42 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  200.spaceH,
-                  _email(state),
-                  30.spaceH,
-                  _resetButton(),
+                  160.spaceH,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 40),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 20,
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.lock_reset, size: 60, color: blueButtonColor),
+                            16.spaceH,
+                            LocaleKeys.forgotPassword.tr().appText(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              color: blueTextColor,
+                            ),
+                            24.spaceH,
+                            _email(state),
+                            30.spaceH,
+                            _resetButton(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ).appPadding(left: 20, right: 20),
                 ],
               ),
             ),
@@ -108,16 +141,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         decoration: BoxDecoration(
           color: blueButtonColor,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: blueButtonColor.withValues(alpha: 0.4),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             LocaleKeys.sendResetEmail.tr().appText(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              letterSpacing: 0.5,
               color: Colors.white,
             ),
           ],
-        ).appPadding(top: 10, bottom: 10),
+        ).appPadding(top: 14, bottom: 14),
       ),
       onTap: () {
         context.read<ForgotPasswordCubit>().performForgotPassword();
