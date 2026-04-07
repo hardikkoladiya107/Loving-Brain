@@ -37,7 +37,7 @@ class _BaseScreenState extends State<BaseScreen> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.white,
-          extendBody: true, // Let screens flow behind the floating nav bar
+          extendBody: false, // Prevents content from rendering under the nav bar
           body: IndexedStack(
             index: state.bottomNavigationIndex,
             children: const [
