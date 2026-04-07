@@ -42,44 +42,53 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<WriteYourThoughtCubit, WriteYourThoughtState>(
       builder: (context, state) {
-        return Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.images.imgWriteYourThoughtBg.path),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.only(
-                  left: 20.w,
-                  right: 20.w,
-                  top: 24.h,
-                  bottom: 32.h,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _header(),
-                    16.h.spaceH,
-                    _description(),
-                    24.h.spaceH,
-                    _typeYourThoughtsHere(state),
-                    24.h.spaceH,
-                    _actionButtons(state),
-                    if (state.journalList.isNotEmpty) ...[
-                      28.h.spaceH,
-                      _pastEntriesSection(state),
-                    ],
-                  ],
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  Assets.images.imgWriteYourThoughtBg.path,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                  child: Container(
+                    color: Colors.white.withValues(alpha: 0.3),
+                  ),
+                ),
+              ),
+              SafeArea(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.only(
+                    left: 20.w,
+                    right: 20.w,
+                    top: 16.h,
+                    bottom: 120.h, // Prevent bottom pill cover
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _header(),
+                      8.h.spaceH,
+                      _description(),
+                      32.h.spaceH,
+                      _typeYourThoughtsHere(state),
+                      32.h.spaceH,
+                      _actionButtons(state),
+                      if (state.journalList.isNotEmpty) ...[
+                        40.h.spaceH,
+                        _pastEntriesSection(state),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -107,186 +116,140 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
   }
 
   Widget _header() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(28.r),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.6),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: primaryColor.withValues(alpha: 0.08),
-            blurRadius: 24.r,
-            offset: Offset(0, 8.h),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 12.r,
-            offset: Offset(0, 4.h),
-          ),
-        ],
-      ),
-      child: LocaleKeys.writeYourThoughts.tr().appText(
-        color: primaryColor,
-        fontWeight: FontWeight.w800,
-        fontSize: 22.sp,
-        letterSpacing: 0.5,
-      ),
+    return LocaleKeys.writeYourThoughts.tr().appText(
+      color: primaryColor,
+      fontWeight: FontWeight.w900,
+      fontSize: 28.sp,
+      letterSpacing: 0.2,
     );
   }
 
   Widget _description() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: primaryColor.withValues(alpha: 0.06),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: primaryColor.withValues(alpha: 0.05),
-            blurRadius: 16.r,
-            offset: Offset(0, 6.h),
-          ),
-        ],
-      ),
-      child: "${LocaleKeys.hi.tr()}, ${LocaleKeys.howYourHeartTodayTakeMomentReflect.tr()}"
-          .appText(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: blackTextColor,
-            height: 1.45,
-            textAlign: TextAlign.center,
-          ),
-    );
+    return "${LocaleKeys.hi.tr()}, ${LocaleKeys.howYourHeartTodayTakeMomentReflect.tr()}"
+        .appText(
+          fontSize: 16.sp,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+          height: 1.4,
+          textAlign: TextAlign.start,
+        );
   }
 
   Widget _typeYourThoughtsHere(WriteYourThoughtState state) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.8),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: primaryColor.withValues(alpha: 0.06),
-            blurRadius: 20.r,
-            offset: Offset(0, 8.h),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(32.r),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.65),
+            borderRadius: BorderRadius.circular(32.r),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.8),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 20.r,
+                spreadRadius: 0,
+              ),
+            ],
           ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 12.r,
-            spreadRadius: 0,
+          child: AppTextField(
+            controller: yourThoughtsController,
+            fillColor: Colors.transparent,
+            filled: true,
+            minLines: 8,
+            contentPadding: EdgeInsets.all(24.w),
+            hintStyle: getTextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 15.sp,
+              color: greyColor1.withValues(alpha: 0.7),
+            ),
+            hint: LocaleKeys.typeYourThoughtsHere.tr(),
+            error: state.thoughtsErrorText,
+            maxLines: 12,
+            onChanged: (value) {
+              context.read<WriteYourThoughtCubit>().changeProps(thoughtsText: value);
+            },
           ),
-        ],
-      ),
-      child: AppTextField(
-        controller: yourThoughtsController,
-        fillColor: Colors.transparent,
-        filled: true,
-        minLines: 6,
-        contentPadding: EdgeInsets.all(20.w),
-        hintStyle: getTextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 14.sp,
-          color: greyColor1,
         ),
-        hint: LocaleKeys.typeYourThoughtsHere.tr(),
-        error: state.thoughtsErrorText,
-        maxLines: 8,
-        onChanged: (value) {
-          context.read<WriteYourThoughtCubit>().changeProps(thoughtsText: value);
-        },
       ),
     );
   }
 
   Widget _actionButtons(WriteYourThoughtState state) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: BaseButton(
-            onTap: () {
-              context.read<WriteYourThoughtCubit>().logThought();
-            },
-            child: Container(
-              height: 52.h,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    yellowColor3,
-                    yellowColor2,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(26.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: yellowColor3.withValues(alpha: 0.4),
-                    blurRadius: 12.r,
-                    offset: Offset(0, 4.h),
-                  ),
-                ],
+        BaseButton(
+          onTap: () {
+            context.read<WriteYourThoughtCubit>().logThought();
+          },
+          child: Container(
+            width: double.infinity,
+            height: 58.h,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [orangeColorStart, orangeColorEnd],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: Center(
-                child: LocaleKeys.saveEntry.tr().appText(
-                  color: Colors.white,
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w700,
+              borderRadius: BorderRadius.circular(30.r),
+              boxShadow: [
+                BoxShadow(
+                  color: orangeColorEnd.withValues(alpha: 0.4),
+                  blurRadius: 16.r,
+                  offset: Offset(0, 6.h),
                 ),
+              ],
+            ),
+            child: Center(
+              child: LocaleKeys.saveEntry.tr().appText(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1,
               ),
             ),
           ),
         ),
-        16.w.spaceW,
-        Expanded(
-          child: BaseButton(
-            onTap: () {
-              if (context.read<WriteYourThoughtCubit>().isValidate()) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ChatDetailScreen(
-                      initialChat: state.thoughtsText,
-                    ),
+        16.h.spaceH,
+        BaseButton(
+          onTap: () {
+            if (context.read<WriteYourThoughtCubit>().isValidate()) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailScreen(
+                    initialChat: state.thoughtsText,
                   ),
-                );
-              }
-            },
-            child: Container(
-              height: 52.h,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.95),
-                borderRadius: BorderRadius.circular(26.r),
-                border: Border.all(
-                  color: primaryColor.withValues(alpha: 0.35),
-                  width: 1.5,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: primaryColor.withValues(alpha: 0.08),
-                    blurRadius: 12.r,
-                    offset: Offset(0, 4.h),
-                  ),
-                ],
+              );
+            }
+          },
+          child: Container(
+            width: double.infinity,
+            height: 58.h,
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(30.r),
+              border: Border.all(
+                color: primaryColor.withValues(alpha: 0.3),
+                width: 2,
               ),
-              child: Center(
-                child: LocaleKeys.getAIReflection.tr().appText(
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.auto_awesome_rounded, color: primaryColor, size: 22.sp),
+                8.w.spaceW,
+                LocaleKeys.getAIReflection.tr().appText(
                   color: primaryColor,
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -302,8 +265,8 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             LocaleKeys.yourPastEntries.tr().appText(
-              fontWeight: FontWeight.w800,
-              fontSize: 17.sp,
+              fontWeight: FontWeight.w900,
+              fontSize: 19.sp,
               color: primaryColor,
             ),
             BaseButton(
@@ -315,14 +278,14 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                 );
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: LocaleKeys.viewAll.tr().appText(
                   color: primaryColor,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   fontSize: 13.sp,
                 ),
               ),
@@ -335,7 +298,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           padding: EdgeInsets.zero,
-          separatorBuilder: (context, index) => 12.h.spaceH,
+          separatorBuilder: (context, index) => 16.h.spaceH,
           itemBuilder: (context, index) {
             final JournalModel journal = state.journalList[index];
             return _pastEntryCard(journal: journal);
@@ -348,22 +311,17 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
   Widget _pastEntryCard({required JournalModel journal}) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(20.r),
+        color: Colors.white.withValues(alpha: 0.75),
+        borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
-          color: primaryColor.withValues(alpha: 0.12),
-          width: 1,
+          color: Colors.white.withValues(alpha: 0.9),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withValues(alpha: 0.06),
-            blurRadius: 16.r,
-            offset: Offset(0, 6.h),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8.r,
-            offset: Offset(0, 2.h),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 20.r,
+            offset: Offset(0, 8.h),
           ),
         ],
       ),
@@ -373,43 +331,54 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(6.r),
+                padding: EdgeInsets.all(8.r),
                 decoration: BoxDecoration(
-                  color: primaryColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10.r),
+                  gradient: LinearGradient(
+                    colors: [primaryColor.withValues(alpha: 0.8), primaryColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 8.r,
+                      offset: Offset(0, 4.h),
+                    )
+                  ],
                 ),
                 child: Icon(
-                  Icons.calendar_today_rounded,
+                  Icons.calendar_month_rounded,
                   size: 16.sp,
-                  color: primaryColor,
+                  color: Colors.white,
                 ),
               ),
-              10.w.spaceW,
+              12.w.spaceW,
               convertToMMMMDYYYY(journal.logTime).appText(
-                fontWeight: FontWeight.w700,
-                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                fontSize: 14.sp,
                 color: primaryColor,
               ),
             ],
           ),
-          14.h.spaceH,
+          16.h.spaceH,
           if ((journal.imageUrl ?? '').isNotEmpty) ...[
             ClipRRect(
-              borderRadius: BorderRadius.circular(14.r),
+              borderRadius: BorderRadius.circular(16.r),
               child: AppImage(
                 imageUrl: journal.imageUrl!,
-                height: 180.h,
+                height: 200.h,
                 width: double.infinity,
                 boxFit: BoxFit.cover,
               ),
             ),
-            14.h.spaceH,
+            16.h.spaceH,
           ],
           if ((journal.prompt ?? '').isNotEmpty) ...[
             'Prompt: ${journal.prompt}'.appText(
-              fontWeight: FontWeight.w600,
-              fontSize: 12.sp,
-              color: blackTextColor,
+              fontWeight: FontWeight.w800,
+              fontSize: 13.sp,
+              color: primaryColor,
               textAlign: TextAlign.start,
             ),
             8.h.spaceH,
@@ -419,16 +388,16 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
               !(journal.thoughtText ?? '')
                   .startsWith('Drawn from Connect & Play:'))
             (journal.thoughtText ?? '').appText(
-              fontWeight: FontWeight.w500,
-              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+              fontSize: 14.sp,
               textAlign: TextAlign.start,
-              maxLines: 5,
+              maxLines: 4,
               overflow: TextOverflow.ellipsis,
-              color: blackTextColor,
-              height: 1.4,
+              color: Colors.black87,
+              height: 1.5,
             ),
         ],
-      ).appPadding(all: 16),
+      ).appPadding(all: 20),
     );
   }
 
