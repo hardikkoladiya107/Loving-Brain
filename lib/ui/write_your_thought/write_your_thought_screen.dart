@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -53,10 +54,62 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
     super.dispose();
   }
 
+  void _showColorPickerSubDialog(BuildContext context, Color startColor, Function(Color) onColorChanged) {
+    Color tempColor = startColor;
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+          title: Text(
+            'Pick Unlimited Color',
+            style: getTextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 18.sp,
+              color: primaryColor,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: tempColor,
+              onColorChanged: (c) => tempColor = c,
+              enableAlpha: false, // Opaque cards only
+              displayThumbColor: true,
+              pickerAreaHeightPercent: 0.8,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: getTextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+              ),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            ),
+            TextButton(
+              child: Text(
+                'Select',
+                style: getTextStyle(color: primaryColor, fontWeight: FontWeight.w800),
+              ),
+              onPressed: () {
+                onColorChanged(tempColor);
+                Navigator.of(ctx).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showAddJournalDialog(BuildContext context, WriteYourThoughtState state) {
     // Reset state before opening
     yourThoughtsController.clear();
     context.read<WriteYourThoughtCubit>().changeProps(thoughtsText: '', thoughtsErrorText: '');
+
+    int selectedColorValue = Colors.white.value;
 
     showDialog(
       context: context,
@@ -64,176 +117,258 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
       builder: (ctx) {
         return BlocProvider.value(
           value: context.read<WriteYourThoughtCubit>(),
-          child: BlocConsumer<WriteYourThoughtCubit, WriteYourThoughtState>(
-            listener: (context, modalState) {
-               modalState.apiResultStatus.whenOrNull(
-                data: (data) {
-                  Navigator.of(context).pop(); // close modal on success
+          child: StatefulBuilder(
+            builder: (context, setDialogState) {
+              return BlocConsumer<WriteYourThoughtCubit, WriteYourThoughtState>(
+                listener: (context, modalState) {
+                   modalState.apiResultStatus.whenOrNull(
+                    data: (data) {
+                      Navigator.of(context).pop(); // close modal on success
+                      // Focus back to the newly added cluster center
+                      final initialScale = 0.8;
+                      final screenSize = MediaQuery.of(context).size;
+                      final xOffset = 2000.0 * initialScale - screenSize.width / 2;
+                      final yOffset = 2000.0 * initialScale - screenSize.height / 2;
+                      _transformationController.value = Matrix4.identity()
+                        ..translate(-xOffset, -yOffset)
+                        ..scale(initialScale);
+                    },
+                  );
                 },
-              );
-            },
-            builder: (context, modalState) {
-              return Dialog(
-                backgroundColor: Colors.transparent,
-                insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                child: SingleChildScrollView(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(28.r),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                      child: Container(
-                        padding: EdgeInsets.all(24.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.95),
-                          borderRadius: BorderRadius.circular(28.r),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 30,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                LocaleKeys.writeYourThoughts.tr().appText(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 20.sp,
-                                ),
-                                BaseButton(
-                                  onTap: () => Navigator.pop(context),
-                                  child: Container(
-                                    padding: EdgeInsets.all(8.w),
-                                    decoration: BoxDecoration(
-                                      color: primaryColor.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(Icons.close, color: primaryColor, size: 20.sp),
-                                  ),
+                builder: (context, modalState) {
+                  return Dialog(
+                    backgroundColor: Colors.transparent,
+                    insetPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                    child: SingleChildScrollView(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28.r),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                          child: Container(
+                            padding: EdgeInsets.all(24.w),
+                            decoration: BoxDecoration(
+                              color: Color(selectedColorValue).withValues(alpha: 0.95), // Adapt popup to chosen color
+                              borderRadius: BorderRadius.circular(28.r),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 30,
+                                  spreadRadius: 5,
                                 ),
                               ],
                             ),
-                            16.h.spaceH,
-                            "${LocaleKeys.hi.tr()}, ${LocaleKeys.howYourHeartTodayTakeMomentReflect.tr()}".appText(
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w600,
-                              color: blackTextColor,
-                              height: 1.4,
-                              textAlign: TextAlign.start,
-                            ),
-                            20.h.spaceH,
-                            Container(
-                              decoration: BoxDecoration(
-                                color: const Color(0xffF8F9FB),
-                                borderRadius: BorderRadius.circular(20.r),
-                                border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
-                              ),
-                              child: AppTextField(
-                                controller: yourThoughtsController,
-                                fillColor: Colors.transparent,
-                                filled: true,
-                                minLines: 5,
-                                maxLines: 7,
-                                contentPadding: EdgeInsets.all(16.w),
-                                hintStyle: getTextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14.sp,
-                                  color: greyColor1,
-                                ),
-                                hint: LocaleKeys.typeYourThoughtsHere.tr(),
-                                error: modalState.thoughtsErrorText,
-                                onChanged: (value) {
-                                  context.read<WriteYourThoughtCubit>().changeProps(thoughtsText: value);
-                                },
-                              ),
-                            ),
-                            24.h.spaceH,
-                            Row(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Expanded(
-                                  child: BaseButton(
-                                    onTap: () {
-                                      context.read<WriteYourThoughtCubit>().logThought();
-                                    },
-                                    child: Container(
-                                      height: 52.h,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [yellowColor3, yellowColor2],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    LocaleKeys.writeYourThoughts.tr().appText(
+                                      color: primaryColor,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 20.sp,
+                                    ),
+                                    BaseButton(
+                                      onTap: () => Navigator.pop(context),
+                                      child: Container(
+                                        padding: EdgeInsets.all(8.w),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor.withValues(alpha: 0.1),
+                                          shape: BoxShape.circle,
                                         ),
-                                        borderRadius: BorderRadius.circular(26.r),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: yellowColor3.withValues(alpha: 0.4),
-                                            blurRadius: 10.r,
-                                            offset: Offset(0, 4.h),
-                                          ),
-                                        ],
+                                        child: Icon(Icons.close, color: primaryColor, size: 20.sp),
                                       ),
-                                      child: Center(
-                                        child: LocaleKeys.saveEntry.tr().appText(
-                                          color: Colors.white,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w700,
+                                    ),
+                                  ],
+                                ),
+                                16.h.spaceH,
+                                "${LocaleKeys.hi.tr()}, ${LocaleKeys.howYourHeartTodayTakeMomentReflect.tr()}".appText(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: blackTextColor,
+                                  height: 1.4,
+                                  textAlign: TextAlign.start,
+                                ),
+                                20.h.spaceH,
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
+                                  ),
+                                  child: AppTextField(
+                                    controller: yourThoughtsController,
+                                    fillColor: Colors.transparent,
+                                    filled: true,
+                                    minLines: 5,
+                                    maxLines: 7,
+                                    contentPadding: EdgeInsets.all(16.w),
+                                    hintStyle: getTextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14.sp,
+                                      color: greyColor1,
+                                    ),
+                                    hint: LocaleKeys.typeYourThoughtsHere.tr(),
+                                    error: modalState.thoughtsErrorText,
+                                    onChanged: (value) {
+                                      context.read<WriteYourThoughtCubit>().changeProps(thoughtsText: value);
+                                    },
+                                  ),
+                                ),
+                                20.h.spaceH,
+                                
+                                // Unlimited Color Selector Button
+                                "Card Background Style".appText(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey.shade700,
+                                  textAlign: TextAlign.start,
+                                ),
+                                12.h.spaceH,
+                                BaseButton(
+                                  onTap: () {
+                                    _showColorPickerSubDialog(
+                                      context, 
+                                      Color(selectedColorValue), 
+                                      (newColor) {
+                                        setDialogState(() {
+                                          selectedColorValue = newColor.value;
+                                        });
+                                      }
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 52.h,
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFFFB3BA), // Pastel Red
+                                          Color(0xFFFFDFBA), // Pastel Orange
+                                          Color(0xFFFFFFBA), // Pastel Yellow
+                                          Color(0xFFBAFFC9), // Pastel Green
+                                          Color(0xFFBAE1FF), // Pastel Blue
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      border: Border.all(color: Colors.white, width: 2),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.05),
+                                          blurRadius: 8,
+                                          offset: Offset(0, 4.h),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Center(
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(alpha: 0.8),
+                                          borderRadius: BorderRadius.circular(20.r),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.palette, color: primaryColor, size: 18.sp),
+                                            8.w.spaceW,
+                                            "Pick Unlimited Color".appText(
+                                              color: primaryColor,
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                12.w.spaceW,
-                                Expanded(
-                                  child: BaseButton(
-                                    onTap: () {
-                                      if (context.read<WriteYourThoughtCubit>().isValidate()) {
-                                        Navigator.pop(context);
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (_) => ChatDetailScreen(
-                                              initialChat: modalState.thoughtsText,
+                                
+                                28.h.spaceH,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: BaseButton(
+                                        onTap: () {
+                                          context.read<WriteYourThoughtCubit>().logThought(colorValue: selectedColorValue);
+                                        },
+                                        child: Container(
+                                          height: 52.h,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [yellowColor3, yellowColor2],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                            borderRadius: BorderRadius.circular(26.r),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: yellowColor3.withValues(alpha: 0.4),
+                                                blurRadius: 10.r,
+                                                offset: Offset(0, 4.h),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: LocaleKeys.saveEntry.tr().appText(
+                                              color: Colors.white,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w700,
                                             ),
                                           ),
-                                        );
-                                      }
-                                    },
-                                    child: Container(
-                                      height: 52.h,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(26.r),
-                                        border: Border.all(
-                                          color: primaryColor.withValues(alpha: 0.3),
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: LocaleKeys.getAIReflection.tr().appText(
-                                          color: primaryColor,
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w700,
                                         ),
                                       ),
                                     ),
-                                  ),
+                                    12.w.spaceW,
+                                    Expanded(
+                                      child: BaseButton(
+                                        onTap: () {
+                                          if (context.read<WriteYourThoughtCubit>().isValidate()) {
+                                            Navigator.pop(context);
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (_) => ChatDetailScreen(
+                                                  initialChat: modalState.thoughtsText,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          height: 52.h,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(26.r),
+                                            border: Border.all(
+                                              color: primaryColor.withValues(alpha: 0.3),
+                                              width: 1.5,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: LocaleKeys.getAIReflection.tr().appText(
+                                              color: primaryColor,
+                                              fontSize: 14.sp,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
+            }
           ),
         );
       },
@@ -437,7 +572,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard> {
           width: 300.w,
           padding: EdgeInsets.all(24.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Color(widget.journal.colorValue ?? 0xFFFFFFFF),
             borderRadius: BorderRadius.circular(24.r),
             border: Border.all(
               color: primaryColor.withValues(alpha: 0.05), 

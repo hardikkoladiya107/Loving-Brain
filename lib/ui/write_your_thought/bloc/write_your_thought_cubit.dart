@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,16 +42,17 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
   StreamSubscription? journalsSubscription;
 
   void _getThoughts() {
-    if (state.userModel?.uid != null) {
+    var uid = state.userModel?.uid ?? FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
       journalsSubscription?.cancel();
       journalsSubscription = AuthRepo.instance.userCollection
-          .doc(state.userModel!.uid)
+          .doc(uid)
           .collection("journals")
           .snapshots()
           .listen((event) {
             changeProps(
               journalList: event.docs
-                  .map((e) => JournalModel.fromJson(e.data()))
+                  .map((e) => JournalModel.fromJson(e.data(), docId: e.id))
                   .toList(),
             );
           });
@@ -61,13 +63,14 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
     journalsSubscription?.cancel();
   }
 
-  Future<void> logThought() async {
+  Future<void> logThought({int colorValue = 0xFFFFFFFF}) async {
     if (isValidate()) {
       changeProps(apiResultStatus: ApiResultStatus.loading());
       var apiResultStatus = await MoodRepo.instance.addJournal(
         request: {
           "thought_text": state.thoughtsText,
           "log_time": DateTime.now(),
+          "color_value": colorValue,
           "x": 2000.0 + (DateTime.now().millisecond % 100) - 50,
           "y": 2000.0 + (DateTime.now().microsecond % 100) - 50,
         },

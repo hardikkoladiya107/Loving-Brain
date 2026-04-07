@@ -11,6 +11,7 @@ class JournalModel {
     String? hint2,
     double? x,
     double? y,
+    int? colorValue,
   }) {
     _id = id;
     _thoughtText = thoughtText;
@@ -21,6 +22,7 @@ class JournalModel {
     _hint2 = hint2;
     _x = x ?? 1000.0;
     _y = y ?? 1000.0;
+    _colorValue = colorValue ?? 0xFFFFFFFF;
   }
 
   JournalModel.fromJson(dynamic jsonObject, {bool fromConvert = false, String? docId}) {
@@ -32,6 +34,7 @@ class JournalModel {
     _hint2 = jsonObject['hint2'];
     _x = (jsonObject['x'] as num?)?.toDouble() ?? 1000.0;
     _y = (jsonObject['y'] as num?)?.toDouble() ?? 1000.0;
+    _colorValue = (jsonObject['color_value'] as num?)?.toInt() ?? 0xFFFFFFFF;
     try {
       if (fromConvert) {
         if (jsonObject['log_time'] != null) {
@@ -56,6 +59,7 @@ class JournalModel {
   String? _hint2;
   double? _x;
   double? _y;
+  int? _colorValue;
 
   JournalModel copyWith({
     String? id,
@@ -67,6 +71,7 @@ class JournalModel {
     String? hint2,
     double? x,
     double? y,
+    int? colorValue,
   }) =>
       JournalModel(
         id: id ?? _id,
@@ -78,6 +83,7 @@ class JournalModel {
         hint2: hint2 ?? _hint2,
         x: x ?? _x,
         y: y ?? _y,
+        colorValue: colorValue ?? _colorValue,
       );
 
   String? get id => _id;
@@ -89,6 +95,7 @@ class JournalModel {
   String? get hint2 => _hint2;
   double? get x => _x;
   double? get y => _y;
+  int? get colorValue => _colorValue;
 
   Map<String, dynamic> toJson({
     bool forConvert = false,
@@ -102,6 +109,7 @@ class JournalModel {
     map['hint2'] = _hint2;
     map['x'] = _x;
     map['y'] = _y;
+    map['color_value'] = _colorValue;
     try {
       if (forConvert) {
         if (_logTime != null) {
