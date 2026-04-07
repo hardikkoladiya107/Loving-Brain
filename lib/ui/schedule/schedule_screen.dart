@@ -4,6 +4,7 @@
 ///   to [DailyRoutineScreen] to add an activity.
 /// - Co‑parenting: shows shared events (created by or assigned to user); add,
 ///   link co‑parent, view detail / approval / propose change; delete if creator.
+import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,7 +51,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ScheduleCubit, ScheduleState>(
       listener: (context, state) {
-        // Delete routine / shared event: show loading and result snackbar
         state.deleteRoutineApiResultStatus.whenOrNull(
           loading: () => EasyLoading.show(),
           data: (_) {
@@ -88,8 +88,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       },
       builder: (context, state) {
         return Scaffold(
+          extendBodyBehindAppBar: true,
           body: Stack(
             children: [
+              // 1. Foundation Image
               Positioned.fill(
                 child: Assets.images.imgScheduleBg.image(
                   fit: BoxFit.cover,
@@ -97,53 +99,67 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   height: context.height,
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  24.h.spaceH,
-                  LocaleKeys.schedule.tr().appText(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
+              // 2. Glassmorphic Blur Effect covering the screen
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  child: Container(
+                    color: scheduleBgColor.withValues(alpha: 0.3),
                   ),
-                  16.h.spaceH,
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20.w),
-                      decoration: BoxDecoration(
-                        color: scheduleBgColor,
-                        borderRadius: BorderRadius.circular(20.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.06),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                ),
+              ),
+              // 3. Main Content
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    20.h.spaceH,
+                    _buildHeader(),
+                    24.h.spaceH,
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(32.r),
+                            topRight: Radius.circular(32.r),
                           ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.r),
-                        child: Column(
-                          children: [
-                            12.h.spaceH,
-                            _tabBar(context, state),
-                            8.h.spaceH,
-                            Expanded(
-                              child: IndexedStack(
-                                index: state.tabIndex,
-                                children: [
-                                  _dailyRoutineContent(context, state),
-                                  _coParentingContent(context, state),
-                                ],
-                              ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 30,
+                              offset: const Offset(0, -5),
                             ),
                           ],
                         ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(32.r),
+                            topRight: Radius.circular(32.r),
+                          ),
+                          child: Column(
+                            children: [
+                              24.h.spaceH,
+                              _tabBar(context, state),
+                              16.h.spaceH,
+                              Expanded(
+                                child: IndexedStack(
+                                  index: state.tabIndex,
+                                  children: [
+                                    _dailyRoutineContent(context, state),
+                                    _coParentingContent(context, state),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  16.h.spaceH,
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -152,9 +168,52 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  Widget _tabBar(BuildContext context, ScheduleState state) {
+  Widget _buildHeader() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.calendar_month_rounded, 
+              color: Colors.white, 
+              size: 26.sp,
+            ),
+          ),
+          12.w.spaceW,
+          LocaleKeys.schedule.tr().appText(
+            color: Colors.white,
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _tabBar(BuildContext context, ScheduleState state) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24.w),
+      height: 52.h,
+      decoration: BoxDecoration(
+        color: greyColor3.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(100.r),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Expanded(
@@ -165,7 +224,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   context.read<ScheduleCubit>().changeProps(tabIndex: 0),
             ),
           ),
-          8.w.spaceW,
           Expanded(
             child: _tabItem(
               label: LocaleKeys.coParentingSchedule.tr(),
@@ -184,25 +242,29 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     required bool isSelected,
     required VoidCallback? onTap,
   }) {
-    return BaseButton(
+    return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 48.h,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+        margin: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
-          color: isSelected ? null : Colors.white,
+          color: isSelected ? null : Colors.transparent,
           gradient: isSelected
               ? const LinearGradient(
                   colors: [scheduleButtonColor1, scheduleButtonColor2],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 )
               : null,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(100.r),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: scheduleButtonColor1.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: scheduleButtonColor1.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ]
               : null,
@@ -211,19 +273,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         child: Text(
           label,
           textAlign: TextAlign.center,
-          maxLines: 2,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: getTextStyle(
             fontSize: 13.sp,
-            fontWeight: FontWeight.w800,
-            color: isSelected ? Colors.white : blackTextColor,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            color: isSelected ? Colors.white : greyColor1,
           ),
         ),
       ),
     );
   }
 
-  /// Daily routine tab: list of routines for default child, add activity, delete.
   Widget _dailyRoutineContent(BuildContext context, ScheduleState state) {
     final List<RoutineModel> routines =
         state.childModel?.routinesList ?? const [];
@@ -232,18 +293,23 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     final bool hasDefaultChild = state.childModel != null;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+      padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 40.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (childName.isNotEmpty)
-            "$childName's ${LocaleKeys.dailyRoutine.tr()}"
-                .appText(
+            Row(
+              children: [
+                Icon(Icons.child_care_rounded, color: blueTextColor, size: 20.sp),
+                8.w.spaceW,
+                "$childName's ${LocaleKeys.dailyRoutine.tr()}".appText(
                   color: blueTextColor,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
                 ),
-          12.h.spaceH,
+              ],
+            ),
+          if (childName.isNotEmpty) 16.h.spaceH,
           if (routines.isEmpty)
             _emptyState(
               title: hasDefaultChild
@@ -261,7 +327,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 schedule: getStringTime(routine.timeStamp),
                 label: routine.description ?? '',
                 showProposeChange: false,
-                onTap: () {}, // TODO: navigate to edit routine if screen supports it
+                onTap: () {}, // Navigate to edit routine if needed
                 onDeleteIconTap: () {
                   _showDeleteRoutineDialog(
                     onDelete: () {
@@ -282,29 +348,33 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
               );
             },
+            isPrimary: true,
           ),
         ],
       ),
     );
   }
 
-  /// Co‑parenting tab: shared events (creator or assigned), add/link, view/approve/delete.
   Widget _coParentingContent(BuildContext context, ScheduleState state) {
     final List<SharedEventModel> events = state.sharedEventList;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+      padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 40.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LocaleKeys.coParentingCalendar
-              .tr()
-              .appText(
+          Row(
+            children: [
+              Icon(Icons.people_alt_rounded, color: blueTextColor, size: 20.sp),
+              8.w.spaceW,
+              LocaleKeys.coParentingCalendar.tr().appText(
                 color: blueTextColor,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
               ),
-          12.h.spaceH,
+            ],
+          ),
+          16.h.spaceH,
           if (events.isEmpty)
             _emptyState(
               title: 'noSharedEventsYet'.tr(),
@@ -381,6 +451,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
               );
             },
+            isPrimary: true,
           ),
           12.h.spaceH,
           _scheduleButton(
@@ -392,6 +463,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
               );
             },
+            isPrimary: false,
           ),
         ],
       ),
@@ -405,28 +477,43 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 24.w),
-      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.symmetric(vertical: 40.h, horizontal: 24.w),
+      margin: EdgeInsets.only(bottom: 24.h),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16.r),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 48.sp,
-            color: greyColor2,
+          Container(
+            padding: EdgeInsets.all(20.w),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              size: 56.sp,
+              color: primaryColor.withValues(alpha: 0.6),
+            ),
           ),
-          16.h.spaceH,
+          20.h.spaceH,
           title.appText(
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
             color: blackTextColor,
           ),
-          8.h.spaceH,
+          12.h.spaceH,
           subtitle.appText(
-            fontSize: 13,
+            fontSize: 14,
+            height: 1.5,
             color: greyColor1,
             textAlign: TextAlign.center,
           ),
@@ -445,97 +532,167 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     bool showProposeChange = false,
     bool showDeleteIcon = true,
   }) {
-    final bool hasStatus =
-        (status ?? '').isNotEmpty && status != 'NONE';
+    final bool hasStatus = (status ?? '').isNotEmpty && status != 'NONE';
+    
+    // Choose accent color based on status
+    Color leftAccentColor = primaryColor;
+    if (status == 'APPROVED') {
+       leftAccentColor = const Color(0xFF06CB5B); // explicit vibrant green
+    } else if (status == 'REQUESTED') {
+       leftAccentColor = orangeColor; // vibrant orange
+    } else if (showProposeChange) {
+       leftAccentColor = blueColor1; 
+    }
+
     return Padding(
-      padding: EdgeInsets.only(bottom: 10.h),
+      padding: EdgeInsets.only(bottom: 16.h),
       child: BaseButton(
         onTap: onTap,
         child: Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Assets.icons.icCalenderIcon2.image(
-                height: 28.h,
-                width: 28.w,
-              ),
-              14.w.spaceW,
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    schedule.appText(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w700,
-                      color: blackTextColor,
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Premium Left Accent Line
+                Container(
+                  width: 6.w,
+                  decoration: BoxDecoration(
+                    color: leftAccentColor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.r),
+                      bottomLeft: Radius.circular(20.r),
                     ),
-                    4.h.spaceH,
-                    label.appText(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                      color: blackTextColor,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              if (hasStatus || showProposeChange || showDeleteIcon) ...[
-                if (hasStatus)
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: status == 'APPROVED'
-                          ? approvedColor
-                          : status == 'REQUESTED'
-                              ? pendingColor
-                              : Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: (status ?? '')
-                        .appText(fontSize: 10.sp, fontWeight: FontWeight.w800),
-                  ),
-                if (showProposeChange) ...[
-                  8.w.spaceW,
-                  BaseButton(
-                    onTap: proposeChangeButtonTap,
-                    child: "${LocaleKeys.proposeChange.tr()} >"
-                        .appText(
-                          fontSize: 10.sp,
-                          color: blueColor1,
-                          fontWeight: FontWeight.w800,
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Soft rounded icon background
+                        Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            color: leftAccentColor.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Assets.icons.icCalenderIcon2.image(
+                            height: 24.h,
+                            width: 24.w,
+                            color: leftAccentColor,
+                          ),
                         ),
-                  ),
-                ],
-                if (showDeleteIcon) ...[
-                  4.w.spaceW,
-                  BaseButton(
-                    onTap: onDeleteIconTap,
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      size: 22.sp,
-                      color: redColor,
+                        16.w.spaceW,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              schedule.appText(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w800,
+                                color: blueColor2, 
+                              ),
+                              4.h.spaceH,
+                              label.appText(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w700,
+                                color: blackTextColor,
+                                height: 1.3,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Actions & Statuses
+                        if (hasStatus || showProposeChange || showDeleteIcon)
+                          Padding(
+                            padding: EdgeInsets.only(left: 8.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                if (hasStatus) ...[
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: leftAccentColor.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                      border: Border.all(color: leftAccentColor, width: 1.5),
+                                    ),
+                                    child: (status ?? '').appText(
+                                      fontSize: 10.sp, 
+                                      fontWeight: FontWeight.w800,
+                                      color: leftAccentColor
+                                    ),
+                                  ),
+                                  8.h.spaceH,
+                                ],
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (showProposeChange)
+                                      BaseButton(
+                                        onTap: proposeChangeButtonTap,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                                          decoration: BoxDecoration(
+                                            color: blueColor1.withValues(alpha: 0.1),
+                                            borderRadius: BorderRadius.circular(10.r),
+                                          ),
+                                          child: "${LocaleKeys.proposeChange.tr()} >".appText(
+                                            fontSize: 10.sp,
+                                            color: blueColor1,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
+                                    if (showDeleteIcon) ...[
+                                      if (showProposeChange) 8.w.spaceW,
+                                      BaseButton(
+                                        onTap: onDeleteIconTap,
+                                        child: Container(
+                                          padding: EdgeInsets.all(6.w),
+                                          decoration: BoxDecoration(
+                                            color: redColor.withValues(alpha: 0.08),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.delete_outline_rounded,
+                                            size: 20.sp,
+                                            color: redColor,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -545,28 +702,40 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget _scheduleButton({
     required String text,
     required VoidCallback? onTap,
+    bool isPrimary = true,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        height: 44.h,
+        height: 56.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: blueColor2,
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: blueColor2.withValues(alpha: 0.35),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: isPrimary ? null : Colors.white,
+          gradient: isPrimary
+              ? const LinearGradient(
+                  colors: [primaryColor, blueColor2],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                )
+              : null,
+          border: isPrimary ? null : Border.all(color: greyColor.withValues(alpha: 0.5), width: 2),
+          borderRadius: BorderRadius.circular(100.r),
+          boxShadow: isPrimary 
+            ? [
+                BoxShadow(
+                  color: blueColor2.withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
+                ),
+              ] 
+            : null,
         ),
         child: text.appText(
-          color: Colors.white,
+          color: isPrimary ? Colors.white : blackTextColor,
           fontWeight: FontWeight.w800,
-          fontSize: 14.sp,
+          fontSize: 15.sp,
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -595,20 +764,40 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         return Dialog(
           insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(24.r),
           ),
           child: Container(
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(28.w),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(24.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
+                )
+              ]
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: redColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.warning_rounded,
+                    color: redColor,
+                    size: 32.sp,
+                  ),
+                ),
+                20.h.spaceH,
                 "${LocaleKeys.delete.tr()}?".appText(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w800,
                   color: blackTextColor,
                 ),
                 16.h.spaceH,
@@ -617,47 +806,55 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   fontWeight: FontWeight.w600,
                   color: greyColor1,
                   textAlign: TextAlign.center,
+                  height: 1.4,
                 ),
-                28.h.spaceH,
+                32.h.spaceH,
                 Row(
                   children: [
                     Expanded(
                       child: BaseButton(
                         onTap: () => Navigator.pop(dialogContext),
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(
-                            color: greyColor,
-                            borderRadius: BorderRadius.circular(12.r),
+                            color: greyColor3.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(16.r),
                           ),
                           alignment: Alignment.center,
                           child: LocaleKeys.cancel
                               .tr()
                               .appText(
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w800,
+                                color: blackTextColor,
+                                fontSize: 15.sp,
                               ),
                         ),
                       ),
                     ),
-                    12.w.spaceW,
+                    16.w.spaceW,
                     Expanded(
                       child: BaseButton(
                         onTap: onDelete,
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(
                             color: redColor,
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: redColor.withValues(alpha: 0.3),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              )
+                            ]
                           ),
                           alignment: Alignment.center,
                           child: LocaleKeys.delete
                               .tr()
                               .appText(
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w800,
                                 color: Colors.white,
-                                fontSize: 14.sp,
+                                fontSize: 15.sp,
                               ),
                         ),
                       ),
@@ -672,3 +869,4 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 }
+
