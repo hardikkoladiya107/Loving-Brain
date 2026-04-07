@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
@@ -47,146 +49,195 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocConsumer<ProfileCubit, ProfileState>(
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF4F6F9),
-          body: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverToBoxAdapter(
-                child: _buildHeader(state.userModel),
-              ),
-              SliverToBoxAdapter(
+          extendBodyBehindAppBar: true,
+          backgroundColor: const Color(0xFFFAFAFA),
+          body: Stack(
+            children: [
+              // AURORA BLOBS BACKGROUND
+              Positioned(
+                top: -100.h,
+                left: -50.w,
                 child: Container(
-                  transform: Matrix4.translationValues(0.0, -32.0, 0.0),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF4F6F9),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32),
+                  width: 350.w,
+                  height: 350.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF894BCD).withValues(alpha: 0.18),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 150.h,
+                right: -100.w,
+                child: Container(
+                  width: 300.w,
+                  height: 300.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFF66C4).withValues(alpha: 0.12),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -50.h,
+                left: -80.w,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF5271FF).withValues(alpha: 0.10),
+                  ),
+                ),
+              ),
+              
+              // GLASS EFFECT OVERLAY
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+                  child: Container(
+                    color: Colors.white.withValues(alpha: 0.35),
+                  ),
+                ),
+              ),
+
+              // SCROLLABLE CONTENT
+              Positioned.fill(
+                child: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: SafeArea(
+                        bottom: false,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            20.h.spaceH,
+                            _buildHeader(state.userModel),
+                            8.h.spaceH,
+                            
+                            _buildSectionTitle("General Preferences"),
+                            _buildGroup([
+                              _settingItem(
+                                title: LocaleKeys.getGentleRemindersForPlay.tr(),
+                                showCheckBox: true,
+                                icon: LucideIcons.bell,
+                                iconBgColor: gentleReminderIconColor,
+                                check: state.userModel?.getReminderNotification ?? false,
+                                onChanged: (value) {
+                                  context.read<ProfileCubit>().updateGentleReminder();
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: LocaleKeys.children.tr(),
+                                icon: LucideIcons.baby,
+                                iconBgColor: primaryColor,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const ManageChildrenScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: true,
+                              ),
+                            ]),
+
+                            _buildSectionTitle("Account & Plan"),
+                            _buildGroup([
+                              _settingItem(
+                                title: LocaleKeys.subscription.tr(),
+                                icon: LucideIcons.crown,
+                                iconBgColor: const Color(0xFFE5B02B),
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const SubscriptionScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: LocaleKeys.termsConditions.tr(),
+                                icon: LucideIcons.fileText,
+                                iconBgColor: termsAndConditionIconColor,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const TermsAndConditionsScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: LocaleKeys.privacyPolicy.tr(),
+                                icon: LucideIcons.shieldCheck,
+                                iconBgColor: privacyPolicyIconColor,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const PrivacyPolicyScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: true,
+                              ),
+                            ]),
+
+                            _buildSectionTitle("About Loving Brain"),
+                            _buildGroup([
+                              _settingItem(
+                                title: LocaleKeys.rateThisApp.tr(),
+                                icon: LucideIcons.star,
+                                iconBgColor: rateThisAppIconColor,
+                                onTap: () {
+                                  context.read<ProfileCubit>().rateApp();
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: LocaleKeys.shareThisApp.tr(),
+                                icon: LucideIcons.share2,
+                                iconBgColor: shareThisAppIconColor,
+                                onTap: () {
+                                  context.read<ProfileCubit>().shareApp();
+                                },
+                                isLast: true,
+                              ),
+                            ]),
+
+                            _buildSectionTitle("Danger Zone"),
+                            _buildGroup([
+                              _settingItem(
+                                title: LocaleKeys.deleteAccount.tr(),
+                                icon: LucideIcons.trash2,
+                                iconBgColor: Colors.redAccent,
+                                titleColor: Colors.redAccent,
+                                onTap: () {
+                                  _deleteAccountDialog();
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: LocaleKeys.logOut.tr(),
+                                icon: LucideIcons.logOut,
+                                iconBgColor: logoutAppIconColor,
+                                titleColor: logoutAppIconColor,
+                                onTap: () {
+                                  _logoutDialog();
+                                },
+                                isLast: true,
+                              ),
+                            ]),
+                            120.h.spaceH,
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      30.h.spaceH,
-                      _buildSectionTitle("General Preferences"),
-                      _buildGroup([
-                        _settingItem(
-                          title: LocaleKeys.getGentleRemindersForPlay.tr(),
-                          showCheckBox: true,
-                          icon: LucideIcons.bell,
-                          iconBgColor: gentleReminderIconColor,
-                          check: state.userModel?.getReminderNotification ?? false,
-                          onChanged: (value) {
-                            context.read<ProfileCubit>().updateGentleReminder();
-                          },
-                          isLast: false,
-                        ),
-                        _settingItem(
-                          title: LocaleKeys.children.tr(),
-                          icon: LucideIcons.baby,
-                          iconBgColor: primaryColor,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const ManageChildrenScreen(),
-                              ),
-                            );
-                          },
-                          isLast: true,
-                        ),
-                      ]),
-
-                      _buildSectionTitle("Account & Plan"),
-                      _buildGroup([
-                        _settingItem(
-                          title: LocaleKeys.subscription.tr(),
-                          icon: LucideIcons.crown,
-                          iconBgColor: const Color(0xFFE5B02B),
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const SubscriptionScreen(),
-                              ),
-                            );
-                          },
-                          isLast: false,
-                        ),
-                        _settingItem(
-                          title: LocaleKeys.termsConditions.tr(),
-                          icon: LucideIcons.fileText,
-                          iconBgColor: termsAndConditionIconColor,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const TermsAndConditionsScreen(),
-                              ),
-                            );
-                          },
-                          isLast: false,
-                        ),
-                        _settingItem(
-                          title: LocaleKeys.privacyPolicy.tr(),
-                          icon: LucideIcons.shieldCheck,
-                          iconBgColor: privacyPolicyIconColor,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const PrivacyPolicyScreen(),
-                              ),
-                            );
-                          },
-                          isLast: true,
-                        ),
-                      ]),
-
-                      _buildSectionTitle("About Loving Brain"),
-                      _buildGroup([
-                        _settingItem(
-                          title: LocaleKeys.rateThisApp.tr(),
-                          icon: LucideIcons.star,
-                          iconBgColor: rateThisAppIconColor,
-                          onTap: () {
-                            context.read<ProfileCubit>().rateApp();
-                          },
-                          isLast: false,
-                        ),
-                        _settingItem(
-                          title: LocaleKeys.shareThisApp.tr(),
-                          icon: LucideIcons.share2,
-                          iconBgColor: shareThisAppIconColor,
-                          onTap: () {
-                            context.read<ProfileCubit>().shareApp();
-                          },
-                          isLast: true,
-                        ),
-                      ]),
-
-                      _buildSectionTitle("Danger Zone"),
-                      _buildGroup([
-                        _settingItem(
-                          title: LocaleKeys.deleteAccount.tr(),
-                          icon: LucideIcons.trash2,
-                          iconBgColor: Colors.redAccent,
-                          titleColor: Colors.redAccent,
-                          onTap: () {
-                            _deleteAccountDialog();
-                          },
-                          isLast: false,
-                        ),
-                        _settingItem(
-                          title: LocaleKeys.logOut.tr(),
-                          icon: LucideIcons.logOut,
-                          iconBgColor: logoutAppIconColor,
-                          titleColor: logoutAppIconColor,
-                          onTap: () {
-                            _logoutDialog();
-                          },
-                          isLast: true,
-                        ),
-                      ]),
-                      100.h.spaceH,
-                    ],
-                  ),
+                  ],
                 ),
               ),
             ],
@@ -243,94 +294,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildHeader(UserModel? userModel) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(bottom: 74.h, top: 40.h),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [primaryColor, Color(0xFF9D65E8), Color(0xFF894BCD)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Column(
+      children: [
+        _profileImageWidget(userModel),
+        24.h.spaceH,
+        (userModel?.parentName ?? "Loving Brain Parent").appText(
+          color: Colors.black87,
+          fontWeight: FontWeight.w900,
+          fontSize: 28,
+          letterSpacing: 0.5,
         ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            _profileImageWidget(userModel),
-            20.h.spaceH,
-            (userModel?.parentName ?? "Loving Brain Parent").appText(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 26,
-              letterSpacing: 0.5,
-            ),
-            6.h.spaceH,
-            (userModel?.email ?? "").appText(
-              color: Colors.white.withValues(alpha: 0.85),
-              fontWeight: FontWeight.w500,
-              fontSize: 15,
-            ),
-            if (userModel != null && userModel.displayStreak > 0)
-              Padding(
-                padding: EdgeInsets.only(top: 18.h),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
+        8.h.spaceH,
+        (userModel?.email ?? "").appText(
+          color: Colors.grey.shade600,
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+        if (userModel != null && userModel.displayStreak > 0)
+          Padding(
+            padding: EdgeInsets.only(top: 20.h),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(LucideIcons.flame, color: const Color(0xFFFFD700), size: 18.w),
-                      8.spaceW,
-                      "${userModel.displayStreak} Day Streak!".appText(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14,
-                      ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-          ],
-        ),
-      ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(LucideIcons.flame, color: const Color(0xFFFF9561), size: 20.w),
+                  8.spaceW,
+                  "${userModel.displayStreak} Day Streak!".appText(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        16.h.spaceH,
+      ],
     );
   }
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: EdgeInsets.only(left: 36.w, bottom: 10.h, top: 12.h),
+      padding: EdgeInsets.only(left: 36.w, bottom: 8.h, top: 12.h),
       child: title.toUpperCase().appText(
         textAlign: TextAlign.start,
         fontWeight: FontWeight.w800,
         fontSize: 12,
-        letterSpacing: 1.2,
+        letterSpacing: 1.5,
         color: Colors.grey.shade500,
       ),
     );
   }
 
   Widget _buildGroup(List<Widget> children) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF894BCD).withValues(alpha: 0.06),
-            blurRadius: 24,
-            spreadRadius: 2,
-            offset: const Offset(0, 8),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: Colors.white, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 20,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              children: children,
+            ),
           ),
-        ],
-      ),
-      child: Column(
-        children: children,
+        ),
       ),
     );
   }
@@ -351,28 +404,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 18.h),
           decoration: BoxDecoration(
-            border: isLast ? null : Border(bottom: BorderSide(color: Colors.grey.withValues(alpha: 0.08))),
+            border: isLast ? null : Border(bottom: BorderSide(color: Colors.black.withValues(alpha: 0.04))),
           ),
           child: Row(
              children: [
               Container(
-                height: 48.w,
-                width: 48.w,
+                height: 52.w,
+                width: 52.w,
                 decoration: BoxDecoration(
-                  color: iconBgColor.withValues(alpha: 0.12),
+                  color: iconBgColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
                   child: assetIcon != null
-                      ? assetIcon.image(height: 24.w, width: 24.w, color: iconBgColor)
-                      : Icon(icon, color: iconBgColor, size: 24.w),
+                      ? assetIcon.image(height: 26.w, width: 26.w, color: iconBgColor)
+                      : Icon(icon, color: iconBgColor, size: 26.w),
                 ),
               ),
-              18.spaceW,
+              20.spaceW,
               Expanded(
                 child: title.appText(
                   textAlign: TextAlign.start,
@@ -383,7 +435,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               if (showCheckBox)
                 Transform.scale(
-                  scale: 0.9,
+                  scale: 0.95,
                   child: Switch(
                     value: check,
                     onChanged: onChanged,
@@ -395,7 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 )
               else
-                Icon(LucideIcons.chevronRight, color: Colors.grey.withValues(alpha: 0.4), size: 20.w),
+                Icon(LucideIcons.chevronRight, color: Colors.grey.withValues(alpha: 0.4), size: 22.w),
             ],
           ),
         ),
@@ -408,96 +460,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: (context) {
         return Dialog(
           insetPadding: EdgeInsets.only(left: 24.w, right: 24.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-          child: Container(
-            padding: EdgeInsets.all(28.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(18.w),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(LucideIcons.logOut, color: Colors.redAccent, size: 36.w),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(36),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              child: Container(
+                padding: EdgeInsets.all(32.w),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  border: Border.all(color: Colors.white, width: 1.5),
                 ),
-                24.h.spaceH,
-                "${LocaleKeys.logOut.tr()}?".appText(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black87,
-                ),
-                12.h.spaceH,
-                LocaleKeys.areYouSureYouWantToLogout.tr().appText(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600,
-                  textAlign: TextAlign.center,
-                ),
-                36.h.spaceH,
-                Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: BaseButton(
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: LocaleKeys.cancel
-                              .tr()
-                              .appText(
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black87,
-                                fontSize: 16,
-                              )
-                              .appPadding(top: 16.h, bottom: 16.h),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
+                    Container(
+                      padding: EdgeInsets.all(20.w),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
                       ),
+                      child: Icon(LucideIcons.logOut, color: Colors.redAccent, size: 40.w),
                     ),
-                    12.w.spaceW,
-                    Expanded(
-                      child: BaseButton(
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.redAccent,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.redAccent.withValues(alpha: 0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          ),
-                          child: LocaleKeys.logOut
-                              .tr()
-                              .appText(
-                                fontWeight: FontWeight.w700,
+                    28.h.spaceH,
+                    "${LocaleKeys.logOut.tr()}?".appText(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black87,
+                    ),
+                    12.h.spaceH,
+                    LocaleKeys.areYouSureYouWantToLogout.tr().appText(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                      textAlign: TextAlign.center,
+                    ),
+                    40.h.spaceH,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: BaseButton(
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontSize: 16,
-                              )
-                              .appPadding(top: 16.h, bottom: 16.h),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                              ),
+                              child: LocaleKeys.cancel
+                                  .tr()
+                                  .appText(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.black87,
+                                    fontSize: 16,
+                                  )
+                                  .appPadding(top: 18.h, bottom: 18.h),
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
                         ),
-                        onTap: () {
-                          context.read<ProfileCubit>().logout();
-                          Navigator.pop(context);
-                        },
-                      ),
+                        16.w.spaceW,
+                        Expanded(
+                          child: BaseButton(
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.redAccent.withValues(alpha: 0.3),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ]
+                              ),
+                              child: LocaleKeys.logOut
+                                  .tr()
+                                  .appText(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  )
+                                  .appPadding(top: 18.h, bottom: 18.h),
+                            ),
+                            onTap: () {
+                              context.read<ProfileCubit>().logout();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -510,96 +571,105 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: (context) {
         return Dialog(
           insetPadding: EdgeInsets.only(left: 24.w, right: 24.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-          child: Container(
-            padding: EdgeInsets.all(28.w),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(18.w),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(LucideIcons.trash2, color: Colors.redAccent, size: 36.w),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(36),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              child: Container(
+                padding: EdgeInsets.all(32.w),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  border: Border.all(color: Colors.white, width: 1.5),
                 ),
-                24.h.spaceH,
-                "${LocaleKeys.deleteAccount.tr()}?".appText(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black87,
-                ),
-                12.h.spaceH,
-                LocaleKeys.areYouSureYouWantToDeleteAccount.tr().appText(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade600,
-                  textAlign: TextAlign.center,
-                ),
-                36.h.spaceH,
-                Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: BaseButton(
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: LocaleKeys.cancel
-                              .tr()
-                              .appText(
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black87,
-                                fontSize: 16,
-                              )
-                              .appPadding(top: 16.h, bottom: 16.h),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
+                    Container(
+                      padding: EdgeInsets.all(20.w),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
                       ),
+                      child: Icon(LucideIcons.trash2, color: Colors.redAccent, size: 40.w),
                     ),
-                    12.w.spaceW,
-                    Expanded(
-                      child: BaseButton(
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.redAccent,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.redAccent.withValues(alpha: 0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          ),
-                          child: LocaleKeys.delete
-                              .tr()
-                              .appText(
-                                fontWeight: FontWeight.w700,
+                    28.h.spaceH,
+                    "${LocaleKeys.deleteAccount.tr()}?".appText(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black87,
+                    ),
+                    12.h.spaceH,
+                    LocaleKeys.areYouSureYouWantToDeleteAccount.tr().appText(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                      textAlign: TextAlign.center,
+                    ),
+                    40.h.spaceH,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: BaseButton(
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontSize: 16,
-                              )
-                              .appPadding(top: 16.h, bottom: 16.h),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                              ),
+                              child: LocaleKeys.cancel
+                                  .tr()
+                                  .appText(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.black87,
+                                    fontSize: 16,
+                                  )
+                                  .appPadding(top: 18.h, bottom: 18.h),
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
                         ),
-                        onTap: () {
-                          context.read<ProfileCubit>().deleteAccount();
-                          Navigator.pop(context);
-                        },
-                      ),
+                        16.w.spaceW,
+                        Expanded(
+                          child: BaseButton(
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent,
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.redAccent.withValues(alpha: 0.3),
+                                    blurRadius: 15,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ]
+                              ),
+                              child: LocaleKeys.delete
+                                  .tr()
+                                  .appText(
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  )
+                                  .appPadding(top: 18.h, bottom: 18.h),
+                            ),
+                            onTap: () {
+                              context.read<ProfileCubit>().deleteAccount();
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -631,19 +701,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       alignment: Alignment.center,
       children: [
         Container(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: 0.25),
+            color: Colors.white.withValues(alpha: 0.6),
+            border: Border.all(color: Colors.white, width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: _profileImage(userModel),
-          ),
+          child: _profileImage(userModel),
         ),
         Positioned(
           bottom: 0,
@@ -653,23 +724,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _showImagePickerDropdown();
             },
             child: Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: primaryColor,
+                color: Colors.white,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2.5),
+                border: Border.all(color: Colors.grey.shade100, width: 1),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 10,
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: const Icon(
                 LucideIcons.camera,
-                color: Colors.white,
-                size: 16,
+                color: primaryColor,
+                size: 20,
               ),
             ),
           ),
@@ -685,55 +756,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
       useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 30, top: 20),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: 6,
-                width: 50,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: Container(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 40, top: 20),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.8),
+                border: Border(top: BorderSide(color: Colors.white, width: 1.5)),
               ),
-              24.spaceH,
-              "Update Profile Picture".appText(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: Colors.black87,
-              ),
-              30.spaceH,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                   _buildPickerOption(
-                    title: LocaleKeys.pickFromCamera.tr(),
-                    icon: LucideIcons.camera,
-                    color: primaryColor,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _chooseImage(ImageSource.camera);
-                    },
+                  Container(
+                    height: 6,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                  20.w.spaceW,
-                  _buildPickerOption(
-                    title: LocaleKeys.pickGallery.tr(),
-                    icon: LucideIcons.image,
-                    color: const Color(0xFFFF66C4),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _chooseImage(ImageSource.gallery);
-                    },
+                  30.spaceH,
+                  "Update Profile Picture".appText(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black87,
+                  ),
+                  40.spaceH,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                       _buildPickerOption(
+                        title: LocaleKeys.pickFromCamera.tr(),
+                        icon: LucideIcons.camera,
+                        color: primaryColor,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _chooseImage(ImageSource.camera);
+                        },
+                      ),
+                      24.w.spaceW,
+                      _buildPickerOption(
+                        title: LocaleKeys.pickGallery.tr(),
+                        icon: LucideIcons.image,
+                        color: const Color(0xFFFF66C4),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _chooseImage(ImageSource.gallery);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -750,19 +827,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: onTap,
       child: Container(
         width: 140.w,
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 24.h),
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 28.h),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: color.withValues(alpha: 0.1), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ]
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 40.w),
-            16.spaceH,
+            Icon(icon, color: color, size: 44.w),
+            20.spaceH,
             title.appText(
               fontSize: 16,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
               color: color,
             ),
           ],
@@ -781,10 +865,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _profileImage(UserModel? userModel) {
     if ((userModel?.profileImage ?? "").isEmpty) {
       return Container(
-        height: 110.r,
-        width: 110.r,
+        height: 120.r,
+        width: 120.r,
         decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha: 0.1),
+          color: Colors.grey.withValues(alpha: 0.05),
           shape: BoxShape.circle,
         ),
         child: Icon(LucideIcons.user, size: 50.r, color: Colors.grey.shade400),
@@ -792,8 +876,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     return AppImage(
       imageUrl: userModel!.profileImage!,
-      height: 110.r,
-      width: 110.r,
+      height: 120.r,
+      width: 120.r,
       shape: BoxShape.circle,
     );
   }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/model/mood_log_model.dart';
 
@@ -47,16 +48,44 @@ class MoodRepo {
 
   Future<ApiResultStatus> addJournal({
     required Map<String, dynamic> request,
+    String? tUid,
   }) async {
     try {
-      var tUid = preferences.getUserModel()?.uid ?? "";
-      if (tUid.isNotEmpty) {
+      var uid = tUid ?? preferences.getUserModel()?.uid ?? FirebaseAuth.instance.currentUser?.uid ?? "";
+      if (uid.isNotEmpty) {
         await userCollection
-            .doc(tUid)
+            .doc(uid)
             .collection("journals")
             .doc()
             .set(request);
-        return ApiResultStatus.data(data: tUid);
+        return ApiResultStatus.data(data: uid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception("tUid is empty. getUserModel is null or uid is missing."),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(error: Exception("FirebaseException: code=${e.code}, msg=${e.message}"));
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: Exception("Exception: $e"));
+    }
+  }
+
+  Future<ApiResultStatus> updateJournalPosition({
+    required String journalId,
+    required double x,
+    required double y,
+    String? tUid,
+  }) async {
+    try {
+      var uid = tUid ?? preferences.getUserModel()?.uid ?? FirebaseAuth.instance.currentUser?.uid ?? "";
+      if (uid.isNotEmpty) {
+        await userCollection
+            .doc(uid)
+            .collection("journals")
+            .doc(journalId)
+            .update({'x': x, 'y': y});
+        return ApiResultStatus.data(data: uid);
       } else {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),

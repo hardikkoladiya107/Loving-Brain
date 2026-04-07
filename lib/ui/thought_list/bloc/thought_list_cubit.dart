@@ -38,7 +38,7 @@ class ThoughtListCubit extends Cubit<ThoughtListState> {
           .listen((event) {
             changeProps(
               journalList: event.docs
-                  .map((e) => JournalModel.fromJson(e.data()))
+                  .map((e) => JournalModel.fromJson(e.data(), docId: e.id))
                   .toList(),
             );
           });

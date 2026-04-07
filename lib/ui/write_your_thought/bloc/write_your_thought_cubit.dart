@@ -68,6 +68,8 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
         request: {
           "thought_text": state.thoughtsText,
           "log_time": DateTime.now(),
+          "x": 2000.0 + (DateTime.now().millisecond % 100) - 50,
+          "y": 2000.0 + (DateTime.now().microsecond % 100) - 50,
         },
       );
       changeProps(apiResultStatus: apiResultStatus);
