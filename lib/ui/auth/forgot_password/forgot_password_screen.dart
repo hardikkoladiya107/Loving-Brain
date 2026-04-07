@@ -110,7 +110,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            showSnackBar(message: error.toString().replaceAll("Exception: ", ""), type: SnackBarType.ERROR);
           },
         );
       },

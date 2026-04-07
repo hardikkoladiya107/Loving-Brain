@@ -48,7 +48,9 @@ class AuthRepo {
     try {
       var user = await userCollection.doc(uId).get();
       if (user.data() != null) {
-        return UserModel.fromJson(user.data()!);
+        var data = user.data()!;
+        data['uid'] = uId;
+        return UserModel.fromJson(data);
       } else {
         return null;
       }

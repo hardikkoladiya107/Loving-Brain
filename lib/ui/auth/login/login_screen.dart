@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
+            showSnackBar(message: error.toString().replaceAll("Exception: ", ""), type: SnackBarType.ERROR);
           },
         );
       },
@@ -382,8 +382,8 @@ class _LoginScreenState extends State<LoginScreen> {
     EasyLoading.dismiss();
     var userModel = UserModel.fromJson(data);
     await preferences.saveUserModel(userModel);
-    if (navigatorKey.currentContext != null) {
-      navigatorKey.currentContext!.read<LoginCubit>().clearFields();
+    if (context.mounted) {
+      context.read<LoginCubit>().clearFields();
       if (userModel.uid == null) {
         return;
       }
@@ -391,7 +391,7 @@ class _LoginScreenState extends State<LoginScreen> {
           (userModel.parentGender ?? "").isEmpty ||
           (userModel.parentEmail ?? "").isEmpty ||
           userModel.parentDateOfBirth == null) {
-        Navigator.of(navigatorKey.currentContext!).pushReplacement(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => ParentProfileScreen( ),
           ),
@@ -399,14 +399,14 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if ((userModel.childName ?? "").isEmpty ||
           (userModel.childAge ?? "").isEmpty ||
           (userModel.relationshipToChild ?? "").isEmpty) {
-        Navigator.of(navigatorKey.currentContext!).pushReplacement(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => ChildProfileScreen(userId: userModel.uid!),
           ),
         );
       } else {
         await preferences.putBool(SharedPreference.isLogin, true);
-        Navigator.of(navigatorKey.currentContext!).pushReplacement(
+        Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const BaseScreen()),
         );
       }
