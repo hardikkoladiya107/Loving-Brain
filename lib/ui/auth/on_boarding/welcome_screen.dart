@@ -147,24 +147,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     ).appPadding(left: 10, right: 10);
   }
 
-  Widget _loginButton() {
-    return BaseButton(
-      child: Container(
-        decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            LocaleKeys.login.tr().appText(fontWeight: FontWeight.w700),
-          ],
-        ).appPadding(top: 10, bottom: 10),
-      ),
-      onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
-      },
-    ).appPadding(left: 30, right: 30);
-  }
+
 
   Widget _buildTermsText() {
     return RichText(

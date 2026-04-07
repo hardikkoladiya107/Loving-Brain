@@ -22,7 +22,6 @@ import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/manage_children/bloc/manage_children_cubit.dart';
 import 'package:loving_brain/ui/new_behavior/bloc/new_behavior_cubit.dart';
 import 'package:loving_brain/ui/parent_profile/bloc/parent_profile_cubit.dart';
-import 'package:loving_brain/ui/play_and_connect/bloc/play_and_connect_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/propose_change/bloc/propose_change_cubit.dart';
 import 'package:loving_brain/ui/reflect_your_emotions/bloc/reflect_emotion_cubit.dart';
@@ -46,9 +45,6 @@ var blocProvider = [
   ),
   BlocProvider<SubscriptionCubit>(
     create: (BuildContext context) => SubscriptionCubit(),
-  ),
-  BlocProvider<PlayAndConnectCubit>(
-    create: (BuildContext context) => PlayAndConnectCubit(),
   ),
   BlocProvider<AiChatCubit>(create: (BuildContext context) => AiChatCubit()),
   BlocProvider<ActivityCompletedCubit>(
