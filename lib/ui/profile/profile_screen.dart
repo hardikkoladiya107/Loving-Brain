@@ -294,65 +294,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildHeader(UserModel? userModel) {
-    return Column(
-      children: [
-        _profileImageWidget(userModel),
-        24.h.spaceH,
-        (userModel?.parentName ?? "Loving Brain Parent").appText(
-          color: Colors.black87,
-          fontWeight: FontWeight.w900,
-          fontSize: 28,
-          letterSpacing: 0.5,
-        ),
-        8.h.spaceH,
-        (userModel?.email ?? "").appText(
-          color: Colors.grey.shade600,
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
-        if (userModel != null && userModel.displayStreak > 0)
-          Padding(
-            padding: EdgeInsets.only(top: 20.h),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white, width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(LucideIcons.flame, color: const Color(0xFFFF9561), size: 20.w),
-                  8.spaceW,
-                  "${userModel.displayStreak} Day Streak!".appText(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                  ),
-                ],
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Transform.scale(scale: 0.75, child: _profileImageWidget(userModel)),
+          12.h.spaceH,
+          (userModel?.parentName ?? "Loving Brain Parent").appText(
+            color: Colors.black87,
+            fontWeight: FontWeight.w900,
+            fontSize: 20,
+            letterSpacing: 0.5,
+            textAlign: TextAlign.center,
+          ),
+          2.h.spaceH,
+          (userModel?.email ?? "").appText(
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            textAlign: TextAlign.center,
+          ),
+          if (userModel != null && userModel.displayStreak > 0)
+            Padding(
+              padding: EdgeInsets.only(top: 12.h),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(LucideIcons.flame, color: const Color(0xFFFF9561), size: 16.w),
+                    4.spaceW,
+                    "${userModel.displayStreak} Day Streak!".appText(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        16.h.spaceH,
-      ],
+          12.h.spaceH,
+        ],
+      ),
     );
   }
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: EdgeInsets.only(left: 36.w, bottom: 8.h, top: 12.h),
+      padding: EdgeInsets.only(left: 24.w, bottom: 4.h, top: 8.h),
       child: title.toUpperCase().appText(
         textAlign: TextAlign.start,
         fontWeight: FontWeight.w800,
-        fontSize: 12,
+        fontSize: 10,
         letterSpacing: 1.5,
         color: Colors.grey.shade500,
       ),
@@ -361,21 +367,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildGroup(List<Widget> children) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(color: Colors.white, width: 1.5),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 20,
-                  offset: const Offset(0, 5),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -405,37 +411,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 18.h),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           decoration: BoxDecoration(
             border: isLast ? null : Border(bottom: BorderSide(color: Colors.black.withValues(alpha: 0.04))),
           ),
           child: Row(
              children: [
               Container(
-                height: 52.w,
-                width: 52.w,
+                height: 36.w,
+                width: 36.w,
                 decoration: BoxDecoration(
                   color: iconBgColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
                   child: assetIcon != null
-                      ? assetIcon.image(height: 26.w, width: 26.w, color: iconBgColor)
-                      : Icon(icon, color: iconBgColor, size: 26.w),
+                      ? assetIcon.image(height: 18.w, width: 18.w, color: iconBgColor)
+                      : Icon(icon, color: iconBgColor, size: 18.w),
                 ),
               ),
-              20.spaceW,
+              14.spaceW,
               Expanded(
                 child: title.appText(
                   textAlign: TextAlign.start,
                   fontWeight: FontWeight.w700,
-                  fontSize: 16,
+                  fontSize: 13.5,
                   color: titleColor,
                 ),
               ),
               if (showCheckBox)
                 Transform.scale(
-                  scale: 0.95,
+                  scale: 0.75,
                   child: Switch(
                     value: check,
                     onChanged: onChanged,
@@ -447,7 +453,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 )
               else
-                Icon(LucideIcons.chevronRight, color: Colors.grey.withValues(alpha: 0.4), size: 22.w),
+                Icon(LucideIcons.chevronRight, color: Colors.grey.withValues(alpha: 0.4), size: 16.w),
             ],
           ),
         ),

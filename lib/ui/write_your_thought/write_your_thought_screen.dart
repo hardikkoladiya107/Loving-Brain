@@ -288,71 +288,68 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                 ),
                                 
                                 28.h.spaceH,
-                                Row(
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
-                                    Expanded(
-                                      child: BaseButton(
-                                        onTap: () {
-                                          context.read<WriteYourThoughtCubit>().logThought(colorValue: selectedColorValue);
-                                        },
-                                        child: Container(
-                                          height: 52.h,
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [yellowColor3, yellowColor2],
-                                              begin: Alignment.topLeft,
-                                              end: Alignment.bottomRight,
-                                            ),
-                                            borderRadius: BorderRadius.circular(26.r),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: yellowColor3.withValues(alpha: 0.4),
-                                                blurRadius: 10.r,
-                                                offset: Offset(0, 4.h),
-                                              ),
-                                            ],
+                                    BaseButton(
+                                      onTap: () {
+                                        context.read<WriteYourThoughtCubit>().logThought(colorValue: selectedColorValue);
+                                      },
+                                      child: Container(
+                                        height: 52.h,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [yellowColor3, yellowColor2],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
                                           ),
-                                          child: Center(
-                                            child: LocaleKeys.saveEntry.tr().appText(
-                                              color: Colors.white,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w700,
+                                          borderRadius: BorderRadius.circular(26.r),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: yellowColor3.withValues(alpha: 0.4),
+                                              blurRadius: 10.r,
+                                              offset: Offset(0, 4.h),
                                             ),
+                                          ],
+                                        ),
+                                        child: Center(
+                                          child: LocaleKeys.saveEntry.tr().appText(
+                                            color: Colors.white,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                         ),
                                       ),
                                     ),
-                                    12.w.spaceW,
-                                    Expanded(
-                                      child: BaseButton(
-                                        onTap: () {
-                                          if (context.read<WriteYourThoughtCubit>().isValidate()) {
-                                            Navigator.pop(context);
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (_) => ChatDetailScreen(
-                                                  initialChat: modalState.thoughtsText,
-                                                ),
+                                    12.h.spaceH,
+                                    BaseButton(
+                                      onTap: () {
+                                        if (context.read<WriteYourThoughtCubit>().isValidate()) {
+                                          Navigator.pop(context);
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (_) => ChatDetailScreen(
+                                                initialChat: modalState.thoughtsText,
                                               ),
-                                            );
-                                          }
-                                        },
-                                        child: Container(
-                                          height: 52.h,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(26.r),
-                                            border: Border.all(
-                                              color: primaryColor.withValues(alpha: 0.3),
-                                              width: 1.5,
                                             ),
+                                          );
+                                        }
+                                      },
+                                      child: Container(
+                                        height: 52.h,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(26.r),
+                                          border: Border.all(
+                                            color: primaryColor.withValues(alpha: 0.3),
+                                            width: 1.5,
                                           ),
-                                          child: Center(
-                                            child: LocaleKeys.getAIReflection.tr().appText(
-                                              color: primaryColor,
-                                              fontSize: 14.sp,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+                                        ),
+                                        child: Center(
+                                          child: LocaleKeys.getAIReflection.tr().appText(
+                                            color: primaryColor,
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                         ),
                                       ),
