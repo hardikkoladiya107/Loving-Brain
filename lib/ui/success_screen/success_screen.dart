@@ -8,7 +8,7 @@ class SucessScreen extends StatelessWidget {
   final String successText;
   @override
   Widget build(BuildContext context) {
-    Widget _appBar() {
+    Widget appBar() {
       return Row(
         children: [
           20.spaceW,
@@ -31,7 +31,7 @@ class SucessScreen extends StatelessWidget {
       body: Column(
         children: [
           60.spaceH,
-          _appBar(),
+          appBar(),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

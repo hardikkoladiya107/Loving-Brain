@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../model/api_result_status.dart';
 import '../../../model/journal_model.dart';
 import '../../../model/user_model.dart';
 

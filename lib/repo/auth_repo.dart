@@ -37,7 +37,7 @@ class AuthRepo {
       } else {
         return false;
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return false;
     } catch (e) {
       return false;
@@ -54,7 +54,7 @@ class AuthRepo {
       } else {
         return null;
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return null;
     } catch (e) {
       return null;
@@ -72,7 +72,7 @@ class AuthRepo {
       } else {
         return false;
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return false;
     } catch (e) {
       return false;

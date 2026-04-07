@@ -16,7 +16,7 @@ class AppleSignInManager {
         ],
       );
       return credential;
-    } on SignInWithAppleException catch (e) {
+    } on SignInWithAppleException {
       return null;
     }
   }

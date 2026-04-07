@@ -9,7 +9,7 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget _appBar() {
+    Widget appBar() {
       return Row(
         children: [
           20.spaceW,
@@ -34,7 +34,7 @@ class NotificationScreen extends StatelessWidget {
       body: Column(
         children: [
           40.spaceH,
-          _appBar(),
+          appBar(),
           Expanded(
             child: ListView.builder(
               itemCount: 10,

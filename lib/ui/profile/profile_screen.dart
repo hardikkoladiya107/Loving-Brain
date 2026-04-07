@@ -1,7 +1,5 @@
-import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -12,8 +10,6 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/repo/auth_repo.dart';
-import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/auth/on_boarding/welcome_screen.dart';
 import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';

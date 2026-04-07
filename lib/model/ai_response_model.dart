@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'conversation_model.dart';
 

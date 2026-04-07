@@ -9,7 +9,6 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/extra_methods.dart';
-import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_cubit.dart';
 import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_state.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
@@ -170,6 +169,7 @@ class _AddSleepLogScreenState extends State<AddSleepLogScreen> {
     if (date != null) {
       return date;
     }
+    return null;
   }
 
   Future<DateTime?> pickDateTime(BuildContext context) async {

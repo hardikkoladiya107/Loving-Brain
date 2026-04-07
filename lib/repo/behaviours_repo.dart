@@ -34,7 +34,7 @@ class BehavioursRepo {
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -55,7 +55,7 @@ class BehavioursRepo {
           .collection("behaviours")
           .add(request);
       return ApiResultStatus.data(data: behaviours.id);
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );

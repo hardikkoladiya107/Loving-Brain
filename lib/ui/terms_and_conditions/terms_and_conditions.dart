@@ -5,7 +5,7 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget {
-  const TermsAndConditionsScreen({Key? key}) : super(key: key);
+  const TermsAndConditionsScreen({super.key});
 
   @override
   State<TermsAndConditionsScreen> createState() =>

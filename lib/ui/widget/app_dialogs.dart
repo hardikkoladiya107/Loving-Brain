@@ -4,7 +4,7 @@ import '../../main.dart';
 
 enum DialogAnimation { UpDown, Bounce }
 
-showAppDialog({
+void showAppDialog({
   DialogAnimation animation = DialogAnimation.UpDown,
   required Widget Function(BuildContext context) child,
 }) {

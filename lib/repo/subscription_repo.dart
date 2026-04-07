@@ -41,7 +41,7 @@ class SubscriptionRepo {
       } else {
         return null;
       }
-    } on DioException catch (e) {
+    } on DioException {
       return null;
     } catch (e) {
       return null;
@@ -60,7 +60,7 @@ class SubscriptionRepo {
         queryParameters: {"access_token": token},
       );
       return SubscriptionStatusModel.fromJson(response.data);
-    } on DioException catch (e) {
+    } on DioException {
       return null;
     } catch (e) {
       return null;

@@ -7,12 +7,12 @@ class DashedDivider extends StatelessWidget {
   final double dashSpace;
 
   const DashedDivider({
-    Key? key,
+    super.key,
     this.color = Colors.black,
     this.height = 1,
     this.dashWidth = 5,
     this.dashSpace = 3,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

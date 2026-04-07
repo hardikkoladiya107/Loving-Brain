@@ -103,7 +103,7 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                   ),
                 ),
                 TextSpan(
-                  text: " " + LocaleKeys.chatbot.tr(),
+                  text: " ${LocaleKeys.chatbot.tr()}",
                   style: getTextStyle(
                     color: yellowTextColor,
                     fontWeight: FontWeight.w900,

@@ -1,5 +1,6 @@
 /// Cubit for the Schedule screen: listens to child doc (routines) and shared
 /// events, exposes delete actions for routine and shared event.
+library;
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

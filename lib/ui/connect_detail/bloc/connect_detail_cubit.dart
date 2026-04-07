@@ -106,7 +106,7 @@ class ConnectDetailCubit extends Cubit<ConnectDetailState> {
         await PromptsRepo.instance.markPromptAsSeen(selected.id);
       }
 
-      changeProps(promptModel: selected, currentPrompt: selected!.prompt);
+      changeProps(promptModel: selected, currentPrompt: selected.prompt);
     } catch (e) {
       debugPrint("Error in prompt selection logic: $e");
       _useFallback();

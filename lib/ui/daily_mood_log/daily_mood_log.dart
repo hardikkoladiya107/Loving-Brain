@@ -27,7 +27,7 @@ class _DailyMoodLogState extends State<DailyMoodLog> {
 
   @override
   Widget build(BuildContext context) {
-    Widget _appBar() {
+    Widget appBar() {
       return Row(
         children: [
           20.spaceW,
@@ -68,14 +68,14 @@ class _DailyMoodLogState extends State<DailyMoodLog> {
         },
         builder: (context, state) {
           return Column(
-            children: [40.spaceH, _appBar(), 12.spaceH, _logsList(state)],
+            children: [40.spaceH, appBar(), 12.spaceH, _logsList(state)],
           );
         },
       ),
     );
   }
 
-  _logsList(DailyMoodLogState state) {
+  Expanded _logsList(DailyMoodLogState state) {
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.zero,

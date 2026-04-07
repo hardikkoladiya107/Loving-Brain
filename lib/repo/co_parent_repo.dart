@@ -39,7 +39,7 @@ class CoParentRepo {
     try {
       var eventCollection = await sharedEventCollection.add(request);
       return ApiResultStatus.data(data: eventCollection.id);
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -59,7 +59,7 @@ class CoParentRepo {
         "propose": FieldValue.arrayUnion([request]),
       });
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -79,7 +79,7 @@ class CoParentRepo {
           .doc(documentReference)
           .update(request);
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -119,7 +119,7 @@ class CoParentRepo {
         request,
       );
       return ApiResultStatus.data(data: invitationCollectionResult.id);
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -138,7 +138,7 @@ class CoParentRepo {
     try {
       await coParentInvitationCollection.doc(referenceId).update(request);
       return ApiResultStatus.data(data: invitationModel);
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -193,7 +193,7 @@ class CoParentRepo {
         }
       }
       return updateResult;
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );

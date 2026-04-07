@@ -44,7 +44,7 @@ class ChildRepo {
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -89,7 +89,7 @@ class ChildRepo {
         "routines": FieldValue.arrayRemove([request]),
       });
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -109,7 +109,7 @@ class ChildRepo {
         "essentials": FieldValue.arrayUnion([request]),
       });
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -129,7 +129,7 @@ class ChildRepo {
         "essentials": FieldValue.arrayRemove([request]),
       });
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -261,7 +261,7 @@ class ChildRepo {
           .doc(documentReference)
           .update(request);
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -281,7 +281,7 @@ class ChildRepo {
           .doc(documentReference)
           .update(request);
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -301,7 +301,7 @@ class ChildRepo {
           .doc(documentReference)
           .update(request);
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -321,7 +321,7 @@ class ChildRepo {
           .doc(documentReference)
           .update(request);
       return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -389,7 +389,7 @@ class ChildRepo {
           .where((element) => element.isNotEmpty)
           .toList();
       return getChildren(childrenIds: ids);
-    } on FirebaseException catch (e) {
+    } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );

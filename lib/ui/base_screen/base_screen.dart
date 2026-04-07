@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/home/home_screen.dart';
@@ -11,7 +10,6 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../manager/deep_link/deep_link_manager.dart';
 import '../ai_chat/ai_chat_screen.dart';
-import '../daily_routine/daily_routine_screen.dart';
 import '../write_your_thought/write_your_thought_screen.dart';
 import 'bloc/base_cubit.dart';
 import 'bloc/base_state.dart';

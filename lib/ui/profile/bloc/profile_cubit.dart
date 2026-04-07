@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -13,7 +12,6 @@ import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../model/api_result_status.dart';
-import '../../../repo/ai_repo.dart';
 import '../../../repo/auth_repo.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {

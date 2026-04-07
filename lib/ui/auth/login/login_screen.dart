@@ -16,7 +16,6 @@ import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
-import '../../../main.dart';
 import '../../../other/app_color.dart';
 import '../../../other/snack_bar.dart';
 import '../../base_screen/base_screen.dart';
