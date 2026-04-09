@@ -30,67 +30,88 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Positioned(top: 80, left: 24, right: 24, child: _personalizedCard()),
-            Positioned(
-              bottom: 350,
-              left: 30,
-              right: 30,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-                    ),
-                    child: LocaleKeys.weGuideYouThroughParenting.tr().appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      textAlign: TextAlign.center,
+        body: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1500),
+          tween: Tween(begin: 0.0, end: 1.0),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Stack(
+              children: [
+                Positioned(
+                  top: 80 + (20 * (1 - value)),
+                  left: 24,
+                  right: 24,
+                  child: Opacity(
+                    opacity: value.clamp(0.0, 1.0),
+                    child: _personalizedCard(),
+                  ),
+                ),
+                Positioned(
+                  bottom: 350 + (30 * (1 - value)),
+                  left: 30,
+                  right: 30,
+                  child: Opacity(
+                    opacity: (value - 0.3).clamp(0.0, 1.0),
+                    child: _floatingGlassInfo(
+                      text: LocaleKeys.weGuideYouThroughParenting.tr(),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: 190.h,
-              left: 30,
-              right: 30,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-                    ),
-                    child: LocaleKeys.takeAFree2weekCoaching.tr().appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      textAlign: TextAlign.center,
+                Positioned(
+                  bottom: 190.h + (30 * (1 - value)),
+                  left: 30,
+                  right: 30,
+                  child: Opacity(
+                    opacity: (value - 0.6).clamp(0.0, 1.0),
+                    child: _floatingGlassInfo(
+                      text: LocaleKeys.takeAFree2weekCoaching.tr(),
                     ),
                   ),
                 ),
-              ),
+                Positioned(
+                  bottom: 50,
+                  left: 0,
+                  right: 0,
+                  child: Opacity(
+                    opacity: (value - 0.8).clamp(0.0, 1.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [_nextButton()],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _floatingGlassInfo({required String text}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            gradient: LinearGradient(
+              colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            Positioned(
-              bottom: 50,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [_nextButton()],
-              ),
-            ),
-          ],
+          ),
+          child: text.appText(
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            textAlign: TextAlign.center,
+            color: Colors.white,
+            height: 1.4,
+          ),
         ),
       ),
     );
@@ -98,14 +119,20 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
 
   Widget _personalizedCard() {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(30),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 30,
+              )
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -114,14 +141,22 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
               LocaleKeys.personalizedParentSupport.tr().appText(
                 fontWeight: FontWeight.w900,
                 textAlign: TextAlign.center,
-                fontSize: 22,
-                letterSpacing: 1.1,
+                fontSize: 26,
+                letterSpacing: 1.2,
+                color: Colors.white,
               ),
-              8.spaceH,
-              LocaleKeys.justTapAway.tr().appText(
-                color: yellowTextColor,
-                fontWeight: FontWeight.w900,
-                fontSize: 20,
+              12.spaceH,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: yellowTextColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: LocaleKeys.justTapAway.tr().appText(
+                  color: yellowTextColor,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 22,
+                ),
               ),
             ],
           ).appPadding(all: 24),
@@ -133,15 +168,19 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
   Widget _nextButton() {
     return BaseButton(
       child: Container(
-        width: 200.w,
+        width: 220.w,
         decoration: BoxDecoration(
-          color: cardColor2,
-          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [cardColor2, cardColor2.withValues(alpha: 0.8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: cardColor2.withValues(alpha: 0.4),
-              blurRadius: 15,
-              offset: Offset(0, 5),
+              color: cardColor2.withValues(alpha: 0.5),
+              blurRadius: 20,
+              offset: Offset(0, 8),
             ),
           ],
         ),
@@ -151,8 +190,13 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
           children: [
             LocaleKeys.next
                 .tr()
-                .appText(fontWeight: FontWeight.w800, color: Colors.white, fontSize: 16)
-                .appPadding(left: 40, right: 40, top: 14, bottom: 14),
+                .appText(
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  fontSize: 18,
+                  letterSpacing: 1.0,
+                )
+                .appPadding(left: 40, right: 40, top: 16, bottom: 16),
           ],
         ),
       ),

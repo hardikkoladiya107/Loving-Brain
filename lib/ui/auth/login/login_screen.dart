@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -70,65 +71,110 @@ class _LoginScreenState extends State<LoginScreen> {
               );
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.images.imgLoginBg.path),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  80.spaceH,
-                  _loginIcon(),
-                  40.spaceH,
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 32),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 20,
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            _email(state),
-                            12.spaceH,
-                            _password(state),
-                            4.spaceH,
-                            _forgotPassword(),
-                            16.spaceH,
-                            _loginButton(),
-                            16.spaceH,
-                            _dontHaveAccount(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ).appPadding(left: 20, right: 20),
-                  30.spaceH,
-                  _signUpWithGoogle(),
-                  16.spaceH,
-                  if (Platform.isIOS) _signUpWithApple(),
-                  60.spaceH,
-                  _buildTermsText(),
-                  40.spaceH,
-                ],
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: const Color(0xFFFAFAFA),
+          body: Stack(
+            children: [
+              Positioned(
+                top: -100.h,
+                left: -50.w,
+                child: Container(
+                  width: 350.w,
+                  height: 350.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF894BCD).withValues(alpha: 0.18),
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                top: 150.h,
+                right: -100.w,
+                child: Container(
+                  width: 300.w,
+                  height: 300.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFF66C4).withValues(alpha: 0.12),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -50.h,
+                left: -80.w,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF5271FF).withValues(alpha: 0.10),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+                  child: Container(color: Colors.white.withValues(alpha: 0.35)),
+                ),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        40.spaceH,
+                        _loginIcon(),
+                        40.spaceH,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: Colors.white, width: 1.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 4),
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  _email(state),
+                                  16.spaceH,
+                                  _password(state),
+                                  8.spaceH,
+                                  _forgotPassword(),
+                                  24.spaceH,
+                                  _loginButton(),
+                                  20.spaceH,
+                                  _dontHaveAccount(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ).appPadding(left: 20, right: 20),
+                        30.spaceH,
+                        _signUpWithGoogle(),
+                        16.spaceH,
+                        if (Platform.isIOS) _signUpWithApple(),
+                        60.spaceH,
+                        _buildTermsText(),
+                        40.spaceH,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -153,14 +199,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _signUpWithGoogle() {
     return BaseButton(
       child: Container(
-        width: 300,
+        width: 300.w,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 10,
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 15,
               offset: Offset(0, 4),
             )
           ],
@@ -168,12 +215,12 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Assets.icons.icGoogleIcon.image(height: 24, width: 24),
+            Assets.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             LocaleKeys.continueWithGoogle
                 .tr()
-                .appText(fontWeight: FontWeight.w700, fontSize: 14)
-                .appPadding(top: 14, bottom: 14),
+                .appText(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.black87)
+                .appPadding(top: 14.h, bottom: 14.h),
           ],
         ),
       ),
@@ -189,14 +236,15 @@ class _LoginScreenState extends State<LoginScreen> {
         context.read<LoginCubit>().signInWithApple();
       },
       child: Container(
-        width: 300,
+        width: 300.w,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.9),
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 10,
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 15,
               offset: Offset(0, 4),
             )
           ],
@@ -204,12 +252,12 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Assets.icons.icAppleIcon.image(height: 24, width: 24),
+            Assets.icons.icAppleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             LocaleKeys.continueWithApple
                 .tr()
-                .appText(fontWeight: FontWeight.w700, fontSize: 14)
-                .appPadding(top: 14, bottom: 14),
+                .appText(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.black87)
+                .appPadding(top: 14.h, bottom: 14.h),
           ],
         ),
       ),
@@ -221,31 +269,39 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+                color: Colors.white.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 15,
+                    offset: Offset(0, 4),
+                  )
+                ],
               ),
               child: Column(
                 children: [
                   LocaleKeys.login.tr().appText(
-                    color: blueTextColor,
-                    fontSize: 28,
+                    color: Colors.black87,
+                    fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 1.1,
+                    letterSpacing: 1.0,
                   ),
+                  2.spaceH,
                   LocaleKeys.appName.tr().appText(
-                    color: blueTextColor,
-                    fontSize: 28,
+                    color: primaryColor,
+                    fontSize: 20,
                     fontWeight: FontWeight.w900,
-                    letterSpacing: 1.1,
+                    letterSpacing: 1.0,
                   ),
                 ],
-              ).appPadding(left: 20, right: 20, top: 12, bottom: 12),
+              ).appPadding(left: 30, right: 30, top: 16, bottom: 16),
             ),
           ),
         ),
@@ -257,13 +313,13 @@ class _LoginScreenState extends State<LoginScreen> {
     return BaseButton(
       child: Container(
         decoration: BoxDecoration(
-          color: blueButtonColor,
-          borderRadius: BorderRadius.circular(20),
+          color: primaryColor,
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: blueButtonColor.withValues(alpha: 0.4),
+              color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
-              offset: Offset(0, 5),
+              offset: Offset(0, 6),
             )
           ],
         ),
@@ -277,24 +333,26 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.white,
             ),
           ],
-        ).appPadding(top: 14, bottom: 14),
+        ).appPadding(top: 14.h, bottom: 14.h),
       ),
       onTap: () {
         context.read<LoginCubit>().performLogin();
       },
-    ).appPadding(left: 24, right: 24);
+    ).appPadding(left: 32, right: 32);
   }
 
   Widget _dontHaveAccount() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        LocaleKeys.donHaveAnAccount.tr().appText(color: blackTextColor),
-        10.spaceW,
+        LocaleKeys.donHaveAnAccount.tr().appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600, fontSize: 13),
+        6.spaceW,
         BaseButton(
           child: LocaleKeys.signUp.tr().appText(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
+            color: primaryColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 13,
+            textDecoration: TextDecoration.underline,
           ),
           onTap: () {
             context.read<LoginCubit>().clearFields();
@@ -315,9 +373,9 @@ class _LoginScreenState extends State<LoginScreen> {
       error: state.emailAddressError,
       keyboardType: TextInputType.emailAddress,
       prefixIcon: Assets.icons.icEmailPrefixIcon.image(
-        height: 30,
-        width: 30,
-        color: Colors.grey,
+        height: 24,
+        width: 24,
+        color: Colors.grey.shade500,
       ),
       onChanged: (value) {
         context.read<LoginCubit>().changeProps(emailAddress: value);
@@ -333,15 +391,16 @@ class _LoginScreenState extends State<LoginScreen> {
       error: state.passwordError,
       keyboardType: TextInputType.visiblePassword,
       prefixIcon: Assets.icons.icPasswordPrefixIcon.image(
-        height: 30,
-        width: 30,
-        color: Colors.grey,
+        height: 24,
+        width: 24,
+        color: Colors.grey.shade500,
       ),
       obscureText: state.obscureTextPassword,
       maxLines: 1,
       suffixIcon: IconButton(
         icon: Icon(
           state.obscureTextPassword ? Icons.visibility_off : Icons.visibility,
+          color: Colors.grey.shade500,
         ),
         onPressed: () {
           context.read<LoginCubit>().changeProps(
@@ -361,7 +420,9 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         BaseButton(
           child: LocaleKeys.forgotPassword.tr().appText(
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
+            color: Colors.grey.shade700,
+            fontSize: 12,
           ),
           onTap: () {
             context.read<LoginCubit>().clearFields();
@@ -372,7 +433,7 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           },
         ),
-        20.spaceW,
+        30.spaceW,
       ],
     );
   }
@@ -417,7 +478,7 @@ class _LoginScreenState extends State<LoginScreen> {
       textAlign: TextAlign.center,
       text: TextSpan(
         style: getTextStyle(
-          color: Colors.black87,
+          color: Colors.grey.shade600,
           fontSize: 12,
           fontWeight: FontWeight.w500,
         ),
@@ -426,7 +487,7 @@ class _LoginScreenState extends State<LoginScreen> {
           TextSpan(
             text: "Terms & Conditions",
             style: getTextStyle(
-               color: blueTextColor,
+               color: primaryColor,
                fontSize: 12,
                fontWeight: FontWeight.bold,
                textDecoration: TextDecoration.underline,
@@ -442,7 +503,7 @@ class _LoginScreenState extends State<LoginScreen> {
           TextSpan(
             text: "Privacy Policy",
             style: getTextStyle(
-               color: blueTextColor,
+               color: primaryColor,
                fontSize: 12,
                fontWeight: FontWeight.bold,
                textDecoration: TextDecoration.underline,

@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
@@ -38,58 +39,130 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       builder: (context, state) {
         emailTextEditingController.text = state.emailAddress;
 
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.images.imgLoginBg.path),
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  160.spaceH,
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 40),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.6),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.05),
-                              blurRadius: 20,
-                            )
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(Icons.lock_reset, size: 60, color: blueButtonColor),
-                            16.spaceH,
-                            LocaleKeys.forgotPassword.tr().appText(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900,
-                              color: blueTextColor,
-                            ),
-                            24.spaceH,
-                            _email(state),
-                            30.spaceH,
-                            _resetButton(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ).appPadding(left: 20, right: 20),
-                ],
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: const Color(0xFFFAFAFA),
+          body: Stack(
+            children: [
+              Positioned(
+                top: -100.h,
+                left: -50.w,
+                child: Container(
+                  width: 350.w,
+                  height: 350.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF894BCD).withValues(alpha: 0.18),
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                top: 150.h,
+                right: -100.w,
+                child: Container(
+                  width: 300.w,
+                  height: 300.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFF66C4).withValues(alpha: 0.12),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -50.h,
+                left: -80.w,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF5271FF).withValues(alpha: 0.10),
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
+                  child: Container(color: Colors.white.withValues(alpha: 0.35)),
+                ),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        80.spaceH,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 40),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: Colors.white, width: 1.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.03),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 4),
+                                  )
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: primaryColor.withValues(alpha: 0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(Icons.lock_reset, size: 60, color: primaryColor),
+                                  ),
+                                  24.spaceH,
+                                  LocaleKeys.forgotPassword.tr().appText(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black87,
+                                    letterSpacing: 1.0,
+                                  ),
+                                  12.spaceH,
+                                  "Enter your details to receive reset instructions".appText(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                    textAlign: TextAlign.center,
+                                  ).appPadding(left: 30, right: 30),
+                                  32.spaceH,
+                                  _email(state),
+                                  40.spaceH,
+                                  _resetButton(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ).appPadding(left: 20, right: 20),
+                        40.spaceH,
+                        BaseButton(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
+                              4.spaceW,
+                              "Back to Login".appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+                            ],
+                          ),
+                          onTap: () => Navigator.pop(context),
+                        ),
+                        40.spaceH,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -124,9 +197,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       error: state.emailAddressError,
       keyboardType: TextInputType.emailAddress,
       prefixIcon: Assets.icons.icEmailPrefixIcon.image(
-        height: 30,
-        width: 30,
-        color: Colors.grey,
+        height: 24,
+        width: 24,
+        color: Colors.grey.shade500,
       ),
       onChanged: (value) {
         context.read<ForgotPasswordCubit>().changeProps(emailAddress: value);
@@ -138,13 +211,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return BaseButton(
       child: Container(
         decoration: BoxDecoration(
-          color: blueButtonColor,
-          borderRadius: BorderRadius.circular(20),
+          color: primaryColor,
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: blueButtonColor.withValues(alpha: 0.4),
+              color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
-              offset: Offset(0, 5),
+              offset: Offset(0, 6),
             )
           ],
         ),
@@ -158,11 +231,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               color: Colors.white,
             ),
           ],
-        ).appPadding(top: 14, bottom: 14),
+        ).appPadding(top: 14.h, bottom: 14.h),
       ),
       onTap: () {
         context.read<ForgotPasswordCubit>().performForgotPassword();
       },
-    ).appPadding(left: 24, right: 24);
+    ).appPadding(left: 32, right: 32);
   }
 }

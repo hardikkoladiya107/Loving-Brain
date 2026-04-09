@@ -30,103 +30,165 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(children: []),
-            Spacer(flex: 2),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                  ),
-                  child: Column(
-                    children: [
-                      LocaleKeys.youMadeTt
-                          .tr()
-                          .appText(
-                            fontSize: 24,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.2,
-                          ),
-                      12.spaceH,
-                      LocaleKeys.letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs
-                          .tr()
-                          .appText(
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            textAlign: TextAlign.center,
-                          ),
-                    ],
-                  ),
-                ),
-              ),
-            ).appPadding(left: 24, right: 24),
-            Spacer(),
-            Column(
+        body: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1500),
+          tween: Tween(begin: 0.0, end: 1.0),
+          builder: (context, value, child) {
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _infoCard(
-                  cardColor: cardColor1,
-                  header: LocaleKeys.dailyMindfulMoments.tr(),
-                  description: LocaleKeys.twoMinExercisesToResetAndRecharge
-                      .tr(),
-                  assetImage: Assets.icons.icDailyMindfulMomentsIcon,
-                ),
-                18.spaceH,
-                _infoCard(
-                  cardColor: cardColor2,
-                  header: LocaleKeys.parentingInsights.tr(),
-                  description: LocaleKeys.expertBackedTipsTailoredForYourNeeds
-                      .tr(),
-                  assetImage: Assets.icons.icParentingInsightsIcon,
-                ),
-                18.spaceH,
-                _infoCard(
-                  cardColor: cardColor3,
-                  header: LocaleKeys.stressSOS.tr(),
-                  description: LocaleKeys.quickToolsForCalmingInToughMoments
-                      .tr(),
-                  assetImage: Assets.icons.icStressSosIcon,
-                ),
-                10.spaceH,
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: LocaleKeys.evenSuperheroesRequireSupport
-                          .tr()
-                          .appText(
-                            fontWeight: FontWeight.w800,
-                            textAlign: TextAlign.center,
-                            fontSize: 14,
-                            color: primaryColor,
-                          )
-                          .appPadding(all: 16),
-                    ),
+                Spacer(flex: 2),
+                Transform.translate(
+                  offset: Offset(0, 30 * (1 - value)),
+                  child: Opacity(
+                    opacity: value.clamp(0.0, 1.0),
+                    child: _buildHeaderCard(),
                   ),
-                ).appPadding(left: 30, right: 30),
-                130.spaceH,
-                _nextButton(),
-                30.spaceH,
+                ),
+                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _animatedInfoCard(
+                      progress: value,
+                      threshold: 0.3,
+                      cardColor: cardColor1,
+                      header: LocaleKeys.dailyMindfulMoments.tr(),
+                      description: LocaleKeys.twoMinExercisesToResetAndRecharge.tr(),
+                      assetImage: Assets.icons.icDailyMindfulMomentsIcon,
+                    ),
+                    18.spaceH,
+                    _animatedInfoCard(
+                      progress: value,
+                      threshold: 0.5,
+                      cardColor: cardColor2,
+                      header: LocaleKeys.parentingInsights.tr(),
+                      description: LocaleKeys.expertBackedTipsTailoredForYourNeeds.tr(),
+                      assetImage: Assets.icons.icParentingInsightsIcon,
+                    ),
+                    18.spaceH,
+                    _animatedInfoCard(
+                      progress: value,
+                      threshold: 0.7,
+                      cardColor: cardColor3,
+                      header: LocaleKeys.stressSOS.tr(),
+                      description: LocaleKeys.quickToolsForCalmingInToughMoments.tr(),
+                      assetImage: Assets.icons.icStressSosIcon,
+                    ),
+                    24.spaceH,
+                    _animatedSuperheroCard(value),
+                    60.spaceH,
+                    _animatedNextButton(value),
+                    30.spaceH,
+                  ],
+                ),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildHeaderCard() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            gradient: LinearGradient(
+              colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Column(
+            children: [
+              LocaleKeys.youMadeTt.tr().appText(
+                fontSize: 28,
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+              ),
+              12.spaceH,
+              LocaleKeys.letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs.tr().appText(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                textAlign: TextAlign.center,
+                height: 1.4,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).appPadding(left: 24, right: 24);
+  }
+
+  Widget _animatedInfoCard({
+    required double progress,
+    required double threshold,
+    required Color cardColor,
+    required String header,
+    required String description,
+    required AssetGenImage assetImage,
+  }) {
+    final double cardAlpha = (progress - threshold).clamp(0.0, 0.3) / 0.3;
+    return Transform.translate(
+      offset: Offset(20 * (1 - cardAlpha), 0),
+      child: Opacity(
+        opacity: cardAlpha,
+        child: _infoCard(
+          cardColor: cardColor,
+          header: header,
+          description: description,
+          assetImage: assetImage,
+        ),
+      ),
+    );
+  }
+
+  Widget _animatedSuperheroCard(double value) {
+    final double alpha = (value - 0.8).clamp(0.0, 0.2) / 0.2;
+    return Opacity(
+      opacity: alpha,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                )
+              ],
+            ),
+            child: LocaleKeys.evenSuperheroesRequireSupport.tr().appText(
+              fontWeight: FontWeight.w800,
+              textAlign: TextAlign.center,
+              fontSize: 14,
+              color: primaryColor,
+            ).appPadding(all: 16),
+          ),
+        ),
+      ),
+    ).appPadding(left: 30, right: 30);
+  }
+
+  Widget _animatedNextButton(double value) {
+    final double alpha = (value - 0.9).clamp(0.0, 0.1) / 0.1;
+    return Opacity(
+      opacity: alpha,
+      child: _nextButton(),
     );
   }
 

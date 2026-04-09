@@ -31,52 +31,111 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            80.spaceH,
-            Row(),
-            _topCard(),
-            20.spaceH,
-            _card1(
-              title: LocaleKeys.dailySchedulePlanner.tr(),
-              description: LocaleKeys.shareResponsibilityFairly.tr(),
-              image: Assets.icons.icDailySchedulePlannerIcon,
-              trackerStartColor: sliderTrackColor1,
-              trackerEndColor: sliderTrackColor1.withValues(alpha: 0.3),
-            ),
-            20.spaceH,
-            _card1(
-              title: LocaleKeys.coParentingCalendar.tr(),
-              description: LocaleKeys
-                  .coordinateChildRoutinesMealsSchoolPlaytimeTherapy
-                  .tr(),
-              image: Assets.icons.icCoParentingIcon,
-              trackerStartColor: sliderTrackColor2,
-              trackerEndColor: sliderTrackColor2.withValues(alpha: 0.3),
-            ),
-            20.spaceH,
-            _card1(
-              title: LocaleKeys.mindfulness.tr(),
-              description: LocaleKeys.overallWellbeing.tr(),
-              image: Assets.icons.icMindfulness,
-              trackerStartColor: sliderTrackColor3,
-              trackerEndColor: sliderTrackColor3.withValues(alpha: 0.3),
-            ),
-            20.spaceH,
-            _card1(
-              title: LocaleKeys.parentSupport.tr(),
-              description: LocaleKeys.certifiedTrainersCounselors.tr(),
-              image: Assets.icons.icParentSupport,
-              trackerStartColor: sliderTrackColor4,
-              trackerEndColor: sliderTrackColor4.withValues(alpha: 0.3),
-            ),
-            Spacer(),
-            _nextButton(),
-            30.spaceH,
-          ],
+        body: TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 1800),
+          tween: Tween(begin: 0.0, end: 1.0),
+          builder: (context, value, child) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                80.spaceH,
+                Transform.translate(
+                  offset: Offset(0, 30 * (1 - value)),
+                  child: Opacity(
+                    opacity: value.clamp(0.0, 1.0),
+                    child: _topCard(),
+                  ),
+                ),
+                20.spaceH,
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        _animatedCard(
+                          progress: value,
+                          threshold: 0.2,
+                          title: LocaleKeys.dailySchedulePlanner.tr(),
+                          description: LocaleKeys.shareResponsibilityFairly.tr(),
+                          image: Assets.icons.icDailySchedulePlannerIcon,
+                          trackerStartColor: sliderTrackColor1,
+                          trackerEndColor: sliderTrackColor1.withValues(alpha: 0.2),
+                        ),
+                        16.spaceH,
+                        _animatedCard(
+                          progress: value,
+                          threshold: 0.4,
+                          title: LocaleKeys.coParentingCalendar.tr(),
+                          description: LocaleKeys.coordinateChildRoutinesMealsSchoolPlaytimeTherapy.tr(),
+                          image: Assets.icons.icCoParentingIcon,
+                          trackerStartColor: sliderTrackColor2,
+                          trackerEndColor: sliderTrackColor2.withValues(alpha: 0.2),
+                        ),
+                        16.spaceH,
+                        _animatedCard(
+                          progress: value,
+                          threshold: 0.6,
+                          title: LocaleKeys.mindfulness.tr(),
+                          description: LocaleKeys.overallWellbeing.tr(),
+                          image: Assets.icons.icMindfulness,
+                          trackerStartColor: sliderTrackColor3,
+                          trackerEndColor: sliderTrackColor3.withValues(alpha: 0.2),
+                        ),
+                        16.spaceH,
+                        _animatedCard(
+                          progress: value,
+                          threshold: 0.8,
+                          title: LocaleKeys.parentSupport.tr(),
+                          description: LocaleKeys.certifiedTrainersCounselors.tr(),
+                          image: Assets.icons.icParentSupport,
+                          trackerStartColor: sliderTrackColor4,
+                          trackerEndColor: sliderTrackColor4.withValues(alpha: 0.2),
+                        ),
+                        100.spaceH,
+                      ],
+                    ),
+                  ),
+                ),
+                _animatedNextButton(value),
+                30.spaceH,
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _animatedCard({
+    required double progress,
+    required double threshold,
+    required String title,
+    required String description,
+    required AssetGenImage image,
+    required Color trackerStartColor,
+    required Color trackerEndColor,
+  }) {
+    final double cardAlpha = (progress - threshold).clamp(0.0, 0.2) / 0.2;
+    return Transform.translate(
+      offset: Offset(0, 20 * (1 - cardAlpha)),
+      child: Opacity(
+        opacity: cardAlpha,
+        child: _card1(
+          title: title,
+          description: description,
+          image: image,
+          trackerStartColor: trackerStartColor,
+          trackerEndColor: trackerEndColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _animatedNextButton(double value) {
+    final double alpha = (value - 0.9).clamp(0.0, 0.1) / 0.1;
+    return Opacity(
+      opacity: alpha,
+      child: _nextButton(),
     );
   }
 
@@ -84,12 +143,12 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.3),
+            color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
           ),
           child: RichText(
             text: TextSpan(
@@ -97,9 +156,9 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                 TextSpan(
                   text: LocaleKeys.intelligent.tr(),
                   style: getTextStyle(
-                    color: Colors.black87,
+                    color: Colors.white,
                     fontWeight: FontWeight.w900,
-                    fontSize: 22,
+                    fontSize: 24,
                   ),
                 ),
                 TextSpan(
@@ -107,12 +166,12 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                   style: getTextStyle(
                     color: yellowTextColor,
                     fontWeight: FontWeight.w900,
-                    fontSize: 22,
+                    fontSize: 24,
                   ),
                 ),
               ],
             ),
-          ).appPadding(left: 20, right: 20, top: 12, bottom: 12),
+          ).appPadding(left: 24, right: 24, top: 16, bottom: 16),
         ),
       ),
     ).appPadding(left: 30, right: 30);
@@ -126,70 +185,61 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
     required Color trackerEndColor,
   }) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.75),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
+            color: Colors.white.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
           ),
           child: Row(
             children: [
               16.spaceW,
               Container(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: trackerStartColor.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
-                child: image.image(height: 40.h, width: 40.w),
+                child: image.image(height: 32.h, width: 32.w),
               ),
               16.spaceW,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    12.spaceH,
+                    16.spaceH,
                     title.appText(
-                      color: Colors.black87,
+                      color: Colors.white,
                       fontWeight: FontWeight.w900,
-                      fontSize: 14,
+                      fontSize: 16,
                       textAlign: TextAlign.start,
                     ),
-                    4.spaceH,
+                    6.spaceH,
                     description.appText(
-                      color: Colors.black54,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
                       textAlign: TextAlign.start,
-                      height: 1.2,
-                    ),
-                    8.spaceH,
-                    SliderTheme(
-                      data: SliderTheme.of(context).copyWith(
-                        trackHeight: 6,
-                        overlayShape: SliderComponentShape.noOverlay,
-                        thumbShape: SliderComponentShape.noThumb,
-                        trackShape: const RoundedRectSliderTrackShape(),
-                        activeTrackColor: trackerStartColor,
-                        inactiveTrackColor: trackerEndColor,
-                      ),
-                      child: Slider(value: 1, onChanged: (value) {}, max: 10),
+                      height: 1.3,
                     ),
                     12.spaceH,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: 0.7,
+                        backgroundColor: trackerEndColor,
+                        valueColor: AlwaysStoppedAnimation<Color>(trackerStartColor),
+                        minHeight: 8,
+                      ),
+                    ),
+                    16.spaceH,
                   ],
                 ),
               ),
-              12.spaceW,
+              16.spaceW,
             ],
           ),
         ),
@@ -203,15 +253,19 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
       children: [
         BaseButton(
           child: Container(
-            width: 220.w,
+            width: 240.w,
             decoration: BoxDecoration(
-              color: blueButtonColor,
+              gradient: LinearGradient(
+                colors: [blueButtonColor, blueButtonColor.withValues(alpha: 0.8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: blueButtonColor.withValues(alpha: 0.4),
-                  blurRadius: 15,
-                  offset: Offset(0, 5),
+                  color: blueButtonColor.withValues(alpha: 0.5),
+                  blurRadius: 20,
+                  offset: Offset(0, 8),
                 ),
               ],
             ),
@@ -222,12 +276,12 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                 LocaleKeys.next
                     .tr()
                     .appText(
-                      fontWeight: FontWeight.w800, 
+                      fontWeight: FontWeight.w900, 
                       color: Colors.white,
-                      fontSize: 16,
-                      letterSpacing: 0.5,
+                      fontSize: 18,
+                      letterSpacing: 1.0,
                     )
-                    .appPadding(top: 14, bottom: 14),
+                    .appPadding(top: 16, bottom: 16),
               ],
             ),
           ),
