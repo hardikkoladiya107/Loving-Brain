@@ -293,26 +293,63 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Stack(
         children: [
-          // Background large quote icon
+          // Elegant sweeping gradient background element
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 140,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.white.withValues(alpha: 0), Colors.amber.shade50],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+          ),
+          // Formatted quote watermark
           Positioned(
             right: -20,
             bottom: -20,
             child: Icon(
               Icons.format_quote_rounded,
               size: 100,
-              color: Colors.amber.shade50.withValues(alpha: 0.8),
+              color: Colors.amber.shade100.withValues(alpha: 0.6),
             ),
           ),
+          // Premium Accent Bar
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 5,
+              decoration: BoxDecoration(
+                color: Colors.amber.shade400,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  bottomLeft: Radius.circular(24),
+                ),
+              ),
+            ),
+          ),
+          // Content
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(color: Colors.amber.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4))
+                    ],
+                    border: Border.all(color: Colors.amber.shade100, width: 1),
                   ),
                   child: Icon(Icons.lightbulb_rounded, color: Colors.amber.shade500, size: 24),
                 ),
@@ -320,19 +357,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       LocaleKeys.dailyParentingTip.tr().appText(
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: Colors.amber.shade700,
+                        color: Colors.amber.shade800,
                         letterSpacing: 0.5,
+                        textAlign: TextAlign.left,
                       ),
-                      8.spaceH,
+                      6.spaceH,
                       state.todayParentingTip.appText(
                         fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         color: Colors.black87,
                         height: 1.4,
+                        textAlign: TextAlign.left,
                       ),
                     ],
                   ),
