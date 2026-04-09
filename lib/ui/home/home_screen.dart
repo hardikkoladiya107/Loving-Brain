@@ -39,27 +39,55 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocConsumer<HomeCubit, HomeState>(
       builder: (context, state) {
         return Scaffold(
-          body: RefreshIndicator(
-            onRefresh: () => context.read<HomeCubit>().refresh(),
-            color: primaryColor,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  60.spaceH,
-                  _topCard(state),
-                10.spaceH,
-                _secondCard(),
-                10.spaceH,
-                _thirdCard(state),
-                8.spaceH,
-                _fourthCardItem(state),
-                8.spaceH,
-                _fifthCardItem(),
-                8.spaceH,
-                _sixthCardItem(),
-                20.spaceH,
+          extendBodyBehindAppBar: true,
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFF6F0FF),
+                  Color(0xFFFFF0F5),
+                  Color(0xFFF9FAFB),
+                  Color(0xFFF9FAFB),
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [0.0, 0.3, 0.6, 1.0],
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: RefreshIndicator(
+                onRefresh: () => context.read<HomeCubit>().refresh(),
+                color: primaryColor,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      20.spaceH,
+                      _heroDashboard(state),
+                      16.spaceH,
+                      _dailyInsightStrip(state),
+                      24.spaceH,
+                      "Quick Actions".appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                        color: Colors.black87,
+                      ).appPadding(left: 20, right: 20),
+                      12.spaceH,
+                      _quickActionsGrid(),
+                      24.spaceH,
+                      "Family Wellness".appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                        color: Colors.black87,
+                      ).appPadding(left: 20, right: 20),
+                      12.spaceH,
+                      _wellnessHub(),
+                      40.spaceH,
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -69,484 +97,456 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _topCard(HomeState state) {
+  Widget _heroDashboard(HomeState state) {
     RoutineModel? routine = _getNextRoutine(state);
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            aiQuestionCardColor3,
-            aiQuestionCardColor3.withValues(alpha: 0.7),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
+            color: primaryColor.withValues(alpha: 0.08),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          )
         ],
       ),
       child: Column(
         children: [
-          14.spaceH,
+          // Greeting & Profile
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              14.spaceW,
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: Assets.icons.icProfileIcon2.image(
-                  height: 54,
-                  width: 54,
+                  height: 50,
+                  width: 50,
                   fit: BoxFit.contain,
                 ),
               ),
-              14.spaceW,
+              16.spaceW,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     "Hello, ${state.userModel?.parentName ?? ""}!".appText(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20,
                       color: Colors.black87,
                     ),
                     4.spaceH,
-                    "Ready to nurture ${state.childModel?.childName ?? ""}'s journey?\n(Child: ${state.childModel?.childName ?? ""}, ${state.childModel?.childAge ?? ""} old)"
+                    "Nurturing ${state.childModel?.childName ?? ""} (${state.childModel?.childAge ?? ""})"
                         .appText(
                           fontSize: 13,
-                          textAlign: TextAlign.start,
-                          color: Colors.black54,
+                          color: Colors.grey.shade600,
                           fontWeight: FontWeight.w500,
                         ),
                   ],
                 ),
               ),
-              10.spaceW,
             ],
           ),
-          10.spaceH,
+          20.spaceH,
+          // Streak & Schedule Row
           Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              14.spaceW,
+              // Schedule Block
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(16),
+                    color: const Color(0xFFF9FAFB),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      if (routine != null)
-                        LocaleKeys.nextSchedule.tr().appText(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                          color: Colors.black87,
-                        ),
+                      LocaleKeys.nextSchedule.tr().appText(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                        letterSpacing: 0.5,
+                      ),
+                      6.spaceH,
                       if (routine != null) ...[
-                        4.spaceH,
-                        DateFormat(
-                          'hh:mm a',
-                        ).format(routine.timeStamp!).appText(
-                          fontSize: 15,
+                        DateFormat('hh:mm a').format(routine.timeStamp!).appText(
+                          fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: primaryColor,
                         ),
+                        2.spaceH,
                         routine.description!.appText(
-                          fontSize: 12,
-                          color: Colors.black54,
+                          fontSize: 13,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ] else ...[
+                        "No Routines".appText(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.grey.shade700,
+                        ),
+                        2.spaceH,
+                        "All clear for now".appText(
+                          fontSize: 13,
+                          color: Colors.grey.shade500,
                           fontWeight: FontWeight.w500,
                         ),
-                      ] else
-                        "No upcoming routines".appText(
-                          fontSize: 12,
-                          color: Colors.black45,
-                          fontWeight: FontWeight.w500,
+                      ],
+                      8.spaceH,
+                      BaseButton(
+                        child: Row(
+                          children: [
+                            LocaleKeys.viewSchedule.tr().appText(
+                              fontWeight: FontWeight.w700,
+                              color: sliderTrackColor2,
+                              fontSize: 12,
+                            ),
+                            4.spaceW,
+                            const Icon(Icons.arrow_forward_rounded, size: 14, color: sliderTrackColor2),
+                          ],
                         ),
+                        onTap: () {
+                          context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
+                        },
+                      ),
                     ],
                   ),
                 ),
               ),
-              10.spaceW,
+              16.spaceW,
+              // Streak Block
               BaseButton(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const YourStreakScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => const YourStreakScreen()),
                   );
                 },
-                child: Stack(
-                  children: [
-                    Assets.icons.icStreakFire.image(height: 100, width: 80),
-                    Positioned(
-                      bottom: 15,
-                      right: 0,
-                      left: 0,
-                      child: Center(
-                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
+                child: Container(
+                  width: 110,
+                  height: 125,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF7ED),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.center,
+                    children: [
+                      Positioned(
+                        top: -15,
+                         child: Assets.icons.icStreakFire.image(height: 70, width: 70),
+                      ),
+                      Positioned(
+                        bottom: 16,
+                        child: Column(
                           children: [
-                            ((state.userModel?.streak ?? 0).toString()).appText(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                            ),
-                            2.spaceW,
-                            ((state.userModel?.streak ?? 0) >= 1 ? "Day" : "Days")
-                                .appText(
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                ((state.userModel?.streak ?? 0).toString()).appText(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.orange.shade800,
+                                ),
+                                2.spaceW,
+                                ((state.userModel?.streak ?? 0) >= 1 ? "Day" : "Days").appText(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
+                                  color: Colors.orange.shade800,
                                 ),
+                              ],
+                            ),
+                            "Streak!".appText(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 11,
+                              color: Colors.orange.shade600,
+                              letterSpacing: 0.5,
+                            ),
                           ],
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 2,
-                      left: 0,
-                      right: 0,
-                      child: Center(
-                        child: "Streak!".appText(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                          color: Colors.orange.shade800,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              20.spaceW,
-            ],
-          ),
-          12.spaceH,
-          Row(
-            children: [
-              14.spaceW,
-              BaseButton(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      LocaleKeys.viewSchedule.tr().appText(
-                        fontWeight: FontWeight.w700,
-                        color: sliderTrackColor2,
-                        fontSize: 13,
-                      ),
-                      8.spaceW,
-                      Icon(Icons.arrow_forward_rounded, size: 16, color: sliderTrackColor2),
                     ],
                   ),
                 ),
-                onTap: () {
-                  context.read<BaseCubit>().changeProps(
-                    bottomNavigationIndex: 1,
-                  );
-                },
               ),
             ],
           ),
-          14.spaceH,
         ],
       ),
-    ).appPadding(left: 20, right: 20);
+    );
   }
 
-  Widget _secondCard() {
-    return Row(
-      children: [
-        8.spaceW,
-        Expanded(
-          child: _secondCardItem(
-            title: LocaleKeys.learnPlay.tr(),
-            icon: Icons.palette_outlined,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            iconColor: Colors.blue.shade700,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ConnectDetailScreen(),
-                ),
-              );
-            },
-          ),
-        ),
-        20.spaceW,
-        Expanded(
-          child: _secondCardItem(
-            title: LocaleKeys.trackKidBehaviour.tr(),
-            asset: Assets.icons.icTrackKidBehaviour,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFE8F5E9), Color(0xFFC8E6C9)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            iconColor: Colors.green.shade700,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const NewBehaviorScreen(),
-                ),
-              );
-            },
-          ),
-        ),
-        8.spaceW,
-      ],
-    ).appPadding(left: 20, right: 20);
-  }
-
-  Widget _secondCardItem({
-    required String title,
-    AssetGenImage? asset,
-    IconData? icon,
-    required GestureTapCallback onTap,
-    Gradient? gradient,
-    Color? iconColor,
-  }) {
-    return BaseButton(
-      onTap: onTap,
-      child: Container(
-        height: 90.h,
-        decoration: BoxDecoration(
-          gradient: gradient ?? LinearGradient(colors: [greyColor, Colors.grey.shade300]),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            title.appText(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.black87),
-            10.spaceH,
-            if (icon != null)
-              Icon(icon, size: 30.r, color: iconColor ?? Colors.black87)
-            else if (asset != null)
-              asset.image(height: 30.r),
-          ],
-        ),
+  Widget _dailyInsightStrip(HomeState state) {
+    if (state.todayParentingTip.isEmpty) return const SizedBox.shrink();
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: primaryColor.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          )
+        ],
       ),
-    );
-  }
-
-  Widget _thirdCard(HomeState state) {
-    return Row(
-      children: [
-        20.spaceW,
-        Expanded(
-          child: _thirdCardItem(
-            title: LocaleKeys.familySync.tr(),
-            asset: Assets.images.imgSleep,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFFFF3E0), Color(0xFFFFE0B2)], // Soft orange
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.teal.shade50,
+              shape: BoxShape.circle,
             ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const EssentialsScreen(),
-                ),
-              );
-            },
+            child: Icon(Icons.tips_and_updates_rounded, color: Colors.teal.shade600, size: 20),
           ),
-        ),
-        10.spaceW,
-        Expanded(
-          child: _thirdCardItem(
-            title: LocaleKeys.howAreWeFeeling.tr(),
-            asset: Assets.images.imgHowAreWeFeeling,
-            gradient: const LinearGradient(
-              colors: [Color(0xFFF3E5F5), Color(0xFFE1BEE7)], // Soft Purple
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const DailyMoodCheckInScreen(),
-                ),
-              );
-            },
-          ),
-        ),
-        20.spaceW,
-      ],
-    );
-  }
-
-  Widget _thirdCardItem({
-    required String title,
-    required AssetGenImage asset,
-    required GestureTapCallback? onTap,
-    Gradient? gradient,
-  }) {
-    return BaseButton(
-      onTap: onTap,
-      child: Container(
-        height: 100.h,
-        width: 100.w,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: gradient ?? LinearGradient(colors: [aiQuestionCardColor2, aiQuestionCardColor2]),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            title.appText(fontWeight: FontWeight.w700, fontSize: 13, color: Colors.black87),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _fourthCardItem(HomeState state) {
-    return BaseButton(
-      onTap: () {},
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(
-            colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)], // Cyan/Teal
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-             ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            LocaleKeys.dailyParentingTip.tr().appText(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: Colors.teal.shade800,
-            ),
-            4.spaceH,
-            Row(
+          12.spaceW,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: state.todayParentingTip.appText(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.teal.shade900,
-                  ),
+                LocaleKeys.dailyParentingTip.tr().appText(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.teal.shade700,
+                  letterSpacing: 0.5,
+                ),
+                4.spaceH,
+                state.todayParentingTip.appText(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  height: 1.4,
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickActionsGrid() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _actionCard(
+                  title: LocaleKeys.learnPlay.tr(),
+                  asset: Assets.icons.icPlayActivityIcon,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConnectDetailScreen())),
+                ),
+              ),
+              16.spaceW,
+              Expanded(
+                child: _actionCard(
+                  title: LocaleKeys.trackKidBehaviour.tr(),
+                  asset: Assets.icons.icPositiveBehavior,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewBehaviorScreen())),
+                ),
+              ),
+            ],
+          ),
+          16.spaceH,
+          Row(
+            children: [
+              Expanded(
+                child: _actionCard(
+                  title: LocaleKeys.familySync.tr(),
+                  asset: Assets.icons.icDailySchedulePlannerIcon,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EssentialsScreen())),
+                ),
+              ),
+              16.spaceW,
+              Expanded(
+                child: _actionCard(
+                  title: LocaleKeys.howAreWeFeeling.tr(),
+                  asset: Assets.icons.icDailyEmotionCheckIcon,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DailyMoodCheckInScreen())),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionCard({
+    required String title,
+    required AssetGenImage asset,
+    required VoidCallback onTap,
+  }) {
+    return BaseButton(
+      onTap: onTap,
+      child: Container(
+        height: 110.h,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: primaryColor.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF9FAFB),
+                shape: BoxShape.circle,
+              ),
+              child: asset.image(height: 38, width: 38),
+            ),
+            12.spaceH,
+            title.appText(
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              color: Colors.black87,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _fifthCardItem() {
-    return BaseButton(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const SleepSummaryScreen()),
-        );
-      },
-      child: Container(
-        height: 70.h,
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(
-              colors: [Color(0xFFFFF9C4), Color(0xFFFFF59D)], // Light Yellow
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-             BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-             ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: 0,
-              bottom: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: (MediaQuery.of(context).size.width - 80) * 0.8,
-                    child: Assets.images.imgSleepHomeBackground.image(
-                      fit: BoxFit.fill,
-                    ),
+  Widget _wellnessHub() {
+    return Column(
+      children: [
+        // Sleep Summary
+        BaseButton(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SleepSummaryScreen())),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                 BoxShadow(
+                   color: primaryColor.withValues(alpha: 0.05),
+                   blurRadius: 20,
+                   offset: const Offset(0, 8),
+                 ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.shade50,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                ],
-              ),
+                  child: const Icon(Icons.bedtime_rounded, size: 28, color: Colors.indigo),
+                ),
+                16.spaceW,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      LocaleKeys.sleep.tr().appText(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black87,
+                      ),
+                      2.spaceH,
+                      "Track restful nights & patterns".appText(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.shade400),
+              ],
             ),
-            Center(
-              child: LocaleKeys.sleep.appText(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: Colors.brown.shade700,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
+        16.spaceH,
+        // Family Feel Meter
+        BaseButton(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReflectYourEmotions())),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                 BoxShadow(
+                   color: primaryColor.withValues(alpha: 0.05),
+                   blurRadius: 20,
+                   offset: const Offset(0, 8),
+                 ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.pink.shade50,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Assets.icons.icFamilyFeelMeter.image(height: 28),
+                ),
+                16.spaceW,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      "Family Feel Meter".appText(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black87,
+                      ),
+                      2.spaceH,
+                      "Reflect and connect emotionally".appText(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.shade400),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -560,95 +560,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   RoutineModel? _getNextRoutine(HomeState state) {
     final routines = state.childModel?.routinesList ?? [];
-
-    // Filter only routines that have a valid timestamp
     final validRoutines = routines.where((r) => r.timeStamp != null).toList();
     if (validRoutines.isEmpty) return null;
-
     final now = DateTime.now();
-
-    // Get only future routines
-    final futureRoutines = validRoutines
-        .where((r) => r.timeStamp!.isAfter(now))
-        .toList();
+    final futureRoutines = validRoutines.where((r) => r.timeStamp!.isAfter(now)).toList();
     if (futureRoutines.isEmpty) return null;
-
-    // Return the routine with the smallest timestamp
     futureRoutines.sort((a, b) => a.timeStamp!.compareTo(b.timeStamp!));
     return futureRoutines.first;
-  }
-
-  DateTime? getNearestUpcomingTime(List<DateTime> timestamps) {
-    final now = DateTime.now();
-
-    // Filter only future times
-    final futureTimes = timestamps.where((t) => t.isAfter(now)).toList();
-    if (futureTimes.isEmpty) return null;
-
-    // Sort and return nearest
-    futureTimes.sort((a, b) => a.compareTo(b));
-    return futureTimes.first;
-  }
-
-  Widget _sixthCardItem() {
-    return BaseButton(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ReflectYourEmotions(),
-          ),
-        );
-      },
-      child: Stack(
-        children: [
-          Container(
-            height: 70.h,
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFFEBEE), Color(0xFFFFCDD2)], // Red/Pink
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
-                 BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                 ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                Center(
-                  child: "Family Feel Meter".appText(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.red.shade900,
-                  ),
-                ),
-              ],
-            ),
-          ).appPadding(top: 20),
-
-          Positioned(
-            top: -0,
-            left: 30,
-            child: Row(
-              children: [
-                SizedBox(
-                  child: Assets.icons.icFamilyFeelMeter.image(
-                    fit: BoxFit.fill,
-                    height: 80.r,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
