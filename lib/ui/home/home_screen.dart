@@ -42,17 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
           extendBodyBehindAppBar: true,
           body: Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFFF6F0FF),
-                  Color(0xFFFFF0F5),
-                  Color(0xFFF9FAFB),
-                  Color(0xFFF9FAFB),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0.0, 0.3, 0.6, 1.0],
-              ),
+              color: Color(0xFFFAFAFA),
             ),
             child: SafeArea(
               bottom: false,
@@ -68,21 +58,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       _heroDashboard(state),
                       16.spaceH,
                       _dailyInsightStrip(state),
-                      24.spaceH,
-                      "Quick Actions".appText(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 18,
+                      20.spaceH,
+                      "Jump Back In".appText(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 22,
                         color: Colors.black87,
                       ).appPadding(left: 20, right: 20),
                       12.spaceH,
                       _quickActionsGrid(),
                       24.spaceH,
                       "Family Wellness".appText(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 22,
                         color: Colors.black87,
                       ).appPadding(left: 20, right: 20),
-                      12.spaceH,
+                      20.spaceH,
                       _wellnessHub(),
                       40.spaceH,
                     ],
@@ -101,190 +91,184 @@ class _HomeScreenState extends State<HomeScreen> {
     RoutineModel? routine = _getNextRoutine(state);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(24),
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF894BCD), Color(0xFFB185DB)], // Brand Purple Gradient
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(36),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withValues(alpha: 0.08),
-            blurRadius: 30,
+            color: const Color(0xFF894BCD).withValues(alpha: 0.25),
+            blurRadius: 20,
             offset: const Offset(0, 10),
           )
         ],
       ),
-      child: Column(
+      child: Stack(
         children: [
-          // Greeting & Profile
-          Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Assets.icons.icProfileIcon2.image(
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.contain,
-                ),
+          // Background abstract rings
+          Positioned(
+            top: -40,
+            right: -40,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.1),
               ),
-              16.spaceW,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    "Hello, ${state.userModel?.parentName ?? ""}!".appText(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 20,
-                      color: Colors.black87,
-                    ),
-                    4.spaceH,
-                    "Nurturing ${state.childModel?.childName ?? ""} (${state.childModel?.childAge ?? ""})"
-                        .appText(
-                          fontSize: 13,
-                          color: Colors.grey.shade600,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-          20.spaceH,
-          // Streak & Schedule Row
-          Row(
-            children: [
-              // Schedule Block
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LocaleKeys.nextSchedule.tr().appText(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
-                        letterSpacing: 0.5,
+          Positioned(
+            bottom: -20,
+            left: -20,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
+              ),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top Row: Greeting + Streak
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          "Good Morning,".appText(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            color: Colors.white70,
+                            letterSpacing: 0.5,
+                          ),
+                          4.spaceH,
+                          "${state.userModel?.parentName ?? "Parent"}!".appText(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 26,
+                            color: Colors.white,
+                          ),
+                        ],
                       ),
-                      6.spaceH,
-                      if (routine != null) ...[
-                        DateFormat('hh:mm a').format(routine.timeStamp!).appText(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: primaryColor,
+                    ),
+                    // Streak Badge
+                    BaseButton(
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const YourStreakScreen())),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
                         ),
-                        2.spaceH,
-                        routine.description!.appText(
-                          fontSize: 13,
-                          color: Colors.black87,
-                          fontWeight: FontWeight.w600,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ] else ...[
-                        "No Routines".appText(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.grey.shade700,
-                        ),
-                        2.spaceH,
-                        "All clear for now".appText(
-                          fontSize: 13,
-                          color: Colors.grey.shade500,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ],
-                      8.spaceH,
-                      BaseButton(
                         child: Row(
                           children: [
-                            LocaleKeys.viewSchedule.tr().appText(
-                              fontWeight: FontWeight.w700,
-                              color: sliderTrackColor2,
-                              fontSize: 12,
-                            ),
-                            4.spaceW,
-                            const Icon(Icons.arrow_forward_rounded, size: 14, color: sliderTrackColor2),
-                          ],
-                        ),
-                        onTap: () {
-                          context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              16.spaceW,
-              // Streak Block
-              BaseButton(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const YourStreakScreen()),
-                  );
-                },
-                child: Container(
-                  width: 110,
-                  height: 125,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF7ED),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    alignment: Alignment.center,
-                    children: [
-                      Positioned(
-                        top: -15,
-                         child: Assets.icons.icStreakFire.image(height: 70, width: 70),
-                      ),
-                      Positioned(
-                        bottom: 16,
-                        child: Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                ((state.userModel?.streak ?? 0).toString()).appText(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.orange.shade800,
-                                ),
-                                2.spaceW,
-                                ((state.userModel?.streak ?? 0) >= 1 ? "Day" : "Days").appText(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.orange.shade800,
-                                ),
-                              ],
-                            ),
-                            "Streak!".appText(
+                            Assets.icons.icStreakFire.image(height: 18),
+                            6.spaceW,
+                            ((state.userModel?.streak ?? 0).toString()).appText(
+                              fontSize: 14,
                               fontWeight: FontWeight.w800,
-                              fontSize: 11,
-                              color: Colors.orange.shade600,
-                              letterSpacing: 0.5,
+                              color: Colors.white,
+                            ),
+                            2.spaceW,
+                            "Days".appText(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white70,
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                24.spaceH,
+                // Bottom Row: Schedule Glass Box
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.calendar_month_rounded, color: Colors.white, size: 22),
+                      ),
+                      16.spaceW,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (routine != null) ...[
+                              DateFormat('hh:mm a').format(routine.timeStamp!).appText(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white70,
+                              ),
+                              2.spaceH,
+                              routine.description!.appText(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ] else ...[
+                              "Free Time".appText(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                              ),
+                              2.spaceH,
+                              "No upcoming schedule".appText(
+                                fontSize: 13,
+                                color: Colors.white70,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      BaseButton(
+                        onTap: () => context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: "View".appText(
+                            color: const Color(0xFF894BCD),
+                            fontWeight: FontWeight.w800, 
+                            fontSize: 13
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -295,46 +279,63 @@ class _HomeScreenState extends State<HomeScreen> {
     if (state.todayParentingTip.isEmpty) return const SizedBox.shrink();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withValues(alpha: 0.05),
+            color: Colors.amber.shade600.withValues(alpha: 0.08),
             blurRadius: 20,
-            offset: const Offset(0, 5),
+            offset: const Offset(0, 8),
           )
         ],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.teal.shade50,
-              shape: BoxShape.circle,
+          // Background large quote icon
+          Positioned(
+            right: -20,
+            bottom: -20,
+            child: Icon(
+              Icons.format_quote_rounded,
+              size: 100,
+              color: Colors.amber.shade50.withValues(alpha: 0.8),
             ),
-            child: Icon(Icons.tips_and_updates_rounded, color: Colors.teal.shade600, size: 20),
           ),
-          12.spaceW,
-          Expanded(
-            child: Column(
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                LocaleKeys.dailyParentingTip.tr().appText(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.teal.shade700,
-                  letterSpacing: 0.5,
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(Icons.lightbulb_rounded, color: Colors.amber.shade500, size: 24),
                 ),
-                4.spaceH,
-                state.todayParentingTip.appText(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                  height: 1.4,
+                16.spaceW,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      LocaleKeys.dailyParentingTip.tr().appText(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.amber.shade700,
+                        letterSpacing: 0.5,
+                      ),
+                      8.spaceH,
+                      state.todayParentingTip.appText(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                        height: 1.4,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -354,36 +355,44 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: _actionCard(
                   title: LocaleKeys.learnPlay.tr(),
-                  asset: Assets.icons.icPlayActivityIcon,
+                  subtitle: "Connect together",
+                  icon: Icons.toys_rounded,
+                  themeColor: Colors.cyan.shade600,
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConnectDetailScreen())),
                 ),
               ),
-              16.spaceW,
+              12.spaceW,
               Expanded(
                 child: _actionCard(
-                  title: LocaleKeys.trackKidBehaviour.tr(),
-                  asset: Assets.icons.icPositiveBehavior,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewBehaviorScreen())),
+                  title: LocaleKeys.howAreWeFeeling.tr(),
+                  subtitle: "Daily mood check",
+                  icon: Icons.favorite_rounded,
+                  themeColor: Colors.purple.shade500,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DailyMoodCheckInScreen())),
                 ),
               ),
             ],
           ),
-          16.spaceH,
+          12.spaceH,
           Row(
             children: [
               Expanded(
                 child: _actionCard(
-                  title: LocaleKeys.familySync.tr(),
-                  asset: Assets.icons.icDailySchedulePlannerIcon,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EssentialsScreen())),
+                  title: LocaleKeys.trackKidBehaviour.tr(),
+                  subtitle: "Log behaviors",
+                  icon: Icons.auto_awesome_rounded,
+                  themeColor: Colors.green.shade500,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewBehaviorScreen())),
                 ),
               ),
-              16.spaceW,
+              12.spaceW,
               Expanded(
                 child: _actionCard(
-                  title: LocaleKeys.howAreWeFeeling.tr(),
-                  asset: Assets.icons.icDailyEmotionCheckIcon,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DailyMoodCheckInScreen())),
+                  title: LocaleKeys.familySync.tr(),
+                  subtitle: "Shared schedules",
+                  icon: Icons.sync_rounded,
+                  themeColor: Colors.orange.shade600,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EssentialsScreen())),
                 ),
               ),
             ],
@@ -395,44 +404,96 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _actionCard({
     required String title,
-    required AssetGenImage asset,
+    required String subtitle,
+    required IconData icon,
+    required Color themeColor,
     required VoidCallback onTap,
   }) {
     return BaseButton(
       onTap: onTap,
       child: Container(
-        height: 110.h,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        height: 140.h,
+        clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: primaryColor.withValues(alpha: 0.05),
+              color: themeColor.withValues(alpha: 0.12),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF9FAFB),
-                shape: BoxShape.circle,
+            // Abstract background accent 1
+            Positioned(
+              top: -30,
+              right: -20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: themeColor.withValues(alpha: 0.1),
+                ),
               ),
-              child: asset.image(height: 38, width: 38),
             ),
-            12.spaceH,
-            title.appText(
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-              color: Colors.black87,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            // Abstract background accent 2
+            Positioned(
+              bottom: -40,
+              right: 20,
+              child: Container(
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: themeColor.withValues(alpha: 0.05),
+                ),
+              ),
+            ),
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Icon
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: themeColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: themeColor,
+                      size: 28,
+                    ),
+                  ),
+                  // Text
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      title.appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        color: Colors.black87,
+                        maxLines: 2,
+                        height: 1.2,
+                      ),
+                      4.spaceH,
+                      subtitle.appText(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 11,
+                        color: Colors.grey.shade500,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -448,100 +509,113 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SleepSummaryScreen())),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.all(20),
+            height: 110.h,
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2C3E50), Color(0xFF0F2027)], // Deep Night Sky
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(28),
               boxShadow: [
-                 BoxShadow(
-                   color: primaryColor.withValues(alpha: 0.05),
-                   blurRadius: 20,
-                   offset: const Offset(0, 8),
-                 ),
+                 BoxShadow(color: Color(0xFF0F2027).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8)),
               ],
             ),
-            child: Row(
+            child: Stack(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.indigo.shade50,
-                    borderRadius: BorderRadius.circular(16),
+                // Faded background graphic on the right
+                Positioned(
+                  right: -20,
+                  bottom: -20,
+                  top: -20,
+                  child: Assets.images.imgSleepHomeBackground.image(
+                    height: 150.h,
+                    fit: BoxFit.cover,
                   ),
-                  child: const Icon(Icons.bedtime_rounded, size: 28, color: Colors.indigo),
                 ),
-                16.spaceW,
-                Expanded(
+                // Text overlay
+                Positioned(
+                  left: 24,
+                  top: 0,
+                  bottom: 0,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       LocaleKeys.sleep.tr().appText(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black87,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
                       ),
-                      2.spaceH,
-                      "Track restful nights & patterns".appText(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
+                      4.spaceH,
+                      "Track restful nights".appText(
+                        fontSize: 13,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w600,
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.shade400),
               ],
             ),
           ),
         ),
-        16.spaceH,
+        20.spaceH,
         // Family Feel Meter
         BaseButton(
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReflectYourEmotions())),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                 BoxShadow(
-                   color: primaryColor.withValues(alpha: 0.05),
-                   blurRadius: 20,
-                   offset: const Offset(0, 8),
-                 ),
-              ],
-            ),
-            child: Row(
+            height: 110.h,
+            clipBehavior: Clip.none, // Allow meter to pop out top!
+            child: Stack(
+              clipBehavior: Clip.none,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.pink.shade50,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Assets.icons.icFamilyFeelMeter.image(height: 28),
-                ),
-                16.spaceW,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      "Family Feel Meter".appText(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.black87,
+                // Base
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: 90.h,
+                    width: double.infinity,
+                    padding: EdgeInsets.only(left: 24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF859B), Color(0xFFFF416C)], // Beautiful Pink/Red
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      2.spaceH,
-                      "Reflect and connect emotionally".appText(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ],
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                         BoxShadow(color: Color(0xFFFF416C).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8)),
+                      ],
+                    ),
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        "Family Feel Meter".appText(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                        4.spaceH,
+                        "Connect emotionally".appText(
+                          fontSize: 13,
+                          color: Colors.white70,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.shade400),
+                // Overlapping icon
+                Positioned(
+                  right: 15,
+                  top: -15, // Pops out slightly
+                  child: Assets.icons.icFamilyFeelMeter.image(height: 100.h),
+                ),
               ],
             ),
           ),
