@@ -94,54 +94,47 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         80.spaceH,
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 40),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.white, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.03),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 4),
-                                  )
-                                ],
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withValues(alpha: 0.08),
+                                blurRadius: 30,
+                                offset: Offset(0, 10),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: primaryColor.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.lock_reset, size: 60, color: primaryColor),
                               ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: primaryColor.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(Icons.lock_reset, size: 60, color: primaryColor),
-                                  ),
-                                  24.spaceH,
-                                  LocaleKeys.forgotPassword.tr().appText(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.black87,
-                                    letterSpacing: 1.0,
-                                  ),
-                                  12.spaceH,
-                                  "Enter your details to receive reset instructions".appText(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade600,
-                                    textAlign: TextAlign.center,
-                                  ).appPadding(left: 30, right: 30),
-                                  32.spaceH,
-                                  _email(state),
-                                  40.spaceH,
-                                  _resetButton(),
-                                ],
+                              24.spaceH,
+                              LocaleKeys.forgotPassword.tr().appText(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.black87,
+                                letterSpacing: 1.0,
                               ),
-                            ),
+                              12.spaceH,
+                              "Enter your details to receive reset instructions".appText(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                                textAlign: TextAlign.center,
+                              ).appPadding(left: 30, right: 30),
+                              32.spaceH,
+                              _email(state),
+                              40.spaceH,
+                              _resetButton(),
+                            ],
                           ),
                         ).appPadding(left: 20, right: 20),
                         40.spaceH,
@@ -196,15 +189,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       hint: LocaleKeys.enterEmailAddress.tr(),
       error: state.emailAddressError,
       keyboardType: TextInputType.emailAddress,
+      fillColor: const Color(0xFFF9FAFB),
       prefixIcon: Assets.icons.icEmailPrefixIcon.image(
         height: 24,
         width: 24,
-        color: Colors.grey.shade500,
+        color: Colors.grey.shade400,
       ),
       onChanged: (value) {
         context.read<ForgotPasswordCubit>().changeProps(emailAddress: value);
       },
-    ).appPadding(left: 20, right: 20);
+    ).appPadding(left: 24, right: 24);
   }
 
   Widget _resetButton() {

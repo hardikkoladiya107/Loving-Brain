@@ -132,113 +132,109 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         40.spaceH,
                         _header(),
                         40.spaceH,
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 32),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.white, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.03),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 4),
-                                  )
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  AppTextField(
-                                    controller: emailTextEditingController,
-                                    title: LocaleKeys.emailAddress.tr(),
-                                    hint: LocaleKeys.enterEmailAddress.tr(),
-                                    error: state.emailAddressError,
-                                    onChanged: (value) {
-                                      context.read<RegisterCubit>().changeProps(
-                                        emailAddress: value,
-                                      );
-                                    },
-                                  ).appPadding(left: 30, right: 30),
-                                  16.spaceH,
-                                  AppTextField(
-                                    controller: passwordTextEditingController,
-                                    title: LocaleKeys.password.tr(),
-                                    hint: LocaleKeys.enterPassword.tr(),
-                                    keyboardType: TextInputType.visiblePassword,
-                                    obscureText: state.obscureTextPassword,
-                                    error: state.passwordError,
-                                    maxLines: 1,
-                                    onChanged: (value) {
-                                      context.read<RegisterCubit>().changeProps(
-                                        password: value,
-                                      );
-                                    },
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        state.obscureTextPassword
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Colors.grey.shade500,
-                                      ),
-                                      onPressed: () {
-                                        context.read<RegisterCubit>().changeProps(
-                                          obscureTextPassword: !state.obscureTextPassword,
-                                        );
-                                      },
-                                    ),
-                                  ).appPadding(left: 30, right: 30),
-                                  16.spaceH,
-                                  AppTextField(
-                                    maxLines: 1,
-                                    controller: confirmPasswordTextEditingController,
-                                    title: LocaleKeys.confirmPassword.tr(),
-                                    hint: LocaleKeys.enterConfirmPassword.tr(),
-                                    keyboardType: TextInputType.visiblePassword,
-                                    obscureText: state.obscureTextConfirmPassword,
-                                    error: state.confirmPasswordError,
-                                    onChanged: (value) {
-                                      context.read<RegisterCubit>().changeProps(
-                                        confirmPassword: value,
-                                      );
-                                    },
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        state.obscureTextConfirmPassword
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: Colors.grey.shade500,
-                                      ),
-                                      onPressed: () {
-                                        context.read<RegisterCubit>().changeProps(
-                                          obscureTextConfirmPassword:
-                                              !state.obscureTextConfirmPassword,
-                                        );
-                                      },
-                                    ),
-                                  ).appPadding(left: 30, right: 30),
-                                  16.spaceH,
-                                  _termsAndConditions(state),
-                                  32.spaceH,
-                                  _registerButton(),
-                                  20.spaceH,
-                                  BaseButton(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
-                                        4.spaceW,
-                                        "Back to Login".appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
-                                      ],
-                                    ),
-                                    onTap: () => Navigator.pop(context),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withValues(alpha: 0.08),
+                                blurRadius: 30,
+                                offset: Offset(0, 10),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              AppTextField(
+                                controller: emailTextEditingController,
+                                title: LocaleKeys.emailAddress.tr(),
+                                hint: LocaleKeys.enterEmailAddress.tr(),
+                                error: state.emailAddressError,
+                                fillColor: const Color(0xFFF9FAFB),
+                                onChanged: (value) {
+                                  context.read<RegisterCubit>().changeProps(
+                                    emailAddress: value,
+                                  );
+                                },
+                              ).appPadding(left: 24, right: 24),
+                              16.spaceH,
+                              AppTextField(
+                                controller: passwordTextEditingController,
+                                title: LocaleKeys.password.tr(),
+                                hint: LocaleKeys.enterPassword.tr(),
+                                keyboardType: TextInputType.visiblePassword,
+                                obscureText: state.obscureTextPassword,
+                                error: state.passwordError,
+                                maxLines: 1,
+                                fillColor: const Color(0xFFF9FAFB),
+                                onChanged: (value) {
+                                  context.read<RegisterCubit>().changeProps(
+                                    password: value,
+                                  );
+                                },
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    state.obscureTextPassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.grey.shade400,
                                   ),
-                                ],
+                                  onPressed: () {
+                                    context.read<RegisterCubit>().changeProps(
+                                      obscureTextPassword: !state.obscureTextPassword,
+                                    );
+                                  },
+                                ),
+                              ).appPadding(left: 24, right: 24),
+                              16.spaceH,
+                              AppTextField(
+                                maxLines: 1,
+                                controller: confirmPasswordTextEditingController,
+                                title: LocaleKeys.confirmPassword.tr(),
+                                hint: LocaleKeys.enterConfirmPassword.tr(),
+                                keyboardType: TextInputType.visiblePassword,
+                                obscureText: state.obscureTextConfirmPassword,
+                                error: state.confirmPasswordError,
+                                fillColor: const Color(0xFFF9FAFB),
+                                onChanged: (value) {
+                                  context.read<RegisterCubit>().changeProps(
+                                    confirmPassword: value,
+                                  );
+                                },
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    state.obscureTextConfirmPassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                  onPressed: () {
+                                    context.read<RegisterCubit>().changeProps(
+                                      obscureTextConfirmPassword:
+                                          !state.obscureTextConfirmPassword,
+                                    );
+                                  },
+                                ),
+                              ).appPadding(left: 24, right: 24),
+                              16.spaceH,
+                              _termsAndConditions(state),
+                              32.spaceH,
+                              _registerButton(),
+                              20.spaceH,
+                              BaseButton(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
+                                    4.spaceW,
+                                    "Back to Login".appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+                                  ],
+                                ),
+                                onTap: () => Navigator.pop(context),
                               ),
-                            ),
+                            ],
                           ),
                         ).appPadding(left: 20, right: 20),
                         80.spaceH,
@@ -277,16 +273,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white, width: 1.5),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 15,
-                offset: Offset(0, 4),
+                color: primaryColor.withValues(alpha: 0.08),
+                blurRadius: 30,
+                offset: Offset(0, 10),
               )
             ],
           ),

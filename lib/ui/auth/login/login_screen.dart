@@ -128,38 +128,31 @@ class _LoginScreenState extends State<LoginScreen> {
                         40.spaceH,
                         _loginIcon(),
                         40.spaceH,
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 32),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.7),
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.white, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.03),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 4),
-                                  )
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  _email(state),
-                                  16.spaceH,
-                                  _password(state),
-                                  8.spaceH,
-                                  _forgotPassword(),
-                                  24.spaceH,
-                                  _loginButton(),
-                                  20.spaceH,
-                                  _dontHaveAccount(),
-                                ],
-                              ),
-                            ),
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withValues(alpha: 0.08),
+                                blurRadius: 30,
+                                offset: Offset(0, 10),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              _email(state),
+                              16.spaceH,
+                              _password(state),
+                              8.spaceH,
+                              _forgotPassword(),
+                              24.spaceH,
+                              _loginButton(),
+                              20.spaceH,
+                              _dontHaveAccount(),
+                            ],
                           ),
                         ).appPadding(left: 20, right: 20),
                         30.spaceH,
@@ -199,16 +192,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _signUpWithGoogle() {
     return BaseButton(
       child: Container(
-        width: 300.w,
+        width: 310.w,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.8),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 15,
-              offset: Offset(0, 4),
+              color: primaryColor.withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: Offset(0, 8),
             )
           ],
         ),
@@ -236,16 +228,15 @@ class _LoginScreenState extends State<LoginScreen> {
         context.read<LoginCubit>().signInWithApple();
       },
       child: Container(
-        width: 300.w,
+        width: 310.w,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.8),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 15,
-              offset: Offset(0, 4),
+              color: primaryColor.withValues(alpha: 0.08),
+              blurRadius: 20,
+              offset: Offset(0, 8),
             )
           ],
         ),
@@ -268,42 +259,35 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white, width: 1.5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 15,
-                    offset: Offset(0, 4),
-                  )
-                ],
-              ),
-              child: Column(
-                children: [
-                  LocaleKeys.login.tr().appText(
-                    color: Colors.black87,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
-                  2.spaceH,
-                  LocaleKeys.appName.tr().appText(
-                    color: primaryColor,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
-                ],
-              ).appPadding(left: 30, right: 30, top: 16, bottom: 16),
-            ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: primaryColor.withValues(alpha: 0.08),
+                blurRadius: 30,
+                offset: Offset(0, 10),
+              )
+            ],
           ),
+          child: Column(
+            children: [
+              LocaleKeys.login.tr().appText(
+                color: Colors.black87,
+                fontSize: 24,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.0,
+              ),
+              2.spaceH,
+              LocaleKeys.appName.tr().appText(
+                color: primaryColor,
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
+              ),
+            ],
+          ).appPadding(left: 40, right: 40, top: 20, bottom: 20),
         ),
       ],
     );
@@ -372,15 +356,16 @@ class _LoginScreenState extends State<LoginScreen> {
       hint: LocaleKeys.enterEmailAddress.tr(),
       error: state.emailAddressError,
       keyboardType: TextInputType.emailAddress,
+      fillColor: const Color(0xFFF9FAFB),
       prefixIcon: Assets.icons.icEmailPrefixIcon.image(
         height: 24,
         width: 24,
-        color: Colors.grey.shade500,
+        color: Colors.grey.shade400,
       ),
       onChanged: (value) {
         context.read<LoginCubit>().changeProps(emailAddress: value);
       },
-    ).appPadding(left: 20, right: 20);
+    ).appPadding(left: 24, right: 24);
   }
 
   Widget _password(LoginState state) {
@@ -390,17 +375,18 @@ class _LoginScreenState extends State<LoginScreen> {
       hint: LocaleKeys.enterPassword.tr(),
       error: state.passwordError,
       keyboardType: TextInputType.visiblePassword,
+      fillColor: const Color(0xFFF9FAFB),
       prefixIcon: Assets.icons.icPasswordPrefixIcon.image(
         height: 24,
         width: 24,
-        color: Colors.grey.shade500,
+        color: Colors.grey.shade400,
       ),
       obscureText: state.obscureTextPassword,
       maxLines: 1,
       suffixIcon: IconButton(
         icon: Icon(
           state.obscureTextPassword ? Icons.visibility_off : Icons.visibility,
-          color: Colors.grey.shade500,
+          color: Colors.grey.shade400,
         ),
         onPressed: () {
           context.read<LoginCubit>().changeProps(
@@ -411,7 +397,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onChanged: (value) {
         context.read<LoginCubit>().changeProps(password: value);
       },
-    ).appPadding(left: 20, right: 20);
+    ).appPadding(left: 24, right: 24);
   }
 
   Widget _forgotPassword() {
