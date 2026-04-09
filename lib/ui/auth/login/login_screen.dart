@@ -76,46 +76,21 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: const Color(0xFFFAFAFA),
           body: Stack(
             children: [
-              Positioned(
-                top: -100.h,
-                left: -50.w,
-                child: Container(
-                  width: 350.w,
-                  height: 350.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF894BCD).withValues(alpha: 0.18),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 150.h,
-                right: -100.w,
-                child: Container(
-                  width: 300.w,
-                  height: 300.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFFFF66C4).withValues(alpha: 0.12),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: -50.h,
-                left: -80.w,
-                child: Container(
-                  width: 400.w,
-                  height: 400.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF5271FF).withValues(alpha: 0.10),
-                  ),
-                ),
-              ),
               Positioned.fill(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                  child: Container(color: Colors.white.withValues(alpha: 0.35)),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFF6F0FF),
+                        const Color(0xFFFFF0F5),
+                        const Color(0xFFF9FAFB),
+                        const Color(0xFFF9FAFB),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.0, 0.3, 0.6, 1.0],
+                    ),
+                  ),
                 ),
               ),
               Positioned.fill(

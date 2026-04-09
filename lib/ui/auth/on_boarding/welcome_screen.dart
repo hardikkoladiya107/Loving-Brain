@@ -35,35 +35,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 1400),
-          tween: Tween(begin: 0.0, end: 1.0),
-          curve: Curves.easeOutBack,
-          builder: (context, value, child) {
-            return Column(
-              children: [
-                Spacer(flex: 3),
-                Transform.translate(
-                  offset: Offset(0, 50 * (1 - value)),
-                  child: Opacity(
-                    opacity: value.clamp(0.0, 1.0),
-                    child: _buildTitleCard(),
-                  ),
-                ),
-                Spacer(flex: 5),
-                Transform.translate(
-                  offset: Offset(0, 80 * (1 - value)),
-                  child: Opacity(
-                    opacity: value.clamp(0.0, 1.0),
-                    child: _buildActionCard(),
-                  ),
-                ),
-                Spacer(),
-                _buildTermsText(),
-                40.spaceH,
-              ],
-            );
-          },
+        body: SafeArea(
+          child: Column(
+            children: [
+              Spacer(flex: 3),
+              _buildTitleCard(),
+              Spacer(flex: 5),
+              _buildActionCard(),
+              Spacer(),
+              _buildTermsText(),
+              20.spaceH,
+            ],
+          ),
         ),
       ),
     );
