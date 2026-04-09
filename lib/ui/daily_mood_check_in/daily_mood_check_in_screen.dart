@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,47 +55,41 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF9FAFC),
-          body: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              _buildSliverAppBar(context),
-              SliverToBoxAdapter(
-                child: Transform.translate(
-                  offset: const Offset(0, -40),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF9FAFC),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40.r),
-                        topRight: Radius.circular(40.r),
+          backgroundColor: const Color(0xFFF5F7FA), // Soft beautiful off-white/grey
+          body: Stack(
+            children: [
+              // Beautiful Header Banner Graphic
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Assets.images.imgDailyMoodCheckInBg.image(
+                  fit: BoxFit.fitWidth,
+                  width: context.width,
+                ),
+              ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    16.h.spaceH,
+                    _buildHeader(context),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+                        child: Column(
+                          children: [
+                            _childFeelingCard(state),
+                            24.h.spaceH,
+                            _parentFeelingCard(state),
+                            40.h.spaceH,
+                            _logMoodsButton(context),
+                            40.h.spaceH,
+                          ],
+                        ),
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        24.h.spaceH,
-                        // Custom rounded drag handle aesthetic
-                        Center(
-                          child: Container(
-                            width: 60.w,
-                            height: 6.h,
-                            decoration: BoxDecoration(
-                              color: greyColor2,
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                          ),
-                        ),
-                        32.h.spaceH,
-                        _childFeelingSection(state),
-                        40.h.spaceH,
-                        _parentFeelingSection(state),
-                        60.h.spaceH,
-                        _logMoodsButton(context),
-                        60.h.spaceH,
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ],
@@ -106,109 +99,97 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context) {
-    return SliverAppBar(
-      expandedHeight: 320.h,
-      pinned: true,
-      backgroundColor: primaryColor,
-      elevation: 0,
-      centerTitle: true,
-      title: "Daily Mood".appText(
-        color: Colors.white,
-        fontWeight: FontWeight.w900,
-        fontSize: 20.sp,
-        shadows: [
-          Shadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BaseButton(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(Icons.arrow_back_rounded, color: primaryColor, size: 24.sp),
+            ),
+          ),
+          "Daily Mood Check-in".appText(
+            color: blackTextColor,
+            fontWeight: FontWeight.w900,
+            fontSize: 20.sp,
+          ),
+          BaseButton(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const DailyMoodLog()),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Icon(Icons.history_rounded, color: primaryColor, size: 24.sp),
+            ),
           ),
         ],
-      ),
-      leading: BaseButton(
-        onTap: () => Navigator.pop(context),
-        child: Container(
-          margin: EdgeInsets.all(8.w),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(Icons.arrow_back_rounded, color: Colors.white, size: 22.sp),
-        ),
-      ),
-      actions: [
-        BaseButton(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const DailyMoodLog()),
-            );
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 16.w),
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.history_rounded, color: Colors.white, size: 22.sp),
-          ),
-        ),
-      ],
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            Assets.images.imgDailyMoodCheckInBg.image(
-              fit: BoxFit.cover,
-            ),
-            // Subtle gradient at bottom to blend into the curving surface
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 100.h,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.2),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Widget _childFeelingSection(DailyMoodCheckInState state) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
+  Widget _childFeelingCard(DailyMoodCheckInState state) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(10.w),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: primaryColor.withValues(alpha: 0.15),
+                  color: primaryColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.child_care_rounded, color: primaryColor, size: 26.sp),
+                child: Icon(Icons.child_care_rounded, color: primaryColor, size: 24.sp),
               ),
               12.w.spaceW,
               Flexible(
                 child: "How is ${state.userModel?.childName ?? 'your child'} feeling?".appText(
                   color: primaryColor,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 22.sp,
-                  height: 1.2,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18.sp,
                 ),
               ),
             ],
@@ -224,29 +205,41 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
     );
   }
 
-  Widget _parentFeelingSection(DailyMoodCheckInState state) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
+  Widget _parentFeelingCard(DailyMoodCheckInState state) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(10.w),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
-                  color: blueColor1.withValues(alpha: 0.15),
+                  color: blueColor1.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.person_rounded, color: blueColor1, size: 26.sp),
+                child: Icon(Icons.person_rounded, color: blueColor1, size: 24.sp),
               ),
               12.w.spaceW,
               Flexible(
-                child: "And how are you feeling?".appText(
+                child: "How are you feeling?".appText(
                   color: blueColor1,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 22.sp,
-                  height: 1.2,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18.sp,
                 ),
               ),
             ],
@@ -267,10 +260,9 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
     required Function(String) onMoodSelected,
     required Color activeColor,
   }) {
-    // Beautiful grid layout for emotions
     return Wrap(
       alignment: WrapAlignment.center,
-      spacing: 16.w,
+      spacing: 12.w,
       runSpacing: 16.h,
       children: [
         _moodSquare(
@@ -323,40 +315,34 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutBack,
-        width: 100.w,
-        height: 108.h,
+        curve: Curves.easeOutCubic,
+        width: 85.w,
+        height: 98.h,
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.1) : Colors.white,
-          borderRadius: BorderRadius.circular(24.r),
+          color: isSelected ? activeColor.withValues(alpha: 0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected ? activeColor : Colors.grey.withValues(alpha: 0.2),
-            width: isSelected ? 2.5 : 1,
+            color: isSelected ? activeColor : Colors.grey.withValues(alpha: 0.15),
+            width: isSelected ? 2 : 1.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: activeColor.withValues(alpha: 0.25),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
+                    color: activeColor.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   )
                 ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  )
-                ],
+              : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
               duration: const Duration(milliseconds: 250),
+              scale: isSelected ? 1.1 : 1.0,
               curve: Curves.easeOutBack,
-              scale: isSelected ? 1.15 : 1.0,
-              child: image.image(height: 48.h, width: 48.w),
+              child: image.image(height: 38.h, width: 38.w),
             ),
             10.h.spaceH,
             title.appText(
@@ -371,35 +357,32 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
   }
 
   Widget _logMoodsButton(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: BaseButton(
-        onTap: () => context.read<DailyMoodCheckInCubit>().logMoods(),
-        child: Container(
-          width: double.infinity,
-          height: 60.h,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [primaryColor, blueColor2],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+    return BaseButton(
+      onTap: () => context.read<DailyMoodCheckInCubit>().logMoods(),
+      child: Container(
+        width: double.infinity,
+        height: 60.h,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [primaryColor, blueColor2],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(100.r),
+          boxShadow: [
+            BoxShadow(
+              color: blueColor2.withValues(alpha: 0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
-            borderRadius: BorderRadius.circular(100.r),
-            boxShadow: [
-              BoxShadow(
-                color: blueColor2.withValues(alpha: 0.4),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: LocaleKeys.logMoodsLabel.tr().appText(
-            color: Colors.white,
-            fontSize: 17.sp,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 0.5,
-          ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: LocaleKeys.logMoodsLabel.tr().appText(
+          color: Colors.white,
+          fontSize: 17.sp,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
         ),
       ),
     );
