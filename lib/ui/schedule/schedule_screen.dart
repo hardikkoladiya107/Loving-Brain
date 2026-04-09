@@ -23,7 +23,7 @@ import '../../model/shared_event_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
 import '../add_shared_event/add_shared_event_screen.dart';
-import '../daily_routine/daily_routine_screen.dart';
+import 'widget/add_daily_routine_dialog.dart';
 import '../event_approval/event_approval_screen.dart';
 import '../event_detail/event_detail_screen.dart';
 import '../link_co_parent/link_co_parent_screen.dart';
@@ -343,10 +343,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           _scheduleButton(
             text: "+ ${LocaleKeys.addActivity.tr()}",
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const DailyRoutineScreen(),
-                ),
+              showDialog(
+                context: context,
+                builder: (_) => const AddDailyRoutineDialog(),
               );
             },
             isPrimary: true,
