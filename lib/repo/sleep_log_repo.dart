@@ -71,7 +71,10 @@ class SleepLogRepo {
     required String sleepLogId,
   }) async {
     try {
-      await child.reference?.delete();
+      if (child.reference?.id == null) {
+        return ApiResultStatus.error(error: Exception('Child ID required'));
+      }
+      await _childSleepCollection(child.reference!.id).doc(sleepLogId).delete();
       return ApiResultStatus.data(data: null);
     } on FirebaseException catch (_) {
       return ApiResultStatus.error(

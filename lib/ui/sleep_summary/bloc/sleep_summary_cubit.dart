@@ -124,42 +124,50 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
   }
 
   bool _validateSleepLog() {
-    if (state.selectedDate == null ||
-        state.selectedBedTime == null ||
-        state.selectedWakeTime == null ||
-        (state.notes ?? "").isEmpty) {
-      if (state.selectedDate == null) {
-        changeProps(selectedDateError: "Please select Date");
-      } else {
-        changeProps(selectedDateError: "");
-      }
-
-      if (state.selectedBedTime == null) {
-        changeProps(bedTimeError: "Please select bed time");
-      } else {
-        changeProps(bedTimeError: "");
-      }
-
-      if (state.selectedWakeTime == null) {
-        changeProps(wakeUpTimeError: "Please select bed time");
-      } else {
-        changeProps(wakeUpTimeError: "");
-      }
-
-      if ((state.notes ?? "").isEmpty) {
-        changeProps(notesError: "Please select notes");
-      } else {
-        changeProps(notesError: "");
-      }
-      return false;
+    bool isValid = true;
+    
+    if (state.selectedDate == null) {
+      changeProps(selectedDateError: "Please select Date");
+      isValid = false;
+    } else {
+      changeProps(selectedDateError: "");
     }
-    changeProps(
-      notesError: "",
-      wakeUpTimeError: "",
-      bedTimeError: "",
-      selectedDateError: "",
-    );
-    return true;
+
+    if (state.selectedBedTime == null) {
+      changeProps(bedTimeError: "Please select bed time");
+      isValid = false;
+    } else {
+      changeProps(bedTimeError: "");
+    }
+
+    if (state.selectedWakeTime == null) {
+      changeProps(wakeUpTimeError: "Please select wake up time");
+      isValid = false;
+    } else {
+      changeProps(wakeUpTimeError: "");
+    }
+
+    if ((state.notes ?? "").isEmpty) {
+      changeProps(notesError: "Please enter notes");
+      isValid = false;
+    } else {
+      changeProps(notesError: "");
+    }
+
+    if (isValid && state.selectedBedTime != null && state.selectedWakeTime != null) {
+      if (!state.selectedWakeTime!.isAfter(state.selectedBedTime!)) {
+        changeProps(wakeUpTimeError: "Wake time must be after bed time");
+        isValid = false;
+      } else {
+        final duration = state.selectedWakeTime!.difference(state.selectedBedTime!);
+        if (duration.inHours > 24) {
+          changeProps(wakeUpTimeError: "Sleep duration cannot exceed 24 hours");
+          isValid = false;
+        }
+      }
+    }
+
+    return isValid;
   }
 
   Future<void> addSleepLog() async {
@@ -205,6 +213,22 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
     apiResultStatus.whenOrNull(
       data: (data) {
         changeProps(sleepLogs: data);
+      },
+    );
+  }
+
+  Future<void> deleteSleepLog(String logId) async {
+    if (state.childModel == null) return;
+    
+    // Add loading indicator here if needed, but we can do it optimistically or wait for reload.
+    ApiResultStatus result = await SleepLogRepo.instance.deleteSleepLog(
+      child: state.childModel!,
+      sleepLogId: logId,
+    );
+    
+    result.whenOrNull(
+      data: (_) {
+        reload(); // Reload sleep logs after successful deletion
       },
     );
   }
