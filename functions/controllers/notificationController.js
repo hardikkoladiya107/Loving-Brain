@@ -163,8 +163,28 @@ async function sendMulticastBatched(tokens, title, body) {
 }
 
 exports.sendNotificationToAll = onRequest(async (req, res) => {
+  // Set CORS headers so the admin dashboard can call this
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).send("");
+  }
+
   try {
-    const usersSnapshot = await admin.firestore().collection("users").get();
+    // Accept custom title/body from POST body; fall back to streak defaults
+    const {title: reqTitle, body: reqBody} = req.body || {};
+    const {TITLE: streakTitle, BODY: streakBody} = NOTIFICATION_COPY.STREAK;
+    const title = (reqTitle && reqTitle.trim()) ? reqTitle.trim() : streakTitle;
+    const body = (reqBody && reqBody.trim()) ? reqBody.trim() : streakBody;
+
+    // Only send to users who have notifications enabled and a valid FCM token
+    const usersSnapshot = await admin.firestore()
+        .collection("users")
+        .where("is_notification", "==", true)
+        .get();
+
     const tokens = [];
     usersSnapshot.forEach((doc) => {
       const t = doc.data().fcm_token;
@@ -172,19 +192,20 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
     });
 
     if (tokens.length === 0) {
-      return res.status(400).send({error: "No valid FCM tokens found"});
+      return res.status(200).send({
+        success: true,
+        message: "No eligible users found (no tokens or notifications disabled)",
+        sent: 0,
+      });
     }
 
-    const {TITLE: streakTitle, BODY: streakBody} = NOTIFICATION_COPY.STREAK;
-    await sendMulticastBatched(
-        tokens,
-        streakTitle,
-        streakBody,
-    );
+    await sendMulticastBatched(tokens, title, body);
+    logger.info(`Broadcast notification sent to ${tokens.length} users.`);
 
     return res.status(200).send({
       success: true,
-      message: "Notifications sent in batches",
+      message: "Notifications sent successfully",
+      sent: tokens.length,
     });
   } catch (error) {
     logger.error("Error sending notifications", {error});
@@ -194,6 +215,7 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
     });
   }
 });
+
 
 exports.sendPushNotification = onRequest(async (req, res) => {
   try {

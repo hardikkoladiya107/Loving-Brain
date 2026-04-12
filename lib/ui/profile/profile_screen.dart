@@ -123,9 +123,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 showCheckBox: true,
                                 icon: LucideIcons.bell,
                                 iconBgColor: gentleReminderIconColor,
-                                check: state.userModel?.getReminderNotification ?? false,
+                                check: state.userModel?.isNotification ?? false,
                                 onChanged: (value) {
-                                  context.read<ProfileCubit>().updateGentleReminder();
+                                  context.read<ProfileCubit>().updateNotification();
                                 },
                                 isLast: false,
                               ),

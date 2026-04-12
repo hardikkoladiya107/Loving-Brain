@@ -15,9 +15,11 @@ const {
 } = require("./controllers/notificationController");
 const {onRoutineWrite} = require("./triggers/routineTriggers");
 const {onSharedEventWrite} = require("./triggers/eventTriggers");
+const {onUserDelete} = require("./triggers/userTriggers");
 
 exports.sendScheduledNotification = sendScheduledNotification;
 exports.sendNotificationToAll = sendNotificationToAll;
 exports.sendPushNotification = sendPushNotification;
 exports.onRoutineWrite = onRoutineWrite;
 exports.onSharedEventWrite = onSharedEventWrite;
+exports.onUserDelete = onUserDelete;

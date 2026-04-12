@@ -87,22 +87,22 @@ class UserRepo {
 
     print("🟢 Streak updated locally: $newStreak days");
 
-    // ✅ Then update Firestore in background
+    // ✅ Then upsert to Firestore (safe for new documents too)
     try {
-      await userCollection.doc(localUser.uid).update({
-        'streak': newStreak,
-        'last_streak_update': today,
-      });
+      await userCollection.doc(localUser.uid).set(
+        {
+          'streak': newStreak,
+          'last_streak_update': today,
+        },
+        SetOptions(merge: true),
+      );
       print("☁️ Synced streak with Firestore successfully");
     } catch (e) {
       print("⚠️ Failed to sync streak to Firestore: $e");
     }
   }
 
-  Future<void> updateGentleReminder() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
+  Future<void> updateNotification() async {
     // Get user from local preferences
     final localUser = preferences.getUserModel();
     if (localUser == null) {
@@ -110,17 +110,18 @@ class UserRepo {
       return;
     }
 
-    // ✅ Update locally first
+    // ✅ Toggle & save locally first
     final updatedUser = localUser.copyWith(
-      getReminderNotification: !(localUser.getReminderNotification ?? false),
+      isNotification: !(localUser.isNotification ?? false),
     );
     await preferences.saveUserModel(updatedUser);
 
-    // ✅ Then update Firestore in background
+    // ✅ Upsert to Firestore (set with merge = create if not exists, update if exists)
     try {
-      await userCollection.doc(localUser.uid).update({
-        'get_reminder_notification': updatedUser.getReminderNotification,
-      });
+      await userCollection.doc(localUser.uid).set(
+        {'is_notification': updatedUser.isNotification},
+        SetOptions(merge: true),
+      );
     } catch (e) {
       print("⚠️ Failed to update to Firestore: $e");
     }
@@ -202,7 +203,8 @@ class UserRepo {
     try {
       var tUid = uId ?? preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
-        await userCollection.doc(tUid).update(request);
+        // Use set with merge:true so it works even if the document doesn't exist yet
+        await userCollection.doc(tUid).set(request, SetOptions(merge: true));
         return ApiResultStatus.data(data: tUid);
       } else {
         return ApiResultStatus.error(

@@ -25,7 +25,7 @@ class UserModel {
     int? streak,
     List<DocumentReference>? children,
     DocumentReference? defaultChild,
-    bool? getReminderNotification,
+    bool? isNotification,
     bool? dailyEmotionCheck,
     bool? todaysPlayIdea,
     bool? scheduleReminder,
@@ -54,7 +54,7 @@ class UserModel {
     _streak = streak;
     _children = children;
     _defaultChild = defaultChild;
-    _getReminderNotification = getReminderNotification;
+    _isNotification = isNotification;
     _dailyEmotionCheck = dailyEmotionCheck;
     _todaysPlayIdea = todaysPlayIdea;
     _scheduleReminder = scheduleReminder;
@@ -81,7 +81,7 @@ class UserModel {
     _relationshipToChild = jsonObject['relationship_to_child'];
     _parentEmail = jsonObject['parent_email'];
     _streak = jsonObject['streak'];
-    _getReminderNotification = jsonObject['get_reminder_notification'];
+    _isNotification = jsonObject['is_notification'];
     _dailyEmotionCheck = jsonObject['daily_emotion_check'];
     _todaysPlayIdea = jsonObject['todays_play_idea'];
     _scheduleReminder = jsonObject['schedule_reminder'];
@@ -243,7 +243,7 @@ class UserModel {
   int? _streak;
   List<DocumentReference>? _children;
   DocumentReference? _defaultChild;
-  bool? _getReminderNotification;
+  bool? _isNotification;
   bool? _dailyEmotionCheck;
   bool? _todaysPlayIdea;
   bool? _scheduleReminder;
@@ -273,7 +273,7 @@ class UserModel {
     int? streak,
     List<DocumentReference>? children,
     DocumentReference? defaultChild,
-    bool? getReminderNotification,
+    bool? isNotification,
     bool? dailyEmotionCheck,
     bool? todaysPlayIdea,
     bool? scheduleReminder,
@@ -303,8 +303,8 @@ class UserModel {
       streak: streak ?? _streak,
       children: children ?? _children,
       defaultChild: defaultChild ?? _defaultChild,
-      getReminderNotification:
-          getReminderNotification ?? _getReminderNotification,
+      isNotification:
+          isNotification ?? _isNotification,
       dailyEmotionCheck: dailyEmotionCheck ?? _dailyEmotionCheck,
       todaysPlayIdea: todaysPlayIdea ?? _todaysPlayIdea,
       scheduleReminder: scheduleReminder ?? _scheduleReminder,
@@ -375,7 +375,7 @@ class UserModel {
     return _streak!;
   }
 
-  bool? get getReminderNotification => _getReminderNotification;
+  bool? get isNotification => _isNotification;
   bool? get dailyEmotionCheck => _dailyEmotionCheck;
   bool? get todaysPlayIdea => _todaysPlayIdea;
   bool? get scheduleReminder => _scheduleReminder;
@@ -407,7 +407,7 @@ class UserModel {
     map['child_age'] = _childAge;
     map['relationship_to_child'] = _relationshipToChild;
     map['streak'] = _streak;
-    map['get_reminder_notification'] = _getReminderNotification;
+    map['is_notification'] = _isNotification;
     map['daily_emotion_check'] = _dailyEmotionCheck;
     map['todays_play_idea'] = _todaysPlayIdea;
     map['schedule_reminder'] = _scheduleReminder;

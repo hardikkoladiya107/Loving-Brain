@@ -73,9 +73,6 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            shadows: [
-                              const Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))
-                            ],
                           ),
                       20.spaceH,
                       if (state.sleepLogs.isEmpty) ...[

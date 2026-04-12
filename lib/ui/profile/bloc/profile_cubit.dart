@@ -77,8 +77,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     profileSubscription?.cancel();
   }
 
-  void updateGentleReminder() {
-    UserRepo.instance.updateGentleReminder();
+  void updateNotification() {
+    UserRepo.instance.updateNotification();
   }
 
   void shareApp() {
