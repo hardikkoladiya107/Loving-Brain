@@ -8,7 +8,6 @@ import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
 import 'package:loving_brain/ui/chat_detail/bloc/chat_detail_cubit.dart';
 import 'package:loving_brain/ui/chat_list/bloc/chat_list_cubit.dart';
 import 'package:loving_brain/ui/child_profile/bloc/child_profile_cubit.dart';
-import 'package:loving_brain/ui/connect_detail/bloc/connect_detail_cubit.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/bloc/daily_mood_check_in_cubit.dart';
 import 'package:loving_brain/ui/daily_mood_log/bloc/daily_mood_log_cubit.dart';
 import 'package:loving_brain/ui/daily_routine/bloc/daily_routine_cubit.dart';
@@ -117,7 +116,5 @@ var blocProvider = [
   BlocProvider<YourStreakCubit>(
     create: (BuildContext context) => YourStreakCubit(),
   ),
-  BlocProvider<ConnectDetailCubit>(
-    create: (BuildContext context) => ConnectDetailCubit(),
-  ),
+
 ];

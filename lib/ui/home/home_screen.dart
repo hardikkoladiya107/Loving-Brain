@@ -15,7 +15,6 @@ import '../../main.dart';
 import '../../other/app_color.dart';
 import '../base_screen/bloc/base_cubit.dart';
 import '../new_behavior/new_behavior_screen.dart';
-import '../connect_detail/connect_detail_screen.dart';
 import '../reflect_your_emotions/reflect_your_emotions.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
@@ -56,8 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       20.spaceH,
                       _heroDashboard(state),
-                      16.spaceH,
-                      _dailyInsightStrip(state),
+                      // 16.spaceH,
+                      // _dailyInsightStrip(state),
                       20.spaceH,
                       "Jump Back In".appText(
                         fontWeight: FontWeight.w900,
@@ -275,116 +274,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _dailyInsightStrip(HomeState state) {
-    if (state.todayParentingTip.isEmpty) return const SizedBox.shrink();
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.amber.shade600.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          )
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Elegant sweeping gradient background element
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: 140,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.white.withValues(alpha: 0), Colors.amber.shade50],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-              ),
-            ),
-          ),
-          // Formatted quote watermark
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Icon(
-              Icons.format_quote_rounded,
-              size: 100,
-              color: Colors.amber.shade100.withValues(alpha: 0.6),
-            ),
-          ),
-          // Premium Accent Bar
-          Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: 5,
-              decoration: BoxDecoration(
-                color: Colors.amber.shade400,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  bottomLeft: Radius.circular(24),
-                ),
-              ),
-            ),
-          ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(color: Colors.amber.withValues(alpha: 0.15), blurRadius: 10, offset: const Offset(0, 4))
-                    ],
-                    border: Border.all(color: Colors.amber.shade100, width: 1),
-                  ),
-                  child: Icon(Icons.lightbulb_rounded, color: Colors.amber.shade500, size: 24),
-                ),
-                16.spaceW,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      LocaleKeys.dailyParentingTip.tr().appText(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.amber.shade800,
-                        letterSpacing: 0.5,
-                        textAlign: TextAlign.left,
-                      ),
-                      6.spaceH,
-                      state.todayParentingTip.appText(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                        height: 1.4,
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _quickActionsGrid() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -394,16 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: _actionCard(
-                  title: LocaleKeys.learnPlay.tr(),
-                  subtitle: "Connect together",
-                  icon: Icons.toys_rounded,
-                  themeColor: Colors.cyan.shade600,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ConnectDetailScreen())),
-                ),
-              ),
-              12.spaceW,
-              Expanded(
-                child: _actionCard(
                   title: LocaleKeys.howAreWeFeeling.tr(),
                   subtitle: "Daily mood check",
                   icon: Icons.favorite_rounded,
@@ -411,11 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DailyMoodCheckInScreen())),
                 ),
               ),
-            ],
-          ),
-          12.spaceH,
-          Row(
-            children: [
+              12.spaceW,
               Expanded(
                 child: _actionCard(
                   title: LocaleKeys.trackKidBehaviour.tr(),
@@ -425,7 +300,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewBehaviorScreen())),
                 ),
               ),
-              12.spaceW,
+            ],
+          ),
+          12.spaceH,
+          Row(
+            children: [
               Expanded(
                 child: _actionCard(
                   title: LocaleKeys.familySync.tr(),
@@ -434,6 +313,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   themeColor: Colors.orange.shade600,
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EssentialsScreen())),
                 ),
+              ),
+              12.spaceW,
+              Expanded(
+                child: const SizedBox(),
               ),
             ],
           ),
