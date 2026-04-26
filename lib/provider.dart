@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loving_brain/ui/activity/bloc/activity_cubit.dart';
-import 'package:loving_brain/ui/activity_completed/bloc/activity_completed_cubit.dart';
+
 import 'package:loving_brain/ui/add_shared_event/cubit/add_shared_event_cubit.dart';
 import 'package:loving_brain/ui/ai_chat/bloc/ai_chat_cubit.dart';
 import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
@@ -46,12 +45,7 @@ var blocProvider = [
     create: (BuildContext context) => SubscriptionCubit(),
   ),
   BlocProvider<AiChatCubit>(create: (BuildContext context) => AiChatCubit()),
-  BlocProvider<ActivityCompletedCubit>(
-    create: (BuildContext context) => ActivityCompletedCubit(),
-  ),
-  BlocProvider<ActivityCubit>(
-    create: (BuildContext context) => ActivityCubit(),
-  ),
+
   BlocProvider<NewBehaviorCubit>(
     create: (BuildContext context) => NewBehaviorCubit(),
   ),
