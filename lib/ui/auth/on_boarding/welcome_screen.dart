@@ -164,16 +164,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         ),
       ),
       onTap: () {
-        bool hasSeen = preferences.getBool(SharedPreference.hasSeenOnboarding, defValue: false) ?? false;
-        if (hasSeen) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-          );
-        } else {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const OnBoardingScreen1()),
-          );
-        }
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const OnBoardingScreen1()),
+        );
       },
     ).appPadding(left: 10, right: 10);
   }

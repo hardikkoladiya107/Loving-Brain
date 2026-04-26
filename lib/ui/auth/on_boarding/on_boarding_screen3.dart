@@ -31,111 +31,60 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 1800),
-          tween: Tween(begin: 0.0, end: 1.0),
-          builder: (context, value, child) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                80.spaceH,
-                Transform.translate(
-                  offset: Offset(0, 30 * (1 - value)),
-                  child: Opacity(
-                    opacity: value.clamp(0.0, 1.0),
-                    child: _topCard(),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              40.spaceH,
+              _topCard(),
+              20.spaceH,
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _card1(
+                        title: LocaleKeys.dailySchedulePlanner.tr(),
+                        description: LocaleKeys.shareResponsibilityFairly.tr(),
+                        image: Assets.icons.icDailySchedulePlannerIcon,
+                        trackerStartColor: sliderTrackColor1,
+                        trackerEndColor: sliderTrackColor1.withValues(alpha: 0.2),
+                      ),
+                      16.spaceH,
+                      _card1(
+                        title: LocaleKeys.coParentingCalendar.tr(),
+                        description: LocaleKeys.coordinateChildRoutinesMealsSchoolPlaytimeTherapy.tr(),
+                        image: Assets.icons.icCoParentingIcon,
+                        trackerStartColor: sliderTrackColor2,
+                        trackerEndColor: sliderTrackColor2.withValues(alpha: 0.2),
+                      ),
+                      16.spaceH,
+                      _card1(
+                        title: LocaleKeys.mindfulness.tr(),
+                        description: LocaleKeys.overallWellbeing.tr(),
+                        image: Assets.icons.icMindfulness,
+                        trackerStartColor: sliderTrackColor3,
+                        trackerEndColor: sliderTrackColor3.withValues(alpha: 0.2),
+                      ),
+                      16.spaceH,
+                      _card1(
+                        title: LocaleKeys.parentSupport.tr(),
+                        description: LocaleKeys.certifiedTrainersCounselors.tr(),
+                        image: Assets.icons.icParentSupport,
+                        trackerStartColor: sliderTrackColor4,
+                        trackerEndColor: sliderTrackColor4.withValues(alpha: 0.2),
+                      ),
+                      40.spaceH,
+                    ],
                   ),
                 ),
-                20.spaceH,
-                Expanded(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        _animatedCard(
-                          progress: value,
-                          threshold: 0.2,
-                          title: LocaleKeys.dailySchedulePlanner.tr(),
-                          description: LocaleKeys.shareResponsibilityFairly.tr(),
-                          image: Assets.icons.icDailySchedulePlannerIcon,
-                          trackerStartColor: sliderTrackColor1,
-                          trackerEndColor: sliderTrackColor1.withValues(alpha: 0.2),
-                        ),
-                        16.spaceH,
-                        _animatedCard(
-                          progress: value,
-                          threshold: 0.4,
-                          title: LocaleKeys.coParentingCalendar.tr(),
-                          description: LocaleKeys.coordinateChildRoutinesMealsSchoolPlaytimeTherapy.tr(),
-                          image: Assets.icons.icCoParentingIcon,
-                          trackerStartColor: sliderTrackColor2,
-                          trackerEndColor: sliderTrackColor2.withValues(alpha: 0.2),
-                        ),
-                        16.spaceH,
-                        _animatedCard(
-                          progress: value,
-                          threshold: 0.6,
-                          title: LocaleKeys.mindfulness.tr(),
-                          description: LocaleKeys.overallWellbeing.tr(),
-                          image: Assets.icons.icMindfulness,
-                          trackerStartColor: sliderTrackColor3,
-                          trackerEndColor: sliderTrackColor3.withValues(alpha: 0.2),
-                        ),
-                        16.spaceH,
-                        _animatedCard(
-                          progress: value,
-                          threshold: 0.8,
-                          title: LocaleKeys.parentSupport.tr(),
-                          description: LocaleKeys.certifiedTrainersCounselors.tr(),
-                          image: Assets.icons.icParentSupport,
-                          trackerStartColor: sliderTrackColor4,
-                          trackerEndColor: sliderTrackColor4.withValues(alpha: 0.2),
-                        ),
-                        100.spaceH,
-                      ],
-                    ),
-                  ),
-                ),
-                _animatedNextButton(value),
-                30.spaceH,
-              ],
-            );
-          },
+              ),
+              _nextButton(),
+              30.spaceH,
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  Widget _animatedCard({
-    required double progress,
-    required double threshold,
-    required String title,
-    required String description,
-    required AssetGenImage image,
-    required Color trackerStartColor,
-    required Color trackerEndColor,
-  }) {
-    final double cardAlpha = (progress - threshold).clamp(0.0, 0.2) / 0.2;
-    return Transform.translate(
-      offset: Offset(0, 20 * (1 - cardAlpha)),
-      child: Opacity(
-        opacity: cardAlpha,
-        child: _card1(
-          title: title,
-          description: description,
-          image: image,
-          trackerStartColor: trackerStartColor,
-          trackerEndColor: trackerEndColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _animatedNextButton(double value) {
-    final double alpha = (value - 0.9).clamp(0.0, 0.1) / 0.1;
-    return Opacity(
-      opacity: alpha,
-      child: _nextButton(),
     );
   }
 

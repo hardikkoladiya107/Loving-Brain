@@ -30,59 +30,28 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: TweenAnimationBuilder<double>(
-          duration: const Duration(milliseconds: 1500),
-          tween: Tween(begin: 0.0, end: 1.0),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, child) {
-            return Stack(
-              children: [
-                Positioned(
-                  top: 80 + (20 * (1 - value)),
-                  left: 24,
-                  right: 24,
-                  child: Opacity(
-                    opacity: value.clamp(0.0, 1.0),
-                    child: _personalizedCard(),
-                  ),
-                ),
-                Positioned(
-                  bottom: 350 + (30 * (1 - value)),
-                  left: 30,
-                  right: 30,
-                  child: Opacity(
-                    opacity: (value - 0.3).clamp(0.0, 1.0),
-                    child: _floatingGlassInfo(
-                      text: LocaleKeys.weGuideYouThroughParenting.tr(),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 190.h + (30 * (1 - value)),
-                  left: 30,
-                  right: 30,
-                  child: Opacity(
-                    opacity: (value - 0.6).clamp(0.0, 1.0),
-                    child: _floatingGlassInfo(
-                      text: LocaleKeys.takeAFree2weekCoaching.tr(),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 50,
-                  left: 0,
-                  right: 0,
-                  child: Opacity(
-                    opacity: (value - 0.8).clamp(0.0, 1.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [_nextButton()],
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Spacer(flex: 1),
+              _personalizedCard().appPadding(left: 24, right: 24),
+              Spacer(flex: 2),
+              _floatingGlassInfo(
+                text: LocaleKeys.weGuideYouThroughParenting.tr(),
+              ).appPadding(left: 30, right: 30),
+              24.spaceH,
+              _floatingGlassInfo(
+                text: LocaleKeys.takeAFree2weekCoaching.tr(),
+              ).appPadding(left: 30, right: 30),
+              Spacer(flex: 2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [_nextButton()],
+              ),
+              30.spaceH,
+            ],
+          ),
         ),
       ),
     );
@@ -95,6 +64,7 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
@@ -123,6 +93,7 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
+          width: double.infinity,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(30),
