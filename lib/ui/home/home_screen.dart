@@ -9,6 +9,7 @@ import 'package:loving_brain/ui/essentials/essentials_screen.dart';
 import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
+import 'package:loving_brain/ui/energy_bridge/energy_bridge_screen.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
@@ -16,6 +17,9 @@ import '../../other/app_color.dart';
 import '../base_screen/bloc/base_cubit.dart';
 import '../new_behavior/new_behavior_screen.dart';
 import '../reflect_your_emotions/reflect_your_emotions.dart';
+import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_cubit.dart';
+import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_state.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -55,8 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       20.spaceH,
                       _heroDashboard(state),
-                      // 16.spaceH,
                       // _dailyInsightStrip(state),
+                      20.spaceH,
+                      _bridgeCard(context),
                       20.spaceH,
                       "Jump Back In".appText(
                         fontWeight: FontWeight.w900,
@@ -83,6 +88,95 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
       listener: (context, state) {},
+    );
+  }
+
+  Widget _bridgeCard(BuildContext context) {
+    return BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
+      builder: (context, energyState) {
+        if (!energyState.isTimerActive || energyState.startTime == null || energyState.startTime == 0) {
+          return const SizedBox.shrink();
+        }
+
+        final startDateTime = DateTime.fromMillisecondsSinceEpoch(energyState.startTime!);
+        final elapsedMinutes = DateTime.now().difference(startDateTime).inMinutes;
+
+        if (elapsedMinutes >= 105 && elapsedMinutes < 120) {
+          return Container(
+            margin: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
+            padding: EdgeInsets.all(20.w),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFB3BA), Color(0xFFFFDFBA)], // Calming Pastel
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24.r),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFFB3BA).withValues(alpha: 0.4),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                )
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.self_improvement_rounded, color: Colors.orange.shade800, size: 28.sp),
+                    8.w.spaceW,
+                    "Time to Transition".appText(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.orange.shade900,
+                    ),
+                  ],
+                ),
+                8.h.spaceH,
+                "Your child has been highly active for over 105 minutes. It's time to start a calming activity to prevent a crash."
+                    .appText(
+                  fontSize: 13.sp,
+                  color: Colors.orange.shade900.withValues(alpha: 0.8),
+                  height: 1.4,
+                  fontWeight: FontWeight.w600,
+                ),
+                16.h.spaceH,
+                BaseButton(
+                  onTap: () async {
+                    // Placeholder video URL
+                    final url = Uri.parse("https://www.youtube.com/watch?v=l_mAefX-q0c");
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url);
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.play_circle_fill_rounded, color: Colors.orange.shade600, size: 20.sp),
+                        8.w.spaceW,
+                        "Play Calming Video".appText(
+                          color: Colors.orange.shade700,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14.sp,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 
@@ -316,7 +410,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               12.spaceW,
               Expanded(
-                child: const SizedBox(),
+                child: _actionCard(
+                  title: "Energy Bridge",
+                  subtitle: "Connect energy",
+                  icon: Icons.bolt_rounded,
+                  themeColor: Colors.blue.shade500,
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EnergyBridgeScreen())),
+                ),
               ),
             ],
           ),

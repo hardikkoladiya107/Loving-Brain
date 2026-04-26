@@ -4,6 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../main.dart';
 
@@ -18,6 +20,7 @@ class NotificationUtil {
   static FlutterLocalNotificationsPlugin instance() => _localNotifications;
 
   static Future<void> initializePlatformNotifications() async {
+    tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@drawable/ic_notification_icon');
 
@@ -115,6 +118,33 @@ class NotificationUtil {
       platformChannelSpecifics,
       // payload: payload,
     );
+  }
+
+  static Future<void> scheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required String payload,
+    required DateTime scheduledDate,
+  }) async {
+    final platformChannelSpecifics = await _notificationDetails(
+      channelId: channelId,
+      channelName: channelName,
+      channelDesc: channelDesc,
+    );
+    await _localNotifications.zonedSchedule(
+      id,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledDate, tz.local),
+      platformChannelSpecifics,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      payload: payload,
+    );
+  }
+
+  static Future<void> cancelNotification(int id) async {
+    await _localNotifications.cancel(id);
   }
 
   static Future<NotificationDetails> _notificationDetails({

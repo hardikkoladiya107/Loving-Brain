@@ -30,6 +30,7 @@ import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
 import 'package:loving_brain/ui/thought_list/bloc/thought_list_cubit.dart';
 import 'package:loving_brain/ui/write_your_thought/bloc/write_your_thought_cubit.dart';
 import 'package:loving_brain/ui/your_streak/bloc/your_streak_cubit.dart';
+import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_cubit.dart';
 
 var blocProvider = [
   BlocProvider<LoginCubit>(create: (BuildContext context) => LoginCubit()),
@@ -109,6 +110,9 @@ var blocProvider = [
   ),
   BlocProvider<YourStreakCubit>(
     create: (BuildContext context) => YourStreakCubit(),
+  ),
+  BlocProvider<EnergyBridgeCubit>(
+    create: (BuildContext context) => EnergyBridgeCubit(),
   ),
 
 ];

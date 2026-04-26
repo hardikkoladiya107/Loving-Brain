@@ -15,6 +15,8 @@ class SharedPreference {
   static const user = "user";
   static const isLogin = "isLogin";
   static const hasSeenOnboarding = "hasSeenOnboarding";
+  static const energyBridgeStartTime = "energyBridgeStartTime";
+  static const isHighEnergyActive = "isHighEnergyActive";
 
   bool? getBool(String key, {bool defValue = false}) {
     return _preferences == null
@@ -41,6 +43,20 @@ class SharedPreference {
       return null;
     } else {
       return _preferences!.setString(key, value);
+    }
+  }
+
+  int? getInt(String key, {int defValue = 0}) {
+    return _preferences == null
+        ? defValue
+        : _preferences!.getInt(key) ?? defValue;
+  }
+
+  Future<bool?> putInt(String key, int value) async {
+    if (_preferences == null) {
+      return null;
+    } else {
+      return _preferences!.setInt(key, value);
     }
   }
 
