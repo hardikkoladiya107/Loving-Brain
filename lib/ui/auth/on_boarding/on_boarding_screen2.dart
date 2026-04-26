@@ -66,20 +66,15 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-            gradient: LinearGradient(
-              colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
           ),
           child: text.appText(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             fontSize: 16,
             textAlign: TextAlign.center,
-            color: Colors.white,
+            color: const Color(0xFF1F2937),
             height: 1.4,
           ),
         ),
@@ -95,12 +90,12 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 30,
               )
             ],
@@ -114,17 +109,17 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
                 textAlign: TextAlign.center,
                 fontSize: 26,
                 letterSpacing: 1.2,
-                color: Colors.white,
+                color: const Color(0xFF1F2937),
               ),
               12.spaceH,
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: yellowTextColor.withValues(alpha: 0.2),
+                  color: primaryColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: LocaleKeys.justTapAway.tr().appText(
-                  color: yellowTextColor,
+                  color: primaryColor,
                   fontWeight: FontWeight.w900,
                   fontSize: 22,
                 ),

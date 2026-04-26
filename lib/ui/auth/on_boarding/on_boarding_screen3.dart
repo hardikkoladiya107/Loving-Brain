@@ -95,9 +95,9 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
         filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
           ),
           child: RichText(
             text: TextSpan(
@@ -139,9 +139,16 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: Colors.white.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.8)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: Row(
             children: [
@@ -161,16 +168,16 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                   children: [
                     16.spaceH,
                     title.appText(
-                      color: Colors.white,
+                      color: const Color(0xFF1F2937),
                       fontWeight: FontWeight.w900,
                       fontSize: 16,
                       textAlign: TextAlign.start,
                     ),
-                    6.spaceH,
+                    4.spaceH,
                     description.appText(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: const Color(0xFF4B5563),
                       fontSize: 13,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start,
                       height: 1.3,
                     ),
