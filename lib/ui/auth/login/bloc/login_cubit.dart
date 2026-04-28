@@ -25,7 +25,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(
       state.copyWith(
         emailAddress: emailAddress ?? state.emailAddress,
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
         password: password ?? state.password,
         emailAddressError: emailAddressError ?? state.emailAddressError,
         passwordError: passwordError ?? state.passwordError,

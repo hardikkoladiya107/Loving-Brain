@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -59,6 +58,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
         );
       },
       builder: (context, state) {
+        final bool isActive = state.isTimerActive && state.startTime != null;
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
@@ -76,60 +76,77 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF894BCD), Color(0xFFB185DB)],
+                colors: <Color>[
+                  Color(0xFF6F3CC3),
+                  Color(0xFF9C76DA),
+                  Color(0xFFEDE3FF),
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
+                stops: <double>[0.0, 0.42, 1.0],
               ),
             ),
             child: SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(24.w),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(32.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 30,
-                            offset: const Offset(0, 10),
+                  children: <Widget>[
+                    24.h.spaceH,
+                    _headerCard(isActive),
+                    18.h.spaceH,
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 18.w,
+                          vertical: 20.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.96),
+                          borderRadius: BorderRadius.circular(32.r),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 28,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: <Widget>[
+                              _heroIcon(isActive),
+                              14.h.spaceH,
+                              (isActive
+                                      ? "Energy Session Active"
+                                      : "Tantrum Stopper")
+                                  .appText(
+                                    fontSize: 23.sp,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black87,
+                                    textAlign: TextAlign.center,
+                                  ),
+                              8.h.spaceH,
+                              "Start high-energy play and we will remind you at 105 minutes to begin a smooth calming transition."
+                                  .appText(
+                                    fontSize: 13.sp,
+                                    color: Colors.grey.shade700,
+                                    textAlign: TextAlign.center,
+                                    height: 1.5,
+                                  ),
+                              24.h.spaceH,
+                              if (isActive)
+                                _buildActiveTimer(state)
+                              else
+                                _buildStartButton(context),
+                              18.h.spaceH,
+                              _quickTipsCard(),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.bolt_rounded,
-                            size: 80.sp,
-                            color: const Color(0xFF894BCD),
-                          ),
-                          16.h.spaceH,
-                          "Tantrum Stopper".appText(
-                            fontSize: 22.sp,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black87,
-                          ),
-                          12.h.spaceH,
-                          "We'll start a 120-minute timer and notify you at the 105-minute mark to help transition your child to a calm state."
-                              .appText(
-                            fontSize: 14.sp,
-                            color: Colors.grey.shade600,
-                            textAlign: TextAlign.center,
-                            height: 1.5,
-                          ),
-                          32.h.spaceH,
-                          if (state.isTimerActive && state.startTime != null)
-                            _buildActiveTimer(state)
-                          else
-                            _buildStartButton(context),
-                        ],
+                        ),
                       ),
                     ),
+                    18.h.spaceH,
                   ],
                 ),
               ),
@@ -140,68 +157,214 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
     );
   }
 
+  Widget _headerCard(bool isActive) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.24)),
+      ),
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 42.w,
+            height: 42.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14.r),
+            ),
+            child: Icon(
+              Icons.bolt_rounded,
+              color: const Color(0xFF7A46C9),
+              size: 24.sp,
+            ),
+          ),
+          12.w.spaceW,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                "Bridge Mode".appText(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.sp,
+                ),
+                2.h.spaceH,
+                (isActive ? "Running" : "Ready").appText(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16.sp,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFF17B26A).withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(100.r),
+            ),
+            child: (isActive ? "ACTIVE" : "IDLE").appText(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 11.sp,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _heroIcon(bool isActive) {
+    return Container(
+      width: 94.w,
+      height: 94.w,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: <Color>[Color(0xFF7D4BCE), Color(0xFFB287E6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28.r),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: const Color(0xFF7D4BCE).withValues(alpha: 0.34),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Icon(
+        isActive
+            ? Icons.self_improvement_rounded
+            : Icons.play_circle_fill_rounded,
+        color: Colors.white,
+        size: 46.sp,
+      ),
+    );
+  }
+
+  Widget _quickTipsCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F1FF),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: const Color(0xFFE8DEFA)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Icon(
+            Icons.tips_and_updates_rounded,
+            color: const Color(0xFF7A46C9),
+            size: 18.sp,
+          ),
+          8.w.spaceW,
+          Expanded(
+            child:
+                "Tip: Use this after intense activity to prevent sudden energy crashes and meltdowns."
+                    .appText(
+                      fontSize: 11.sp,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w600,
+                      height: 1.45,
+                    ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildActiveTimer(EnergyBridgeState state) {
-    final startDateTime = DateTime.fromMillisecondsSinceEpoch(state.startTime!);
-    final elapsedMinutes = DateTime.now().difference(startDateTime).inMinutes;
-    final remainingMinutes = 105 - elapsedMinutes;
+    final DateTime startDateTime = DateTime.fromMillisecondsSinceEpoch(
+      state.startTime!,
+    );
+    final int elapsedMinutes = DateTime.now()
+        .difference(startDateTime)
+        .inMinutes;
+    final int remainingMinutes = 105 - elapsedMinutes;
+    final int clampedElapsed = elapsedMinutes.clamp(0, 105);
+    final double progress = clampedElapsed / 105;
 
     return Column(
-      children: [
+      children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           decoration: BoxDecoration(
-            color: const Color(0xFF894BCD).withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(color: const Color(0xFF894BCD).withValues(alpha: 0.3)),
+            color: const Color(0xFF7A46C9).withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(18.r),
           ),
           child: Column(
-            children: [
-              "Time Active".appText(
-                fontSize: 14.sp,
-                color: const Color(0xFF894BCD),
-                fontWeight: FontWeight.w700,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: "Elapsed".appText(
+                      fontSize: 12.sp,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  "${clampedElapsed}m / 105m".appText(
+                    fontSize: 12.sp,
+                    color: const Color(0xFF7A46C9),
+                    fontWeight: FontWeight.w800,
+                  ),
+                ],
               ),
-              8.h.spaceH,
-              "$elapsedMinutes min".appText(
-                fontSize: 32.sp,
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF894BCD),
+              10.h.spaceH,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(99.r),
+                child: LinearProgressIndicator(
+                  minHeight: 10.h,
+                  value: progress,
+                  backgroundColor: const Color(0xFFDCCBF7),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Color(0xFF7A46C9),
+                  ),
+                ),
               ),
+              14.h.spaceH,
               if (remainingMinutes > 0) ...[
-                8.h.spaceH,
                 "Notification in $remainingMinutes min".appText(
-                  fontSize: 12.sp,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 13.sp,
+                  color: Colors.grey.shade700,
+                  fontWeight: FontWeight.w700,
                 ),
               ] else ...[
-                8.h.spaceH,
                 "Bridge Card is now active!".appText(
                   fontSize: 13.sp,
-                  color: Colors.green.shade600,
+                  color: Colors.green.shade700,
                   fontWeight: FontWeight.w800,
                 ),
-              ]
+              ],
             ],
           ),
         ),
-        24.h.spaceH,
+        18.h.spaceH,
         BaseButton(
           onTap: () {
             context.read<EnergyBridgeCubit>().stopTimer();
           },
           child: Container(
-            height: 56.h,
+            height: 54.h,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(28.r),
-              border: Border.all(color: Colors.red.shade400, width: 2),
+              color: const Color(0xFFFFF1F2),
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(color: const Color(0xFFFFBAC2), width: 1.3),
             ),
             child: Center(
               child: "Cancel Timer".appText(
                 color: Colors.red.shade500,
-                fontSize: 16.sp,
+                fontSize: 15.sp,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -217,18 +380,18 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
         context.read<EnergyBridgeCubit>().startTimer();
       },
       child: Container(
-        height: 56.h,
+        height: 54.h,
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF894BCD), Color(0xFFB185DB)],
+            colors: <Color>[Color(0xFF7A46C9), Color(0xFFB287E6)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          borderRadius: BorderRadius.circular(28.r),
-          boxShadow: [
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: <BoxShadow>[
             BoxShadow(
-              color: const Color(0xFF894BCD).withValues(alpha: 0.4),
+              color: const Color(0xFF7A46C9).withValues(alpha: 0.4),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -237,7 +400,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
         child: Center(
           child: "Start High Energy Play".appText(
             color: Colors.white,
-            fontSize: 16.sp,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w800,
           ),
         ),
