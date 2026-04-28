@@ -1,73 +1,134 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/energy_bridge_timer_model.dart';
 import 'package:loving_brain/other/notification_util.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/energy_bridge_repo.dart';
+
 import 'energy_bridge_state.dart';
 
 class EnergyBridgeCubit extends Cubit<EnergyBridgeState> {
   EnergyBridgeCubit() : super(const EnergyBridgeState());
 
-  void init() {
-    bool isActive = preferences.getBool(SharedPreference.isHighEnergyActive) ?? false;
-    int startTime = preferences.getInt(SharedPreference.energyBridgeStartTime) ?? 0;
-    
-    // Check if 120 minutes have already passed and auto-reset
-    if (isActive && startTime > 0) {
-      final startDateTime = DateTime.fromMillisecondsSinceEpoch(startTime);
-      final difference = DateTime.now().difference(startDateTime);
-      if (difference.inMinutes >= 120) {
-        _resetTimerState();
-        isActive = false;
-        startTime = 0;
-      }
-    }
+  StreamSubscription? _timerSubscription;
 
-    changeProps(isTimerActive: isActive, startTime: startTime);
+  void init({String? childId}) {
+    final String? resolvedChildId =
+        childId ?? preferences.getUserModel()?.defaultChild?.id;
+    if (resolvedChildId == null || resolvedChildId.isEmpty) return;
+
+    changeProps(childId: resolvedChildId);
+    _timerSubscription?.cancel();
+    _timerSubscription = EnergyBridgeRepo.instance
+        .watchTimer(resolvedChildId)
+        .listen((EnergyBridgeTimerModel? timer) {
+          changeProps(timer: timer);
+          _handleFireIfDue();
+        });
   }
 
   void startTimer() {
-    final now = DateTime.now();
-    final startTimeEpoch = now.millisecondsSinceEpoch;
-    
-    preferences.putBool(SharedPreference.isHighEnergyActive, true);
-    preferences.putInt(SharedPreference.energyBridgeStartTime, startTimeEpoch);
-    
-    changeProps(isTimerActive: true, startTime: startTimeEpoch);
-
-    // Schedule notification for 105 minutes from now
-    // (using 105 minutes per requirements)
-    final triggerTime = now.add(const Duration(minutes: 105));
-    
-    NotificationUtil.scheduleNotification(
-      id: 9991, // Unique ID for Energy Bridge
-      title: "Energy Bridge",
-      body: "Time to transition! Your child has been highly active.",
-      payload: "energy_bridge",
-      scheduledDate: triggerTime,
-    );
+    _startTimerInternal();
   }
 
   void stopTimer() {
-    _resetTimerState();
-    changeProps(isTimerActive: false, startTime: 0);
+    _resetTimerInternal(reason: 'manual');
   }
 
-  void _resetTimerState() {
-    preferences.putBool(SharedPreference.isHighEnergyActive, false);
-    preferences.putInt(SharedPreference.energyBridgeStartTime, 0);
-    NotificationUtil.cancelNotification(9991);
+  void resetByReason(String reason) {
+    _resetTimerInternal(reason: reason);
+  }
+
+  Future<void> _startTimerInternal() async {
+    final String? childId = state.childId;
+    final String uid = preferences.getUserModel()?.uid ?? '';
+    if ((childId ?? '').isEmpty || uid.isEmpty) return;
+
+    changeProps(apiResultStatus: ApiResultStatus.loading());
+    final ApiResultStatus response = await EnergyBridgeRepo.instance.startTimer(
+      childId: childId!,
+      actorUid: uid,
+      durationMinutes: 105,
+    );
+    response.whenOrNull(
+      data: (_) {
+        final DateTime triggerTime = DateTime.now().add(
+          const Duration(minutes: 105),
+        );
+        NotificationUtil.scheduleNotification(
+          id: _notificationIdForChild(childId),
+          title: "Energy Bridge",
+          body: "Time to transition! Your child has been highly active.",
+          payload: "energy_bridge:$childId",
+          scheduledDate: triggerTime,
+        );
+      },
+    );
+    changeProps(apiResultStatus: response);
+  }
+
+  Future<void> _resetTimerInternal({required String reason}) async {
+    final String? childId = state.childId;
+    final String uid = preferences.getUserModel()?.uid ?? '';
+    if ((childId ?? '').isEmpty || uid.isEmpty) return;
+
+    changeProps(apiResultStatus: ApiResultStatus.loading());
+    final ApiResultStatus response = await EnergyBridgeRepo.instance.resetTimer(
+      childId: childId!,
+      actorUid: uid,
+      reason: reason,
+    );
+    await NotificationUtil.cancelNotification(_notificationIdForChild(childId));
+    changeProps(apiResultStatus: response);
+  }
+
+  Future<void> _handleFireIfDue() async {
+    final EnergyBridgeTimerModel? timer = state.timer;
+    final String? childId = state.childId;
+    final String uid = preferences.getUserModel()?.uid ?? '';
+    if (timer == null || childId == null || uid.isEmpty) return;
+    if (!timer.isActive || timer.fired || timer.fireAt == null) return;
+    if (DateTime.now().isBefore(timer.fireAt!)) return;
+
+    final ApiResultStatus response = await EnergyBridgeRepo.instance.markFired(
+      childId: childId,
+      actorUid: uid,
+    );
+    response.whenOrNull(
+      data: (_) {
+        NotificationUtil.showLocalNotification(
+          id: _notificationIdForChild(childId),
+          title: "Energy Bridge",
+          body: "Time to slow things down.",
+          payload: "energy_bridge:$childId",
+        );
+      },
+    );
+  }
+
+  int _notificationIdForChild(String childId) {
+    return 900000 + childId.hashCode.abs() % 99999;
   }
 
   void changeProps({
-    apiResultStatus,
-    bool? isTimerActive,
-    int? startTime,
+    ApiResultStatus? apiResultStatus,
+    String? childId,
+    EnergyBridgeTimerModel? timer,
   }) {
     emit(
       state.copyWith(
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
-        isTimerActive: isTimerActive ?? state.isTimerActive,
-        startTime: startTime ?? state.startTime,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
+        childId: childId ?? state.childId,
+        timer: timer ?? state.timer,
       ),
     );
+  }
+
+  @override
+  Future<void> close() {
+    _timerSubscription?.cancel();
+    return super.close();
   }
 }

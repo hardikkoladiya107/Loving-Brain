@@ -36,12 +36,10 @@ class ChildProfileCubit extends Cubit<ChildProfileState> {
         relationShipToChild: relationShipToChild ?? state.relationShipToChild,
         relationShipToChildError:
             relationShipToChildError ?? state.relationShipToChildError,
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
-
-
 
   bool _isValidate() {
     if (state.childName.trim().isEmpty ||

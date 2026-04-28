@@ -41,7 +41,7 @@ class ParentProfileCubit extends Cubit<ParentProfileState> {
             parentDateOfBirthError ?? state.parentDateOfBirthError,
         parentGender: parentGender ?? state.parentGender,
         parentGenderError: parentGenderError ?? state.parentGenderError,
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
@@ -95,7 +95,7 @@ class ParentProfileCubit extends Cubit<ParentProfileState> {
     return true;
   }
 
-  Future<void> addParentDetail( ) async {
+  Future<void> addParentDetail() async {
     if (_isValidate()) {
       final credential = await AuthRepo.instance.updateUserToFireStore(
         uId: null,

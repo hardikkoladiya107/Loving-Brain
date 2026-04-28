@@ -36,7 +36,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         confirmPassword: confirmPassword ?? state.confirmPassword,
         emailAddressError: emailAddressError ?? state.emailAddressError,
         passwordError: passwordError ?? state.passwordError,
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
         confirmPasswordError:
             confirmPasswordError ?? state.confirmPasswordError,
         isTermsAndConditionAccepted:

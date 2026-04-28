@@ -25,6 +25,11 @@ const NOTIFICATION_COPY = {
     TITLE: "Streak update",
     BODY: "Don't forget to check in today to keep your streak alive!",
   },
+  /** Energy Bridge fired reminder. */
+  ENERGY_BRIDGE: {
+    TITLE: "Energy Bridge",
+    BODY: "Time to slow things down and begin a calming transition.",
+  },
 };
 
 module.exports = {

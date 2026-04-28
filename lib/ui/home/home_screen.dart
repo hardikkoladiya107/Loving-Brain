@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,10 +33,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Timer? _bridgeTicker;
+
   @override
   void initState() {
-    context.read<HomeCubit>().init();
     super.initState();
+    context.read<HomeCubit>().init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<EnergyBridgeCubit>().init();
+    });
+    _bridgeTicker = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -44,16 +55,16 @@ class _HomeScreenState extends State<HomeScreen> {
         return Scaffold(
           extendBodyBehindAppBar: true,
           body: Container(
-            decoration: const BoxDecoration(
-              color: Color(0xFFFAFAFA),
-            ),
+            decoration: const BoxDecoration(color: Color(0xFFFAFAFA)),
             child: SafeArea(
               bottom: false,
               child: RefreshIndicator(
                 onRefresh: () => context.read<HomeCubit>().refresh(),
                 color: primaryColor,
                 child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -63,19 +74,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       20.spaceH,
                       _bridgeCard(context),
                       20.spaceH,
-                      "Jump Back In".appText(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        color: Colors.black87,
-                      ).appPadding(left: 20, right: 20),
+                      "Jump Back In"
+                          .appText(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22,
+                            color: Colors.black87,
+                          )
+                          .appPadding(left: 20, right: 20),
                       12.spaceH,
                       _quickActionsGrid(),
                       24.spaceH,
-                      "Family Wellness".appText(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 22,
-                        color: Colors.black87,
-                      ).appPadding(left: 20, right: 20),
+                      "Family Wellness"
+                          .appText(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22,
+                            color: Colors.black87,
+                          )
+                          .appPadding(left: 20, right: 20),
                       20.spaceH,
                       _wellnessHub(),
                       40.spaceH,
@@ -94,20 +109,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _bridgeCard(BuildContext context) {
     return BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
       builder: (context, energyState) {
-        if (!energyState.isTimerActive || energyState.startTime == null || energyState.startTime == 0) {
+        final timer = energyState.timer;
+        if (timer == null) {
           return const SizedBox.shrink();
         }
 
-        final startDateTime = DateTime.fromMillisecondsSinceEpoch(energyState.startTime!);
-        final elapsedMinutes = DateTime.now().difference(startDateTime).inMinutes;
-
-        if (elapsedMinutes >= 105 && elapsedMinutes < 120) {
+        if (timer.fired) {
           return Container(
             margin: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
             padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFFB3BA), Color(0xFFFFDFBA)], // Calming Pastel
+                colors: [
+                  Color(0xFFFFB3BA),
+                  Color(0xFFFFDFBA),
+                ], // Calming Pastel
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -117,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: const Color(0xFFFFB3BA).withValues(alpha: 0.4),
                   blurRadius: 15,
                   offset: const Offset(0, 8),
-                )
+                ),
               ],
             ),
             child: Column(
@@ -125,9 +141,13 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.self_improvement_rounded, color: Colors.orange.shade800, size: 28.sp),
+                    Icon(
+                      Icons.self_improvement_rounded,
+                      color: Colors.orange.shade800,
+                      size: 28.sp,
+                    ),
                     8.w.spaceW,
-                    "Time to Transition".appText(
+                    "energyBridgeTimeToTransition".tr().appText(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w900,
                       color: Colors.orange.shade900,
@@ -135,8 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 8.h.spaceH,
-                "Your child has been highly active for over 105 minutes. It's time to start a calming activity to prevent a crash."
-                    .appText(
+                "energyBridgeTransitionBody".tr().appText(
                   fontSize: 13.sp,
                   color: Colors.orange.shade900.withValues(alpha: 0.8),
                   height: 1.4,
@@ -146,7 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 BaseButton(
                   onTap: () async {
                     // Placeholder video URL
-                    final url = Uri.parse("https://www.youtube.com/watch?v=l_mAefX-q0c");
+                    final url = Uri.parse(
+                      "https://www.youtube.com/watch?v=l_mAefX-q0c",
+                    );
                     if (await canLaunchUrl(url)) {
                       await launchUrl(url);
                     }
@@ -160,9 +181,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.play_circle_fill_rounded, color: Colors.orange.shade600, size: 20.sp),
+                        Icon(
+                          Icons.play_circle_fill_rounded,
+                          color: Colors.orange.shade600,
+                          size: 20.sp,
+                        ),
                         8.w.spaceW,
-                        "Play Calming Video".appText(
+                        "energyBridgePlayCalmingVideo".tr().appText(
                           color: Colors.orange.shade700,
                           fontWeight: FontWeight.w800,
                           fontSize: 14.sp,
@@ -170,6 +195,55 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (timer.isActive && timer.fireAt != null) {
+          final int minutesLeft = timer.fireAt!
+              .difference(DateTime.now())
+              .inMinutes
+              .clamp(0, timer.durationMinutes);
+          return Container(
+            margin: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
+            padding: EdgeInsets.all(20.w),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: <Color>[Color(0xFFE7D9FF), Color(0xFFF3EAFE)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24.r),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: const Color(0xFFB287E6).withValues(alpha: 0.25),
+                  blurRadius: 15,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.bolt_rounded,
+                  color: const Color(0xFF7A46C9),
+                  size: 26.sp,
+                ),
+                10.w.spaceW,
+                Expanded(
+                  child: "energyBridgeMinutesBeforeShift"
+                      .tr(
+                        namedArgs: <String, String>{
+                          "minutes": minutesLeft.toString(),
+                        },
+                      )
+                      .appText(
+                        fontSize: 14.sp,
+                        color: const Color(0xFF4A2B7C),
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ],
             ),
@@ -187,7 +261,10 @@ class _HomeScreenState extends State<HomeScreen> {
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF894BCD), Color(0xFFB185DB)], // Brand Purple Gradient
+          colors: [
+            Color(0xFF894BCD),
+            Color(0xFFB185DB),
+          ], // Brand Purple Gradient
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -197,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: const Color(0xFF894BCD).withValues(alpha: 0.25),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          )
+          ),
         ],
       ),
       child: Stack(
@@ -259,13 +336,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     // Streak Badge
                     BaseButton(
-                      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const YourStreakScreen())),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const YourStreakScreen(),
+                        ),
+                      ),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -295,7 +382,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -305,7 +395,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.calendar_month_rounded, color: Colors.white, size: 22),
+                        child: const Icon(
+                          Icons.calendar_month_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
                       ),
                       16.spaceW,
                       Expanded(
@@ -313,11 +407,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (routine != null) ...[
-                              DateFormat('hh:mm a').format(routine.timeStamp!).appText(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white70,
-                              ),
+                              DateFormat('hh:mm a')
+                                  .format(routine.timeStamp!)
+                                  .appText(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white70,
+                                  ),
                               2.spaceH,
                               routine.description!.appText(
                                 fontSize: 16,
@@ -343,17 +439,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       BaseButton(
-                        onTap: () => context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1),
+                        onTap: () => context.read<BaseCubit>().changeProps(
+                          bottomNavigationIndex: 1,
+                        ),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: "View".appText(
                             color: const Color(0xFF894BCD),
-                            fontWeight: FontWeight.w800, 
-                            fontSize: 13
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
                           ),
                         ),
                       ),
@@ -381,7 +482,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "Daily mood check",
                   icon: Icons.favorite_rounded,
                   themeColor: Colors.purple.shade500,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DailyMoodCheckInScreen())),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const DailyMoodCheckInScreen(),
+                    ),
+                  ),
                 ),
               ),
               12.spaceW,
@@ -391,7 +496,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "Log behaviors",
                   icon: Icons.auto_awesome_rounded,
                   themeColor: Colors.green.shade500,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NewBehaviorScreen())),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NewBehaviorScreen(),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -405,17 +514,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "Shared schedules",
                   icon: Icons.sync_rounded,
                   themeColor: Colors.orange.shade600,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EssentialsScreen())),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const EssentialsScreen()),
+                  ),
                 ),
               ),
               12.spaceW,
               Expanded(
                 child: _actionCard(
-                  title: "Energy Bridge",
-                  subtitle: "Connect energy",
+                  title: "energyBridgeTitle".tr(),
+                  subtitle: "energyBridgeConnectEnergy".tr(),
                   icon: Icons.bolt_rounded,
                   themeColor: Colors.blue.shade500,
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EnergyBridgeScreen())),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const EnergyBridgeScreen(),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -490,11 +605,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: themeColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Icon(
-                      icon,
-                      color: themeColor,
-                      size: 28,
-                    ),
+                    child: Icon(icon, color: themeColor, size: 28),
                   ),
                   // Text
                   Column(
@@ -529,20 +640,29 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         // Sleep Summary
         BaseButton(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SleepSummaryScreen())),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const SleepSummaryScreen())),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 110.h,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF2C3E50), Color(0xFF0F2027)], // Deep Night Sky
+                colors: [
+                  Color(0xFF2C3E50),
+                  Color(0xFF0F2027),
+                ], // Deep Night Sky
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(28),
               boxShadow: [
-                 BoxShadow(color: Color(0xFF0F2027).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8)),
+                BoxShadow(
+                  color: Color(0xFF0F2027).withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
               ],
             ),
             child: Stack(
@@ -587,7 +707,9 @@ class _HomeScreenState extends State<HomeScreen> {
         20.spaceH,
         // Family Feel Meter
         BaseButton(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReflectYourEmotions())),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const ReflectYourEmotions()),
+          ),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 110.h,
@@ -604,13 +726,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.only(left: 24),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFFF859B), Color(0xFFFF416C)], // Beautiful Pink/Red
+                        colors: [
+                          Color(0xFFFF859B),
+                          Color(0xFFFF416C),
+                        ], // Beautiful Pink/Red
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
-                         BoxShadow(color: Color(0xFFFF416C).withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 8)),
+                        BoxShadow(
+                          color: Color(0xFFFF416C).withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
                       ],
                     ),
                     alignment: Alignment.centerLeft,
@@ -649,6 +778,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _bridgeTicker?.cancel();
     if (navigatorKey.currentContext != null) {
       navigatorKey.currentContext!.read<HomeCubit>().dispose();
     }
@@ -660,7 +790,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final validRoutines = routines.where((r) => r.timeStamp != null).toList();
     if (validRoutines.isEmpty) return null;
     final now = DateTime.now();
-    final futureRoutines = validRoutines.where((r) => r.timeStamp!.isAfter(now)).toList();
+    final futureRoutines = validRoutines
+        .where((r) => r.timeStamp!.isAfter(now))
+        .toList();
     if (futureRoutines.isEmpty) return null;
     futureRoutines.sort((a, b) => a.timeStamp!.compareTo(b.timeStamp!));
     return futureRoutines.first;

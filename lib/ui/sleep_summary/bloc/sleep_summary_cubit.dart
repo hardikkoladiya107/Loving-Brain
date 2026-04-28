@@ -13,6 +13,7 @@ import '../../../model/child_model.dart';
 import '../../../model/user_model.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/child_repo.dart';
+import '../../../repo/energy_bridge_repo.dart';
 
 class SleepSummaryCubit extends Cubit<SleepSummaryState> {
   SleepSummaryCubit() : super(SleepSummaryState());
@@ -81,8 +82,7 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
 
   Future<void> _fetchChildFromFirestore({DocumentReference? refVal}) async {
     try {
-      final DocumentReference? ref =
-          refVal ?? state.userModel?.defaultChild;
+      final DocumentReference? ref = refVal ?? state.userModel?.defaultChild;
       if (ref == null) return;
       final snapshot = await ref.get();
       final data = snapshot.data();
@@ -125,7 +125,7 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
 
   bool _validateSleepLog() {
     bool isValid = true;
-    
+
     if (state.selectedDate == null) {
       changeProps(selectedDateError: "Please select Date");
       isValid = false;
@@ -154,12 +154,16 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
       changeProps(notesError: "");
     }
 
-    if (isValid && state.selectedBedTime != null && state.selectedWakeTime != null) {
+    if (isValid &&
+        state.selectedBedTime != null &&
+        state.selectedWakeTime != null) {
       if (!state.selectedWakeTime!.isAfter(state.selectedBedTime!)) {
         changeProps(wakeUpTimeError: "Wake time must be after bed time");
         isValid = false;
       } else {
-        final duration = state.selectedWakeTime!.difference(state.selectedBedTime!);
+        final duration = state.selectedWakeTime!.difference(
+          state.selectedBedTime!,
+        );
         if (duration.inHours > 24) {
           changeProps(wakeUpTimeError: "Sleep duration cannot exceed 24 hours");
           isValid = false;
@@ -195,10 +199,27 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
               ),
             );
         changeProps(addSleepLogApiResult: apiResultStatus);
+        await _syncEnergyBridgeOnSleep(apiResultStatus);
       } catch (e) {
         changeProps(addSleepLogApiResult: ApiResultStatus.initial());
       }
     }
+  }
+
+  Future<void> _syncEnergyBridgeOnSleep(ApiResultStatus apiResultStatus) async {
+    final String? childId = state.childModel?.reference?.id;
+    final String uid = state.userModel?.uid ?? '';
+    if ((childId ?? '').isEmpty || uid.isEmpty) return;
+
+    bool isSuccess = false;
+    apiResultStatus.whenOrNull(data: (_) => isSuccess = true);
+    if (!isSuccess) return;
+
+    await EnergyBridgeRepo.instance.resetTimer(
+      childId: childId!,
+      actorUid: uid,
+      reason: 'sleep',
+    );
   }
 
   Future<void> _loadSleepLogs() async {
@@ -219,13 +240,13 @@ class SleepSummaryCubit extends Cubit<SleepSummaryState> {
 
   Future<void> deleteSleepLog(String logId) async {
     if (state.childModel == null) return;
-    
+
     // Add loading indicator here if needed, but we can do it optimistically or wait for reload.
     ApiResultStatus result = await SleepLogRepo.instance.deleteSleepLog(
       child: state.childModel!,
       sleepLogId: logId,
     );
-    
+
     result.whenOrNull(
       data: (_) {
         reload(); // Reload sleep logs after successful deletion

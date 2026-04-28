@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -58,14 +59,15 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
         );
       },
       builder: (context, state) {
-        final bool isActive = state.isTimerActive && state.startTime != null;
+        final bool isActive = state.timer?.isActive ?? false;
+        final bool isFired = state.timer?.fired ?? false;
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             iconTheme: const IconThemeData(color: Colors.white),
-            title: "Energy Bridge".appText(
+            title: "energyBridgeTitle".tr().appText(
               color: Colors.white,
               fontWeight: FontWeight.w800,
               fontSize: 18.sp,
@@ -118,8 +120,8 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                               _heroIcon(isActive),
                               14.h.spaceH,
                               (isActive
-                                      ? "Energy Session Active"
-                                      : "Tantrum Stopper")
+                                      ? "energyBridgeSessionActive".tr()
+                                      : "energyBridgeTantrumStopper".tr())
                                   .appText(
                                     fontSize: 23.sp,
                                     fontWeight: FontWeight.w900,
@@ -127,16 +129,17 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                                     textAlign: TextAlign.center,
                                   ),
                               8.h.spaceH,
-                              "Start high-energy play and we will remind you at 105 minutes to begin a smooth calming transition."
-                                  .appText(
-                                    fontSize: 13.sp,
-                                    color: Colors.grey.shade700,
-                                    textAlign: TextAlign.center,
-                                    height: 1.5,
-                                  ),
+                              "energyBridgeIntro".tr().appText(
+                                fontSize: 13.sp,
+                                color: Colors.grey.shade700,
+                                textAlign: TextAlign.center,
+                                height: 1.5,
+                              ),
                               24.h.spaceH,
                               if (isActive)
                                 _buildActiveTimer(state)
+                              else if (isFired)
+                                _buildFiredState()
                               else
                                 _buildStartButton(context),
                               18.h.spaceH,
@@ -186,17 +189,20 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                "Bridge Mode".appText(
+                "energyBridgeMode".tr().appText(
                   color: Colors.white.withValues(alpha: 0.85),
                   fontWeight: FontWeight.w700,
                   fontSize: 12.sp,
                 ),
                 2.h.spaceH,
-                (isActive ? "Running" : "Ready").appText(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16.sp,
-                ),
+                (isActive
+                        ? "energyBridgeRunning".tr()
+                        : "energyBridgeReady".tr())
+                    .appText(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16.sp,
+                    ),
               ],
             ),
           ),
@@ -208,11 +214,15 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                   : Colors.white.withValues(alpha: 0.18),
               borderRadius: BorderRadius.circular(100.r),
             ),
-            child: (isActive ? "ACTIVE" : "IDLE").appText(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 11.sp,
-            ),
+            child:
+                (isActive
+                        ? "energyBridgeActiveBadge".tr()
+                        : "energyBridgeIdleBadge".tr())
+                    .appText(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 11.sp,
+                    ),
           ),
         ],
       ),
@@ -267,14 +277,12 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
           ),
           8.w.spaceW,
           Expanded(
-            child:
-                "Tip: Use this after intense activity to prevent sudden energy crashes and meltdowns."
-                    .appText(
-                      fontSize: 11.sp,
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w600,
-                      height: 1.45,
-                    ),
+            child: "energyBridgeTip".tr().appText(
+              fontSize: 11.sp,
+              color: Colors.grey.shade700,
+              fontWeight: FontWeight.w600,
+              height: 1.45,
+            ),
           ),
         ],
       ),
@@ -282,15 +290,19 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
   }
 
   Widget _buildActiveTimer(EnergyBridgeState state) {
-    final DateTime startDateTime = DateTime.fromMillisecondsSinceEpoch(
-      state.startTime!,
-    );
-    final int elapsedMinutes = DateTime.now()
-        .difference(startDateTime)
-        .inMinutes;
-    final int remainingMinutes = 105 - elapsedMinutes;
-    final int clampedElapsed = elapsedMinutes.clamp(0, 105);
-    final double progress = clampedElapsed / 105;
+    final DateTime? fireAt = state.timer?.fireAt;
+    final DateTime? startedAt = state.timer?.startedAt;
+    final int durationMinutes = state.timer?.durationMinutes ?? 105;
+    final int elapsedMinutes = startedAt == null
+        ? 0
+        : DateTime.now().difference(startedAt).inMinutes;
+    final int remainingMinutes = fireAt == null
+        ? durationMinutes
+        : fireAt.difference(DateTime.now()).inMinutes;
+    final int clampedElapsed = elapsedMinutes.clamp(0, durationMinutes);
+    final double progress = durationMinutes == 0
+        ? 0
+        : clampedElapsed / durationMinutes;
 
     return Column(
       children: <Widget>[
@@ -306,13 +318,13 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: "Elapsed".appText(
+                    child: "energyBridgeElapsed".tr().appText(
                       fontSize: 12.sp,
                       color: Colors.grey.shade700,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  "${clampedElapsed}m / 105m".appText(
+                  "${clampedElapsed}m / ${durationMinutes}m".appText(
                     fontSize: 12.sp,
                     color: const Color(0xFF7A46C9),
                     fontWeight: FontWeight.w800,
@@ -333,13 +345,19 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
               ),
               14.h.spaceH,
               if (remainingMinutes > 0) ...[
-                "Notification in $remainingMinutes min".appText(
-                  fontSize: 13.sp,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w700,
-                ),
+                "energyBridgeNotificationIn"
+                    .tr(
+                      namedArgs: <String, String>{
+                        "minutes": remainingMinutes.toString(),
+                      },
+                    )
+                    .appText(
+                      fontSize: 13.sp,
+                      color: Colors.grey.shade700,
+                      fontWeight: FontWeight.w700,
+                    ),
               ] else ...[
-                "Bridge Card is now active!".appText(
+                "energyBridgeCardActive".tr().appText(
                   fontSize: 13.sp,
                   color: Colors.green.shade700,
                   fontWeight: FontWeight.w800,
@@ -362,7 +380,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
               border: Border.all(color: const Color(0xFFFFBAC2), width: 1.3),
             ),
             child: Center(
-              child: "Cancel Timer".appText(
+              child: "energyBridgeCancelTimer".tr().appText(
                 color: Colors.red.shade500,
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w800,
@@ -398,13 +416,38 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
           ],
         ),
         child: Center(
-          child: "Start High Energy Play".appText(
+          child: "energyBridgeStartPlay".tr().appText(
             color: Colors.white,
             fontSize: 15.sp,
             fontWeight: FontWeight.w800,
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFiredState() {
+    return Column(
+      children: <Widget>[
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF3CD),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(color: const Color(0xFFFFE69C)),
+          ),
+          child: "energyBridgeFiredMessage".tr().appText(
+            fontSize: 13.sp,
+            color: Colors.brown.shade700,
+            fontWeight: FontWeight.w700,
+            textAlign: TextAlign.center,
+            height: 1.4,
+          ),
+        ),
+        16.h.spaceH,
+        _buildStartButton(context),
+      ],
     );
   }
 }

@@ -38,7 +38,7 @@ class ReflectEmotionCubit extends Cubit<ReflectEmotionState> {
         emotionsLogApiResult:
             emotionsLogApiResult ?? state.emotionsLogApiResult,
         logs: logs ?? state.logs,
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
         childrenListApiResult:
             childrenListApiResult ?? state.childrenListApiResult,
         selectedWeek: selectedWeek ?? state.selectedWeek,

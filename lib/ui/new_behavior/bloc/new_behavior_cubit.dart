@@ -7,8 +7,10 @@ import '../../../model/api_result_status.dart';
 import '../../../model/behaviour_category_model.dart';
 import '../../../model/behaviour_model.dart';
 import '../../../model/user_model.dart';
+import '../../../other/energy_bridge_rules.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/behaviours_repo.dart';
+import '../../../repo/energy_bridge_repo.dart';
 import 'new_behavior_state.dart';
 
 class NewBehaviorCubit extends Cubit<NewBehaviorState> {
@@ -82,13 +84,42 @@ class NewBehaviorCubit extends Cubit<NewBehaviorState> {
         },
       );
       changeProps(addBehaviourApiResultStatus: apiResultStatus);
+      await _syncEnergyBridgeByBehavior(apiResultStatus);
+    }
+  }
+
+  Future<void> _syncEnergyBridgeByBehavior(
+    ApiResultStatus apiResultStatus,
+  ) async {
+    final String? childId = state.userModel?.defaultChild?.id;
+    final String uid = state.userModel?.uid ?? '';
+    final String selected = state.selectedBehaviour;
+    if ((childId ?? '').isEmpty || uid.isEmpty) return;
+
+    bool isSuccess = false;
+    apiResultStatus.whenOrNull(data: (_) => isSuccess = true);
+    if (!isSuccess) return;
+
+    if (EnergyBridgeRules.isHighEnergy(selected)) {
+      await EnergyBridgeRepo.instance.startTimer(
+        childId: childId!,
+        actorUid: uid,
+        durationMinutes: 105,
+      );
+    } else if (EnergyBridgeRules.isResetMood(selected)) {
+      await EnergyBridgeRepo.instance.resetTimer(
+        childId: childId!,
+        actorUid: uid,
+        reason: selected.toLowerCase(),
+      );
     }
   }
 
   void _listenToBehaviours() {
     if (state.userModel?.defaultChild != null) {
       state.userModel?.defaultChild!
-          .collection("behaviours").orderBy("time_stamp",descending: true)
+          .collection("behaviours")
+          .orderBy("time_stamp", descending: true)
           .snapshots()
           .listen((event) {
             changeProps(

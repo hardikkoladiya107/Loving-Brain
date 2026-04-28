@@ -10,8 +10,10 @@ import '../../../model/api_result_status.dart';
 import '../../../model/routine_category_model.dart';
 import '../../../model/routine_model.dart';
 import '../../../model/user_model.dart';
+import '../../../other/energy_bridge_rules.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/child_repo.dart';
+import '../../../repo/energy_bridge_repo.dart';
 import 'daily_routine_state.dart';
 
 class DailyRoutineCubit extends Cubit<DailyRoutineState> {
@@ -105,6 +107,38 @@ class DailyRoutineCubit extends Cubit<DailyRoutineState> {
       id: childId,
     );
     changeProps(addRoutineApiResult: apiResultStatus);
+    await _syncEnergyBridgeFromRoutine(apiResultStatus, childId);
+  }
+
+  Future<void> _syncEnergyBridgeFromRoutine(
+    ApiResultStatus apiResultStatus,
+    String childId,
+  ) async {
+    final String uid = state.userModel?.uid ?? '';
+    if (uid.isEmpty) return;
+
+    final String selectedType = state.selectedType;
+    final String description = state.descriptionText;
+    final bool isFeedOrSleep =
+        EnergyBridgeRules.isFeedOrSleep(selectedType) ||
+        EnergyBridgeRules.isFeedOrSleep(description);
+
+    if (!isFeedOrSleep) return;
+
+    bool isSuccess = false;
+    apiResultStatus.whenOrNull(data: (_) => isSuccess = true);
+    if (!isSuccess) return;
+
+    final String reason =
+        EnergyBridgeRules.isFeedOrSleep(selectedType) &&
+            selectedType.toLowerCase().contains('feed')
+        ? 'feed'
+        : 'sleep';
+    await EnergyBridgeRepo.instance.resetTimer(
+      childId: childId,
+      actorUid: uid,
+      reason: reason,
+    );
   }
 
   Future<void> _fetchDailyRoutine() async {

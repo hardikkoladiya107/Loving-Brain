@@ -23,7 +23,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
       state.copyWith(
         emailAddress: emailAddress ?? state.emailAddress,
         emailAddressError: emailAddressError ?? state.emailAddressError,
-        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
+        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
