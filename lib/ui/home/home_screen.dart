@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .appPadding(left: 20, right: 20),
                       20.spaceH,
                       _wellnessHub(),
-                      40.spaceH,
+                      120.spaceH,
                     ],
                   ),
                 ),
@@ -704,7 +704,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        20.spaceH,
+        10.spaceH,
         // Family Feel Meter
         BaseButton(
           onTap: () => Navigator.of(context).push(
