@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/essential_model.dart';
 
@@ -16,10 +18,17 @@ import 'essentials_state.dart';
 class EssentialsCubit extends Cubit<EssentialsState> {
   EssentialsCubit() : super(EssentialsState());
 
-  void init() async {
-    emit(EssentialsState(userModel: preferences.getUserModel()));
+  Future<void> init() async {
+    changeProps(
+      userModel: preferences.getUserModel(),
+      titleError: "",
+      descriptionError: "",
+      addEssentialsApiResult: ApiResultStatus.initial(),
+      childrenListApiResult: ApiResultStatus.initial(),
+      uploadDocumentApiResultStatus: ApiResultStatus.initial(),
+    );
     await loadChildren();
-    fetchChildFromFirestore();
+    await fetchChildFromFirestore();
   }
 
   void changeProps({
@@ -31,22 +40,20 @@ class EssentialsCubit extends Cubit<EssentialsState> {
     ApiResultStatus? childrenListApiResult,
     String? titleError,
     String? descriptionError,
-
-    List<String>? documentsList,
   }) {
     emit(
       state.copyWith(
         userModel: userModel ?? state.userModel,
         childModel: childModel ?? state.childModel,
         addEssentialsApiResult:
-            addEssentialsApiResult ?? ApiResultStatus.initial(),
+            addEssentialsApiResult ?? state.addEssentialsApiResult,
         uploadDocumentApiResultStatus:
-            uploadDocumentApiResultStatus ?? ApiResultStatus.initial(),
+            uploadDocumentApiResultStatus ??
+            state.uploadDocumentApiResultStatus,
         childrenListApiResult:
-            childrenListApiResult ?? ApiResultStatus.initial(),
-        titleError: titleError ?? "",
-        descriptionError: descriptionError ?? "",
-        documentsList: documentsList ?? state.documentsList,
+            childrenListApiResult ?? state.childrenListApiResult,
+        titleError: titleError ?? state.titleError,
+        descriptionError: descriptionError ?? state.descriptionError,
         childList: children ?? state.childList,
       ),
     );
@@ -73,7 +80,8 @@ class EssentialsCubit extends Cubit<EssentialsState> {
 
   Future<void> fetchChildFromFirestore({DocumentReference? refVal}) async {
     try {
-      DocumentReference ref = refVal ?? state.userModel!.defaultChild!;
+      final DocumentReference? ref = refVal ?? state.userModel?.defaultChild;
+      if (ref == null) return;
       final snapshot = await ref.get();
       final data = snapshot.data();
       if (data != null) {
@@ -87,18 +95,16 @@ class EssentialsCubit extends Cubit<EssentialsState> {
   }
 
   bool isValidate({required String title, required String description}) {
-    if (title.isEmpty) {
-      changeProps(
-        addEssentialsApiResult: ApiResultStatus.initial(),
-        titleError: "Please provide title",
-      );
+    final String normalizedTitle = title.trim();
+    final String normalizedDescription = description.trim();
+    changeProps(titleError: "", descriptionError: "");
+
+    if (normalizedTitle.isEmpty) {
+      changeProps(titleError: LocaleKeys.pleaseEnterTitle.tr());
       return false;
     }
-    if (description.isEmpty) {
-      changeProps(
-        addEssentialsApiResult: ApiResultStatus.initial(),
-        descriptionError: "Please provide description",
-      );
+    if (normalizedDescription.isEmpty) {
+      changeProps(descriptionError: LocaleKeys.pleaseEnterDescription.tr());
       return false;
     }
     return true;
@@ -108,14 +114,39 @@ class EssentialsCubit extends Cubit<EssentialsState> {
     required String title,
     required String description,
   }) async {
-    if (!isValidate(title: title, description: description)) return;
+    final String normalizedTitle = title.trim();
+    final String normalizedDescription = description.trim();
+    final String? childId = state.childModel?.reference?.id;
+    if (!isValidate(
+      title: normalizedTitle,
+      description: normalizedDescription,
+    )) {
+      changeProps(addEssentialsApiResult: ApiResultStatus.initial());
+      return;
+    }
+    if ((childId ?? "").isEmpty) {
+      changeProps(
+        addEssentialsApiResult: ApiResultStatus.error(
+          error: Exception(LocaleKeys.pleaseSelectChild.tr()),
+        ),
+      );
+      return;
+    }
     changeProps(addEssentialsApiResult: ApiResultStatus.loading());
-    var apiResultStatus = await ChildRepo.instance.addEssential(
-      request: {"title": title, "description": description},
-      id: state.childModel?.reference?.id,
-    );
+    final ApiResultStatus apiResultStatus = await ChildRepo.instance
+        .addEssential(
+          request: <String, dynamic>{
+            "title": normalizedTitle,
+            "description": normalizedDescription,
+          },
+          id: childId,
+        );
     changeProps(addEssentialsApiResult: apiResultStatus);
-    fetchChildFromFirestore(refVal: state.childModel?.reference);
+    apiResultStatus.whenOrNull(
+      data: (_) async {
+        await fetchChildFromFirestore(refVal: state.childModel?.reference);
+      },
+    );
   }
 
   Future<void> editEssentialNote(
@@ -123,121 +154,198 @@ class EssentialsCubit extends Cubit<EssentialsState> {
     required String title,
     required String description,
   }) async {
-    if (!isValidate(title: title, description: description)) return;
+    final String normalizedTitle = title.trim();
+    final String normalizedDescription = description.trim();
+    final String? childId = state.childModel?.reference?.id;
+    final List<EssentialNote> notes = List<EssentialNote>.from(
+      state.childModel?.essentials ?? <EssentialNote>[],
+    );
+    if (!isValidate(
+      title: normalizedTitle,
+      description: normalizedDescription,
+    )) {
+      changeProps(addEssentialsApiResult: ApiResultStatus.initial());
+      return;
+    }
+    if ((childId ?? "").isEmpty || index < 0 || index >= notes.length) {
+      changeProps(
+        addEssentialsApiResult: ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        ),
+      );
+      return;
+    }
     changeProps(addEssentialsApiResult: ApiResultStatus.loading());
 
-    List<EssentialNote>? note = [];
-    note.addAll(state.childModel?.essentials ?? []);
-    note[index].title = title;
-    note[index].description = description;
-    List<dynamic> data = note.map((e) => e.toJson()).toList();
-    var apiResultStatus = await ChildRepo.instance.updateEssentials(
-      documentReference: state.childModel?.reference!.id,
-      request: {'essentials': data},
+    notes[index] = EssentialNote(
+      title: normalizedTitle,
+      description: normalizedDescription,
     );
+    final List<Map<String, dynamic>> data = notes
+        .map((EssentialNote e) => e.toJson())
+        .toList();
+    final ApiResultStatus apiResultStatus = await ChildRepo.instance
+        .updateEssentials(
+          documentReference: childId,
+          request: <String, dynamic>{'essentials': data},
+        );
     changeProps(addEssentialsApiResult: apiResultStatus);
-
-    fetchChildFromFirestore(refVal: state.childModel?.reference);
+    apiResultStatus.whenOrNull(
+      data: (_) async {
+        await fetchChildFromFirestore(refVal: state.childModel?.reference);
+      },
+    );
   }
 
   Future<void> deleteEssentialNote({required int index}) async {
+    final String? childId = state.childModel?.reference?.id;
+    final EssentialNote? note = state.childModel?.essentials?[index];
+    if ((childId ?? "").isEmpty || note == null) {
+      changeProps(
+        addEssentialsApiResult: ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        ),
+      );
+      return;
+    }
     changeProps(addEssentialsApiResult: ApiResultStatus.loading());
-    var apiResultStatus = await ChildRepo.instance.deleteEssential(
-      documentReference: state.childModel?.reference!.id,
-      request: {
-        'essentials': FieldValue.arrayRemove([
-          state.childModel?.essentials?[index].toJson(),
-        ]),
+    final ApiResultStatus apiResultStatus = await ChildRepo.instance
+        .deleteEssential(
+          documentReference: childId,
+          request: <String, FieldValue>{
+            'essentials': FieldValue.arrayRemove(<Map<String, dynamic>>[
+              note.toJson(),
+            ]),
+          },
+        );
+    changeProps(addEssentialsApiResult: apiResultStatus);
+    apiResultStatus.whenOrNull(
+      data: (_) async {
+        await fetchChildFromFirestore(refVal: state.childModel?.reference);
       },
     );
-    changeProps(addEssentialsApiResult: ApiResultStatus.initial());
-
-    fetchChildFromFirestore(refVal: state.childModel?.reference);
   }
 
   Future<void> deleteDocument({required int index}) async {
+    final String? childId = state.childModel?.reference?.id;
+    final String fileUrl = state.childModel?.documents?[index] ?? "";
+    if ((childId ?? "").isEmpty || fileUrl.isEmpty) {
+      changeProps(
+        uploadDocumentApiResultStatus: ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        ),
+      );
+      return;
+    }
     changeProps(uploadDocumentApiResultStatus: ApiResultStatus.loading());
-    ChildRepo.instance.deleteFileFromFirebaseStorage(
-      fileUrl: state.childModel?.documents?[index] ?? "",
-    );
-    var apiResultStatus = await ChildRepo.instance.deleteDocument(
-      documentReference: state.childModel?.reference!.id,
-      request: {
-        'documents': FieldValue.arrayRemove([
-          state.childModel?.documents?[index],
-        ]),
+
+    final ApiResultStatus deleteFileApiResult = await ChildRepo.instance
+        .deleteFileFromFirebaseStorage(fileUrl: fileUrl);
+    bool deleteFileSuccess = false;
+    deleteFileApiResult.whenOrNull(data: (_) => deleteFileSuccess = true);
+    if (!deleteFileSuccess) {
+      changeProps(uploadDocumentApiResultStatus: deleteFileApiResult);
+      return;
+    }
+
+    final ApiResultStatus apiResultStatus = await ChildRepo.instance
+        .deleteDocument(
+          documentReference: childId,
+          request: <String, FieldValue>{
+            'documents': FieldValue.arrayRemove(<String>[fileUrl]),
+          },
+        );
+    changeProps(uploadDocumentApiResultStatus: apiResultStatus);
+    apiResultStatus.whenOrNull(
+      data: (_) async {
+        await fetchChildFromFirestore(refVal: state.childModel?.reference);
       },
     );
-    changeProps(uploadDocumentApiResultStatus: apiResultStatus);
-
-    fetchChildFromFirestore(refVal: state.childModel?.reference);
   }
 
   Future<void> uploadToFirebaseStorage(String? fileLocalPath) async {
-    if (fileLocalPath != null) {
-      changeProps(uploadDocumentApiResultStatus: ApiResultStatus.loading());
-      var uploadedFilePath = await ChildRepo.instance
-          .uploadFileToFirebaseStorage(
-            file: File(fileLocalPath),
-            referenceId: state.userModel?.uid,
+    if (fileLocalPath == null) return;
+    changeProps(uploadDocumentApiResultStatus: ApiResultStatus.loading());
+    final ApiResultStatus uploadedFilePath = await ChildRepo.instance
+        .uploadFileToFirebaseStorage(
+          file: File(fileLocalPath),
+          referenceId: state.userModel?.uid,
+        );
+    uploadedFilePath.whenOrNull(
+      data: (dynamic data) async {
+        if (data is String && data.isNotEmpty) {
+          final ApiResultStatus updateApiResult = await _updateDocuments(data);
+          changeProps(uploadDocumentApiResultStatus: updateApiResult);
+          updateApiResult.whenOrNull(
+            data: (_) async {
+              await fetchChildFromFirestore(
+                refVal: state.childModel?.reference,
+              );
+            },
           );
-      uploadedFilePath.whenOrNull(
-        data: (data) async {
-          changeProps(
-            uploadDocumentApiResultStatus: ApiResultStatus.data(data: ""),
-          );
-          if (data is String) {
-            _updateDocuments(data);
-
-            fetchChildFromFirestore(refVal: state.childModel?.reference);
-            // List<String> documentsList = [];
-            // documentsList.addAll(state.documentsList);
-            // documentsList.add(data);
-            // changeProps(documentsList: documentsList);
-          }
-        },
-        error: (error) {
-          changeProps(
-            uploadDocumentApiResultStatus: ApiResultStatus.error(error: error),
-          );
-
-          fetchChildFromFirestore(refVal: state.childModel?.reference);
-        },
-      );
-    }
+          return;
+        }
+        changeProps(
+          uploadDocumentApiResultStatus: ApiResultStatus.error(
+            error: Exception(LocaleKeys.somethingWentWrong.tr()),
+          ),
+        );
+      },
+      error: (dynamic error) {
+        changeProps(
+          uploadDocumentApiResultStatus: ApiResultStatus.error(error: error),
+        );
+      },
+    );
   }
 
-  Future<void> _updateDocuments(String fileNetworkUrl) async {
-    if (state.childModel?.reference?.id != null) {
-      await ChildRepo.instance.updateDocuments(
-        documentReference: state.childModel?.reference!.id,
-        request: {
-          'documents': FieldValue.arrayUnion([fileNetworkUrl]),
-        },
+  Future<ApiResultStatus> _updateDocuments(String fileNetworkUrl) async {
+    final String? childId = state.childModel?.reference?.id;
+    if ((childId ?? "").isEmpty) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.pleaseSelectChild.tr()),
       );
     }
+    return ChildRepo.instance.updateDocuments(
+      documentReference: childId,
+      request: <String, FieldValue>{
+        'documents': FieldValue.arrayUnion(<String>[fileNetworkUrl]),
+      },
+    );
   }
 
   Future<void> loadChildren() async {
-    changeProps(childrenListApiResult: ApiResultStatus.loading(), children: []);
-    if (state.userModel != null) {
-      ApiResultStatus childrenListApiResult = await ChildRepo.instance
-          .getAllChildren(state.userModel!);
-      childrenListApiResult.whenOrNull(
-        data: (data) {
+    changeProps(
+      childrenListApiResult: ApiResultStatus.loading(),
+      children: <ChildModel>[],
+    );
+    if (state.userModel == null) {
+      changeProps(
+        childrenListApiResult: ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        ),
+      );
+      return;
+    }
+    final ApiResultStatus childrenListApiResult = await ChildRepo.instance
+        .getAllChildren(state.userModel!);
+    childrenListApiResult.whenOrNull(
+      data: (dynamic data) {
+        if (data is List<ChildModel>) {
           changeProps(
             childrenListApiResult: ApiResultStatus.data(data: data),
             children: data,
+            childModel: data.isNotEmpty ? data.first : state.childModel,
           );
-        },
-        error: (error) {
-          changeProps(
-            childrenListApiResult: ApiResultStatus.error(
-              error: Exception("Failed to load children"),
-            ),
-          );
-        },
-      );
-    }
+        }
+      },
+      error: (dynamic error) {
+        changeProps(
+          childrenListApiResult: ApiResultStatus.error(
+            error: Exception(LocaleKeys.somethingWentWrong.tr()),
+          ),
+        );
+      },
+    );
   }
 }
