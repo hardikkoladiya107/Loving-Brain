@@ -7,7 +7,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/provider.dart';
-import 'package:loving_brain/ui/splash/splash_screen.dart';
+import 'package:loving_brain/router/app_router.dart';
 import 'firebase_options.dart';
 import 'generated/locale_keys.g.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
@@ -62,6 +62,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late final _router = AppRouter.createRouter(navigatorKey);
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -84,15 +86,14 @@ class _MyAppState extends State<MyApp> {
         designSize: const Size(389, 780),
         minTextAdapt: true,
         splitScreenMode: true,
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
+        child: MaterialApp.router(
+          routerConfig: _router,
           title: LocaleKeys.appName.tr(),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           builder: EasyLoading.init(),
-          home: SplashScreen(),
         ),
       ),
     );
@@ -100,7 +101,6 @@ class _MyAppState extends State<MyApp> {
 }
 
 void configLoading() {
-  final bool isDark = false;
   final Color indicatorColor = const Color(0xFF9F35B1);
   final Color backgroundColor = Colors.white;
   final Color textColor = const Color(0xFF1A1A1A);
@@ -129,9 +129,7 @@ void configLoading() {
     ..textPadding = const EdgeInsets.only(top: 12)
     ..boxShadow = [
       BoxShadow(
-        color: isDark
-            ? Colors.black.withValues(alpha: 0.5)
-            : Colors.black.withValues(alpha: 0.15),
+        color: Colors.black.withValues(alpha: 0.15),
         blurRadius: 20.0,
         spreadRadius: 2.0,
         offset: const Offset(0, 4),

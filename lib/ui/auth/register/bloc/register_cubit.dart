@@ -10,6 +10,10 @@ import '../../../../../repo/auth_repo.dart';
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit() : super(RegisterState());
 
+  void init() {
+    emit(RegisterState());
+  }
+
   void changeProps({
     bool? obscureTextPassword,
     bool? obscureTextConfirmPassword,
@@ -32,7 +36,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         confirmPassword: confirmPassword ?? state.confirmPassword,
         emailAddressError: emailAddressError ?? state.emailAddressError,
         passwordError: passwordError ?? state.passwordError,
-        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
+        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
         confirmPasswordError:
             confirmPasswordError ?? state.confirmPasswordError,
         isTermsAndConditionAccepted:
@@ -80,7 +84,11 @@ class RegisterCubit extends Cubit<RegisterState> {
       }
 
       if (!state.isTermsAndConditionAccepted) {
-        changeProps(apiResultStatus: ApiResultStatus.error(error: Exception("Please accept Terms and Conditions")));
+        changeProps(
+          apiResultStatus: ApiResultStatus.error(
+            error: Exception("Please accept Terms and Conditions"),
+          ),
+        );
       }
       return false;
     }
@@ -124,6 +132,8 @@ class RegisterCubit extends Cubit<RegisterState> {
       obscureTextPassword: true,
       obscureTextConfirmPassword: true,
       confirmPasswordError: "",
+      isTermsAndConditionAccepted: false,
+      apiResultStatus: ApiResultStatus.initial(),
     );
   }
 }

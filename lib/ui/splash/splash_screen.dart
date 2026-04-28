@@ -1,13 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../generated/locale_keys.g.dart';
-import '../../main.dart';
 import '../../other/preferances.dart';
-import '../base_screen/base_screen.dart';
-import '../auth/on_boarding/welcome_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,21 +19,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (navigatorKey.currentContext != null) {
-        Future.delayed(Duration(seconds: 2), () {
-          if (preferences.getBool(SharedPreference.isLogin) ?? false) {
-            Navigator.of(navigatorKey.currentContext!).pushReplacement(
-              MaterialPageRoute(builder: (context) => const BaseScreen()),
-            );
-          } else {
-            Navigator.of(navigatorKey.currentContext!).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const WelcomeScreen(),
-              ),
-            );
-          }
-        });
-      }
+      Future<void>.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
+        final bool isLogin =
+            preferences.getBool(SharedPreference.isLogin) ?? false;
+        context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
+      });
     });
 
     super.initState();

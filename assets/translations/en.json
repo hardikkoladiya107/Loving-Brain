@@ -373,5 +373,7 @@
   "noChildrenYet": "No children yet",
   "addYourFirstChild": "Add your first child to get started",
   "removeChild": "Remove child",
-  "areYouSureYouWantToRemoveChild": "Are you sure you want to remove this child from your list?"
+  "areYouSureYouWantToRemoveChild": "Are you sure you want to remove this child from your list?",
+  "cannotInviteYourself": "You can’t invite yourself as a co-parent.",
+  "invitationAlreadySent": "An invitation is already pending for this co-parent and selected child(ren)."
 }

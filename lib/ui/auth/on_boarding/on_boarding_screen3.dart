@@ -3,9 +3,10 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
-import 'package:loving_brain/ui/auth/login/login_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
@@ -48,15 +49,21 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                         description: LocaleKeys.shareResponsibilityFairly.tr(),
                         image: Assets.icons.icDailySchedulePlannerIcon,
                         trackerStartColor: sliderTrackColor1,
-                        trackerEndColor: sliderTrackColor1.withValues(alpha: 0.2),
+                        trackerEndColor: sliderTrackColor1.withValues(
+                          alpha: 0.2,
+                        ),
                       ),
                       16.spaceH,
                       _card1(
                         title: LocaleKeys.coParentingCalendar.tr(),
-                        description: LocaleKeys.coordinateChildRoutinesMealsSchoolPlaytimeTherapy.tr(),
+                        description: LocaleKeys
+                            .coordinateChildRoutinesMealsSchoolPlaytimeTherapy
+                            .tr(),
                         image: Assets.icons.icCoParentingIcon,
                         trackerStartColor: sliderTrackColor2,
-                        trackerEndColor: sliderTrackColor2.withValues(alpha: 0.2),
+                        trackerEndColor: sliderTrackColor2.withValues(
+                          alpha: 0.2,
+                        ),
                       ),
                       16.spaceH,
                       _card1(
@@ -64,15 +71,20 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                         description: LocaleKeys.overallWellbeing.tr(),
                         image: Assets.icons.icMindfulness,
                         trackerStartColor: sliderTrackColor3,
-                        trackerEndColor: sliderTrackColor3.withValues(alpha: 0.2),
+                        trackerEndColor: sliderTrackColor3.withValues(
+                          alpha: 0.2,
+                        ),
                       ),
                       16.spaceH,
                       _card1(
                         title: LocaleKeys.parentSupport.tr(),
-                        description: LocaleKeys.certifiedTrainersCounselors.tr(),
+                        description: LocaleKeys.certifiedTrainersCounselors
+                            .tr(),
                         image: Assets.icons.icParentSupport,
                         trackerStartColor: sliderTrackColor4,
-                        trackerEndColor: sliderTrackColor4.withValues(alpha: 0.2),
+                        trackerEndColor: sliderTrackColor4.withValues(
+                          alpha: 0.2,
+                        ),
                       ),
                       40.spaceH,
                     ],
@@ -187,7 +199,9 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                       child: LinearProgressIndicator(
                         value: 0.7,
                         backgroundColor: trackerEndColor,
-                        valueColor: AlwaysStoppedAnimation<Color>(trackerStartColor),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          trackerStartColor,
+                        ),
                         minHeight: 8,
                       ),
                     ),
@@ -212,7 +226,10 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
             width: 240.w,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [blueButtonColor, blueButtonColor.withValues(alpha: 0.8)],
+                colors: [
+                  blueButtonColor,
+                  blueButtonColor.withValues(alpha: 0.8),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -232,7 +249,7 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
                 LocaleKeys.next
                     .tr()
                     .appText(
-                      fontWeight: FontWeight.w900, 
+                      fontWeight: FontWeight.w900,
                       color: Colors.white,
                       fontSize: 18,
                       letterSpacing: 1.0,
@@ -242,12 +259,10 @@ class _OnBoardingScreen3State extends State<OnBoardingScreen3> {
             ),
           ),
           onTap: () async {
+            final GoRouter router = GoRouter.of(context);
             await preferences.putBool(SharedPreference.hasSeenOnboarding, true);
             if (!context.mounted) return;
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-              (route) => false,
-            );
+            router.go(RoutePaths.login);
           },
         ),
       ],

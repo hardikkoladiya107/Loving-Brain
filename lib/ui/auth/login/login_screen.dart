@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
-import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
@@ -19,13 +19,7 @@ import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
 import '../../../other/snack_bar.dart';
-import '../../base_screen/base_screen.dart';
-import '../../parent_profile/parent_profile_screen.dart';
-import '../../privacy_policy/privacy_policy_screen.dart';
-import '../../terms_and_conditions/terms_and_conditions.dart';
 import '../../widget/base_button.dart';
-import '../forgot_password/forgot_password_screen.dart';
-import '../register/register_screen.dart';
 import 'bloc/login_state.dart';
 import 'package:flutter/gestures.dart';
 
@@ -37,8 +31,26 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailTextEditingController = TextEditingController();
-  TextEditingController passwordTextEditingController = TextEditingController();
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+  final TextEditingController passwordTextEditingController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<LoginCubit>().init();
+    });
+  }
+
+  @override
+  void dispose() {
+    emailTextEditingController.dispose();
+    passwordTextEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: primaryColor.withValues(alpha: 0.08),
                                 blurRadius: 30,
                                 offset: Offset(0, 10),
-                              )
+                              ),
                             ],
                           ),
                           child: Column(
@@ -157,7 +169,10 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString().replaceAll("Exception: ", ""), type: SnackBarType.ERROR);
+            showSnackBar(
+              message: error.toString().replaceAll("Exception: ", ""),
+              type: SnackBarType.ERROR,
+            );
           },
         );
       },
@@ -176,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: primaryColor.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: Offset(0, 8),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -186,7 +201,11 @@ class _LoginScreenState extends State<LoginScreen> {
             20.spaceW,
             LocaleKeys.continueWithGoogle
                 .tr()
-                .appText(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.black87)
+                .appText(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: Colors.black87,
+                )
                 .appPadding(top: 14.h, bottom: 14.h),
           ],
         ),
@@ -212,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: primaryColor.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: Offset(0, 8),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -222,7 +241,11 @@ class _LoginScreenState extends State<LoginScreen> {
             20.spaceW,
             LocaleKeys.continueWithApple
                 .tr()
-                .appText(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.black87)
+                .appText(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: Colors.black87,
+                )
                 .appPadding(top: 14.h, bottom: 14.h),
           ],
         ),
@@ -243,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 color: primaryColor.withValues(alpha: 0.08),
                 blurRadius: 30,
                 offset: Offset(0, 10),
-              )
+              ),
             ],
           ),
           child: Column(
@@ -279,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: Offset(0, 6),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -304,7 +327,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        LocaleKeys.donHaveAnAccount.tr().appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600, fontSize: 13),
+        LocaleKeys.donHaveAnAccount.tr().appText(
+          color: Colors.grey.shade600,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+        ),
         6.spaceW,
         BaseButton(
           child: LocaleKeys.signUp.tr().appText(
@@ -315,9 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           onTap: () {
             context.read<LoginCubit>().clearFields();
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const RegisterScreen()),
-            );
+            context.push(RoutePaths.register);
           },
         ),
       ],
@@ -387,11 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           onTap: () {
             context.read<LoginCubit>().clearFields();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ForgotPasswordScreen(),
-              ),
-            );
+            context.push(RoutePaths.forgotPassword);
           },
         ),
         30.spaceW,
@@ -401,36 +422,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
     EasyLoading.dismiss();
-    var userModel = UserModel.fromJson(data);
+    final UserModel userModel = UserModel.fromJson(data);
+    final GoRouter router = GoRouter.of(context);
     await preferences.saveUserModel(userModel);
-    if (context.mounted) {
-      context.read<LoginCubit>().clearFields();
-      if (userModel.uid == null) {
-        return;
-      }
-      if ((userModel.parentName ?? "").isEmpty ||
-          (userModel.parentGender ?? "").isEmpty ||
-          (userModel.parentEmail ?? "").isEmpty ||
-          userModel.parentDateOfBirth == null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ParentProfileScreen( ),
-          ),
-        );
-      } else if ((userModel.childName ?? "").isEmpty ||
-          (userModel.childAge ?? "").isEmpty ||
-          (userModel.relationshipToChild ?? "").isEmpty) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => ChildProfileScreen(userId: userModel.uid!),
-          ),
-        );
-      } else {
-        await preferences.putBool(SharedPreference.isLogin, true);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const BaseScreen()),
-        );
-      }
+    if (!mounted) return;
+    context.read<LoginCubit>().clearFields();
+    if (userModel.uid == null) {
+      return;
+    }
+    if ((userModel.parentName ?? "").isEmpty ||
+        (userModel.parentGender ?? "").isEmpty ||
+        (userModel.parentEmail ?? "").isEmpty ||
+        userModel.parentDateOfBirth == null) {
+      router.go(RoutePaths.parentProfile);
+    } else if ((userModel.childName ?? "").isEmpty ||
+        (userModel.childAge ?? "").isEmpty ||
+        (userModel.relationshipToChild ?? "").isEmpty) {
+      router.go(RoutePaths.childProfilePath(userModel.uid!));
+    } else {
+      await preferences.putBool(SharedPreference.isLogin, true);
+      router.go(RoutePaths.base);
     }
   }
 
@@ -448,32 +459,30 @@ class _LoginScreenState extends State<LoginScreen> {
           TextSpan(
             text: "Terms & Conditions",
             style: getTextStyle(
-               color: primaryColor,
-               fontSize: 12,
-               fontWeight: FontWeight.bold,
-               textDecoration: TextDecoration.underline,
+              color: primaryColor,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              textDecoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const TermsAndConditionsScreen(),
-                ));
+                if (!mounted) return;
+                context.push(RoutePaths.terms);
               },
           ),
           TextSpan(text: " and "),
           TextSpan(
             text: "Privacy Policy",
             style: getTextStyle(
-               color: primaryColor,
-               fontSize: 12,
-               fontWeight: FontWeight.bold,
-               textDecoration: TextDecoration.underline,
+              color: primaryColor,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              textDecoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const PrivacyPolicyScreen(),
-                ));
+                if (!mounted) return;
+                context.push(RoutePaths.privacy);
               },
           ),
           TextSpan(text: "."),

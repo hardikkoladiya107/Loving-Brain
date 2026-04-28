@@ -257,9 +257,7 @@ class ChildRepo {
     required Map<String, FieldValue> request,
   }) async {
     try {
-      var eventCollection = await childrenCollection
-          .doc(documentReference)
-          .update(request);
+      await childrenCollection.doc(documentReference).update(request);
       return ApiResultStatus.data(data: "");
     } on FirebaseException {
       return ApiResultStatus.error(
@@ -277,9 +275,7 @@ class ChildRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var eventCollection = await childrenCollection
-          .doc(documentReference)
-          .update(request);
+      await childrenCollection.doc(documentReference).update(request);
       return ApiResultStatus.data(data: "");
     } on FirebaseException {
       return ApiResultStatus.error(
@@ -297,9 +293,7 @@ class ChildRepo {
     required Map<String, FieldValue> request,
   }) async {
     try {
-      var eventCollection = await childrenCollection
-          .doc(documentReference)
-          .update(request);
+      await childrenCollection.doc(documentReference).update(request);
       return ApiResultStatus.data(data: "");
     } on FirebaseException {
       return ApiResultStatus.error(
@@ -317,9 +311,7 @@ class ChildRepo {
     required Map<String, FieldValue> request,
   }) async {
     try {
-      var eventCollection = await childrenCollection
-          .doc(documentReference)
-          .update(request);
+      await childrenCollection.doc(documentReference).update(request);
       return ApiResultStatus.data(data: "");
     } on FirebaseException {
       return ApiResultStatus.error(
@@ -368,7 +360,9 @@ class ChildRepo {
     }
   }
 
-  Future<ApiResultStatus<List<ChildModel>>> getCoChildren(UserModel user) async {
+  Future<ApiResultStatus<List<ChildModel>>> getCoChildren(
+    UserModel user,
+  ) async {
     try {
       var childrenResponse = await CoParentRepo
           .instance
@@ -381,14 +375,19 @@ class ChildRepo {
       if (childrenResponse.docs.isEmpty) {
         return ApiResultStatus.data(data: <ChildModel>[]);
       }
-      List<InvitationModel> invitations = childrenResponse.docs
+      final List<InvitationModel> invitations = childrenResponse.docs
           .map((doc) => InvitationModel.fromJson(doc.data()))
           .toList();
-      final List<String> ids = invitations
-          .map((e) => e.children ?? "")
-          .where((element) => element.isNotEmpty)
-          .toList();
-      return getChildren(childrenIds: ids);
+      final Set<String> childIds = <String>{};
+      for (final InvitationModel inv in invitations) {
+        final String raw = (inv.children ?? "").trim();
+        if (raw.isEmpty) continue;
+        for (final String part in raw.split(',')) {
+          final String id = part.trim();
+          if (id.isNotEmpty) childIds.add(id);
+        }
+      }
+      return getChildren(childrenIds: childIds.toList());
     } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

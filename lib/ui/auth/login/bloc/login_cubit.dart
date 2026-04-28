@@ -10,6 +10,10 @@ import 'login_state.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginState());
 
+  void init() {
+    emit(LoginState());
+  }
+
   void changeProps({
     String? emailAddress,
     String? password,
@@ -21,7 +25,7 @@ class LoginCubit extends Cubit<LoginState> {
     emit(
       state.copyWith(
         emailAddress: emailAddress ?? state.emailAddress,
-        apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
+        apiResultStatus: apiResultStatus ?? state.apiResultStatus,
         password: password ?? state.password,
         emailAddressError: emailAddressError ?? state.emailAddressError,
         passwordError: passwordError ?? state.passwordError,
@@ -87,6 +91,7 @@ class LoginCubit extends Cubit<LoginState> {
       password: "",
       passwordError: "",
       obscureTextPassword: true,
+      apiResultStatus: ApiResultStatus.initial(),
     );
   }
 }

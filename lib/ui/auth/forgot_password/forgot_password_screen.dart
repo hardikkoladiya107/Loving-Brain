@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -25,19 +26,40 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  TextEditingController emailTextEditingController = TextEditingController();
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
 
   @override
   void initState() {
-    context.read<ForgotPasswordCubit>().init();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ForgotPasswordCubit>().init();
+    });
+  }
+
+  @override
+  void dispose() {
+    emailTextEditingController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
       builder: (context, state) {
-        emailTextEditingController.text = state.emailAddress;
+        if (emailTextEditingController.value.text != state.emailAddress) {
+          emailTextEditingController.value = emailTextEditingController.value
+              .copyWith(
+                text: state.emailAddress,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    emailTextEditingController.value.selection.start,
+                    state.emailAddress.length,
+                  ),
+                ),
+              );
+        }
 
         return Scaffold(
           extendBodyBehindAppBar: true,
@@ -79,7 +101,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 color: primaryColor.withValues(alpha: 0.08),
                                 blurRadius: 30,
                                 offset: Offset(0, 10),
-                              )
+                              ),
                             ],
                           ),
                           child: Column(
@@ -90,7 +112,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   color: primaryColor.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
-                                child: Icon(Icons.lock_reset, size: 60, color: primaryColor),
+                                child: Icon(
+                                  Icons.lock_reset,
+                                  size: 60,
+                                  color: primaryColor,
+                                ),
                               ),
                               24.spaceH,
                               LocaleKeys.forgotPassword.tr().appText(
@@ -100,11 +126,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 letterSpacing: 1.0,
                               ),
                               12.spaceH,
-                              "Enter your details to receive reset instructions".appText(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
-                                textAlign: TextAlign.center,
-                              ).appPadding(left: 30, right: 30),
+                              "Enter your details to receive reset instructions"
+                                  .appText(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                    textAlign: TextAlign.center,
+                                  )
+                                  .appPadding(left: 30, right: 30),
                               32.spaceH,
                               _email(state),
                               40.spaceH,
@@ -117,9 +145,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
+                              Icon(
+                                Icons.arrow_back_ios,
+                                size: 14,
+                                color: Colors.grey.shade600,
+                              ),
                               4.spaceW,
-                              "Back to Login".appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+                              "Back to Login".appText(
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ],
                           ),
                           onTap: () => Navigator.pop(context),
@@ -146,11 +181,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               message: LocaleKeys.weSentYouMailToResetYourPassword.tr(),
               type: SnackBarType.SUCCESS,
             );
+            if (!mounted) return;
             Navigator.pop(context);
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString().replaceAll("Exception: ", ""), type: SnackBarType.ERROR);
+            showSnackBar(
+              message: error.toString().replaceAll("Exception: ", ""),
+              type: SnackBarType.ERROR,
+            );
           },
         );
       },
@@ -187,7 +226,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: Offset(0, 6),
-            )
+            ),
           ],
         ),
         child: Row(

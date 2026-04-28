@@ -48,15 +48,24 @@ class DeepLinkManager {
           UserModel? fromParent = await UserRepo.instance.getUserFromEmail(
             email: data.fromParent ?? "",
           );
-          ApiResultStatus childApiResult = await ChildRepo.instance.getChildren(
-            childrenIds: [?data.children],
-          );
+          final String rawChildren = (data.children ?? "").trim();
+          final List<String> childIds = rawChildren.isEmpty
+              ? <String>[]
+              : rawChildren
+                    .split(',')
+                    .map((String e) => e.trim())
+                    .where((String e) => e.isNotEmpty)
+                    .toSet()
+                    .toList();
+          final ApiResultStatus childApiResult = await ChildRepo.instance
+              .getChildren(childrenIds: childIds);
           childApiResult.whenOrNull(
             data: (data) {
               if (data is List<ChildModel>) {
                 if (data.isNotEmpty) {
                   ChildModel child = data[0];
-                  if (fromParent != null && navigatorKey.currentContext != null) {
+                  if (fromParent != null &&
+                      navigatorKey.currentContext != null) {
                     Navigator.of(navigatorKey.currentContext!).push(
                       MaterialPageRoute(
                         builder: (context) => SucessScreen(

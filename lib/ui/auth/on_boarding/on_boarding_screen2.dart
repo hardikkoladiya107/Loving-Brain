@@ -3,13 +3,14 @@ import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
 import '../../widget/base_button.dart';
-import 'on_boarding_screen3.dart';
 
 class OnBoardingScreen2 extends StatefulWidget {
   const OnBoardingScreen2({super.key});
@@ -97,7 +98,7 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 30,
-              )
+              ),
             ],
           ),
           child: Column(
@@ -167,9 +168,7 @@ class _OnBoardingScreen2State extends State<OnBoardingScreen2> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const OnBoardingScreen3()),
-        );
+        context.push(RoutePaths.onboarding3);
       },
     );
   }

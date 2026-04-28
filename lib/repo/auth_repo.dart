@@ -22,21 +22,23 @@ class AuthRepo {
 
   static AuthRepo get instance => _instance;
 
-  var userCollection = FirebaseFirestore.instance.collection('users');
-  var childrenCollection = FirebaseFirestore.instance.collection('children');
-  final _sharedEventCollection =
-      FirebaseFirestore.instance.collection('shared_event');
-  final _coParentInvitationCollection =
-      FirebaseFirestore.instance.collection('co-parent-invitation');
+  CollectionReference<Map<String, dynamic>> userCollection = FirebaseFirestore
+      .instance
+      .collection('users');
+  CollectionReference<Map<String, dynamic>> childrenCollection =
+      FirebaseFirestore.instance.collection('children');
+  final _sharedEventCollection = FirebaseFirestore.instance.collection(
+    'shared_event',
+  );
+  final _coParentInvitationCollection = FirebaseFirestore.instance.collection(
+    'co-parent-invitation',
+  );
 
   Future<bool> currentUserExist({required String uId}) async {
     try {
-      var allUsers = await userCollection.get();
-      if (allUsers.docs.any((element) => element.id == uId)) {
-        return true;
-      } else {
-        return false;
-      }
+      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await userCollection.doc(uId).get();
+      return userSnapshot.exists;
     } on FirebaseException {
       return false;
     } catch (e) {
@@ -63,15 +65,12 @@ class AuthRepo {
 
   Future<bool> isAccountExistWithEmail({required String email}) async {
     try {
-      var allUsers = await userCollection.get();
-      if (allUsers.docs.any((element) {
-        var userModel = UserModel.fromJson(element.data());
-        return email == userModel.email;
-      })) {
-        return true;
-      } else {
-        return false;
-      }
+      final QuerySnapshot<Map<String, dynamic>> usersSnapshot =
+          await userCollection
+              .where('email', isEqualTo: email.trim())
+              .limit(1)
+              .get();
+      return usersSnapshot.docs.isNotEmpty;
     } on FirebaseException {
       return false;
     } catch (e) {
@@ -170,9 +169,7 @@ class AuthRepo {
     required String email,
   }) async {
     try {
-      final credential = await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: email.trim(),
-      );
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
       return ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
@@ -221,8 +218,9 @@ class AuthRepo {
     required String? email,
     UserModel? userModel,
   }) async {
-    final DocumentReference<Map<String, dynamic>> userRef =
-        userCollection.doc(uid);
+    final DocumentReference<Map<String, dynamic>> userRef = userCollection.doc(
+      uid,
+    );
 
     await _deleteUserSubcollections(userRef);
     await userRef.delete();
@@ -250,14 +248,18 @@ class AuthRepo {
       'connect_prompt_history',
     ];
     for (final String name in subcollections) {
-      final QuerySnapshot<Map<String, dynamic>> snapshot =
-          await userRef.collection(name).get();
-      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snapshot.docs) {
+      final QuerySnapshot<Map<String, dynamic>> snapshot = await userRef
+          .collection(name)
+          .get();
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in snapshot.docs) {
         if (name == 'conversations') {
-          final CollectionReference<Map<String, dynamic>> chats =
-              doc.reference.collection('chats');
-          final QuerySnapshot<Map<String, dynamic>> chatSnap = await chats.get();
-          for (final DocumentSnapshot<Map<String, dynamic>> chat in chatSnap.docs) {
+          final CollectionReference<Map<String, dynamic>> chats = doc.reference
+              .collection('chats');
+          final QuerySnapshot<Map<String, dynamic>> chatSnap = await chats
+              .get();
+          for (final DocumentSnapshot<Map<String, dynamic>> chat
+              in chatSnap.docs) {
             await chat.reference.delete();
           }
         }
@@ -272,7 +274,8 @@ class AuthRepo {
     if (!childSnap.exists || childSnap.data() == null) return;
 
     final List<dynamic>? parentIds = childSnap.data()?['parent_reference_ids'];
-    final List<String> ids = parentIds
+    final List<String> ids =
+        parentIds
             ?.map((e) => e?.toString() ?? '')
             .where((s) => s.isNotEmpty)
             .toList() ??
@@ -281,15 +284,17 @@ class AuthRepo {
     if (ids.isEmpty || ids.length == 1 && ids.first == uid) {
       final DocumentReference<Map<String, dynamic>> childRef =
           childrenCollection.doc(childId);
-      final CollectionReference<Map<String, dynamic>> sleepLogs =
-          childRef.collection('sleep_logs');
-      final QuerySnapshot<Map<String, dynamic>> sleepSnap = await sleepLogs.get();
+      final CollectionReference<Map<String, dynamic>> sleepLogs = childRef
+          .collection('sleep_logs');
+      final QuerySnapshot<Map<String, dynamic>> sleepSnap = await sleepLogs
+          .get();
       for (final DocumentSnapshot<Map<String, dynamic>> d in sleepSnap.docs) {
         await d.reference.delete();
       }
-      final CollectionReference<Map<String, dynamic>> behaviours =
-          childRef.collection('behaviours');
-      final QuerySnapshot<Map<String, dynamic>> behSnap = await behaviours.get();
+      final CollectionReference<Map<String, dynamic>> behaviours = childRef
+          .collection('behaviours');
+      final QuerySnapshot<Map<String, dynamic>> behSnap = await behaviours
+          .get();
       for (final DocumentSnapshot<Map<String, dynamic>> d in behSnap.docs) {
         await d.reference.delete();
       }
@@ -326,10 +331,10 @@ class AuthRepo {
     }
   }
 
-  Future logout() async {
+  Future<ApiResultStatus> logout() async {
     try {
       // await FirebaseAuth.instance.signInAnonymously();
-      final credential = await FirebaseAuth.instance.signOut();
+      await FirebaseAuth.instance.signOut();
       return ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
@@ -639,9 +644,7 @@ class AuthRepo {
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
-      await userCollection.doc(tUid).update({
-        "default_child": childRef,
-      });
+      await userCollection.doc(tUid).update({"default_child": childRef});
       final UserModel? updatedUser = await getUserFromUid(uId: tUid);
       if (updatedUser == null) {
         return ApiResultStatus.error(
@@ -678,11 +681,9 @@ class AuthRepo {
       }
       final List<DocumentReference<Object?>>? currentChildren =
           currentUser.children;
-      final bool wasDefault =
-          currentUser.defaultChild?.id == childRef.id;
-      final List<DocumentReference<Object?>> newChildren = (currentChildren ?? [])
-          .where((ref) => ref.id != childId)
-          .toList();
+      final bool wasDefault = currentUser.defaultChild?.id == childRef.id;
+      final List<DocumentReference<Object?>> newChildren =
+          (currentChildren ?? []).where((ref) => ref.id != childId).toList();
 
       final Map<String, dynamic> userUpdate = <String, dynamic>{
         'children': FieldValue.arrayRemove([childRef]),

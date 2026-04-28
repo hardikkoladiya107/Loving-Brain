@@ -1,15 +1,16 @@
 import 'dart:math';
-import 'dart:ui';
+import 'package:flutter/gestures.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../../generated/locale_keys.g.dart';
@@ -26,10 +27,29 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  TextEditingController emailTextEditingController = TextEditingController();
-  TextEditingController passwordTextEditingController = TextEditingController();
-  TextEditingController confirmPasswordTextEditingController =
+  final TextEditingController emailTextEditingController =
       TextEditingController();
+  final TextEditingController passwordTextEditingController =
+      TextEditingController();
+  final TextEditingController confirmPasswordTextEditingController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<RegisterCubit>().init();
+    });
+  }
+
+  @override
+  void dispose() {
+    emailTextEditingController.dispose();
+    passwordTextEditingController.dispose();
+    confirmPasswordTextEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: primaryColor.withValues(alpha: 0.08),
                                 blurRadius: 30,
                                 offset: Offset(0, 10),
-                              )
+                              ),
                             ],
                           ),
                           child: Column(
@@ -158,7 +178,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   onPressed: () {
                                     context.read<RegisterCubit>().changeProps(
-                                      obscureTextPassword: !state.obscureTextPassword,
+                                      obscureTextPassword:
+                                          !state.obscureTextPassword,
                                     );
                                   },
                                 ),
@@ -166,7 +187,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               16.spaceH,
                               AppTextField(
                                 maxLines: 1,
-                                controller: confirmPasswordTextEditingController,
+                                controller:
+                                    confirmPasswordTextEditingController,
                                 title: LocaleKeys.confirmPassword.tr(),
                                 hint: LocaleKeys.enterConfirmPassword.tr(),
                                 keyboardType: TextInputType.visiblePassword,
@@ -202,9 +224,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
+                                    Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
                                     4.spaceW,
-                                    "Back to Login".appText(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+                                    "Back to Login".appText(
+                                      color: Colors.grey.shade600,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ],
                                 ),
                                 onTap: () => Navigator.pop(context),
@@ -231,13 +260,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
           data: (data) {
             context.read<RegisterCubit>().clearFields();
             EasyLoading.dismiss();
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => ParentProfileScreen()),
-            );
+            if (!mounted) return;
+            context.go(RoutePaths.parentProfile);
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            showSnackBar(message: error.toString().replaceAll("Exception: ", ""), type: SnackBarType.ERROR);
+            showSnackBar(
+              message: error.toString().replaceAll("Exception: ", ""),
+              type: SnackBarType.ERROR,
+            );
           },
         );
       },
@@ -257,7 +288,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 color: primaryColor.withValues(alpha: 0.08),
                 blurRadius: 30,
                 offset: Offset(0, 10),
-              )
+              ),
             ],
           ),
           child: LocaleKeys.createYourAccount.tr().appText(
@@ -268,13 +299,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         16.spaceH,
-        LocaleKeys.secureYourSpotLovingBrainCommunity.tr().appText(
-          fontWeight: FontWeight.w600,
-          color: Colors.grey.shade600,
-          fontSize: 14,
-          textAlign: TextAlign.center,
-          height: 1.4,
-        ).appPadding(left: 20, right: 20),
+        LocaleKeys.secureYourSpotLovingBrainCommunity
+            .tr()
+            .appText(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+              fontSize: 14,
+              textAlign: TextAlign.center,
+              height: 1.4,
+            )
+            .appPadding(left: 20, right: 20),
       ],
     ).appPadding(left: 30, right: 30);
   }
@@ -291,7 +325,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
               offset: Offset(0, 6),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -322,12 +356,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Checkbox(
               value: state.isTermsAndConditionAccepted,
               activeColor: primaryColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
               side: BorderSide(color: Colors.grey.shade400, width: 1.5),
               onChanged: (value) {
                 context.read<RegisterCubit>().changeProps(
-                      isTermsAndConditionAccepted: value,
-                    );
+                  isTermsAndConditionAccepted: value ?? false,
+                );
               },
             ),
           ),
@@ -345,6 +381,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: primaryColor,
                       textDecoration: TextDecoration.underline,
                     ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        context.push(RoutePaths.terms);
+                      },
+                  ),
+                  TextSpan(text: " ${LocaleKeys.and.tr()} "),
+                  TextSpan(
+                    text: LocaleKeys.privacyPolicy.tr(),
+                    style: getTextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: primaryColor,
+                      textDecoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        context.push(RoutePaths.privacy);
+                      },
                   ),
                 ],
               ),

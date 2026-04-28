@@ -2,14 +2,15 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
-import 'on_boarding_screen2.dart';
 
 class OnBoardingScreen1 extends StatefulWidget {
   const OnBoardingScreen1({super.key});
@@ -43,21 +44,24 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                   _infoCard(
                     cardColor: cardColor1,
                     header: LocaleKeys.dailyMindfulMoments.tr(),
-                    description: LocaleKeys.twoMinExercisesToResetAndRecharge.tr(),
+                    description: LocaleKeys.twoMinExercisesToResetAndRecharge
+                        .tr(),
                     assetImage: Assets.icons.icDailyMindfulMomentsIcon,
                   ),
                   18.spaceH,
                   _infoCard(
                     cardColor: cardColor2,
                     header: LocaleKeys.parentingInsights.tr(),
-                    description: LocaleKeys.expertBackedTipsTailoredForYourNeeds.tr(),
+                    description: LocaleKeys.expertBackedTipsTailoredForYourNeeds
+                        .tr(),
                     assetImage: Assets.icons.icParentingInsightsIcon,
                   ),
                   18.spaceH,
                   _infoCard(
                     cardColor: cardColor3,
                     header: LocaleKeys.stressSOS.tr(),
-                    description: LocaleKeys.quickToolsForCalmingInToughMoments.tr(),
+                    description: LocaleKeys.quickToolsForCalmingInToughMoments
+                        .tr(),
                     assetImage: Assets.icons.icStressSosIcon,
                   ),
                   24.spaceH,
@@ -86,7 +90,10 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
             gradient: LinearGradient(
-              colors: [Colors.white.withValues(alpha: 0.15), Colors.white.withValues(alpha: 0.05)],
+              colors: [
+                Colors.white.withValues(alpha: 0.15),
+                Colors.white.withValues(alpha: 0.05),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -100,13 +107,15 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                 letterSpacing: 1.5,
               ),
               12.spaceH,
-              LocaleKeys.letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs.tr().appText(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                textAlign: TextAlign.center,
-                height: 1.4,
-              ),
+              LocaleKeys.letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs
+                  .tr()
+                  .appText(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    textAlign: TextAlign.center,
+                    height: 1.4,
+                  ),
             ],
           ),
         ),
@@ -127,15 +136,18 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
-              )
+              ),
             ],
           ),
-          child: LocaleKeys.evenSuperheroesRequireSupport.tr().appText(
-            fontWeight: FontWeight.w800,
-            textAlign: TextAlign.center,
-            fontSize: 14,
-            color: primaryColor,
-          ).appPadding(all: 16),
+          child: LocaleKeys.evenSuperheroesRequireSupport
+              .tr()
+              .appText(
+                fontWeight: FontWeight.w800,
+                textAlign: TextAlign.center,
+                fontSize: 14,
+                color: primaryColor,
+              )
+              .appPadding(all: 16),
         ),
       ),
     ).appPadding(left: 30, right: 30);
@@ -182,7 +194,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                 ),
                 4.spaceH,
                 description.appText(
-                  color: Colors.white.withValues(alpha: 0.9), 
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 12,
                   textAlign: TextAlign.start,
                   height: 1.3,
@@ -218,7 +230,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
             LocaleKeys.startYourDay
                 .tr()
                 .appText(
-                  fontWeight: FontWeight.w900, 
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
                   fontSize: 16,
                 )
@@ -227,9 +239,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const OnBoardingScreen2()),
-        );
+        context.push(RoutePaths.onboarding2);
       },
     );
   }

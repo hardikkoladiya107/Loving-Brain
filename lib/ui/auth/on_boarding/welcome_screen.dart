@@ -2,13 +2,10 @@ import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/auth/login/login_screen.dart';
-import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen1.dart';
-import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
-import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
-import 'package:loving_brain/other/preferances.dart';
 import 'package:flutter/gestures.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -62,13 +59,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.65),
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 2),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.8),
+              width: 2,
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: Offset(0, 10),
-              )
+              ),
             ],
           ),
           child: Column(
@@ -110,7 +110,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 color: primaryColor.withValues(alpha: 0.1),
                 blurRadius: 30,
                 offset: Offset(0, 15),
-              )
+              ),
             ],
           ),
           child: Column(
@@ -164,14 +164,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         ),
       ),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const OnBoardingScreen1()),
-        );
+        context.push(RoutePaths.onboarding1);
       },
     ).appPadding(left: 10, right: 10);
   }
-
-
 
   Widget _buildTermsText() {
     return RichText(
@@ -187,32 +183,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           TextSpan(
             text: "Terms & Conditions",
             style: getTextStyle(
-               color: primaryColor,
-               fontSize: 12,
-               fontWeight: FontWeight.w800,
-               textDecoration: TextDecoration.underline,
+              color: primaryColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              textDecoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const TermsAndConditionsScreen(),
-                ));
+                context.push(RoutePaths.terms);
               },
           ),
           TextSpan(text: " and "),
           TextSpan(
             text: "Privacy Policy",
             style: getTextStyle(
-               color: primaryColor,
-               fontSize: 12,
-               fontWeight: FontWeight.w800,
-               textDecoration: TextDecoration.underline,
+              color: primaryColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              textDecoration: TextDecoration.underline,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const PrivacyPolicyScreen(),
-                ));
+                context.push(RoutePaths.privacy);
               },
           ),
           TextSpan(text: "."),

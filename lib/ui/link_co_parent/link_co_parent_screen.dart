@@ -133,10 +133,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     );
   }
 
-  Widget _sendInvite({
-    required String text,
-    required VoidCallback? onTap,
-  }) {
+  Widget _sendInvite({required String text, required VoidCallback? onTap}) {
     return BaseButton(
       onTap: onTap,
       child: Container(
@@ -221,8 +218,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
                   child: _childNameChip(
                     name: child.childName ?? '',
                     selected: state.selectedChildren.any(
-                      (ChildModel e) =>
-                          e.reference?.id == child.reference?.id,
+                      (ChildModel e) => e.reference?.id == child.reference?.id,
                     ),
                   ),
                 ),
@@ -268,14 +264,14 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     return Column(
       children: [
         _accessCard(
-          isRequired: true,
+          isRequired: false,
           title: LocaleKeys.calendarEvents.tr(),
           description: LocaleKeys.createApproveAndChangeSharedEvents.tr(),
           switchValue: state.calenderAndEvent,
           onChanged: (bool value) {
             context.read<LinkCoParentCubit>().changeProps(
-                  calenderAndEvent: value,
-                );
+              calenderAndEvent: value,
+            );
           },
         ),
         14.h.spaceH,
@@ -286,8 +282,8 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
           switchValue: state.childEssentials,
           onChanged: (bool value) {
             context.read<LinkCoParentCubit>().changeProps(
-                  childEssentials: value,
-                );
+              childEssentials: value,
+            );
           },
         ),
         14.h.spaceH,
