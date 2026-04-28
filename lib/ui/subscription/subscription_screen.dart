@@ -1,23 +1,18 @@
-import 'dart:io';
+import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/manager/subscription_manager/subscription_utils.dart';
+import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../gen/assets.gen.dart';
-import '../../generated/locale_keys.g.dart';
-import '../../main.dart';
-import '../../manager/subscription_manager/subscription_utils.dart';
-import '../../other/app_color.dart';
-import '../../other/snack_bar.dart';
-import '../home/bloc/home_cubit.dart';
-import '../widget/app_button.dart';
-import '../widget/base_button.dart';
 import 'bloc/subscription_cubit.dart';
 import 'bloc/subscription_state.dart';
 
@@ -31,350 +26,378 @@ class SubscriptionScreen extends StatefulWidget {
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
-    context.read<SubscriptionCubit>().init();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SubscriptionCubit>().init();
+    });
   }
-
-  var scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SubscriptionCubit, SubscriptionState>(
-      builder: (context, state) {
-        List<Widget> widgetsList = [];
-
-        if (state.products.isNotEmpty &&
-            (state.userModel?.productId ?? "").isEmpty) {
-          widgetsList.add(
-            _subscriptionItem(
-              isShow: true,
-              isSubscribed: true,
-              isSelected: state.selectedProduct == null,
-              title: LocaleKeys.free.tr(),
-              price: "",
-              description: LocaleKeys.oneExercisePerDay.tr(),
-              onTap: () {
-                context.read<SubscriptionCubit>().selectPlan(
-                  selectedProduct: null,
-                );
-              },
-              bgImage: Assets.images.imgMonthlyBg,
-            ),
-          );
-        }
-
-        for (int i = 0; i < state.products.length; i++) {
-          var product = state.products[i];
-          widgetsList.add(
-            _subscriptionItem(
-              isShow: true,
-              isSubscribed: product.id == state.userModel?.productId,
-              isSelected: state.selectedProduct?.id == product.id,
-              title: product.id == monthlyPlan
-                  ? LocaleKeys.premiumMonthly.tr()
-                  : LocaleKeys.premiumAnnual.tr(),
-              price:
-                  "${product.price}/${product.id == monthlyPlan ? "month" : "year"}",
-              description: product.id == monthlyPlan
-                  ? LocaleKeys.stayFlexibleWithMonthlyAccess.tr()
-                  : LocaleKeys.unlimitedAccessToMoodBasedExercises.tr(),
-              onTap: () {
-                context.read<SubscriptionCubit>().selectPlan(
-                  selectedProduct: product,
-                );
-              },
-              bgImage: Assets.images.imgYearlyBg,
-            ).appPadding(top: 10.h),
-          );
-        }
-
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.white,
-          body: SingleChildScrollView(
-            child: Stack(
-              children: [_backgroundImage(), _subscriptionWidget(widgetsList)],
-            ),
-          ),
-        );
-      },
-      listener: (context, state) {
-        if (state.isLoading) {
-          EasyLoading.show();
-        } else {
-          EasyLoading.dismiss();
-        }
-
+      listener: (BuildContext context, SubscriptionState state) {
         if (state.message.isNotEmpty) {
           showSnackBar(message: state.message, type: SnackBarType.None);
         }
       },
+      builder: (BuildContext context, SubscriptionState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFAFAFA),
+          body: Stack(
+            children: <Widget>[
+              _buildAuroraBackground(),
+              _buildGlassOverlay(),
+              SafeArea(
+                child: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 12.h,
+                      ),
+                      sliver: SliverToBoxAdapter(child: _topBar()),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            _heroCard(),
+                            18.h.spaceH,
+                            ...List<Widget>.generate(
+                              state.subsProductDetails.length,
+                              (int index) => _planCard(
+                                index: index,
+                                state: state,
+                              ).appPadding(bottom: 12.h),
+                            ),
+                            14.h.spaceH,
+                            _comingSoonButton(),
+                            12.h.spaceH,
+                            _stripeInfoTag(),
+                            24.h.spaceH,
+                            _termsAndConditions(),
+                            30.h.spaceH,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _subscriptionWidget(List<Widget> widgetsList) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          45.h.spaceH,
-          _appBar(),
-          48.h.spaceH,
-          _headerText(),
-          26.h.spaceH,
-          _headerDescription(),
-          150.h.spaceH,
-          if (widgetsList.isEmpty)
-             _buildEmptyState(),
-          ...widgetsList,
-          32.h.spaceH,
-          if (widgetsList.isNotEmpty)
-          AppButton(
-            onTap: () {
-              if (context.read<SubscriptionCubit>().state.selectedProduct == null) {
-                 showSnackBar(message: "Please select a plan", type: SnackBarType.ERROR);
-                 return;
-              }
-              context.read<SubscriptionCubit>().buyProduct();
-            },
-            title: LocaleKeys.subscribe.tr(),
-            backgroundColor: context.read<SubscriptionCubit>().state.selectedProduct == null 
-                ? Colors.grey 
-                : blueButtonColor,
-            height: 42.h,
-          ),
-          16.h.spaceH,
-          BaseButton(
-            child: LocaleKeys.restore.tr().appText(
-              color: blueButtonColor,
-              fontWeight: FontWeight.w800,
+  Widget _buildAuroraBackground() {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: -120.h,
+          left: -60.w,
+          child: Container(
+            width: 360.w,
+            height: 360.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF894BCD).withValues(alpha: 0.2),
             ),
-            onTap: () {
-               context.read<SubscriptionCubit>().restorePurchase();
-            },
           ),
-          32.h.spaceH,
-          termsAndConditionText(),
+        ),
+        Positioned(
+          top: 200.h,
+          right: -120.w,
+          child: Container(
+            width: 320.w,
+            height: 320.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF5271FF).withValues(alpha: 0.12),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGlassOverlay() {
+    return Positioned.fill(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 78, sigmaY: 78),
+        child: Container(color: Colors.white.withValues(alpha: 0.36)),
+      ),
+    );
+  }
+
+  Widget _topBar() {
+    return Row(
+      children: <Widget>[
+        BaseButton(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.72),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1.2),
+            ),
+            child: Icon(
+              Icons.arrow_back_rounded,
+              color: primaryColor,
+              size: 22.sp,
+            ),
+          ),
+        ),
+        12.w.spaceW,
+        Expanded(
+          child: LocaleKeys.subscription.tr().appText(
+            fontWeight: FontWeight.w900,
+            fontSize: 19.sp,
+            color: Colors.black87,
+            textAlign: TextAlign.start,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _heroCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: <Color>[Color(0xFF894BCD), Color(0xFFB185DB)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28.r),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: const Color(0xFF894BCD).withValues(alpha: 0.24),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          LocaleKeys.getMoreFromLovingBrain.tr().appText(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 20.sp,
+          ),
+          8.h.spaceH,
+          LocaleKeys.unlockAllChallengesToolsAndInsightsForAMoreConfident
+              .tr()
+              .appText(
+                color: Colors.white.withValues(alpha: 0.92),
+                fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
+                textAlign: TextAlign.start,
+              ),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyState() {
-     return Column(
-       children: [
-         Text("No subscription available", style: TextStyle(color: Colors.black)),
-         10.h.spaceH,
-         AppButton(
-           onTap: () {
-             context.read<SubscriptionCubit>().init();
-           },
-           title: "Retry",
-           backgroundColor: blueButtonColor,
-           height: 40.h,
-         )
-       ],
-     );
-  }
+  Widget _planCard({required int index, required SubscriptionState state}) {
+    final plan = state.subsProductDetails[index];
+    final bool isSelected = state.selectedPlan == index;
+    final bool isYearly = plan.id == yearly;
+    final String title = isYearly
+        ? LocaleKeys.premiumAnnual.tr()
+        : LocaleKeys.premiumMonthly.tr();
+    final String subtitle = isYearly
+        ? LocaleKeys.unlimitedAccessToMoodBasedExercises.tr()
+        : LocaleKeys.stayFlexibleWithMonthlyAccess.tr();
+    final String cadence = isYearly ? "year" : "month";
 
-  Widget _subscriptionItem({
-    required String title,
-    required String description,
-    required String price,
-    required bool isSelected,
-    required bool isSubscribed,
-    required bool isShow,
-    required GestureTapCallback? onTap,
-    required AssetGenImage bgImage,
-  }) {
-    if (!isShow) {
-      return Container();
-    }
     return BaseButton(
-      onTap: onTap,
+      onTap: () => context.read<SubscriptionCubit>().selectPlan(index),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            bgImage.image(height: 100.h, width: 350.w, fit: BoxFit.cover),
-            Container(
-              height: 100.h,
-              width: 350.w,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: isSelected
-                    ? Border.all(
-                        color: appButtonColor,
-                        width: isSubscribed ? 2.5 : 1.5,
-                      )
-                    : null,
-                borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24.r),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: Container(
+            padding: EdgeInsets.all(18.w),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(24.r),
+              border: Border.all(
+                color: isSelected ? primaryColor : Colors.white,
+                width: isSelected ? 2 : 1.3,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      title.appText(fontSize: 16, fontWeight: FontWeight.w600),
-                      Spacer(),
-                      price.appText(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: title.appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16.sp,
+                        color: Colors.black87,
                         textAlign: TextAlign.start,
                       ),
-                    ],
-                  ),
-                  8.h.spaceH,
-                  description.appText(fontSize: 12, textAlign: TextAlign.start),
-                  4.h.spaceH,
-                  if (isSubscribed)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade900,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: LocaleKeys.subscribed
-                              .tr()
-                              .appText(
-                                fontSize: 11,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              )
-                              .appPadding(left: 8, right: 8, top: 2, bottom: 2),
-                        ),
-                      ],
                     ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? primaryColor.withValues(alpha: 0.14)
+                            : Colors.grey.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(99.r),
+                      ),
+                      child: "${plan.price}/$cadence".appText(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 11.sp,
+                        color: isSelected ? primaryColor : Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+                8.h.spaceH,
+                subtitle.appText(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade700,
+                  textAlign: TextAlign.start,
+                ),
+                if (isYearly) ...<Widget>[
+                  10.h.spaceH,
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF17B26A).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(99.r),
+                    ),
+                    child: "Best value".appText(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0E9F6E),
+                    ),
+                  ),
                 ],
-              ).appPadding(left: 16, right: 16),
+              ],
             ),
-          ],
-        ),
-      ),
-    ).appPadding(left: 20, right: 20);
-  }
-
-  Widget _appBar() {
-    return Row(
-      children: [
-        BaseButton(
-          child: Assets.icons.icBackIcon.image(height: 36, width: 36),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        12.w.spaceW,
-        LocaleKeys.subscription.tr().appText(fontWeight: FontWeight.w700),
-      ],
-    ).appPadding(left: 20);
-  }
-
-  Widget termsAndConditionText() {
-    return Column(
-      children: [
-        Text.rich(
-          textAlign: TextAlign.center,
-          TextSpan(
-            children: <InlineSpan>[
-              TextSpan(
-                text: Platform.isIOS
-                    ? LocaleKeys.subsTermsTextIOS.tr()
-                    : LocaleKeys.subsTermsTextAndroid.tr(),
-                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-              ),
-            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _comingSoonButton() {
+    return Container(
+      width: double.infinity,
+      height: 56.h,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: <Color>[primaryColor, blueColor2],
+        ),
+        borderRadius: BorderRadius.circular(100.r),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: blueColor2.withValues(alpha: 0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: "Subscriptions coming soon".appText(
+        color: Colors.white,
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w900,
+      ),
+    );
+  }
+
+  Widget _stripeInfoTag() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.78),
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: "Static plans for now. Stripe checkout will be integrated soon."
+          .appText(
+            textAlign: TextAlign.center,
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade700,
+          ),
+    );
+  }
+
+  Widget _termsAndConditions() {
+    final TextStyle defaultStyle = getTextStyle(
+      fontSize: 12.sp,
+      fontWeight: FontWeight.w700,
+      color: Colors.black87,
+    );
+    final TextStyle linkStyle = getTextStyle(
+      fontSize: 12.sp,
+      fontWeight: FontWeight.w700,
+      color: blueColor2,
+    );
+
+    return Column(
+      children: <Widget>[
         Text.rich(
           textAlign: TextAlign.center,
           TextSpan(
             children: <InlineSpan>[
               TextSpan(
                 text: LocaleKeys.forMoreInformationPleaseVisitOur.tr(),
-                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                style: defaultStyle,
               ),
               TextSpan(
                 text: LocaleKeys.termsOfUse.tr(),
+                style: linkStyle,
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
                     if (!await launchUrl(Uri.parse(termsOfUseWebUrl))) {
-                      throw Exception('Could not launch \$termsOfUseWebUrl');
+                      showSnackBar(
+                        message: LocaleKeys.somethingWentWrong.tr(),
+                        type: SnackBarType.ERROR,
+                      );
                     }
                   },
-                style: getTextStyle(
-                  fontSize: 14,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w700,
-                ),
               ),
-              TextSpan(
-                text: " ${LocaleKeys.and.tr()} ",
-                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-              ),
+              TextSpan(text: " ${LocaleKeys.and.tr()} ", style: defaultStyle),
               TextSpan(
                 text: LocaleKeys.privacyPolicy.tr(),
+                style: linkStyle,
                 recognizer: TapGestureRecognizer()
                   ..onTap = () async {
                     if (!await launchUrl(Uri.parse(privacyPolicyUrl))) {
-                      throw Exception('Could not launch \$privacyPolicyUrl');
+                      showSnackBar(
+                        message: LocaleKeys.somethingWentWrong.tr(),
+                        type: SnackBarType.ERROR,
+                      );
                     }
                   },
-                style: getTextStyle(
-                  fontSize: 14,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w700,
-                ),
               ),
-              TextSpan(
-                text: ".",
-                style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-              ),
+              TextSpan(text: ".", style: defaultStyle),
             ],
           ),
         ),
       ],
-    ).appPadding(left: 25, right: 25, bottom: 25);
-  }
-
-    Widget _backgroundImage() {
-      return Column(
-        children: [
-          Assets.images.imgSubscriptionBg.image(height: context.height),
-          Container(height: context.height / 2),
-        ],
-      );
-    }
-
-  Widget _headerText() {
-    return LocaleKeys.getMoreFromLovingBrain
-        .tr()
-        .appText(
-          fontWeight: FontWeight.w900,
-          color: yellowTextColor3,
-          fontSize: 20,
-        )
-        .appPadding(left: 20.w, right: 20.w);
-  }
-
-  Widget _headerDescription() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: LocaleKeys.unlockAllChallengesToolsAndInsightsForAMoreConfident
-          .tr()
-          .appText(fontSize: 12, fontWeight: FontWeight.w800),
-    ).appPadding(left: 20.w, right: 20.w);
-  }
-
-  @override
-  void dispose() {
-    if (navigatorKey.currentContext != null) {
-      navigatorKey.currentContext!.read<HomeCubit>().dispose();
-    }
-    super.dispose();
+    ).appPadding(left: 8.w, right: 8.w);
   }
 }

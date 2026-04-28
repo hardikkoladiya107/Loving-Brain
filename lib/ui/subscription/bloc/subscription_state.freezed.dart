@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SubscriptionState {
 
- bool get isLoading; int get selectedPlan; String get message; List<ProductDetails> get products; List<SubsProductDetails> get subsProductDetails; ProductDetails? get selectedProduct; UserModel? get userModel;
+ bool get isLoading; int get selectedPlan; String get message; List<SubsProductDetails> get subsProductDetails; UserModel? get userModel;
 /// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $SubscriptionStateCopyWith<SubscriptionState> get copyWith => _$SubscriptionStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.products, products)&&const DeepCollectionEquality().equals(other.subsProductDetails, subsProductDetails)&&(identical(other.selectedProduct, selectedProduct) || other.selectedProduct == selectedProduct)&&(identical(other.userModel, userModel) || other.userModel == userModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.subsProductDetails, subsProductDetails)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(products),const DeepCollectionEquality().hash(subsProductDetails),selectedProduct,userModel);
+int get hashCode => Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(subsProductDetails),userModel);
 
 @override
 String toString() {
-  return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, products: $products, subsProductDetails: $subsProductDetails, selectedProduct: $selectedProduct, userModel: $userModel)';
+  return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, subsProductDetails: $subsProductDetails, userModel: $userModel)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $SubscriptionStateCopyWith<$Res>  {
   factory $SubscriptionStateCopyWith(SubscriptionState value, $Res Function(SubscriptionState) _then) = _$SubscriptionStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, int selectedPlan, String message, List<ProductDetails> products, List<SubsProductDetails> subsProductDetails, ProductDetails? selectedProduct, UserModel? userModel
+ bool isLoading, int selectedPlan, String message, List<SubsProductDetails> subsProductDetails, UserModel? userModel
 });
 
 
@@ -62,15 +62,13 @@ class _$SubscriptionStateCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? selectedPlan = null,Object? message = null,Object? products = null,Object? subsProductDetails = null,Object? selectedProduct = freezed,Object? userModel = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? selectedPlan = null,Object? message = null,Object? subsProductDetails = null,Object? userModel = freezed,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,selectedPlan: null == selectedPlan ? _self.selectedPlan : selectedPlan // ignore: cast_nullable_to_non_nullable
 as int,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,products: null == products ? _self.products : products // ignore: cast_nullable_to_non_nullable
-as List<ProductDetails>,subsProductDetails: null == subsProductDetails ? _self.subsProductDetails : subsProductDetails // ignore: cast_nullable_to_non_nullable
-as List<SubsProductDetails>,selectedProduct: freezed == selectedProduct ? _self.selectedProduct : selectedProduct // ignore: cast_nullable_to_non_nullable
-as ProductDetails?,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as String,subsProductDetails: null == subsProductDetails ? _self.subsProductDetails : subsProductDetails // ignore: cast_nullable_to_non_nullable
+as List<SubsProductDetails>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,
   ));
 }
@@ -156,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  int selectedPlan,  String message,  List<ProductDetails> products,  List<SubsProductDetails> subsProductDetails,  ProductDetails? selectedProduct,  UserModel? userModel)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  int selectedPlan,  String message,  List<SubsProductDetails> subsProductDetails,  UserModel? userModel)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SubscriptionState() when $default != null:
-return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.products,_that.subsProductDetails,_that.selectedProduct,_that.userModel);case _:
+return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.subsProductDetails,_that.userModel);case _:
   return orElse();
 
 }
@@ -177,10 +175,10 @@ return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.products,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  int selectedPlan,  String message,  List<ProductDetails> products,  List<SubsProductDetails> subsProductDetails,  ProductDetails? selectedProduct,  UserModel? userModel)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  int selectedPlan,  String message,  List<SubsProductDetails> subsProductDetails,  UserModel? userModel)  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionState():
-return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.products,_that.subsProductDetails,_that.selectedProduct,_that.userModel);case _:
+return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.subsProductDetails,_that.userModel);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +195,10 @@ return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.products,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  int selectedPlan,  String message,  List<ProductDetails> products,  List<SubsProductDetails> subsProductDetails,  ProductDetails? selectedProduct,  UserModel? userModel)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  int selectedPlan,  String message,  List<SubsProductDetails> subsProductDetails,  UserModel? userModel)?  $default,) {final _that = this;
 switch (_that) {
 case _SubscriptionState() when $default != null:
-return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.products,_that.subsProductDetails,_that.selectedProduct,_that.userModel);case _:
+return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.subsProductDetails,_that.userModel);case _:
   return null;
 
 }
@@ -212,19 +210,12 @@ return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.products,
 
 
 class _SubscriptionState implements SubscriptionState {
-  const _SubscriptionState({this.isLoading = false, this.selectedPlan = 0, this.message = "", final  List<ProductDetails> products = const [], final  List<SubsProductDetails> subsProductDetails = const [], this.selectedProduct, this.userModel}): _products = products,_subsProductDetails = subsProductDetails;
+  const _SubscriptionState({this.isLoading = false, this.selectedPlan = 0, this.message = "", final  List<SubsProductDetails> subsProductDetails = const [], this.userModel}): _subsProductDetails = subsProductDetails;
   
 
 @override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  int selectedPlan;
 @override@JsonKey() final  String message;
- final  List<ProductDetails> _products;
-@override@JsonKey() List<ProductDetails> get products {
-  if (_products is EqualUnmodifiableListView) return _products;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_products);
-}
-
  final  List<SubsProductDetails> _subsProductDetails;
 @override@JsonKey() List<SubsProductDetails> get subsProductDetails {
   if (_subsProductDetails is EqualUnmodifiableListView) return _subsProductDetails;
@@ -232,7 +223,6 @@ class _SubscriptionState implements SubscriptionState {
   return EqualUnmodifiableListView(_subsProductDetails);
 }
 
-@override final  ProductDetails? selectedProduct;
 @override final  UserModel? userModel;
 
 /// Create a copy of SubscriptionState
@@ -245,16 +235,16 @@ _$SubscriptionStateCopyWith<_SubscriptionState> get copyWith => __$SubscriptionS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._products, _products)&&const DeepCollectionEquality().equals(other._subsProductDetails, _subsProductDetails)&&(identical(other.selectedProduct, selectedProduct) || other.selectedProduct == selectedProduct)&&(identical(other.userModel, userModel) || other.userModel == userModel));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._subsProductDetails, _subsProductDetails)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(_products),const DeepCollectionEquality().hash(_subsProductDetails),selectedProduct,userModel);
+int get hashCode => Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(_subsProductDetails),userModel);
 
 @override
 String toString() {
-  return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, products: $products, subsProductDetails: $subsProductDetails, selectedProduct: $selectedProduct, userModel: $userModel)';
+  return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, subsProductDetails: $subsProductDetails, userModel: $userModel)';
 }
 
 
@@ -265,7 +255,7 @@ abstract mixin class _$SubscriptionStateCopyWith<$Res> implements $SubscriptionS
   factory _$SubscriptionStateCopyWith(_SubscriptionState value, $Res Function(_SubscriptionState) _then) = __$SubscriptionStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, int selectedPlan, String message, List<ProductDetails> products, List<SubsProductDetails> subsProductDetails, ProductDetails? selectedProduct, UserModel? userModel
+ bool isLoading, int selectedPlan, String message, List<SubsProductDetails> subsProductDetails, UserModel? userModel
 });
 
 
@@ -282,15 +272,13 @@ class __$SubscriptionStateCopyWithImpl<$Res>
 
 /// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? selectedPlan = null,Object? message = null,Object? products = null,Object? subsProductDetails = null,Object? selectedProduct = freezed,Object? userModel = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? selectedPlan = null,Object? message = null,Object? subsProductDetails = null,Object? userModel = freezed,}) {
   return _then(_SubscriptionState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,selectedPlan: null == selectedPlan ? _self.selectedPlan : selectedPlan // ignore: cast_nullable_to_non_nullable
 as int,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,products: null == products ? _self._products : products // ignore: cast_nullable_to_non_nullable
-as List<ProductDetails>,subsProductDetails: null == subsProductDetails ? _self._subsProductDetails : subsProductDetails // ignore: cast_nullable_to_non_nullable
-as List<SubsProductDetails>,selectedProduct: freezed == selectedProduct ? _self.selectedProduct : selectedProduct // ignore: cast_nullable_to_non_nullable
-as ProductDetails?,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
+as String,subsProductDetails: null == subsProductDetails ? _self._subsProductDetails : subsProductDetails // ignore: cast_nullable_to_non_nullable
+as List<SubsProductDetails>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,
   ));
 }
