@@ -2,229 +2,245 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Loving Brain</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Privacy Policy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #94A3F6;      /* A calming blue, matching app_color.dart */
-            --secondary: #B9C6FF;    
-            --bg-top: #F0F4FF;       
-            --bg-bottom: #FFF8E7;
-            --text-dark: #2A3143;
-            --text-light: #6A728A;
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.5);
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Outfit', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-            color: var(--text-dark);
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #FAFAFA 0%, #F0F2F5 100%);
+            color: #333333;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
             min-height: 100vh;
-            padding: 40px 20px 80px 20px;
-            /* Animated background */
-            background-size: 200% 200%;
-            animation: gradientMove 15s ease infinite;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Abstract Background Elements for Premium Feel */
+        .bg-shape-1 {
+            position: fixed;
+            top: -150px;
+            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(137, 75, 205, 0.15); /* #894BCD */
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .bg-shape-2 {
+            position: fixed;
+            bottom: -150px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: rgba(255, 102, 196, 0.12); /* #FF66C4 */
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .bg-shape-3 {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: rgba(82, 113, 255, 0.08); /* #5271FF */
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
         }
 
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Glassmorphism Header */
-        header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 32px;
+            margin: 120px auto 40px auto;
             padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 32px;
+            border: 1.5px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        header {
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
             margin-bottom: 40px;
-            animation: fadeDown 0.8s ease-out;
         }
 
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        header h1 {
-            font-weight: 800;
+        h1 {
             font-size: 32px;
-            background: linear-gradient(90deg, #7A89DE, #94A3F6);
+            font-weight: 800;
+            background: linear-gradient(135deg, #894BCD 0%, #B185DB 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 12px;
-            letter-spacing: 1px;
+            letter-spacing: -0.5px;
         }
 
-        header p {
-            color: var(--text-light);
-            font-weight: 400;
-            font-size: 15px;
+        .last-updated {
+            font-size: 14px;
+            font-weight: 500;
+            color: #888888;
             letter-spacing: 0.5px;
-        }
-
-        /* Content Sections */
-        .glass-block {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 28px;
-            padding: 36px 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            animation: fadeUp 1s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        /* Stagger animations for sections */
-        .glass-block:nth-child(2) { animation-delay: 0.2s; }
-        .glass-block:nth-child(3) { animation-delay: 0.4s; }
-        .glass-block:nth-child(4) { animation-delay: 0.6s; }
-        .glass-block:nth-child(5) { animation-delay: 0.8s; }
-
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .glass-block::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-            opacity: 0.8;
-            border-radius: 4px 0 0 4px;
+            text-transform: uppercase;
         }
 
         h2 {
             font-size: 20px;
-            font-weight: 800;
-            color: var(--text-dark);
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-top: 32px;
             margin-bottom: 16px;
-            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        h2 span.icon-badge {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            background: rgba(148, 163, 246, 0.2);
-            color: #7A89DE;
-            font-size: 16px;
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background: linear-gradient(180deg, #894BCD 0%, #FF66C4 100%);
+            border-radius: 4px;
         }
 
         p {
-            color: var(--text-light);
             font-size: 15px;
+            color: #555555;
             margin-bottom: 16px;
+            font-weight: 400;
             line-height: 1.7;
         }
 
         ul {
-            list-style: none;
-            margin-bottom: 16px;
+            margin-left: 20px;
+            margin-bottom: 20px;
         }
 
-        ul li {
-            position: relative;
-            padding-left: 28px;
-            margin-bottom: 12px;
-            color: var(--text-light);
+        li {
             font-size: 15px;
+            color: #555555;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 8px;
         }
 
-        ul li::before {
-            content: '●';
-            position: absolute;
-            left: 0;
-            top: 2px;
-            color: var(--primary);
-            font-size: 12px;
+        li::marker {
+            color: #894BCD;
         }
 
-        /* Scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 8px;
+        a {
+            color: #5271FF;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
         }
-        ::-webkit-scrollbar-track {
-            background: transparent;
+
+        a:hover {
+            color: #894BCD;
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 246, 0.5);
-            border-radius: 4px;
+
+        .highlight-box {
+            background: rgba(137, 75, 205, 0.05);
+            border-left: 4px solid #894BCD;
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin: 24px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: #444;
+            font-weight: 500;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.05);
+            margin: 40px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 100px 20px 30px 20px;
+                padding: 30px 20px;
+                border-radius: 24px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            h2 {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Abstract Background -->
+    <div class="bg-shape-1"></div>
+    <div class="bg-shape-2"></div>
+    <div class="bg-shape-3"></div>
+
     <div class="container">
         <header>
             <h1>Privacy Policy</h1>
-            <p>Your Trust is Our Priority</p>
+            <div class="last-updated">Last Updated: October 2023</div>
         </header>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">1</span> Our Commitment</h2>
-            <p>Loving Brain is deeply committed to protecting the privacy and security of your family's data. As a wellness and parenting tool, we understand that you are entrusting us with deeply personal behavioral reflections, sleep logs, and co-parenting schedules.</p>
-        </section>
+        <p>Welcome to Loving Brain! Your privacy is of paramount importance to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you use our application and services.</p>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">2</span> Information We Collect</h2>
-            <p>We only collect data necessary to provide and improve our services:</p>
-            <ul>
-                <li><strong>Account Data:</strong> Name, email address, and authentication tokens via Google or Apple.</li>
-                <li><strong>Family Logic:</strong> Child profiles, co-parent relationships, and routine interactions.</li>
-                <li><strong>Wellness Data:</strong> Sleep logs, mood trackers, thoughts, and reflections you input into the app.</li>
-                <li><strong>Usage Metrics:</strong> Anonymous behavioral usage data to help us improve the app and chatbot responses over time.</li>
-            </ul>
-        </section>
+        <div class="highlight-box">
+            <p><strong>Core Principle:</strong> We only collect the data necessary to provide you with the best possible experience. We never sell your personal data to third parties.</p>
+        </div>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">3</span> How We Use Your Information</h2>
-            <p>The primary purpose of collecting your data is to personalize the Loving Brain experience. This includes:</p>
-            <ul>
-                <li>Powering our Intelligent Chatbot to offer relevant parenting reflections.</li>
-                <li>Syncing daily schedules and event parameters automatically across linked co-parent devices.</li>
-                <li>Analyzing anonymized trends to introduce new features directly benefitting your child's well-being.</li>
-            </ul>
-        </section>
+        <h2>1. Information We Collect</h2>
+        <p>We collect information to provide better services to all our users. The types of information we collect include:</p>
+        <ul>
+            <li><strong>Personal Information:</strong> Information you provide to us, such as your name, email address, and profile details when you create an account.</li>
+            <li><strong>Usage Data:</strong> Information about how you interact with our app, including features used, time spent, and navigation paths.</li>
+            <li><strong>Device Information:</strong> Data regarding the device you use to access Loving Brain, such as IP address, operating system, and device identifiers.</li>
+        </ul>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">4</span> Data Protection</h2>
-            <p>We respect the absolute privacy of your family. Loving Brain does not, and will never, sell your raw personal data to third-party brokers. We utilize industry-standard cryptographic techniques to safely maintain your user sessions and secure your family's routine database.</p>
-            <p>If you choose to delete your account, all associated sensitive data is immediately unlinked and removed from our active systems in compliance with regional data processing laws.</p>
-        </section>
+        <h2>2. How We Use Your Information</h2>
+        <p>The information we collect is used in the following ways:</p>
+        <ul>
+            <li>To personalize your experience and deliver content tailored to your needs.</li>
+            <li>To improve our application, identify bugs, and enhance performance.</li>
+            <li>To communicate with you regarding updates, security alerts, and support messages.</li>
+        </ul>
 
+        <h2>3. Data Security</h2>
+        <p>We implement robust, industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, please be aware that no method of transmission over the internet or electronic storage is 100% secure.</p>
+
+        <h2>4. Your Rights and Choices</h2>
+        <p>You have the right to access, update, or delete your personal information at any time. You can manage your preferences within the app settings. If you wish to permanently delete your account, please contact our support team.</p>
+
+        <h2>5. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy periodically to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes through the app.</p>
+
+        <hr>
+        
+        <p style="text-align: center; font-size: 14px; color: #888;">
+            If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@lovingbrain.com">support@lovingbrain.com</a>.
+        </p>
     </div>
 
 </body>

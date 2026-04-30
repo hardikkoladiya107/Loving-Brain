@@ -320,6 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           "Good Morning,".appText(
+                            textAlign: TextAlign.start,
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                             color: Colors.white70,
@@ -327,6 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           4.spaceH,
                           "${state.userModel?.parentName ?? "Parent"}!".appText(
+                            textAlign: TextAlign.start,
                             fontWeight: FontWeight.w900,
                             fontSize: 26,
                             color: Colors.white,
@@ -410,12 +412,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               DateFormat('hh:mm a')
                                   .format(routine.timeStamp!)
                                   .appText(
+                                    textAlign: TextAlign.start,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white70,
                                   ),
                               2.spaceH,
                               routine.description!.appText(
+                                textAlign: TextAlign.start,
                                 fontSize: 16,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
@@ -424,12 +428,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ] else ...[
                               "Free Time".appText(
+                                textAlign: TextAlign.start,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white,
                               ),
                               2.spaceH,
                               "No upcoming schedule".appText(
+                                textAlign: TextAlign.start,
                                 fontSize: 13,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.w500,
@@ -452,6 +458,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: "View".appText(
+                            textAlign: TextAlign.center,
                             color: const Color(0xFF894BCD),
                             fontWeight: FontWeight.w800,
                             fontSize: 13,

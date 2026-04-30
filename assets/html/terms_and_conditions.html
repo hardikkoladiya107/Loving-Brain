@@ -2,251 +2,240 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms & Conditions - Loving Brain</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Terms & Conditions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #FDB1C8;      /* pinkColor1 */
-            --secondary: #F8DF84;    /* yellowColor2 */
-            --bg-top: #FFE5E5;
-            --bg-bottom: #FFF8E7;
-            --text-dark: #2D3748;
-            --text-light: #718096;
-            --glass-bg: rgba(255, 255, 255, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.4);
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Outfit', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-            color: var(--text-dark);
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #FAFAFA 0%, #F0F2F5 100%);
+            color: #333333;
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
             min-height: 100vh;
-            padding: 40px 20px 80px 20px;
-            /* Animated background to mimic dynamic clouds/wellness app */
-            background-size: 200% 200%;
-            animation: gradientMove 15s ease infinite;
         }
 
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Abstract Background Elements for Premium Feel */
+        .bg-shape-1 {
+            position: fixed;
+            top: -150px;
+            right: -100px;
+            width: 450px;
+            height: 450px;
+            background: rgba(82, 113, 255, 0.12); /* #5271FF */
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: 0;
+        }
+
+        .bg-shape-2 {
+            position: fixed;
+            bottom: -150px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: rgba(137, 75, 205, 0.15); /* #894BCD */
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+
+        .bg-shape-3 {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 650px;
+            height: 650px;
+            background: rgba(255, 102, 196, 0.08); /* #FF66C4 */
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
         }
 
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Glassmorphism Header */
-        header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 32px;
+            margin: 120px auto 40px auto;
             padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 32px;
+            border: 1.5px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        header {
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
             margin-bottom: 40px;
-            animation: fadeDown 0.8s ease-out;
         }
 
-        @keyframes fadeDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        header h1 {
-            font-weight: 800;
+        h1 {
             font-size: 32px;
-            background: linear-gradient(90deg, #FF8AAB, #FDB1C8);
+            font-weight: 800;
+            background: linear-gradient(135deg, #5271FF 0%, #894BCD 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 12px;
-            letter-spacing: 1px;
+            letter-spacing: -0.5px;
         }
 
-        header p {
-            color: var(--text-light);
-            font-weight: 400;
-            font-size: 15px;
+        .last-updated {
+            font-size: 14px;
+            font-weight: 500;
+            color: #888888;
             letter-spacing: 0.5px;
-        }
-
-        /* Content Sections styled as glass blocks */
-        .glass-block {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 28px;
-            padding: 36px 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            animation: fadeUp 1s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        /* Stagger animations for sections */
-        .glass-block:nth-child(2) { animation-delay: 0.2s; }
-        .glass-block:nth-child(3) { animation-delay: 0.4s; }
-        .glass-block:nth-child(4) { animation-delay: 0.6s; }
-        .glass-block:nth-child(5) { animation-delay: 0.8s; }
-
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .glass-block::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-            opacity: 0.8;
-            border-radius: 4px 0 0 4px;
+            text-transform: uppercase;
         }
 
         h2 {
             font-size: 20px;
-            font-weight: 800;
-            color: var(--text-dark);
+            font-weight: 700;
+            color: #1A1A1A;
+            margin-top: 32px;
             margin-bottom: 16px;
-            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        h2 span.icon-badge {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            background: rgba(253, 177, 200, 0.2);
-            color: #FF8AAB;
-            font-size: 16px;
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 24px;
+            background: linear-gradient(180deg, #5271FF 0%, #894BCD 100%);
+            border-radius: 4px;
         }
 
         p {
-            color: var(--text-light);
             font-size: 15px;
+            color: #555555;
             margin-bottom: 16px;
+            font-weight: 400;
             line-height: 1.7;
         }
 
         ul {
-            list-style: none;
-            margin-bottom: 16px;
+            margin-left: 20px;
+            margin-bottom: 20px;
         }
 
-        ul li {
-            position: relative;
-            padding-left: 28px;
-            margin-bottom: 12px;
-            color: var(--text-light);
+        li {
             font-size: 15px;
+            color: #555555;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 8px;
         }
 
-        ul li::before {
-            content: '✦';
-            position: absolute;
-            left: 0;
-            top: 1px;
-            color: var(--secondary);
-            font-size: 14px;
+        li::marker {
+            color: #5271FF;
         }
 
         a {
-            color: var(--primary);
+            color: #FF66C4;
             text-decoration: none;
             font-weight: 600;
-            border-bottom: 1px solid transparent;
-            transition: color 0.2s, border-bottom 0.2s;
+            transition: color 0.3s ease;
         }
 
         a:hover {
-            color: #FF8AAB;
-            border-bottom: 1px solid #FF8AAB;
+            color: #894BCD;
         }
 
-        /* Scrollbar styles */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .highlight-box {
+            background: rgba(82, 113, 255, 0.05);
+            border-left: 4px solid #5271FF;
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin: 24px 0;
         }
-        ::-webkit-scrollbar-track {
-            background: transparent;
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: #444;
+            font-weight: 500;
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(253, 177, 200, 0.5);
-            border-radius: 4px;
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.05);
+            margin: 40px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 100px 20px 30px 20px;
+                padding: 30px 20px;
+                border-radius: 24px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            h2 {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Abstract Background -->
+    <div class="bg-shape-1"></div>
+    <div class="bg-shape-2"></div>
+    <div class="bg-shape-3"></div>
+
     <div class="container">
         <header>
             <h1>Terms & Conditions</h1>
-            <p>Last Updated: October 2025</p>
+            <div class="last-updated">Last Updated: October 2023</div>
         </header>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">1</span> Welcome to Loving Brain</h2>
-            <p>Welcome to Loving Brain! By accessing or using our parenting and wellness mobile application, you agree to be bound by these Terms and Conditions. Please read them carefully. If you do not agree with any part of these terms, you may not use our services.</p>
-        </section>
+        <p>Please read these Terms and Conditions carefully before using the Loving Brain application. By accessing or using our app, you agree to be bound by these terms.</p>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">2</span> Nature of the Application</h2>
-            <p>Our goal is to foster wellness, calmness, and organization through co-parenting calendars, mindfulness tools, and intelligent chatbots.</p>
-            <ul>
-                <li>The content provided is strictly for informational and emotional wellness purposes.</li>
-                <li>It does not constitute professional medical, psychiatric, or psychological advice.</li>
-                <li>Always seek the advice of a qualified healthcare provider regarding any mental health questions.</li>
-            </ul>
-        </section>
+        <div class="highlight-box">
+            <p><strong>Agreement:</strong> Your use of the Application constitutes your agreement to all such Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
+        </div>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">3</span> Account Security</h2>
-            <p>To use Loving Brain, you are required to create an account either directly or via third-party integrations (Apple/Google). You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account.</p>
-            <p>If you suspect unauthorized use, please contact us immediately.</p>
-        </section>
+        <h2>1. User Accounts</h2>
+        <p>When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.</p>
+        
+        <h2>2. Acceptable Use</h2>
+        <p>You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password. You agree not to disclose your password to any third party.</p>
+        <ul>
+            <li>You must not use the app for any illegal or unauthorized purpose.</li>
+            <li>You must not transmit any worms or viruses or any code of a destructive nature.</li>
+            <li>Violation of any of these agreements will result in the termination of your Services.</li>
+        </ul>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">4</span> Subscriptions and Payments</h2>
-            <p>Loving Brain offers premium features such as advanced AI chatbots, detailed cognitive reflections, and extended co-parenting synchronization. Access to these may require a recurring subscription.</p>
-            <ul>
-                <li>Payments are securely processed through trusted third parties (e.g., Apple App Store, Google Play).</li>
-                <li>Subscriptions automatically renew unless canceled at least 24 hours prior to the end of the current period.</li>
-            </ul>
-        </section>
+        <h2>3. Intellectual Property</h2>
+        <p>The Service and its original content, features, and functionality are and will remain the exclusive property of Loving Brain and its licensors. The Service is protected by copyright, trademark, and other laws of both the United States and foreign countries.</p>
 
-        <section class="glass-block">
-            <h2><span class="icon-badge">5</span> Acceptable Use Policy</h2>
-            <p>You agree not to misuse our services. Prohibited actions include:</p>
-            <ul>
-                <li>Attempting to reverse-engineer our AI or extract its logic.</li>
-                <li>Transmitting malicious code, spam, or disruptive elements through our chat networks.</li>
-                <li>Harassing or misusing shared family profiles linked within the app.</li>
-            </ul>
-            <p>We reserve the right to suspend accounts that violate this trust.</p>
-        </section>
+        <h2>4. Termination</h2>
+        <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
 
+        <h2>5. Limitation of Liability</h2>
+        <p>In no event shall Loving Brain, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.</p>
+
+        <hr>
+        
+        <p style="text-align: center; font-size: 14px; color: #888;">
+            If you have any questions about these Terms, please contact us at <a href="mailto:support@lovingbrain.com">support@lovingbrain.com</a>.
+        </p>
     </div>
 
 </body>
