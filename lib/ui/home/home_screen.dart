@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -258,116 +259,214 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _heroDashboard(HomeState state) {
     RoutineModel? routine = _getNextRoutine(state);
+    final int streakDays = state.userModel?.streak ?? 0;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF894BCD),
-            Color(0xFFB185DB),
-          ], // Brand Purple Gradient
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF894BCD).withValues(alpha: 0.25),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: const Color(0xFF6B35B8).withValues(alpha: 0.45),
+            blurRadius: 35,
+            spreadRadius: 0,
+            offset: const Offset(0, 14),
+          ),
+          BoxShadow(
+            color: const Color(0xFF894BCD).withValues(alpha: 0.2),
+            blurRadius: 60,
+            spreadRadius: 4,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Stack(
         children: [
-          // Background abstract rings
+          // ── Deep gradient base ──────────────────────────────────────
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF5B1FA6),
+                  Color(0xFF7B3FCF),
+                  Color(0xFF9C5CE6),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [0.0, 0.5, 1.0],
+              ),
+            ),
+          ),
+
+          // ── Decorative orbs ─────────────────────────────────────────
           Positioned(
-            top: -40,
-            right: -40,
+            top: -55,
+            right: -45,
             child: Container(
-              width: 150,
-              height: 150,
+              width: 180,
+              height: 180,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.1),
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.18),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
               ),
             ),
           ),
           Positioned(
-            bottom: -20,
-            left: -20,
+            bottom: -50,
+            left: -30,
             child: Container(
-              width: 100,
-              height: 100,
+              width: 160,
+              height: 160,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.05),
+                gradient: RadialGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.12),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
               ),
             ),
           ),
-          // Content
+          Positioned(
+            top: 20,
+            left: 120,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
+            ),
+          ),
+
+          // ── Content ─────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.fromLTRB(24, 26, 24, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top Row: Greeting + Streak
+                // Top row: Greeting + Streak Badge
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Greeting
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          "Good Morning,".appText(
-                            textAlign: TextAlign.start,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                            color: Colors.white70,
-                            letterSpacing: 0.5,
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.25),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _getGreetingEmoji(),
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    6.spaceW,
+                                    Text(
+                                      _getGreetingText(),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                        letterSpacing: 0.3,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          4.spaceH,
-                          "${state.userModel?.parentName ?? "Parent"}!".appText(
-                            textAlign: TextAlign.start,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 26,
-                            color: Colors.white,
+                          10.spaceH,
+                          Text(
+                            "${state.userModel?.parentName ?? "Parent"}!",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 30,
+                              color: Colors.white,
+                              letterSpacing: -0.5,
+                              height: 1.1,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    // Streak Badge
+
+                    // Streak Badge — premium pill
                     BaseButton(
                       onTap: () => context.push(RoutePaths.yourStreak),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
+                            horizontal: 14, vertical: 10),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            width: 1,
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white.withValues(alpha: 0.28),
+                              Colors.white.withValues(alpha: 0.14),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.4),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Assets.icons.icStreakFire.image(height: 18),
-                            6.spaceW,
-                            ((state.userModel?.streak ?? 0).toString()).appText(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                            2.spaceW,
-                            "Days".appText(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white70,
+                            Assets.icons.icStreakFire.image(height: 22, width: 22),
+                            8.spaceW,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "$streakDays",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    height: 1.0,
+                                  ),
+                                ),
+                                Text(
+                                  "Day Streak",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -375,95 +474,144 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                24.spaceH,
-                // Bottom Row: Schedule Glass Box
+
+                22.spaceH,
+
+                // Divider with subtle shimmer line
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  height: 1,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      width: 1,
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.0),
+                        Colors.white.withValues(alpha: 0.3),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.calendar_month_rounded,
-                          color: Colors.white,
-                          size: 22,
+                ),
+
+                18.spaceH,
+
+                // Schedule glass card
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(22),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.25),
+                          width: 1,
                         ),
                       ),
-                      16.spaceW,
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (routine != null) ...[
-                              DateFormat('hh:mm a')
-                                  .format(routine.timeStamp!)
-                                  .appText(
-                                    textAlign: TextAlign.start,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white70,
+                      child: Row(
+                        children: [
+                          // Icon container
+                          Container(
+                            width: 46,
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.calendar_month_rounded,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                          ),
+                          14.spaceW,
+                          // Text content
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (routine != null) ...[
+                                  Text(
+                                    DateFormat('hh:mm a').format(routine.timeStamp!),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white.withValues(alpha: 0.7),
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
-                              2.spaceH,
-                              routine.description!.appText(
-                                textAlign: TextAlign.start,
-                                fontSize: 16,
+                                  4.spaceH,
+                                  Text(
+                                    routine.description!,
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ] else ...[
+                                  Text(
+                                    "Free Time",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  4.spaceH,
+                                  Text(
+                                    "No upcoming schedule",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withValues(alpha: 0.7),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          12.spaceW,
+                          // View button
+                          BaseButton(
+                            onTap: () => context.read<BaseCubit>().changeProps(
+                              bottomNavigationIndex: 1,
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 18, vertical: 11),
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.12),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                            ] else ...[
-                              "Free Time".appText(
-                                textAlign: TextAlign.start,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
+                              child: Text(
+                                "View",
+                                style: TextStyle(
+                                  color: const Color(0xFF6B35B8),
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 13,
+                                  letterSpacing: 0.2,
+                                ),
                               ),
-                              2.spaceH,
-                              "No upcoming schedule".appText(
-                                textAlign: TextAlign.start,
-                                fontSize: 13,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                      BaseButton(
-                        onTap: () => context.read<BaseCubit>().changeProps(
-                          bottomNavigationIndex: 1,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: "View".appText(
-                            textAlign: TextAlign.center,
-                            color: const Color(0xFF894BCD),
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -473,6 +621,22 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  String _getGreetingText() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return "Good Morning";
+    if (hour < 17) return "Good Afternoon";
+    return "Good Evening";
+  }
+
+  String _getGreetingEmoji() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return "☀️";
+    if (hour < 17) return "🌤️";
+    return "🌙";
+  }
+
+
 
   Widget _quickActionsGrid() {
     return Padding(

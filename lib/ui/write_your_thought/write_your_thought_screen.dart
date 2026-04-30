@@ -471,34 +471,50 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                 child: BaseButton(
                   onTap: () => _showAddJournalDialog(context, state),
                   child: Container(
-                    height: 60.h,
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    height: 62.h,
+                    padding: EdgeInsets.symmetric(horizontal: 28.w),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [yellowColor3, yellowColor2],
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF894BCD), Color(0xFFB06FE5)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(30.r),
+                      borderRadius: BorderRadius.circular(31.r),
                       boxShadow: [
                         BoxShadow(
-                          color: yellowColor3.withValues(alpha: 0.4),
-                          blurRadius: 15.r,
-                          offset: Offset(0, 6.h),
+                          color: const Color(0xFF894BCD).withValues(alpha: 0.45),
+                          blurRadius: 20.r,
+                          spreadRadius: 0,
+                          offset: Offset(0, 8.h),
+                        ),
+                        BoxShadow(
+                          color: const Color(0xFF894BCD).withValues(alpha: 0.2),
+                          blurRadius: 40.r,
+                          spreadRadius: 4,
+                          offset: Offset(0, 4.h),
                         ),
                       ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, color: Colors.white, size: 24.sp),
-                        8.w.spaceW,
+                        Container(
+                          width: 28.w,
+                          height: 28.w,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.25),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(Icons.add_rounded, color: Colors.white, size: 20.sp),
+                        ),
+                        10.w.spaceW,
                         Text(
                           "Add Journal",
                           style: getTextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 16.sp,
                             color: Colors.white,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ],
@@ -522,15 +538,32 @@ class DraggableJournalCard extends StatefulWidget {
   State<DraggableJournalCard> createState() => _DraggableJournalCardState();
 }
 
-class _DraggableJournalCardState extends State<DraggableJournalCard> {
+class _DraggableJournalCardState extends State<DraggableJournalCard>
+    with SingleTickerProviderStateMixin {
   late double x;
   late double y;
+  bool _isHovered = false;
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     x = widget.journal.x ?? 1000.0;
     y = widget.journal.y ?? 1000.0;
+    _scaleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 180),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scaleController.dispose();
+    super.dispose();
   }
 
   @override
@@ -542,89 +575,350 @@ class _DraggableJournalCardState extends State<DraggableJournalCard> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: x,
-      top: y,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          setState(() {
-            x += details.delta.dx;
-            y += details.delta.dy;
-          });
-        },
-        onPanEnd: (details) {
-          if (widget.journal.id != null) {
-            MoodRepo.instance.updateJournalPosition(
-              journalId: widget.journal.id!,
-              x: x,
-              y: y,
-            );
-          }
-        },
-        child: Container(
-          width: 300.w,
-          padding: EdgeInsets.all(24.w),
-          decoration: BoxDecoration(
-            color: Color(widget.journal.colorValue ?? 0xFFFFFFFF),
-            borderRadius: BorderRadius.circular(24.r),
-            border: Border.all(
-              color: primaryColor.withValues(alpha: 0.05), 
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 30,
-                spreadRadius: 2,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 14.w,
-                    height: 14.w,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffFF7EB3),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xffFF7EB3).withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        )
-                      ],
-                    ),
-                  ),
-                  12.w.spaceW,
-                  Expanded(
-                    child: convertToMMMMDYYYY(widget.journal.logTime)
-                        .appText(
-                          fontWeight: FontWeight.w700, 
-                          fontSize: 14.sp,
-                          color: Colors.grey.shade600,
-                          textAlign: TextAlign.start,
-                        ),
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (ctx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 40.w),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28.r),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              padding: EdgeInsets.all(28.w),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(28.r),
+                border: Border.all(color: Colors.white, width: 1.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 40,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              16.h.spaceH,
-              if ((widget.journal.thoughtText ?? "").isNotEmpty)
-                (widget.journal.thoughtText ?? "").appText(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.sp,
-                  color: blackTextColor,
-                  textAlign: TextAlign.start,
-                  height: 1.4,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.delete_outline_rounded,
+                        color: Colors.redAccent, size: 36.sp),
+                  ),
+                  20.h.spaceH,
+                  Text(
+                    'Delete Journal?',
+                    style: getTextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20.sp,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  12.h.spaceH,
+                  Text(
+                    'This journal entry will be permanently removed from your canvas.',
+                    textAlign: TextAlign.center,
+                    style: getTextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13.sp,
+                      color: Colors.grey.shade600,
+                      height: 1.5,
+                    ),
+                  ),
+                  28.h.spaceH,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => ctx.pop(),
+                          child: Container(
+                            height: 50.h,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                  color: Colors.grey.shade200, width: 1.5),
+                            ),
+                            child: Text(
+                              'Cancel',
+                              style: getTextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14.sp,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      12.w.spaceW,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            ctx.pop();
+                            if (widget.journal.id != null) {
+                              context
+                                  .read<WriteYourThoughtCubit>()
+                                  .deleteJournal(widget.journal.id!);
+                            }
+                          },
+                          child: Container(
+                            height: 50.h,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFF5252), Color(0xFFFF1744)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.red.withValues(alpha: 0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              'Delete',
+                              style: getTextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getCardAccentColor() {
+    final base = Color(widget.journal.colorValue ?? 0xFFFFFFFF);
+    // Derive a readable accent from the card color
+    final hsl = HSLColor.fromColor(base);
+    if (hsl.lightness > 0.85) {
+      // Very light card — use purple accent
+      return const Color(0xFF894BCD);
+    }
+    return hsl.withLightness((hsl.lightness - 0.2).clamp(0.2, 0.8)).toColor();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardColor = Color(widget.journal.colorValue ?? 0xFFFFFFFF);
+    final accentColor = _getCardAccentColor();
+    final dateText = convertToMMMMDYYYY(widget.journal.logTime);
+    final thoughtText = widget.journal.thoughtText ?? '';
+
+    return Positioned(
+      left: x,
+      top: y,
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          );
+        },
+        child: GestureDetector(
+          onPanStart: (_) {
+            setState(() => _isHovered = true);
+            _scaleController.forward();
+          },
+          onPanUpdate: (details) {
+            setState(() {
+              x += details.delta.dx;
+              y += details.delta.dy;
+            });
+          },
+          onPanEnd: (details) {
+            setState(() => _isHovered = false);
+            _scaleController.reverse();
+            if (widget.journal.id != null) {
+              MoodRepo.instance.updateJournalPosition(
+                journalId: widget.journal.id!,
+                x: x,
+                y: y,
+              );
+            }
+          },
+          child: Container(
+            width: 300.w,
+            decoration: BoxDecoration(
+              color: cardColor,
+              borderRadius: BorderRadius.circular(28.r),
+              border: Border.all(
+                color: _isHovered
+                    ? accentColor.withValues(alpha: 0.3)
+                    : Colors.white.withValues(alpha: 0.8),
+                width: _isHovered ? 2 : 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(
+                      alpha: _isHovered ? 0.12 : 0.07),
+                  blurRadius: _isHovered ? 40 : 24,
+                  spreadRadius: _isHovered ? 4 : 1,
+                  offset: Offset(0, _isHovered ? 14 : 8),
                 ),
-            ],
+                if (_isHovered)
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.08),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                  ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ─── Card Header ───────────────────────────
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 18.w, vertical: 14.h),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(28.r),
+                      topRight: Radius.circular(28.r),
+                    ),
+                    border: Border(
+                      bottom: BorderSide(
+                        color: accentColor.withValues(alpha: 0.1),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      // Dot indicator
+                      Container(
+                        width: 10.w,
+                        height: 10.w,
+                        decoration: BoxDecoration(
+                          color: accentColor,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: accentColor.withValues(alpha: 0.4),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                      8.w.spaceW,
+                      Expanded(
+                        child: Text(
+                          dateText,
+                          style: getTextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12.sp,
+                            color: accentColor,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
+                      // ─── Delete Button ───────────────────
+                      GestureDetector(
+                        onTap: () => _showDeleteConfirmation(context),
+                        child: Container(
+                          width: 30.w,
+                          height: 30.w,
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.redAccent,
+                            size: 16.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ─── Card Body ─────────────────────────────
+                Padding(
+                  padding: EdgeInsets.all(18.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (thoughtText.isNotEmpty) ...([
+                        Text(
+                          thoughtText,
+                          style: getTextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15.sp,
+                            color: Colors.black87,
+                            height: 1.55,
+                          ),
+                          maxLines: 8,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ]),
+                    ],
+                  ),
+                ),
+
+                // ─── Card Footer ───────────────────────────
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 18.w, right: 18.w, bottom: 14.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.drag_indicator_rounded,
+                                size: 12.sp,
+                                color: accentColor.withValues(alpha: 0.6)),
+                            4.w.spaceW,
+                            Text(
+                              'Drag to move',
+                              style: getTextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 10.sp,
+                                color: accentColor.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -88,5 +88,8 @@ class WriteYourThoughtCubit extends Cubit<WriteYourThoughtState> {
     return true;
   }
 
+  Future<void> deleteJournal(String journalId) async {
+    await MoodRepo.instance.deleteJournal(journalId: journalId);
+  }
 
 }

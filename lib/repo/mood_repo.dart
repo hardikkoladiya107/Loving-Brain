@@ -98,6 +98,31 @@ class MoodRepo {
     }
   }
 
+  Future<ApiResultStatus> deleteJournal({
+    required String journalId,
+    String? tUid,
+  }) async {
+    try {
+      var uid = tUid ?? preferences.getUserModel()?.uid ?? FirebaseAuth.instance.currentUser?.uid ?? "";
+      if (uid.isNotEmpty) {
+        await userCollection
+            .doc(uid)
+            .collection("journals")
+            .doc(journalId)
+            .delete();
+        return ApiResultStatus.data(data: uid);
+      } else {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } on Exception catch (e) {
+      return ApiResultStatus.error(error: e);
+    }
+  }
+
   Future<ApiResultStatus> fetchAllMoodLogs() async {
     try {
       final tUid = preferences.getUserModel()?.uid ?? "";
