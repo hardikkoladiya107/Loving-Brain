@@ -258,366 +258,269 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _heroDashboard(HomeState state) {
-    RoutineModel? routine = _getNextRoutine(state);
+    final RoutineModel? routine = _getNextRoutine(state);
     final int streakDays = state.userModel?.streak ?? 0;
+    final String name = state.userModel?.parentName ?? "Parent";
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6A24B8), Color(0xFF894BCD), Color(0xFFA96EE0)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.0, 0.5, 1.0],
+        ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF6B35B8).withValues(alpha: 0.45),
-            blurRadius: 35,
-            spreadRadius: 0,
-            offset: const Offset(0, 14),
-          ),
-          BoxShadow(
-            color: const Color(0xFF894BCD).withValues(alpha: 0.2),
-            blurRadius: 60,
-            spreadRadius: 4,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF6A24B8).withValues(alpha: 0.42),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          // ── Deep gradient base ──────────────────────────────────────
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF5B1FA6),
-                  Color(0xFF7B3FCF),
-                  Color(0xFF9C5CE6),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: [0.0, 0.5, 1.0],
-              ),
-            ),
-          ),
-
-          // ── Decorative orbs ─────────────────────────────────────────
-          Positioned(
-            top: -55,
-            right: -45,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.18),
-                    Colors.white.withValues(alpha: 0.0),
-                  ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: Stack(
+          children: [
+            // Decorative orb — top right
+            Positioned(
+              top: -50,
+              right: -50,
+              child: Container(
+                width: 170,
+                height: 170,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.1),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: -50,
-            left: -30,
-            child: Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.12),
-                    Colors.white.withValues(alpha: 0.0),
-                  ],
+            // Decorative orb — bottom left
+            Positioned(
+              bottom: -40,
+              left: -30,
+              child: Container(
+                width: 130,
+                height: 130,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.07),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 20,
-            left: 120,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.06),
-              ),
-            ),
-          ),
 
-          // ── Content ─────────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 26, 24, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top row: Greeting + Streak Badge
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Greeting
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+            // ── Main content ───────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(22, 24, 22, 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Row: greeting text + streak badge
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left: greeting + name
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "${_getGreetingText()},",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white.withValues(alpha: 0.8),
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                            4.spaceH,
+                            Text(
+                              "$name!",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 28,
+                                color: Colors.white,
+                                letterSpacing: -0.3,
+                                height: 1.1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      8.spaceW,
+                      // Right: streak badge
+                      BaseButton(
+                        onTap: () => context.push(RoutePaths.yourStreak),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.18),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.35),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.25),
-                                    width: 1,
+                              Assets.icons.icStreakFire.image(
+                                  height: 20, width: 20),
+                              6.spaceW,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "$streakDays",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      height: 1.1,
+                                    ),
                                   ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      _getGreetingEmoji(),
-                                      style: const TextStyle(fontSize: 14),
+                                  Text(
+                                    "Days",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white.withValues(alpha: 0.75),
                                     ),
-                                    6.spaceW,
-                                    Text(
-                                      _getGreetingText(),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white,
-                                        letterSpacing: 0.3,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          10.spaceH,
-                          Text(
-                            "${state.userModel?.parentName ?? "Parent"}!",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 30,
-                              color: Colors.white,
-                              letterSpacing: -0.5,
-                              height: 1.1,
-                            ),
-                          ),
-                        ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  20.spaceH,
+
+                  // Schedule row inside translucent card
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 13),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        width: 1,
                       ),
                     ),
-
-                    // Streak Badge — premium pill
-                    BaseButton(
-                      onTap: () => context.push(RoutePaths.yourStreak),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withValues(alpha: 0.28),
-                              Colors.white.withValues(alpha: 0.14),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                    child: Row(
+                      children: [
+                        // Calendar icon
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.18),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            width: 1.5,
+                          child: const Icon(
+                            Icons.calendar_month_rounded,
+                            color: Colors.white,
+                            size: 22,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Assets.icons.icStreakFire.image(height: 22, width: 22),
-                            8.spaceW,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                        14.spaceW,
+                        // Text
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (routine != null) ...[
                                 Text(
-                                  "$streakDays",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.white,
-                                    height: 1.0,
+                                  DateFormat('hh:mm a')
+                                      .format(routine.timeStamp!),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                    letterSpacing: 0.4,
                                   ),
                                 ),
+                                3.spaceH,
                                 Text(
-                                  "Day Streak",
+                                  routine.description!,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ] else ...[
+                                Text(
+                                  "Free Time",
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                3.spaceH,
+                                Text(
+                                  "No upcoming schedule",
                                   style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white.withValues(alpha: 0.8),
-                                    letterSpacing: 0.2,
+                                    fontSize: 12,
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                22.spaceH,
-
-                // Divider with subtle shimmer line
-                Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.0),
-                        Colors.white.withValues(alpha: 0.3),
-                        Colors.white.withValues(alpha: 0.0),
+                        10.spaceW,
+                        // View button
+                        BaseButton(
+                          onTap: () =>
+                              context.read<BaseCubit>().changeProps(
+                                bottomNavigationIndex: 1,
+                              ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: const Text(
+                              "View",
+                              style: TextStyle(
+                                color: Color(0xFF6A24B8),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ),
-
-                18.spaceH,
-
-                // Schedule glass card
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(22),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.25),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          // Icon container
-                          Container(
-                            width: 46,
-                            height: 46,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.calendar_month_rounded,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                          ),
-                          14.spaceW,
-                          // Text content
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (routine != null) ...[
-                                  Text(
-                                    DateFormat('hh:mm a').format(routine.timeStamp!),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white.withValues(alpha: 0.7),
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  4.spaceH,
-                                  Text(
-                                    routine.description!,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ] else ...[
-                                  Text(
-                                    "Free Time",
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  4.spaceH,
-                                  Text(
-                                    "No upcoming schedule",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white.withValues(alpha: 0.7),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                          12.spaceW,
-                          // View button
-                          BaseButton(
-                            onTap: () => context.read<BaseCubit>().changeProps(
-                              bottomNavigationIndex: 1,
-                            ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 18, vertical: 11),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.12),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Text(
-                                "View",
-                                style: TextStyle(
-                                  color: const Color(0xFF6B35B8),
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 13,
-                                  letterSpacing: 0.2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -636,9 +539,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return "🌙";
   }
 
-
-
   Widget _quickActionsGrid() {
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
