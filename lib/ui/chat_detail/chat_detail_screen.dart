@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -585,7 +586,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
               child: Assets.icons.icBackIcon.image(height: 24.w, width: 24.w),
             ),
-            onTap: () => Navigator.pop(context),
+            onTap: () => context.pop(),
           ),
           Expanded(
             child: LocaleKeys.askToAI.tr().appText(
@@ -693,7 +694,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ],
               ).appPadding(top: 12, bottom: 12),
               onTap: () async {
-                Navigator.of(context).pop();
+                context.pop();
                 _chooseImage(ImageSource.camera);
               },
             ),
@@ -710,7 +711,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ],
               ).appPadding(top: 12, bottom: 12),
               onTap: () async {
-                Navigator.of(context).pop();
+                context.pop();
                 _chooseImage(ImageSource.gallery);
               },
             ),
@@ -755,7 +756,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           onTap: () {
                             if (state.isRecording) {
                               _stopRecording();
-                              Navigator.of(context).pop();
+                              context.pop();
                             } else {
                               _startRecording();
                             }

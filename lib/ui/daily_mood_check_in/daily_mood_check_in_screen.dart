@@ -13,6 +13,8 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/daily_mood_log/daily_mood_log.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../generated/locale_keys.g.dart';
 import 'bloc/daily_mood_check_in_cubit.dart';
@@ -75,7 +77,7 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
               type: SnackBarType.SUCCESS,
             );
             UserRepo.instance.updateUserStreak();
-            Navigator.of(context).pop();
+            context.pop();
           },
           error: (dynamic error) {
             EasyLoading.dismiss();
@@ -202,7 +204,7 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         BaseButton(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
@@ -224,11 +226,7 @@ class _DailyMoodCheckInScreenState extends State<DailyMoodCheckInScreen> {
         ),
         BaseButton(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) => const DailyMoodLog(),
-              ),
-            );
+            context.push(RoutePaths.dailyMoodLog);
           },
           child: Container(
             padding: EdgeInsets.all(10.w),

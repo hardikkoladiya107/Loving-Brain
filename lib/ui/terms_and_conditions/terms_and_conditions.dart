@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,7 @@ class TermsAndConditionsScreen extends StatefulWidget {
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
   late final WebViewController _controller;
-  
+
   @override
   void initState() {
     super.initState();
@@ -24,7 +25,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.transparent)
       ..loadFlutterAsset('assets/html/terms_and_conditions.html');
-      
+
     // _controller = WebViewController()
     //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
     //   ..loadRequest(
@@ -43,7 +44,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          _appBar().appPadding(top: 60, left: 20),
+          _appBar().appPadding(top: 35.r, left: 20.r),
         ],
       ),
     );
@@ -54,7 +55,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         BaseButton(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(30),
             child: BackdropFilter(

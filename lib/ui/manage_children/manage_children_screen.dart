@@ -8,9 +8,10 @@ import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
-import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/widget/app_dialogs.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -100,7 +101,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
     return Row(
       children: [
         BaseButton(
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () => context.pop(),
           child: Assets.icons.icBackIcon.image(height: 36.h, width: 36.w),
         ),
         12.w.spaceW,
@@ -350,7 +351,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
                   children: [
                     Expanded(
                       child: BaseButton(
-                        onTap: () => Navigator.pop(dialogContext),
+                        onTap: () => dialogContext.pop(),
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                           decoration: BoxDecoration(
@@ -369,7 +370,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
                     Expanded(
                       child: BaseButton(
                         onTap: () {
-                          Navigator.pop(dialogContext);
+                          dialogContext.pop();
                           context.read<ManageChildrenCubit>().deleteChild(child);
                         },
                         child: Container(
@@ -399,13 +400,8 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
   Future<void> _openAddChild(BuildContext context) async {
     final String? uid = preferences.getUserModel()?.uid;
     if (uid == null || uid.isEmpty) return;
-    final bool? added = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (context) => ChildProfileScreen(
-          userId: uid,
-          fromManageChildren: true,
-        ),
-      ),
+    final bool? added = await context.push<bool>(
+      RoutePaths.childProfilePath(uid, fromManageChildren: true),
     );
     if (added == true && mounted) {
       context.read<ManageChildrenCubit>().init();

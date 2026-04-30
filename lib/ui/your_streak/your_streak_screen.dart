@@ -11,6 +11,8 @@ import '../daily_mood_log/daily_mood_log.dart';
 import '../widget/base_button.dart';
 import 'bloc/your_streak_cubit.dart';
 import 'bloc/your_streak_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 class YourStreakScreen extends StatefulWidget {
   const YourStreakScreen({super.key});
@@ -77,7 +79,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
             color: Colors.black.withValues(alpha: 0.8),
           ),
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
         12.w.spaceW,
@@ -86,11 +88,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
         BaseButton(
           child: Icon(Icons.bar_chart),
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const ReflectYourEmotions(),
-              ),
-            );
+            context.push(RoutePaths.reflectYourEmotions);
           },
         ),
       ],
@@ -164,9 +162,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
          
           BaseButton(
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const DailyMoodLog()),
-              );
+              context.push(RoutePaths.dailyMoodLog);
             },
             child: Container(
               decoration: BoxDecoration(

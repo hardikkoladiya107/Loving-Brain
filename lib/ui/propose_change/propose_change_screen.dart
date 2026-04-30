@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,7 +67,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
           },
           data: (data) {
             EasyLoading.dismiss();
-            Navigator.of(context).pop();
+            context.pop();
           },
           loading: () {
             EasyLoading.show();
@@ -301,7 +302,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
         BaseButton(
           child: Assets.icons.icBackIcon.image(height: 36, width: 36),
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
       ],

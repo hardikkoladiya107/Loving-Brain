@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -190,7 +191,7 @@ class _EssentialsScreenState extends State<EssentialsScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         BaseButton(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(

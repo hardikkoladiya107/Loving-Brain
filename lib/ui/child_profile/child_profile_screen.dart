@@ -21,6 +21,8 @@ import '../base_screen/base_screen.dart';
 import '../widget/app_dropdown.dart';
 import 'bloc/child_profile_cubit.dart';
 import 'bloc/child_profile_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 class ChildProfileScreen extends StatefulWidget {
   const ChildProfileScreen({
@@ -117,13 +119,11 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             await preferences.saveUserModel(data);
             navigatorKey.currentContext!.read<ChildProfileCubit>().clearFields();
             if (widget.fromManageChildren) {
-              Navigator.of(navigatorKey.currentContext!).pop(true);
+              navigatorKey.currentContext!.pop(true);
               return;
             }
             await preferences.putBool(SharedPreference.isLogin, true);
-            Navigator.of(navigatorKey.currentContext!).pushReplacement(
-              MaterialPageRoute(builder: (context) => BaseScreen()),
-            );
+            navigatorKey.currentContext!.go(RoutePaths.baseScreen);
           },
           error: (Exception error) {
             EasyLoading.dismiss();
@@ -141,7 +141,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
     return Align(
       alignment: Alignment.centerLeft,
       child: BaseButton(
-        onTap: () => Navigator.of(context).pop(),
+        onTap: () => context.pop(),
         child: Padding(
           padding: EdgeInsets.all(8.w),
           child: Container(

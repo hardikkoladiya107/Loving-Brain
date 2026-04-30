@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,7 +55,7 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
               message: LocaleKeys.routineAddedSuccessfully.tr(),
               type: SnackBarType.SUCCESS,
             );
-            Navigator.pop(context);
+            context.pop();
           },
           error: (Exception error) {
             EasyLoading.dismiss();
@@ -133,7 +134,7 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
                             ),
                       ),
                       BaseButton(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(6.w),
                           decoration: BoxDecoration(

@@ -7,10 +7,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -111,12 +112,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           data: (data) {
             EasyLoading.dismiss();
             context.read<ParentProfileCubit>().clearFields();
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) =>
-                    ChildProfileScreen(userId: data.toString()),
-              ),
-            );
+            context.replace(RoutePaths.childProfilePath(data.toString()));
           },
           error: (Exception error) {
             EasyLoading.dismiss();

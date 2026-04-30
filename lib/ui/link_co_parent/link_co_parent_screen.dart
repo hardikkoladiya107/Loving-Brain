@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -164,7 +165,7 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     return Row(
       children: [
         BaseButton(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Assets.icons.icBackIcon.image(
             height: 36.h,
             width: 36.w,

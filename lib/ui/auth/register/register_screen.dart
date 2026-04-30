@@ -236,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ],
                                 ),
-                                onTap: () => Navigator.pop(context),
+                                onTap: () => context.pop(),
                               ),
                             ],
                           ),

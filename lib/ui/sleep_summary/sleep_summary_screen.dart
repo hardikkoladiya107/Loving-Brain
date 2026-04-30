@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -588,7 +589,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
           child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 28),
         ),
         onTap: () {
-          Navigator.pop(context);
+          context.pop();
         },
       ),
     );

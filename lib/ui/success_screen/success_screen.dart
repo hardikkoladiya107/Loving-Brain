@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -19,7 +20,7 @@ class SucessScreen extends StatelessWidget {
               color: Colors.black.withValues(alpha: 0.8),
             ),
             onTap: () {
-              Navigator.pop(context);
+              context.pop();
             },
           ),
         ],

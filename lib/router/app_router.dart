@@ -17,6 +17,31 @@ import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
 
 import 'route_paths.dart';
 
+import 'package:loving_brain/ui/subscription/subscription_screen.dart';
+import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
+import 'package:loving_brain/ui/daily_mood_log/daily_mood_log.dart';
+import 'package:loving_brain/ui/schedule/schedule_screen.dart';
+import 'package:loving_brain/ui/chat_list/chat_list_screen.dart';
+import 'package:loving_brain/ui/write_your_thought/write_your_thought_screen.dart';
+import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
+import 'package:loving_brain/ui/event_detail/event_detail_screen.dart';
+import 'package:loving_brain/ui/event_approval/event_approval_screen.dart';
+import 'package:loving_brain/ui/ai_chat/ai_chat_screen.dart';
+import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
+import 'package:loving_brain/ui/essentials/essentials_screen.dart';
+import 'package:loving_brain/ui/energy_bridge/energy_bridge_screen.dart';
+import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
+import 'package:loving_brain/ui/new_behavior/new_behavior_screen.dart';
+import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart';
+import 'package:loving_brain/ui/propose_change/propose_change_screen.dart';
+import 'package:loving_brain/ui/thought_list/thought_list_scren.dart';
+import 'package:loving_brain/ui/chat_detail/chat_detail_screen.dart';
+import 'package:loving_brain/ui/add_shared_event/add_shared_event_screen.dart';
+import 'package:loving_brain/ui/link_co_parent/link_co_parent_screen.dart';
+import 'package:loving_brain/ui/success_screen/success_screen.dart';
+import 'package:loving_brain/model/shared_event_model.dart';
+
+
 class AppRouter {
   AppRouter._();
 
@@ -52,6 +77,131 @@ class AppRouter {
         return null;
       },
       routes: <RouteBase>[
+
+        GoRoute(
+          path: RoutePaths.subscription,
+          builder: (BuildContext context, GoRouterState state) =>
+              const SubscriptionScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.dailyMoodCheckIn,
+          builder: (BuildContext context, GoRouterState state) =>
+              const DailyMoodCheckInScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.dailyMoodLog,
+          builder: (BuildContext context, GoRouterState state) =>
+              const DailyMoodLog(),
+        ),
+        GoRoute(
+          path: RoutePaths.schedule,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ScheduleScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.chatList,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ChatListScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.writeYourThought,
+          builder: (BuildContext context, GoRouterState state) =>
+              const WriteYourThoughtScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.manageChildren,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ManageChildrenScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.eventDetail,
+          builder: (BuildContext context, GoRouterState state) {
+            final sharedEvent = state.extra as SharedEventModel?;
+            if (sharedEvent == null) return const SizedBox();
+            return EventDetailScreen(sharedEvent: sharedEvent);
+          },
+        ),
+        GoRoute(
+          path: RoutePaths.eventApproval,
+          builder: (BuildContext context, GoRouterState state) {
+            final sharedEvent = state.extra as SharedEventModel?;
+            if (sharedEvent == null) return const SizedBox();
+            return EventApprovalScreen(sharedEvent: sharedEvent);
+          },
+        ),
+        GoRoute(
+          path: RoutePaths.aiChat,
+          builder: (BuildContext context, GoRouterState state) =>
+              const AiChatScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.yourStreak,
+          builder: (BuildContext context, GoRouterState state) =>
+              const YourStreakScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.essentials,
+          builder: (BuildContext context, GoRouterState state) =>
+              const EssentialsScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.energyBridge,
+          builder: (BuildContext context, GoRouterState state) =>
+              const EnergyBridgeScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.sleepSummary,
+          builder: (BuildContext context, GoRouterState state) =>
+              const SleepSummaryScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.newBehavior,
+          builder: (BuildContext context, GoRouterState state) =>
+              const NewBehaviorScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.reflectYourEmotions,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ReflectYourEmotions(),
+        ),
+        GoRoute(
+          path: RoutePaths.proposeChange,
+          builder: (BuildContext context, GoRouterState state) {
+            final sharedEvent = state.extra as SharedEventModel?;
+            return ProposeChangeScreen(sharedEvent: sharedEvent!);
+          },
+        ),
+        GoRoute(
+          path: RoutePaths.thoughtList,
+          builder: (BuildContext context, GoRouterState state) =>
+              const ThoughtListScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.chatDetail,
+          builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return ChatDetailScreen(
+              initialChat: extra['initialChat'] as String?,
+              conversationId: extra['conversationId'] as String?,
+            );
+          },
+        ),
+        GoRoute(
+          path: RoutePaths.addSharedEvent,
+          builder: (BuildContext context, GoRouterState state) =>
+              const AddSharedEventScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.linkCoParent,
+          builder: (BuildContext context, GoRouterState state) =>
+              const LinkCoParentScreen(),
+        ),
+        // GoRoute(
+        //   path: RoutePaths.successScreen,
+        //   builder: (BuildContext context, GoRouterState state) =>
+        //       const SuccessScreen(),
+        // ),
+
         GoRoute(
           path: RoutePaths.splash,
           builder: (BuildContext context, GoRouterState state) =>

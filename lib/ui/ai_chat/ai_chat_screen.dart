@@ -10,10 +10,10 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
-import '../chat_detail/chat_detail_screen.dart';
-import '../chat_list/chat_list_screen.dart';
 import 'bloc/ai_chat_cubit.dart';
 import 'bloc/ai_chat_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 class AiChatScreen extends StatefulWidget {
   const AiChatScreen({super.key});
@@ -70,15 +70,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         .myNewbornIsCryingContinuouslyWhatStepsShouldITake
                         .tr(),
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            initialChat: LocaleKeys
-                                .myNewbornIsCryingContinuouslyWhatStepsShouldITake
-                                .tr(),
-                          ),
-                        ),
-                      );
+                      context.push(RoutePaths.chatDetail, extra: {
+                        'initialChat': LocaleKeys.myNewbornIsCryingContinuouslyWhatStepsShouldITake.tr(),
+                      });
                     },
                   ),
                 ),
@@ -90,15 +84,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     text: LocaleKeys.howCanIEncourageMyChildExpressTheirFeelings
                         .tr(),
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            initialChat: LocaleKeys
-                                .howCanIEncourageMyChildExpressTheirFeelings
-                                .tr(),
-                          ),
-                        ),
-                      );
+                      context.push(RoutePaths.chatDetail, extra: {
+                        'initialChat': LocaleKeys.howCanIEncourageMyChildExpressTheirFeelings.tr(),
+                      });
                     },
                   ),
                 ),
@@ -109,15 +97,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     color: aiQuestionCardColor1,
                     text: LocaleKeys.howCanIHandleToddlerTantrumInPublic.tr(),
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            initialChat: LocaleKeys
-                                .howCanIHandleToddlerTantrumInPublic
-                                .tr(),
-                          ),
-                        ),
-                      );
+                      context.push(RoutePaths.chatDetail, extra: {
+                        'initialChat': LocaleKeys.howCanIHandleToddlerTantrumInPublic.tr(),
+                      });
                     },
                   ),
                 ),
@@ -129,15 +111,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     text: LocaleKeys.whatAreSomeTipsForConsistentInfantSleep
                         .tr(),
                     onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ChatDetailScreen(
-                            initialChat: LocaleKeys
-                                .whatAreSomeTipsForConsistentInfantSleep
-                                .tr(),
-                          ),
-                        ),
-                      );
+                      context.push(RoutePaths.chatDetail, extra: {
+                        'initialChat': LocaleKeys.whatAreSomeTipsForConsistentInfantSleep.tr(),
+                      });
                     },
                   ),
                 ),
@@ -381,12 +357,9 @@ class _AiChatScreenState extends State<AiChatScreen> {
                   if ((state.chatText ?? "").isNotEmpty) {
                     var chatText = state.chatText;
                     context.read<AiChatCubit>().changeProps(chatText: "");
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ChatDetailScreen(initialChat: chatText),
-                      ),
-                    );
+                    context.push(RoutePaths.chatDetail, extra: {
+                      'initialChat': chatText,
+                    });
                   }
                 },
               ),
@@ -419,9 +392,7 @@ class _AiChatScreenState extends State<AiChatScreen> {
           child: Icon(Icons.history_rounded, color: Colors.black87, size: 26),
         ),
         onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const ChatListScreen()),
-          );
+          context.push(RoutePaths.chatList);
         },
       ),
     );

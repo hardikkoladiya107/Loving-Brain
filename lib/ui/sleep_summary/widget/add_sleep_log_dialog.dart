@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -72,7 +73,7 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
           loading: () => EasyLoading.show(),
           data: (data) {
             EasyLoading.dismiss();
-            Navigator.pop(context);
+            context.pop();
             context.read<SleepSummaryCubit>().reload();
           },
         );

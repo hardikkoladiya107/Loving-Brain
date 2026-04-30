@@ -15,9 +15,10 @@ import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
 import '../../other/snack_bar.dart';
 import '../../repo/mood_repo.dart';
-import '../chat_detail/chat_detail_screen.dart';
 import '../widget/app_text_field.dart';
 import '../widget/base_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'bloc/write_your_thought_cubit.dart';
 import 'bloc/write_your_thought_state.dart';
 
@@ -85,7 +86,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                 style: getTextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600),
               ),
               onPressed: () {
-                Navigator.of(ctx).pop();
+                ctx.pop();
               },
             ),
             TextButton(
@@ -95,7 +96,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
               ),
               onPressed: () {
                 onColorChanged(tempColor);
-                Navigator.of(ctx).pop();
+                ctx.pop();
               },
             ),
           ],
@@ -123,7 +124,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                 listener: (context, modalState) {
                    modalState.apiResultStatus.whenOrNull(
                     data: (data) {
-                      Navigator.of(context).pop(); // close modal on success
+                      context.pop(); // close modal on success
                       // Focus back to the newly added cluster center
                       final initialScale = 0.8;
                       final screenSize = MediaQuery.of(context).size;
@@ -171,7 +172,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                       fontSize: 20.sp,
                                     ),
                                     BaseButton(
-                                      onTap: () => Navigator.pop(context),
+                                      onTap: () => context.pop(),
                                       child: Container(
                                         padding: EdgeInsets.all(8.w),
                                         decoration: BoxDecoration(
@@ -325,13 +326,10 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                     BaseButton(
                                       onTap: () {
                                         if (context.read<WriteYourThoughtCubit>().isValidate()) {
-                                          Navigator.pop(context);
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => ChatDetailScreen(
-                                                initialChat: modalState.thoughtsText,
-                                              ),
-                                            ),
+                                          context.pop();
+                                          context.push(
+                                            RoutePaths.chatDetail,
+                                            extra: {'initialChat': modalState.thoughtsText},
                                           );
                                         }
                                       },

@@ -11,7 +11,8 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import 'bloc/subscription_cubit.dart';
 import 'bloc/subscription_state.dart';
@@ -138,7 +139,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Row(
       children: <Widget>[
         BaseButton(
-          onTap: () => Navigator.pop(context),
+          onTap: () => context.pop(),
           child: Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
@@ -370,13 +371,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 text: LocaleKeys.termsOfUse.tr(),
                 style: linkStyle,
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () async {
-                    if (!await launchUrl(Uri.parse(termsOfUseWebUrl))) {
-                      showSnackBar(
-                        message: LocaleKeys.somethingWentWrong.tr(),
-                        type: SnackBarType.ERROR,
-                      );
-                    }
+                  ..onTap = () {
+                    context.push(RoutePaths.terms);
                   },
               ),
               TextSpan(text: " ${LocaleKeys.and.tr()} ", style: defaultStyle),
@@ -384,13 +380,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 text: LocaleKeys.privacyPolicy.tr(),
                 style: linkStyle,
                 recognizer: TapGestureRecognizer()
-                  ..onTap = () async {
-                    if (!await launchUrl(Uri.parse(privacyPolicyUrl))) {
-                      showSnackBar(
-                        message: LocaleKeys.somethingWentWrong.tr(),
-                        type: SnackBarType.ERROR,
-                      );
-                    }
+                  ..onTap = () {
+                    context.push(RoutePaths.privacy);
                   },
               ),
               TextSpan(text: ".", style: defaultStyle),

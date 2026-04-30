@@ -11,6 +11,8 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -176,7 +178,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             color: Colors.black.withValues(alpha: 0.8),
           ),
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
         20.w.spaceW,
@@ -208,9 +210,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   Widget _upgradeButton() {
     return BaseButton(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
-        );
+        context.push(RoutePaths.subscription);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -311,12 +311,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           child: _bottomButton(
             onTap: () {
               if (state.sharedEvent != null) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        ProposeChangeScreen(sharedEvent: state.sharedEvent!),
-                  ),
-                );
+                context.push(RoutePaths.proposeChange, extra: state.sharedEvent!);
               }
             },
             text: LocaleKeys.proposeChange.tr(),

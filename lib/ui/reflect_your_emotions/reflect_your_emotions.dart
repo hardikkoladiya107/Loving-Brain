@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,7 +97,7 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
               ),
               child: Assets.icons.icBackIcon.image(height: 20.w, width: 20.w),
             ),
-            onTap: () => Navigator.pop(context),
+            onTap: () => context.pop(),
           ),
           // Can add a help or settings icon here if needed
         ],

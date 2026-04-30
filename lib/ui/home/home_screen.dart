@@ -22,6 +22,8 @@ import '../reflect_your_emotions/reflect_your_emotions.dart';
 import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_cubit.dart';
 import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_state.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -338,11 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     // Streak Badge
                     BaseButton(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const YourStreakScreen(),
-                        ),
-                      ),
+                      onTap: () => context.push(RoutePaths.yourStreak),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -489,11 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "Daily mood check",
                   icon: Icons.favorite_rounded,
                   themeColor: Colors.purple.shade500,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const DailyMoodCheckInScreen(),
-                    ),
-                  ),
+                  onTap: () => context.push(RoutePaths.dailyMoodCheckIn),
                 ),
               ),
               12.spaceW,
@@ -503,11 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "Log behaviors",
                   icon: Icons.auto_awesome_rounded,
                   themeColor: Colors.green.shade500,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const NewBehaviorScreen(),
-                    ),
-                  ),
+                  onTap: () => context.push(RoutePaths.newBehavior),
                 ),
               ),
             ],
@@ -521,9 +511,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "Shared schedules",
                   icon: Icons.sync_rounded,
                   themeColor: Colors.orange.shade600,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const EssentialsScreen()),
-                  ),
+                  onTap: () => context.push(RoutePaths.essentials),
                 ),
               ),
               12.spaceW,
@@ -533,11 +521,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: "energyBridgeConnectEnergy".tr(),
                   icon: Icons.bolt_rounded,
                   themeColor: Colors.blue.shade500,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const EnergyBridgeScreen(),
-                    ),
-                  ),
+                  onTap: () => context.push(RoutePaths.energyBridge),
                 ),
               ),
             ],
@@ -647,9 +631,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         // Sleep Summary
         BaseButton(
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const SleepSummaryScreen())),
+          onTap: () => context.push(RoutePaths.sleepSummary),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 110.h,
@@ -714,9 +696,7 @@ class _HomeScreenState extends State<HomeScreen> {
         10.spaceH,
         // Family Feel Meter
         BaseButton(
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const ReflectYourEmotions()),
-          ),
+          onTap: () => context.push(RoutePaths.reflectYourEmotions),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 110.h,

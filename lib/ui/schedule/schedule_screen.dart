@@ -15,6 +15,8 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -332,7 +334,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 onDeleteIconTap: () {
                   _showDeleteRoutineDialog(
                     onDelete: () {
-                      Navigator.pop(context);
+                      context.pop();
                       context.read<ScheduleCubit>().deleteRoutine(routine);
                     },
                   );
@@ -406,33 +408,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 showDeleteIcon: isCreator,
                 onTap: () {
                   if (canView) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) =>
-                            EventDetailScreen(sharedEvent: sharedEvent),
-                      ),
-                    );
+                    context.push(RoutePaths.eventDetail, extra: sharedEvent);
                   } else if (needsApproval) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) =>
-                            EventApprovalScreen(sharedEvent: sharedEvent),
-                      ),
-                    );
+                    context.push(RoutePaths.eventApproval, extra: sharedEvent);
                   }
                 },
                 proposeChangeButtonTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) =>
-                          ProposeChangeScreen(sharedEvent: sharedEvent),
-                    ),
-                  );
+                  context.push(RoutePaths.proposeChange, extra: sharedEvent);
                 },
                 onDeleteIconTap: () {
                   _showDeleteSharedEventDialog(
                     onDelete: () {
-                      Navigator.pop(context);
+                      context.pop();
                       context
                           .read<ScheduleCubit>()
                           .deleteSharedEvent(sharedEvent);
@@ -445,11 +432,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           _scheduleButton(
             text: "+ ${LocaleKeys.addSharedEvent.tr()}",
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const AddSharedEventScreen(),
-                ),
-              );
+              context.push(RoutePaths.addSharedEvent);
             },
             isPrimary: true,
           ),
@@ -457,11 +440,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           _scheduleButton(
             text: LocaleKeys.linkCoParent.tr(),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const LinkCoParentScreen(),
-                ),
-              );
+              context.push(RoutePaths.linkCoParent);
             },
             isPrimary: false,
           ),
@@ -813,7 +792,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   children: [
                     Expanded(
                       child: BaseButton(
-                        onTap: () => Navigator.pop(dialogContext),
+                        onTap: () => dialogContext.pop(),
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(

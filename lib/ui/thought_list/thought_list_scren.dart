@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,7 @@ class _ThoughtListScreenState extends State<ThoughtListScreen> {
                                 child: Assets.icons.icBackIcon.image(height: 36, width: 36),
                               ),
                               onTap: () {
-                                Navigator.pop(context);
+                                context.pop();
                               },
                             ),
                             16.w.spaceW,

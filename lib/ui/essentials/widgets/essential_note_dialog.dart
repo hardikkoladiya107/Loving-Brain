@@ -14,6 +14,7 @@ import 'package:loving_brain/ui/essentials/bloc/essentials_state.dart';
 import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:go_router/go_router.dart';
 
 class EssentialNoteDialog {
   static void show(BuildContext context, EssentialsState state, {int? index}) {
@@ -102,7 +103,7 @@ class EssentialNoteDialog {
                           children: <Widget>[
                             Expanded(
                               child: BaseButton(
-                                onTap: () => Navigator.pop(dialogContext),
+                                onTap: () => dialogContext.pop(),
                                 child: Container(
                                   height: 52.h,
                                   alignment: Alignment.center,

@@ -12,16 +12,14 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/auth/on_boarding/welcome_screen.dart';
-import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
-import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
-import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
-import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
-import 'package:loving_brain/ui/subscription/subscription_screen.dart';
-import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
-import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
+import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
+import 'package:loving_brain/ui/widget/app_dialogs.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -134,11 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.baby,
                                 iconBgColor: primaryColor,
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const ManageChildrenScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.manageChildren);
                                 },
                                 isLast: true,
                               ),
@@ -151,11 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.crown,
                                 iconBgColor: const Color(0xFFE5B02B),
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const SubscriptionScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.subscription);
                                 },
                                 isLast: false,
                               ),
@@ -164,11 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.fileText,
                                 iconBgColor: termsAndConditionIconColor,
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const TermsAndConditionsScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.terms);
                                 },
                                 isLast: false,
                               ),
@@ -177,11 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.shieldCheck,
                                 iconBgColor: privacyPolicyIconColor,
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const PrivacyPolicyScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.privacy);
                                 },
                                 isLast: true,
                               ),
@@ -525,7 +507,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   .appPadding(top: 18.h, bottom: 18.h),
                             ),
                             onTap: () {
-                              Navigator.pop(context);
+                              context.pop();
                             },
                           ),
                         ),
@@ -556,7 +538,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             onTap: () {
                               context.read<ProfileCubit>().logout();
-                              Navigator.pop(context);
+                              context.pop();
                             },
                           ),
                         ),
@@ -636,7 +618,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   .appPadding(top: 18.h, bottom: 18.h),
                             ),
                             onTap: () {
-                              Navigator.pop(context);
+                              context.pop();
                             },
                           ),
                         ),
@@ -667,7 +649,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             onTap: () {
                               context.read<ProfileCubit>().deleteAccount();
-                              Navigator.pop(context);
+                              context.pop();
                             },
                           ),
                         ),
@@ -687,10 +669,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (navigatorKey.currentContext != null) {
       await preferences.putBool(SharedPreference.isLogin, false);
       await preferences.clearUser();
-      Navigator.of(navigatorKey.currentContext!).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const WelcomeScreen()),
-        (Route<dynamic> route) => false, // remove all previous routes
-      );
+      navigatorKey.currentContext!.go(RoutePaths.welcome);
     }
   }
 
@@ -798,7 +777,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: LucideIcons.camera,
                         color: primaryColor,
                         onTap: () {
-                          Navigator.of(context).pop();
+                          context.pop();
                           _chooseImage(ImageSource.camera);
                         },
                       ),
@@ -808,7 +787,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: LucideIcons.image,
                         color: const Color(0xFFFF66C4),
                         onTap: () {
-                          Navigator.of(context).pop();
+                          context.pop();
                           _chooseImage(ImageSource.gallery);
                         },
                       ),

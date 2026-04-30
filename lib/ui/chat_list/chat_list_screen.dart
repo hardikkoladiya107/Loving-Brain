@@ -7,13 +7,14 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/conversation_list_item.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
-import '../chat_detail/chat_detail_screen.dart';
-import '../widget/app_dialogs.dart';
 import 'bloc/chat_list_cubit.dart';
 import 'bloc/chat_list_state.dart';
 
@@ -99,7 +100,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             child: Assets.icons.icBackIcon.image(height: 24, width: 24),
           ),
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
         16.w.spaceW,
@@ -187,11 +188,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ).appPadding(all: 16),
       ).appPadding(left: 20, right: 20),
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) =>
-                ChatDetailScreen(conversationId: conversation.conversationId),
-          ),
+        context.push(
+          RoutePaths.chatDetail,
+          extra: {'conversationId': conversation.conversationId},
         );
       },
     ).appPadding(top: 16);
@@ -240,7 +239,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                               .appPadding(top: 10.h, bottom: 10.h),
                         ),
                         onTap: () {
-                          Navigator.pop(context);
+                          context.pop();
                         },
                       ),
                     ),
@@ -265,7 +264,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             context.read<ChatListCubit>().deleteChat(
                               conversation.conversationId!,
                             );
-                            Navigator.pop(context);
+                            context.pop();
                           }
                         },
                       ),

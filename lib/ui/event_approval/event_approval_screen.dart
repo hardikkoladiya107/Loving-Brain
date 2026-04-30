@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,7 +86,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             showSnackBar(message: error.toString(), type: SnackBarType.ERROR);
           },
           data: (data) {
-            Navigator.pop(context);
+            context.pop();
             EasyLoading.dismiss();
           },
           loading: () {
@@ -106,7 +107,7 @@ class _EventApprovalScreenState extends State<EventApprovalScreen> {
             color: Colors.black.withValues(alpha: 0.8),
           ),
           onTap: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'dart:math';
 
@@ -157,7 +158,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               ),
                             ],
                           ),
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                         ),
                         40.spaceH,
                       ],
@@ -182,7 +183,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               type: SnackBarType.SUCCESS,
             );
             if (!mounted) return;
-            Navigator.pop(context);
+            context.pop();
           },
           error: (Exception error) {
             EasyLoading.dismiss();
