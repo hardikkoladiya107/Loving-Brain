@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/model/essential_model.dart';
 import 'package:loving_brain/model/routine_model.dart';
 
@@ -16,6 +17,8 @@ class ChildModel {
     List<String>? documents,
     List<String>? parentReferenceIds,
     DocumentReference<Object?>? reference,
+    ChildState? childState,
+    DateTime? stateUpdatedAt,
   }) {
     _childAge = childAge;
     _childName = childName;
@@ -25,6 +28,8 @@ class ChildModel {
     _documents = documents;
     _parentReferenceIds = parentReferenceIds;
     _reference = reference;
+    _childState = childState;
+    _stateUpdatedAt = stateUpdatedAt;
   }
 
   ChildModel.fromJson(
@@ -35,6 +40,13 @@ class ChildModel {
     _childAge = jsonObject['child_age'];
     _childName = jsonObject['child_name'];
     _relationshipToChild = jsonObject['relationship_to_child'];
+    _childState = ChildStateExtension.fromKey(jsonObject['child_state']);
+    final dynamic rawStateTime = jsonObject['state_updated_at'];
+    if (rawStateTime is Timestamp) {
+      _stateUpdatedAt = rawStateTime.toDate();
+    } else if (rawStateTime is DateTime) {
+      _stateUpdatedAt = rawStateTime;
+    }
     if (jsonObject['routines'] is List<dynamic>) {
       _routinesList = [];
       _routinesList?.addAll(
@@ -75,6 +87,8 @@ class ChildModel {
   List<String>? _documents;
   List<String>? _parentReferenceIds;
   DocumentReference<Object?>? _reference;
+  ChildState? _childState;
+  DateTime? _stateUpdatedAt;
 
   // Getters
   String? get childAge => _childAge;
@@ -85,6 +99,8 @@ class ChildModel {
   List<String>? get documents => _documents;
   List<String>? get parentReferenceIds => _parentReferenceIds;
   DocumentReference<Object?>? get reference => _reference;
+  ChildState? get childState => _childState;
+  DateTime? get stateUpdatedAt => _stateUpdatedAt;
 
   // CopyWith method
   ChildModel copyWith({
@@ -96,6 +112,8 @@ class ChildModel {
     List<String>? documents,
     List<String>? parentReferenceIds,
     DocumentReference<Object?>? reference,
+    ChildState? childState,
+    DateTime? stateUpdatedAt,
   }) =>
       ChildModel(
         childAge: childAge ?? _childAge,
@@ -106,6 +124,8 @@ class ChildModel {
         documents: documents ?? _documents,
         parentReferenceIds: parentReferenceIds ?? _parentReferenceIds,
         reference: reference ?? _reference,
+        childState: childState ?? _childState,
+        stateUpdatedAt: stateUpdatedAt ?? _stateUpdatedAt,
       );
 
   // Convert to JSON (for Firestore)
@@ -118,6 +138,9 @@ class ChildModel {
     map['essentials'] = _essentialList?.map((e) => e.toJson()).toList();
     map['documents'] = _documents?.map((e) => e.toString()).toList();
     map['parent_reference_ids'] = _parentReferenceIds;
+    map['child_state'] = _childState?.key;
+    map['state_updated_at'] =
+        _stateUpdatedAt != null ? Timestamp.fromDate(_stateUpdatedAt!) : null;
     return map;
   }
 }
