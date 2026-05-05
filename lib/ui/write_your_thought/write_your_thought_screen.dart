@@ -81,7 +81,8 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
             child: ColorPicker(
               pickerColor: tempColor,
               onColorChanged: (c) => tempColor = c,
-              enableAlpha: false, // Opaque cards only
+              enableAlpha: false,
+              // Opaque cards only
               displayThumbColor: true,
               pickerAreaHeightPercent: 0.8,
             ),
@@ -508,208 +509,185 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                 ),
               ),
 
-              // Title header + primary add journal (full-width below header)
+              // Title header (add entry = floating button below, above bottom nav)
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.only(top: 12.h, left: 16.w, right: 16.w),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(22.r),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 14.h,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(22.r),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 14.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.72),
+                              Colors.white.withValues(alpha: 0.52),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(22.r),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.95),
+                            width: 1.2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primaryColor.withValues(alpha: 0.08),
+                              blurRadius: 24,
+                              offset: Offset(0, 8.h),
                             ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.white.withValues(alpha: 0.72),
-                                  Colors.white.withValues(alpha: 0.52),
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 12,
+                              offset: Offset(0, 2.h),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 44.w,
+                              height: 44.w,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    primaryColor.withValues(alpha: 0.18),
+                                    const Color(
+                                      0xFFB06FE5,
+                                    ).withValues(alpha: 0.14),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(14.r),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                ),
+                              ),
+                              child: Center(
+                                child: Assets.icons.icJournalIcon.image(
+                                  width: 22.w,
+                                  height: 22.w,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                            14.w.spaceW,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  'journalCanvasTitle'.tr().appText(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 17.sp,
+                                    color: primaryColor,
+                                    letterSpacing: -0.2,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  4.h.spaceH,
+                                  'journalCanvasSubtitle'.tr().appText(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12.sp,
+                                    color: greyColor1,
+                                    height: 1.35,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.start,
+                                  ),
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(22.r),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.95),
-                                width: 1.2,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: primaryColor.withValues(alpha: 0.08),
-                                  blurRadius: 24,
-                                  offset: Offset(0, 8.h),
-                                ),
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.04),
-                                  blurRadius: 12,
-                                  offset: Offset(0, 2.h),
-                                ),
-                              ],
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 44.w,
-                                  height: 44.w,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        primaryColor.withValues(alpha: 0.18),
-                                        const Color(
-                                          0xFFB06FE5,
-                                        ).withValues(alpha: 0.14),
-                                      ],
-                                    ),
-                                    borderRadius: BorderRadius.circular(14.r),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.9,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Assets.icons.icJournalIcon.image(
-                                      width: 22.w,
-                                      height: 22.w,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
+                            10.w.spaceW,
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(
+                                  color: primaryColor.withValues(alpha: 0.15),
                                 ),
-                                14.w.spaceW,
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      'journalCanvasTitle'.tr().appText(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 17.sp,
-                                        color: primaryColor,
-                                        letterSpacing: -0.2,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                      4.h.spaceH,
-                                      'journalCanvasSubtitle'.tr().appText(
-                                        fontWeight: FontWeight.w500,
+                              ),
+                              child:
+                                  (state.journalList.length == 1
+                                          ? 'journalEntryCountOne'.tr()
+                                          : 'journalEntryCountMany'.tr(
+                                              namedArgs: {
+                                                'count': state
+                                                    .journalList
+                                                    .length
+                                                    .toString(),
+                                              },
+                                            ))
+                                      .appText(
+                                        fontWeight: FontWeight.w700,
                                         fontSize: 12.sp,
-                                        color: greyColor1,
-                                        height: 1.35,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.start,
+                                        color: primaryColor,
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                10.w.spaceW,
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 8.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(999),
-                                    border: Border.all(
-                                      color: primaryColor.withValues(
-                                        alpha: 0.15,
-                                      ),
-                                    ),
-                                  ),
-                                  child:
-                                      (state.journalList.length == 1
-                                              ? 'journalEntryCountOne'.tr()
-                                              : 'journalEntryCountMany'.tr(
-                                                  namedArgs: {
-                                                    'count': state
-                                                        .journalList
-                                                        .length
-                                                        .toString(),
-                                                  },
-                                                ))
-                                          .appText(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 12.sp,
-                                            color: primaryColor,
-                                          ),
-                                ),
-                              ],
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                      14.h.spaceH,
-                      BaseButton(
-                        onTap: () => _showAddJournalDialog(context, state),
-                        child: Container(
-                          width: double.infinity,
-                          height: 62.h,
-                          padding: EdgeInsets.symmetric(horizontal: 22.w),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF894BCD), Color(0xFFB06FE5)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(20.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(
-                                  0xFF894BCD,
-                                ).withValues(alpha: 0.42),
-                                blurRadius: 22.r,
-                                spreadRadius: 0,
-                                offset: Offset(0, 10.h),
-                              ),
-                              BoxShadow(
-                                color: const Color(
-                                  0xFF894BCD,
-                                ).withValues(alpha: 0.18),
-                                blurRadius: 36.r,
-                                spreadRadius: 2,
-                                offset: Offset(0, 4.h),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 34.w,
-                                height: 34.w,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.25),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.add_rounded,
-                                  color: Colors.white,
-                                  size: 24.sp,
-                                ),
-                              ),
-                              14.w.spaceW,
-                              'journalAddEntry'.tr().appText(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17.sp,
-                                color: Colors.white,
-                                letterSpacing: 0.35,
-                              ),
-                            ],
-                          ),
-                        ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Matches BaseScreen `_floatingBottomNavigation`: bottom inset + 16.h + 68.h bar.
+              Positioned(
+                right: 20.w,
+                bottom: 100.h,
+                child: BaseButton(
+                  onTap: () => _showAddJournalDialog(context, state),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF894BCD), Color(0xFFB06FE5)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
+                      borderRadius: BorderRadius.circular(31.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(
+                            0xFF894BCD,
+                          ).withValues(alpha: 0.45),
+                          blurRadius: 20.r,
+                          spreadRadius: 0,
+                          offset: Offset(0, 8.h),
+                        ),
+                        BoxShadow(
+                          color: const Color(0xFF894BCD).withValues(alpha: 0.2),
+                          blurRadius: 40.r,
+                          spreadRadius: 4,
+                          offset: Offset(0, 4.h),
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      width: 28.w,
+                      height: 28.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.add_rounded,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
+                    ).appPadding(all: 18.r),
                   ),
                 ),
               ),
@@ -723,6 +701,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
 
 class DraggableJournalCard extends StatefulWidget {
   final JournalModel journal;
+
   const DraggableJournalCard({super.key, required this.journal});
 
   @override

@@ -682,6 +682,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         color: Colors.black87,
                         maxLines: 2,
                         height: 1.2,
+                        textAlign: TextAlign.left,
                       ),
                       4.spaceH,
                       subtitle.appText(
