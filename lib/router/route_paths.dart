@@ -14,7 +14,7 @@ class RoutePaths {
   static const String parentProfile = '/parent-profile';
   static const String childProfile = '/child-profile/:userId';
   static const String base = '/base';
-  
+
   // New paths
   static const String subscription = '/subscription';
   static const String dailyMoodCheckIn = '/daily-mood-check-in';
@@ -32,6 +32,11 @@ class RoutePaths {
   static const String sleepSummary = '/sleep-summary';
   static const String newBehavior = '/new-behavior';
   static const String reflectYourEmotions = '/reflect-your-emotions';
+  static const String familyMeterStateDetail = '/family-meter-state-detail';
+  static const String familyMeterStatePicker = '/family-meter-state-picker';
+  static const String smartMoment = '/smart-moment';
+  static const String helpProblemSelection = '/help-problem-selection';
+  static const String helpGuidance = '/help-guidance';
   static const String proposeChange = '/propose-change';
   static const String thoughtList = '/thought-list';
   static const String chatDetail = '/chat-detail';

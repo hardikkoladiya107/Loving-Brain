@@ -1,25 +1,18 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/model/routine_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
-import 'package:loving_brain/ui/essentials/essentials_screen.dart';
-import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
-import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
-import 'package:loving_brain/ui/energy_bridge/energy_bridge_screen.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
 import '../base_screen/bloc/base_cubit.dart';
-import '../new_behavior/new_behavior_screen.dart';
-import '../reflect_your_emotions/reflect_your_emotions.dart';
 import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_cubit.dart';
 import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_state.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -85,6 +78,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       20.spaceH,
+                      _familyMeterCard(state),
+                      12.spaceH,
+                      _smartActionCard(state),
+                      20.spaceH,
                       _heroDashboard(state),
                       // _dailyInsightStrip(state),
                       20.spaceH,
@@ -119,6 +116,215 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         );
       },
       listener: (context, state) {},
+    );
+  }
+
+  Widget _familyMeterCard(HomeState state) {
+    final String childName = state.childModel?.childName ?? "Child";
+    final ChildState? childState = state.childModel?.childState;
+    final String stateText = childState?.label ?? "Nothing logged yet";
+    final String insightText =
+        childState?.insightText ?? "How is $childName feeling right now?";
+    final String updatedText = _updatedAgoText(
+      state.childModel?.stateUpdatedAt,
+    );
+    return BaseButton(
+      onTap: () => context.push(RoutePaths.familyMeterStateDetail),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: childState == null
+                ? <Color>[const Color(0xFFEAE8FF), const Color(0xFFF6F2FF)]
+                : <Color>[
+                    childState.lightColor,
+                    childState.lightColor.withValues(alpha: 0.75),
+                  ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: const Color(0xFF6A24B8).withValues(alpha: 0.12),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Text(
+                  childState?.emoji ?? "💭",
+                  style: TextStyle(fontSize: 26.sp),
+                ),
+                8.w.spaceW,
+                Expanded(
+                  child: childName.appText(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24.sp,
+                    color: const Color(0xFF2F2A44),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: const Color(0xFF5E4C88),
+                  size: 24.sp,
+                ),
+              ],
+            ),
+            8.h.spaceH,
+            stateText.appText(
+              fontWeight: FontWeight.w800,
+              fontSize: 15.sp,
+              color: childState?.color ?? Colors.grey.shade700,
+            ),
+            6.h.spaceH,
+            insightText.appText(
+              fontWeight: FontWeight.w600,
+              fontSize: 13.sp,
+              color: const Color(0xFF4C4266),
+            ),
+            8.h.spaceH,
+            BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
+              builder: (BuildContext context, EnergyBridgeState energyState) {
+                final String timerText = _energyBridgeCountdownText(
+                  energyState,
+                );
+                if (timerText.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 6.h),
+                  child: timerText.appText(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.sp,
+                    color: const Color(0xFF6750A4),
+                  ),
+                );
+              },
+            ),
+            updatedText.appText(
+              fontWeight: FontWeight.w600,
+              fontSize: 12.sp,
+              color: Colors.grey.shade600,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _smartActionCard(HomeState state) {
+    final String childName = state.childModel?.childName ?? "Child";
+    final ChildState? childState = state.childModel?.childState;
+    final String headerText = _smartActionHeaderText(
+      childState: childState,
+      childName: childName,
+    );
+    final String bodyText = _smartActionBodyText(childState: childState);
+    final String ctaText = _smartActionCtaText(childState: childState);
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: const Color(0xFFECE8F8), width: 1.2),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: const Color(0xFF6A24B8).withValues(alpha: 0.08),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1ECFF),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(
+                  Icons.tips_and_updates_rounded,
+                  size: 18.sp,
+                  color: const Color(0xFF6A24B8),
+                ),
+              ),
+              8.w.spaceW,
+              "Smart Action".appText(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w900,
+                color: const Color(0xFF2F2A44),
+              ),
+              const Spacer(),
+              BaseButton(
+                onTap: () => context.push(RoutePaths.helpProblemSelection),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1ECFF),
+                    borderRadius: BorderRadius.circular(999.r),
+                  ),
+                  child: "Help".appText(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFF6A24B8),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          10.h.spaceH,
+          headerText.appText(
+            fontSize: 17.sp,
+            fontWeight: FontWeight.w900,
+            color: const Color(0xFF2F2A44),
+            textAlign: TextAlign.start,
+          ),
+          6.h.spaceH,
+          bodyText.appText(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF5B5571),
+            textAlign: TextAlign.start,
+          ),
+          12.h.spaceH,
+          BaseButton(
+            onTap: () => _onSmartActionTap(childState),
+            child: Container(
+              width: double.infinity,
+              height: 44.h,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: <Color>[Color(0xFF6A24B8), Color(0xFF8F58D7)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              alignment: Alignment.center,
+              child: ctaText.appText(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -859,5 +1065,87 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (futureRoutines.isEmpty) return null;
     futureRoutines.sort((a, b) => a.timeStamp!.compareTo(b.timeStamp!));
     return futureRoutines.first;
+  }
+
+  String _updatedAgoText(DateTime? updatedAt) {
+    if (updatedAt == null) {
+      return "Updated just now";
+    }
+    final Duration duration = DateTime.now().difference(updatedAt);
+    if (duration.inMinutes < 1) {
+      return "Updated just now";
+    }
+    if (duration.inMinutes < 60) {
+      return "Updated ${duration.inMinutes} mins ago";
+    }
+    if (duration.inHours < 24) {
+      return "Updated ${duration.inHours} hours ago";
+    }
+    return "Updated ${duration.inDays} days ago";
+  }
+
+  String _energyBridgeCountdownText(EnergyBridgeState energyState) {
+    if (energyState.timer == null) {
+      return "";
+    }
+    if (!energyState.timer!.isActive || energyState.timer!.fireAt == null) {
+      return "";
+    }
+    final int minutesLeft = energyState.timer!.fireAt!
+        .difference(DateTime.now())
+        .inMinutes
+        .clamp(0, energyState.timer!.durationMinutes);
+    return "~$minutesLeft mins before shift";
+  }
+
+  String _smartActionHeaderText({
+    required ChildState? childState,
+    required String childName,
+  }) {
+    if (childState == ChildState.calm) {
+      return "$childName is ready to connect";
+    }
+    if (childState == ChildState.highEnergy) {
+      return "Good time for active play";
+    }
+    if (childState == ChildState.fussy) {
+      return "$childName needs support right now";
+    }
+    if (childState == ChildState.tired) {
+      return "Wind-down time";
+    }
+    return "How is $childName right now?";
+  }
+
+  String _smartActionBodyText({required ChildState? childState}) {
+    if (childState == ChildState.calm) {
+      return "Try one short connection activity together.";
+    }
+    if (childState == ChildState.highEnergy) {
+      return "Channel the energy into movement before transition time.";
+    }
+    if (childState == ChildState.fussy) {
+      return "Offer comfort first, then reduce stimulation nearby.";
+    }
+    if (childState == ChildState.tired) {
+      return "Keep the environment quiet and start your bedtime routine.";
+    }
+    return "Update the Family Meter so guidance stays current.";
+  }
+
+  String _smartActionCtaText({required ChildState? childState}) {
+    return "Guide me now";
+  }
+
+  void _onSmartActionTap(ChildState? childState) {
+    if (childState == ChildState.fussy) {
+      context.push(RoutePaths.helpProblemSelection);
+      return;
+    }
+    if (childState == null) {
+      context.push(RoutePaths.familyMeterStatePicker);
+      return;
+    }
+    context.push(RoutePaths.smartMoment);
   }
 }

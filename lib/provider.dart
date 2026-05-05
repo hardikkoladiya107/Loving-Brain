@@ -15,6 +15,7 @@ import 'package:loving_brain/ui/event_approval/bloc/event_approval_cubit.dart';
 import 'package:loving_brain/ui/event_detail/bloc/event_detail_cubit.dart';
 import 'package:loving_brain/ui/auth/forgot_password/bloc/forgot_password_cubit.dart';
 import 'package:loving_brain/ui/home/bloc/home_cubit.dart';
+import 'package:loving_brain/ui/help_flow/bloc/help_flow_cubit.dart';
 import 'package:loving_brain/ui/link_co_parent/bloc/link_co_parent_cubit.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/manage_children/bloc/manage_children_cubit.dart';
@@ -26,6 +27,7 @@ import 'package:loving_brain/ui/reflect_your_emotions/bloc/reflect_emotion_cubit
 import 'package:loving_brain/ui/auth/register/bloc/register_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
 import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_cubit.dart';
+import 'package:loving_brain/ui/smart_moment/bloc/smart_moment_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
 import 'package:loving_brain/ui/thought_list/bloc/thought_list_cubit.dart';
 import 'package:loving_brain/ui/write_your_thought/bloc/write_your_thought_cubit.dart';
@@ -36,6 +38,9 @@ var blocProvider = [
   BlocProvider<LoginCubit>(create: (BuildContext context) => LoginCubit()),
   BlocProvider<BaseCubit>(create: (BuildContext context) => BaseCubit()),
   BlocProvider<HomeCubit>(create: (BuildContext context) => HomeCubit()),
+  BlocProvider<HelpFlowCubit>(
+    create: (BuildContext context) => HelpFlowCubit(),
+  ),
   BlocProvider<DailyRoutineCubit>(
     create: (BuildContext context) => DailyRoutineCubit(),
   ),
@@ -108,11 +113,13 @@ var blocProvider = [
   BlocProvider<SleepSummaryCubit>(
     create: (BuildContext context) => SleepSummaryCubit(),
   ),
+  BlocProvider<SmartMomentCubit>(
+    create: (BuildContext context) => SmartMomentCubit(),
+  ),
   BlocProvider<YourStreakCubit>(
     create: (BuildContext context) => YourStreakCubit(),
   ),
   BlocProvider<EnergyBridgeCubit>(
     create: (BuildContext context) => EnergyBridgeCubit(),
   ),
-
 ];

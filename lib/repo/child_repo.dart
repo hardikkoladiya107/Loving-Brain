@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/model/invitation_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
@@ -391,6 +392,121 @@ class ChildRepo {
     } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> updateChildState({
+    required String childId,
+    required ChildState childState,
+    required String actorUid,
+  }) async {
+    try {
+      if (childId.isEmpty || actorUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+
+      final DateTime now = DateTime.now();
+      final DocumentReference<Map<String, dynamic>> childRef =
+          childrenCollection.doc(childId);
+      final DocumentReference<Map<String, dynamic>> stateRef = childRef
+          .collection('states')
+          .doc('${now.microsecondsSinceEpoch}_${childState.key}');
+      final WriteBatch writeBatch = FirebaseFirestore.instance.batch();
+
+      writeBatch.update(childRef, <String, dynamic>{
+        'child_state': childState.key,
+        'state_updated_at': Timestamp.fromDate(now),
+      });
+      writeBatch.set(stateRef, <String, dynamic>{
+        'state_id': childState.key,
+        'time_stamp': Timestamp.fromDate(now),
+        'updated_by': actorUid,
+      });
+
+      await writeBatch.commit();
+      return ApiResultStatus.data(data: childState.key);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> saveSmartMomentEvent({
+    required String childId,
+    required String actorUid,
+    required String stateAtTime,
+  }) async {
+    try {
+      if (childId.isEmpty || actorUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      await childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add(<String, dynamic>{
+            'type': 'smart_moment',
+            'state_at_time': stateAtTime,
+            'outcome': 'success',
+            'timestamp': Timestamp.now(),
+            'updated_by': actorUid,
+          });
+      return ApiResultStatus.data(data: childId);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> saveHelpFlowEvent({
+    required String childId,
+    required String actorUid,
+    required String problemType,
+    required String solutionId,
+    required String childState,
+    required int ageInMonths,
+  }) async {
+    try {
+      if (childId.isEmpty || actorUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      await childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add(<String, dynamic>{
+            'type': 'help_flow',
+            'problem_type': problemType,
+            'solution_id': solutionId,
+            'outcome': 'success',
+            'child_state': childState,
+            'age_in_months': ageInMonths,
+            'timestamp': Timestamp.now(),
+            'updated_by': actorUid,
+          });
+      return ApiResultStatus.data(data: childId);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
       );
     } catch (e) {
       return ApiResultStatus.error(

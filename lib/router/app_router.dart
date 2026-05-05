@@ -33,6 +33,11 @@ import 'package:loving_brain/ui/energy_bridge/energy_bridge_screen.dart';
 import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
 import 'package:loving_brain/ui/new_behavior/new_behavior_screen.dart';
 import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart';
+import 'package:loving_brain/ui/family_meter/family_meter_state_detail_screen.dart';
+import 'package:loving_brain/ui/family_meter/family_meter_state_picker_screen.dart';
+import 'package:loving_brain/ui/smart_moment/smart_moment_screen.dart';
+import 'package:loving_brain/ui/help_flow/help_guidance_screen.dart';
+import 'package:loving_brain/ui/help_flow/help_problem_selection_screen.dart';
 import 'package:loving_brain/ui/propose_change/propose_change_screen.dart';
 import 'package:loving_brain/ui/thought_list/thought_list_scren.dart';
 import 'package:loving_brain/ui/chat_detail/chat_detail_screen.dart';
@@ -162,6 +167,31 @@ class AppRouter {
               const ReflectYourEmotions(),
         ),
         GoRoute(
+          path: RoutePaths.familyMeterStateDetail,
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilyMeterStateDetailScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.familyMeterStatePicker,
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilyMeterStatePickerScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.smartMoment,
+          builder: (BuildContext context, GoRouterState state) =>
+              const SmartMomentScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.helpProblemSelection,
+          builder: (BuildContext context, GoRouterState state) =>
+              const HelpProblemSelectionScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.helpGuidance,
+          builder: (BuildContext context, GoRouterState state) =>
+              const HelpGuidanceScreen(),
+        ),
+        GoRoute(
           path: RoutePaths.proposeChange,
           builder: (BuildContext context, GoRouterState state) {
             final sharedEvent = state.extra as SharedEventModel?;
@@ -193,12 +223,6 @@ class AppRouter {
           builder: (BuildContext context, GoRouterState state) =>
               const LinkCoParentScreen(),
         ),
-
-        // GoRoute(
-        //   path: RoutePaths.successScreen,
-        //   builder: (BuildContext context, GoRouterState state) =>
-        //       const SuccessScreen(),
-        // ),
         GoRoute(
           path: RoutePaths.splash,
           builder: (BuildContext context, GoRouterState state) =>
