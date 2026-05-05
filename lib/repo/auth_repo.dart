@@ -388,9 +388,7 @@ class AuthRepo {
         );
       }
 
-      final credential = GoogleAuthProvider.credential(
-        idToken: idToken,
-      );
+      final credential = GoogleAuthProvider.credential(idToken: idToken);
       final signInUser = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
@@ -613,7 +611,7 @@ class AuthRepo {
   /// Adds a child to the current user: creates child doc, appends to [children]
   /// and sets [default_child] to the new child. Returns updated [UserModel].
   Future<ApiResultStatus<UserModel>> addChild({
-    required Map<String, String> request,
+    required Map<String, dynamic> request,
   }) async {
     try {
       final String tUid = preferences.getUserModel()?.uid ?? "";

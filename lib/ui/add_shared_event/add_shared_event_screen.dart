@@ -207,23 +207,53 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  _titleTextField(state),
-                                  16.h.spaceH,
-                                  _schoolPickUp(state),
-                                  16.h.spaceH,
-                                  _startEnd(state),
-                                  16.h.spaceH,
-                                  _location(state),
-                                  20.h.spaceH,
-                                  _children(state),
-                                  16.h.spaceH,
-                                  _assignedTo(state),
-                                  16.h.spaceH,
-                                  _requireApproval(state),
-                                  16.h.spaceH,
-                                  _note(state),
-                                  16.h.spaceH,
-                                  _attachDocument(state),
+                                  _sectionCard(
+                                    title: LocaleKeys.title.tr(),
+                                    icon: Icons.edit_calendar_rounded,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        _titleTextField(state),
+                                        16.h.spaceH,
+                                        _schoolPickUp(state),
+                                        16.h.spaceH,
+                                        _startEnd(state),
+                                        16.h.spaceH,
+                                        _location(state),
+                                      ],
+                                    ),
+                                  ),
+                                  14.h.spaceH,
+                                  _sectionCard(
+                                    title: LocaleKeys.assignedTo.tr(),
+                                    icon: Icons.people_alt_rounded,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        _children(state),
+                                        16.h.spaceH,
+                                        _assignedTo(state),
+                                        16.h.spaceH,
+                                        _requireApproval(state),
+                                      ],
+                                    ),
+                                  ),
+                                  14.h.spaceH,
+                                  _sectionCard(
+                                    title: LocaleKeys.noteToCoParent.tr(),
+                                    icon: Icons.notes_rounded,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[
+                                        _note(state),
+                                        16.h.spaceH,
+                                        _attachDocument(state),
+                                      ],
+                                    ),
+                                  ),
                                   24.h.spaceH,
                                   _button(),
                                 ],
@@ -447,6 +477,39 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           ),
           child: child,
         ),
+      ),
+    );
+  }
+
+  Widget _sectionCard({
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 14.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.56),
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.95)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(icon, size: 18.sp, color: primaryColor),
+              8.w.spaceW,
+              title.appText(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: blackTextColor,
+              ),
+            ],
+          ),
+          12.h.spaceH,
+          child,
+        ],
       ),
     );
   }
@@ -715,11 +778,13 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
           ],
         ),
         alignment: Alignment.center,
-        child: text.appText(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: 16.sp,
-        ),
+        child: text
+            .appText(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 16.sp,
+            )
+            .appPadding(left: 10.w, right: 10.w),
       ),
     );
   }

@@ -29,15 +29,16 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
         }
         if (saveStatus is status.Data) {
           EasyLoading.dismiss();
-          await showSnackBar(
-            message: 'Great job - your response helped.',
-            type: SnackBarType.SUCCESS,
-          );
           if (!context.mounted) {
             return;
           }
           context.pop();
           context.pop();
+          await Future<void>.delayed(const Duration(milliseconds: 80));
+          await showSnackBar(
+            message: 'Great job - your response helped.',
+            type: SnackBarType.SUCCESS,
+          );
           return;
         }
         if (saveStatus is status.Error) {

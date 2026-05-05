@@ -78,11 +78,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       20.spaceH,
-                      _familyMeterCard(state),
-                      12.spaceH,
-                      _smartActionCard(state),
-                      20.spaceH,
                       _heroDashboard(state),
+                      20.spaceH,
+                      _familyMeterCard(state),
                       // _dailyInsightStrip(state),
                       20.spaceH,
                       _bridgeCard(context),
@@ -128,11 +126,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final String updatedText = _updatedAgoText(
       state.childModel?.stateUpdatedAt,
     );
+    final String headerText = _smartActionHeaderText(
+      childState: childState,
+      childName: childName,
+    );
+    final String bodyText = _smartActionBodyText(childState: childState);
+    final String ctaText = _smartActionCtaText(childState: childState);
     return BaseButton(
       onTap: () => context.push(RoutePaths.familyMeterStateDetail),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.w),
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: childState == null
@@ -177,19 +181,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
               ],
             ),
-            8.h.spaceH,
+            6.h.spaceH,
             stateText.appText(
               fontWeight: FontWeight.w800,
-              fontSize: 15.sp,
+              fontSize: 14.sp,
               color: childState?.color ?? Colors.grey.shade700,
             ),
-            6.h.spaceH,
+            4.h.spaceH,
             insightText.appText(
               fontWeight: FontWeight.w600,
-              fontSize: 13.sp,
+              fontSize: 12.sp,
               color: const Color(0xFF4C4266),
             ),
-            8.h.spaceH,
+            6.h.spaceH,
             BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
               builder: (BuildContext context, EnergyBridgeState energyState) {
                 final String timerText = _energyBridgeCountdownText(
@@ -213,117 +217,101 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               fontSize: 12.sp,
               color: Colors.grey.shade600,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _smartActionCard(HomeState state) {
-    final String childName = state.childModel?.childName ?? "Child";
-    final ChildState? childState = state.childModel?.childState;
-    final String headerText = _smartActionHeaderText(
-      childState: childState,
-      childName: childName,
-    );
-    final String bodyText = _smartActionBodyText(childState: childState);
-    final String ctaText = _smartActionCtaText(childState: childState);
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: const Color(0xFFECE8F8), width: 1.2),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: const Color(0xFF6A24B8).withValues(alpha: 0.08),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1ECFF),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(
-                  Icons.tips_and_updates_rounded,
-                  size: 18.sp,
-                  color: const Color(0xFF6A24B8),
-                ),
-              ),
-              8.w.spaceW,
-              "Smart Action".appText(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF2F2A44),
-              ),
-              const Spacer(),
-              BaseButton(
-                onTap: () => context.push(RoutePaths.helpProblemSelection),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1ECFF),
-                    borderRadius: BorderRadius.circular(999.r),
-                  ),
-                  child: "Help".appText(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF6A24B8),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          10.h.spaceH,
-          headerText.appText(
-            fontSize: 17.sp,
-            fontWeight: FontWeight.w900,
-            color: const Color(0xFF2F2A44),
-            textAlign: TextAlign.start,
-          ),
-          6.h.spaceH,
-          bodyText.appText(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF5B5571),
-            textAlign: TextAlign.start,
-          ),
-          12.h.spaceH,
-          BaseButton(
-            onTap: () => _onSmartActionTap(childState),
-            child: Container(
+            10.h.spaceH,
+            Container(
               width: double.infinity,
-              height: 44.h,
+              padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: <Color>[Color(0xFF6A24B8), Color(0xFF8F58D7)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular(12.r),
+                color: Colors.white.withValues(alpha: 0.72),
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(color: const Color(0xFFECE8F8), width: 1.2),
               ),
-              alignment: Alignment.center,
-              child: ctaText.appText(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w900,
-                color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(8.w),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF1ECFF),
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Icon(
+                          Icons.tips_and_updates_rounded,
+                          size: 18.sp,
+                          color: const Color(0xFF6A24B8),
+                        ),
+                      ),
+                      8.w.spaceW,
+                      "Smart Action".appText(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFF2F2A44),
+                      ),
+                      const Spacer(),
+                      BaseButton(
+                        onTap: () =>
+                            context.push(RoutePaths.helpProblemSelection),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF1ECFF),
+                            borderRadius: BorderRadius.circular(999.r),
+                          ),
+                          child: "Help".appText(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF6A24B8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  8.h.spaceH,
+                  headerText.appText(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w900,
+                    color: const Color(0xFF2F2A44),
+                    textAlign: TextAlign.start,
+                  ),
+                  4.h.spaceH,
+                  bodyText.appText(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF5B5571),
+                    textAlign: TextAlign.start,
+                  ),
+                  10.h.spaceH,
+                  BaseButton(
+                    onTap: () => _onSmartActionTap(childState),
+                    child: Container(
+                      width: double.infinity,
+                      height: 40.h,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: <Color>[Color(0xFF6A24B8), Color(0xFF8F58D7)],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      alignment: Alignment.center,
+                      child: ctaText.appText(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -423,53 +411,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           );
         }
 
+        // Countdown now appears in Family Meter card to avoid duplicate UI.
         if (timer.isActive && timer.fireAt != null) {
-          final int minutesLeft = timer.fireAt!
-              .difference(DateTime.now())
-              .inMinutes
-              .clamp(0, timer.durationMinutes);
-          return Container(
-            margin: EdgeInsets.only(bottom: 20.h, left: 20.w, right: 20.w),
-            padding: EdgeInsets.all(20.w),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: <Color>[Color(0xFFE7D9FF), Color(0xFFF3EAFE)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(24.r),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: const Color(0xFFB287E6).withValues(alpha: 0.25),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.bolt_rounded,
-                  color: const Color(0xFF7A46C9),
-                  size: 26.sp,
-                ),
-                10.w.spaceW,
-                Expanded(
-                  child: "energyBridgeMinutesBeforeShift"
-                      .tr(
-                        namedArgs: <String, String>{
-                          "minutes": minutesLeft.toString(),
-                        },
-                      )
-                      .appText(
-                        fontSize: 14.sp,
-                        color: const Color(0xFF4A2B7C),
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-              ],
-            ),
-          );
+          return const SizedBox.shrink();
         }
         return const SizedBox.shrink();
       },
@@ -1134,6 +1078,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   String _smartActionCtaText({required ChildState? childState}) {
+    if (childState == ChildState.fussy) {
+      return "Help me now";
+    }
     return "Guide me now";
   }
 

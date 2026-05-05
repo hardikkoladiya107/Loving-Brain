@@ -10,11 +10,12 @@ Future<void> showSnackBar({
   required String message,
   required SnackBarType type,
 }) async {
-  final BuildContext? context = navigatorKey.currentContext;
-  if (context == null) {
+  final ScaffoldMessengerState? messenger = scaffoldMessengerKey.currentState;
+  if (messenger == null) {
     return;
   }
-  ScaffoldMessenger.of(context).showSnackBar(
+  messenger.hideCurrentSnackBar();
+  messenger.showSnackBar(
     SnackBar(
       backgroundColor: Colors.transparent,
       elevation: 0,

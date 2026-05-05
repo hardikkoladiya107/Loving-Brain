@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -20,6 +23,7 @@ class NotificationUtil {
   static FlutterLocalNotificationsPlugin instance() => _localNotifications;
 
   static Future<void> initializePlatformNotifications() async {
+    await _requestPermissionIfNeeded();
     tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@drawable/ic_notification_icon');
@@ -57,7 +61,7 @@ class NotificationUtil {
         id: message.data.hashCode,
         title: message.notification?.title ?? "",
         body: message.notification?.body ?? "",
-        payload: message.toString(),
+        payload: message.data['type']?.toString() ?? "",
       );
     });
 
@@ -75,10 +79,32 @@ class NotificationUtil {
     });
   }
 
+  static Future<void> _requestPermissionIfNeeded() async {
+    if (Firebase.apps.isEmpty) {
+      return;
+    }
+    final bool isRequested =
+        preferences.getBool(SharedPreference.notificationPermissionRequested) ??
+        false;
+    if (!isRequested) {
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      await preferences.putBool(
+        SharedPreference.notificationPermissionRequested,
+        true,
+      );
+    }
+  }
+
   static void _handleMessageClick(BuildContext context, RemoteMessage message) {
-    Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => const YourStreakScreen()));
+    final String type = message.data['type']?.toString() ?? '';
+    if (type == 'energy_bridge') {
+      context.push(RoutePaths.smartMoment);
+      return;
+    }
   }
 
   static Future<void> initializeBGNotifications() async {
@@ -97,7 +123,12 @@ class NotificationUtil {
   }
 
   static void onDidReceiveLocalNotification(dynamic payload) {
-    if (payload != null) {}
+    final String? dataPayload = payload?.payload?.toString();
+    if (dataPayload == 'energy_bridge') {
+      if (navigatorKey.currentContext != null) {
+        navigatorKey.currentContext!.push(RoutePaths.smartMoment);
+      }
+    }
   }
 
   static Future<void> showLocalNotification({
@@ -116,7 +147,7 @@ class NotificationUtil {
       title,
       body,
       platformChannelSpecifics,
-      // payload: payload,
+      payload: payload,
     );
   }
 

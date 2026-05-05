@@ -5,6 +5,7 @@
 /// - Co‑parenting: shows shared events (created by or assigned to user); add,
 ///   link co‑parent, view detail / approval / propose change; delete if creator.
 library;
+
 import 'dart:ui';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +25,7 @@ import '../../model/routine_model.dart';
 import '../../model/shared_event_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
-import '../add_shared_event/add_shared_event_screen.dart';
 import 'widget/add_daily_routine_dialog.dart';
-import '../event_approval/event_approval_screen.dart';
-import '../event_detail/event_detail_screen.dart';
-import '../link_co_parent/link_co_parent_screen.dart';
-import '../propose_change/propose_change_screen.dart';
 import '../widget/app_dialogs.dart';
 import 'bloc/schedule_cubit.dart';
 import 'bloc/schedule_state.dart';
@@ -187,8 +183,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.calendar_month_rounded, 
-              color: Colors.white, 
+              Icons.calendar_month_rounded,
+              color: Colors.white,
               size: 26.sp,
             ),
           ),
@@ -257,8 +253,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             borderRadius: BorderRadius.circular(100.r),
                             boxShadow: <BoxShadow>[
                               BoxShadow(
-                                color: scheduleButtonColor1
-                                    .withValues(alpha: 0.32),
+                                color: scheduleButtonColor1.withValues(
+                                  alpha: 0.32,
+                                ),
                                 blurRadius: 10,
                                 offset: Offset(0, 3.h),
                               ),
@@ -353,7 +350,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           if (childName.isNotEmpty)
             Row(
               children: [
-                Icon(Icons.child_care_rounded, color: blueTextColor, size: 20.sp),
+                Icon(
+                  Icons.child_care_rounded,
+                  color: blueTextColor,
+                  size: 20.sp,
+                ),
                 8.w.spaceW,
                 "$childName's ${LocaleKeys.dailyRoutine.tr()}".appText(
                   color: blueTextColor,
@@ -409,6 +410,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   Widget _coParentingContent(BuildContext context, ScheduleState state) {
     final List<SharedEventModel> events = state.sharedEventList;
+    final bool hasLinkedCoParent = state.hasLinkedCoParent;
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 40.h),
@@ -437,14 +439,18 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ...events.map((SharedEventModel sharedEvent) {
               final bool isCreator =
                   sharedEvent.createdBy == state.userModel?.uid;
-              final bool isAssigned = sharedEvent.assignedTo
-                      ?.any((String id) => id == state.userModel?.uid) ??
+              final bool isAssigned =
+                  sharedEvent.assignedTo?.any(
+                    (String id) => id == state.userModel?.uid,
+                  ) ??
                   false;
-              final bool canView = isCreator ||
+              final bool canView =
+                  isCreator ||
                   (isAssigned &&
                       (sharedEvent.status == 'APPROVED' ||
                           sharedEvent.status == 'NONE'));
-              final bool needsApproval = isAssigned &&
+              final bool needsApproval =
+                  isAssigned &&
                   (sharedEvent.requiredApproval == true) &&
                   sharedEvent.status == 'REQUESTED';
 
@@ -470,9 +476,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   _showDeleteSharedEventDialog(
                     onDelete: () {
                       context.pop();
-                      context
-                          .read<ScheduleCubit>()
-                          .deleteSharedEvent(sharedEvent);
+                      context.read<ScheduleCubit>().deleteSharedEvent(
+                        sharedEvent,
+                      );
                     },
                   );
                 },
@@ -481,8 +487,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           16.h.spaceH,
           _scheduleButton(
             text: "+ ${LocaleKeys.addSharedEvent.tr()}",
+            isEnabled: hasLinkedCoParent,
             onTap: () {
               context.push(RoutePaths.addSharedEvent);
+            },
+            onDisabledTap: () {
+              showSnackBar(
+                message: 'linkCoParentToAddSharedEvent'.tr(),
+                type: SnackBarType.ERROR,
+              );
             },
             isPrimary: true,
           ),
@@ -562,15 +575,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     bool showDeleteIcon = true,
   }) {
     final bool hasStatus = (status ?? '').isNotEmpty && status != 'NONE';
-    
+
     // Choose accent color based on status
     Color leftAccentColor = primaryColor;
     if (status == 'APPROVED') {
-       leftAccentColor = const Color(0xFF06CB5B); // explicit vibrant green
+      leftAccentColor = const Color(0xFF06CB5B); // explicit vibrant green
     } else if (status == 'REQUESTED') {
-       leftAccentColor = orangeColor; // vibrant orange
+      leftAccentColor = orangeColor; // vibrant orange
     } else if (showProposeChange) {
-       leftAccentColor = blueColor1; 
+      leftAccentColor = blueColor1;
     }
 
     return Padding(
@@ -607,7 +620,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
+                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -633,7 +649,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               schedule.appText(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w800,
-                                color: blueColor2, 
+                                color: blueColor2,
                               ),
                               4.h.spaceH,
                               label.appText(
@@ -662,14 +678,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       vertical: 6.h,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: leftAccentColor.withValues(alpha: 0.15),
+                                      color: leftAccentColor.withValues(
+                                        alpha: 0.15,
+                                      ),
                                       borderRadius: BorderRadius.circular(20.r),
-                                      border: Border.all(color: leftAccentColor, width: 1.5),
+                                      border: Border.all(
+                                        color: leftAccentColor,
+                                        width: 1.5,
+                                      ),
                                     ),
                                     child: (status ?? '').appText(
-                                      fontSize: 10.sp, 
+                                      fontSize: 10.sp,
                                       fontWeight: FontWeight.w800,
-                                      color: leftAccentColor
+                                      color: leftAccentColor,
                                     ),
                                   ),
                                   8.h.spaceH,
@@ -681,16 +702,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                       BaseButton(
                                         onTap: proposeChangeButtonTap,
                                         child: Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 10.w,
+                                            vertical: 6.h,
+                                          ),
                                           decoration: BoxDecoration(
-                                            color: blueColor1.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(10.r),
+                                            color: blueColor1.withValues(
+                                              alpha: 0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              10.r,
+                                            ),
                                           ),
-                                          child: "${LocaleKeys.proposeChange.tr()} >".appText(
-                                            fontSize: 10.sp,
-                                            color: blueColor1,
-                                            fontWeight: FontWeight.w800,
-                                          ),
+                                          child:
+                                              "${LocaleKeys.proposeChange.tr()} >"
+                                                  .appText(
+                                                    fontSize: 10.sp,
+                                                    color: blueColor1,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
                                         ),
                                       ),
                                     if (showDeleteIcon) ...[
@@ -700,7 +730,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                         child: Container(
                                           padding: EdgeInsets.all(6.w),
                                           decoration: BoxDecoration(
-                                            color: redColor.withValues(alpha: 0.08),
+                                            color: redColor.withValues(
+                                              alpha: 0.08,
+                                            ),
                                             shape: BoxShape.circle,
                                           ),
                                           child: Icon(
@@ -731,37 +763,53 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   Widget _scheduleButton({
     required String text,
     required VoidCallback? onTap,
+    VoidCallback? onDisabledTap,
+    bool isEnabled = true,
     bool isPrimary = true,
   }) {
     return BaseButton(
-      onTap: onTap,
+      onTap: isEnabled ? onTap : onDisabledTap,
       child: Container(
         width: double.infinity,
         height: 56.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isPrimary ? null : Colors.white,
-          gradient: isPrimary
+          color: isPrimary
+              ? null
+              : Colors.white.withValues(alpha: isEnabled ? 1 : 0.72),
+          gradient: isPrimary && isEnabled
               ? const LinearGradient(
                   colors: [primaryColor, blueColor2],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 )
               : null,
-          border: isPrimary ? null : Border.all(color: greyColor.withValues(alpha: 0.5), width: 2),
-          borderRadius: BorderRadius.circular(100.r),
-          boxShadow: isPrimary 
-            ? [
-                BoxShadow(
-                  color: blueColor2.withValues(alpha: 0.4),
-                  blurRadius: 20,
-                  offset: const Offset(0, 6),
+          border: isPrimary
+              ? Border.all(
+                  color: isEnabled
+                      ? Colors.transparent
+                      : greyColor.withValues(alpha: 0.5),
+                  width: 2,
+                )
+              : Border.all(
+                  color: greyColor.withValues(alpha: isEnabled ? 0.5 : 0.4),
+                  width: 2,
                 ),
-              ] 
-            : null,
+          borderRadius: BorderRadius.circular(100.r),
+          boxShadow: isPrimary && isEnabled
+              ? [
+                  BoxShadow(
+                    color: blueColor2.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
+                ]
+              : null,
         ),
         child: text.appText(
-          color: isPrimary ? Colors.white : blackTextColor,
+          color: isPrimary
+              ? (isEnabled ? Colors.white : greyColor1)
+              : (isEnabled ? blackTextColor : greyColor1),
           fontWeight: FontWeight.w800,
           fontSize: 15.sp,
           letterSpacing: 0.5,
@@ -805,8 +853,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                   color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 40,
                   offset: const Offset(0, 20),
-                )
-              ]
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -850,13 +898,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                             borderRadius: BorderRadius.circular(16.r),
                           ),
                           alignment: Alignment.center,
-                          child: LocaleKeys.cancel
-                              .tr()
-                              .appText(
-                                fontWeight: FontWeight.w800,
-                                color: blackTextColor,
-                                fontSize: 15.sp,
-                              ),
+                          child: LocaleKeys.cancel.tr().appText(
+                            fontWeight: FontWeight.w800,
+                            color: blackTextColor,
+                            fontSize: 15.sp,
+                          ),
                         ),
                       ),
                     ),
@@ -874,17 +920,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                                 color: redColor.withValues(alpha: 0.3),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
-                              )
-                            ]
+                              ),
+                            ],
                           ),
                           alignment: Alignment.center,
-                          child: LocaleKeys.delete
-                              .tr()
-                              .appText(
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                fontSize: 15.sp,
-                              ),
+                          child: LocaleKeys.delete.tr().appText(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            fontSize: 15.sp,
+                          ),
                         ),
                       ),
                     ),
@@ -898,4 +942,3 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 }
-

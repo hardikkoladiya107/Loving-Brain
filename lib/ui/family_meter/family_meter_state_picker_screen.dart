@@ -19,7 +19,8 @@ class FamilyMeterStatePickerScreen extends StatefulWidget {
       _FamilyMeterStatePickerScreenState();
 }
 
-class _FamilyMeterStatePickerScreenState extends State<FamilyMeterStatePickerScreen> {
+class _FamilyMeterStatePickerScreenState
+    extends State<FamilyMeterStatePickerScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeState>(
@@ -45,55 +46,59 @@ class _FamilyMeterStatePickerScreenState extends State<FamilyMeterStatePickerScr
                 crossAxisCount: 2,
                 crossAxisSpacing: 12.w,
                 mainAxisSpacing: 12.h,
-                children: <_StateChoice>[
-                  _StateChoice(
-                    state: ChildState.calm,
-                    icon: Icons.eco_rounded,
-                  ),
-                  _StateChoice(
-                    state: ChildState.highEnergy,
-                    icon: Icons.bolt_rounded,
-                  ),
-                  _StateChoice(
-                    state: ChildState.fussy,
-                    icon: Icons.cloud_rounded,
-                  ),
-                  _StateChoice(
-                    state: ChildState.tired,
-                    icon: Icons.nightlight_round,
-                  ),
-                ].map((_StateChoice choice) {
-                  return BaseButton(
-                    onTap: () => _saveState(choice.state),
-                    child: Container(
-                      constraints: BoxConstraints(minHeight: 80.h, minWidth: 80.w),
-                      decoration: BoxDecoration(
-                        color: choice.state.lightColor,
-                        borderRadius: BorderRadius.circular(18.r),
-                        border: Border.all(
-                          color: choice.state.color.withValues(alpha: 0.5),
-                          width: 1.3,
+                children:
+                    <_StateChoice>[
+                      _StateChoice(
+                        state: ChildState.calm,
+                        icon: Icons.eco_rounded,
+                      ),
+                      _StateChoice(
+                        state: ChildState.highEnergy,
+                        icon: Icons.bolt_rounded,
+                      ),
+                      _StateChoice(
+                        state: ChildState.fussy,
+                        icon: Icons.cloud_rounded,
+                      ),
+                      _StateChoice(
+                        state: ChildState.tired,
+                        icon: Icons.nightlight_round,
+                      ),
+                    ].map((_StateChoice choice) {
+                      return BaseButton(
+                        onTap: () => _saveState(choice.state),
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minHeight: 80.h,
+                            minWidth: 80.w,
+                          ),
+                          decoration: BoxDecoration(
+                            color: choice.state.lightColor,
+                            borderRadius: BorderRadius.circular(18.r),
+                            border: Border.all(
+                              color: choice.state.color.withValues(alpha: 0.5),
+                              width: 1.3,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                choice.icon,
+                                color: choice.state.color,
+                                size: 36.sp,
+                              ),
+                              10.h.spaceH,
+                              choice.state.label.appText(
+                                fontWeight: FontWeight.w900,
+                                color: choice.state.color,
+                                fontSize: 15.sp,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            choice.icon,
-                            color: choice.state.color,
-                            size: 36.sp,
-                          ),
-                          10.h.spaceH,
-                          choice.state.label.appText(
-                            fontWeight: FontWeight.w900,
-                            color: choice.state.color,
-                            fontSize: 15.sp,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               ),
             ),
           ),
@@ -110,14 +115,15 @@ class _FamilyMeterStatePickerScreenState extends State<FamilyMeterStatePickerScr
     EasyLoading.dismiss();
     apiResultStatus.whenOrNull(
       data: (dynamic data) async {
-        await showSnackBar(
-          message: 'State updated successfully.',
-          type: SnackBarType.SUCCESS,
-        );
         if (!mounted) {
           return;
         }
         context.pop();
+        await Future<void>.delayed(const Duration(milliseconds: 80));
+        await showSnackBar(
+          message: 'State updated successfully.',
+          type: SnackBarType.SUCCESS,
+        );
       },
       error: (dynamic error) async {
         await showSnackBar(
@@ -130,10 +136,7 @@ class _FamilyMeterStatePickerScreenState extends State<FamilyMeterStatePickerScr
 }
 
 class _StateChoice {
-  const _StateChoice({
-    required this.state,
-    required this.icon,
-  });
+  const _StateChoice({required this.state, required this.icon});
 
   final ChildState state;
   final IconData icon;

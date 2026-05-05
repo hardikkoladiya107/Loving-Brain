@@ -19,7 +19,8 @@ class FamilyMeterStateDetailScreen extends StatefulWidget {
       _FamilyMeterStateDetailScreenState();
 }
 
-class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScreen> {
+class _FamilyMeterStateDetailScreenState
+    extends State<FamilyMeterStateDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeState>(
@@ -27,7 +28,9 @@ class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScr
       builder: (BuildContext context, HomeState state) {
         final String childName = state.childModel?.childName ?? 'Child';
         final ChildState? currentState = state.childModel?.childState;
-        final String updatedText = _buildUpdatedText(state.childModel?.stateUpdatedAt);
+        final String updatedText = _buildUpdatedText(
+          state.childModel?.stateUpdatedAt,
+        );
         return Scaffold(
           backgroundColor: const Color(0xFFF7F7FB),
           appBar: AppBar(
@@ -53,7 +56,9 @@ class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScr
                       borderRadius: BorderRadius.circular(22.r),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: const Color(0xFF2F2A44).withValues(alpha: 0.08),
+                          color: const Color(
+                            0xFF2F2A44,
+                          ).withValues(alpha: 0.08),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -79,11 +84,14 @@ class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScr
                                     color: const Color(0xFF26223A),
                                   ),
                                   4.h.spaceH,
-                                  (currentState?.label ?? 'Nothing logged yet').appText(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w800,
-                                    color: currentState?.color ?? Colors.grey.shade600,
-                                  ),
+                                  (currentState?.label ?? 'Nothing logged yet')
+                                      .appText(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w800,
+                                        color:
+                                            currentState?.color ??
+                                            Colors.grey.shade600,
+                                      ),
                                 ],
                               ),
                             ),
@@ -100,21 +108,23 @@ class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScr
                             ),
                         10.h.spaceH,
                         BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
-                          builder: (
-                            BuildContext context,
-                            EnergyBridgeState energyBridgeState,
-                          ) {
-                            final String timerText =
-                                _buildTimerText(energyBridgeState);
-                            if (timerText.isEmpty) {
-                              return const SizedBox.shrink();
-                            }
-                            return timerText.appText(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF6A5A9A),
-                            );
-                          },
+                          builder:
+                              (
+                                BuildContext context,
+                                EnergyBridgeState energyBridgeState,
+                              ) {
+                                final String timerText = _buildTimerText(
+                                  energyBridgeState,
+                                );
+                                if (timerText.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return timerText.appText(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF6A5A9A),
+                                );
+                              },
                         ),
                         8.h.spaceH,
                         updatedText.appText(
@@ -127,7 +137,8 @@ class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScr
                   ),
                   const Spacer(),
                   BaseButton(
-                    onTap: () => context.push(RoutePaths.familyMeterStatePicker),
+                    onTap: () =>
+                        context.push(RoutePaths.familyMeterStatePicker),
                     child: Container(
                       width: double.infinity,
                       height: 56.h,
@@ -176,7 +187,8 @@ class _FamilyMeterStateDetailScreenState extends State<FamilyMeterStateDetailScr
     if (energyBridgeState.timer == null) {
       return '';
     }
-    if (energyBridgeState.timer!.isActive && energyBridgeState.timer!.fireAt != null) {
+    if (energyBridgeState.timer!.isActive &&
+        energyBridgeState.timer!.fireAt != null) {
       final int minutesLeft = energyBridgeState.timer!.fireAt!
           .difference(DateTime.now())
           .inMinutes

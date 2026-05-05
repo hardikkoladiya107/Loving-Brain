@@ -405,5 +405,6 @@
   "journalCanvasSubtitle": "Drag notes anywhere. Pinch to zoom your canvas.",
   "journalEntryCountOne": "1 note",
   "journalEntryCountMany": "{count} notes",
-  "journalAddEntry": "Add note"
+  "journalAddEntry": "Add note",
+  "linkCoParentToAddSharedEvent": "You need to link a co-parent to add a shared event."
 }

@@ -10,6 +10,7 @@ import 'package:loving_brain/model/routine_model.dart';
 class ChildModel {
   ChildModel({
     String? childAge,
+    DateTime? childDob,
     String? childName,
     String? relationshipToChild,
     List<RoutineModel>? routinesList,
@@ -21,6 +22,7 @@ class ChildModel {
     DateTime? stateUpdatedAt,
   }) {
     _childAge = childAge;
+    _childDob = childDob;
     _childName = childName;
     _relationshipToChild = relationshipToChild;
     _routinesList = routinesList;
@@ -38,6 +40,12 @@ class ChildModel {
   ) {
     _reference = reference;
     _childAge = jsonObject['child_age'];
+    final dynamic rawChildDob = jsonObject['child_dob'];
+    if (rawChildDob is Timestamp) {
+      _childDob = rawChildDob.toDate();
+    } else if (rawChildDob is DateTime) {
+      _childDob = rawChildDob;
+    }
     _childName = jsonObject['child_name'];
     _relationshipToChild = jsonObject['relationship_to_child'];
     _childState = ChildStateExtension.fromKey(jsonObject['child_state']);
@@ -72,14 +80,16 @@ class ChildModel {
       );
     }
     if (jsonObject['parent_reference_ids'] is List<dynamic>) {
-      _parentReferenceIds = (jsonObject['parent_reference_ids'] as List<dynamic>)
-          .map((e) => e?.toString() ?? '')
-          .where((s) => s.isNotEmpty)
-          .toList();
+      _parentReferenceIds =
+          (jsonObject['parent_reference_ids'] as List<dynamic>)
+              .map((e) => e?.toString() ?? '')
+              .where((s) => s.isNotEmpty)
+              .toList();
     }
   }
 
   String? _childAge;
+  DateTime? _childDob;
   String? _childName;
   String? _relationshipToChild;
   List<RoutineModel>? _routinesList;
@@ -92,6 +102,7 @@ class ChildModel {
 
   // Getters
   String? get childAge => _childAge;
+  DateTime? get childDob => _childDob;
   String? get childName => _childName;
   String? get relationshipToChild => _relationshipToChild;
   List<RoutineModel>? get routinesList => _routinesList;
@@ -105,6 +116,7 @@ class ChildModel {
   // CopyWith method
   ChildModel copyWith({
     String? childAge,
+    DateTime? childDob,
     String? childName,
     String? relationshipToChild,
     List<RoutineModel>? routinesList,
@@ -114,24 +126,27 @@ class ChildModel {
     DocumentReference<Object?>? reference,
     ChildState? childState,
     DateTime? stateUpdatedAt,
-  }) =>
-      ChildModel(
-        childAge: childAge ?? _childAge,
-        childName: childName ?? _childName,
-        relationshipToChild: relationshipToChild ?? _relationshipToChild,
-        routinesList: routinesList ?? _routinesList,
-        essentials: essentials ?? _essentialList,
-        documents: documents ?? _documents,
-        parentReferenceIds: parentReferenceIds ?? _parentReferenceIds,
-        reference: reference ?? _reference,
-        childState: childState ?? _childState,
-        stateUpdatedAt: stateUpdatedAt ?? _stateUpdatedAt,
-      );
+  }) => ChildModel(
+    childAge: childAge ?? _childAge,
+    childDob: childDob ?? _childDob,
+    childName: childName ?? _childName,
+    relationshipToChild: relationshipToChild ?? _relationshipToChild,
+    routinesList: routinesList ?? _routinesList,
+    essentials: essentials ?? _essentialList,
+    documents: documents ?? _documents,
+    parentReferenceIds: parentReferenceIds ?? _parentReferenceIds,
+    reference: reference ?? _reference,
+    childState: childState ?? _childState,
+    stateUpdatedAt: stateUpdatedAt ?? _stateUpdatedAt,
+  );
 
   // Convert to JSON (for Firestore)
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['child_age'] = _childAge;
+    map['child_dob'] = _childDob != null
+        ? Timestamp.fromDate(_childDob!)
+        : null;
     map['child_name'] = _childName;
     map['relationship_to_child'] = _relationshipToChild;
     map['routines'] = _routinesList?.map((e) => e.toJson()).toList();
@@ -139,8 +154,9 @@ class ChildModel {
     map['documents'] = _documents?.map((e) => e.toString()).toList();
     map['parent_reference_ids'] = _parentReferenceIds;
     map['child_state'] = _childState?.key;
-    map['state_updated_at'] =
-        _stateUpdatedAt != null ? Timestamp.fromDate(_stateUpdatedAt!) : null;
+    map['state_updated_at'] = _stateUpdatedAt != null
+        ? Timestamp.fromDate(_stateUpdatedAt!)
+        : null;
     return map;
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/model/api_result_status.dart' as status;
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/smart_moment/bloc/smart_moment_cubit.dart';
@@ -28,28 +29,46 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SmartMomentCubit, SmartMomentState>(
-      listener: (BuildContext context, SmartMomentState state) {
-        state.saveApiResultStatus.whenOrNull(
-          loading: () => EasyLoading.show(),
-          data: (dynamic data) async {
-            EasyLoading.dismiss();
+      listener: (BuildContext context, SmartMomentState state) async {
+        final status.ApiResultStatus saveStatus = state.saveApiResultStatus;
+        if (saveStatus is status.Loging) {
+          EasyLoading.show();
+          return;
+        }
+        if (saveStatus is status.Data) {
+          EasyLoading.dismiss();
+          await showSnackBar(
+            message: 'Nice timing - this builds connection.',
+            type: SnackBarType.SUCCESS,
+          );
+          if (!context.mounted) {
+            return;
+          }
+          final bool? isMilestone = await _showMilestonePrompt(context);
+          if (!context.mounted) {
+            return;
+          }
+          if (isMilestone == true) {
             await showSnackBar(
-              message: 'Nice timing - this builds connection.',
-              type: SnackBarType.SUCCESS,
+              message: 'Milestone flow will open in Sprint 3.',
+              type: SnackBarType.None,
             );
-            if (!mounted) {
-              return;
-            }
-            context.pop();
-          },
-          error: (dynamic error) async {
-            EasyLoading.dismiss();
-            await showSnackBar(
-              message: error.toString().replaceAll('Exception: ', ''),
-              type: SnackBarType.ERROR,
-            );
-          },
-        );
+          }
+          if (!context.mounted) {
+            return;
+          }
+          context.pop();
+          return;
+        }
+        if (saveStatus is status.Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: saveStatus.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+          return;
+        }
+        EasyLoading.dismiss();
       },
       builder: (BuildContext context, SmartMomentState state) {
         return Scaffold(
@@ -155,7 +174,8 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
                   ),
                   16.h.spaceH,
                   BaseButton(
-                    onTap: () => context.read<SmartMomentCubit>().markTriedThis(),
+                    onTap: () =>
+                        context.read<SmartMomentCubit>().markTriedThis(),
                     child: Container(
                       width: double.infinity,
                       height: 56.h,
@@ -178,6 +198,43 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  Future<bool?> _showMilestonePrompt(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: 'Did something special happen?'.appText(
+            fontWeight: FontWeight.w900,
+            fontSize: 16.sp,
+          ),
+          content: 'You can mark this as a milestone if needed.'.appText(
+            fontWeight: FontWeight.w600,
+            fontSize: 13.sp,
+            textAlign: TextAlign.start,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => context.pop(false),
+              child: 'No'.appText(
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF5B5571),
+                fontSize: 13.sp,
+              ),
+            ),
+            TextButton(
+              onPressed: () => context.pop(true),
+              child: 'Yes'.appText(
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF6A24B8),
+                fontSize: 13.sp,
+              ),
+            ),
+          ],
         );
       },
     );

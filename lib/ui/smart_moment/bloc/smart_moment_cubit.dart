@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
@@ -56,9 +57,13 @@ class SmartMomentCubit extends Cubit<SmartMomentState> {
           event.reference,
         );
         final ChildState? childState = childModel.childState;
+        final int ageInMonths = AgeUtils.resolvedAgeInMonths(
+          dob: childModel.childDob,
+          legacyAgeText: childModel.childAge ?? '',
+        );
         final _SmartMomentContent content = _contentFor(
           childState: childState,
-          childAge: childModel.childAge ?? '',
+          ageInMonths: ageInMonths,
           childName: childModel.childName ?? 'your child',
         );
         changeProps(
@@ -85,20 +90,21 @@ class SmartMomentCubit extends Cubit<SmartMomentState> {
       return;
     }
     changeProps(saveApiResultStatus: ApiResultStatus.loading());
-    final ApiResultStatus response = await ChildRepo.instance.saveSmartMomentEvent(
-      childId: childId,
-      actorUid: uid,
-      stateAtTime: state.stateAtTime?.key ?? '',
-    );
+    final ApiResultStatus response = await ChildRepo.instance
+        .saveSmartMomentEvent(
+          childId: childId,
+          actorUid: uid,
+          stateAtTime: state.stateAtTime?.key ?? '',
+        );
     changeProps(saveApiResultStatus: response);
   }
 
   _SmartMomentContent _contentFor({
     required ChildState? childState,
-    required String childAge,
+    required int ageInMonths,
     required String childName,
   }) {
-    final _AgeBand ageBand = _ageBandFromText(childAge);
+    final _AgeBand ageBand = _ageBandFromMonths(ageInMonths);
     if (childState == ChildState.calm) {
       if (ageBand == _AgeBand.zeroToThree) {
         return _SmartMomentContent(
@@ -194,12 +200,11 @@ class SmartMomentCubit extends Cubit<SmartMomentState> {
     );
   }
 
-  _AgeBand _ageBandFromText(String childAge) {
-    final String normalized = childAge.trim().toLowerCase();
-    if (normalized.contains('0-3') || normalized.contains('0 - 3')) {
+  _AgeBand _ageBandFromMonths(int ageInMonths) {
+    if (ageInMonths <= 36) {
       return _AgeBand.zeroToThree;
     }
-    if (normalized.contains('3-6') || normalized.contains('3 - 6')) {
+    if (ageInMonths <= 72) {
       return _AgeBand.threeToSix;
     }
     return _AgeBand.sixToNine;

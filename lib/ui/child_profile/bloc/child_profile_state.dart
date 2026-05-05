@@ -8,12 +8,8 @@ abstract class ChildProfileState with _$ChildProfileState {
   const factory ChildProfileState({
     @Default("") String childName,
     @Default("") String childNameError,
-    @Default("") String childAge,
-    @Default("") String childAgeError,
-    @Default("") String relationShipToChild,
-    @Default("") String relationShipToChildError,
-    @Default([]) List<String> relationshipList,
-    @Default([]) List<String> childAgeList,
+    DateTime? childDob,
+    @Default("") String childDobError,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
   }) = _ChildProfileState;
 }

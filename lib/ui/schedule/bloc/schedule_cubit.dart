@@ -1,6 +1,7 @@
 /// Cubit for the Schedule screen: listens to child doc (routines) and shared
 /// events, exposes delete actions for routine and shared event.
 library;
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,12 +22,14 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     emit(ScheduleState(userModel: preferences.getUserModel()));
     _listenToRoutine();
     _listenToSharedEvent(state);
+    _checkCoParentLinkStatus();
   }
 
   void changeProps({
     int? tabIndex,
     ChildModel? childModel,
     List<SharedEventModel>? sharedEventList,
+    bool? hasLinkedCoParent,
     ApiResultStatus? deleteRoutineApiResultStatus,
     ApiResultStatus? deleteSharedEventApiResultStatus,
   }) {
@@ -35,9 +38,11 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         tabIndex: tabIndex ?? state.tabIndex,
         childModel: childModel ?? state.childModel,
         sharedEventList: sharedEventList ?? state.sharedEventList,
+        hasLinkedCoParent: hasLinkedCoParent ?? state.hasLinkedCoParent,
         deleteRoutineApiResultStatus:
             deleteRoutineApiResultStatus ?? state.deleteRoutineApiResultStatus,
-        deleteSharedEventApiResultStatus: deleteSharedEventApiResultStatus ??
+        deleteSharedEventApiResultStatus:
+            deleteSharedEventApiResultStatus ??
             state.deleteSharedEventApiResultStatus,
       ),
     );
@@ -112,9 +117,26 @@ class ScheduleCubit extends Cubit<ScheduleState> {
     final String? docId = sharedEvent.reference?.id;
     if (docId == null || docId.isEmpty) return;
     changeProps(deleteSharedEventApiResultStatus: ApiResultStatus.loading());
-    final ApiResultStatus response =
-        await CoParentRepo.instance.deleteSharedEvent(documentId: docId);
+    final ApiResultStatus response = await CoParentRepo.instance
+        .deleteSharedEvent(documentId: docId);
     changeProps(deleteSharedEventApiResultStatus: response);
+  }
+
+  Future<void> _checkCoParentLinkStatus() async {
+    final ApiResultStatus response = await CoParentRepo.instance
+        .getMyCoParents();
+    response.whenOrNull(
+      data: (dynamic data) {
+        if (data is List && data.isNotEmpty) {
+          changeProps(hasLinkedCoParent: true);
+          return;
+        }
+        changeProps(hasLinkedCoParent: false);
+      },
+      error: (Exception _) {
+        changeProps(hasLinkedCoParent: false);
+      },
+    );
   }
 
   @override

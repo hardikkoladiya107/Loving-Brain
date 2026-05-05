@@ -130,23 +130,27 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
-                                  _subsectionLabel(
-                                    LocaleKeys.coParentEmail.tr(),
+                                  _sectionCard(
+                                    title: LocaleKeys.coParentEmail.tr(),
+                                    icon: Icons.alternate_email_rounded,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: <Widget>[_coParentEmail(state)],
+                                    ),
                                   ),
-                                  10.h.spaceH,
-                                  _coParentEmail(state),
-                                  22.h.spaceH,
-                                  _subsectionLabel(
-                                    LocaleKeys.shareForWhichChild.tr(),
+                                  14.h.spaceH,
+                                  _sectionCard(
+                                    title: LocaleKeys.shareForWhichChild.tr(),
+                                    icon: Icons.child_care_rounded,
+                                    child: _shareForWhichChild(state),
                                   ),
-                                  10.h.spaceH,
-                                  _shareForWhichChild(state),
-                                  22.h.spaceH,
-                                  _subsectionLabel(
-                                    LocaleKeys.coParentingCalendar.tr(),
+                                  14.h.spaceH,
+                                  _sectionCard(
+                                    title: LocaleKeys.coParentingCalendar.tr(),
+                                    icon: Icons.lock_clock_rounded,
+                                    child: _whatTheyllhaveAccessTo(state),
                                   ),
-                                  12.h.spaceH,
-                                  _whatTheyllhaveAccessTo(state),
                                   26.h.spaceH,
                                   _sendInvite(
                                     text: state.selectedTab == 'EMAIL'
@@ -381,13 +385,36 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
     );
   }
 
-  Widget _subsectionLabel(String text) {
-    return text.toUpperCase().appText(
-      fontWeight: FontWeight.w800,
-      fontSize: 10.sp,
-      letterSpacing: 1.35,
-      color: Colors.grey.shade500,
-      textAlign: TextAlign.start,
+  Widget _sectionCard({
+    required String title,
+    required IconData icon,
+    required Widget child,
+  }) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 14.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.56),
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.95)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(icon, size: 18.sp, color: primaryColor),
+              8.w.spaceW,
+              title.appText(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w800,
+                color: blackTextColor,
+              ),
+            ],
+          ),
+          10.h.spaceH,
+          child,
+        ],
+      ),
     );
   }
 

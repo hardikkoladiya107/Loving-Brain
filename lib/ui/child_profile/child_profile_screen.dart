@@ -17,8 +17,6 @@ import '../../main.dart';
 import '../../other/app_color.dart';
 import '../../other/preferances.dart';
 import '../../other/snack_bar.dart';
-import '../base_screen/base_screen.dart';
-import '../widget/app_dropdown.dart';
 import 'bloc/child_profile_cubit.dart';
 import 'bloc/child_profile_state.dart';
 import 'package:go_router/go_router.dart';
@@ -82,16 +80,14 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                   children: [
                     if (widget.fromManageChildren) _backButton(),
                     if (widget.fromManageChildren) 24.spaceH else 100.spaceH,
-                  _header(),
-                  80.spaceH,
-                  _childName(state),
-                  10.spaceH,
-                  _relationshipToChild(state),
-                  10.spaceH,
-                  childsAge(state),
-                  32.spaceH,
-                  _startMyJourney(),
-                  32.spaceH,
+                    _header(),
+                    80.spaceH,
+                    _childName(state),
+                    10.spaceH,
+                    _childDob(state),
+                    32.spaceH,
+                    _startMyJourney(),
+                    32.spaceH,
                   ],
                 ),
               ),
@@ -117,7 +113,9 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
               return;
             }
             await preferences.saveUserModel(data);
-            navigatorKey.currentContext!.read<ChildProfileCubit>().clearFields();
+            navigatorKey.currentContext!
+                .read<ChildProfileCubit>()
+                .clearFields();
             if (widget.fromManageChildren) {
               navigatorKey.currentContext!.pop(true);
               return;
@@ -174,8 +172,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
         color: Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: LocaleKeys.weGuideYouThroughParenting
-          .tr()
+      child: "Tell us about your child"
           .appText(fontWeight: FontWeight.w700, fontSize: 12)
           .appPadding(all: 8),
     );
@@ -193,67 +190,21 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget _relationshipToChild(ChildProfileState state) {
-    return AppDropDownButton(
-      offset: Offset(0, 78.h),
-      dropDownWidget: (close) {
-        List<Widget> widgetsList = [];
-        for (int i = 0; i < state.relationshipList.length; i++) {
-          var relationShip = state.relationshipList[i];
-          widgetsList.add(
-            BaseButton(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(),
-                  8.spaceH,
-                  relationShip
-                      .appText(fontWeight: FontWeight.w500)
-                      .appPadding(left: 16),
-                  8.spaceH,
-                  if (i < state.relationshipList.length - 1)
-                    Divider(height: 0.1, thickness: 0.2),
-                ],
-              ),
-              onTap: () {
-                close.call();
-                context.read<ChildProfileCubit>().changeProps(
-                  relationShipToChild: relationShip,
-                );
-              },
-            ),
-          );
-        }
-
-        return Container(
-          height: 125.h,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.1),
-                blurRadius: 2,
-                spreadRadius: 2,
-                offset: Offset(1, 1),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [...widgetsList],
-          ),
-        );
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LocaleKeys.yourRelationshipToChild.tr().appText(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          8.spaceH,
-          Container(
+  Widget _childDob(ChildProfileState state) {
+    final String dobText = state.childDob != null
+        ? DateFormat('dd MMM yyyy').format(state.childDob!)
+        : 'Select date of birth';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        'Child date of birth'.appText(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        8.spaceH,
+        BaseButton(
+          onTap: _pickChildDob,
+          child: Container(
             height: 55.h,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -262,146 +213,53 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
             child: Row(
               children: [
                 16.spaceW,
-                if (state.relationShipToChild.isNotEmpty) ...[
-                  state.relationShipToChild.appText(
+                Expanded(
+                  child: dobText.appText(
                     fontSize: 14,
-                    color: Colors.black,
+                    color: state.childDob != null
+                        ? Colors.black
+                        : Colors.grey.shade400,
                     fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.start,
                   ),
-                ] else ...[
-                  LocaleKeys.selectRelationship.tr().appText(
-                    fontSize: 14,
-                    color: Colors.grey.shade400,
-                  ),
-                ],
-
-                Spacer(),
-                Icon(Icons.arrow_drop_down),
-                20.spaceW,
+                ),
+                Icon(Icons.calendar_month_rounded, size: 20.sp),
+                16.spaceW,
               ],
             ),
           ),
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (state.relationShipToChildError).appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+        ),
+        4.spaceH,
+        (state.childDobError).appText(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: Colors.red,
+        ),
+      ],
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget childsAge(ChildProfileState state) {
-    return AppDropDownButton(
-      offset: Offset(0, 78.h),
-      dropDownWidget: (close) {
-        List<Widget> widgetsList = [];
-        for (int i = 0; i < state.childAgeList.length; i++) {
-          var age = state.childAgeList[i];
-          widgetsList.add(
-            BaseButton(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(),
-                  8.spaceH,
-                  age.appText(fontWeight: FontWeight.w500).appPadding(left: 16),
-                  8.spaceH,
-                  if (i < state.childAgeList.length - 1)
-                    Divider(height: 0.1, thickness: 0.2),
-                ],
-              ),
-              onTap: () {
-                close.call();
-                context.read<ChildProfileCubit>().changeProps(childAge: age);
-              },
-            ),
-          );
-        }
-
-        return Container(
-          height: 125.h,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.1),
-                blurRadius: 2,
-                spreadRadius: 2,
-                offset: Offset(1, 1),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [...widgetsList],
-          ),
-        );
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LocaleKeys.childAgeStage.tr().appText(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          8.spaceH,
-          Container(
-            height: 55.h,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              children: [
-                16.spaceW,
-
-                if (state.childAge.isNotEmpty) ...[
-                  state.childAge.appText(
-                    fontSize: 14,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ] else ...[
-                  LocaleKeys.selectAge.tr().appText(
-                    fontSize: 14,
-                    color: Colors.grey.shade400,
-                  ),
-                ],
-
-                Spacer(),
-                Icon(Icons.arrow_drop_down),
-                20.spaceW,
-              ],
-            ),
-          ),
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (state.childAgeError).appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    ).appPadding(left: 30, right: 30);
+  Future<void> _pickChildDob() async {
+    final DateTime now = DateTime.now();
+    final DateTime initialDate =
+        context.read<ChildProfileCubit>().state.childDob ??
+        DateTime(now.year - 2, now.month, now.day);
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(now.year - 12, 1, 1),
+      lastDate: now,
+    );
+    if (pickedDate == null) {
+      return;
+    }
+    if (!mounted) {
+      return;
+    }
+    context.read<ChildProfileCubit>().changeProps(
+      childDob: DateTime(pickedDate.year, pickedDate.month, pickedDate.day),
+      childDobError: '',
+    );
   }
 
   Widget _startMyJourney() {
@@ -415,8 +273,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LocaleKeys.startMyJourney
-                .tr()
+            "Continue"
                 .appText(fontWeight: FontWeight.w700)
                 .appPadding(top: 8, bottom: 8),
           ],
@@ -425,54 +282,6 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
       onTap: () {
         context.read<ChildProfileCubit>().addChildDetail(widget.userId);
       },
-    );
-  }
-
-  Widget _signUpWithGoogle() {
-    return BaseButton(
-      child: Container(
-        width: 300,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Assets.icons.icGoogleIcon.image(height: 24, width: 24),
-            20.spaceW,
-            LocaleKeys.signUpWithGoogle
-                .tr()
-                .appText(fontWeight: FontWeight.w700, fontSize: 14)
-                .appPadding(top: 8, bottom: 8),
-          ],
-        ),
-      ),
-      onTap: () {},
-    );
-  }
-
-  Widget _signUpWithApple() {
-    return BaseButton(
-      child: Container(
-        width: 300,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Assets.icons.icAppleIcon.image(height: 24, width: 24),
-            20.spaceW,
-            LocaleKeys.signInWithApple
-                .tr()
-                .appText(fontWeight: FontWeight.w700, fontSize: 14)
-                .appPadding(top: 10, bottom: 10),
-          ],
-        ),
-      ),
-      onTap: () {},
     );
   }
 }

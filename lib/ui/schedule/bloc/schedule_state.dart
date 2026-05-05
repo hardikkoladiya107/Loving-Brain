@@ -15,6 +15,7 @@ abstract class ScheduleState with _$ScheduleState {
     @Default([]) List<SharedEventModel> sharedEventList,
     UserModel? userModel,
     ChildModel? childModel,
+    @Default(false) bool hasLinkedCoParent,
     @Default(ApiResultStatus.initial())
     ApiResultStatus deleteRoutineApiResultStatus,
     @Default(ApiResultStatus.initial())

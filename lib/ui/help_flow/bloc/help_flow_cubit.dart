@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
@@ -208,10 +209,7 @@ class HelpFlowCubit extends Cubit<HelpFlowState> {
       return;
     }
     final int nextFailedAttempts = state.failedAttempts + 1;
-    final int nextIndex = (state.solutionIndex + 1).clamp(
-      0,
-      options.length - 1,
-    );
+    final int nextIndex = (state.solutionIndex + 1) % options.length;
     final _GuidanceSolution next = options[nextIndex];
     changeProps(
       solutionIndex: nextIndex,
@@ -235,8 +233,9 @@ class HelpFlowCubit extends Cubit<HelpFlowState> {
       );
       return;
     }
-    final int ageInMonths = _ageInMonthsFromChildAge(
-      state.childModel?.childAge ?? '',
+    final int ageInMonths = AgeUtils.resolvedAgeInMonths(
+      dob: state.childModel?.childDob,
+      legacyAgeText: state.childModel?.childAge ?? '',
     );
     changeProps(saveApiResultStatus: ApiResultStatus.loading());
     final ApiResultStatus response = await ChildRepo.instance.saveHelpFlowEvent(
@@ -248,20 +247,6 @@ class HelpFlowCubit extends Cubit<HelpFlowState> {
       ageInMonths: ageInMonths,
     );
     changeProps(saveApiResultStatus: response);
-  }
-
-  int _ageInMonthsFromChildAge(String childAge) {
-    final String normalized = childAge.trim().toLowerCase();
-    if (normalized.contains('0-3') || normalized.contains('0 - 3')) {
-      return 18;
-    }
-    if (normalized.contains('3-6') || normalized.contains('3 - 6')) {
-      return 54;
-    }
-    if (normalized.contains('6-9') || normalized.contains('6 - 9')) {
-      return 90;
-    }
-    return 0;
   }
 
   @override

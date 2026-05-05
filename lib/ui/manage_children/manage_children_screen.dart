@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -86,9 +87,7 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
                 20.h.spaceH,
                 _appBar(context),
                 20.h.spaceH,
-                Expanded(
-                  child: _buildBody(context, state),
-                ),
+                Expanded(child: _buildBody(context, state)),
               ],
             ),
           ),
@@ -115,7 +114,6 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
   }
 
   Widget _buildBody(BuildContext context, ManageChildrenState state) {
-
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
@@ -135,11 +133,13 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: state.children.length,
-                  separatorBuilder: (_, __) => 14.h.spaceH,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      14.h.spaceH,
                   itemBuilder: (context, index) {
                     final ChildModel child = state.children[index];
-                    final bool isDefault =
-                        context.read<ManageChildrenCubit>().isDefaultChild(child);
+                    final bool isDefault = context
+                        .read<ManageChildrenCubit>()
+                        .isDefaultChild(child);
                     return _childCard(
                       context: context,
                       child: child,
@@ -263,11 +263,22 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
                   color: Colors.black87,
                 ),
                 4.h.spaceH,
-                if (child.childAge != null && child.childAge!.isNotEmpty)
-                  (child.childAge ?? '').appText(
+                () {
+                  final int ageInMonths = AgeUtils.resolvedAgeInMonths(
+                    dob: child.childDob,
+                    legacyAgeText: child.childAge ?? '',
+                  );
+                  final String ageLabel = AgeUtils.ageLabelFromMonths(
+                    ageInMonths,
+                  );
+                  if (ageLabel.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return ageLabel.appText(
                     fontSize: 13.sp,
                     color: Colors.black54,
-                  ),
+                  );
+                }(),
                 if (child.relationshipToChild != null &&
                     child.relationshipToChild!.isNotEmpty)
                   (child.relationshipToChild ?? '').appText(
@@ -371,7 +382,9 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
                       child: BaseButton(
                         onTap: () {
                           dialogContext.pop();
-                          context.read<ManageChildrenCubit>().deleteChild(child);
+                          context.read<ManageChildrenCubit>().deleteChild(
+                            child,
+                          );
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -403,7 +416,10 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
     final bool? added = await context.push<bool>(
       RoutePaths.childProfilePath(uid, fromManageChildren: true),
     );
-    if (added == true && mounted) {
+    if (!context.mounted) {
+      return;
+    }
+    if (added == true) {
       context.read<ManageChildrenCubit>().init();
     }
   }

@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/other/extra_methods.dart';
+import 'package:loving_brain/repo/child_repo.dart';
+import 'package:loving_brain/repo/energy_bridge_repo.dart';
 import 'package:loving_brain/repo/user_repo.dart';
 
 import '../../../model/child_model.dart';
@@ -91,6 +94,7 @@ class HomeCubit extends Cubit<HomeState> {
   void dispose() {
     profileSubscription?.cancel();
     moodSubscription?.cancel();
+    childSubscription?.cancel();
   }
 
   Future<void> _updateStreak() async {
@@ -120,5 +124,43 @@ class HomeCubit extends Cubit<HomeState> {
   /// Call from pull-to-refresh to reload tip and keep UI in sync.
   Future<void> refresh() async {
     await _loadTodayParentingTip();
+  }
+
+  Future<ApiResultStatus> updateFamilyMeterState({
+    required ChildState childState,
+  }) async {
+    final String childId =
+        state.childModel?.reference?.id ??
+        state.userModel?.defaultChild?.id ??
+        '';
+    final String uid = state.userModel?.uid ?? '';
+    if (childId.isEmpty || uid.isEmpty) {
+      return ApiResultStatus.error(error: Exception('Please select child.'));
+    }
+
+    final ApiResultStatus stateResult = await ChildRepo.instance
+        .updateChildState(
+          childId: childId,
+          childState: childState,
+          actorUid: uid,
+        );
+    bool stateSaved = false;
+    stateResult.whenOrNull(data: (dynamic data) => stateSaved = true);
+    if (!stateSaved) {
+      return stateResult;
+    }
+
+    if (childState == ChildState.highEnergy) {
+      return EnergyBridgeRepo.instance.startTimer(
+        childId: childId,
+        actorUid: uid,
+        durationMinutes: 105,
+      );
+    }
+    return EnergyBridgeRepo.instance.resetTimer(
+      childId: childId,
+      actorUid: uid,
+      reason: childState.key,
+    );
   }
 }

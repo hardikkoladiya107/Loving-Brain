@@ -54,6 +54,8 @@ Future<void> main() async {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -88,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         splitScreenMode: true,
         child: MaterialApp.router(
           routerConfig: _router,
+          scaffoldMessengerKey: scaffoldMessengerKey,
           title: LocaleKeys.appName.tr(),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: context.localizationDelegates,

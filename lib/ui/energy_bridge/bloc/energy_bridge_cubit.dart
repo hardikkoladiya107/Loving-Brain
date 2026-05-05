@@ -102,7 +102,7 @@ class EnergyBridgeCubit extends Cubit<EnergyBridgeState> {
           id: _notificationIdForChild(childId),
           title: "Energy Bridge",
           body: "Time to slow things down.",
-          payload: "energy_bridge:$childId",
+          payload: "energy_bridge",
         );
       },
     );
