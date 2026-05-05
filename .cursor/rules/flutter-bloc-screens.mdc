@@ -1,0 +1,36 @@
+---
+description: Cubit, Freezed state, BlocConsumer, ApiResultStatus (Flutter)
+globs:
+  - lib/**/*_cubit.dart
+  - lib/**/*_state.dart
+  - lib/ui/**/*.dart
+alwaysApply: false
+---
+
+# BLoC / Cubit + screens
+
+## Cubit
+
+- Every cubit: **`init()`** (initial state + listeners) and **`changeProps(...)`** — prefer **not** calling `emit()` outside `changeProps` / controlled `init` setup; align with existing cubits in the repo.
+- **`WidgetsBinding.instance.addPostFrameCallback`** in screen `initState` before calling `context.read<MyCubit>().init()`.
+
+## Streams
+
+- Field: `StreamSubscription<T>? _subscription;`
+- Before new listen: `_subscription?.cancel();`
+- In `close()`: `_subscription?.cancel();` then `super.close()`.
+
+## Screens + Bloc
+
+- Wrap the screen in **`BlocConsumer`** (not `BlocBuilder` only) so **listener** handles side effects; **builder** returns **`Scaffold`** (consumer wraps scaffold, not the reverse).
+
+## ApiResultStatus (critical)
+
+- In **Freezed state**: use plain **`ApiResultStatus`** (no generic on the field). Default: `@Default(ApiResultStatus.initial()) ApiResultStatus myOpStatus`.
+- Store **real data** in separate fields (`List<Item> items`, etc.) — not inside `ApiResultStatus` for UI lists.
+- **Listeners only**: `state.myOpStatus.whenOrNull(loading: ..., data: ..., error: ...)` for EasyLoading + snackbars + navigation.
+- **Builders**: use **data fields only** — e.g. `state.items.isEmpty ? EmptyState() : ListView(...)` — **no** status checks, **no** loading UI in builder.
+
+## Repo vs cubit
+
+- Async I/O and exceptions: **repositories** return `Future<ApiResultStatus<...>>` (or project’s equivalent). Cubits orchestrate and call `changeProps`.

@@ -42,6 +42,9 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
+  static const Duration _kTabAnimDuration = Duration(milliseconds: 300);
+  static const Curve _kTabAnimCurve = Curves.easeOutCubic;
+
   @override
   void initState() {
     super.initState();
@@ -202,86 +205,133 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Widget _tabBar(BuildContext context, ScheduleState state) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24.w),
-      height: 52.h,
-      decoration: BoxDecoration(
-        color: greyColor3.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(100.r),
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    final int tabIndex = state.tabIndex.clamp(0, 1);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Container(
+        height: 52.h,
+        decoration: BoxDecoration(
+          color: greyColor3.withValues(alpha: 0.45),
+          borderRadius: BorderRadius.circular(100.r),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.85),
+            width: 1.5,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _tabItem(
-              label: LocaleKeys.dailyRoutine.tr(),
-              isSelected: state.tabIndex == 0,
-              onTap: () =>
-                  context.read<ScheduleCubit>().changeProps(tabIndex: 0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: Offset(0, 4.h),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100.r),
+          child: Padding(
+            padding: EdgeInsets.all(4.w),
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double segmentWidth = constraints.maxWidth / 2;
+                return Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+                    AnimatedAlign(
+                      duration: _kTabAnimDuration,
+                      curve: _kTabAnimCurve,
+                      alignment: tabIndex == 0
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
+                      child: SizedBox(
+                        width: segmentWidth,
+                        height: constraints.maxHeight,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: <Color>[
+                                scheduleButtonColor1,
+                                scheduleButtonColor2,
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(100.r),
+                            boxShadow: <BoxShadow>[
+                              BoxShadow(
+                                color: scheduleButtonColor1
+                                    .withValues(alpha: 0.32),
+                                blurRadius: 10,
+                                offset: Offset(0, 3.h),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: _scheduleTabLabel(
+                            label: LocaleKeys.dailyRoutine.tr(),
+                            selected: tabIndex == 0,
+                            onTap: () => context
+                                .read<ScheduleCubit>()
+                                .changeProps(tabIndex: 0),
+                          ),
+                        ),
+                        Expanded(
+                          child: _scheduleTabLabel(
+                            label: LocaleKeys.coParentingSchedule.tr(),
+                            selected: tabIndex == 1,
+                            onTap: () => context
+                                .read<ScheduleCubit>()
+                                .changeProps(tabIndex: 1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-          Expanded(
-            child: _tabItem(
-              label: LocaleKeys.coParentingSchedule.tr(),
-              isSelected: state.tabIndex == 1,
-              onTap: () =>
-                  context.read<ScheduleCubit>().changeProps(tabIndex: 1),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _tabItem({
+  Widget _scheduleTabLabel({
     required String label,
-    required bool isSelected,
-    required VoidCallback? onTap,
+    required bool selected,
+    required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-        margin: EdgeInsets.all(4.w),
-        decoration: BoxDecoration(
-          color: isSelected ? null : Colors.transparent,
-          gradient: isSelected
-              ? const LinearGradient(
-                  colors: [scheduleButtonColor1, scheduleButtonColor2],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          borderRadius: BorderRadius.circular(100.r),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: scheduleButtonColor1.withValues(alpha: 0.35),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: getTextStyle(
-            fontSize: 13.sp,
-            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-            color: isSelected ? Colors.white : greyColor1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(100.r),
+        splashColor: scheduleButtonColor1.withValues(alpha: 0.15),
+        highlightColor: scheduleButtonColor1.withValues(alpha: 0.08),
+        child: SizedBox(
+          height: double.infinity,
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: AnimatedDefaultTextStyle(
+                duration: _kTabAnimDuration,
+                curve: _kTabAnimCurve,
+                style: getTextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+                  color: selected ? Colors.white : greyColor1,
+                ),
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
           ),
         ),
       ),

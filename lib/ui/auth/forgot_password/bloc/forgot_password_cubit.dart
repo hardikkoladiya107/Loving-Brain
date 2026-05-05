@@ -18,23 +18,27 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     String? emailAddress,
     String? emailAddressError,
     ApiResultStatus? apiResultStatus,
+    bool? isAuthSubmitting,
   }) {
     emit(
       state.copyWith(
         emailAddress: emailAddress ?? state.emailAddress,
         emailAddressError: emailAddressError ?? state.emailAddressError,
         apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
+        isAuthSubmitting: isAuthSubmitting ?? state.isAuthSubmitting,
       ),
     );
   }
 
   Future<void> performForgotPassword() async {
     if (_isValidate()) {
-      changeProps(apiResultStatus: ApiResultStatus.loading());
-      var apiResult = await AuthRepo.instance.sendPasswordResetEmail(
-        email: state.emailAddress,
+      changeProps(
+        apiResultStatus: ApiResultStatus.loading(),
+        isAuthSubmitting: true,
       );
-      changeProps(apiResultStatus: apiResult);
+      final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
+          .sendPasswordResetEmail(email: state.emailAddress);
+      changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
     }
   }
 

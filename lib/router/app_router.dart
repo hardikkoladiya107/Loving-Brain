@@ -38,9 +38,7 @@ import 'package:loving_brain/ui/thought_list/thought_list_scren.dart';
 import 'package:loving_brain/ui/chat_detail/chat_detail_screen.dart';
 import 'package:loving_brain/ui/add_shared_event/add_shared_event_screen.dart';
 import 'package:loving_brain/ui/link_co_parent/link_co_parent_screen.dart';
-import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/model/shared_event_model.dart';
-
 
 class AppRouter {
   AppRouter._();
@@ -54,7 +52,9 @@ class AppRouter {
             preferences.getBool(SharedPreference.isLogin) ?? false;
         final String location = state.uri.path;
 
-        const Set<String> guestRoutes = <String>{
+        // Auth / onboarding only: logged-in users are sent to the app shell.
+        // Terms and privacy stay reachable from profile (do not list them here).
+        const Set<String> authFlowRoutes = <String>{
           RoutePaths.splash,
           RoutePaths.welcome,
           RoutePaths.onboarding1,
@@ -63,11 +63,9 @@ class AppRouter {
           RoutePaths.login,
           RoutePaths.register,
           RoutePaths.forgotPassword,
-          RoutePaths.terms,
-          RoutePaths.privacy,
         };
 
-        if (isLoggedIn && guestRoutes.contains(location)) {
+        if (isLoggedIn && authFlowRoutes.contains(location)) {
           return RoutePaths.base;
         }
 
@@ -77,7 +75,6 @@ class AppRouter {
         return null;
       },
       routes: <RouteBase>[
-
         GoRoute(
           path: RoutePaths.subscription,
           builder: (BuildContext context, GoRouterState state) =>
@@ -196,12 +193,12 @@ class AppRouter {
           builder: (BuildContext context, GoRouterState state) =>
               const LinkCoParentScreen(),
         ),
+
         // GoRoute(
         //   path: RoutePaths.successScreen,
         //   builder: (BuildContext context, GoRouterState state) =>
         //       const SuccessScreen(),
         // ),
-
         GoRoute(
           path: RoutePaths.splash,
           builder: (BuildContext context, GoRouterState state) =>

@@ -1,11 +1,9 @@
 import 'package:go_router/go_router.dart';
-import 'dart:ui';
 import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -137,7 +135,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               32.spaceH,
                               _email(state),
                               40.spaceH,
-                              _resetButton(),
+                              _resetButton(state),
                             ],
                           ),
                         ).appPadding(left: 20, right: 20),
@@ -173,11 +171,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       listener: (context, state) {
         state.apiResultStatus.whenOrNull(
           initial: () {},
-          loading: () {
-            EasyLoading.show();
-          },
+          loading: () {},
           data: (data) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: LocaleKeys.weSentYouMailToResetYourPassword.tr(),
               type: SnackBarType.SUCCESS,
@@ -186,7 +181,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             context.pop();
           },
           error: (Exception error) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: error.toString().replaceAll("Exception: ", ""),
               type: SnackBarType.ERROR,
@@ -216,8 +210,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     ).appPadding(left: 24, right: 24);
   }
 
-  Widget _resetButton() {
+  Widget _resetButton(ForgotPasswordState state) {
+    final bool submitting = state.isAuthSubmitting;
     return BaseButton(
+      onTap: submitting
+          ? null
+          : () {
+              context.read<ForgotPasswordCubit>().performForgotPassword();
+            },
       child: Container(
         decoration: BoxDecoration(
           color: primaryColor,
@@ -233,18 +233,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LocaleKeys.sendResetEmail.tr().appText(
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-              letterSpacing: 0.5,
-              color: Colors.white,
-            ),
+            if (submitting)
+              SizedBox(
+                height: 22.r,
+                width: 22.r,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            else
+              LocaleKeys.sendResetEmail.tr().appText(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                letterSpacing: 0.5,
+                color: Colors.white,
+              ),
           ],
         ).appPadding(top: 14.h, bottom: 14.h),
       ),
-      onTap: () {
-        context.read<ForgotPasswordCubit>().performForgotPassword();
-      },
     ).appPadding(left: 32, right: 32);
   }
 }

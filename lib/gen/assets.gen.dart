@@ -11,6 +11,19 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsHtmlGen {
+  const $AssetsHtmlGen();
+
+  /// File path: assets/html/privacy_policy.html
+  String get privacyPolicy => 'assets/html/privacy_policy.html';
+
+  /// File path: assets/html/terms_and_conditions.html
+  String get termsAndConditions => 'assets/html/terms_and_conditions.html';
+
+  /// List of all assets
+  List<String> get values => [privacyPolicy, termsAndConditions];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -769,6 +782,7 @@ class $AssetsTranslationsGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsHtmlGen html = $AssetsHtmlGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();

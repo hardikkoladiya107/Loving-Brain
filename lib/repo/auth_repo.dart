@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -366,16 +367,29 @@ class AuthRepo {
 
   Future<ApiResultStatus> signInWithGoogle() async {
     try {
-      var googleSignInAccount = await GoogleSignInManager.instance
+      final googleSignInAccount = await GoogleSignInManager.instance
           .authenticate();
       if (googleSignInAccount == null) {
         return ApiResultStatus.error(
-          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+          error: Exception('Google Sign-In returned empty account.'),
+        );
+      }
+
+      final googleAuthentication = googleSignInAccount.authentication;
+      final String? idToken = googleAuthentication.idToken;
+      if (idToken == null) {
+        debugPrint(
+          'Google Sign-In token error: idToken is null for email=${googleSignInAccount.email}',
+        );
+        return ApiResultStatus.error(
+          error: Exception(
+            'Google Sign-In failed: idToken is null. Check Firebase OAuth and SHA configuration.',
+          ),
         );
       }
 
       final credential = GoogleAuthProvider.credential(
-        idToken: googleSignInAccount.authentication.idToken,
+        idToken: idToken,
       );
       final signInUser = await FirebaseAuth.instance.signInWithCredential(
         credential,
@@ -417,9 +431,18 @@ class AuthRepo {
           error: Exception(LocaleKeys.userNotFound.tr()),
         );
       }
+    } on FirebaseAuthException catch (e) {
+      final String message =
+          'FirebaseAuth Google Sign-In failed. code=${e.code}, message=${e.message ?? "no_message"}';
+      debugPrint(message);
+      return ApiResultStatus.error(error: Exception(message));
     } on FirebaseException catch (e) {
-      return onFirebaseException(e);
+      final String message =
+          'Firebase Google Sign-In failed. code=${e.code}, message=${e.message ?? "no_message"}';
+      debugPrint(message);
+      return ApiResultStatus.error(error: Exception(message));
     } on Exception catch (e) {
+      debugPrint('Google Sign-In exception in AuthRepo: $e');
       return ApiResultStatus.error(error: e);
     }
   }

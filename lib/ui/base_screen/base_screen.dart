@@ -36,8 +36,11 @@ class _BaseScreenState extends State<BaseScreen> {
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Colors.white,
-          extendBody: false, // Prevents content from rendering under the nav bar
+          // Match primary tabs so any gap under transparent layers is neutral.
+          backgroundColor: const Color(0xFFFAFAFA),
+          // Lets tab bodies paint under the nav slot; removes the full-width white
+          // “plate” behind the pill’s transparent margins (Scaffold Material is full-screen).
+          extendBody: true,
           body: IndexedStack(
             index: state.bottomNavigationIndex,
             children: const [
@@ -55,79 +58,81 @@ class _BaseScreenState extends State<BaseScreen> {
   }
 
   Widget _floatingBottomNavigation(BuildContext context, BaseState state) {
-    return Container(
-      color: Colors.transparent,
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: 20.w,
-          right: 20.w,
-          bottom: MediaQuery.of(context).padding.bottom + 16.h,
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20.w,
+        right: 20.w,
+        bottom: MediaQuery.of(context).padding.bottom + 16.h,
+      ),
+      child: Container(
+        height: 68.h,
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(100.r), // pill shaped
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              offset: const Offset(0, 15),
+              blurRadius: 30,
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              offset: const Offset(0, 5),
+              blurRadius: 10,
+            ),
+          ],
         ),
-        child: Container(
-          height: 68.h,
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(100.r), // pill shaped
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                offset: const Offset(0, 15),
-                blurRadius: 30,
-                spreadRadius: 2,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _animatedNavItem(
+              index: 0,
+              selectedIndex: state.bottomNavigationIndex,
+              icon: Icons.home_rounded,
+              title: "Home",
+              onTap: () => context.read<BaseCubit>().changeProps(
+                bottomNavigationIndex: 0,
               ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                offset: const Offset(0, 5),
-                blurRadius: 10,
+            ),
+            _animatedNavItem(
+              index: 1,
+              selectedIndex: state.bottomNavigationIndex,
+              icon: Icons.calendar_month_rounded,
+              title: "Schedules",
+              onTap: () => context.read<BaseCubit>().changeProps(
+                bottomNavigationIndex: 1,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _animatedNavItem(
-                index: 0,
-                selectedIndex: state.bottomNavigationIndex,
-                icon: Icons.home_rounded,
-                title: "Home",
-                onTap: () =>
-                    context.read<BaseCubit>().changeProps(bottomNavigationIndex: 0),
+            ),
+            _animatedNavItem(
+              index: 2,
+              selectedIndex: state.bottomNavigationIndex,
+              icon: Icons.auto_awesome_rounded,
+              title: "Brain AI",
+              onTap: () => context.read<BaseCubit>().changeProps(
+                bottomNavigationIndex: 2,
               ),
-              _animatedNavItem(
-                index: 1,
-                selectedIndex: state.bottomNavigationIndex,
-                icon: Icons.calendar_month_rounded,
-                title: "Schedules",
-                onTap: () =>
-                    context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1),
+            ),
+            _animatedNavItem(
+              index: 3,
+              selectedIndex: state.bottomNavigationIndex,
+              icon: Icons.menu_book_rounded,
+              title: "Journal",
+              onTap: () => context.read<BaseCubit>().changeProps(
+                bottomNavigationIndex: 3,
               ),
-              _animatedNavItem(
-                index: 2,
-                selectedIndex: state.bottomNavigationIndex,
-                icon: Icons.auto_awesome_rounded,
-                title: "Brain AI",
-                onTap: () =>
-                    context.read<BaseCubit>().changeProps(bottomNavigationIndex: 2),
+            ),
+            _animatedNavItem(
+              index: 4,
+              selectedIndex: state.bottomNavigationIndex,
+              icon: Icons.account_circle_rounded,
+              title: "Profile",
+              onTap: () => context.read<BaseCubit>().changeProps(
+                bottomNavigationIndex: 4,
               ),
-              _animatedNavItem(
-                index: 3,
-                selectedIndex: state.bottomNavigationIndex,
-                icon: Icons.menu_book_rounded,
-                title: "Journal",
-                onTap: () =>
-                    context.read<BaseCubit>().changeProps(bottomNavigationIndex: 3),
-              ),
-              _animatedNavItem(
-                index: 4,
-                selectedIndex: state.bottomNavigationIndex,
-                icon: Icons.account_circle_rounded,
-                title: "Profile",
-                onTap: () =>
-                    context.read<BaseCubit>().changeProps(bottomNavigationIndex: 4),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -155,7 +160,9 @@ class _BaseScreenState extends State<BaseScreen> {
           vertical: 12.h,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(100.r),
         ),
         child: Row(
@@ -163,7 +170,8 @@ class _BaseScreenState extends State<BaseScreen> {
           children: [
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+              transitionBuilder: (child, anim) =>
+                  ScaleTransition(scale: anim, child: child),
               child: Icon(
                 icon,
                 key: ValueKey(isSelected),

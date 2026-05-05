@@ -1,0 +1,14 @@
+---
+description: Firebase Cloud Functions — logging, validation, notifications
+globs:
+  - functions/**/*.js
+alwaysApply: false
+---
+
+# Firebase Functions (`functions/`)
+
+- **Logging**: `firebase-functions/logger` (`logger.info`, `logger.warn`, `logger.error`) — not `console.log`.
+- **HTTP / onRequest**: validate inputs early; on failure return **400** + JSON like `{ success: false, error: "message" }`.
+- **Notifications**: use **`sendNotification`** from `functions/notification.js` — do not duplicate FCM payload wiring in `index.js` unless extending the helper.
+- **Timezones**: many flows use a **fixed IST offset** (`5.5 * 60 * 60 * 1000`). Stay consistent unless deliberately migrating to a timezone library.
+- Split complex logic into **modules** (controllers/services) instead of growing `index.js` without bound.

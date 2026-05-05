@@ -396,5 +396,14 @@
   "energyBridgeTransitionBody": "Your child has been highly active for over 105 minutes. It's time to start a calming activity to prevent a crash.",
   "energyBridgePlayCalmingVideo": "Play Calming Video",
   "energyBridgeMinutesBeforeShift": "~{minutes} mins before shift",
-  "energyBridgeConnectEnergy": "Connect energy"
+  "energyBridgeConnectEnergy": "Connect energy",
+  "homeGreetingGoodMorning": "Good morning",
+  "homeGreetingGoodAfternoon": "Good afternoon",
+  "homeGreetingGoodEvening": "Good evening",
+  "homeGreetingGoodNight": "Good night",
+  "journalCanvasTitle": "Journal",
+  "journalCanvasSubtitle": "Drag notes anywhere. Pinch to zoom your canvas.",
+  "journalEntryCountOne": "1 note",
+  "journalEntryCountMany": "{count} notes",
+  "journalAddEntry": "Add note"
 }

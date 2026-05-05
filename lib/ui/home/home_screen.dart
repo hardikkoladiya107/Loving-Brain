@@ -25,6 +25,7 @@ import 'package:loving_brain/ui/energy_bridge/bloc/energy_bridge_state.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/core/home_time_greeting.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -35,20 +36,32 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Timer? _bridgeTicker;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     context.read<HomeCubit>().init();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<EnergyBridgeCubit>().init();
     });
+    // Refreshes time-based UI (greeting, bridge copy) at least once per minute.
     _bridgeTicker = Timer.periodic(const Duration(minutes: 1), (Timer timer) {
-      if (mounted) setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed && mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -328,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${_getGreetingText()},",
+                              "${homeGreetingLocaleKey(DateTime.now()).tr()},",
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -356,7 +369,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () => context.push(RoutePaths.yourStreak),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 10),
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.18),
                             borderRadius: BorderRadius.circular(20),
@@ -369,7 +384,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Assets.icons.icStreakFire.image(
-                                  height: 20, width: 20),
+                                height: 20,
+                                width: 20,
+                              ),
                               6.spaceW,
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +406,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white.withValues(alpha: 0.75),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.75,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -406,7 +425,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Schedule row inside translucent card
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 13),
+                      horizontal: 14,
+                      vertical: 13,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
@@ -440,8 +461,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               if (routine != null) ...[
                                 Text(
-                                  DateFormat('hh:mm a')
-                                      .format(routine.timeStamp!),
+                                  DateFormat(
+                                    'hh:mm a',
+                                  ).format(routine.timeStamp!),
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
@@ -485,13 +507,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         10.spaceW,
                         // View button
                         BaseButton(
-                          onTap: () =>
-                              context.read<BaseCubit>().changeProps(
-                                bottomNavigationIndex: 1,
-                              ),
+                          onTap: () => context.read<BaseCubit>().changeProps(
+                            bottomNavigationIndex: 1,
+                          ),
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(14),
@@ -525,22 +548,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String _getGreetingText() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return "Good Morning";
-    if (hour < 17) return "Good Afternoon";
-    return "Good Evening";
-  }
-
-  String _getGreetingEmoji() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return "☀️";
-    if (hour < 17) return "🌤️";
-    return "🌙";
-  }
-
   Widget _quickActionsGrid() {
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -831,6 +839,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _bridgeTicker?.cancel();
     if (navigatorKey.currentContext != null) {
       navigatorKey.currentContext!.read<HomeCubit>().dispose();

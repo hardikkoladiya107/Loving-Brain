@@ -369,5 +369,32 @@ abstract class  LocaleKeys {
   static const addYourFirstChild = 'addYourFirstChild';
   static const removeChild = 'removeChild';
   static const areYouSureYouWantToRemoveChild = 'areYouSureYouWantToRemoveChild';
+  static const cannotInviteYourself = 'cannotInviteYourself';
+  static const invitationAlreadySent = 'invitationAlreadySent';
+  static const energyBridgeTitle = 'energyBridgeTitle';
+  static const energyBridgeSessionActive = 'energyBridgeSessionActive';
+  static const energyBridgeTantrumStopper = 'energyBridgeTantrumStopper';
+  static const energyBridgeIntro = 'energyBridgeIntro';
+  static const energyBridgeMode = 'energyBridgeMode';
+  static const energyBridgeRunning = 'energyBridgeRunning';
+  static const energyBridgeReady = 'energyBridgeReady';
+  static const energyBridgeActiveBadge = 'energyBridgeActiveBadge';
+  static const energyBridgeIdleBadge = 'energyBridgeIdleBadge';
+  static const energyBridgeTip = 'energyBridgeTip';
+  static const energyBridgeElapsed = 'energyBridgeElapsed';
+  static const energyBridgeNotificationIn = 'energyBridgeNotificationIn';
+  static const energyBridgeCardActive = 'energyBridgeCardActive';
+  static const energyBridgeCancelTimer = 'energyBridgeCancelTimer';
+  static const energyBridgeStartPlay = 'energyBridgeStartPlay';
+  static const energyBridgeFiredMessage = 'energyBridgeFiredMessage';
+  static const energyBridgeTimeToTransition = 'energyBridgeTimeToTransition';
+  static const energyBridgeTransitionBody = 'energyBridgeTransitionBody';
+  static const energyBridgePlayCalmingVideo = 'energyBridgePlayCalmingVideo';
+  static const energyBridgeMinutesBeforeShift = 'energyBridgeMinutesBeforeShift';
+  static const energyBridgeConnectEnergy = 'energyBridgeConnectEnergy';
+  static const homeGreetingGoodMorning = 'homeGreetingGoodMorning';
+  static const homeGreetingGoodAfternoon = 'homeGreetingGoodAfternoon';
+  static const homeGreetingGoodEvening = 'homeGreetingGoodEvening';
+  static const homeGreetingGoodNight = 'homeGreetingGoodNight';
 
 }

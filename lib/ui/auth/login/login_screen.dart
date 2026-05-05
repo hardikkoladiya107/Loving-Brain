@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -136,16 +135,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               8.spaceH,
                               _forgotPassword(),
                               24.spaceH,
-                              _loginButton(),
+                              _loginButton(state),
                               20.spaceH,
                               _dontHaveAccount(),
                             ],
                           ),
                         ).appPadding(left: 20, right: 20),
                         30.spaceH,
-                        _signUpWithGoogle(),
+                        _signUpWithGoogle(state),
                         16.spaceH,
-                        if (Platform.isIOS) _signUpWithApple(),
+                        if (Platform.isIOS) _signUpWithApple(state),
                         60.spaceH,
                         _buildTermsText(),
                         40.spaceH,
@@ -161,26 +160,39 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         state.apiResultStatus.whenOrNull(
           initial: () {},
-          loading: () {
-            EasyLoading.show();
-          },
+          loading: () {},
           data: (data) {
             _loggedInSuccess(data);
           },
           error: (Exception error) {
-            EasyLoading.dismiss();
-            showSnackBar(
-              message: error.toString().replaceAll("Exception: ", ""),
-              type: SnackBarType.ERROR,
+            final String message = error.toString().replaceAll(
+              "Exception: ",
+              "",
             );
+            final String normalizedMessage = message.toLowerCase();
+            final bool isGoogleSignInCancelled =
+                normalizedMessage.contains('code=canceled') ||
+                normalizedMessage.contains('cancelled by the user') ||
+                normalizedMessage.contains('canceled');
+            if (isGoogleSignInCancelled) {
+              return;
+            }
+            showSnackBar(message: message, type: SnackBarType.ERROR);
           },
         );
       },
     );
   }
 
-  Widget _signUpWithGoogle() {
+  Widget _signUpWithGoogle(LoginState state) {
+    final bool isLoading = state.submittingAction == LoginSubmitAction.google;
+    final bool authBusy = state.submittingAction != LoginSubmitAction.idle;
     return BaseButton(
+      onTap: authBusy
+          ? null
+          : () {
+              context.read<LoginCubit>().googleAuthenticate();
+            },
       child: Container(
         width: 310.w,
         decoration: BoxDecoration(
@@ -199,28 +211,39 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Assets.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
-            LocaleKeys.continueWithGoogle
-                .tr()
-                .appText(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: Colors.black87,
-                )
-                .appPadding(top: 14.h, bottom: 14.h),
+            if (isLoading)
+              SizedBox(
+                height: 20.r,
+                width: 20.r,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: primaryColor,
+                ),
+              ).appPadding(top: 14.h, bottom: 14.h)
+            else
+              LocaleKeys.continueWithGoogle
+                  .tr()
+                  .appText(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.black87,
+                  )
+                  .appPadding(top: 14.h, bottom: 14.h),
           ],
         ),
       ),
-      onTap: () {
-        context.read<LoginCubit>().googleAuthenticate();
-      },
     );
   }
 
-  Widget _signUpWithApple() {
+  Widget _signUpWithApple(LoginState state) {
+    final bool isLoading = state.submittingAction == LoginSubmitAction.apple;
+    final bool authBusy = state.submittingAction != LoginSubmitAction.idle;
     return BaseButton(
-      onTap: () {
-        context.read<LoginCubit>().signInWithApple();
-      },
+      onTap: authBusy
+          ? null
+          : () {
+              context.read<LoginCubit>().signInWithApple();
+            },
       child: Container(
         width: 310.w,
         decoration: BoxDecoration(
@@ -239,14 +262,24 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             Assets.icons.icAppleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
-            LocaleKeys.continueWithApple
-                .tr()
-                .appText(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: Colors.black87,
-                )
-                .appPadding(top: 14.h, bottom: 14.h),
+            if (isLoading)
+              SizedBox(
+                height: 20.r,
+                width: 20.r,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: primaryColor,
+                ),
+              ).appPadding(top: 14.h, bottom: 14.h)
+            else
+              LocaleKeys.continueWithApple
+                  .tr()
+                  .appText(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                    color: Colors.black87,
+                  )
+                  .appPadding(top: 14.h, bottom: 14.h),
           ],
         ),
       ),
@@ -291,8 +324,15 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _loginButton() {
+  Widget _loginButton(LoginState state) {
+    final bool isLoading = state.submittingAction == LoginSubmitAction.email;
+    final bool authBusy = state.submittingAction != LoginSubmitAction.idle;
     return BaseButton(
+      onTap: authBusy
+          ? null
+          : () {
+              context.read<LoginCubit>().performLogin();
+            },
       child: Container(
         decoration: BoxDecoration(
           color: primaryColor,
@@ -308,18 +348,25 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LocaleKeys.login.tr().appText(
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-              letterSpacing: 0.5,
-              color: Colors.white,
-            ),
+            if (isLoading)
+              SizedBox(
+                height: 22.r,
+                width: 22.r,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            else
+              LocaleKeys.login.tr().appText(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                letterSpacing: 0.5,
+                color: Colors.white,
+              ),
           ],
         ).appPadding(top: 14.h, bottom: 14.h),
       ),
-      onTap: () {
-        context.read<LoginCubit>().performLogin();
-      },
     ).appPadding(left: 32, right: 32);
   }
 
@@ -421,7 +468,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
-    EasyLoading.dismiss();
     final UserModel userModel = UserModel.fromJson(data);
     final GoRouter router = GoRouter.of(context);
     await preferences.saveUserModel(userModel);

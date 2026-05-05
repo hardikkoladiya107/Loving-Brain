@@ -25,6 +25,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     String? confirmPasswordError,
     bool? isTermsAndConditionAccepted,
     ApiResultStatus? apiResultStatus,
+    bool? isAuthSubmitting,
   }) {
     emit(
       state.copyWith(
@@ -41,6 +42,7 @@ class RegisterCubit extends Cubit<RegisterState> {
             confirmPasswordError ?? state.confirmPasswordError,
         isTermsAndConditionAccepted:
             isTermsAndConditionAccepted ?? state.isTermsAndConditionAccepted,
+        isAuthSubmitting: isAuthSubmitting ?? state.isAuthSubmitting,
       ),
     );
   }
@@ -103,7 +105,10 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   Future<void> register() async {
     if (_isValidate()) {
-      changeProps(apiResultStatus: ApiResultStatus.loading());
+      changeProps(
+        apiResultStatus: ApiResultStatus.loading(),
+        isAuthSubmitting: true,
+      );
       if (await AuthRepo.instance.isAccountExistWithEmail(
         email: state.emailAddress.trim(),
       )) {
@@ -111,14 +116,16 @@ class RegisterCubit extends Cubit<RegisterState> {
           apiResultStatus: ApiResultStatus.error(
             error: Exception(LocaleKeys.accountAlreadyExists.tr()),
           ),
+          isAuthSubmitting: false,
         );
         return;
       }
-      final credential = await AuthRepo.instance.createUserWithEmailAndPassword(
-        email: state.emailAddress.trim(),
-        password: state.password.trim(),
-      );
-      changeProps(apiResultStatus: credential);
+      final ApiResultStatus<dynamic> credential = await AuthRepo.instance
+          .createUserWithEmailAndPassword(
+            email: state.emailAddress.trim(),
+            password: state.password.trim(),
+          );
+      changeProps(apiResultStatus: credential, isAuthSubmitting: false);
     }
   }
 
@@ -134,6 +141,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       confirmPasswordError: "",
       isTermsAndConditionAccepted: false,
       apiResultStatus: ApiResultStatus.initial(),
+      isAuthSubmitting: false,
     );
   }
 }

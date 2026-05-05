@@ -40,6 +40,7 @@ Future<void> main() async {
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await GoogleSignInManager.instance.initialise();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
     EasyLocalization(
@@ -68,7 +69,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initNotification();
-      GoogleSignInManager.instance.initialise();
     });
     super.initState();
   }

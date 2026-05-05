@@ -10,5 +10,6 @@ abstract class ForgotPasswordState with _$ForgotPasswordState {
     @Default("") String emailAddress,
     @Default("") String emailAddressError,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
+    @Default(false) bool isAuthSubmitting,
   }) = _ForgotPasswordState;
 }

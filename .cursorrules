@@ -1,5 +1,7 @@
 # Flutter Project - Cursor Rules
 
+**Cursor agent rules (preferred):** structured, scoped rules live in **`.cursor/rules/*.mdc`** (see that folder first). This file is the extended reference for the same conventions.
+
 ## Project Overview
 
 This Flutter project uses BLoC pattern with Cubit for state management, Freezed for immutable state classes, and follows a clean architecture approach with repository pattern. The backend is powered by Firebase Functions (Node.js).

@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -218,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               16.spaceH,
                               _termsAndConditions(state),
                               32.spaceH,
-                              _registerButton(),
+                              _registerButton(state),
                               20.spaceH,
                               BaseButton(
                                 child: Row(
@@ -254,17 +253,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       listener: (context, state) {
         state.apiResultStatus.whenOrNull(
           initial: () {},
-          loading: () {
-            EasyLoading.show();
-          },
+          loading: () {},
           data: (data) {
             context.read<RegisterCubit>().clearFields();
-            EasyLoading.dismiss();
             if (!mounted) return;
             context.go(RoutePaths.parentProfile);
           },
           error: (Exception error) {
-            EasyLoading.dismiss();
             showSnackBar(
               message: error.toString().replaceAll("Exception: ", ""),
               type: SnackBarType.ERROR,
@@ -313,8 +308,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     ).appPadding(left: 30, right: 30);
   }
 
-  Widget _registerButton() {
+  Widget _registerButton(RegisterState state) {
+    final bool submitting = state.isAuthSubmitting;
     return BaseButton(
+      onTap: submitting
+          ? null
+          : () {
+              context.read<RegisterCubit>().register();
+            },
       child: Container(
         width: 250.w,
         decoration: BoxDecoration(
@@ -331,18 +332,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LocaleKeys.register.tr().appText(
-              fontWeight: FontWeight.w800,
-              fontSize: 16,
-              letterSpacing: 0.5,
-              color: Colors.white,
-            ),
+            if (submitting)
+              SizedBox(
+                height: 22.r,
+                width: 22.r,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            else
+              LocaleKeys.register.tr().appText(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                letterSpacing: 0.5,
+                color: Colors.white,
+              ),
           ],
         ).appPadding(top: 14.h, bottom: 14.h),
       ),
-      onTap: () {
-        context.read<RegisterCubit>().register();
-      },
     );
   }
 

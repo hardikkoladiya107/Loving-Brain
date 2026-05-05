@@ -17,5 +17,6 @@ abstract class RegisterState with _$RegisterState {
     @Default("") String confirmPasswordError,
     @Default(false) bool isTermsAndConditionAccepted,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
+    @Default(false) bool isAuthSubmitting,
   }) = _RegisterState;
 }

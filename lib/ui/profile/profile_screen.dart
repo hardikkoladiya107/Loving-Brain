@@ -16,9 +16,7 @@ import 'package:loving_brain/ui/widget/app_image.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
-import 'package:loving_brain/ui/widget/app_dialogs.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
 import '../../gen/assets.gen.dart';
@@ -88,14 +86,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              
+
               // GLASS EFFECT OVERLAY
               Positioned.fill(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-                  child: Container(
-                    color: Colors.white.withValues(alpha: 0.35),
-                  ),
+                  child: Container(color: Colors.white.withValues(alpha: 0.35)),
                 ),
               ),
 
@@ -113,17 +109,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             20.h.spaceH,
                             _buildHeader(state.userModel),
                             8.h.spaceH,
-                            
+
                             _buildSectionTitle("General Preferences"),
                             _buildGroup([
                               _settingItem(
-                                title: LocaleKeys.getGentleRemindersForPlay.tr(),
+                                title: LocaleKeys.getGentleRemindersForPlay
+                                    .tr(),
                                 showCheckBox: true,
                                 icon: LucideIcons.bell,
                                 iconBgColor: gentleReminderIconColor,
                                 check: state.userModel?.isNotification ?? false,
                                 onChanged: (value) {
-                                  context.read<ProfileCubit>().updateNotification();
+                                  context
+                                      .read<ProfileCubit>()
+                                      .updateNotification();
                                 },
                                 isLast: false,
                               ),
@@ -317,7 +316,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.flame, color: const Color(0xFFFF9561), size: 16.w),
+                    Icon(
+                      LucideIcons.flame,
+                      color: const Color(0xFFFF9561),
+                      size: 16.w,
+                    ),
                     4.spaceW,
                     "${userModel.displayStreak} Day Streak!".appText(
                       color: Colors.black87,
@@ -367,9 +370,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            child: Column(
-              children: children,
-            ),
+            child: Column(children: children),
           ),
         ),
       ),
@@ -395,10 +396,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           decoration: BoxDecoration(
-            border: isLast ? null : Border(bottom: BorderSide(color: Colors.black.withValues(alpha: 0.04))),
+            border: isLast
+                ? null
+                : Border(
+                    bottom: BorderSide(
+                      color: Colors.black.withValues(alpha: 0.04),
+                    ),
+                  ),
           ),
           child: Row(
-             children: [
+            children: [
               Container(
                 height: 36.w,
                 width: 36.w,
@@ -408,7 +415,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 child: Center(
                   child: assetIcon != null
-                      ? assetIcon.image(height: 18.w, width: 18.w, color: iconBgColor)
+                      ? assetIcon.image(
+                          height: 18.w,
+                          width: 18.w,
+                          color: iconBgColor,
+                        )
                       : Icon(icon, color: iconBgColor, size: 18.w),
                 ),
               ),
@@ -431,11 +442,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     activeTrackColor: primaryColor,
                     inactiveThumbColor: Colors.white,
                     inactiveTrackColor: Colors.grey.shade300,
-                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                    trackOutlineColor: WidgetStateProperty.all(
+                      Colors.transparent,
+                    ),
                   ),
                 )
               else
-                Icon(LucideIcons.chevronRight, color: Colors.grey.withValues(alpha: 0.4), size: 16.w),
+                Icon(
+                  LucideIcons.chevronRight,
+                  color: Colors.grey.withValues(alpha: 0.4),
+                  size: 16.w,
+                ),
             ],
           ),
         ),
@@ -443,103 +460,137 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _logoutDialog() {
-    showAppDialog(
-      child: (context) {
+  /// Same pattern as delete-journal confirmation (`write_your_thought_screen`):
+  /// [showDialog] + glass card (no `showGeneralDialog` slide animation).
+  void _showAccountConfirmationDialog({
+    required IconData icon,
+    required Color iconTint,
+    required String title,
+    required String message,
+    required String confirmLabel,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
         return Dialog(
-          insetPadding: EdgeInsets.only(left: 24.w, right: 24.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
-          elevation: 0,
           backgroundColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 40.w),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(36),
+            borderRadius: BorderRadius.circular(28.r),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
-                padding: EdgeInsets.all(32.w),
+                padding: EdgeInsets.all(28.w),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.8),
+                  color: Colors.white.withValues(alpha: 0.95),
+                  borderRadius: BorderRadius.circular(28.r),
                   border: Border.all(color: Colors.white, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 40,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(20.w),
+                      padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
+                        color: iconTint.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(LucideIcons.logOut, color: Colors.redAccent, size: 40.w),
+                      child: Icon(icon, color: iconTint, size: 36.sp),
                     ),
-                    28.h.spaceH,
-                    "${LocaleKeys.logOut.tr()}?".appText(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black87,
+                    20.h.spaceH,
+                    Text(
+                      title,
+                      style: getTextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 20.sp,
+                        color: Colors.black87,
+                      ),
                     ),
                     12.h.spaceH,
-                    LocaleKeys.areYouSureYouWantToLogout.tr().appText(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
+                    Text(
+                      message,
                       textAlign: TextAlign.center,
+                      style: getTextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 13.sp,
+                        color: Colors.grey.shade600,
+                        height: 1.5,
+                      ),
                     ),
-                    40.h.spaceH,
+                    28.h.spaceH,
                     Row(
                       children: [
                         Expanded(
-                          child: BaseButton(
+                          child: GestureDetector(
+                            onTap: () => dialogContext.pop(),
                             child: Container(
+                              height: 50.h,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: Colors.grey.shade200,
+                                  width: 1.5,
+                                ),
                               ),
-                              child: LocaleKeys.cancel
-                                  .tr()
-                                  .appText(
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black87,
-                                    fontSize: 16,
-                                  )
-                                  .appPadding(top: 18.h, bottom: 18.h),
+                              child: Text(
+                                LocaleKeys.cancel.tr(),
+                                style: getTextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14.sp,
+                                  color: Colors.black54,
+                                ),
+                              ),
                             ),
-                            onTap: () {
-                              context.pop();
-                            },
                           ),
                         ),
-                        16.w.spaceW,
+                        12.w.spaceW,
                         Expanded(
-                          child: BaseButton(
+                          child: GestureDetector(
+                            onTap: () {
+                              dialogContext.pop();
+                              onConfirm();
+                            },
                             child: Container(
+                              height: 50.h,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                borderRadius: BorderRadius.circular(24),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF5252),
+                                    Color(0xFFFF1744),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16.r),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.redAccent.withValues(alpha: 0.3),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 6),
+                                    color: Colors.red.withValues(alpha: 0.3),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
                                   ),
-                                ]
+                                ],
                               ),
-                              child: LocaleKeys.logOut
-                                  .tr()
-                                  .appText(
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  )
-                                  .appPadding(top: 18.h, bottom: 18.h),
+                              child: Text(
+                                confirmLabel,
+                                style: getTextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            onTap: () {
-                              context.read<ProfileCubit>().logout();
-                              context.pop();
-                            },
                           ),
                         ),
                       ],
@@ -554,113 +605,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _logoutDialog() {
+    _showAccountConfirmationDialog(
+      icon: Icons.logout_rounded,
+      iconTint: logoutAppIconColor,
+      title: '${LocaleKeys.logOut.tr()}?',
+      message: LocaleKeys.areYouSureYouWantToLogout.tr(),
+      confirmLabel: LocaleKeys.logOut.tr(),
+      onConfirm: () {
+        context.read<ProfileCubit>().logout();
+      },
+    );
+  }
+
   void _deleteAccountDialog() {
-    showAppDialog(
-      child: (context) {
-        return Dialog(
-          insetPadding: EdgeInsets.only(left: 24.w, right: 24.w),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(36)),
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(36),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: Container(
-                padding: EdgeInsets.all(32.w),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.8),
-                  border: Border.all(color: Colors.white, width: 1.5),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(20.w),
-                      decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(LucideIcons.trash2, color: Colors.redAccent, size: 40.w),
-                    ),
-                    28.h.spaceH,
-                    "${LocaleKeys.deleteAccount.tr()}?".appText(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.black87,
-                    ),
-                    12.h.spaceH,
-                    LocaleKeys.areYouSureYouWantToDeleteAccount.tr().appText(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
-                      textAlign: TextAlign.center,
-                    ),
-                    40.h.spaceH,
-                    Row(
-                      children: [
-                        Expanded(
-                          child: BaseButton(
-                            child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
-                              ),
-                              child: LocaleKeys.cancel
-                                  .tr()
-                                  .appText(
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black87,
-                                    fontSize: 16,
-                                  )
-                                  .appPadding(top: 18.h, bottom: 18.h),
-                            ),
-                            onTap: () {
-                              context.pop();
-                            },
-                          ),
-                        ),
-                        16.w.spaceW,
-                        Expanded(
-                          child: BaseButton(
-                            child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                borderRadius: BorderRadius.circular(24),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.redAccent.withValues(alpha: 0.3),
-                                    blurRadius: 15,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                ]
-                              ),
-                              child: LocaleKeys.delete
-                                  .tr()
-                                  .appText(
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  )
-                                  .appPadding(top: 18.h, bottom: 18.h),
-                            ),
-                            onTap: () {
-                              context.read<ProfileCubit>().deleteAccount();
-                              context.pop();
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
+    _showAccountConfirmationDialog(
+      icon: Icons.delete_outline_rounded,
+      iconTint: Colors.redAccent,
+      title: '${LocaleKeys.deleteAccount.tr()}?',
+      message: LocaleKeys.areYouSureYouWantToDeleteAccount.tr(),
+      confirmLabel: LocaleKeys.delete.tr(),
+      onConfirm: () {
+        context.read<ProfileCubit>().deleteAccount();
       },
     );
   }
@@ -746,10 +712,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 40, top: 20),
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom + 40,
+                top: 20,
+              ),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.8),
-                border: Border(top: BorderSide(color: Colors.white, width: 1.5)),
+                border: Border(
+                  top: BorderSide(color: Colors.white, width: 1.5),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -772,7 +743,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       _buildPickerOption(
+                      _buildPickerOption(
                         title: LocaleKeys.pickFromCamera.tr(),
                         icon: LucideIcons.camera,
                         color: primaryColor,
@@ -823,7 +794,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               blurRadius: 15,
               offset: const Offset(0, 6),
             ),
-          ]
+          ],
         ),
         child: Column(
           children: [

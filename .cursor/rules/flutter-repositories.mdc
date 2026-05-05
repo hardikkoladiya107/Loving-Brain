@@ -1,0 +1,15 @@
+---
+description: Repository singletons and ApiResultStatus returns
+globs:
+  - lib/repo/**/*.dart
+alwaysApply: false
+---
+
+# Repositories (`lib/repo/`)
+
+- **Singleton**: private constructor + `factory` + static `instance` (match existing repos).
+- **All** network/Firestore/auth calls that belong in data layer go here — not in widgets/cubits beyond orchestration.
+- Return **`ApiResultStatus<T>`** (or project sealed type) from async methods:
+  - Success: `ApiResultStatus.data(data: ...)`
+  - Failure: `ApiResultStatus.error(error: Exception(...))` after `try/catch`
+- Map errors to user-meaningful messages where the repo already does; keep handling consistent across repos.

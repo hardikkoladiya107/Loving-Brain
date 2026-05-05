@@ -21,6 +21,7 @@ class LoginCubit extends Cubit<LoginState> {
     String? passwordError,
     bool? obscureTextPassword,
     ApiResultStatus? apiResultStatus,
+    LoginSubmitAction? submittingAction,
   }) {
     emit(
       state.copyWith(
@@ -30,30 +31,52 @@ class LoginCubit extends Cubit<LoginState> {
         emailAddressError: emailAddressError ?? state.emailAddressError,
         passwordError: passwordError ?? state.passwordError,
         obscureTextPassword: obscureTextPassword ?? state.obscureTextPassword,
+        submittingAction: submittingAction ?? state.submittingAction,
       ),
     );
   }
 
   Future<void> googleAuthenticate() async {
-    changeProps(apiResultStatus: ApiResultStatus.loading());
-    var apiResult = await AuthRepo.instance.signInWithGoogle();
-    changeProps(apiResultStatus: apiResult);
+    changeProps(
+      apiResultStatus: ApiResultStatus.loading(),
+      submittingAction: LoginSubmitAction.google,
+    );
+    final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
+        .signInWithGoogle();
+    changeProps(
+      apiResultStatus: apiResult,
+      submittingAction: LoginSubmitAction.idle,
+    );
   }
 
   Future<void> signInWithApple() async {
-    changeProps(apiResultStatus: ApiResultStatus.loading());
-    var apiResult = await AuthRepo.instance.signInWithApple();
-    changeProps(apiResultStatus: apiResult);
+    changeProps(
+      apiResultStatus: ApiResultStatus.loading(),
+      submittingAction: LoginSubmitAction.apple,
+    );
+    final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
+        .signInWithApple();
+    changeProps(
+      apiResultStatus: apiResult,
+      submittingAction: LoginSubmitAction.idle,
+    );
   }
 
   Future<void> performLogin() async {
     if (_isValidate()) {
-      changeProps(apiResultStatus: ApiResultStatus.loading());
-      var apiResult = await AuthRepo.instance.signInWithEmailAndPassword(
-        email: state.emailAddress,
-        password: state.password,
+      changeProps(
+        apiResultStatus: ApiResultStatus.loading(),
+        submittingAction: LoginSubmitAction.email,
       );
-      changeProps(apiResultStatus: apiResult);
+      final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
+          .signInWithEmailAndPassword(
+            email: state.emailAddress,
+            password: state.password,
+          );
+      changeProps(
+        apiResultStatus: apiResult,
+        submittingAction: LoginSubmitAction.idle,
+      );
     }
   }
 
@@ -92,6 +115,7 @@ class LoginCubit extends Cubit<LoginState> {
       passwordError: "",
       obscureTextPassword: true,
       apiResultStatus: ApiResultStatus.initial(),
+      submittingAction: LoginSubmitAction.idle,
     );
   }
 }

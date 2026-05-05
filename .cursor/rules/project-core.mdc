@@ -1,0 +1,41 @@
+---
+description: Loving Brain — core stack, layout, types, localization, git
+alwaysApply: true
+---
+
+# Loving Brain — core conventions
+
+## Stack
+
+- Flutter app: **Cubit** (not `Bloc` + events), **Freezed** state, **repository** pattern, **go_router**.
+- Backend: **Firebase Cloud Functions** (Node) under `functions/`.
+
+## Layout & paths
+
+- UI: `lib/ui/{feature}/` — screen `{feature}_screen.dart`, optional `widgets/`, `bloc/` for cubit + state.
+- Data: `lib/repo/` (singleton repos). Models: `lib/model/`. Shared: `lib/core/` or `lib/other/`.
+- Register new Cubits in the centralized providers file (`bloc_providers.dart` / `provider.dart` as used in repo).
+
+## Types & style
+
+- Explicit types everywhere: no `var`, no omitted parameter/return types.
+- Files `snake_case.dart`; classes `PascalCase`; members `camelCase` / `_privateCamelCase`.
+- Run `dart format` before commit. After Freezed edits: `dart run build_runner build --delete-conflicting-outputs`.
+- **Stage new files with `git add`** as soon as you create them (project convention).
+
+## UI fundamentals
+
+- **Screens** = `StatefulWidget` with `super.key`.
+- **Responsive**: **ScreenUtil** (`.w`, `.h`, `.sp`, `.r`) — avoid raw pixel literals for layout.
+- **Copy**: **EasyLocalization** — `LocaleKeys.*.tr()`, strings only in `assets/translations/`; **append new keys at end** of JSON files.
+- **Feedback**: centralized `showSnackBar` (and types like `SnackBarType`); do **not** call `ScaffoldMessenger.showSnackBar` directly.
+- Loading in listeners: **EasyLoading** where the project already does.
+
+## Cross-cutting
+
+- Trim user input where appropriate. Request **permission_handler** before camera/storage/etc.
+- Dispose controllers and cancel cubit stream subscriptions in `close()`.
+
+## When in doubt
+
+- Match the nearest existing feature’s folder and patterns; avoid new global patterns without a reason.
