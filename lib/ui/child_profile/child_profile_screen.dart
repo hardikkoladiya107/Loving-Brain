@@ -241,7 +241,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           ),
         ],
       ),
-      child: "Tell us about your child"
+      child: LocaleKeys.tellUsAboutYourChild.tr()
           .appText(
             fontWeight: FontWeight.w800,
             fontSize: 19.sp,
@@ -268,11 +268,11 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
   Widget _childDob(ChildProfileState state) {
     final String dobText = state.childDob != null
         ? DateFormat('dd MMM yyyy').format(state.childDob!)
-        : 'Select date of birth';
+        : LocaleKeys.selectDateOfBirth.tr();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        "Child date of birth".appText(
+        LocaleKeys.childDateOfBirth.tr().appText(
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -359,7 +359,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            "Continue"
+            LocaleKeys.continueBtn.tr()
                 .appText(
                   fontWeight: FontWeight.w800,
                   color: Colors.white,

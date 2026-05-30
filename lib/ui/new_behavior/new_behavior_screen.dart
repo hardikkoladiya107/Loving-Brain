@@ -228,7 +228,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                       fontSize: 18.sp,
                     ),
                 4.h.spaceH,
-                "Capture moments quickly to discover behavior patterns."
+                LocaleKeys.captureMomentsQuickly.tr()
                     .appText(
                       color: Colors.white.withValues(alpha: 0.88),
                       fontWeight: FontWeight.w600,
@@ -291,7 +291,11 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
             fontSize: 16.sp,
           ),
           8.h.spaceH,
-          "Get a personalized insight based on ${state.userModel?.parentName ?? ''}'s recent logged behaviors."
+          LocaleKeys.getPersonalizedBehaviorInsight.tr(
+            namedArgs: {
+              'parentName': state.userModel?.parentName ?? '',
+            },
+          )
               .appText(
                 textAlign: TextAlign.start,
                 fontSize: 12.sp,
@@ -430,8 +434,11 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
       controller: _tellUsMoreController,
       fillColor: aiQuestionCardColor2,
       title: LocaleKeys.tellUsMore.tr(),
-      hint:
-          "Describe what happened, when and where. How did ${state.userModel?.childName ?? ''} feel?",
+      hint: LocaleKeys.describeBehaviorHint.tr(
+        namedArgs: {
+          'childName': state.userModel?.childName ?? '',
+        },
+      ),
       maxLines: 4,
       contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       onChanged: (String value) {
@@ -494,7 +501,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
               borderRadius: BorderRadius.circular(18.r),
             ),
             child: Center(
-              child: "No behavior logs yet".appText(
+              child: LocaleKeys.noBehaviorLogsYet.tr().appText(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.grey.shade600,

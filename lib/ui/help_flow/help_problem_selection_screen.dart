@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,7 +50,7 @@ class _HelpProblemSelectionScreenState
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: const Color(0xFF2F2A44),
-            title: 'Help'.appText(
+            title: LocaleKeys.help.tr().appText(
               fontWeight: FontWeight.w900,
               fontSize: 18.sp,
               color: const Color(0xFF2F2A44),
@@ -60,7 +62,7 @@ class _HelpProblemSelectionScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  'What is happening with $childName right now?'.appText(
+                  LocaleKeys.whatIsHappeningWithChild.tr(namedArgs: {'childName': childName}).appText(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w900,
                     color: const Color(0xFF2F2A44),

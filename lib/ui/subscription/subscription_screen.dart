@@ -286,7 +286,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       color: const Color(0xFF17B26A).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(99.r),
                     ),
-                    child: "Best value".appText(
+                    child: LocaleKeys.bestValue.tr().appText(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w800,
                       color: const Color(0xFF0E9F6E),
@@ -319,7 +319,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         ],
       ),
       alignment: Alignment.center,
-      child: "Subscriptions coming soon".appText(
+      child: LocaleKeys.subscriptionsComingSoon.tr().appText(
         color: Colors.white,
         fontSize: 16.sp,
         fontWeight: FontWeight.w900,

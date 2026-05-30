@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -58,7 +60,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: const Color(0xFF2F2A44),
-            title: 'Guidance'.appText(
+            title: LocaleKeys.guidance.tr().appText(
               fontWeight: FontWeight.w900,
               fontSize: 18.sp,
               color: const Color(0xFF2F2A44),
@@ -168,7 +170,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                         color: const Color(0xFF2DBE6C),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: 'This helped'.appText(
+                      child: LocaleKeys.thisHelped.tr().appText(
                         fontWeight: FontWeight.w900,
                         fontSize: 15.sp,
                         color: Colors.white,
@@ -187,7 +189,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                         color: const Color(0xFFE9E9EE),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: 'Still not working'.appText(
+                      child: LocaleKeys.stillNotWorking.tr().appText(
                         fontWeight: FontWeight.w900,
                         fontSize: 15.sp,
                         color: const Color(0xFF50505D),

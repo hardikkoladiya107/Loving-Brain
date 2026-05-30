@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      "Smart Action".appText(
+                      LocaleKeys.smartAction.tr().appText(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w900,
                         color: const Color(0xFF2F2A44),
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             color: const Color(0xFFF1ECFF),
                             borderRadius: BorderRadius.circular(999.r),
                           ),
-                          child: "Help".appText(
+                          child: LocaleKeys.help.tr().appText(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w900,
                             color: const Color(0xFF6A24B8),
@@ -323,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       size: 28.sp,
                     ),
                     8.w.spaceW,
-                    "energyBridgeTimeToTransition".tr().appText(
+                    LocaleKeys.energyBridgeTimeToTransition.tr().appText(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w900,
                       color: Colors.orange.shade900,
@@ -331,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ],
                 ),
                 8.h.spaceH,
-                "energyBridgeTransitionBody".tr().appText(
+                LocaleKeys.energyBridgeTransitionBody.tr().appText(
                   fontSize: 13.sp,
                   color: Colors.orange.shade900.withValues(alpha: 0.8),
                   height: 1.4,
@@ -363,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           size: 20.sp,
                         ),
                         8.w.spaceW,
-                        "energyBridgePlayCalmingVideo".tr().appText(
+                        LocaleKeys.energyBridgePlayCalmingVideo.tr().appText(
                           color: Colors.orange.shade700,
                           fontWeight: FontWeight.w800,
                           fontSize: 14.sp,
@@ -707,8 +707,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               12.spaceW,
               Expanded(
                 child: _actionCard(
-                  title: "energyBridgeTitle".tr(),
-                  subtitle: "energyBridgeConnectEnergy".tr(),
+                  title: LocaleKeys.energyBridgeTitle.tr(),
+                  subtitle: LocaleKeys.energyBridgeConnectEnergy.tr(),
                   icon: Icons.bolt_rounded,
                   themeColor: Colors.blue.shade500,
                   onTap: () => context.push(RoutePaths.energyBridge),
@@ -872,7 +872,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         color: Colors.white,
                       ),
                       4.spaceH,
-                      "Track restful nights".appText(
+                      LocaleKeys.trackRestfulNights.tr().appText(
                         fontSize: 13,
                         color: Colors.white70,
                         fontWeight: FontWeight.w600,
@@ -925,13 +925,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        "Family Feel Meter".appText(
+                        LocaleKeys.familyFeelMeter.tr().appText(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
                         ),
                         4.spaceH,
-                        "Connect emotionally".appText(
+                        LocaleKeys.connectEmotionally.tr().appText(
                           fontSize: 13,
                           color: Colors.white70,
                           fontWeight: FontWeight.w600,
@@ -1013,25 +1013,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     required String childName,
   }) {
     if (childState == ChildState.calm) {
-      return "$childName is ready to connect";
+      return LocaleKeys.childReadyToConnect.tr(namedArgs: {'childName': childName});
     }
     if (childState == ChildState.highEnergy) {
-      return "Good time for active play";
+      return LocaleKeys.goodTimeForActivePlay.tr();
     }
     if (childState == ChildState.fussy) {
-      return "$childName needs support right now";
+      return LocaleKeys.childNeedsSupportRightNow.tr(namedArgs: {'childName': childName});
     }
     if (childState == ChildState.tired) {
-      return "Wind-down time";
+      return LocaleKeys.windDownTime.tr();
     }
-    return "How is $childName right now?";
+    return LocaleKeys.howIsChildRightNow.tr(namedArgs: {'childName': childName});
   }
 
   String _smartActionCtaText({required ChildState? childState}) {
     if (childState == ChildState.fussy) {
-      return "Help me now";
+      return LocaleKeys.helpMeNow.tr();
     }
-    return "Guide me now";
+    return LocaleKeys.guideMeNow.tr();
   }
 
   void _onSmartActionTap(ChildState? childState) {

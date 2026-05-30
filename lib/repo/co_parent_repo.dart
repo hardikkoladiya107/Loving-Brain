@@ -11,6 +11,7 @@ import 'package:loving_brain/other/preferances.dart';
 
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
+import '../env/env.dart';
 import '../model/invitation_model.dart';
 import 'child_repo.dart';
 
@@ -40,10 +41,10 @@ class CoParentRepo {
   // The key is intentionally stored here as a placeholder; move it to a
   // secrets file or remote config before release.
   // ──────────────────────────────────────────────────────────────────────────
-  static const String _brevoApiKey = 'BREVO_API_KEY_PLACEHOLDER';
+  static final String _brevoApiKey = Env.brevoApiKey;
   static const String _brevoSendUrl =
       'https://api.brevo.com/v3/smtp/email';
-  static const String _senderEmail = 'noreply@lovingbrain.com';
+  static const String _senderEmail = 'ibuildmvp.com';
   static const String _senderName = 'Loving Brain';
 
   Future<ApiResultStatus> addSharedEvent({
@@ -309,7 +310,7 @@ class CoParentRepo {
       }
       if (invitationModel.status != 'REQUESTED') {
         return ApiResultStatus.error(
-          error: Exception('invitationAlreadyUsed'.tr()),
+          error: Exception(LocaleKeys.invitationAlreadyUsed.tr()),
         );
       }
 

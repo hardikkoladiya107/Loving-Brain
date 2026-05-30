@@ -103,7 +103,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
             context.pop();
             WidgetsBinding.instance.addPostFrameCallback((_) {
               showSnackBar(
-                message: 'sharedEventCreated'.tr(),
+                message: LocaleKeys.sharedEventCreated.tr(),
                 type: SnackBarType.SUCCESS,
               );
             });
@@ -1010,7 +1010,7 @@ class _AddSharedEventScreenState extends State<AddSharedEventScreen> {
   Widget _assignedTo(AddSharedEventState state) {
     final List<Widget> chips = <Widget>[
       _chipWidget(
-        text: 'you'.tr(),
+        text: LocaleKeys.you.tr(),
         selected: state.selectedCoParentList.any(
           (UserModel e) => e.uid == state.userModel?.uid,
         ),

@@ -278,7 +278,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             children: [
               Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
               4.spaceW,
-              'Back to Login'.appText(
+              LocaleKeys.backToLogin.tr().appText(
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w600,
               ),
@@ -326,7 +326,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 ),
               )
             else
-              'Continue'.appText(
+              LocaleKeys.continueBtn.tr().appText(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 letterSpacing: 0.5,
@@ -430,7 +430,7 @@ class _RegisterScreenState extends State<RegisterScreen>
             children: [
               Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
               4.spaceW,
-              'Change email'.appText(
+              LocaleKeys.changeEmail.tr().appText(
                 color: Colors.grey.shade600,
                 fontWeight: FontWeight.w600,
               ),
@@ -517,7 +517,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               text: TextSpan(
                 style: getTextStyle(fontSize: 13, color: Colors.grey.shade700),
                 children: [
-                  const TextSpan(text: 'I accept '),
+                  TextSpan(text: LocaleKeys.iAccept.tr()),
                   TextSpan(
                     text: LocaleKeys.termsConditions.tr(),
                     style: getTextStyle(

@@ -264,7 +264,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                 20.h.spaceH,
 
                                 // Unlimited Color Selector Button
-                                "Card Background Style".appText(
+                                LocaleKeys.cardBackgroundStyle.tr().appText(
                                   fontSize: 13.sp,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.grey.shade700,
@@ -335,7 +335,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                               size: 18.sp,
                                             ),
                                             8.w.spaceW,
-                                            "Pick Unlimited Color".appText(
+                                            LocaleKeys.pickUnlimitedColor.tr().appText(
                                               color: primaryColor,
                                               fontSize: 13.sp,
                                               fontWeight: FontWeight.w800,
@@ -586,7 +586,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  'journalCanvasTitle'.tr().appText(
+                                  LocaleKeys.journalCanvasTitle.tr().appText(
                                     fontWeight: FontWeight.w800,
                                     fontSize: 17.sp,
                                     color: primaryColor,
@@ -594,7 +594,7 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                     textAlign: TextAlign.start,
                                   ),
                                   4.h.spaceH,
-                                  'journalCanvasSubtitle'.tr().appText(
+                                  LocaleKeys.journalCanvasSubtitle.tr().appText(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 12.sp,
                                     color: greyColor1,
@@ -621,8 +621,8 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                               ),
                               child:
                                   (state.journalList.length == 1
-                                          ? 'journalEntryCountOne'.tr()
-                                          : 'journalEntryCountMany'.tr(
+                                          ? LocaleKeys.journalEntryCountOne.tr()
+                                          : LocaleKeys.journalEntryCountMany.tr(
                                               namedArgs: {
                                                 'count': state
                                                     .journalList
@@ -789,7 +789,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard>
                   ),
                   20.h.spaceH,
                   Text(
-                    'Delete Journal?',
+                    LocaleKeys.deleteJournal.tr(),
                     style: getTextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 20.sp,
@@ -798,7 +798,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard>
                   ),
                   12.h.spaceH,
                   Text(
-                    'This journal entry will be permanently removed from your canvas.',
+                    LocaleKeys.deleteJournalConfirm.tr(),
                     textAlign: TextAlign.center,
                     style: getTextStyle(
                       fontWeight: FontWeight.w500,
@@ -825,7 +825,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard>
                               ),
                             ),
                             child: Text(
-                              'Cancel',
+                              LocaleKeys.cancel.tr(),
                               style: getTextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14.sp,
@@ -865,7 +865,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard>
                               ],
                             ),
                             child: Text(
-                              'Delete',
+                              LocaleKeys.delete.tr(),
                               style: getTextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 14.sp,

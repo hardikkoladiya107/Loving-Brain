@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +47,7 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        "Reflect Your Emotions".appText(
+                        LocaleKeys.reflectYourEmotions.tr().appText(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -252,7 +254,7 @@ class _EmotionSummaryCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  "Mood Activity".appText(
+                  LocaleKeys.moodActivity.tr().appText(
                     fontSize: 14.sp, 
                     fontWeight: FontWeight.bold,
                     color: Colors.black87

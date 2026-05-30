@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -33,7 +35,7 @@ class _FamilyMeterStatePickerScreenState
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: const Color(0xFF2F2A44),
-            title: 'How is $childName right now?'.appText(
+            title: LocaleKeys.howIsChildRightNow.tr(namedArgs: {'childName': childName}).appText(
               fontWeight: FontWeight.w900,
               fontSize: 18.sp,
               color: const Color(0xFF2F2A44),

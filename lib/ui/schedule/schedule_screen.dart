@@ -58,7 +58,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           data: (_) {
             EasyLoading.dismiss();
             showSnackBar(
-              message: 'routineRemoved'.tr(),
+              message: LocaleKeys.routineRemoved.tr(),
               type: SnackBarType.SUCCESS,
             );
           },
@@ -75,7 +75,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           data: (_) {
             EasyLoading.dismiss();
             showSnackBar(
-              message: 'successMessage'.tr(),
+              message: LocaleKeys.successMessage.tr(),
               type: SnackBarType.SUCCESS,
             );
           },
@@ -367,11 +367,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           if (routines.isEmpty)
             _emptyState(
               title: hasDefaultChild
-                  ? 'noRoutinesYet'.tr()
-                  : 'selectDefaultChildForRoutine'.tr(),
+                  ? LocaleKeys.noRoutinesYet.tr()
+                  : LocaleKeys.selectDefaultChildForRoutine.tr(),
               subtitle: hasDefaultChild
-                  ? 'addFirstRoutine'.tr()
-                  : 'pleaseSelectChild'.tr(),
+                  ? LocaleKeys.addFirstRoutine.tr()
+                  : LocaleKeys.pleaseSelectChild.tr(),
               icon: Icons.schedule_rounded,
             )
           else
@@ -431,8 +431,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           16.h.spaceH,
           if (events.isEmpty)
             _emptyState(
-              title: 'noSharedEventsYet'.tr(),
-              subtitle: 'addFirstSharedEvent'.tr(),
+              title: LocaleKeys.noSharedEventsYet.tr(),
+              subtitle: LocaleKeys.addFirstSharedEvent.tr(),
               icon: Icons.event_note_rounded,
             )
           else
@@ -493,7 +493,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             },
             onDisabledTap: () {
               showSnackBar(
-                message: 'linkCoParentToAddSharedEvent'.tr(),
+                message: LocaleKeys.linkCoParentToAddSharedEvent.tr(),
                 type: SnackBarType.ERROR,
               );
             },
@@ -827,7 +827,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   void _showDeleteSharedEventDialog({required VoidCallback? onDelete}) {
     _showDeleteConfirmDialog(
-      message: 'areYouSureYouWantToRemoveSharedEvent'.tr(),
+      message: LocaleKeys.areYouSureYouWantToRemoveSharedEvent.tr(),
       onDelete: onDelete,
     );
   }

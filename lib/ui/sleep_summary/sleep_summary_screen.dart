@@ -454,7 +454,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
           children: [
             const Icon(Icons.list_alt_rounded, color: Color(0xFF64748B), size: 24),
             8.spaceW,
-            "Sleep Logs".appText(
+            LocaleKeys.sleepLogs.tr().appText(
               color: const Color(0xFF0F172A),
               fontSize: 18,
               fontWeight: FontWeight.w800,

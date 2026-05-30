@@ -347,12 +347,12 @@ class _ManageChildrenScreenState extends State<ManageChildrenScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                "${'removeChild'.tr()}?".appText(
+                "${LocaleKeys.removeChild.tr()}?".appText(
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w700,
                 ),
                 16.h.spaceH,
-                'areYouSureYouWantToRemoveChild'.tr().appText(
+                LocaleKeys.areYouSureYouWantToRemoveChild.tr().appText(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w500,
                   textAlign: TextAlign.center,

@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,7 +39,7 @@ class _FamilyMeterStateDetailScreenState
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: const Color(0xFF2F2A44),
-            title: 'State Detail'.appText(
+            title: LocaleKeys.stateDetail.tr().appText(
               fontWeight: FontWeight.w900,
               fontSize: 18.sp,
               color: const Color(0xFF2F2A44),
@@ -149,7 +151,7 @@ class _FamilyMeterStateDetailScreenState
                         ),
                         borderRadius: BorderRadius.circular(14.r),
                       ),
-                      child: 'Update state'.appText(
+                      child: LocaleKeys.updateState.tr().appText(
                         fontWeight: FontWeight.w900,
                         fontSize: 15.sp,
                         color: Colors.white,

@@ -322,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       size: 16.w,
                     ),
                     4.spaceW,
-                    "${userModel.displayStreak} Day Streak!".appText(
+                    LocaleKeys.dayStreakText.tr(namedArgs: {"count": userModel.displayStreak.toString()}).appText(
                       color: Colors.black87,
                       fontWeight: FontWeight.w800,
                       fontSize: 12,
@@ -734,7 +734,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   30.spaceH,
-                  "Update Profile Picture".appText(
+                  LocaleKeys.updateProfilePicture.tr().appText(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     color: Colors.black87,

@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -78,7 +80,7 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: const Color(0xFF2F2A44),
-            title: 'Smart Moment'.appText(
+            title: LocaleKeys.smartMoment.tr().appText(
               fontWeight: FontWeight.w900,
               fontSize: 18.sp,
               color: const Color(0xFF2F2A44),
@@ -127,7 +129,7 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
                               textAlign: TextAlign.start,
                             ),
                             18.h.spaceH,
-                            'Steps'.appText(
+                            LocaleKeys.steps.tr().appText(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w900,
                               color: const Color(0xFF2F2A44),
@@ -187,7 +189,7 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
                         ),
                         borderRadius: BorderRadius.circular(14.r),
                       ),
-                      child: 'I tried this'.appText(
+                      child: LocaleKeys.iTriedThis.tr().appText(
                         fontWeight: FontWeight.w900,
                         fontSize: 15.sp,
                         color: Colors.white,
@@ -222,14 +224,14 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                'Did something special happen?'.appText(
+                LocaleKeys.didSomethingSpecialHappen.tr().appText(
                   fontWeight: FontWeight.w900,
                   fontSize: 22.sp,
                   textAlign: TextAlign.center,
                   color: const Color(0xFF2F2A44),
                 ),
                 10.h.spaceH,
-                'You can mark this as a milestone if needed.'.appText(
+                LocaleKeys.markAsMilestoneIfNeeded.tr().appText(
                   fontWeight: FontWeight.w600,
                   fontSize: 14.sp,
                   textAlign: TextAlign.center,
@@ -248,7 +250,7 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
                             color: const Color(0xFFEAEAF0),
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          child: 'No'.appText(
+                          child: LocaleKeys.no.tr().appText(
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF5B5571),
                             fontSize: 14.sp,
@@ -267,7 +269,7 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
                             color: const Color(0xFF6A24B8),
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          child: 'Yes'.appText(
+                          child: LocaleKeys.yes.tr().appText(
                             fontWeight: FontWeight.w800,
                             color: Colors.white,
                             fontSize: 14.sp,

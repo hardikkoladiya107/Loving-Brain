@@ -160,7 +160,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                     color: Colors.black87,
                   ),
                   4.spaceH,
-                  "Tap to view details".appText(
+                  LocaleKeys.tapToViewDetails.tr().appText(
                     // Placeholder or logic for subtitle if available
                     fontSize: 12,
                     fontWeight: FontWeight.w500,

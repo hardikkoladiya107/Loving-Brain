@@ -125,7 +125,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 letterSpacing: 1.0,
                               ),
                               12.spaceH,
-                              "Enter your details to receive reset instructions"
+                              LocaleKeys.enterDetailsToReceiveResetInstructions
+                                  .tr()
                                   .appText(
                                     fontSize: 14,
                                     color: Colors.grey.shade600,
@@ -150,7 +151,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 color: Colors.grey.shade600,
                               ),
                               4.spaceW,
-                              "Back to Login".appText(
+                              LocaleKeys.backToLogin.tr().appText(
                                 color: Colors.grey.shade600,
                                 fontWeight: FontWeight.w600,
                               ),

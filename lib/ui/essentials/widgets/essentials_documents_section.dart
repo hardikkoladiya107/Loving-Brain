@@ -61,7 +61,7 @@ class EssentialsDocumentsSection extends StatelessWidget {
                         size: 40.w,
                       ),
                       8.h.spaceH,
-                      "No documents attached".appText(
+                      LocaleKeys.noDocumentsAttached.tr().appText(
                         fontSize: 13.sp,
                         color: Colors.grey.shade500,
                         fontWeight: FontWeight.w600,

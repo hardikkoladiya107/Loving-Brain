@@ -103,7 +103,7 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
 
     if (fromEmail.isNotEmpty &&
         fromEmail.toLowerCase() == toEmail.toLowerCase()) {
-      changeProps(coParentEmailError: 'cannotInviteYourself'.tr());
+      changeProps(coParentEmailError: LocaleKeys.cannotInviteYourself.tr());
       return false;
     }
 
@@ -135,7 +135,7 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
         if (exists) {
           changeProps(
             createInvitation: ApiResultStatus.error(
-              error: Exception('invitationAlreadySent'.tr()),
+              error: Exception(LocaleKeys.invitationAlreadySent.tr()),
             ),
           );
           return;

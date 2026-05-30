@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -125,7 +127,7 @@ class _SucessScreenState extends State<SucessScreen> {
             fit: BoxFit.contain,
           ),
           10.h.spaceH,
-          "Success".appText(
+          LocaleKeys.successMessage.tr().appText(
             fontSize: 28,
             fontWeight: FontWeight.w900,
             color: primaryColor,
@@ -168,7 +170,7 @@ class _SucessScreenState extends State<SucessScreen> {
           ],
         ),
         child: Center(
-          child: "Done".appText(
+          child: LocaleKeys.done.tr().appText(
             fontSize: 17,
             color: Colors.white,
             fontWeight: FontWeight.w800,

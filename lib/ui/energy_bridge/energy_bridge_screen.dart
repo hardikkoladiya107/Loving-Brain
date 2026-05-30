@@ -10,6 +10,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
+import '../../generated/locale_keys.g.dart';
 import 'bloc/energy_bridge_cubit.dart';
 import 'bloc/energy_bridge_state.dart';
 
@@ -67,7 +68,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             iconTheme: const IconThemeData(color: Colors.white),
-            title: "energyBridgeTitle".tr().appText(
+            title: LocaleKeys.energyBridgeTitle.tr().appText(
               color: Colors.white,
               fontWeight: FontWeight.w800,
               fontSize: 18.sp,
@@ -120,8 +121,8 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                               _heroIcon(isActive),
                               14.h.spaceH,
                               (isActive
-                                      ? "energyBridgeSessionActive".tr()
-                                      : "energyBridgeTantrumStopper".tr())
+                                      ? LocaleKeys.energyBridgeSessionActive.tr()
+                                      : LocaleKeys.energyBridgeTantrumStopper.tr())
                                   .appText(
                                     fontSize: 23.sp,
                                     fontWeight: FontWeight.w900,
@@ -129,7 +130,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                                     textAlign: TextAlign.center,
                                   ),
                               8.h.spaceH,
-                              "energyBridgeIntro".tr().appText(
+                              LocaleKeys.energyBridgeIntro.tr().appText(
                                 fontSize: 13.sp,
                                 color: Colors.grey.shade700,
                                 textAlign: TextAlign.center,
@@ -189,15 +190,15 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                "energyBridgeMode".tr().appText(
+                LocaleKeys.energyBridgeMode.tr().appText(
                   color: Colors.white.withValues(alpha: 0.85),
                   fontWeight: FontWeight.w700,
                   fontSize: 12.sp,
                 ),
                 2.h.spaceH,
                 (isActive
-                        ? "energyBridgeRunning".tr()
-                        : "energyBridgeReady".tr())
+                        ? LocaleKeys.energyBridgeRunning.tr()
+                        : LocaleKeys.energyBridgeReady.tr())
                     .appText(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -216,8 +217,8 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
             ),
             child:
                 (isActive
-                        ? "energyBridgeActiveBadge".tr()
-                        : "energyBridgeIdleBadge".tr())
+                        ? LocaleKeys.energyBridgeActiveBadge.tr()
+                        : LocaleKeys.energyBridgeIdleBadge.tr())
                     .appText(
                       color: Colors.white,
                       fontWeight: FontWeight.w800,
@@ -277,7 +278,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
           ),
           8.w.spaceW,
           Expanded(
-            child: "energyBridgeTip".tr().appText(
+            child: LocaleKeys.energyBridgeTip.tr().appText(
               fontSize: 11.sp,
               color: Colors.grey.shade700,
               fontWeight: FontWeight.w600,
@@ -318,7 +319,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: "energyBridgeElapsed".tr().appText(
+                    child: LocaleKeys.energyBridgeElapsed.tr().appText(
                       fontSize: 12.sp,
                       color: Colors.grey.shade700,
                       fontWeight: FontWeight.w700,
@@ -345,7 +346,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
               ),
               14.h.spaceH,
               if (remainingMinutes > 0) ...[
-                "energyBridgeNotificationIn"
+                LocaleKeys.energyBridgeNotificationIn
                     .tr(
                       namedArgs: <String, String>{
                         "minutes": remainingMinutes.toString(),
@@ -357,7 +358,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                       fontWeight: FontWeight.w700,
                     ),
               ] else ...[
-                "energyBridgeCardActive".tr().appText(
+                LocaleKeys.energyBridgeCardActive.tr().appText(
                   fontSize: 13.sp,
                   color: Colors.green.shade700,
                   fontWeight: FontWeight.w800,
@@ -380,7 +381,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
               border: Border.all(color: const Color(0xFFFFBAC2), width: 1.3),
             ),
             child: Center(
-              child: "energyBridgeCancelTimer".tr().appText(
+              child: LocaleKeys.energyBridgeCancelTimer.tr().appText(
                 color: Colors.red.shade500,
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w800,
@@ -416,7 +417,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
           ],
         ),
         child: Center(
-          child: "energyBridgeStartPlay".tr().appText(
+          child: LocaleKeys.energyBridgeStartPlay.tr().appText(
             color: Colors.white,
             fontSize: 15.sp,
             fontWeight: FontWeight.w800,
@@ -437,7 +438,7 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(color: const Color(0xFFFFE69C)),
           ),
-          child: "energyBridgeFiredMessage".tr().appText(
+          child: LocaleKeys.energyBridgeFiredMessage.tr().appText(
             fontSize: 13.sp,
             color: Colors.brown.shade700,
             fontWeight: FontWeight.w700,

@@ -78,8 +78,12 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           (state.sharedEvent?.title ?? "").appText(
                             fontWeight: FontWeight.w800,
                           ),
-                          "For ${_getChildName(state)} • Created by ${_getCreatedByName(state)}"
-                              .appText(fontSize: 14),
+                          LocaleKeys.forChildCreatedBy.tr(
+                            namedArgs: {
+                              'childName': _getChildName(state),
+                              'creatorName': _getCreatedByName(state),
+                            },
+                          ).appText(fontSize: 14),
                         ],
                       ).appPadding(all: 8),
                     ),
@@ -182,7 +186,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           },
         ),
         20.w.spaceW,
-        "Event Details".appText(fontWeight: FontWeight.w700, fontSize: 20),
+        LocaleKeys.eventDetails.tr().appText(fontWeight: FontWeight.w700, fontSize: 20),
       ],
     );
   }
@@ -196,7 +200,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          "Note".appText(color: cardColor2, fontWeight: FontWeight.w700),
+          LocaleKeys.note.tr().appText(color: cardColor2, fontWeight: FontWeight.w700),
           (note ?? "").appText(
             fontSize: 12,
             textAlign: TextAlign.start,
@@ -220,7 +224,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            "Upgrade"
+            LocaleKeys.upgrade.tr()
                 .appText(
                   color: Colors.white,
                   fontSize: 10,
@@ -243,7 +247,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           10.spaceH,
-          "History".appText(
+          LocaleKeys.history.tr().appText(
             color: primaryColor,
             fontWeight: FontWeight.w600,
             fontSize: 14,
@@ -253,7 +257,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             children: [
               Assets.icons.icSuccessCheck.image(),
               4.spaceW,
-              "Approved by Priya • Aug 4, 7:12 pm".appText(
+              LocaleKeys.mockApprovedByPriya.tr().appText(
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
@@ -264,7 +268,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             children: [
               Assets.icons.icSuccessCheck.image(),
               4.spaceW,
-              "Approved by Priya • Aug 4, 7:12 pm".appText(
+              LocaleKeys.mockApprovedByPriya.tr().appText(
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),

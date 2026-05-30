@@ -68,7 +68,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
                 MaterialPageRoute(
                   builder: (_) => SucessScreen(
                     successText:
-                        "Your account has been created and you're now a co-parent! 🎉\n\nPlease complete your profile to get started.",
+                        LocaleKeys.coParentSuccessText.tr(),
                   ),
                 ),
               );
@@ -225,7 +225,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              'Create Your Account'.appText(
+              LocaleKeys.createYourAccount.tr().appText(
                 fontWeight: FontWeight.w900,
                 fontSize: 22.sp,
                 color: Colors.black87,
@@ -233,7 +233,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
                 letterSpacing: -0.3,
               ),
               4.h.spaceH,
-              'Set a password to accept the invitation'.appText(
+              LocaleKeys.setPasswordToAcceptInvitation.tr().appText(
                 fontWeight: FontWeight.w600,
                 fontSize: 12.sp,
                 color: Colors.grey.shade600,
@@ -288,7 +288,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  'Invitation accepted for:'.appText(
+                  LocaleKeys.invitationAcceptedFor.tr().appText(
                     fontWeight: FontWeight.w600,
                     fontSize: 12.sp,
                     color: Colors.white.withValues(alpha: 0.82),
@@ -427,7 +427,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
             text: TextSpan(
               style: getTextStyle(fontSize: 13, color: Colors.grey.shade700),
               children: [
-                const TextSpan(text: 'I accept '),
+                TextSpan(text: LocaleKeys.iAccept.tr()),
                 TextSpan(
                   text: LocaleKeys.termsConditions.tr(),
                   style: getTextStyle(
@@ -496,7 +496,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
                   strokeWidth: 2.5,
                 ),
               )
-            : 'Create Account & Accept Invitation'.appText(
+            : LocaleKeys.createAccountAndAcceptInvitation.tr().appText(
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 15.sp,

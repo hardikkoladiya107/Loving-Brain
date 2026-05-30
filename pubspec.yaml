@@ -84,6 +84,7 @@ dependencies:
   timezone: ^0.10.1
   go_router: ^17.2.2
   firebase_core: ^4.7.0
+  envied: ^1.3.5
 
 
 
@@ -102,9 +103,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   flutter_gen_runner: ^5.11.0
-  build_runner: ^2.6.0
+  build_runner: ^2.15.0
   freezed: ^3.2.0
   json_serializable: ^6.10.0
+  envied_generator: ^1.3.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

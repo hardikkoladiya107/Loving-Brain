@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/essential_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -29,7 +31,7 @@ class EssentialsNotesSection extends StatelessWidget {
           children: <Widget>[
             Icon(LucideIcons.fileText, color: Colors.grey.shade300, size: 48.w),
             12.h.spaceH,
-            "No essentials added yet".appText(
+            LocaleKeys.noEssentialsAddedYet.tr().appText(
               fontSize: 14.sp,
               color: Colors.grey.shade500,
               fontWeight: FontWeight.w600,
