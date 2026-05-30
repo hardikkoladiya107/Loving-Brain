@@ -35,12 +35,11 @@ class ReflectEmotionCubit extends Cubit<ReflectEmotionState> {
     emit(
       state.copyWith(
         userModel: userModel ?? state.userModel,
-        emotionsLogApiResult:
-            emotionsLogApiResult ?? state.emotionsLogApiResult,
+        emotionsLogApiResult: emotionsLogApiResult ?? ApiResultStatus.initial(),
         logs: logs ?? state.logs,
         apiResultStatus: apiResultStatus ?? ApiResultStatus.initial(),
         childrenListApiResult:
-            childrenListApiResult ?? state.childrenListApiResult,
+            childrenListApiResult ?? ApiResultStatus.initial(),
         selectedWeek: selectedWeek ?? state.selectedWeek,
         childModel: childModel ?? state.childModel,
         children: children ?? state.children,

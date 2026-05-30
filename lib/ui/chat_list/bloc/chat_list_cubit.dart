@@ -26,10 +26,10 @@ class ChatListCubit extends Cubit<ChatListState> {
     emit(
       state.copyWith(
         getConversationsApiResult:
-            getConversationsApiResult ?? state.getConversationsApiResult,
+            getConversationsApiResult ?? ApiResultStatus.initial(),
         userModel: userModel ?? state.userModel,
         deleteConversationsApiResult:
-            deleteConversationsApiResult ?? state.deleteConversationsApiResult,
+            deleteConversationsApiResult ?? ApiResultStatus.initial(),
         conversationList: conversationList ?? state.conversationList,
       ),
     );
@@ -51,10 +51,8 @@ class ChatListCubit extends Cubit<ChatListState> {
                     .map((e) => ConversationListItem.fromJson(e.data()))
                     .toList(),
               );
-            }else{
-              changeProps(
-                conversationList: [],
-              );
+            } else {
+              changeProps(conversationList: []);
             }
           });
     }

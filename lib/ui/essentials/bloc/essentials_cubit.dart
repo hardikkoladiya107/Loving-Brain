@@ -46,12 +46,11 @@ class EssentialsCubit extends Cubit<EssentialsState> {
         userModel: userModel ?? state.userModel,
         childModel: childModel ?? state.childModel,
         addEssentialsApiResult:
-            addEssentialsApiResult ?? state.addEssentialsApiResult,
+            addEssentialsApiResult ?? ApiResultStatus.initial(),
         uploadDocumentApiResultStatus:
-            uploadDocumentApiResultStatus ??
-            state.uploadDocumentApiResultStatus,
+            uploadDocumentApiResultStatus ?? ApiResultStatus.initial(),
         childrenListApiResult:
-            childrenListApiResult ?? state.childrenListApiResult,
+            childrenListApiResult ?? ApiResultStatus.initial(),
         titleError: titleError ?? state.titleError,
         descriptionError: descriptionError ?? state.descriptionError,
         childList: children ?? state.childList,

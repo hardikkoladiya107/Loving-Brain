@@ -37,21 +37,22 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
         }
         if (saveStatus is status.Data) {
           EasyLoading.dismiss();
-          await showSnackBar(
-            message: 'Nice timing - this builds connection.',
-            type: SnackBarType.SUCCESS,
-          );
+          final bool? isMilestone = await _showMilestonePrompt(context);
           if (!context.mounted) {
             return;
           }
-          final bool? isMilestone = await _showMilestonePrompt(context);
-          if (!context.mounted) {
+          if (isMilestone == null) {
             return;
           }
           if (isMilestone == true) {
             await showSnackBar(
               message: 'Milestone flow will open in Sprint 3.',
               type: SnackBarType.None,
+            );
+          } else {
+            await showSnackBar(
+              message: 'Nice timing - this builds connection.',
+              type: SnackBarType.SUCCESS,
             );
           }
           if (!context.mounted) {
@@ -207,34 +208,78 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: 'Did something special happen?'.appText(
-            fontWeight: FontWeight.w900,
-            fontSize: 16.sp,
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.r),
           ),
-          content: 'You can mark this as a milestone if needed.'.appText(
-            fontWeight: FontWeight.w600,
-            fontSize: 13.sp,
-            textAlign: TextAlign.start,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                'Did something special happen?'.appText(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 22.sp,
+                  textAlign: TextAlign.center,
+                  color: const Color(0xFF2F2A44),
+                ),
+                10.h.spaceH,
+                'You can mark this as a milestone if needed.'.appText(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  textAlign: TextAlign.center,
+                  color: const Color(0xFF5B5571),
+                ),
+                22.h.spaceH,
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: BaseButton(
+                        onTap: () => Navigator.of(context).pop(false),
+                        child: Container(
+                          height: 44.h,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEAEAF0),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: 'No'.appText(
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF5B5571),
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                    10.w.spaceW,
+                    Expanded(
+                      child: BaseButton(
+                        onTap: () => Navigator.of(context).pop(true),
+                        child: Container(
+                          height: 44.h,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF6A24B8),
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: 'Yes'.appText(
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => context.pop(false),
-              child: 'No'.appText(
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFF5B5571),
-                fontSize: 13.sp,
-              ),
-            ),
-            TextButton(
-              onPressed: () => context.pop(true),
-              child: 'Yes'.appText(
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFF6A24B8),
-                fontSize: 13.sp,
-              ),
-            ),
-          ],
         );
       },
     );

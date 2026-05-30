@@ -39,3 +39,10 @@ alwaysApply: true
 ## When in doubt
 
 - Match the nearest existing feature’s folder and patterns; avoid new global patterns without a reason.
+
+## ApiResultStatus in changeProps (strict)
+
+- In every Cubit `changeProps(...)`, any `ApiResultStatus` field must default to `ApiResultStatus.initial()` when the parameter is null.
+- Required pattern:
+  - `someApiResultStatus: someApiResultStatus ?? ApiResultStatus.initial(),`
+- Never default `ApiResultStatus` fields to previous state inside `changeProps` (for example, avoid `?? state.someApiResultStatus`).

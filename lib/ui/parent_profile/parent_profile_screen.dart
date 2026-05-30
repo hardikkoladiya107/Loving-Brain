@@ -13,7 +13,6 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
-import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
@@ -22,23 +21,34 @@ import 'bloc/parent_profile_cubit.dart';
 import 'bloc/parent_profile_state.dart';
 
 class ParentProfileScreen extends StatefulWidget {
-  const ParentProfileScreen({super.key,});
-
+  const ParentProfileScreen({super.key});
 
   @override
   State<ParentProfileScreen> createState() => _ParentProfileScreenState();
 }
 
 class _ParentProfileScreenState extends State<ParentProfileScreen> {
-  TextEditingController parentNameTextEditingController =
+  final TextEditingController parentNameTextEditingController =
       TextEditingController();
-  TextEditingController parentEmailTextEditingController =
+  final TextEditingController parentEmailTextEditingController =
       TextEditingController();
 
   @override
   void initState() {
-    context.read<ParentProfileCubit>().init();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      context.read<ParentProfileCubit>().init();
+    });
+  }
+
+  @override
+  void dispose() {
+    parentNameTextEditingController.dispose();
+    parentEmailTextEditingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -72,34 +82,88 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
               );
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.images.imgParentProfileBg.path),
-            ),
-          ),
-          child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  80.spaceH,
-                  _header(),
-                  140.spaceH,
-                  _name(state),
-                  10.spaceH,
-                  _email(state),
-                  10.spaceH,
-                  _dateOfBirthButton(context, state),
-                  10.spaceH,
-                  _genderDropDown(state),
-                  30.spaceH,
-                  _nextButton(),
-                ],
+        return Scaffold(
+          resizeToAvoidBottomInset: true,
+          extendBodyBehindAppBar: true,
+          backgroundColor: const Color(0xFFFAFAFA),
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFF6F0FF),
+                        Color(0xFFFFF0F5),
+                        Color(0xFFF9FAFB),
+                        Color(0xFFF9FAFB),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.0, 0.3, 0.6, 1.0],
+                    ),
+                  ),
+                ),
               ),
-            ),
+              Positioned(
+                top: -65.h,
+                right: -40.w,
+                child: _decorativeOrb(
+                  size: 180.r,
+                  colors: [const Color(0xFFFFD7EE), const Color(0xFFFFEEF8)],
+                ),
+              ),
+              Positioned(
+                top: 120.h,
+                left: -50.w,
+                child: _decorativeOrb(
+                  size: 140.r,
+                  colors: [const Color(0xFFDDF3FF), const Color(0xFFF2FAFF)],
+                ),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        34.spaceH,
+                        _header(),
+                        28.spaceH,
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 30.h),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withValues(alpha: 0.08),
+                                blurRadius: 30.r,
+                                offset: Offset(0, 10.h),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              _name(state),
+                              16.spaceH,
+                              _email(state),
+                              16.spaceH,
+                              _dateOfBirthButton(context, state),
+                              16.spaceH,
+                              _genderDropDown(state),
+                              30.spaceH,
+                              _nextButton(),
+                            ],
+                          ),
+                        ).appPadding(left: 20, right: 20),
+                        40.spaceH,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -124,15 +188,32 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
   }
 
   Widget _header() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: Colors.white.withValues(alpha: 0.5),
-      ),
-      child: LocaleKeys.createYourAccountToBeginYourParentingJourney
-          .tr()
-          .appText(fontWeight: FontWeight.w900, color: yellowTextColor)
-          .appPadding(all: 10),
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: primaryColor.withValues(alpha: 0.08),
+                blurRadius: 24.r,
+                offset: Offset(0, 8.h),
+              ),
+            ],
+          ),
+          child: LocaleKeys.createYourAccountToBeginYourParentingJourney
+              .tr()
+              .appText(
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF374151),
+                fontSize: 20.sp,
+                textAlign: TextAlign.center,
+                height: 1.35,
+              )
+              .appPadding(left: 20, right: 20, top: 14, bottom: 14),
+        ),
+      ],
     ).appPadding(left: 30, right: 30);
   }
 
@@ -144,10 +225,10 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
         8.spaceH,
         BaseButton(
           child: Container(
-            height: 55,
+            height: 55.h,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFF9FAFB),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Row(
               children: [
@@ -165,7 +246,11 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                   ),
                 ],
                 Spacer(),
-                Icon(Icons.calendar_month),
+                Icon(
+                  Icons.calendar_month_rounded,
+                  color: Colors.grey.shade500,
+                  size: 20.sp,
+                ),
                 20.spaceW,
               ],
             ),
@@ -179,7 +264,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             4.spaceH,
             Row(
               children: [
-                (state.parentDateOfBirthError ?? "").appText(
+                state.parentDateOfBirthError.appText(
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: Colors.red,
@@ -189,16 +274,16 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           ],
         ),
       ],
-    ).appPadding(left: 30, right: 30);
+    ).appPadding(left: 24, right: 24);
   }
 
   Widget _genderDropDown(ParentProfileState state) {
     return AppDropDownButton(
       offset: Offset(0, 78.h),
       dropDownWidget: (close) {
-        List<Widget> widgetsList = [];
+        final List<Widget> widgetsList = <Widget>[];
         for (int i = 0; i < state.genderList.length; i++) {
-          var gender = state.genderList[i];
+          final String gender = state.genderList[i];
           widgetsList.add(
             BaseButton(
               child: Column(
@@ -227,14 +312,14 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
         return Container(
           height: 125.h,
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            color: const Color(0xFFFDFDFD),
+            borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.1),
-                blurRadius: 2,
-                spreadRadius: 2,
-                offset: Offset(1, 1),
+                color: primaryColor.withValues(alpha: 0.08),
+                blurRadius: 12.r,
+                spreadRadius: 1.r,
+                offset: Offset(0, 6.h),
               ),
             ],
           ),
@@ -250,15 +335,15 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           LocaleKeys.gender.tr().appText(fontSize: 14),
           8.spaceH,
           Container(
-            height: 55,
+            height: 55.h,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: const Color(0xFFF9FAFB),
+              borderRadius: BorderRadius.circular(12.r),
             ),
             child: Row(
               children: [
                 16.spaceW,
-                if ((state.parentGender ?? "").isNotEmpty) ...[
+                if (state.parentGender.isNotEmpty) ...[
                   state.parentGender.appText(
                     fontSize: 14,
                     color: Colors.black,
@@ -271,7 +356,11 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                   ),
                 ],
                 Spacer(),
-                Icon(Icons.arrow_drop_down),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: Colors.grey.shade500,
+                  size: 22.sp,
+                ),
                 20.spaceW,
               ],
             ),
@@ -281,7 +370,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
               4.spaceH,
               Row(
                 children: [
-                  (state.parentGenderError ?? "").appText(
+                  state.parentGenderError.appText(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Colors.red,
@@ -292,7 +381,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           ),
         ],
       ),
-    ).appPadding(left: 30, right: 30);
+    ).appPadding(left: 24, right: 24);
   }
 
   Widget _nextButton() {
@@ -300,31 +389,51 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
       child: Container(
         width: 200.w,
         decoration: BoxDecoration(
-          color: buttonColor1,
-          borderRadius: BorderRadius.circular(20),
+          color: primaryColor,
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: [
+            BoxShadow(
+              color: primaryColor.withValues(alpha: 0.3),
+              blurRadius: 15.r,
+              offset: Offset(0, 6.h),
+            ),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             LocaleKeys.next
                 .tr()
-                .appText(color: Colors.white, fontWeight: FontWeight.w800)
-                .appPadding(top: 8, bottom: 8),
+                .appText(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16.sp,
+                  letterSpacing: 0.3,
+                )
+                .appPadding(top: 14, bottom: 14),
           ],
         ),
       ),
       onTap: () {
-        context.read<ParentProfileCubit>().addParentDetail( );
+        context.read<ParentProfileCubit>().addParentDetail();
       },
     );
   }
 
   Future<void> _showDatePickerDialog() async {
-    var date = await showDatePicker(
+    final DateTime now = DateTime.now();
+    final DateTime initialDate =
+        context.read<ParentProfileCubit>().state.parentDateOfBirth ??
+        DateTime(now.year - 24, now.month, now.day);
+    final DateTime? date = await showDatePicker(
       context: context,
+      initialDate: initialDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
+      lastDate: now,
     );
+    if (date == null) {
+      return;
+    }
     context.read<ParentProfileCubit>().changeProps(parentDateOfBirth: date);
   }
 
@@ -337,7 +446,8 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
       onChanged: (value) {
         context.read<ParentProfileCubit>().changeProps(parentName: value);
       },
-    ).appPadding(left: 30, right: 30);
+      fillColor: const Color(0xFFF9FAFB),
+    ).appPadding(left: 24, right: 24);
   }
 
   Widget _email(ParentProfileState state) {
@@ -352,6 +462,18 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           parentEmailAddress: value,
         );
       },
-    ).appPadding(left: 30, right: 30);
+      fillColor: const Color(0xFFF9FAFB),
+    ).appPadding(left: 24, right: 24);
+  }
+
+  Widget _decorativeOrb({required double size, required List<Color> colors}) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(colors: colors),
+      ),
+    );
   }
 }

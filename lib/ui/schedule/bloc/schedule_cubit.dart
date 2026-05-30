@@ -40,10 +40,9 @@ class ScheduleCubit extends Cubit<ScheduleState> {
         sharedEventList: sharedEventList ?? state.sharedEventList,
         hasLinkedCoParent: hasLinkedCoParent ?? state.hasLinkedCoParent,
         deleteRoutineApiResultStatus:
-            deleteRoutineApiResultStatus ?? state.deleteRoutineApiResultStatus,
+            deleteRoutineApiResultStatus ?? ApiResultStatus.initial(),
         deleteSharedEventApiResultStatus:
-            deleteSharedEventApiResultStatus ??
-            state.deleteSharedEventApiResultStatus,
+            deleteSharedEventApiResultStatus ?? ApiResultStatus.initial(),
       ),
     );
   }

@@ -114,6 +114,7 @@ This Flutter project uses BLoC pattern with Cubit for state management, Freezed 
 - **CRITICAL: ApiResultStatus MUST ONLY be used in BlocConsumer/BlocListener listeners** - handle loading/error states with EasyLoading (or your loading solution)
 - **CRITICAL: NEVER use ApiResultStatus in builders** - always use data directly from state
 - **CRITICAL: Builders should only check if data list is empty** - no status checking, no loading indicators in builder
+- **CRITICAL: In every Cubit `changeProps()`, all `ApiResultStatus` fields MUST default to `ApiResultStatus.initial()` when null** - use `fieldStatus: fieldStatus ?? ApiResultStatus.initial()` and NEVER use `fieldStatus ?? state.fieldStatus`
 - In BlocConsumer/BlocListener listeners, use `whenOrNull()` and handle loading with EasyLoading:
 
   listener: (context, state) {

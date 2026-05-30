@@ -86,7 +86,7 @@ class EventApprovalCubit extends Cubit<EventApprovalState> {
         assignedUserList: assignedUserList ?? state.assignedUserList,
         childrenList: childrenList ?? state.childrenList,
         updatedSharedEventApiResult:
-            updatedSharedEventApiResult ?? state.updatedSharedEventApiResult,
+            updatedSharedEventApiResult ?? ApiResultStatus.initial(),
       ),
     );
   }

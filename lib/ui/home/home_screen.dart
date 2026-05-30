@@ -121,8 +121,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final String childName = state.childModel?.childName ?? "Child";
     final ChildState? childState = state.childModel?.childState;
     final String stateText = childState?.label ?? "Nothing logged yet";
-    final String insightText =
-        childState?.insightText ?? "How is $childName feeling right now?";
     final String updatedText = _updatedAgoText(
       state.childModel?.stateUpdatedAt,
     );
@@ -130,13 +128,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       childState: childState,
       childName: childName,
     );
-    final String bodyText = _smartActionBodyText(childState: childState);
     final String ctaText = _smartActionCtaText(childState: childState);
     return BaseButton(
       onTap: () => context.push(RoutePaths.familyMeterStateDetail),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 20.w),
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: childState == null
@@ -148,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: <BoxShadow>[
             BoxShadow(
               color: const Color(0xFF6A24B8).withValues(alpha: 0.12),
@@ -164,66 +161,52 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: <Widget>[
                 Text(
                   childState?.emoji ?? "💭",
-                  style: TextStyle(fontSize: 26.sp),
+                  style: TextStyle(fontSize: 22.sp),
                 ),
                 8.w.spaceW,
                 Expanded(
                   child: childName.appText(
                     fontWeight: FontWeight.w900,
-                    fontSize: 24.sp,
+                    fontSize: 20.sp,
                     color: const Color(0xFF2F2A44),
                   ),
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
                   color: const Color(0xFF5E4C88),
-                  size: 24.sp,
+                  size: 22.sp,
                 ),
               ],
             ),
-            6.h.spaceH,
+            4.h.spaceH,
             stateText.appText(
               fontWeight: FontWeight.w800,
-              fontSize: 14.sp,
+              fontSize: 13.sp,
               color: childState?.color ?? Colors.grey.shade700,
             ),
             4.h.spaceH,
-            insightText.appText(
-              fontWeight: FontWeight.w600,
-              fontSize: 12.sp,
-              color: const Color(0xFF4C4266),
-            ),
-            6.h.spaceH,
             BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
               builder: (BuildContext context, EnergyBridgeState energyState) {
                 final String timerText = _energyBridgeCountdownText(
                   energyState,
                 );
-                if (timerText.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 6.h),
-                  child: timerText.appText(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12.sp,
-                    color: const Color(0xFF6750A4),
-                  ),
+                final String metaText = timerText.isEmpty
+                    ? updatedText
+                    : "$timerText • $updatedText";
+                return metaText.appText(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11.sp,
+                  color: const Color(0xFF6750A4),
                 );
               },
             ),
-            updatedText.appText(
-              fontWeight: FontWeight.w600,
-              fontSize: 12.sp,
-              color: Colors.grey.shade600,
-            ),
-            10.h.spaceH,
+            8.h.spaceH,
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(12.w),
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(20.r),
+                borderRadius: BorderRadius.circular(14.r),
                 border: Border.all(color: const Color(0xFFECE8F8), width: 1.2),
               ),
               child: Column(
@@ -231,21 +214,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.all(8.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1ECFF),
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Icon(
-                          Icons.tips_and_updates_rounded,
-                          size: 18.sp,
-                          color: const Color(0xFF6A24B8),
-                        ),
-                      ),
-                      8.w.spaceW,
                       "Smart Action".appText(
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w900,
                         color: const Color(0xFF2F2A44),
                       ),
@@ -263,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             borderRadius: BorderRadius.circular(999.r),
                           ),
                           child: "Help".appText(
-                            fontSize: 11.sp,
+                            fontSize: 10.sp,
                             fontWeight: FontWeight.w900,
                             color: const Color(0xFF6A24B8),
                           ),
@@ -271,26 +241,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  8.h.spaceH,
+                  6.h.spaceH,
                   headerText.appText(
-                    fontSize: 16.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w900,
                     color: const Color(0xFF2F2A44),
                     textAlign: TextAlign.start,
                   ),
-                  4.h.spaceH,
-                  bodyText.appText(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF5B5571),
-                    textAlign: TextAlign.start,
-                  ),
-                  10.h.spaceH,
+                  8.h.spaceH,
                   BaseButton(
                     onTap: () => _onSmartActionTap(childState),
                     child: Container(
                       width: double.infinity,
-                      height: 40.h,
+                      height: 34.h,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: <Color>[Color(0xFF6A24B8), Color(0xFF8F58D7)],
@@ -300,11 +263,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       alignment: Alignment.center,
-                      child: ctaText.appText(
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                      ),
+                      child: ctaText
+                          .replaceAll("Guide me now", "Guide now")
+                          .replaceAll("Help me now", "Help now")
+                          .appText(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
                     ),
                   ),
                 ],
@@ -1059,22 +1025,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       return "Wind-down time";
     }
     return "How is $childName right now?";
-  }
-
-  String _smartActionBodyText({required ChildState? childState}) {
-    if (childState == ChildState.calm) {
-      return "Try one short connection activity together.";
-    }
-    if (childState == ChildState.highEnergy) {
-      return "Channel the energy into movement before transition time.";
-    }
-    if (childState == ChildState.fussy) {
-      return "Offer comfort first, then reduce stimulation nearby.";
-    }
-    if (childState == ChildState.tired) {
-      return "Keep the environment quiet and start your bedtime routine.";
-    }
-    return "Update the Family Meter so guidance stays current.";
   }
 
   String _smartActionCtaText({required ChildState? childState}) {

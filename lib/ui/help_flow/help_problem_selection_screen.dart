@@ -19,25 +19,27 @@ class HelpProblemSelectionScreen extends StatefulWidget {
 
 class _HelpProblemSelectionScreenState
     extends State<HelpProblemSelectionScreen> {
+  bool _didAutoSelectFussy = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HelpFlowCubit>().init();
-      final ChildState? suggested = context
-          .read<HelpFlowCubit>()
-          .state
-          .childState;
-      if (suggested == ChildState.fussy) {
-        context.read<HelpFlowCubit>().selectProblem('too_fussy');
-      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HelpFlowCubit, HelpFlowState>(
-      listener: (BuildContext context, HelpFlowState state) {},
+      listener: (BuildContext context, HelpFlowState state) {
+        if (!_didAutoSelectFussy &&
+            state.childState == ChildState.fussy &&
+            state.selectedProblemType.isEmpty) {
+          _didAutoSelectFussy = true;
+          context.read<HelpFlowCubit>().selectProblem('too_fussy');
+        }
+      },
       builder: (BuildContext context, HelpFlowState state) {
         final String childName = state.childModel?.childName ?? 'Child';
         return Scaffold(
