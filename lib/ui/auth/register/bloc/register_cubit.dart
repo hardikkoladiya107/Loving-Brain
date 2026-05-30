@@ -26,6 +26,8 @@ class RegisterCubit extends Cubit<RegisterState> {
     bool? isTermsAndConditionAccepted,
     ApiResultStatus? apiResultStatus,
     bool? isAuthSubmitting,
+    int? currentStep,
+    bool? isEmailChecking,
   }) {
     emit(
       state.copyWith(
@@ -43,105 +45,125 @@ class RegisterCubit extends Cubit<RegisterState> {
         isTermsAndConditionAccepted:
             isTermsAndConditionAccepted ?? state.isTermsAndConditionAccepted,
         isAuthSubmitting: isAuthSubmitting ?? state.isAuthSubmitting,
+        currentStep: currentStep ?? state.currentStep,
+        isEmailChecking: isEmailChecking ?? state.isEmailChecking,
       ),
     );
   }
 
-  bool _isValidate() {
-    if (state.emailAddress.trim().isEmpty ||
-        !state.emailAddress.trim().isValidEmail ||
-        state.password.trim().isEmpty ||
-        state.password.length < 6 ||
-        state.confirmPassword.trim().isEmpty ||
-        state.password.trim() != state.confirmPassword ||
-        !state.isTermsAndConditionAccepted) {
-      if (state.emailAddress.trim().isEmpty) {
-        changeProps(emailAddressError: LocaleKeys.pleaseEnterEmailAddress.tr());
-      } else if (!state.emailAddress.trim().isValidEmail) {
-        changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
-      } else {
-        changeProps(emailAddressError: "");
-      }
-
-      if (state.password.trim().isEmpty) {
-        changeProps(passwordError: LocaleKeys.pleaseEnterPassword.tr());
-      } else if (state.password.length < 6) {
-        changeProps(passwordError: LocaleKeys.passwordShouldBeMoreLetters.tr());
-      } else {
-        changeProps(passwordError: "");
-      }
-
-      if (state.confirmPassword.trim().isEmpty) {
-        changeProps(
-          confirmPasswordError: LocaleKeys.pleaseEnterConfirmPassword.tr(),
-        );
-      } else if (state.password.isNotEmpty &&
-          state.password.trim() != state.confirmPassword) {
-        changeProps(
-          confirmPasswordError: LocaleKeys.passwordAndConfirmPasswordShouldSame
-              .tr(),
-        );
-      } else {
-        changeProps(confirmPasswordError: "");
-      }
-
-      if (!state.isTermsAndConditionAccepted) {
-        changeProps(
-          apiResultStatus: ApiResultStatus.error(
-            error: Exception("Please accept Terms and Conditions"),
-          ),
-        );
-      }
-      return false;
+  // ---------------------------------------------------------------------------
+  // Step 0 → Step 1: validate email then advance
+  // ---------------------------------------------------------------------------
+  Future<void> nextStep() async {
+    final String email = state.emailAddress.trim();
+    if (email.isEmpty) {
+      changeProps(emailAddressError: LocaleKeys.pleaseEnterEmailAddress.tr());
+      return;
+    }
+    if (!email.isValidEmail) {
+      changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
+      return;
     }
 
-    changeProps(
-      confirmPasswordError: "",
-      passwordError: "",
-      emailAddressError: "",
-    );
-    return true;
+    // Check if account already exists
+    changeProps(emailAddressError: '', isEmailChecking: true);
+    final bool exists =
+        await AuthRepo.instance.isAccountExistWithEmail(email: email);
+    changeProps(isEmailChecking: false);
+
+    if (exists) {
+      changeProps(
+        emailAddressError: LocaleKeys.accountAlreadyExists.tr(),
+      );
+      return;
+    }
+
+    // Advance to password step
+    changeProps(currentStep: 1);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Back from step 1 → step 0
+  // ---------------------------------------------------------------------------
+  void previousStep() {
+    changeProps(currentStep: 0);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Step 1: validate passwords and register
+  // ---------------------------------------------------------------------------
+  bool _isPasswordValid() {
+    bool valid = true;
+
+    if (state.password.trim().isEmpty) {
+      changeProps(passwordError: LocaleKeys.pleaseEnterPassword.tr());
+      valid = false;
+    } else if (state.password.length < 6) {
+      changeProps(passwordError: LocaleKeys.passwordShouldBeMoreLetters.tr());
+      valid = false;
+    } else {
+      changeProps(passwordError: '');
+    }
+
+    if (state.confirmPassword.trim().isEmpty) {
+      changeProps(
+        confirmPasswordError: LocaleKeys.pleaseEnterConfirmPassword.tr(),
+      );
+      valid = false;
+    } else if (state.password.trim() != state.confirmPassword.trim()) {
+      changeProps(
+        confirmPasswordError:
+            LocaleKeys.passwordAndConfirmPasswordShouldSame.tr(),
+      );
+      valid = false;
+    } else {
+      changeProps(confirmPasswordError: '');
+    }
+
+    if (!state.isTermsAndConditionAccepted) {
+      changeProps(
+        apiResultStatus: ApiResultStatus.error(
+          error: Exception('Please accept Terms and Conditions'),
+        ),
+      );
+      valid = false;
+    }
+
+    return valid;
   }
 
   Future<void> register() async {
-    if (_isValidate()) {
-      changeProps(
-        apiResultStatus: ApiResultStatus.loading(),
-        isAuthSubmitting: true,
-      );
-      if (await AuthRepo.instance.isAccountExistWithEmail(
-        email: state.emailAddress.trim(),
-      )) {
-        changeProps(
-          apiResultStatus: ApiResultStatus.error(
-            error: Exception(LocaleKeys.accountAlreadyExists.tr()),
-          ),
-          isAuthSubmitting: false,
+    if (!_isPasswordValid()) return;
+
+    changeProps(
+      apiResultStatus: ApiResultStatus.loading(),
+      isAuthSubmitting: true,
+    );
+
+    final ApiResultStatus<dynamic> credential =
+        await AuthRepo.instance.createUserWithEmailAndPassword(
+          email: state.emailAddress.trim(),
+          password: state.password.trim(),
         );
-        return;
-      }
-      final ApiResultStatus<dynamic> credential = await AuthRepo.instance
-          .createUserWithEmailAndPassword(
-            email: state.emailAddress.trim(),
-            password: state.password.trim(),
-          );
-      changeProps(apiResultStatus: credential, isAuthSubmitting: false);
-    }
+    changeProps(apiResultStatus: credential, isAuthSubmitting: false);
   }
 
   void clearFields() {
     changeProps(
-      emailAddress: "",
-      emailAddressError: "",
-      password: "",
-      passwordError: "",
-      confirmPassword: "",
+      emailAddress: '',
+      emailAddressError: '',
+      password: '',
+      passwordError: '',
+      confirmPassword: '',
       obscureTextPassword: true,
       obscureTextConfirmPassword: true,
-      confirmPasswordError: "",
+      confirmPasswordError: '',
       isTermsAndConditionAccepted: false,
       apiResultStatus: ApiResultStatus.initial(),
       isAuthSubmitting: false,
+      currentStep: 0,
+      isEmailChecking: false,
     );
   }
 }
+

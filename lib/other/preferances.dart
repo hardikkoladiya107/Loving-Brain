@@ -19,6 +19,8 @@ class SharedPreference {
       "notificationPermissionRequested";
   static const energyBridgeStartTime = "energyBridgeStartTime";
   static const isHighEnergyActive = "isHighEnergyActive";
+  static const pendingInvitationId = "pendingInvitationId";
+  static const pendingInvitationEmail = "pendingInvitationEmail";
 
   bool? getBool(String key, {bool defValue = false}) {
     return _preferences == null

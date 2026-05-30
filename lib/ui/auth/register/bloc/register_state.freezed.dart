@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RegisterState {
 
- bool get obscureTextPassword; bool get obscureTextConfirmPassword; String get emailAddress; String get password; String get confirmPassword; String get emailAddressError; String get passwordError; String get confirmPasswordError; bool get isTermsAndConditionAccepted; ApiResultStatus get apiResultStatus; bool get isAuthSubmitting;
+ bool get obscureTextPassword; bool get obscureTextConfirmPassword; String get emailAddress; String get password; String get confirmPassword; String get emailAddressError; String get passwordError; String get confirmPasswordError; bool get isTermsAndConditionAccepted; ApiResultStatus get apiResultStatus; bool get isAuthSubmitting;/// 0 = email step, 1 = password step
+ int get currentStep; bool get isEmailChecking;
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $RegisterStateCopyWith<RegisterState> get copyWith => _$RegisterStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterState&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, obscureTextConfirmPassword) || other.obscureTextConfirmPassword == obscureTextConfirmPassword)&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterState&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, obscureTextConfirmPassword) || other.obscureTextConfirmPassword == obscureTextConfirmPassword)&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.isEmailChecking, isEmailChecking) || other.isEmailChecking == isEmailChecking));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,obscureTextPassword,obscureTextConfirmPassword,emailAddress,password,confirmPassword,emailAddressError,passwordError,confirmPasswordError,isTermsAndConditionAccepted,apiResultStatus,isAuthSubmitting);
+int get hashCode => Object.hash(runtimeType,obscureTextPassword,obscureTextConfirmPassword,emailAddress,password,confirmPassword,emailAddressError,passwordError,confirmPasswordError,isTermsAndConditionAccepted,apiResultStatus,isAuthSubmitting,currentStep,isEmailChecking);
 
 @override
 String toString() {
-  return 'RegisterState(obscureTextPassword: $obscureTextPassword, obscureTextConfirmPassword: $obscureTextConfirmPassword, emailAddress: $emailAddress, password: $password, confirmPassword: $confirmPassword, emailAddressError: $emailAddressError, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, isTermsAndConditionAccepted: $isTermsAndConditionAccepted, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting)';
+  return 'RegisterState(obscureTextPassword: $obscureTextPassword, obscureTextConfirmPassword: $obscureTextConfirmPassword, emailAddress: $emailAddress, password: $password, confirmPassword: $confirmPassword, emailAddressError: $emailAddressError, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, isTermsAndConditionAccepted: $isTermsAndConditionAccepted, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting, currentStep: $currentStep, isEmailChecking: $isEmailChecking)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $RegisterStateCopyWith<$Res>  {
   factory $RegisterStateCopyWith(RegisterState value, $Res Function(RegisterState) _then) = _$RegisterStateCopyWithImpl;
 @useResult
 $Res call({
- bool obscureTextPassword, bool obscureTextConfirmPassword, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus apiResultStatus, bool isAuthSubmitting
+ bool obscureTextPassword, bool obscureTextConfirmPassword, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus apiResultStatus, bool isAuthSubmitting, int currentStep, bool isEmailChecking
 });
 
 
@@ -62,7 +63,7 @@ class _$RegisterStateCopyWithImpl<$Res>
 
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,Object? currentStep = null,Object? isEmailChecking = null,}) {
   return _then(_self.copyWith(
 obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
 as bool,obscureTextConfirmPassword: null == obscureTextConfirmPassword ? _self.obscureTextConfirmPassword : obscureTextConfirmPassword // ignore: cast_nullable_to_non_nullable
@@ -75,6 +76,8 @@ as String,confirmPasswordError: null == confirmPasswordError ? _self.confirmPass
 as String,isTermsAndConditionAccepted: null == isTermsAndConditionAccepted ? _self.isTermsAndConditionAccepted : isTermsAndConditionAccepted // ignore: cast_nullable_to_non_nullable
 as bool,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,isAuthSubmitting: null == isAuthSubmitting ? _self.isAuthSubmitting : isAuthSubmitting // ignore: cast_nullable_to_non_nullable
+as bool,currentStep: null == currentStep ? _self.currentStep : currentStep // ignore: cast_nullable_to_non_nullable
+as int,isEmailChecking: null == isEmailChecking ? _self.isEmailChecking : isEmailChecking // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -169,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RegisterState() when $default != null:
-return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting);case _:
+return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking);case _:
   return orElse();
 
 }
@@ -190,10 +193,10 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking)  $default,) {final _that = this;
 switch (_that) {
 case _RegisterState():
-return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting);case _:
+return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -210,10 +213,10 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking)?  $default,) {final _that = this;
 switch (_that) {
 case _RegisterState() when $default != null:
-return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting);case _:
+return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking);case _:
   return null;
 
 }
@@ -225,7 +228,7 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 
 
 class _RegisterState implements RegisterState {
-  const _RegisterState({this.obscureTextPassword = true, this.obscureTextConfirmPassword = true, this.emailAddress = "", this.password = "", this.confirmPassword = "", this.emailAddressError = "", this.passwordError = "", this.confirmPasswordError = "", this.isTermsAndConditionAccepted = false, this.apiResultStatus = const ApiResultStatus.initial(), this.isAuthSubmitting = false});
+  const _RegisterState({this.obscureTextPassword = true, this.obscureTextConfirmPassword = true, this.emailAddress = '', this.password = '', this.confirmPassword = '', this.emailAddressError = '', this.passwordError = '', this.confirmPasswordError = '', this.isTermsAndConditionAccepted = false, this.apiResultStatus = const ApiResultStatus.initial(), this.isAuthSubmitting = false, this.currentStep = 0, this.isEmailChecking = false});
   
 
 @override@JsonKey() final  bool obscureTextPassword;
@@ -239,6 +242,9 @@ class _RegisterState implements RegisterState {
 @override@JsonKey() final  bool isTermsAndConditionAccepted;
 @override@JsonKey() final  ApiResultStatus apiResultStatus;
 @override@JsonKey() final  bool isAuthSubmitting;
+/// 0 = email step, 1 = password step
+@override@JsonKey() final  int currentStep;
+@override@JsonKey() final  bool isEmailChecking;
 
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
@@ -250,16 +256,16 @@ _$RegisterStateCopyWith<_RegisterState> get copyWith => __$RegisterStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterState&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, obscureTextConfirmPassword) || other.obscureTextConfirmPassword == obscureTextConfirmPassword)&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterState&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, obscureTextConfirmPassword) || other.obscureTextConfirmPassword == obscureTextConfirmPassword)&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.isEmailChecking, isEmailChecking) || other.isEmailChecking == isEmailChecking));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,obscureTextPassword,obscureTextConfirmPassword,emailAddress,password,confirmPassword,emailAddressError,passwordError,confirmPasswordError,isTermsAndConditionAccepted,apiResultStatus,isAuthSubmitting);
+int get hashCode => Object.hash(runtimeType,obscureTextPassword,obscureTextConfirmPassword,emailAddress,password,confirmPassword,emailAddressError,passwordError,confirmPasswordError,isTermsAndConditionAccepted,apiResultStatus,isAuthSubmitting,currentStep,isEmailChecking);
 
 @override
 String toString() {
-  return 'RegisterState(obscureTextPassword: $obscureTextPassword, obscureTextConfirmPassword: $obscureTextConfirmPassword, emailAddress: $emailAddress, password: $password, confirmPassword: $confirmPassword, emailAddressError: $emailAddressError, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, isTermsAndConditionAccepted: $isTermsAndConditionAccepted, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting)';
+  return 'RegisterState(obscureTextPassword: $obscureTextPassword, obscureTextConfirmPassword: $obscureTextConfirmPassword, emailAddress: $emailAddress, password: $password, confirmPassword: $confirmPassword, emailAddressError: $emailAddressError, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, isTermsAndConditionAccepted: $isTermsAndConditionAccepted, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting, currentStep: $currentStep, isEmailChecking: $isEmailChecking)';
 }
 
 
@@ -270,7 +276,7 @@ abstract mixin class _$RegisterStateCopyWith<$Res> implements $RegisterStateCopy
   factory _$RegisterStateCopyWith(_RegisterState value, $Res Function(_RegisterState) _then) = __$RegisterStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool obscureTextPassword, bool obscureTextConfirmPassword, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus apiResultStatus, bool isAuthSubmitting
+ bool obscureTextPassword, bool obscureTextConfirmPassword, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus apiResultStatus, bool isAuthSubmitting, int currentStep, bool isEmailChecking
 });
 
 
@@ -287,7 +293,7 @@ class __$RegisterStateCopyWithImpl<$Res>
 
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,Object? currentStep = null,Object? isEmailChecking = null,}) {
   return _then(_RegisterState(
 obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
 as bool,obscureTextConfirmPassword: null == obscureTextConfirmPassword ? _self.obscureTextConfirmPassword : obscureTextConfirmPassword // ignore: cast_nullable_to_non_nullable
@@ -300,6 +306,8 @@ as String,confirmPasswordError: null == confirmPasswordError ? _self.confirmPass
 as String,isTermsAndConditionAccepted: null == isTermsAndConditionAccepted ? _self.isTermsAndConditionAccepted : isTermsAndConditionAccepted // ignore: cast_nullable_to_non_nullable
 as bool,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus,isAuthSubmitting: null == isAuthSubmitting ? _self.isAuthSubmitting : isAuthSubmitting // ignore: cast_nullable_to_non_nullable
+as bool,currentStep: null == currentStep ? _self.currentStep : currentStep // ignore: cast_nullable_to_non_nullable
+as int,isEmailChecking: null == isEmailChecking ? _self.isEmailChecking : isEmailChecking // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

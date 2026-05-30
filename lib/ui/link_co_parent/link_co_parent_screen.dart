@@ -11,12 +11,10 @@ import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
-import '../../other/app_utils.dart';
 import '../widget/base_button.dart';
 import 'bloc/link_co_parent_cubit.dart';
 import 'bloc/link_co_parent_state.dart';
@@ -60,15 +58,9 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
           data: (dynamic data) {
             EasyLoading.dismiss();
             showSnackBar(
-              message: 'inviteLinkReadyToShare'.tr(),
+              message:
+                  'Invitation sent to ${state.coParentEmail ?? ''} ✓',
               type: SnackBarType.SUCCESS,
-            );
-            final String invitationLink = getInvitationLink(data.toString());
-            SharePlus.instance.share(
-              ShareParams(
-                text:
-                    'Please join as co-parent using this link\n$invitationLink',
-              ),
             );
           },
           error: (Exception error) {

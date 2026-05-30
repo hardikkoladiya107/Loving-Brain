@@ -25,17 +25,26 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController emailTextEditingController =
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
       TextEditingController();
-  final TextEditingController passwordTextEditingController =
-      TextEditingController();
-  final TextEditingController confirmPasswordTextEditingController =
-      TextEditingController();
+
+  late final AnimationController _animController;
+  late final Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+    );
+    _fadeAnim = CurvedAnimation(parent: _animController, curve: Curves.easeOut);
+    _animController.forward();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<RegisterCubit>().init();
@@ -44,56 +53,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
-    emailTextEditingController.dispose();
-    passwordTextEditingController.dispose();
-    confirmPasswordTextEditingController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    _animController.dispose();
     super.dispose();
+  }
+
+  void _onStepChanged(int newStep) {
+    _animController.forward(from: 0);
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
       builder: (context, state) {
-        if (emailTextEditingController.value.text != state.emailAddress) {
-          emailTextEditingController.value = emailTextEditingController.value
-              .copyWith(
-                text: state.emailAddress,
-                selection: TextSelection.collapsed(
-                  offset: min(
-                    emailTextEditingController.value.selection.start,
-                    state.emailAddress.length,
-                  ),
-                ),
-              );
-        }
-
-        if (passwordTextEditingController.value.text != state.password) {
-          passwordTextEditingController.value = passwordTextEditingController
-              .value
-              .copyWith(
-                text: state.password,
-                selection: TextSelection.collapsed(
-                  offset: min(
-                    passwordTextEditingController.value.selection.start,
-                    state.password.length,
-                  ),
-                ),
-              );
-        }
-
-        if (confirmPasswordTextEditingController.value.text !=
-            state.confirmPassword) {
-          confirmPasswordTextEditingController.value =
-              confirmPasswordTextEditingController.value.copyWith(
-                text: state.confirmPassword,
-                selection: TextSelection.collapsed(
-                  offset: min(
-                    confirmPasswordTextEditingController.value.selection.start,
-                    state.confirmPassword.length,
-                  ),
-                ),
-              );
-        }
+        // Sync controllers
+        _syncController(emailController, state.emailAddress);
+        _syncController(passwordController, state.password);
+        _syncController(confirmPasswordController, state.confirmPassword);
 
         return Scaffold(
           extendBodyBehindAppBar: true,
@@ -102,13 +80,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               Positioned.fill(
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFFF6F0FF),
-                        const Color(0xFFFFF0F5),
-                        const Color(0xFFF9FAFB),
-                        const Color(0xFFF9FAFB),
+                        Color(0xFFF6F0FF),
+                        Color(0xFFFFF0F5),
+                        Color(0xFFF9FAFB),
+                        Color(0xFFF9FAFB),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -119,130 +97,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               Positioned.fill(
                 child: SafeArea(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      children: [
-                        40.spaceH,
-                        _header(),
-                        40.spaceH,
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 32),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(32),
-                            boxShadow: [
-                              BoxShadow(
-                                color: primaryColor.withValues(alpha: 0.08),
-                                blurRadius: 30,
-                                offset: Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              AppTextField(
-                                controller: emailTextEditingController,
-                                title: LocaleKeys.emailAddress.tr(),
-                                hint: LocaleKeys.enterEmailAddress.tr(),
-                                error: state.emailAddressError,
-                                fillColor: const Color(0xFFF9FAFB),
-                                onChanged: (value) {
-                                  context.read<RegisterCubit>().changeProps(
-                                    emailAddress: value,
-                                  );
-                                },
-                              ).appPadding(left: 24, right: 24),
-                              16.spaceH,
-                              AppTextField(
-                                controller: passwordTextEditingController,
-                                title: LocaleKeys.password.tr(),
-                                hint: LocaleKeys.enterPassword.tr(),
-                                keyboardType: TextInputType.visiblePassword,
-                                obscureText: state.obscureTextPassword,
-                                error: state.passwordError,
-                                maxLines: 1,
-                                fillColor: const Color(0xFFF9FAFB),
-                                onChanged: (value) {
-                                  context.read<RegisterCubit>().changeProps(
-                                    password: value,
-                                  );
-                                },
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    state.obscureTextPassword
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                    color: Colors.grey.shade400,
+                  child: Column(
+                    children: [
+                      40.spaceH,
+                      _header(state),
+                      20.spaceH,
+                      _stepIndicator(state.currentStep),
+                      20.spaceH,
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: FadeTransition(
+                            opacity: _fadeAnim,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(32),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: primaryColor.withValues(alpha: 0.08),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 10),
                                   ),
-                                  onPressed: () {
-                                    context.read<RegisterCubit>().changeProps(
-                                      obscureTextPassword:
-                                          !state.obscureTextPassword,
-                                    );
-                                  },
-                                ),
-                              ).appPadding(left: 24, right: 24),
-                              16.spaceH,
-                              AppTextField(
-                                maxLines: 1,
-                                controller:
-                                    confirmPasswordTextEditingController,
-                                title: LocaleKeys.confirmPassword.tr(),
-                                hint: LocaleKeys.enterConfirmPassword.tr(),
-                                keyboardType: TextInputType.visiblePassword,
-                                obscureText: state.obscureTextConfirmPassword,
-                                error: state.confirmPasswordError,
-                                fillColor: const Color(0xFFF9FAFB),
-                                onChanged: (value) {
-                                  context.read<RegisterCubit>().changeProps(
-                                    confirmPassword: value,
-                                  );
-                                },
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    state.obscureTextConfirmPassword
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                  onPressed: () {
-                                    context.read<RegisterCubit>().changeProps(
-                                      obscureTextConfirmPassword:
-                                          !state.obscureTextConfirmPassword,
-                                    );
-                                  },
-                                ),
-                              ).appPadding(left: 24, right: 24),
-                              16.spaceH,
-                              _termsAndConditions(state),
-                              32.spaceH,
-                              _registerButton(state),
-                              20.spaceH,
-                              BaseButton(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.arrow_back_ios,
-                                      size: 14,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                    4.spaceW,
-                                    "Back to Login".appText(
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-                                onTap: () => context.pop(),
+                                ],
                               ),
-                            ],
-                          ),
-                        ).appPadding(left: 20, right: 20),
-                        80.spaceH,
-                      ],
-                    ),
+                              child: state.currentStep == 0
+                                  ? _step0(state)
+                                  : _step1(state),
+                            ),
+                          ).appPadding(left: 20, right: 20),
+                        ),
+                      ),
+                      40.spaceH,
+                    ],
                   ),
                 ),
               ),
@@ -261,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           },
           error: (Exception error) {
             showSnackBar(
-              message: error.toString().replaceAll("Exception: ", ""),
+              message: error.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
             );
           },
@@ -270,11 +158,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _header() {
+  void _syncController(TextEditingController ctrl, String stateValue) {
+    if (ctrl.text != stateValue) {
+      ctrl.value = ctrl.value.copyWith(
+        text: stateValue,
+        selection: TextSelection.collapsed(
+          offset: min(ctrl.value.selection.start, stateValue.length),
+        ),
+      );
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Shared Widgets
+  // ──────────────────────────────────────────────────────────────────────────
+
+  Widget _header(RegisterState state) {
+    final String title = state.currentStep == 0
+        ? LocaleKeys.createYourAccount.tr()
+        : LocaleKeys.createYourAccount.tr();
+    final String subtitle = state.currentStep == 0
+        ? 'Enter your email to get started'
+        : 'Set a secure password for your account';
+
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
@@ -282,11 +192,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
               BoxShadow(
                 color: primaryColor.withValues(alpha: 0.08),
                 blurRadius: 30,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
-          child: LocaleKeys.createYourAccount.tr().appText(
+          child: title.appText(
             fontWeight: FontWeight.w900,
             fontSize: 24,
             color: Colors.black87,
@@ -294,8 +204,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         16.spaceH,
-        LocaleKeys.secureYourSpotLovingBrainCommunity
-            .tr()
+        subtitle
             .appText(
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade600,
@@ -306,6 +215,234 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .appPadding(left: 20, right: 20),
       ],
     ).appPadding(left: 30, right: 30);
+  }
+
+  Widget _stepIndicator(int step) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _dot(active: step == 0, done: step > 0),
+        Container(
+          width: 40,
+          height: 2,
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: step > 0
+                ? primaryColor
+                : primaryColor.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        _dot(active: step == 1, done: false),
+      ],
+    );
+  }
+
+  Widget _dot({required bool active, required bool done}) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: active ? 14 : 10,
+      height: active ? 14 : 10,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: active || done
+            ? primaryColor
+            : primaryColor.withValues(alpha: 0.2),
+      ),
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Step 0 — Email
+  // ──────────────────────────────────────────────────────────────────────────
+
+  Widget _step0(RegisterState state) {
+    return Column(
+      children: [
+        AppTextField(
+          controller: emailController,
+          title: LocaleKeys.emailAddress.tr(),
+          hint: LocaleKeys.enterEmailAddress.tr(),
+          error: state.emailAddressError,
+          fillColor: const Color(0xFFF9FAFB),
+          keyboardType: TextInputType.emailAddress,
+          onChanged: (v) =>
+              context.read<RegisterCubit>().changeProps(emailAddress: v),
+        ).appPadding(left: 24, right: 24),
+        32.spaceH,
+        _nextButton(state),
+        20.spaceH,
+        BaseButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
+              4.spaceW,
+              'Back to Login'.appText(
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+          onTap: () => context.pop(),
+        ),
+      ],
+    );
+  }
+
+  Widget _nextButton(RegisterState state) {
+    final bool busy = state.isEmailChecking;
+    return BaseButton(
+      onTap: busy
+          ? null
+          : () {
+              context.read<RegisterCubit>().nextStep().then((_) {
+                _onStepChanged(1);
+              });
+            },
+      child: Container(
+        width: 250.w,
+        decoration: BoxDecoration(
+          color: primaryColor,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: primaryColor.withValues(alpha: 0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (busy)
+              SizedBox(
+                height: 22.r,
+                width: 22.r,
+                child: const CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Colors.white,
+                ),
+              )
+            else
+              'Continue'.appText(
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                letterSpacing: 0.5,
+                color: Colors.white,
+              ),
+          ],
+        ).appPadding(top: 14.h, bottom: 14.h),
+      ),
+    );
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Step 1 — Password + Confirm + Terms
+  // ──────────────────────────────────────────────────────────────────────────
+
+  Widget _step1(RegisterState state) {
+    return Column(
+      children: [
+        // Email display (read-only)
+        Container(
+          margin: EdgeInsets.fromLTRB(24.w, 0, 24.w, 20.h),
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: primaryColor.withValues(alpha: 0.07),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: primaryColor.withValues(alpha: 0.15),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.email_outlined,
+                  color: primaryColor, size: 18.sp),
+              10.spaceW,
+              Expanded(
+                child: state.emailAddress.appText(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14.sp,
+                  color: primaryColor,
+                  textAlign: TextAlign.start,
+                ),
+              ),
+            ],
+          ),
+        ),
+        AppTextField(
+          controller: passwordController,
+          title: LocaleKeys.password.tr(),
+          hint: LocaleKeys.enterPassword.tr(),
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: state.obscureTextPassword,
+          error: state.passwordError,
+          maxLines: 1,
+          fillColor: const Color(0xFFF9FAFB),
+          onChanged: (v) =>
+              context.read<RegisterCubit>().changeProps(password: v),
+          suffixIcon: IconButton(
+            icon: Icon(
+              state.obscureTextPassword
+                  ? Icons.visibility_off
+                  : Icons.visibility,
+              color: Colors.grey.shade400,
+            ),
+            onPressed: () => context.read<RegisterCubit>().changeProps(
+              obscureTextPassword: !state.obscureTextPassword,
+            ),
+          ),
+        ).appPadding(left: 24, right: 24),
+        16.spaceH,
+        AppTextField(
+          maxLines: 1,
+          controller: confirmPasswordController,
+          title: LocaleKeys.confirmPassword.tr(),
+          hint: LocaleKeys.enterConfirmPassword.tr(),
+          keyboardType: TextInputType.visiblePassword,
+          obscureText: state.obscureTextConfirmPassword,
+          error: state.confirmPasswordError,
+          fillColor: const Color(0xFFF9FAFB),
+          onChanged: (v) =>
+              context.read<RegisterCubit>().changeProps(confirmPassword: v),
+          suffixIcon: IconButton(
+            icon: Icon(
+              state.obscureTextConfirmPassword
+                  ? Icons.visibility_off
+                  : Icons.visibility,
+              color: Colors.grey.shade400,
+            ),
+            onPressed: () => context.read<RegisterCubit>().changeProps(
+              obscureTextConfirmPassword: !state.obscureTextConfirmPassword,
+            ),
+          ),
+        ).appPadding(left: 24, right: 24),
+        16.spaceH,
+        _termsAndConditions(state),
+        32.spaceH,
+        _registerButton(state),
+        20.spaceH,
+        BaseButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
+              4.spaceW,
+              'Change email'.appText(
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+          onTap: () {
+            context.read<RegisterCubit>().previousStep();
+            _onStepChanged(0);
+          },
+        ),
+      ],
+    );
   }
 
   Widget _registerButton(RegisterState state) {
@@ -325,7 +462,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             BoxShadow(
               color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
-              offset: Offset(0, 6),
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -356,7 +493,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _termsAndConditions(RegisterState state) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
           Transform.scale(
@@ -380,7 +517,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               text: TextSpan(
                 style: getTextStyle(fontSize: 13, color: Colors.grey.shade700),
                 children: [
-                  TextSpan(text: "I accept "),
+                  const TextSpan(text: 'I accept '),
                   TextSpan(
                     text: LocaleKeys.termsConditions.tr(),
                     style: getTextStyle(
@@ -394,7 +531,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         context.push(RoutePaths.terms);
                       },
                   ),
-                  TextSpan(text: " ${LocaleKeys.and.tr()} "),
+                  TextSpan(text: ' ${LocaleKeys.and.tr()} '),
                   TextSpan(
                     text: LocaleKeys.privacyPolicy.tr(),
                     style: getTextStyle(

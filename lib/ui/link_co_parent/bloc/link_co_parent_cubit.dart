@@ -147,14 +147,39 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
       final ApiResultStatus apiResponse = await CoParentRepo.instance
           .createInvitation(
             request: {
-              "calender_events": state.calenderAndEvent,
-              "childs_essentials": state.childEssentials,
-              "from_parent": fromEmail,
-              "to_parent": toEmail,
-              "children": childrenValue,
-              "status": "REQUESTED",
+              'calender_events': state.calenderAndEvent,
+              'childs_essentials': state.childEssentials,
+              'from_parent': fromEmail,
+              'to_parent': toEmail,
+              'children': childrenValue,
+              'status': 'REQUESTED',
             },
           );
+
+      // If invitation was created successfully, send the email
+      apiResponse.whenOrNull(
+        data: (invitationId) async {
+          final String fromParentName =
+              state.userModel?.parentName ??
+              state.userModel?.displayName ??
+              'Your co-parent';
+          final String childrenNames = state.selectedChildren
+              .map((ChildModel e) => e.childName ?? '')
+              .where((String n) => n.isNotEmpty)
+              .join(' & ');
+
+          // Fire-and-forget email — failure is non-fatal
+          CoParentRepo.instance
+              .sendInvitationEmail(
+                toEmail: toEmail,
+                fromParentName: fromParentName,
+                childrenNames: childrenNames,
+                invitationId: invitationId.toString(),
+              )
+              .catchError((_) => ApiResultStatus.error(error: Exception('Email error')));
+        },
+      );
+
       changeProps(createInvitation: apiResponse);
     }
   }

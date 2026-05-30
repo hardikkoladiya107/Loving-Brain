@@ -44,6 +44,7 @@ class RoutePaths {
   static const String linkCoParent = '/link-co-parent';
   static const String successScreen = '/success-screen';
   static const String baseScreen = '/base';
+  static const String coParentRegister = '/co-parent-register';
 
   static String childProfilePath(
     String userId, {

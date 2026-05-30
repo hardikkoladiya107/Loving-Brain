@@ -662,10 +662,6 @@ class $AssetsImagesGen {
   AssetGenImage get imgSleep =>
       const AssetGenImage('assets/images/img_sleep.png');
 
-  /// File path: assets/images/img_sleep_background.png
-  AssetGenImage get imgSleepBackground =>
-      const AssetGenImage('assets/images/img_sleep_background.png');
-
   /// File path: assets/images/img_sleep_home_background.png
   AssetGenImage get imgSleepHomeBackground =>
       const AssetGenImage('assets/images/img_sleep_home_background.png');
@@ -755,7 +751,6 @@ class $AssetsImagesGen {
     imgScanBodyBg,
     imgScheduleBg,
     imgSleep,
-    imgSleepBackground,
     imgSleepHomeBackground,
     imgSleepMoon,
     imgSleepTeddy,

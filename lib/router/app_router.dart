@@ -43,6 +43,7 @@ import 'package:loving_brain/ui/thought_list/thought_list_scren.dart';
 import 'package:loving_brain/ui/chat_detail/chat_detail_screen.dart';
 import 'package:loving_brain/ui/add_shared_event/add_shared_event_screen.dart';
 import 'package:loving_brain/ui/link_co_parent/link_co_parent_screen.dart';
+import 'package:loving_brain/ui/auth/co_parent_register/co_parent_register_screen.dart';
 import 'package:loving_brain/model/shared_event_model.dart';
 
 class AppRouter {
@@ -68,6 +69,7 @@ class AppRouter {
           RoutePaths.login,
           RoutePaths.register,
           RoutePaths.forgotPassword,
+          RoutePaths.coParentRegister,
         };
 
         if (isLoggedIn && authFlowRoutes.contains(location)) {
@@ -222,6 +224,16 @@ class AppRouter {
           path: RoutePaths.linkCoParent,
           builder: (BuildContext context, GoRouterState state) =>
               const LinkCoParentScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.coParentRegister,
+          builder: (BuildContext context, GoRouterState state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return CoParentRegisterScreen(
+              email: (extra['email'] as String?) ?? '',
+              invitationId: (extra['invitationId'] as String?) ?? '',
+            );
+          },
         ),
         GoRoute(
           path: RoutePaths.splash,

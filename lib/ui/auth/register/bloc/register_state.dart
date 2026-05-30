@@ -9,14 +9,18 @@ abstract class RegisterState with _$RegisterState {
   const factory RegisterState({
     @Default(true) bool obscureTextPassword,
     @Default(true) bool obscureTextConfirmPassword,
-    @Default("") String emailAddress,
-    @Default("") String password,
-    @Default("") String confirmPassword,
-    @Default("") String emailAddressError,
-    @Default("") String passwordError,
-    @Default("") String confirmPasswordError,
+    @Default('') String emailAddress,
+    @Default('') String password,
+    @Default('') String confirmPassword,
+    @Default('') String emailAddressError,
+    @Default('') String passwordError,
+    @Default('') String confirmPasswordError,
     @Default(false) bool isTermsAndConditionAccepted,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
     @Default(false) bool isAuthSubmitting,
+    /// 0 = email step, 1 = password step
+    @Default(0) int currentStep,
+    @Default(false) bool isEmailChecking,
   }) = _RegisterState;
 }
+

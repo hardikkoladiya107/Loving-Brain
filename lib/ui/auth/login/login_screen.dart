@@ -10,8 +10,10 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
+import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -473,17 +475,71 @@ class _LoginScreenState extends State<LoginScreen> {
     await preferences.saveUserModel(userModel);
     if (!mounted) return;
     context.read<LoginCubit>().clearFields();
-    if (userModel.uid == null) {
-      return;
+    if (userModel.uid == null) return;
+
+    // ── Process pending co-parent invitation ──────────────────────────────
+    final String pendingId =
+        preferences.getString(SharedPreference.pendingInvitationId) ?? '';
+    final String pendingEmail =
+        preferences.getString(SharedPreference.pendingInvitationEmail) ?? '';
+
+    if (pendingId.isNotEmpty) {
+      final String loggedEmail = (userModel.email ?? '').trim().toLowerCase();
+      if (loggedEmail == pendingEmail.trim().toLowerCase()) {
+        // Accept the invitation
+        final result =
+            await CoParentRepo.instance.addUserAsCoParent(pendingId);
+        // Clear pending regardless of outcome
+        await preferences.putString(SharedPreference.pendingInvitationId, '');
+        await preferences.putString(
+          SharedPreference.pendingInvitationEmail,
+          '',
+        );
+
+        bool invitationSuccess = false;
+        result.whenOrNull(
+          data: (_) => invitationSuccess = true,
+        );
+
+        if (invitationSuccess && mounted) {
+          await preferences.putBool(SharedPreference.isLogin, true);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => const SucessScreen(
+                successText:
+                    "You've successfully accepted the co-parent invitation! 🎉",
+              ),
+            ),
+          );
+        } else if (!invitationSuccess && mounted) {
+          String errMsg = '';
+          result.whenOrNull(
+            error: (err) => errMsg = err.toString().replaceAll('Exception: ', ''),
+          );
+          if (errMsg.isNotEmpty) {
+            showSnackBar(message: errMsg, type: SnackBarType.ERROR);
+          }
+        }
+      } else {
+        // Email mismatch — clear pending silently
+        await preferences.putString(SharedPreference.pendingInvitationId, '');
+        await preferences.putString(
+          SharedPreference.pendingInvitationEmail,
+          '',
+        );
+      }
     }
-    if ((userModel.parentName ?? "").isEmpty ||
-        (userModel.parentGender ?? "").isEmpty ||
-        (userModel.parentEmail ?? "").isEmpty ||
+    // ─────────────────────────────────────────────────────────────────────
+
+    if (!mounted) return;
+    if ((userModel.parentName ?? '').isEmpty ||
+        (userModel.parentGender ?? '').isEmpty ||
+        (userModel.parentEmail ?? '').isEmpty ||
         userModel.parentDateOfBirth == null) {
       router.go(RoutePaths.parentProfile);
-    } else if ((userModel.childName ?? "").isEmpty ||
-        (userModel.childAge ?? "").isEmpty ||
-        (userModel.relationshipToChild ?? "").isEmpty) {
+    } else if ((userModel.childName ?? '').isEmpty ||
+        (userModel.childAge ?? '').isEmpty ||
+        (userModel.relationshipToChild ?? '').isEmpty) {
       router.go(RoutePaths.childProfilePath(userModel.uid!));
     } else {
       await preferences.putBool(SharedPreference.isLogin, true);
