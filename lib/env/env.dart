@@ -5,5 +5,5 @@ part 'env.g.dart';
 @Envied(path: '.env', useConstantCase: true)
 abstract class Env {
   @EnviedField(varName: 'BREVO_API_KEY', obfuscate: true)
-  static const String brevoApiKey = _Env.brevoApiKey;
+  static final String brevoApiKey = _Env.brevoApiKey;
 }
