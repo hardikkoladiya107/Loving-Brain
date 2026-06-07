@@ -8,7 +8,6 @@ import 'package:loving_brain/model/routine_category_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_dropdown.dart';
-import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../../../generated/locale_keys.g.dart';

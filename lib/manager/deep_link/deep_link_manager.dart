@@ -16,7 +16,6 @@ import 'package:loving_brain/repo/child_repo.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class DeepLinkManager {
@@ -194,11 +193,7 @@ class DeepLinkManager {
 
         final BuildContext? ctx = navigatorKey.currentContext;
         if (ctx != null && ctx.mounted) {
-          Navigator.of(ctx).push(
-            MaterialPageRoute(
-              builder: (_) => SucessScreen(successText: message),
-            ),
-          );
+          GoRouter.of(ctx).push(RoutePaths.successScreen, extra: message);
         }
       },
       error: (error) {

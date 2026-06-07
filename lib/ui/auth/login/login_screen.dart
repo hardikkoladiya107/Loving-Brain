@@ -13,7 +13,6 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
-import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -503,13 +502,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (invitationSuccess && mounted) {
           await preferences.putBool(SharedPreference.isLogin, true);
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const SucessScreen(
-                successText:
-                    "You've successfully accepted the co-parent invitation! 🎉",
-              ),
-            ),
+          context.push(
+            RoutePaths.successScreen,
+            extra: "You've successfully accepted the co-parent invitation! 🎉",
           );
         } else if (!invitationSuccess && mounted) {
           String errMsg = '';

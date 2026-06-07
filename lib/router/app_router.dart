@@ -4,8 +4,6 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/auth/forgot_password/forgot_password_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
 import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen1.dart';
-import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen2.dart';
-import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen3.dart';
 import 'package:loving_brain/ui/auth/on_boarding/welcome_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
 import 'package:loving_brain/ui/base_screen/base_screen.dart';
@@ -14,6 +12,7 @@ import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
+import 'package:loving_brain/ui/success_screen/success_screen.dart';
 
 import 'route_paths.dart';
 
@@ -253,12 +252,12 @@ class AppRouter {
         GoRoute(
           path: RoutePaths.onboarding2,
           builder: (BuildContext context, GoRouterState state) =>
-              const OnBoardingScreen2(),
+              const OnBoardingScreen1(),
         ),
         GoRoute(
           path: RoutePaths.onboarding3,
           builder: (BuildContext context, GoRouterState state) =>
-              const OnBoardingScreen3(),
+              const OnBoardingScreen1(),
         ),
         GoRoute(
           path: RoutePaths.login,
@@ -279,6 +278,13 @@ class AppRouter {
           path: RoutePaths.terms,
           builder: (BuildContext context, GoRouterState state) =>
               const TermsAndConditionsScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.successScreen,
+          builder: (BuildContext context, GoRouterState state) {
+            final String text = state.extra as String? ?? '';
+            return SucessScreen(successText: text);
+          },
         ),
         GoRoute(
           path: RoutePaths.privacy,

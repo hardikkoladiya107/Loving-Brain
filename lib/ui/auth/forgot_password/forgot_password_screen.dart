@@ -1,10 +1,11 @@
-import 'package:go_router/go_router.dart';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
@@ -47,6 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
       builder: (context, state) {
+        // Sync input field value from Bloc state
         if (emailTextEditingController.value.text != state.emailAddress) {
           emailTextEditingController.value = emailTextEditingController.value
               .copyWith(
@@ -63,104 +65,181 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         return Scaffold(
           extendBodyBehindAppBar: true,
           backgroundColor: const Color(0xFFFAFAFA),
-          body: Stack(
-            children: [
-              Positioned.fill(
+          // Elegant transparent AppBar with standard circular back button
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leadingWidth: 70.w,
+            leading: Center(
+              child: GestureDetector(
+                onTap: () => context.pop(),
                 child: Container(
+                  width: 40.r,
+                  height: 40.r,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFFF6F0FF),
-                        const Color(0xFFFFF0F5),
-                        const Color(0xFFF9FAFB),
-                        const Color(0xFFF9FAFB),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      stops: [0.0, 0.3, 0.6, 1.0],
+                    color: Colors.white.withValues(alpha: 0.9),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFF0E5FC), width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 14,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
               ),
+            ),
+          ),
+          body: Stack(
+            children: [
+              // Background Base
+              Positioned.fill(
+                child: Container(
+                  color: const Color(0xFFFAFAFA),
+                ),
+              ),
+              // Premium Ambient Glow Orbs
+              Positioned(
+                top: -100.h,
+                left: -100.w,
+                child: Container(
+                  width: 320.w,
+                  height: 320.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFE5D1FA).withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 220.h,
+                right: -120.w,
+                child: Container(
+                  width: 340.w,
+                  height: 340.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFD4E5).withValues(alpha: 0.35),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -120.h,
+                left: -60.w,
+                child: Container(
+                  width: 280.w,
+                  height: 280.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFD6E4FF).withValues(alpha: 0.35),
+                  ),
+                ),
+              ),
+              // Gaussian blur overlay for soft background
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 70, sigmaY: 70),
+                  child: Container(
+                    color: Colors.transparent,
+                  ),
+                ),
+              ),
+              // Main content layout scrollable to prevent overflow
               Positioned.fill(
                 child: SafeArea(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        80.spaceH,
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 40),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(32),
-                            boxShadow: [
-                              BoxShadow(
-                                color: primaryColor.withValues(alpha: 0.08),
-                                blurRadius: 30,
-                                offset: Offset(0, 10),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 28.h, horizontal: 8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(28.r),
+                              border: Border.all(
+                                color: const Color(0xFFF0E5FC),
+                                width: 1.5,
                               ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: primaryColor.withValues(alpha: 0.1),
-                                  shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.03),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 12),
                                 ),
-                                child: Icon(
-                                  Icons.lock_reset,
-                                  size: 60,
-                                  color: primaryColor,
+                                BoxShadow(
+                                  color: primaryColor.withValues(alpha: 0.03),
+                                  blurRadius: 40,
+                                  offset: const Offset(0, 16),
                                 ),
-                              ),
-                              24.spaceH,
-                              LocaleKeys.forgotPassword.tr().appText(
-                                fontSize: 26,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black87,
-                                letterSpacing: 1.0,
-                              ),
-                              12.spaceH,
-                              LocaleKeys.enterDetailsToReceiveResetInstructions
-                                  .tr()
-                                  .appText(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade600,
-                                    textAlign: TextAlign.center,
-                                  )
-                                  .appPadding(left: 30, right: 30),
-                              32.spaceH,
-                              _email(state),
-                              40.spaceH,
-                              _resetButton(state),
-                            ],
-                          ),
-                        ).appPadding(left: 20, right: 20),
-                        40.spaceH,
-                        BaseButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.arrow_back_ios,
-                                size: 14,
-                                color: Colors.grey.shade600,
-                              ),
-                              4.spaceW,
-                              LocaleKeys.backToLogin.tr().appText(
-                                color: Colors.grey.shade600,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ],
-                          ),
-                          onTap: () => context.pop(),
-                        ),
-                        40.spaceH,
-                      ],
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                // Personalised Brand Reset Icon
+                                Container(
+                                  width: 58.r,
+                                  height: 58.r,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: primaryColor.withValues(alpha: 0.12),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.lock_reset_rounded,
+                                      size: 32.r,
+                                      color: primaryColor,
+                                    ),
+                                  ),
+                                ),
+                                20.spaceH,
+                                LocaleKeys.forgotPassword.tr().appText(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 26,
+                                  color: Colors.black87,
+                                  letterSpacing: 0.5,
+                                ),
+                                8.spaceH,
+                                LocaleKeys.enterDetailsToReceiveResetInstructions
+                                    .tr()
+                                    .appText(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade600,
+                                      fontSize: 14,
+                                      textAlign: TextAlign.center,
+                                      height: 1.4,
+                                    )
+                                    .appPadding(left: 20, right: 20),
+                                28.spaceH,
+                                _email(state),
+                                32.spaceH,
+                                _resetButton(state),
+                              ],
+                            ),
+                          ).appPadding(left: 20, right: 20),
+                          24.spaceH,
+                          _backToLoginLink(),
+                          20.spaceH,
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -192,6 +271,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
+  // Email input field widget
   Widget _email(ForgotPasswordState state) {
     return AppTextField(
       controller: emailTextEditingController,
@@ -201,16 +281,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       keyboardType: TextInputType.emailAddress,
       fillColor: const Color(0xFFF9FAFB),
       prefixIcon: Assets.icons.icEmailPrefixIcon.image(
-        height: 24,
-        width: 24,
-        color: Colors.grey.shade400,
-      ),
+        height: 20.r,
+        width: 20.r,
+        color: primaryColor.withValues(alpha: 0.7),
+      ).appPadding(all: 12),
       onChanged: (value) {
         context.read<ForgotPasswordCubit>().changeProps(emailAddress: value);
       },
-    ).appPadding(left: 24, right: 24);
+    ).appPadding(left: 20, right: 20);
   }
 
+  // Premium Send Reset Link Button widget
   Widget _resetButton(ForgotPasswordState state) {
     final bool submitting = state.isAuthSubmitting;
     return BaseButton(
@@ -220,39 +301,88 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               context.read<ForgotPasswordCubit>().performForgotPassword();
             },
       child: Container(
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(horizontal: 20.w),
         decoration: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: primaryColor.withValues(alpha: 0.3),
-              blurRadius: 15,
-              offset: Offset(0, 6),
-            ),
-          ],
+          gradient: LinearGradient(
+            colors: submitting
+                ? [primaryColor.withValues(alpha: 0.6), primaryColor.withValues(alpha: 0.6)]
+                : [primaryColor, primaryColor.withValues(alpha: 0.85)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: submitting
+              ? []
+              : [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.24),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (submitting)
               SizedBox(
-                height: 22.r,
-                width: 22.r,
+                height: 20.r,
+                width: 20.r,
                 child: const CircularProgressIndicator(
                   strokeWidth: 2.5,
                   color: Colors.white,
                 ),
-              )
+              ).appPadding(top: 14.h, bottom: 14.h)
             else
-              LocaleKeys.sendResetEmail.tr().appText(
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-                letterSpacing: 0.5,
-                color: Colors.white,
-              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LocaleKeys.sendResetEmail.tr().appText(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                    letterSpacing: 0.5,
+                    color: Colors.white,
+                  ),
+                  8.spaceW,
+                  const Icon(
+                    Icons.send_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ],
+              ).appPadding(top: 14.h, bottom: 14.h),
           ],
-        ).appPadding(top: 14.h, bottom: 14.h),
+        ),
       ),
-    ).appPadding(left: 32, right: 32);
+    );
+  }
+
+  // Back to login bottom link
+  Widget _backToLoginLink() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 13,
+                color: primaryColor,
+              ),
+              6.spaceW,
+              LocaleKeys.backToLogin.tr().appText(
+                color: primaryColor,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+              ),
+            ],
+          ),
+          onTap: () => context.pop(),
+        ),
+      ],
+    );
   }
 }

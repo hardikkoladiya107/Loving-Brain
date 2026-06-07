@@ -8,7 +8,6 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/shared_event_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +18,6 @@ import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
-import '../propose_change/propose_change_screen.dart';
 import '../widget/base_button.dart';
 import 'bloc/event_detail_cubit.dart';
 import 'bloc/event_detail_state.dart';
@@ -211,31 +209,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     );
   }
 
-  Widget _upgradeButton() {
-    return BaseButton(
-      onTap: () {
-        context.push(RoutePaths.subscription);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: primaryColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            LocaleKeys.upgrade.tr()
-                .appText(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                )
-                .appPadding(left: 10, right: 10, top: 5, bottom: 5),
-          ],
-        ),
-      ),
-    ).appPadding(left: 20.w, right: 20.w);
-  }
+
 
   Widget _history() {
     return Container(
@@ -423,42 +397,15 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
   }
 
   Widget _filesWidget(EventDetailState state) {
-    if (true) {
-      return Column(
-        children: [
-          20.spaceH,
-          ...(state.sharedEvent?.documents ?? []).map(
-            (e) => _fileNameWidget(e),
-          ),
-          20.spaceH,
-        ],
-      );
-    }
-
-    ///TODO
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          10.h.spaceH,
-          LocaleKeys.premiumFeature.tr().appText(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-          LocaleKeys.attachDocumentsToEventsWithLovingBrainPremium.tr().appText(
-            fontWeight: FontWeight.w600,
-            fontSize: 10,
-          ),
-          10.h.spaceH,
-          _upgradeButton(),
-          10.h.spaceH,
-        ],
-      ),
-    ).appPadding(all: 20);
+    return Column(
+      children: [
+        20.spaceH,
+        ...(state.sharedEvent?.documents ?? []).map(
+          (e) => _fileNameWidget(e),
+        ),
+        20.spaceH,
+      ],
+    );
   }
 
   Widget _addAttachment() {
