@@ -1,11 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:loving_brain/content/help_guidance_content.dart';
 import 'package:loving_brain/ui/help_flow/bloc/help_flow_cubit.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    HelpGuidanceContent.resetCacheForTests();
+  });
+
   group('HelpFlowCubit', () {
-    test('stillNotWorking rotates to next alternative solution', () {
+    test('stillNotWorking rotates to next alternative solution', () async {
       final HelpFlowCubit cubit = HelpFlowCubit();
-      cubit.selectProblem('crying');
+      await cubit.selectProblem('crying');
       final String firstAction = cubit.state.primaryAction;
 
       cubit.stillNotWorking();
@@ -16,9 +23,9 @@ void main() {
       expect(secondAction, isNot(equals(firstAction)));
     });
 
-    test('shows escalation hint after 3 failed attempts', () {
+    test('shows escalation hint after 3 failed attempts', () async {
       final HelpFlowCubit cubit = HelpFlowCubit();
-      cubit.selectProblem('too_fussy');
+      await cubit.selectProblem('too_fussy');
 
       cubit.stillNotWorking();
       cubit.stillNotWorking();

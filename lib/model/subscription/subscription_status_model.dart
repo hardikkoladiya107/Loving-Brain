@@ -1,18 +1,18 @@
-
 class SubscriptionStatusModel {
   SubscriptionStatusModel({
-      String? startTimeMillis, 
-      String? expiryTimeMillis, 
-      bool? autoRenewing, 
-      String? priceCurrencyCode, 
-      String? priceAmountMicros, 
-      String? countryCode, 
-      String? developerPayload, 
-      num? cancelReason, 
-      String? orderId, 
-      num? purchaseType, 
-      num? acknowledgementState, 
-      String? kind,}){
+    String? startTimeMillis,
+    String? expiryTimeMillis,
+    bool? autoRenewing,
+    String? priceCurrencyCode,
+    String? priceAmountMicros,
+    String? countryCode,
+    String? developerPayload,
+    num? cancelReason,
+    String? orderId,
+    num? purchaseType,
+    num? acknowledgementState,
+    String? kind,
+  }) {
     _startTimeMillis = startTimeMillis;
     _expiryTimeMillis = expiryTimeMillis;
     _autoRenewing = autoRenewing;
@@ -25,7 +25,7 @@ class SubscriptionStatusModel {
     _purchaseType = purchaseType;
     _acknowledgementState = acknowledgementState;
     _kind = kind;
-}
+  }
 
   SubscriptionStatusModel.fromJson(dynamic json) {
     _startTimeMillis = json['startTimeMillis'];
@@ -53,31 +53,33 @@ class SubscriptionStatusModel {
   num? _purchaseType;
   num? _acknowledgementState;
   String? _kind;
-SubscriptionStatusModel copyWith({  String? startTimeMillis,
-  String? expiryTimeMillis,
-  bool? autoRenewing,
-  String? priceCurrencyCode,
-  String? priceAmountMicros,
-  String? countryCode,
-  String? developerPayload,
-  num? cancelReason,
-  String? orderId,
-  num? purchaseType,
-  num? acknowledgementState,
-  String? kind,
-}) => SubscriptionStatusModel(  startTimeMillis: startTimeMillis ?? _startTimeMillis,
-  expiryTimeMillis: expiryTimeMillis ?? _expiryTimeMillis,
-  autoRenewing: autoRenewing ?? _autoRenewing,
-  priceCurrencyCode: priceCurrencyCode ?? _priceCurrencyCode,
-  priceAmountMicros: priceAmountMicros ?? _priceAmountMicros,
-  countryCode: countryCode ?? _countryCode,
-  developerPayload: developerPayload ?? _developerPayload,
-  cancelReason: cancelReason ?? _cancelReason,
-  orderId: orderId ?? _orderId,
-  purchaseType: purchaseType ?? _purchaseType,
-  acknowledgementState: acknowledgementState ?? _acknowledgementState,
-  kind: kind ?? _kind,
-);
+  SubscriptionStatusModel copyWith({
+    String? startTimeMillis,
+    String? expiryTimeMillis,
+    bool? autoRenewing,
+    String? priceCurrencyCode,
+    String? priceAmountMicros,
+    String? countryCode,
+    String? developerPayload,
+    num? cancelReason,
+    String? orderId,
+    num? purchaseType,
+    num? acknowledgementState,
+    String? kind,
+  }) => SubscriptionStatusModel(
+    startTimeMillis: startTimeMillis ?? _startTimeMillis,
+    expiryTimeMillis: expiryTimeMillis ?? _expiryTimeMillis,
+    autoRenewing: autoRenewing ?? _autoRenewing,
+    priceCurrencyCode: priceCurrencyCode ?? _priceCurrencyCode,
+    priceAmountMicros: priceAmountMicros ?? _priceAmountMicros,
+    countryCode: countryCode ?? _countryCode,
+    developerPayload: developerPayload ?? _developerPayload,
+    cancelReason: cancelReason ?? _cancelReason,
+    orderId: orderId ?? _orderId,
+    purchaseType: purchaseType ?? _purchaseType,
+    acknowledgementState: acknowledgementState ?? _acknowledgementState,
+    kind: kind ?? _kind,
+  );
   String? get startTimeMillis => _startTimeMillis;
   String? get expiryTimeMillis => _expiryTimeMillis;
   bool? get autoRenewing => _autoRenewing;
@@ -107,5 +109,4 @@ SubscriptionStatusModel copyWith({  String? startTimeMillis,
     map['kind'] = _kind;
     return map;
   }
-
 }

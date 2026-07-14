@@ -11,8 +11,10 @@ abstract class ChatListState with _$ChatListState {
   const factory ChatListState({
     @Default("") String message,
     UserModel? userModel,
-    @Default(ApiResultStatus.initial()) ApiResultStatus getConversationsApiResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus deleteConversationsApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus getConversationsApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus deleteConversationsApiResult,
     @Default([]) List<ConversationListItem> conversationList,
   }) = _ChatListState;
 }

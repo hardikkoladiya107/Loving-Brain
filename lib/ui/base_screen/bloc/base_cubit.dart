@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +29,14 @@ class BaseCubit extends Cubit<BaseState> {
 
   Future<void> updateFCMToken() async {
     try {
+      if (Platform.isIOS) {
+        String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken == null) {
+          await Future<void>.delayed(const Duration(seconds: 2));
+          apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        }
+      }
+
       final String? token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
         await AuthRepo.instance.updateUserToFireStore(

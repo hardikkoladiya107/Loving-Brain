@@ -10,6 +10,7 @@ import 'package:loving_brain/provider.dart';
 import 'package:loving_brain/router/app_router.dart';
 import 'firebase_options.dart';
 import 'generated/locale_keys.g.dart';
+import 'manager/deep_link/deep_link_manager.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
 import 'other/app_extentions.dart';
 import 'other/notification_util.dart';
@@ -17,14 +18,19 @@ import 'other/preferances.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  Map<String, dynamic>? notification = message.data;
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationUtil.initializeBGNotifications();
 
-  NotificationUtil.showLocalNotification(
+  final String title =
+      message.notification?.title ?? message.data['title']?.toString() ?? '';
+  final String body =
+      message.notification?.body ?? message.data['body']?.toString() ?? '';
+
+  await NotificationUtil.showLocalNotification(
     id: message.hashCode,
-    title: notification['title'] ?? '',
-    body: notification['body'] ?? '',
-    payload: notification.toString(),
+    title: title,
+    body: body,
+    payload: message.data['type']?.toString() ?? '',
   );
 }
 
@@ -69,15 +75,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initNotification();
+      // Must run at startup so invitation links work on cold start (before BaseScreen).
+      DeepLinkManager.instance.init();
     });
-    super.initState();
   }
 
   Future<void> initNotification() async {
     await NotificationUtil.initializePlatformNotifications();
-    await NotificationUtil.initializeBGNotifications();
   }
 
   @override

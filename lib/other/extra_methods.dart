@@ -28,21 +28,23 @@ String formatDate(DateTime dateOfBirth) {
 
 ApiResultStatus onFirebaseException(FirebaseException e) {
   if (e.code == 'permission-denied') {
-    return ApiResultStatus.error(error: Exception(LocaleKeys.somethingWentWrong.tr()));
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.somethingWentWrong.tr()),
+    );
   } else if (e.code == 'unavailable') {
     return ApiResultStatus.error(
       error: Exception(LocaleKeys.somethingWentWrong.tr()),
     );
   } else if (e.code == 'not-found') {
-    return ApiResultStatus.error(error: Exception(LocaleKeys.somethingWentWrong.tr()));
+    return ApiResultStatus.error(
+      error: Exception(LocaleKeys.somethingWentWrong.tr()),
+    );
   } else if (e.code == 'invalid-email') {
     return ApiResultStatus.error(
       error: Exception(LocaleKeys.pleaseEnterValidEmail.tr()),
     );
   } else if (e.code == 'user-disabled') {
-    return ApiResultStatus.error(
-      error: Exception("User has been disabled."),
-    );
+    return ApiResultStatus.error(error: Exception("User has been disabled."));
   } else if (e.code == 'user-not-found') {
     return ApiResultStatus.error(
       error: Exception(LocaleKeys.userNotFound.tr()),
@@ -61,7 +63,7 @@ ApiResultStatus onFirebaseException(FirebaseException e) {
     );
   } else if (e.code == 'invalid-credential') {
     return ApiResultStatus.error(
-        error: Exception(LocaleKeys.invalidPassword.tr())
+      error: Exception(LocaleKeys.invalidPassword.tr()),
     );
   } else if (e.code == 'requires-recent-login') {
     return ApiResultStatus.error(

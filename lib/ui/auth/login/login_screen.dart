@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/pending_invitation_manager.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
@@ -83,78 +84,87 @@ class _LoginScreenState extends State<LoginScreen> {
               );
         }
 
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: const Color(0xFFFAFAFA),
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFFF6F0FF),
-                        const Color(0xFFFFF0F5),
-                        const Color(0xFFF9FAFB),
-                        const Color(0xFFF9FAFB),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      stops: [0.0, 0.3, 0.6, 1.0],
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            if (didPop) {
+              return;
+            }
+            context.go(RoutePaths.welcome);
+          },
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: const Color(0xFFFAFAFA),
+            body: Stack(
+              children: [
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFF6F0FF),
+                          const Color(0xFFFFF0F5),
+                          const Color(0xFFF9FAFB),
+                          const Color(0xFFF9FAFB),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        stops: [0.0, 0.3, 0.6, 1.0],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: SafeArea(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        40.spaceH,
-                        _loginIcon(),
-                        40.spaceH,
-                        Container(
-                          padding: EdgeInsets.symmetric(vertical: 32),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(32),
-                            boxShadow: [
-                              BoxShadow(
-                                color: primaryColor.withValues(alpha: 0.08),
-                                blurRadius: 30,
-                                offset: Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              _email(state),
-                              16.spaceH,
-                              _password(state),
-                              8.spaceH,
-                              _forgotPassword(),
-                              24.spaceH,
-                              _loginButton(state),
-                              20.spaceH,
-                              _dontHaveAccount(),
-                            ],
-                          ),
-                        ).appPadding(left: 20, right: 20),
-                        30.spaceH,
-                        _signUpWithGoogle(state),
-                        16.spaceH,
-                        if (Platform.isIOS) _signUpWithApple(state),
-                        60.spaceH,
-                        _buildTermsText(),
-                        40.spaceH,
-                      ],
+                Positioned.fill(
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          40.spaceH,
+                          _loginIcon(),
+                          40.spaceH,
+                          Container(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(32),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: primaryColor.withValues(alpha: 0.08),
+                                  blurRadius: 30,
+                                  offset: Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                _email(state),
+                                16.spaceH,
+                                _password(state),
+                                8.spaceH,
+                                _forgotPassword(),
+                                24.spaceH,
+                                _loginButton(state),
+                                20.spaceH,
+                                _dontHaveAccount(),
+                              ],
+                            ),
+                          ).appPadding(left: 20, right: 20),
+                          30.spaceH,
+                          _signUpWithGoogle(state),
+                          16.spaceH,
+                          if (Platform.isIOS) _signUpWithApple(state),
+                          60.spaceH,
+                          _buildTermsText(),
+                          40.spaceH,
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -476,55 +486,49 @@ class _LoginScreenState extends State<LoginScreen> {
     context.read<LoginCubit>().clearFields();
     if (userModel.uid == null) return;
 
-    // ── Process pending co-parent invitation ──────────────────────────────
-    final String pendingId =
-        preferences.getString(SharedPreference.pendingInvitationId) ?? '';
-    final String pendingEmail =
-        preferences.getString(SharedPreference.pendingInvitationEmail) ?? '';
-
-    if (pendingId.isNotEmpty) {
+    // ── Pending co-parent invitation (saved by DeepLinkManager before login) ──
+    if (PendingInvitationManager.hasPending()) {
+      final String pendingId = PendingInvitationManager.getId();
+      final String pendingEmail = PendingInvitationManager.getEmail();
       final String loggedEmail = (userModel.email ?? '').trim().toLowerCase();
+
       if (loggedEmail == pendingEmail.trim().toLowerCase()) {
-        // Accept the invitation
-        final result =
-            await CoParentRepo.instance.addUserAsCoParent(pendingId);
-        // Clear pending regardless of outcome
-        await preferences.putString(SharedPreference.pendingInvitationId, '');
-        await preferences.putString(
-          SharedPreference.pendingInvitationEmail,
-          '',
-        );
+        final ApiResultStatus result = await CoParentRepo.instance
+            .addUserAsCoParent(pendingId);
 
         bool invitationSuccess = false;
-        result.whenOrNull(
-          data: (_) => invitationSuccess = true,
-        );
+        result.whenOrNull(data: (_) => invitationSuccess = true);
 
-        if (invitationSuccess && mounted) {
+        if (invitationSuccess) {
+          await PendingInvitationManager.clear();
+        }
+
+        if (!mounted) {
+          return;
+        }
+
+        if (invitationSuccess) {
           await preferences.putBool(SharedPreference.isLogin, true);
-          context.push(
+          router.push(
             RoutePaths.successScreen,
-            extra: "You've successfully accepted the co-parent invitation! 🎉",
+            extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
           );
-        } else if (!invitationSuccess && mounted) {
-          String errMsg = '';
-          result.whenOrNull(
-            error: (err) => errMsg = err.toString().replaceAll('Exception: ', ''),
-          );
-          if (errMsg.isNotEmpty) {
-            showSnackBar(message: errMsg, type: SnackBarType.ERROR);
-          }
+          return;
+        }
+
+        String errMsg = '';
+        result.whenOrNull(
+          error: (Exception err) =>
+              errMsg = err.toString().replaceAll('Exception: ', ''),
+        );
+        if (errMsg.isNotEmpty) {
+          showSnackBar(message: errMsg, type: SnackBarType.ERROR);
         }
       } else {
-        // Email mismatch — clear pending silently
-        await preferences.putString(SharedPreference.pendingInvitationId, '');
-        await preferences.putString(
-          SharedPreference.pendingInvitationEmail,
-          '',
-        );
+        await PendingInvitationManager.clear();
       }
     }
-    // ─────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
 
     if (!mounted) return;
     if ((userModel.parentName ?? '').isEmpty ||

@@ -157,11 +157,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded( // Added Expanded to fix overflow
+          Expanded(
+            // Added Expanded to fix overflow
             child: GptMarkdown(
               chat.text ?? "",
               textAlign: TextAlign.start,
-              style: getTextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black87),
+              style: getTextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
             ).appPadding(all: 12),
           ),
 
@@ -366,46 +371,46 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ],
 
         if ((chat.text ?? "").isNotEmpty) ...[
-        if ((chat.text ?? "").isNotEmpty) ...[
-          Container(
-            constraints: BoxConstraints(maxWidth: context.width * 0.8),
-            decoration: BoxDecoration(
-              color: primaryColor,
-              gradient: LinearGradient(
-                colors: [primaryColor, primaryColor.withOpacity(0.9)]
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: primaryColor.withOpacity(0.3),
-                  offset: Offset(0, 4),
-                  blurRadius: 10,
-                  spreadRadius: 1,
+          if ((chat.text ?? "").isNotEmpty) ...[
+            Container(
+              constraints: BoxConstraints(maxWidth: context.width * 0.8),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                gradient: LinearGradient(
+                  colors: [primaryColor, primaryColor.withOpacity(0.9)],
                 ),
-              ],
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-                topLeft: Radius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.3),
+                    offset: Offset(0, 4),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                  topLeft: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: GptMarkdown(
+                      chat.text ?? "",
+                      textAlign: TextAlign.start,
+                      style: getTextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ).appPadding(all: 12),
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: GptMarkdown(
-                    chat.text ?? "",
-                    textAlign: TextAlign.start,
-                    style: getTextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white 
-                    ),
-                  ).appPadding(all: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
         ],
       ],
     );
@@ -542,12 +547,12 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   color: primaryColor,
                   shape: BoxShape.circle,
                   boxShadow: [
-                     BoxShadow(
-                       color: primaryColor.withOpacity(0.3), 
-                       blurRadius: 6, 
-                       offset: Offset(0, 2)
-                     )
-                  ]
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.3),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Icon(Icons.arrow_upward, color: Colors.white, size: 20),
               ).appPadding(right: 8),
@@ -590,11 +595,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           ),
           Expanded(
             child: LocaleKeys.askToAI.tr().appText(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  fontSize: 18.sp,
-                  textAlign: TextAlign.center,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+              fontSize: 18.sp,
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(width: 40.w), // To balance the back button for centering
         ],

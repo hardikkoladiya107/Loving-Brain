@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LinkCoParentState {
 
- String get selectedTab; String? get coParentEmail; String? get coParentEmailError; String? get selectChildrenError; bool get calenderAndEvent; bool get childEssentials; String get selectedChild; ApiResultStatus get getApiResultStatus; ApiResultStatus get createInvitation; UserModel? get userModel; List<ChildModel> get children; List<ChildModel> get selectedChildren;
+ String get selectedTab; String? get coParentEmail; String? get coParentEmailError; String? get selectChildrenError; bool get calenderAndEvent; bool get childEssentials; String get selectedChild; ApiResultStatus get getApiResultStatus; ApiResultStatus get createInvitation; UserModel? get userModel; List<ChildModel> get children; List<ChildModel> get selectedChildren;/// True when Firestore invite was created but Brevo email delivery failed.
+ bool get emailDeliveryFailed;
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $LinkCoParentStateCopyWith<LinkCoParentState> get copyWith => _$LinkCoParentStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.coParentEmailError, coParentEmailError) || other.coParentEmailError == coParentEmailError)&&(identical(other.selectChildrenError, selectChildrenError) || other.selectChildrenError == selectChildrenError)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.getApiResultStatus, getApiResultStatus) || other.getApiResultStatus == getApiResultStatus)&&(identical(other.createInvitation, createInvitation) || other.createInvitation == createInvitation)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.children, children)&&const DeepCollectionEquality().equals(other.selectedChildren, selectedChildren));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.coParentEmailError, coParentEmailError) || other.coParentEmailError == coParentEmailError)&&(identical(other.selectChildrenError, selectChildrenError) || other.selectChildrenError == selectChildrenError)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.getApiResultStatus, getApiResultStatus) || other.getApiResultStatus == getApiResultStatus)&&(identical(other.createInvitation, createInvitation) || other.createInvitation == createInvitation)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.children, children)&&const DeepCollectionEquality().equals(other.selectedChildren, selectedChildren)&&(identical(other.emailDeliveryFailed, emailDeliveryFailed) || other.emailDeliveryFailed == emailDeliveryFailed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,coParentEmailError,selectChildrenError,calenderAndEvent,childEssentials,selectedChild,getApiResultStatus,createInvitation,userModel,const DeepCollectionEquality().hash(children),const DeepCollectionEquality().hash(selectedChildren));
+int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,coParentEmailError,selectChildrenError,calenderAndEvent,childEssentials,selectedChild,getApiResultStatus,createInvitation,userModel,const DeepCollectionEquality().hash(children),const DeepCollectionEquality().hash(selectedChildren),emailDeliveryFailed);
 
 @override
 String toString() {
-  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, coParentEmailError: $coParentEmailError, selectChildrenError: $selectChildrenError, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild, getApiResultStatus: $getApiResultStatus, createInvitation: $createInvitation, userModel: $userModel, children: $children, selectedChildren: $selectedChildren)';
+  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, coParentEmailError: $coParentEmailError, selectChildrenError: $selectChildrenError, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild, getApiResultStatus: $getApiResultStatus, createInvitation: $createInvitation, userModel: $userModel, children: $children, selectedChildren: $selectedChildren, emailDeliveryFailed: $emailDeliveryFailed)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $LinkCoParentStateCopyWith<$Res>  {
   factory $LinkCoParentStateCopyWith(LinkCoParentState value, $Res Function(LinkCoParentState) _then) = _$LinkCoParentStateCopyWithImpl;
 @useResult
 $Res call({
- String selectedTab, String? coParentEmail, String? coParentEmailError, String? selectChildrenError, bool calenderAndEvent, bool childEssentials, String selectedChild, ApiResultStatus getApiResultStatus, ApiResultStatus createInvitation, UserModel? userModel, List<ChildModel> children, List<ChildModel> selectedChildren
+ String selectedTab, String? coParentEmail, String? coParentEmailError, String? selectChildrenError, bool calenderAndEvent, bool childEssentials, String selectedChild, ApiResultStatus getApiResultStatus, ApiResultStatus createInvitation, UserModel? userModel, List<ChildModel> children, List<ChildModel> selectedChildren, bool emailDeliveryFailed
 });
 
 
@@ -62,7 +63,7 @@ class _$LinkCoParentStateCopyWithImpl<$Res>
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? coParentEmailError = freezed,Object? selectChildrenError = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,Object? getApiResultStatus = null,Object? createInvitation = null,Object? userModel = freezed,Object? children = null,Object? selectedChildren = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? coParentEmailError = freezed,Object? selectChildrenError = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,Object? getApiResultStatus = null,Object? createInvitation = null,Object? userModel = freezed,Object? children = null,Object? selectedChildren = null,Object? emailDeliveryFailed = null,}) {
   return _then(_self.copyWith(
 selectedTab: null == selectedTab ? _self.selectedTab : selectedTab // ignore: cast_nullable_to_non_nullable
 as String,coParentEmail: freezed == coParentEmail ? _self.coParentEmail : coParentEmail // ignore: cast_nullable_to_non_nullable
@@ -76,7 +77,8 @@ as ApiResultStatus,createInvitation: null == createInvitation ? _self.createInvi
 as ApiResultStatus,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,children: null == children ? _self.children : children // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>,selectedChildren: null == selectedChildren ? _self.selectedChildren : selectedChildren // ignore: cast_nullable_to_non_nullable
-as List<ChildModel>,
+as List<ChildModel>,emailDeliveryFailed: null == emailDeliveryFailed ? _self.emailDeliveryFailed : emailDeliveryFailed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 /// Create a copy of LinkCoParentState
@@ -179,10 +181,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  String? coParentEmailError,  String? selectChildrenError,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  ApiResultStatus createInvitation,  UserModel? userModel,  List<ChildModel> children,  List<ChildModel> selectedChildren)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  String? coParentEmailError,  String? selectChildrenError,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  ApiResultStatus createInvitation,  UserModel? userModel,  List<ChildModel> children,  List<ChildModel> selectedChildren,  bool emailDeliveryFailed)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LinkCoParentState() when $default != null:
-return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_that.selectChildrenError,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.createInvitation,_that.userModel,_that.children,_that.selectedChildren);case _:
+return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_that.selectChildrenError,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.createInvitation,_that.userModel,_that.children,_that.selectedChildren,_that.emailDeliveryFailed);case _:
   return orElse();
 
 }
@@ -200,10 +202,10 @@ return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  String? coParentEmailError,  String? selectChildrenError,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  ApiResultStatus createInvitation,  UserModel? userModel,  List<ChildModel> children,  List<ChildModel> selectedChildren)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedTab,  String? coParentEmail,  String? coParentEmailError,  String? selectChildrenError,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  ApiResultStatus createInvitation,  UserModel? userModel,  List<ChildModel> children,  List<ChildModel> selectedChildren,  bool emailDeliveryFailed)  $default,) {final _that = this;
 switch (_that) {
 case _LinkCoParentState():
-return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_that.selectChildrenError,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.createInvitation,_that.userModel,_that.children,_that.selectedChildren);case _:
+return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_that.selectChildrenError,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.createInvitation,_that.userModel,_that.children,_that.selectedChildren,_that.emailDeliveryFailed);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -220,10 +222,10 @@ return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedTab,  String? coParentEmail,  String? coParentEmailError,  String? selectChildrenError,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  ApiResultStatus createInvitation,  UserModel? userModel,  List<ChildModel> children,  List<ChildModel> selectedChildren)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedTab,  String? coParentEmail,  String? coParentEmailError,  String? selectChildrenError,  bool calenderAndEvent,  bool childEssentials,  String selectedChild,  ApiResultStatus getApiResultStatus,  ApiResultStatus createInvitation,  UserModel? userModel,  List<ChildModel> children,  List<ChildModel> selectedChildren,  bool emailDeliveryFailed)?  $default,) {final _that = this;
 switch (_that) {
 case _LinkCoParentState() when $default != null:
-return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_that.selectChildrenError,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.createInvitation,_that.userModel,_that.children,_that.selectedChildren);case _:
+return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_that.selectChildrenError,_that.calenderAndEvent,_that.childEssentials,_that.selectedChild,_that.getApiResultStatus,_that.createInvitation,_that.userModel,_that.children,_that.selectedChildren,_that.emailDeliveryFailed);case _:
   return null;
 
 }
@@ -235,7 +237,7 @@ return $default(_that.selectedTab,_that.coParentEmail,_that.coParentEmailError,_
 
 
 class _LinkCoParentState implements LinkCoParentState {
-  const _LinkCoParentState({this.selectedTab = "EMAIL", this.coParentEmail = "", this.coParentEmailError = "", this.selectChildrenError = "", this.calenderAndEvent = false, this.childEssentials = false, this.selectedChild = "", this.getApiResultStatus = const ApiResultStatus.initial(), this.createInvitation = const ApiResultStatus.initial(), this.userModel, final  List<ChildModel> children = const [], final  List<ChildModel> selectedChildren = const []}): _children = children,_selectedChildren = selectedChildren;
+  const _LinkCoParentState({this.selectedTab = "EMAIL", this.coParentEmail = "", this.coParentEmailError = "", this.selectChildrenError = "", this.calenderAndEvent = false, this.childEssentials = false, this.selectedChild = "", this.getApiResultStatus = const ApiResultStatus.initial(), this.createInvitation = const ApiResultStatus.initial(), this.userModel, final  List<ChildModel> children = const [], final  List<ChildModel> selectedChildren = const [], this.emailDeliveryFailed = false}): _children = children,_selectedChildren = selectedChildren;
   
 
 @override@JsonKey() final  String selectedTab;
@@ -262,6 +264,8 @@ class _LinkCoParentState implements LinkCoParentState {
   return EqualUnmodifiableListView(_selectedChildren);
 }
 
+/// True when Firestore invite was created but Brevo email delivery failed.
+@override@JsonKey() final  bool emailDeliveryFailed;
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
@@ -273,16 +277,16 @@ _$LinkCoParentStateCopyWith<_LinkCoParentState> get copyWith => __$LinkCoParentS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.coParentEmailError, coParentEmailError) || other.coParentEmailError == coParentEmailError)&&(identical(other.selectChildrenError, selectChildrenError) || other.selectChildrenError == selectChildrenError)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.getApiResultStatus, getApiResultStatus) || other.getApiResultStatus == getApiResultStatus)&&(identical(other.createInvitation, createInvitation) || other.createInvitation == createInvitation)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._children, _children)&&const DeepCollectionEquality().equals(other._selectedChildren, _selectedChildren));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LinkCoParentState&&(identical(other.selectedTab, selectedTab) || other.selectedTab == selectedTab)&&(identical(other.coParentEmail, coParentEmail) || other.coParentEmail == coParentEmail)&&(identical(other.coParentEmailError, coParentEmailError) || other.coParentEmailError == coParentEmailError)&&(identical(other.selectChildrenError, selectChildrenError) || other.selectChildrenError == selectChildrenError)&&(identical(other.calenderAndEvent, calenderAndEvent) || other.calenderAndEvent == calenderAndEvent)&&(identical(other.childEssentials, childEssentials) || other.childEssentials == childEssentials)&&(identical(other.selectedChild, selectedChild) || other.selectedChild == selectedChild)&&(identical(other.getApiResultStatus, getApiResultStatus) || other.getApiResultStatus == getApiResultStatus)&&(identical(other.createInvitation, createInvitation) || other.createInvitation == createInvitation)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._children, _children)&&const DeepCollectionEquality().equals(other._selectedChildren, _selectedChildren)&&(identical(other.emailDeliveryFailed, emailDeliveryFailed) || other.emailDeliveryFailed == emailDeliveryFailed));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,coParentEmailError,selectChildrenError,calenderAndEvent,childEssentials,selectedChild,getApiResultStatus,createInvitation,userModel,const DeepCollectionEquality().hash(_children),const DeepCollectionEquality().hash(_selectedChildren));
+int get hashCode => Object.hash(runtimeType,selectedTab,coParentEmail,coParentEmailError,selectChildrenError,calenderAndEvent,childEssentials,selectedChild,getApiResultStatus,createInvitation,userModel,const DeepCollectionEquality().hash(_children),const DeepCollectionEquality().hash(_selectedChildren),emailDeliveryFailed);
 
 @override
 String toString() {
-  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, coParentEmailError: $coParentEmailError, selectChildrenError: $selectChildrenError, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild, getApiResultStatus: $getApiResultStatus, createInvitation: $createInvitation, userModel: $userModel, children: $children, selectedChildren: $selectedChildren)';
+  return 'LinkCoParentState(selectedTab: $selectedTab, coParentEmail: $coParentEmail, coParentEmailError: $coParentEmailError, selectChildrenError: $selectChildrenError, calenderAndEvent: $calenderAndEvent, childEssentials: $childEssentials, selectedChild: $selectedChild, getApiResultStatus: $getApiResultStatus, createInvitation: $createInvitation, userModel: $userModel, children: $children, selectedChildren: $selectedChildren, emailDeliveryFailed: $emailDeliveryFailed)';
 }
 
 
@@ -293,7 +297,7 @@ abstract mixin class _$LinkCoParentStateCopyWith<$Res> implements $LinkCoParentS
   factory _$LinkCoParentStateCopyWith(_LinkCoParentState value, $Res Function(_LinkCoParentState) _then) = __$LinkCoParentStateCopyWithImpl;
 @override @useResult
 $Res call({
- String selectedTab, String? coParentEmail, String? coParentEmailError, String? selectChildrenError, bool calenderAndEvent, bool childEssentials, String selectedChild, ApiResultStatus getApiResultStatus, ApiResultStatus createInvitation, UserModel? userModel, List<ChildModel> children, List<ChildModel> selectedChildren
+ String selectedTab, String? coParentEmail, String? coParentEmailError, String? selectChildrenError, bool calenderAndEvent, bool childEssentials, String selectedChild, ApiResultStatus getApiResultStatus, ApiResultStatus createInvitation, UserModel? userModel, List<ChildModel> children, List<ChildModel> selectedChildren, bool emailDeliveryFailed
 });
 
 
@@ -310,7 +314,7 @@ class __$LinkCoParentStateCopyWithImpl<$Res>
 
 /// Create a copy of LinkCoParentState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? coParentEmailError = freezed,Object? selectChildrenError = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,Object? getApiResultStatus = null,Object? createInvitation = null,Object? userModel = freezed,Object? children = null,Object? selectedChildren = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedTab = null,Object? coParentEmail = freezed,Object? coParentEmailError = freezed,Object? selectChildrenError = freezed,Object? calenderAndEvent = null,Object? childEssentials = null,Object? selectedChild = null,Object? getApiResultStatus = null,Object? createInvitation = null,Object? userModel = freezed,Object? children = null,Object? selectedChildren = null,Object? emailDeliveryFailed = null,}) {
   return _then(_LinkCoParentState(
 selectedTab: null == selectedTab ? _self.selectedTab : selectedTab // ignore: cast_nullable_to_non_nullable
 as String,coParentEmail: freezed == coParentEmail ? _self.coParentEmail : coParentEmail // ignore: cast_nullable_to_non_nullable
@@ -324,7 +328,8 @@ as ApiResultStatus,createInvitation: null == createInvitation ? _self.createInvi
 as ApiResultStatus,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,children: null == children ? _self._children : children // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>,selectedChildren: null == selectedChildren ? _self._selectedChildren : selectedChildren // ignore: cast_nullable_to_non_nullable
-as List<ChildModel>,
+as List<ChildModel>,emailDeliveryFailed: null == emailDeliveryFailed ? _self.emailDeliveryFailed : emailDeliveryFailed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

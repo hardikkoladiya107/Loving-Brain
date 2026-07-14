@@ -335,11 +335,13 @@ class _WriteYourThoughtScreenState extends State<WriteYourThoughtScreen> {
                                               size: 18.sp,
                                             ),
                                             8.w.spaceW,
-                                            LocaleKeys.pickUnlimitedColor.tr().appText(
-                                              color: primaryColor,
-                                              fontSize: 13.sp,
-                                              fontWeight: FontWeight.w800,
-                                            ),
+                                            LocaleKeys.pickUnlimitedColor
+                                                .tr()
+                                                .appText(
+                                                  color: primaryColor,
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
                                           ],
                                         ),
                                       ),

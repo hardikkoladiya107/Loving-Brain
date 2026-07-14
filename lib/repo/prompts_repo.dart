@@ -92,7 +92,9 @@ class PromptsRepo {
           .doc(tUid)
           .collection('connect_prompt_history')
           .doc(promptId)
-          .set({'last_seen': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+          .set({
+            'last_seen': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
     } catch (e) {
       // Ignore error for non-critical logging
     }

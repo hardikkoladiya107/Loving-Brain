@@ -1,4 +1,3 @@
-
 class PromptModel {
   final String id;
   final String prompt;
@@ -22,10 +21,6 @@ class PromptModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'prompt': prompt,
-      'hint1': hint1,
-      'hint2': hint2,
-    };
+    return {'prompt': prompt, 'hint1': hint1, 'hint2': hint2};
   }
 }

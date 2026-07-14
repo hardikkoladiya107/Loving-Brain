@@ -11,6 +11,8 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/home/bloc/home_cubit.dart';
 import 'package:loving_brain/ui/home/bloc/home_state.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/energy_bridge/widgets/energy_bridge_explainer_sheet.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 class FamilyMeterStatePickerScreen extends StatefulWidget {
@@ -35,11 +37,13 @@ class _FamilyMeterStatePickerScreenState
             elevation: 0,
             backgroundColor: Colors.transparent,
             foregroundColor: const Color(0xFF2F2A44),
-            title: LocaleKeys.howIsChildRightNow.tr(namedArgs: {'childName': childName}).appText(
-              fontWeight: FontWeight.w900,
-              fontSize: 18.sp,
-              color: const Color(0xFF2F2A44),
-            ),
+            title: LocaleKeys.howIsChildRightNow
+                .tr(namedArgs: {'childName': childName})
+                .appText(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 18.sp,
+                  color: const Color(0xFF2F2A44),
+                ),
           ),
           body: SafeArea(
             child: Padding(
@@ -120,10 +124,16 @@ class _FamilyMeterStatePickerScreenState
         if (!mounted) {
           return;
         }
-        context.pop();
+        if (childState == ChildState.highEnergy) {
+          await showEnergyBridgeExplainerIfNeeded(context);
+        }
+        if (!mounted) {
+          return;
+        }
+        context.go(RoutePaths.base);
         await Future<void>.delayed(const Duration(milliseconds: 80));
         await showSnackBar(
-          message: 'State updated successfully.',
+          message: LocaleKeys.stateUpdatedSuccess.tr(),
           type: SnackBarType.SUCCESS,
         );
       },

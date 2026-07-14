@@ -17,7 +17,9 @@ abstract class NewBehaviorState with _$NewBehaviorState {
     @Default([]) List<BehaviourCategoryModel> behaviourCategoryList,
     @Default([]) List<BehaviourModel> behaviourList,
     UserModel? userModel,
-    @Default(ApiResultStatus.initial()) ApiResultStatus getBehaviourApiResultStatus,
-    @Default(ApiResultStatus.initial()) ApiResultStatus addBehaviourApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus getBehaviourApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus addBehaviourApiResultStatus,
   }) = _NewBehaviorState;
 }

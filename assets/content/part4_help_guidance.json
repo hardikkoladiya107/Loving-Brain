@@ -1,0 +1,266 @@
+{
+  "version": "2025-04",
+  "source": "LovingBrain_ContentGuide.pdf Section 4 + age-band extensions",
+  "sprint1Mapping": {
+    "crying": "crying",
+    "wont_sleep": "wont_sleep",
+    "feeding_issue": "wont_eat",
+    "too_fussy": { "fallbackProblem": "crying", "fallbackAgeBand": "0_6" }
+  },
+  "ageBands": {
+    "0_6": { "minMonths": 0, "maxMonths": 6 },
+    "6_18": { "minMonths": 7, "maxMonths": 18 },
+    "18_36": { "minMonths": 19, "maxMonths": 36 }
+  },
+  "problems": [
+    {
+      "problemKey": "crying",
+      "suggestions": [
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} is probably overstimulated or overtired. His nervous system is very sensitive right now and too much input can quickly become overwhelming.",
+          "steps": [
+            { "title": "Move to a quieter, dimmer place", "instruction": "Find the calmest room in the house. Dim the lights if you can. Remove any background noise — turn off the TV, step away from the kitchen.", "tip": "Move slowly and speak quietly. Your calm body language directly affects his nervous system." },
+            { "title": "Hold him against your chest", "instruction": "Hold {childName} upright against your chest, his ear over your heart. Use a slow, rhythmic pat on his back.", "tip": "Your heartbeat is the sound he heard for 9 months. It is the most calming thing in his world." }
+          ],
+          "fallback": "Try offering a feed. Even if he fed recently, comfort sucking can help settle an overstimulated baby."
+        },
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Try the 5 S's — Swaddle", "instruction": "Wrap {childName} snugly in a thin muslin — arms tucked in, not too tight.", "tip": "Make sure his hips can still move freely inside the swaddle." },
+            { "title": "Add gentle motion and shushing", "instruction": "Hold the swaddled {childName} and gently rock or sway while making a continuous shushing sound — louder than you think you need to.", "tip": "The shushing sound mimics the whooshing blood flow he heard in the womb." }
+          ]
+        },
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Try skin-to-skin contact", "instruction": "Undress {childName} down to his nappy. Hold him against your bare chest and cover both of you with a light blanket.", "tip": "Skin-to-skin regulates his temperature, heart rate, and stress hormones." },
+            { "title": "Go outside briefly", "instruction": "Fresh air and a change of environment can break the crying cycle.", "tip": "The change in air temperature on his face is a gentle sensory reset." }
+          ]
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} may be overtired, hungry, or overwhelmed by a new skill or environment. Crying at this age is still his primary way to ask for help.",
+          "steps": [
+            { "title": "Check the basics first", "instruction": "Run through hunger, wet nappy, too hot or cold, and tiredness. Address the most likely need before trying anything else.", "tip": "A quick HALT-style check saves time when you are stressed." },
+            { "title": "Reduce stimulation", "instruction": "Move to a quieter space. Put down your phone. Lower your voice and slow your movements around {childName}.", "tip": "Your calm is contagious — rushing often prolongs the cry." }
+          ],
+          "fallback": "If crying continues after basic needs are met, try a change of scenery — a walk outside or a different room."
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Offer comfort object or rhythm", "instruction": "Try a familiar blanket, gentle rocking, or a short song you use at bedtime.", "tip": "Predictable sensory input helps his nervous system settle." },
+            { "title": "Stay close without fixing", "instruction": "Sit nearby and let {childName} know you are there. You do not need to stop every sound immediately.", "tip": "Sometimes babies need to discharge tension before they can reset." }
+          ]
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Try a movement reset", "instruction": "Gentle bouncing on your knee, a slow walk, or a ride in the pram can shift his state.", "tip": "Rhythmic movement mimics the womb and can break a crying loop." },
+            { "title": "Pause and breathe together", "instruction": "Hold {childName} and take three slow breaths yourself before the next attempt.", "tip": "Regulating your body helps regulate his." }
+          ]
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} is feeling something he cannot express in words yet. Toddler crying is almost always communication, not manipulation.",
+          "steps": [
+            { "title": "Get down to his level", "instruction": "Kneel or sit so you are at his eye level. Just be present and calm.", "tip": "Your physical presence and calm body is the regulation — not your words." },
+            { "title": "Name the feeling out loud", "instruction": "Say quietly: 'You are really upset right now. That is okay. I am right here.'", "tip": "Naming an emotion activates the thinking part of his brain and reduces the intensity." }
+          ],
+          "fallback": "If he is still inconsolable after 10 minutes, offer physical comfort — a hug, a familiar object, or a change of location."
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Offer a simple choice", "instruction": "When he pauses, offer one small choice: this cup or that cup, this corner or the sofa.", "tip": "Tiny control can reduce the intensity once he feels heard." },
+            { "title": "Use a calm-down corner", "instruction": "Guide him to a soft spot with a favourite toy. Stay nearby without demanding he stop crying.", "tip": "A safe space teaches regulation over time — not in one moment." }
+          ]
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Change the scene", "instruction": "Move to another room, step outside, or switch to water play at the sink.", "tip": "A sensory shift can interrupt an emotional spiral." },
+            { "title": "Reconnect after the storm", "instruction": "When crying eases, offer a hug and one warm sentence: 'We got through that together.'", "tip": "Repair builds trust — you do not need to lecture in the moment." }
+          ]
+        }
+      ]
+    },
+    {
+      "problemKey": "wont_sleep",
+      "suggestions": [
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} is probably overtired. Overtired babies find it harder to fall asleep because their stress hormones have kicked in.",
+          "steps": [
+            { "title": "Create the right environment", "instruction": "Dark room, white noise, cool temperature. These three things together signal sleep to his brain.", "tip": "Darkness is the most important of the three." },
+            { "title": "Start the wind-down before he needs it", "instruction": "Start 10 to 15 minutes before you think he needs to sleep — a feed, a quiet hold, soft singing.", "tip": "The Energy Bridge is designed to give you this 15-minute warning. Use that time." }
+          ],
+          "fallback": "If he is fighting sleep, try a 5-minute reset — dim lights and hold him quietly before trying again."
+        },
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Use a consistent mini-routine", "instruction": "Same order every time: nappy, feed, burp, swaddle, bed. Keep it short and predictable.", "tip": "Babies learn sleep cues from repetition, not length." },
+            { "title": "Place him down drowsy but awake", "instruction": "When {childName} is heavy-eyed but not fully asleep, place him in the cot and pat rhythmically.", "tip": "This builds the skill of falling asleep in the sleep space." }
+          ]
+        },
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Check for discomfort", "instruction": "Gas, reflux, or being too hot can block sleep. Try upright hold for 10 minutes after a feed.", "tip": "Sometimes sleep resistance is physical, not behavioural." },
+            { "title": "Try motion then stillness", "instruction": "A short walk or rock until calm, then transfer to cot with hand on chest for one minute.", "tip": "Motion calms; stillness lets sleep arrive." }
+          ]
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} may be undertired, overtired, or excited by new milestones. Sleep resistance is common when the world feels too interesting.",
+          "steps": [
+            { "title": "Watch wake windows", "instruction": "Note how long he has been awake. Adjust bedtime earlier if he is rubbing eyes or fussy.", "tip": "Catching the sleep window beats fighting past it." },
+            { "title": "Keep the last 20 minutes boring", "instruction": "No screens, no rough play, no new toys. Same low-key sequence every night.", "tip": "Boring is good before bed." }
+          ],
+          "fallback": "If he wakes frequently, check room temperature and whether he is going down overtired."
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Use a sleep cue object", "instruction": "Introduce one soft item only for sleep — same blanket or toy in the cot each time.", "tip": "Consistency helps his brain associate the object with sleep." },
+            { "title": "Pat and pause", "instruction": "Pat his back for 30 seconds, pause 10 seconds, repeat. Gradually reduce contact as he settles.", "tip": "Small steps teach self-settling without leaving him alone abruptly." }
+          ]
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Address separation gently", "instruction": "Stay in the room with a calm presence. Hum the same song each night.", "tip": "Predictable presence reduces bedtime anxiety." },
+            { "title": "Keep night feeds boring", "instruction": "If he wakes to feed, keep lights low and interaction minimal.", "tip": "Night is for sleep cues, not play." }
+          ]
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "Toddlers resist sleep because sleep means separation from you and the end of the exciting day.",
+          "steps": [
+            { "title": "Start the routine earlier than you think", "instruction": "Start the wind-down 30 minutes before you want him asleep. Bath, dim lights, quiet play, then the same bedtime sequence every night.", "tip": "Predictability is everything." },
+            { "title": "Give him one choice to feel in control", "instruction": "Which pyjamas. Which book. Which side of the bed. One real choice is enough.", "tip": "Give him tiny amounts of control and the big battles reduce." }
+          ],
+          "fallback": "If bedtime stalls, shorten the routine but keep the order identical."
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Use a visual bedtime chart", "instruction": "Three pictures: bath, book, bed. Point to each step as you do it.", "tip": "Visual routines reduce negotiation." },
+            { "title": "Set a clear last book rule", "instruction": "Say: 'This is our last book, then sleep time.' Stick to it calmly.", "tip": "Boundaries with warmth work better than endless extensions." }
+          ]
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Offer a comfort ritual", "instruction": "Same goodnight phrase, same night-light, same stuffed friend every night.", "tip": "Rituals signal safety when the day ends." },
+            { "title": "Stay boring at the door", "instruction": "If he calls out, return once with a brief reassurance, then less each night.", "tip": "Consistency teaches that sleep is the expectation." }
+          ]
+        }
+      ]
+    },
+    {
+      "problemKey": "wont_eat",
+      "suggestions": [
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} may be distracted, uncomfortable, or not hungry right now. Feeding patterns vary day to day in early months.",
+          "steps": [
+            { "title": "Check comfort before feeding", "instruction": "Burp, change nappy if needed, and make sure he is not overtired before offering a feed.", "tip": "A comfortable baby feeds more easily." },
+            { "title": "Reduce distractions", "instruction": "Feed in a quiet, dim space. Put phones away and keep voices low.", "tip": "Calm environment supports feeding reflexes." }
+          ],
+          "fallback": "If refusal persists across multiple feeds, note timing and discuss with your health visitor."
+        },
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Try a different position", "instruction": "Switch cradle hold, rugby hold, or slightly more upright if reflux is suspected.", "tip": "Position can change comfort dramatically." },
+            { "title": "Offer when sleepy-not-sleeping", "instruction": "Catch the drowsy window after a nap when he may take a fuller feed.", "tip": "Timing often matters more than technique." }
+          ]
+        },
+        {
+          "ageBand": "0_6",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Skin-to-skin before feed", "instruction": "Five minutes of skin contact can trigger feeding interest.", "tip": "Closeness primes appetite in young babies." },
+            { "title": "Stop and retry in 20 minutes", "instruction": "If he turns away, pause and offer again shortly without pressure.", "tip": "Forced feeds increase resistance." }
+          ]
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "Food refusal at this age is almost always developmental. {childName} is asserting independence through eating.",
+          "steps": [
+            { "title": "Remove all pressure from mealtimes", "instruction": "Put food on the tray and step back. No encouragement, no aeroplanes, no 'just one more bite'.", "tip": "It can take 15 to 20 exposures to a new food before a toddler accepts it." },
+            { "title": "Eat the same food yourself visibly", "instruction": "If {childName} sees you eating something and genuinely enjoying it he is far more likely to try it.", "tip": "Children this age learn almost entirely through imitation." }
+          ],
+          "fallback": "Offer the same food again another day — novelty pressure backfires."
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Serve small portions", "instruction": "Two or three pieces on the tray beats a full plate. Refill if he asks.", "tip": "Small portions feel less overwhelming." },
+            { "title": "Let him explore texture", "instruction": "Allow touching, squishing, and smelling food without commenting.", "tip": "Exploration is part of learning to eat." }
+          ]
+        },
+        {
+          "ageBand": "6_18",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Keep milk on schedule", "instruction": "Too much milk between meals can reduce appetite. Space feeds and solids thoughtfully.", "tip": "Hunger is the best motivator for trying solids." },
+            { "title": "End the meal calmly", "instruction": "When he turns away, say 'All done' and clear the tray without drama.", "tip": "Neutral endings prevent power struggles." }
+          ]
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 1,
+          "whyItIsHappening": "{childName} may be testing boundaries or filling up on snacks. Toddler appetite naturally varies week to week.",
+          "steps": [
+            { "title": "Sit together at the table", "instruction": "Family-style sitting — even for 10 minutes — improves willingness to try.", "tip": "Meals are social before they are nutritional." },
+            { "title": "Offer one safe food plus one new food", "instruction": "Always include something he usually accepts alongside something new.", "tip": "Safety plus novelty reduces refusal." }
+          ],
+          "fallback": "Track patterns for a week before worrying — one picky day is normal."
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 2,
+          "steps": [
+            { "title": "Limit grazing", "instruction": "Structured snack times instead of constant crackers and fruit between meals.", "tip": "Appetite needs space to build." },
+            { "title": "Involve him in prep", "instruction": "Stir, pour, or place food on plates — tiny jobs increase interest.", "tip": "Participation creates ownership." }
+          ]
+        },
+        {
+          "ageBand": "18_36",
+          "suggestionIndex": 3,
+          "steps": [
+            { "title": "Stay neutral about intake", "instruction": "Do not praise eating or scold refusal. Describe what you see: 'You tried the carrot.'", "tip": "Neutral feedback keeps food from becoming emotional currency." },
+            { "title": "Close the kitchen after meals", "instruction": "When mealtime ends, food is done until the next scheduled snack.", "tip": "Clear boundaries reduce endless negotiation." }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -13,8 +13,10 @@ abstract class EventDetailState with _$EventDetailState {
     @Default("") String message,
     @Default(ApiResultStatus.initial()) ApiResultStatus getAssigneeApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus getChildrenResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus  getCreatedByUserApiResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus  uploadDocumentApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus getCreatedByUserApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus uploadDocumentApiResultStatus,
     UserModel? createdByUser,
     @Default([]) List<UserModel> assignedUserList,
     @Default([]) List<ChildModel> childrenList,

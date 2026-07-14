@@ -38,7 +38,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
           context.pop();
           await Future<void>.delayed(const Duration(milliseconds: 80));
           await showSnackBar(
-            message: 'Great job - your response helped.',
+            message: LocaleKeys.helpFlowSuccessMessage.tr(),
             type: SnackBarType.SUCCESS,
           );
           return;
@@ -146,13 +146,12 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                             ),
                             if (state.showEscalationHint) ...<Widget>[
                               12.h.spaceH,
-                              'It may be worth calling your health nurse or doctor.'
-                                  .appText(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w800,
-                                    color: const Color(0xFFAB2D55),
-                                    textAlign: TextAlign.start,
-                                  ),
+                              LocaleKeys.helpFlowEscalationHint.tr().appText(
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xFFAB2D55),
+                                textAlign: TextAlign.start,
+                              ),
                             ],
                           ],
                         ),

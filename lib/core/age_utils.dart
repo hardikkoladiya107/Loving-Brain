@@ -1,3 +1,7 @@
+/// Child age helpers used by Help flow, Smart Moment, and onboarding.
+///
+/// Prefer DOB via [ageInMonthsFromDob]; [resolvedAgeInMonths] falls back to
+/// legacy `child_age` text bands for existing users.
 class AgeUtils {
   AgeUtils._();
 

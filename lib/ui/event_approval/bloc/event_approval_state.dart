@@ -14,8 +14,10 @@ abstract class EventApprovalState with _$EventApprovalState {
     SharedEventModel? sharedEvent,
     @Default(ApiResultStatus.initial()) ApiResultStatus getAssigneeApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus getChildrenResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus  getCreatedByUserApiResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus  updatedSharedEventApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus getCreatedByUserApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus updatedSharedEventApiResult,
     UserModel? createdByUser,
     UserModel? userModel,
     @Default([]) List<UserModel> assignedUserList,

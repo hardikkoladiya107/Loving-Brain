@@ -11,6 +11,19 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsContentGen {
+  const $AssetsContentGen();
+
+  /// File path: assets/content/part4_help_guidance.json
+  String get part4HelpGuidance => 'assets/content/part4_help_guidance.json';
+
+  /// File path: assets/content/smart_moment_content.json
+  String get smartMomentContent => 'assets/content/smart_moment_content.json';
+
+  /// List of all assets
+  List<String> get values => [part4HelpGuidance, smartMomentContent];
+}
+
 class $AssetsHtmlGen {
   const $AssetsHtmlGen();
 
@@ -777,6 +790,7 @@ class $AssetsTranslationsGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsContentGen content = $AssetsContentGen();
   static const $AssetsHtmlGen html = $AssetsHtmlGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();

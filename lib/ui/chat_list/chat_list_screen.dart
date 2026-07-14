@@ -138,13 +138,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                 color: primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Center(
-                child: Icon(
-                  Icons.chat,
-                  color:
-                      primaryColor,
-                ),
-              ),
+              child: Center(child: Icon(Icons.chat, color: primaryColor)),
             ),
             16.spaceW,
             Expanded(

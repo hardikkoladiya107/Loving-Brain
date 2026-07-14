@@ -21,5 +21,8 @@ abstract class LinkCoParentState with _$LinkCoParentState {
     UserModel? userModel,
     @Default([]) List<ChildModel> children,
     @Default([]) List<ChildModel> selectedChildren,
+
+    /// True when Firestore invite was created but Brevo email delivery failed.
+    @Default(false) bool emailDeliveryFailed,
   }) = _LinkCoParentState;
 }

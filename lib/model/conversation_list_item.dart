@@ -1,11 +1,10 @@
-
 class ConversationListItem {
   ConversationListItem({String? conversationId, String? firstMessage}) {
     _conversationId = conversationId;
     _firstMessage = firstMessage;
   }
 
-  ConversationListItem.fromJson(Map<String,dynamic> json) {
+  ConversationListItem.fromJson(Map<String, dynamic> json) {
     _conversationId = json['conversation_id'];
     _firstMessage = json['first_message'];
   }

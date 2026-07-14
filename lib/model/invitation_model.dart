@@ -1,3 +1,7 @@
+/// Firestore document for `co-parent-invitation` collection.
+///
+/// [children] is a comma-separated list of child document ids.
+/// [status] is `REQUESTED` until the invited co-parent accepts.
 class InvitationModel {
   InvitationModel({
     bool? calenderEvents,

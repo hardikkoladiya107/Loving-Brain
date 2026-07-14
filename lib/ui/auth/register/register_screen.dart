@@ -272,17 +272,27 @@ class _RegisterScreenState extends State<RegisterScreen>
         32.spaceH,
         _nextButton(state),
         20.spaceH,
+        _alreadyHaveAccount(),
+      ],
+    );
+  }
+
+  Widget _alreadyHaveAccount() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        LocaleKeys.alreadyHaveAnAccount.tr().appText(
+          color: Colors.grey.shade600,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+        ),
+        6.spaceW,
         BaseButton(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.arrow_back_ios, size: 14, color: Colors.grey.shade600),
-              4.spaceW,
-              LocaleKeys.backToLogin.tr().appText(
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w600,
-              ),
-            ],
+          child: LocaleKeys.signIn.tr().appText(
+            color: primaryColor,
+            fontWeight: FontWeight.w800,
+            fontSize: 13,
+            textDecoration: TextDecoration.underline,
           ),
           onTap: () => context.pop(),
         ),
@@ -352,14 +362,11 @@ class _RegisterScreenState extends State<RegisterScreen>
           decoration: BoxDecoration(
             color: primaryColor.withValues(alpha: 0.07),
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color: primaryColor.withValues(alpha: 0.15),
-            ),
+            border: Border.all(color: primaryColor.withValues(alpha: 0.15)),
           ),
           child: Row(
             children: [
-              Icon(Icons.email_outlined,
-                  color: primaryColor, size: 18.sp),
+              Icon(Icons.email_outlined, color: primaryColor, size: 18.sp),
               10.spaceW,
               Expanded(
                 child: state.emailAddress.appText(

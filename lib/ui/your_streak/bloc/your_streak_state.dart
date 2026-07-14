@@ -6,6 +6,5 @@ part 'your_streak_state.freezed.dart';
 
 @freezed
 abstract class YourStreakState with _$YourStreakState {
-  const factory YourStreakState({UserModel? userModel}) =
-      _YourStreakState;
+  const factory YourStreakState({UserModel? userModel}) = _YourStreakState;
 }

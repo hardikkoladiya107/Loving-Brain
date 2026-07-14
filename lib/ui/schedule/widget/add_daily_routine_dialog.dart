@@ -69,10 +69,11 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
         if (_descriptionController.text != (state.descriptionText)) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
-            _descriptionController.value = _descriptionController.value.copyWith(
-              text: state.descriptionText,
-              selection: _descriptionController.selection,
-            );
+            _descriptionController.value = _descriptionController.value
+                .copyWith(
+                  text: state.descriptionText,
+                  selection: _descriptionController.selection,
+                );
           });
         }
 
@@ -118,19 +119,20 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
                       ),
                       12.w.spaceW,
                       Expanded(
-                        child: childName.isNotEmpty 
-                          ? "${LocaleKeys.addNewActivityFor.tr()} $childName".appText(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18.sp,
-                              color: blackTextColor,
-                              maxLines: 2,
-                            )
-                          : LocaleKeys.addActivity.tr().appText(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18.sp,
-                              color: blackTextColor,
-                              maxLines: 2,
-                            ),
+                        child: childName.isNotEmpty
+                            ? "${LocaleKeys.addNewActivityFor.tr()} $childName"
+                                  .appText(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 18.sp,
+                                    color: blackTextColor,
+                                    maxLines: 2,
+                                  )
+                            : LocaleKeys.addActivity.tr().appText(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 18.sp,
+                                color: blackTextColor,
+                                maxLines: 2,
+                              ),
                       ),
                       BaseButton(
                         onTap: () => context.pop(),
@@ -140,7 +142,11 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
                             color: greyColor.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.close_rounded, size: 20.sp, color: greyColor1),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 20.sp,
+                            color: greyColor1,
+                          ),
                         ),
                       ),
                     ],
@@ -194,7 +200,10 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
                           color: blackTextColor,
                           fontWeight: FontWeight.w600,
                         )
-                      : LocaleKeys.selectTime.tr().appText(fontSize: 14.sp, color: greyColor1),
+                      : LocaleKeys.selectTime.tr().appText(
+                          fontSize: 14.sp,
+                          color: greyColor1,
+                        ),
                 ),
               ],
             ),
@@ -244,7 +253,9 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
               hintStyle: getTextStyle(fontSize: 14.sp, color: greyColor1),
             ),
             onChanged: (String value) {
-              context.read<DailyRoutineCubit>().changeProps(descriptionText: value);
+              context.read<DailyRoutineCubit>().changeProps(
+                descriptionText: value,
+              );
             },
             textInputAction: TextInputAction.done,
           ),
@@ -291,12 +302,15 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
                 itemCount: state.routineCategoryList.length,
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 itemBuilder: (BuildContext context, int index) {
-                  final RoutineCategoryModel category = state.routineCategoryList[index];
+                  final RoutineCategoryModel category =
+                      state.routineCategoryList[index];
                   final String label = category.routineType ?? '';
                   return BaseButton(
                     onTap: () {
                       close();
-                      context.read<DailyRoutineCubit>().changeProps(selectedType: category.routineType);
+                      context.read<DailyRoutineCubit>().changeProps(
+                        selectedType: category.routineType,
+                      );
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -324,7 +338,7 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
             decoration: BoxDecoration(
               color: greyColor3.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(16.r),
-               border: Border.all(color: greyColor.withValues(alpha: 0.5)),
+              border: Border.all(color: greyColor.withValues(alpha: 0.5)),
             ),
             child: Row(
               children: [
@@ -335,7 +349,10 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
                           color: blackTextColor,
                           fontWeight: FontWeight.w600,
                         )
-                      : LocaleKeys.selectType.tr().appText(fontSize: 14.sp, color: greyColor1),
+                      : LocaleKeys.selectType.tr().appText(
+                          fontSize: 14.sp,
+                          color: greyColor1,
+                        ),
                 ),
                 Icon(
                   Icons.arrow_drop_down_rounded,
@@ -361,8 +378,8 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
   Widget _addActivityButton(BuildContext context) {
     return BaseButton(
       onTap: () {
-         FocusScope.of(context).unfocus();
-         context.read<DailyRoutineCubit>().addActivity();
+        FocusScope.of(context).unfocus();
+        context.read<DailyRoutineCubit>().addActivity();
       },
       child: Container(
         width: double.infinity,
@@ -394,22 +411,21 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
   }
 
   void _showTimePicker(BuildContext context) {
-     FocusScope.of(context).unfocus();
-    showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    ).then((TimeOfDay? value) {
+    FocusScope.of(context).unfocus();
+    showTimePicker(context: context, initialTime: TimeOfDay.now()).then((
+      TimeOfDay? value,
+    ) {
       if (value != null && navigatorKey.currentContext != null) {
         final DateTime now = DateTime.now();
         navigatorKey.currentContext!.read<DailyRoutineCubit>().changeProps(
-              selectedDateTime: DateTime(
-                now.year,
-                now.month,
-                now.day,
-                value.hour,
-                value.minute,
-              ),
-            );
+          selectedDateTime: DateTime(
+            now.year,
+            now.month,
+            now.day,
+            value.hour,
+            value.minute,
+          ),
+        );
       }
     });
   }

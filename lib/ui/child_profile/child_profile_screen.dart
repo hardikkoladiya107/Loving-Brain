@@ -241,7 +241,8 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
           ),
         ],
       ),
-      child: LocaleKeys.tellUsAboutYourChild.tr()
+      child: LocaleKeys.tellUsAboutYourChild
+          .tr()
           .appText(
             fontWeight: FontWeight.w800,
             fontSize: 19.sp,
@@ -359,7 +360,8 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LocaleKeys.continueBtn.tr()
+            LocaleKeys.continueBtn
+                .tr()
                 .appText(
                   fontWeight: FontWeight.w800,
                   color: Colors.white,

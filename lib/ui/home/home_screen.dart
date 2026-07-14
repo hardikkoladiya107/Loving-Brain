@@ -19,6 +19,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/core/home_time_greeting.dart';
+import 'package:loving_brain/ui/handover/handover_sheet.dart';
+import 'package:loving_brain/ui/quick_record/quick_record_sheet.dart';
 import 'bloc/home_cubit.dart';
 import 'bloc/home_state.dart';
 
@@ -124,6 +126,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final String updatedText = _updatedAgoText(
       state.childModel?.stateUpdatedAt,
     );
+    final String insightText = _familyMeterInsightText(
+      childState: childState,
+      childName: childName,
+    );
     final String headerText = _smartActionHeaderText(
       childState: childState,
       childName: childName,
@@ -185,6 +191,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               color: childState?.color ?? Colors.grey.shade700,
             ),
             4.h.spaceH,
+            insightText.appText(
+              fontWeight: FontWeight.w600,
+              fontSize: 12.sp,
+              color: const Color(0xFF504A67),
+              textAlign: TextAlign.start,
+            ),
+            6.h.spaceH,
             BlocBuilder<EnergyBridgeCubit, EnergyBridgeState>(
               builder: (BuildContext context, EnergyBridgeState energyState) {
                 final String timerText = _energyBridgeCountdownText(
@@ -200,6 +213,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 );
               },
             ),
+            8.h.spaceH,
+            BaseButton(
+              onTap: () => context.push(RoutePaths.timeline),
+              child: Row(
+                children: <Widget>[
+                  LocaleKeys.viewTodaysTimeline.tr().appText(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12.sp,
+                    color: const Color(0xFF6A24B8),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: const Color(0xFF6A24B8),
+                    size: 18.sp,
+                  ),
+                ],
+              ),
+            ),
+            if ((state.userModel?.partnerUserId ?? '').isNotEmpty) ...<Widget>[
+              8.h.spaceH,
+              _handoverChip(state),
+            ],
             8.h.spaceH,
             Container(
               width: double.infinity,
@@ -263,14 +299,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       alignment: Alignment.center,
-                      child: ctaText
-                          .replaceAll("Guide me now", "Guide now")
-                          .replaceAll("Help me now", "Help now")
-                          .appText(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                          ),
+                      child: ctaText.appText(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -683,11 +716,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               12.spaceW,
               Expanded(
                 child: _actionCard(
-                  title: LocaleKeys.trackKidBehaviour.tr(),
-                  subtitle: "Log behaviors",
-                  icon: Icons.auto_awesome_rounded,
+                  title: LocaleKeys.quickRecord.tr(),
+                  subtitle: LocaleKeys.quickRecordSubtitle.tr(),
+                  icon: Icons.edit_note_rounded,
                   themeColor: Colors.green.shade500,
-                  onTap: () => context.push(RoutePaths.newBehavior),
+                  onTap: () => showQuickRecordSheet(context),
                 ),
               ),
             ],
@@ -707,11 +740,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               12.spaceW,
               Expanded(
                 child: _actionCard(
-                  title: LocaleKeys.energyBridgeTitle.tr(),
-                  subtitle: LocaleKeys.energyBridgeConnectEnergy.tr(),
-                  icon: Icons.bolt_rounded,
+                  title: LocaleKeys.todaysTimeline.tr(),
+                  subtitle: LocaleKeys.viewTodaysTimeline.tr(),
+                  icon: Icons.timeline_rounded,
                   themeColor: Colors.blue.shade500,
-                  onTap: () => context.push(RoutePaths.energyBridge),
+                  onTap: () => context.push(RoutePaths.timeline),
                 ),
               ),
             ],
@@ -884,72 +917,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
           ),
         ),
-        10.spaceH,
-        // Family Feel Meter
-        BaseButton(
-          onTap: () => context.push(RoutePaths.reflectYourEmotions),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            height: 110.h,
-            clipBehavior: Clip.none, // Allow meter to pop out top!
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // Base
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    height: 90.h,
-                    width: double.infinity,
-                    padding: EdgeInsets.only(left: 24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFFF859B),
-                          Color(0xFFFF416C),
-                        ], // Beautiful Pink/Red
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(28),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0xFFFF416C).withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        LocaleKeys.familyFeelMeter.tr().appText(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                        ),
-                        4.spaceH,
-                        LocaleKeys.connectEmotionally.tr().appText(
-                          fontSize: 13,
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Overlapping icon
-                Positioned(
-                  right: 15,
-                  top: -15, // Pops out slightly
-                  child: Assets.icons.icFamilyFeelMeter.image(height: 100.h),
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -1008,23 +975,52 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return "~$minutesLeft mins before shift";
   }
 
+  String _familyMeterInsightText({
+    required ChildState? childState,
+    required String childName,
+  }) {
+    if (childState == null) {
+      return LocaleKeys.familyMeterInsightNothingLogged.tr(
+        namedArgs: <String, String>{'childName': childName},
+      );
+    }
+    switch (childState) {
+      case ChildState.calm:
+        return LocaleKeys.familyMeterInsightCalm.tr();
+      case ChildState.highEnergy:
+        return LocaleKeys.familyMeterInsightHighEnergy.tr();
+      case ChildState.fussy:
+        return LocaleKeys.familyMeterInsightFussy.tr(
+          namedArgs: <String, String>{'childName': childName},
+        );
+      case ChildState.tired:
+        return LocaleKeys.familyMeterInsightTired.tr();
+    }
+  }
+
   String _smartActionHeaderText({
     required ChildState? childState,
     required String childName,
   }) {
     if (childState == ChildState.calm) {
-      return LocaleKeys.childReadyToConnect.tr(namedArgs: {'childName': childName});
+      return LocaleKeys.childReadyToConnect.tr(
+        namedArgs: {'childName': childName},
+      );
     }
     if (childState == ChildState.highEnergy) {
       return LocaleKeys.goodTimeForActivePlay.tr();
     }
     if (childState == ChildState.fussy) {
-      return LocaleKeys.childNeedsSupportRightNow.tr(namedArgs: {'childName': childName});
+      return LocaleKeys.childNeedsSupportRightNow.tr(
+        namedArgs: {'childName': childName},
+      );
     }
     if (childState == ChildState.tired) {
       return LocaleKeys.windDownTime.tr();
     }
-    return LocaleKeys.howIsChildRightNow.tr(namedArgs: {'childName': childName});
+    return LocaleKeys.howIsChildRightNow.tr(
+      namedArgs: {'childName': childName},
+    );
   }
 
   String _smartActionCtaText({required ChildState? childState}) {
@@ -1044,5 +1040,54 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       return;
     }
     context.push(RoutePaths.smartMoment);
+  }
+
+  Widget _handoverChip(HomeState state) {
+    final bool isActiveLogger = state.userModel?.isActiveLogger ?? true;
+    final String label = isActiveLogger
+        ? LocaleKeys.handoverChipActive.tr()
+        : LocaleKeys.handoverChipViewer.tr();
+    return BaseButton(
+      onTap: () => showHandoverSheet(context),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: isActiveLogger
+                ? const Color(0xFF6A24B8).withValues(alpha: 0.35)
+                : const Color(0xFF9A8FB8).withValues(alpha: 0.35),
+          ),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(
+              isActiveLogger ? Icons.edit_rounded : Icons.visibility_rounded,
+              size: 16.sp,
+              color: isActiveLogger
+                  ? const Color(0xFF6A24B8)
+                  : const Color(0xFF9A8FB8),
+            ),
+            8.w.spaceW,
+            Expanded(
+              child: label.appText(
+                fontWeight: FontWeight.w800,
+                fontSize: 11.sp,
+                color: isActiveLogger
+                    ? const Color(0xFF6A24B8)
+                    : const Color(0xFF6A5A9A),
+              ),
+            ),
+            Icon(
+              Icons.swap_horiz_rounded,
+              size: 16.sp,
+              color: const Color(0xFF6A24B8),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

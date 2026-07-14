@@ -34,12 +34,12 @@ class _HelpProblemSelectionScreenState
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HelpFlowCubit, HelpFlowState>(
-      listener: (BuildContext context, HelpFlowState state) {
+      listener: (BuildContext context, HelpFlowState state) async {
         if (!_didAutoSelectFussy &&
             state.childState == ChildState.fussy &&
             state.selectedProblemType.isEmpty) {
           _didAutoSelectFussy = true;
-          context.read<HelpFlowCubit>().selectProblem('too_fussy');
+          await context.read<HelpFlowCubit>().selectProblem('too_fussy');
         }
       },
       builder: (BuildContext context, HelpFlowState state) {
@@ -62,12 +62,14 @@ class _HelpProblemSelectionScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  LocaleKeys.whatIsHappeningWithChild.tr(namedArgs: {'childName': childName}).appText(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF2F2A44),
-                    textAlign: TextAlign.start,
-                  ),
+                  LocaleKeys.whatIsHappeningWithChild
+                      .tr(namedArgs: {'childName': childName})
+                      .appText(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFF2F2A44),
+                        textAlign: TextAlign.start,
+                      ),
                   14.h.spaceH,
                   _problemCard(
                     icon: Icons.child_care_rounded,
@@ -163,8 +165,11 @@ class _HelpProblemSelectionScreenState
     );
   }
 
-  void _goToGuidance(String problemType) {
-    context.read<HelpFlowCubit>().selectProblem(problemType);
+  Future<void> _goToGuidance(String problemType) async {
+    await context.read<HelpFlowCubit>().selectProblem(problemType);
+    if (!mounted) {
+      return;
+    }
     context.push(RoutePaths.helpGuidance);
   }
 }

@@ -41,7 +41,6 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProposeChangeCubit, ProposeChangeState>(
       builder: (context, state) {
-
         if (noteForCoParentTextEditingController.text !=
             state.noteForCoParent) {
           noteForCoParentTextEditingController.value =

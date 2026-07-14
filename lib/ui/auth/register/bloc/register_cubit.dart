@@ -67,14 +67,13 @@ class RegisterCubit extends Cubit<RegisterState> {
 
     // Check if account already exists
     changeProps(emailAddressError: '', isEmailChecking: true);
-    final bool exists =
-        await AuthRepo.instance.isAccountExistWithEmail(email: email);
+    final bool exists = await AuthRepo.instance.isAccountExistWithEmail(
+      email: email,
+    );
     changeProps(isEmailChecking: false);
 
     if (exists) {
-      changeProps(
-        emailAddressError: LocaleKeys.accountAlreadyExists.tr(),
-      );
+      changeProps(emailAddressError: LocaleKeys.accountAlreadyExists.tr());
       return;
     }
 
@@ -112,8 +111,8 @@ class RegisterCubit extends Cubit<RegisterState> {
       valid = false;
     } else if (state.password.trim() != state.confirmPassword.trim()) {
       changeProps(
-        confirmPasswordError:
-            LocaleKeys.passwordAndConfirmPasswordShouldSame.tr(),
+        confirmPasswordError: LocaleKeys.passwordAndConfirmPasswordShouldSame
+            .tr(),
       );
       valid = false;
     } else {
@@ -140,8 +139,8 @@ class RegisterCubit extends Cubit<RegisterState> {
       isAuthSubmitting: true,
     );
 
-    final ApiResultStatus<dynamic> credential =
-        await AuthRepo.instance.createUserWithEmailAndPassword(
+    final ApiResultStatus<dynamic> credential = await AuthRepo.instance
+        .createUserWithEmailAndPassword(
           email: state.emailAddress.trim(),
           password: state.password.trim(),
         );
@@ -166,4 +165,3 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 }
-

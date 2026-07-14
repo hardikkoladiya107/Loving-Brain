@@ -185,8 +185,6 @@ extension extOnInt on int {
 }
 
 extension extOnWidget on Widget {
-
-
   Widget appPadding({
     double? all,
     double? left,

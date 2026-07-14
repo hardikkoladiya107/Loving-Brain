@@ -30,6 +30,8 @@ class UserModel {
     bool? todaysPlayIdea,
     bool? scheduleReminder,
     String? profileImage,
+    bool? isActiveLogger,
+    String? partnerUserId,
   }) {
     _uid = uid;
     _platform = platform;
@@ -59,6 +61,8 @@ class UserModel {
     _todaysPlayIdea = todaysPlayIdea;
     _scheduleReminder = scheduleReminder;
     _profileImage = profileImage;
+    _isActiveLogger = isActiveLogger;
+    _partnerUserId = partnerUserId;
   }
 
   UserModel.fromJson(
@@ -86,15 +90,19 @@ class UserModel {
     _todaysPlayIdea = jsonObject['todays_play_idea'];
     _scheduleReminder = jsonObject['schedule_reminder'];
     _profileImage = jsonObject['profile_image'];
+    _isActiveLogger = jsonObject['is_active_logger'] as bool?;
+    _partnerUserId = jsonObject['partner_user_id'] as String?;
 
     try {
       if (fromConvert) {
-        final String? defaultChildPath = jsonObject['default_child']?.toString();
+        final String? defaultChildPath = jsonObject['default_child']
+            ?.toString();
         if (defaultChildPath != null &&
             defaultChildPath.trim().isNotEmpty &&
             defaultChildPath != 'null') {
-          _defaultChild =
-              FirebaseFirestore.instance.doc(defaultChildPath.trim());
+          _defaultChild = FirebaseFirestore.instance.doc(
+            defaultChildPath.trim(),
+          );
         }
       } else {
         final dynamic rawDefaultChild = jsonObject['default_child'];
@@ -103,8 +111,9 @@ class UserModel {
             _defaultChild = rawDefaultChild;
           } else if (rawDefaultChild is String &&
               rawDefaultChild.trim().isNotEmpty) {
-            _defaultChild =
-                FirebaseFirestore.instance.doc(rawDefaultChild.trim());
+            _defaultChild = FirebaseFirestore.instance.doc(
+              rawDefaultChild.trim(),
+            );
           }
         }
       }
@@ -248,6 +257,8 @@ class UserModel {
   bool? _todaysPlayIdea;
   bool? _scheduleReminder;
   String? _profileImage;
+  bool? _isActiveLogger;
+  String? _partnerUserId;
 
   UserModel copyWith({
     String? uid,
@@ -278,6 +289,8 @@ class UserModel {
     bool? todaysPlayIdea,
     bool? scheduleReminder,
     String? profileImage,
+    bool? isActiveLogger,
+    String? partnerUserId,
   }) {
     return UserModel(
       uid: uid ?? _uid,
@@ -303,12 +316,13 @@ class UserModel {
       streak: streak ?? _streak,
       children: children ?? _children,
       defaultChild: defaultChild ?? _defaultChild,
-      isNotification:
-          isNotification ?? _isNotification,
+      isNotification: isNotification ?? _isNotification,
       dailyEmotionCheck: dailyEmotionCheck ?? _dailyEmotionCheck,
       todaysPlayIdea: todaysPlayIdea ?? _todaysPlayIdea,
       scheduleReminder: scheduleReminder ?? _scheduleReminder,
       profileImage: profileImage ?? _profileImage,
+      isActiveLogger: isActiveLogger ?? _isActiveLogger,
+      partnerUserId: partnerUserId ?? _partnerUserId,
     );
   }
 
@@ -385,6 +399,11 @@ class UserModel {
 
   DocumentReference? get defaultChild => _defaultChild;
 
+  /// Defaults to true when unset — parent can log until handover swaps role.
+  bool get isActiveLogger => _isActiveLogger ?? true;
+
+  String? get partnerUserId => _partnerUserId;
+
   Map<String, dynamic> toJson({
     bool forConvert = false,
     bool updateFreeTaskTime = true,
@@ -414,6 +433,8 @@ class UserModel {
     map['children'] = _children?.map((e) => e.path).toList();
     map['default_child'] = _defaultChild?.path;
     map['profile_image'] = _profileImage;
+    map['is_active_logger'] = _isActiveLogger;
+    map['partner_user_id'] = _partnerUserId;
 
     try {
       if (forConvert) {

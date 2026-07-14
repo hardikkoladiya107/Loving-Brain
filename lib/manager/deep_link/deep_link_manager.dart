@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/invitation_model.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/pending_invitation_manager.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -18,6 +21,9 @@ import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:go_router/go_router.dart';
 
+/// Handles universal links for co-parent invitations (`https://www.lovingbrain.com/{id}`).
+///
+/// Call [init] once at app startup (see `main.dart`) so cold-start links are not lost.
 class DeepLinkManager {
   DeepLinkManager._internal();
 
@@ -25,99 +31,117 @@ class DeepLinkManager {
 
   static DeepLinkManager get instance => _instance;
 
-  final appLinks = AppLinks();
+  final AppLinks appLinks = AppLinks();
 
-  StreamSubscription? appLinkStreamSubscription;
+  StreamSubscription<Uri>? _appLinkStreamSubscription;
 
+  /// Starts listening for invitation links (foreground + cold start).
+  Future<void> init() async {
+    await _handleInitialLink();
+    listenToLinks();
+  }
+
+  /// Processes the link that opened the app from a terminated state.
+  Future<void> _handleInitialLink() async {
+    try {
+      final Uri? initialUri = await appLinks.getInitialLink();
+      if (initialUri != null) {
+        await _handleUri(initialUri);
+      }
+    } catch (_) {
+      // Non-fatal — stream listener still handles links while app is running.
+    }
+  }
+
+  /// Subscribes to links received while the app is already running.
   void listenToLinks() {
-    appLinkStreamSubscription?.cancel();
-    appLinkStreamSubscription = appLinks.uriLinkStream.listen((uri) async {
+    _appLinkStreamSubscription?.cancel();
+    _appLinkStreamSubscription = appLinks.uriLinkStream.listen((Uri uri) async {
       await _handleUri(uri);
     });
   }
 
   void disposeListenToLinks() {
-    appLinkStreamSubscription?.cancel();
+    _appLinkStreamSubscription?.cancel();
   }
 
-  // ---------------------------------------------------------------------------
-  // Main handler — called both from stream and initial link on cold start
-  // ---------------------------------------------------------------------------
+  /// Parses the invitation id from the URL path and runs accept / login / register routing.
   Future<void> _handleUri(Uri uri) async {
-    final String path = uri.path.trim();
-    if (path.isEmpty || path == '/') return;
-
-    // Extract invitation ID — last segment of the path
-    final String invitationId = path.split('/').where((s) => s.isNotEmpty).last;
-    if (invitationId.isEmpty) return;
-
+    final String? invitationId =
+        CoParentInvitationHelpers.parseInvitationIdFromUri(uri);
+    if (invitationId == null) {
+      return;
+    }
     await _processInvitation(invitationId);
   }
 
-  // ---------------------------------------------------------------------------
-  // Core invitation processing logic
-  // ---------------------------------------------------------------------------
+  /// Loads the invitation from Firestore and routes based on auth state.
   Future<void> _processInvitation(String invitationId) async {
-    // 1. Fetch the invitation document
+    // 1. Fetch invitation document.
     final DocumentSnapshot<Map<String, dynamic>> snap;
     try {
       snap = await CoParentRepo.instance.coParentInvitationCollection
           .doc(invitationId)
           .get();
     } catch (_) {
-      _showError('Failed to load invitation. Please try again.');
+      _showError(LocaleKeys.deepLinkLoadFailed.tr());
       return;
     }
 
     if (!snap.exists || snap.data() == null) {
-      _showError('This invitation link is invalid or has expired.');
+      _showError(LocaleKeys.deepLinkInvitationInvalid.tr());
       return;
     }
 
     final InvitationModel invitation = InvitationModel.fromJson(snap.data()!);
 
-    // 2. Check invitation status
-    if (invitation.status != 'REQUESTED') {
+    // 2. Invitation must still be pending.
+    if (invitation.status != CoParentInvitationHelpers.statusRequested) {
       _showError(
-        invitation.status == 'ACCEPTED'
-            ? 'This invitation has already been accepted.'
-            : 'This invitation link is no longer valid.',
+        invitation.status == CoParentInvitationHelpers.statusAccepted
+            ? LocaleKeys.deepLinkInvitationAlreadyAccepted.tr()
+            : LocaleKeys.deepLinkInvitationNoLongerValid.tr(),
       );
       return;
     }
 
-    final String toEmail = (invitation.toParent ?? '').trim().toLowerCase();
+    final String toEmail = CoParentInvitationHelpers.normalizeEmail(
+      invitation.toParent ?? '',
+    );
     if (toEmail.isEmpty) {
-      _showError('This invitation link is invalid.');
+      _showError(LocaleKeys.deepLinkInvitationInvalidEmail.tr());
       return;
     }
 
-    // 3. Check if user is currently logged in
+    // 3. Branch on whether someone is already logged in.
     final UserModel? loggedUser = preferences.getUserModel();
     final bool isLoggedIn =
         preferences.getBool(SharedPreference.isLogin) ?? false;
 
     if (isLoggedIn && loggedUser != null) {
-      // ── CASE A: User is logged in ──────────────────────────────────────────
-      final String loggedEmail = (loggedUser.email ?? '').trim().toLowerCase();
+      final String loggedEmail = CoParentInvitationHelpers.normalizeEmail(
+        loggedUser.email ?? '',
+      );
       if (loggedEmail == toEmail) {
-        // Email matches → accept invitation directly
-        final ApiResultStatus result =
-            await CoParentRepo.instance.addUserAsCoParent(invitationId);
+        // Logged in with the invited email → accept immediately.
+        final ApiResultStatus result = await CoParentRepo.instance
+            .addUserAsCoParent(invitationId);
         _showSuccessFromResult(result);
       } else {
         _showError(
-          'This invitation was sent to $toEmail. Please log in with that account.',
+          LocaleKeys.deepLinkWrongAccount.tr(
+            namedArgs: <String, String>{
+              'email': invitation.toParent ?? toEmail,
+            },
+          ),
         );
       }
     } else {
-      // ── CASE B: User is NOT logged in ─────────────────────────────────────
-      // Check if an account exists for the invited email
-      final bool accountExists =
-          await AuthRepo.instance.isAccountExistWithEmail(email: toEmail);
+      // Not logged in — send to login or lightweight co-parent registration.
+      final bool accountExists = await AuthRepo.instance
+          .isAccountExistWithEmail(email: toEmail);
 
       if (accountExists) {
-        // Account exists → save pending invitation and navigate to login
         await PendingInvitationManager.save(
           invitationId: invitationId,
           invitationEmail: toEmail,
@@ -127,15 +151,16 @@ class DeepLinkManager {
           GoRouter.of(ctx).go(RoutePaths.login);
         }
         _showInfo(
-          'Please log in with $toEmail to accept the invitation.',
+          LocaleKeys.deepLinkPleaseLoginWithEmail.tr(
+            namedArgs: <String, String>{'email': toEmail},
+          ),
         );
       } else {
-        // No account → navigate to CoParent password-only registration screen
         final BuildContext? ctx = navigatorKey.currentContext;
         if (ctx != null && ctx.mounted) {
           GoRouter.of(ctx).push(
             RoutePaths.coParentRegister,
-            extra: {
+            extra: <String, String>{
               'email': toEmail,
               'invitationId': invitationId,
             },
@@ -145,16 +170,15 @@ class DeepLinkManager {
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Success display after invitation accepted
-  // ---------------------------------------------------------------------------
+  /// Navigates to the success screen after a deep-link accept.
   void _showSuccessFromResult(ApiResultStatus result) {
     result.whenOrNull(
       data: (data) async {
-        if (data is! InvitationModel) return;
+        if (data is! InvitationModel) {
+          return;
+        }
         final InvitationModel invitation = data;
 
-        // Fetch sender name for a personalised message
         UserModel? fromParent;
         try {
           fromParent = await UserRepo.instance.getUserFromEmail(
@@ -162,23 +186,19 @@ class DeepLinkManager {
           );
         } catch (_) {}
 
-        // Fetch child names
-        final List<String> childIds = (invitation.children ?? '')
-            .split(',')
-            .map((e) => e.trim())
-            .where((e) => e.isNotEmpty)
-            .toList();
+        final List<String> childIds =
+            CoParentInvitationHelpers.parseChildIdsFromCsv(invitation.children);
 
-        String childDisplayName = 'your child';
+        String childDisplayName = LocaleKeys.yourChild.tr();
         try {
-          final ApiResultStatus childResult =
-              await ChildRepo.instance.getChildren(childrenIds: childIds);
+          final ApiResultStatus childResult = await ChildRepo.instance
+              .getChildren(childrenIds: childIds);
           childResult.whenOrNull(
             data: (childData) {
               if (childData is List<ChildModel> && childData.isNotEmpty) {
                 childDisplayName = childData
-                    .map((c) => c.childName ?? '')
-                    .where((n) => n.isNotEmpty)
+                    .map((ChildModel c) => c.childName ?? '')
+                    .where((String n) => n.isNotEmpty)
                     .join(' & ');
               }
             },
@@ -186,17 +206,23 @@ class DeepLinkManager {
         } catch (_) {}
 
         final String senderName =
-            fromParent?.parentName ?? fromParent?.displayName ?? 'Your co-parent';
+            fromParent?.parentName ??
+            fromParent?.displayName ??
+            LocaleKeys.yourCoParent.tr();
 
-        final String message =
-            "You've successfully accepted $senderName's invitation to be a co-parent of $childDisplayName.";
+        final String message = LocaleKeys.coParentInvitationAcceptedMessage.tr(
+          namedArgs: <String, String>{
+            'senderName': senderName,
+            'childName': childDisplayName,
+          },
+        );
 
         final BuildContext? ctx = navigatorKey.currentContext;
         if (ctx != null && ctx.mounted) {
           GoRouter.of(ctx).push(RoutePaths.successScreen, extra: message);
         }
       },
-      error: (error) {
+      error: (Exception error) {
         _showError(error.toString().replaceAll('Exception: ', ''));
       },
     );

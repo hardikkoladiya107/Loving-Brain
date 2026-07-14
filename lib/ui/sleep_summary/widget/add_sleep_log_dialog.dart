@@ -48,8 +48,10 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _scaleAnimation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack);
+    _scaleAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
+    );
 
     _animationController.forward();
     super.initState();
@@ -112,7 +114,9 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFC3D4FE).withValues(alpha: 0.4),
+                              color: const Color(
+                                0xFFC3D4FE,
+                              ).withValues(alpha: 0.4),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -124,10 +128,10 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
 
                       // Title
                       LocaleKeys.addSleepLog.tr().appText(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF1F2937),
-                          ),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1F2937),
+                      ),
                       16.spaceH,
 
                       // Form Fields
@@ -160,9 +164,7 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: blueColor2,
-            ),
+            colorScheme: ColorScheme.light(primary: blueColor2),
           ),
           child: child!,
         );
@@ -181,9 +183,7 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
         builder: (context, child) {
           return Theme(
             data: ThemeData.light().copyWith(
-              colorScheme: ColorScheme.light(
-                primary: blueColor2,
-              ),
+              colorScheme: ColorScheme.light(primary: blueColor2),
             ),
             child: child!,
           );
@@ -259,8 +259,10 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                const Icon(Icons.keyboard_arrow_down_rounded,
-                    color: Color(0xFF9CA3AF)),
+                const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: Color(0xFF9CA3AF),
+                ),
               ],
             ),
           ),
@@ -288,8 +290,8 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
         DateTime? date = await _showDatePicker();
         if (navigatorKey.currentContext != null) {
           navigatorKey.currentContext!.read<SleepSummaryCubit>().changeProps(
-                selectedDate: date,
-              );
+            selectedDate: date,
+          );
         }
       },
     );
@@ -344,16 +346,17 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
 
   Widget _notes() {
     return BlocBuilder<SleepSummaryCubit, SleepSummaryState>(
-      buildWhen: (previous, current) => previous.notesError != current.notesError,
+      buildWhen: (previous, current) =>
+          previous.notesError != current.notesError,
       builder: (context, state) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LocaleKeys.notes.tr().appText(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF4B5563),
-                ),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF4B5563),
+            ),
             8.spaceH,
             Container(
               decoration: BoxDecoration(
@@ -390,8 +393,10 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
                     fontSize: 15,
                     color: Color(0xFF9CA3AF),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                   border: InputBorder.none,
                 ),
               ),
@@ -435,10 +440,10 @@ class _AddSleepLogDialogState extends State<AddSleepLogDialog>
         ),
         child: Center(
           child: LocaleKeys.save.tr().appText(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

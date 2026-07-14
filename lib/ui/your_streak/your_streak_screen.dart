@@ -20,7 +20,6 @@ class YourStreakScreen extends StatefulWidget {
 }
 
 class _YourStreakScreenState extends State<YourStreakScreen> {
-
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -109,10 +108,8 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          "${LocaleKeys.youreOnRoll.tr()}, ${state.userModel?.parentName}!".appText(
-            fontWeight: FontWeight.w900,
-            fontSize: 16
-          ),
+          "${LocaleKeys.youreOnRoll.tr()}, ${state.userModel?.parentName}!"
+              .appText(fontWeight: FontWeight.w900, fontSize: 16),
         ],
       ).appPadding(top: 12.h, bottom: 12.h, left: 16.w, right: 16.w),
     );
@@ -128,12 +125,12 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           image: AssetImage(Assets.images.imgCurrentStreakCard.path),
         ),
         boxShadow: [
-           BoxShadow(
+          BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
-        ]
+        ],
       ),
       child: Column(
         children: [
@@ -151,13 +148,16 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              (state.userModel?.displayStreak ?? 0).toString().appText(fontWeight: FontWeight.w900, fontSize: 48),
+              (state.userModel?.displayStreak ?? 0).toString().appText(
+                fontWeight: FontWeight.w900,
+                fontSize: 48,
+              ),
               8.w.spaceW,
               Assets.icons.icStreakIcon.image(height: 40, width: 40),
             ],
           ),
           Spacer(),
-         
+
           BaseButton(
             onTap: () {
               context.push(RoutePaths.dailyMoodLog);
@@ -183,8 +183,12 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
                       ),
-                       8.w.spaceW,
-                       Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.black54,)
+                      8.w.spaceW,
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 14,
+                        color: Colors.black54,
+                      ),
                     ],
                   ),
                 ],
@@ -194,9 +198,14 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           25.h.spaceH,
           LocaleKeys.donMissYourDailyMoodToKeepTheStreakGoing
               .tr()
-              .appText(fontWeight: FontWeight.w600, fontSize: 11, color: Colors.black54, textAlign: TextAlign.center)
+              .appText(
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+                color: Colors.black54,
+                textAlign: TextAlign.center,
+              )
               .appPadding(left: 24, right: 24),
-           20.h.spaceH,   
+          20.h.spaceH,
         ],
       ),
     );
@@ -211,7 +220,7 @@ class _YourStreakScreenState extends State<YourStreakScreen> {
           color: cardColor2,
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
-             BoxShadow(
+            BoxShadow(
               color: cardColor2.withValues(alpha: 0.4),
               blurRadius: 12,
               offset: const Offset(0, 6),

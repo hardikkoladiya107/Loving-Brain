@@ -3,11 +3,7 @@ class AppleSubscriptionModel {
   String? bundleId;
   List<ResData>? resData;
 
-  AppleSubscriptionModel({
-    this.environment,
-    this.bundleId,
-    this.resData,
-  });
+  AppleSubscriptionModel({this.environment, this.bundleId, this.resData});
 
   factory AppleSubscriptionModel.fromJson(Map<String, dynamic> json) =>
       AppleSubscriptionModel(
@@ -19,37 +15,35 @@ class AppleSubscriptionModel {
       );
 
   Map<String, dynamic> toJson() => {
-        "environment": environment,
-        "bundleId": bundleId,
-        "data": resData == null
-            ? []
-            : List<dynamic>.from(resData!.map((x) => x.toJson())),
-      };
+    "environment": environment,
+    "bundleId": bundleId,
+    "data": resData == null
+        ? []
+        : List<dynamic>.from(resData!.map((x) => x.toJson())),
+  };
 }
 
 class ResData {
   String? subscriptionGroupIdentifier;
   List<LastTransaction>? lastTransactions;
 
-  ResData({
-    this.subscriptionGroupIdentifier,
-    this.lastTransactions,
-  });
+  ResData({this.subscriptionGroupIdentifier, this.lastTransactions});
 
   factory ResData.fromJson(Map<String, dynamic> json) => ResData(
-        subscriptionGroupIdentifier: json["subscriptionGroupIdentifier"],
-        lastTransactions: json["lastTransactions"] == null
-            ? []
-            : List<LastTransaction>.from(json["lastTransactions"]!
-                .map((x) => LastTransaction.fromJson(x))),
-      );
+    subscriptionGroupIdentifier: json["subscriptionGroupIdentifier"],
+    lastTransactions: json["lastTransactions"] == null
+        ? []
+        : List<LastTransaction>.from(
+            json["lastTransactions"]!.map((x) => LastTransaction.fromJson(x)),
+          ),
+  );
 
   Map<String, dynamic> toJson() => {
-        "subscriptionGroupIdentifier": subscriptionGroupIdentifier,
-        "lastTransactions": lastTransactions == null
-            ? []
-            : List<dynamic>.from(lastTransactions!.map((x) => x.toJson())),
-      };
+    "subscriptionGroupIdentifier": subscriptionGroupIdentifier,
+    "lastTransactions": lastTransactions == null
+        ? []
+        : List<dynamic>.from(lastTransactions!.map((x) => x.toJson())),
+  };
 }
 
 class LastTransaction {
@@ -74,9 +68,9 @@ class LastTransaction {
       );
 
   Map<String, dynamic> toJson() => {
-        "originalTransactionId": originalTransactionId,
-        "status": status,
-        "signedTransactionInfo": signedTransactionInfo,
-        "signedRenewalInfo": signedRenewalInfo,
-      };
+    "originalTransactionId": originalTransactionId,
+    "status": status,
+    "signedTransactionInfo": signedTransactionInfo,
+    "signedRenewalInfo": signedRenewalInfo,
+  };
 }

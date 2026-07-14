@@ -1,4 +1,3 @@
-
 import 'conversation_model.dart';
 
 class AiResponseModel {
@@ -332,8 +331,6 @@ class AiResponseModel {
   }
 }
 
-
-
 class Usage {
   Usage({
     num? inputTokens,
@@ -406,7 +403,6 @@ class Usage {
   }
 }
 
-
 class OutputTokensDetails {
   OutputTokensDetails({num? reasoningTokens}) {
     _reasoningTokens = reasoningTokens;
@@ -430,7 +426,6 @@ class OutputTokensDetails {
   }
 }
 
-
 class InputTokensDetails {
   InputTokensDetails({num? cachedTokens}) {
     _cachedTokens = cachedTokens;
@@ -453,7 +448,6 @@ class InputTokensDetails {
     return map;
   }
 }
-
 
 class Text {
   Text({Format? format, String? verbosity}) {
@@ -486,7 +480,6 @@ class Text {
   }
 }
 
-
 class Format {
   Format({String? type}) {
     _type = type;
@@ -508,8 +501,6 @@ class Format {
     return map;
   }
 }
-
-
 
 class Reasoning {
   Reasoning({String? effort, dynamic summary}) {
@@ -539,8 +530,6 @@ class Reasoning {
     return map;
   }
 }
-
-
 
 class Prompt {
   Prompt({String? id, dynamic variables, String? version}) {
@@ -579,8 +568,6 @@ class Prompt {
     return map;
   }
 }
-
-
 
 class Instructions {
   Instructions({String? type, List<Content>? content, String? role}) {

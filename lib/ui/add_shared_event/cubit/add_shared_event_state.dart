@@ -30,9 +30,12 @@ abstract class AddSharedEventState with _$AddSharedEventState {
     @Default([]) List<ChildModel> selectedChildren,
     @Default([]) List<UserModel> selectedCoParentList,
     @Default([]) List<String> documentsList,
-    @Default(ApiResultStatus.initial()) ApiResultStatus requestApprovalApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus requestApprovalApiResultStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus getChildApiResultStatus,
-    @Default(ApiResultStatus.initial()) ApiResultStatus getCoParentApiResultStatus,
-    @Default(ApiResultStatus.initial()) ApiResultStatus uploadDocumentApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus getCoParentApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus uploadDocumentApiResultStatus,
   }) = _AddSharedEventState;
 }

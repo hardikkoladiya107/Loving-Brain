@@ -121,8 +121,10 @@ class _EnergyBridgeScreenState extends State<EnergyBridgeScreen> {
                               _heroIcon(isActive),
                               14.h.spaceH,
                               (isActive
-                                      ? LocaleKeys.energyBridgeSessionActive.tr()
-                                      : LocaleKeys.energyBridgeTantrumStopper.tr())
+                                      ? LocaleKeys.energyBridgeSessionActive
+                                            .tr()
+                                      : LocaleKeys.energyBridgeTantrumStopper
+                                            .tr())
                                   .appText(
                                     fontSize: 23.sp,
                                     fontWeight: FontWeight.w900,

@@ -1,11 +1,13 @@
 import 'package:loving_brain/other/preferances.dart';
 
-/// Manages a pending co-parent invitation that arrives via deep link
-/// when the user is not yet logged in or has no account.
+/// Persists a co-parent invitation id when the user opens an invite link while logged out.
+///
+/// [DeepLinkManager] saves the invitation before navigating to login.
+/// [LoginScreen] and [CoParentRegisterCubit] read/clear it after accept succeeds.
 class PendingInvitationManager {
   PendingInvitationManager._();
 
-  /// Saves a pending invitation so it can be processed after login/register.
+  /// Stores invitation id + invited email in SharedPreferences for post-login accept.
   static Future<void> save({
     required String invitationId,
     required String invitationEmail,
@@ -20,22 +22,19 @@ class PendingInvitationManager {
     );
   }
 
-  /// Returns the stored pending invitation ID, or empty string if none.
   static String getId() {
     return preferences.getString(SharedPreference.pendingInvitationId) ?? '';
   }
 
-  /// Returns the stored pending invitation email, or empty string if none.
   static String getEmail() {
     return preferences.getString(SharedPreference.pendingInvitationEmail) ?? '';
   }
 
-  /// Returns true if there is a pending invitation waiting to be processed.
   static bool hasPending() {
     return getId().isNotEmpty;
   }
 
-  /// Clears the stored pending invitation after it has been processed.
+  /// Clears stored invitation after successful accept (or email mismatch on login).
   static Future<void> clear() async {
     await preferences.putString(SharedPreference.pendingInvitationId, '');
     await preferences.putString(SharedPreference.pendingInvitationEmail, '');

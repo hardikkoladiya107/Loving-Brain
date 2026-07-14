@@ -41,7 +41,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
   Future<void> _completeOnboarding() async {
     await preferences.putBool(SharedPreference.hasSeenOnboarding, true);
     if (!mounted) return;
-    context.go(RoutePaths.login);
+    context.replace(RoutePaths.login);
   }
 
   @override
@@ -52,9 +52,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
           // ──────────────────────────────────────────────────────────────────
           // Smooth Cross-Fading Backgrounds
           // ──────────────────────────────────────────────────────────────────
-          Positioned.fill(
-            child: Container(color: const Color(0xFFFAFAFA)),
-          ),
+          Positioned.fill(child: Container(color: const Color(0xFFFAFAFA))),
           Positioned.fill(
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 400),
@@ -87,9 +85,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
           ),
           // Subtle shading filter to make text readable
           Positioned.fill(
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.12),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.12)),
           ),
 
           // ──────────────────────────────────────────────────────────────────
@@ -113,11 +109,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                             _currentIndex = page;
                           });
                         },
-                        children: [
-                          _page1(),
-                          _page2(),
-                          _page3(),
-                        ],
+                        children: [_page1(), _page2(), _page3()],
                       ),
                     ),
                     _progressDots(),
@@ -167,7 +159,6 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
           )
         else
           SizedBox(width: 34.r), // spacer to maintain centering
-
         // Step index visual pill
         Container(
           decoration: BoxDecoration(
@@ -191,7 +182,11 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
               shape: BoxShape.circle,
             ),
             padding: EdgeInsets.all(8.r),
-            child: const Icon(Icons.close_rounded, color: Colors.white, size: 18),
+            child: const Icon(
+              Icons.close_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
           ),
         ),
       ],
@@ -210,7 +205,9 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
           height: 8.h,
           width: isActive ? 26.w : 8.w,
           decoration: BoxDecoration(
-            color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.35),
+            color: isActive
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.35),
             borderRadius: BorderRadius.circular(100.r),
           ),
         );
@@ -288,8 +285,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
       children: [
         _glassHeaderCard(
           title: LocaleKeys.youMadeTt.tr(),
-          description: LocaleKeys
-              .letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs
+          description: LocaleKeys.letsTakeCareOfYourMindSoYouCanTakeCareOfTheirs
               .tr(),
         ),
         20.h.spaceH,
@@ -301,21 +297,24 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                 _infoCardStep1(
                   cardColor: cardColor1,
                   header: LocaleKeys.dailyMindfulMoments.tr(),
-                  description: LocaleKeys.twoMinExercisesToResetAndRecharge.tr(),
+                  description: LocaleKeys.twoMinExercisesToResetAndRecharge
+                      .tr(),
                   assetImage: Assets.icons.icDailyMindfulMomentsIcon,
                 ),
                 14.h.spaceH,
                 _infoCardStep1(
                   cardColor: cardColor2,
                   header: LocaleKeys.parentingInsights.tr(),
-                  description: LocaleKeys.expertBackedTipsTailoredForYourNeeds.tr(),
+                  description: LocaleKeys.expertBackedTipsTailoredForYourNeeds
+                      .tr(),
                   assetImage: Assets.icons.icParentingInsightsIcon,
                 ),
                 14.h.spaceH,
                 _infoCardStep1(
                   cardColor: cardColor3,
                   header: LocaleKeys.stressSOS.tr(),
-                  description: LocaleKeys.quickToolsForCalmingInToughMoments.tr(),
+                  description: LocaleKeys.quickToolsForCalmingInToughMoments
+                      .tr(),
                   assetImage: Assets.icons.icStressSosIcon,
                 ),
                 18.h.spaceH,
@@ -346,9 +345,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                 text: LocaleKeys.weGuideYouThroughParenting.tr(),
               ),
               14.h.spaceH,
-              _floatingGlassInfo(
-                text: LocaleKeys.takeAFree2weekCoaching.tr(),
-              ),
+              _floatingGlassInfo(text: LocaleKeys.takeAFree2weekCoaching.tr()),
             ],
           ),
         ),
@@ -489,11 +486,16 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
               if (subtitleBadge != null) ...[
                 14.spaceH,
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     color: primaryColor.withValues(alpha: 0.22),
                     borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: primaryColor.withValues(alpha: 0.4)),
+                    border: Border.all(
+                      color: primaryColor.withValues(alpha: 0.4),
+                    ),
                   ),
                   child: subtitleBadge.appText(
                     color: Colors.white,
@@ -617,7 +619,7 @@ class _OnBoardingScreen1State extends State<OnBoardingScreen1> {
                 color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
-              )
+              ),
             ],
           ),
           child: text.appText(

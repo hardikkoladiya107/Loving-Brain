@@ -15,9 +15,11 @@ abstract class ChatDetailState with _$ChatDetailState {
     File? selectedImageFile,
     File? selectedAudioRecordedFile,
     String? conversationId,
-    @Default(ApiResultStatus.initial()) ApiResultStatus createConversationApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus createConversationApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus createResponseApiResult,
-    @Default(ApiResultStatus.initial()) ApiResultStatus getConversationApiResult,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus getConversationApiResult,
     @Default(Duration.zero) Duration currentAudioDuration,
     @Default(Duration.zero) Duration totalAudioDuration,
     @Default(false) bool isRecording,
@@ -25,6 +27,6 @@ abstract class ChatDetailState with _$ChatDetailState {
     UserModel? userModel,
     PlayerState? audioPlayerState,
     @Default("") String currentPlayingItem,
-    @Default(false) bool currentAudioLoading
+    @Default(false) bool currentAudioLoading,
   }) = _ChatDetailState;
 }

@@ -1,4 +1,3 @@
-
 class CreateConversationModel {
   CreateConversationModel({
     String? id,

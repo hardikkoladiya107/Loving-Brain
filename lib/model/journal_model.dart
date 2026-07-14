@@ -25,7 +25,11 @@ class JournalModel {
     _colorValue = colorValue ?? 0xFFFFFFFF;
   }
 
-  JournalModel.fromJson(dynamic jsonObject, {bool fromConvert = false, String? docId}) {
+  JournalModel.fromJson(
+    dynamic jsonObject, {
+    bool fromConvert = false,
+    String? docId,
+  }) {
     _id = docId;
     _thoughtText = jsonObject['thought_text'];
     _imageUrl = jsonObject['image_url'];
@@ -72,19 +76,18 @@ class JournalModel {
     double? x,
     double? y,
     int? colorValue,
-  }) =>
-      JournalModel(
-        id: id ?? _id,
-        thoughtText: thoughtText ?? _thoughtText,
-        logTime: logTime ?? _logTime,
-        imageUrl: imageUrl ?? _imageUrl,
-        prompt: prompt ?? _prompt,
-        hint1: hint1 ?? _hint1,
-        hint2: hint2 ?? _hint2,
-        x: x ?? _x,
-        y: y ?? _y,
-        colorValue: colorValue ?? _colorValue,
-      );
+  }) => JournalModel(
+    id: id ?? _id,
+    thoughtText: thoughtText ?? _thoughtText,
+    logTime: logTime ?? _logTime,
+    imageUrl: imageUrl ?? _imageUrl,
+    prompt: prompt ?? _prompt,
+    hint1: hint1 ?? _hint1,
+    hint2: hint2 ?? _hint2,
+    x: x ?? _x,
+    y: y ?? _y,
+    colorValue: colorValue ?? _colorValue,
+  );
 
   String? get id => _id;
   String? get thoughtText => _thoughtText;

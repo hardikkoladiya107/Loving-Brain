@@ -3,12 +3,17 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/energy_bridge_timer_model.dart';
+import 'package:loving_brain/other/energy_bridge_notification_helper.dart';
 import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/energy_bridge_repo.dart';
 
 import 'energy_bridge_state.dart';
 
+/// Listens to `energy_bridge/{childId}` and handles client-side fire detection.
+///
+/// Server-side firing uses Cloud Tasks (see `onEnergyBridgeSchedule`); this
+/// cubit covers foreground countdown and local notification fallback.
 class EnergyBridgeCubit extends Cubit<EnergyBridgeState> {
   EnergyBridgeCubit() : super(const EnergyBridgeState());
 
@@ -53,16 +58,10 @@ class EnergyBridgeCubit extends Cubit<EnergyBridgeState> {
       durationMinutes: 105,
     );
     response.whenOrNull(
-      data: (_) {
-        final DateTime triggerTime = DateTime.now().add(
-          const Duration(minutes: 105),
-        );
-        NotificationUtil.scheduleNotification(
-          id: _notificationIdForChild(childId),
-          title: "Energy Bridge",
-          body: "Time to transition! Your child has been highly active.",
-          payload: "energy_bridge:$childId",
-          scheduledDate: triggerTime,
+      data: (_) async {
+        await EnergyBridgeNotificationHelper.scheduleFireNotification(
+          childId: childId,
+          durationMinutes: 105,
         );
       },
     );
@@ -80,7 +79,7 @@ class EnergyBridgeCubit extends Cubit<EnergyBridgeState> {
       actorUid: uid,
       reason: reason,
     );
-    await NotificationUtil.cancelNotification(_notificationIdForChild(childId));
+    await EnergyBridgeNotificationHelper.cancelForChild(childId);
     changeProps(apiResultStatus: response);
   }
 
@@ -99,17 +98,13 @@ class EnergyBridgeCubit extends Cubit<EnergyBridgeState> {
     response.whenOrNull(
       data: (_) {
         NotificationUtil.showLocalNotification(
-          id: _notificationIdForChild(childId),
-          title: "Energy Bridge",
-          body: "Time to slow things down.",
-          payload: "energy_bridge",
+          id: EnergyBridgeNotificationHelper.notificationIdForChild(childId),
+          title: 'LovingBrain',
+          body: 'Time to slow things down.',
+          payload: 'energy_bridge',
         );
       },
     );
-  }
-
-  int _notificationIdForChild(String childId) {
-    return 900000 + childId.hashCode.abs() % 99999;
   }
 
   void changeProps({

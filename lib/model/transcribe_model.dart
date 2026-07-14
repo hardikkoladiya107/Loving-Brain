@@ -1,16 +1,18 @@
 import 'dart:convert';
+
 /// text : "you"
 /// usage : {"type":"duration","seconds":18}
 
-TranscribeModel transcribeModelFromJson(String str) => TranscribeModel.fromJson(json.decode(str));
-String transcribeModelToJson(TranscribeModel data) => json.encode(data.toJson());
+TranscribeModel transcribeModelFromJson(String str) =>
+    TranscribeModel.fromJson(json.decode(str));
+String transcribeModelToJson(TranscribeModel data) =>
+    json.encode(data.toJson());
+
 class TranscribeModel {
-  TranscribeModel({
-      String? text, 
-      Usage? usage,}){
+  TranscribeModel({String? text, Usage? usage}) {
     _text = text;
     _usage = usage;
-}
+  }
 
   TranscribeModel.fromJson(dynamic json) {
     _text = json['text'];
@@ -18,11 +20,8 @@ class TranscribeModel {
   }
   String? _text;
   Usage? _usage;
-TranscribeModel copyWith({  String? text,
-  Usage? usage,
-}) => TranscribeModel(  text: text ?? _text,
-  usage: usage ?? _usage,
-);
+  TranscribeModel copyWith({String? text, Usage? usage}) =>
+      TranscribeModel(text: text ?? _text, usage: usage ?? _usage);
   String? get text => _text;
   Usage? get usage => _usage;
 
@@ -34,7 +33,6 @@ TranscribeModel copyWith({  String? text,
     }
     return map;
   }
-
 }
 
 /// type : "duration"
@@ -42,13 +40,12 @@ TranscribeModel copyWith({  String? text,
 
 Usage usageFromJson(String str) => Usage.fromJson(json.decode(str));
 String usageToJson(Usage data) => json.encode(data.toJson());
+
 class Usage {
-  Usage({
-      String? type, 
-      num? seconds,}){
+  Usage({String? type, num? seconds}) {
     _type = type;
     _seconds = seconds;
-}
+  }
 
   Usage.fromJson(dynamic json) {
     _type = json['type'];
@@ -56,11 +53,8 @@ class Usage {
   }
   String? _type;
   num? _seconds;
-Usage copyWith({  String? type,
-  num? seconds,
-}) => Usage(  type: type ?? _type,
-  seconds: seconds ?? _seconds,
-);
+  Usage copyWith({String? type, num? seconds}) =>
+      Usage(type: type ?? _type, seconds: seconds ?? _seconds);
   String? get type => _type;
   num? get seconds => _seconds;
 
@@ -70,5 +64,4 @@ Usage copyWith({  String? type,
     map['seconds'] = _seconds;
     return map;
   }
-
 }

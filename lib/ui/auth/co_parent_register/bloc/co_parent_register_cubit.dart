@@ -9,8 +9,13 @@ import 'package:loving_brain/repo/co_parent_repo.dart';
 import '../../../../generated/locale_keys.g.dart';
 import 'co_parent_register_state.dart';
 
+/// Registers a new co-parent account (password only) and accepts the invitation.
 class CoParentRegisterCubit extends Cubit<CoParentRegisterState> {
   CoParentRegisterCubit() : super(const CoParentRegisterState());
+
+  void init() {
+    emit(const CoParentRegisterState());
+  }
 
   void changeProps({
     String? password,
@@ -60,8 +65,8 @@ class CoParentRegisterCubit extends Cubit<CoParentRegisterState> {
       valid = false;
     } else if (state.password.trim() != state.confirmPassword.trim()) {
       changeProps(
-        confirmPasswordError:
-            LocaleKeys.passwordAndConfirmPasswordShouldSame.tr(),
+        confirmPasswordError: LocaleKeys.passwordAndConfirmPasswordShouldSame
+            .tr(),
       );
       valid = false;
     } else {
@@ -71,7 +76,7 @@ class CoParentRegisterCubit extends Cubit<CoParentRegisterState> {
     if (!state.isTermsAccepted) {
       changeProps(
         apiResultStatus: ApiResultStatus.error(
-          error: Exception('Please accept Terms and Conditions'),
+          error: Exception(LocaleKeys.pleaseAcceptTermsAndConditions.tr()),
         ),
       );
       valid = false;
@@ -80,47 +85,51 @@ class CoParentRegisterCubit extends Cubit<CoParentRegisterState> {
     return valid;
   }
 
-  /// Creates a Firebase Auth account with [email] + password, then immediately
-  /// accepts the co-parent invitation [invitationId].
+  /// Creates Firebase Auth + Firestore user, then accepts the co-parent invitation.
   Future<void> register({
     required String email,
     required String invitationId,
   }) async {
-    if (!_validate()) return;
+    if (!_validate()) {
+      return;
+    }
 
-    changeProps(
-      apiResultStatus: ApiResultStatus.loading(),
-      isSubmitting: true,
-    );
+    changeProps(apiResultStatus: ApiResultStatus.loading(), isSubmitting: true);
 
-    // 1. Create Firebase Auth + Firestore user doc
-    final ApiResultStatus createResult =
-        await AuthRepo.instance.createUserWithEmailAndPassword(
+    // Step 1 — create the Firebase account for the invited email.
+    final ApiResultStatus createResult = await AuthRepo.instance
+        .createUserWithEmailAndPassword(
           email: email.trim(),
           password: state.password.trim(),
         );
 
     bool accountCreated = false;
-    createResult.whenOrNull(
-      data: (_) => accountCreated = true,
-    );
+    createResult.whenOrNull(data: (_) => accountCreated = true);
 
     if (!accountCreated) {
       changeProps(apiResultStatus: createResult, isSubmitting: false);
       return;
     }
 
-    // 2. Save login state
     await preferences.putBool(SharedPreference.isLogin, true);
 
-    // 3. Accept the invitation (links child to this new co-parent)
-    final ApiResultStatus acceptResult =
-        await CoParentRepo.instance.addUserAsCoParent(invitationId);
+    // Step 2 — link shared children via the invitation (see CoParentRepo.addUserAsCoParent).
+    final ApiResultStatus acceptResult = await CoParentRepo.instance
+        .addUserAsCoParent(invitationId);
 
-    // Clear any stored pending invitation
-    await PendingInvitationManager.clear();
+    bool acceptSucceeded = false;
+    acceptResult.whenOrNull(data: (_) => acceptSucceeded = true);
 
-    // Emit the accept result — the screen listens to this to navigate
+    // Keep pending invitation if accept failed so the user can retry after login.
+    if (acceptSucceeded) {
+      await PendingInvitationManager.clear();
+    } else {
+      await PendingInvitationManager.save(
+        invitationId: invitationId,
+        invitationEmail: email.trim(),
+      );
+    }
+
     changeProps(apiResultStatus: acceptResult, isSubmitting: false);
   }
 }

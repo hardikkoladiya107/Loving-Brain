@@ -51,21 +51,25 @@ class MoodRepo {
     String? tUid,
   }) async {
     try {
-      var uid = tUid ?? preferences.getUserModel()?.uid ?? FirebaseAuth.instance.currentUser?.uid ?? "";
+      var uid =
+          tUid ??
+          preferences.getUserModel()?.uid ??
+          FirebaseAuth.instance.currentUser?.uid ??
+          "";
       if (uid.isNotEmpty) {
-        await userCollection
-            .doc(uid)
-            .collection("journals")
-            .doc()
-            .set(request);
+        await userCollection.doc(uid).collection("journals").doc().set(request);
         return ApiResultStatus.data(data: uid);
       } else {
         return ApiResultStatus.error(
-          error: Exception("tUid is empty. getUserModel is null or uid is missing."),
+          error: Exception(
+            "tUid is empty. getUserModel is null or uid is missing.",
+          ),
         );
       }
     } on FirebaseException catch (e) {
-      return ApiResultStatus.error(error: Exception("FirebaseException: code=${e.code}, msg=${e.message}"));
+      return ApiResultStatus.error(
+        error: Exception("FirebaseException: code=${e.code}, msg=${e.message}"),
+      );
     } on Exception catch (e) {
       return ApiResultStatus.error(error: Exception("Exception: $e"));
     }
@@ -78,7 +82,11 @@ class MoodRepo {
     String? tUid,
   }) async {
     try {
-      var uid = tUid ?? preferences.getUserModel()?.uid ?? FirebaseAuth.instance.currentUser?.uid ?? "";
+      var uid =
+          tUid ??
+          preferences.getUserModel()?.uid ??
+          FirebaseAuth.instance.currentUser?.uid ??
+          "";
       if (uid.isNotEmpty) {
         await userCollection
             .doc(uid)
@@ -103,7 +111,11 @@ class MoodRepo {
     String? tUid,
   }) async {
     try {
-      var uid = tUid ?? preferences.getUserModel()?.uid ?? FirebaseAuth.instance.currentUser?.uid ?? "";
+      var uid =
+          tUid ??
+          preferences.getUserModel()?.uid ??
+          FirebaseAuth.instance.currentUser?.uid ??
+          "";
       if (uid.isNotEmpty) {
         await userCollection
             .doc(uid)

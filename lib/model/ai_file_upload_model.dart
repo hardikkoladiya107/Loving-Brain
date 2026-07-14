@@ -1,16 +1,15 @@
-
-
- class AiFileUploadModel {
+class AiFileUploadModel {
   AiFileUploadModel({
-      String? object, 
-      String? id, 
-      String? purpose, 
-      String? filename, 
-      num? bytes, 
-      num? createdAt, 
-      dynamic expiresAt, 
-      String? status, 
-      dynamic statusDetails,}){
+    String? object,
+    String? id,
+    String? purpose,
+    String? filename,
+    num? bytes,
+    num? createdAt,
+    dynamic expiresAt,
+    String? status,
+    dynamic statusDetails,
+  }) {
     _object = object;
     _id = id;
     _purpose = purpose;
@@ -20,7 +19,7 @@
     _expiresAt = expiresAt;
     _status = status;
     _statusDetails = statusDetails;
-}
+  }
 
   AiFileUploadModel.fromJson(dynamic json) {
     _object = json['object'];
@@ -42,25 +41,27 @@
   dynamic _expiresAt;
   String? _status;
   dynamic _statusDetails;
-AiFileUploadModel copyWith({  String? object,
-  String? id,
-  String? purpose,
-  String? filename,
-  num? bytes,
-  num? createdAt,
-  dynamic expiresAt,
-  String? status,
-  dynamic statusDetails,
-}) => AiFileUploadModel(  object: object ?? _object,
-  id: id ?? _id,
-  purpose: purpose ?? _purpose,
-  filename: filename ?? _filename,
-  bytes: bytes ?? _bytes,
-  createdAt: createdAt ?? _createdAt,
-  expiresAt: expiresAt ?? _expiresAt,
-  status: status ?? _status,
-  statusDetails: statusDetails ?? _statusDetails,
-);
+  AiFileUploadModel copyWith({
+    String? object,
+    String? id,
+    String? purpose,
+    String? filename,
+    num? bytes,
+    num? createdAt,
+    dynamic expiresAt,
+    String? status,
+    dynamic statusDetails,
+  }) => AiFileUploadModel(
+    object: object ?? _object,
+    id: id ?? _id,
+    purpose: purpose ?? _purpose,
+    filename: filename ?? _filename,
+    bytes: bytes ?? _bytes,
+    createdAt: createdAt ?? _createdAt,
+    expiresAt: expiresAt ?? _expiresAt,
+    status: status ?? _status,
+    statusDetails: statusDetails ?? _statusDetails,
+  );
   String? get object => _object;
   String? get id => _id;
   String? get purpose => _purpose;
@@ -84,5 +85,4 @@ AiFileUploadModel copyWith({  String? object,
     map['status_details'] = _statusDetails;
     return map;
   }
-
 }

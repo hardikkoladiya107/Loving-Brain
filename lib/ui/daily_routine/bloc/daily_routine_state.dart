@@ -19,9 +19,9 @@ abstract class DailyRoutineState with _$DailyRoutineState {
     @Default("") String timeError,
     @Default("") String descriptionError,
     @Default("") String typeError,
-    @Default(ApiResultStatus.initial())ApiResultStatus getRoutineTypeApiResult,
+    @Default(ApiResultStatus.initial()) ApiResultStatus getRoutineTypeApiResult,
     @Default(ApiResultStatus.initial()) ApiResultStatus addRoutineApiResult,
     @Default([]) List<RoutineCategoryModel> routineCategoryList,
-    @Default([]) List<RoutineModel> routinesList
+    @Default([]) List<RoutineModel> routinesList,
   }) = _DailyRoutineState;
 }

@@ -46,22 +46,21 @@ class ConnectivityManager {
     if (navigatorKey.currentContext != null) {
       if (_overlayEntry != null) return;
       _overlayEntry = OverlayEntry(
-        builder:
-            (context) => Stack(
-              children: [
-                Positioned.fill(
-                  child: Material(
-                    color: Colors.black54, // Background effect
-                    child: Center(
-                      child: Dialog.fullscreen(
-                        backgroundColor: Colors.transparent,
-                        child: ConnectivityScreen(),
-                      ),
-                    ),
+        builder: (context) => Stack(
+          children: [
+            Positioned.fill(
+              child: Material(
+                color: Colors.black54, // Background effect
+                child: Center(
+                  child: Dialog.fullscreen(
+                    backgroundColor: Colors.transparent,
+                    child: ConnectivityScreen(),
                   ),
                 ),
-              ],
+              ),
             ),
+          ],
+        ),
       );
       connectivityDialogVisible = true;
       Overlay.of(navigatorKey.currentContext!).insert(_overlayEntry!);

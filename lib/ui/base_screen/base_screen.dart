@@ -6,10 +6,9 @@ import 'package:loving_brain/ui/home/home_screen.dart';
 import 'package:loving_brain/ui/profile/profile_screen.dart';
 import 'package:loving_brain/ui/schedule/schedule_screen.dart';
 
-import '../../manager/deep_link/deep_link_manager.dart';
 import '../../other/app_color.dart';
 import '../ai_chat/ai_chat_screen.dart';
-import '../write_your_thought/write_your_thought_screen.dart';
+import '../journal/journal_screen.dart';
 import 'bloc/base_cubit.dart';
 import 'bloc/base_state.dart';
 
@@ -26,7 +25,6 @@ class _BaseScreenState extends State<BaseScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context.read<BaseCubit>().init();
-      DeepLinkManager.instance.listenToLinks();
     });
   }
 
@@ -47,7 +45,7 @@ class _BaseScreenState extends State<BaseScreen> {
               HomeScreen(),
               ScheduleScreen(),
               AiChatScreen(),
-              WriteYourThoughtScreen(),
+              JournalScreen(),
               ProfileScreen(),
             ],
           ),

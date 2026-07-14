@@ -1,16 +1,15 @@
-
-
 class AccessTokenModel {
   AccessTokenModel({
-      String? accessToken, 
-      num? expiresIn, 
-      String? scope, 
-      String? tokenType,}){
+    String? accessToken,
+    num? expiresIn,
+    String? scope,
+    String? tokenType,
+  }) {
     _accessToken = accessToken;
     _expiresIn = expiresIn;
     _scope = scope;
     _tokenType = tokenType;
-}
+  }
 
   AccessTokenModel.fromJson(dynamic json) {
     _accessToken = json['access_token'];
@@ -22,15 +21,17 @@ class AccessTokenModel {
   num? _expiresIn;
   String? _scope;
   String? _tokenType;
-AccessTokenModel copyWith({  String? accessToken,
-  num? expiresIn,
-  String? scope,
-  String? tokenType,
-}) => AccessTokenModel(  accessToken: accessToken ?? _accessToken,
-  expiresIn: expiresIn ?? _expiresIn,
-  scope: scope ?? _scope,
-  tokenType: tokenType ?? _tokenType,
-);
+  AccessTokenModel copyWith({
+    String? accessToken,
+    num? expiresIn,
+    String? scope,
+    String? tokenType,
+  }) => AccessTokenModel(
+    accessToken: accessToken ?? _accessToken,
+    expiresIn: expiresIn ?? _expiresIn,
+    scope: scope ?? _scope,
+    tokenType: tokenType ?? _tokenType,
+  );
   String? get accessToken => _accessToken;
   num? get expiresIn => _expiresIn;
   String? get scope => _scope;
@@ -44,5 +45,4 @@ AccessTokenModel copyWith({  String? accessToken,
     map['token_type'] = _tokenType;
     return map;
   }
-
 }

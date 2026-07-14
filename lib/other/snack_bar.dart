@@ -127,10 +127,7 @@ class _CartoonSnackBody extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: <Color>[
-              _surfaceSecondary,
-              _surfacePrimary,
-            ],
+            colors: <Color>[_surfaceSecondary, _surfacePrimary],
           ),
         ),
         child: ClipRRect(

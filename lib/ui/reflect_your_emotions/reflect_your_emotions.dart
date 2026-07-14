@@ -108,11 +108,14 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
   }
 
   Widget _buildChildSection(ReflectEmotionState state) {
-    List<MoodLogModel> logs = context.read<ReflectEmotionCubit>().getLogsForWeek();
-    
+    List<MoodLogModel> logs = context
+        .read<ReflectEmotionCubit>()
+        .getLogsForWeek();
+
     return _EmotionSummaryCard(
       title: "Child's Moods",
-      subtitle: "This Week Mood Count for ${state.childModel?.childName ?? 'Child'}",
+      subtitle:
+          "This Week Mood Count for ${state.childModel?.childName ?? 'Child'}",
       moodCounts: {
         "Calm": logs.where((e) => e.childMood == 'CALM').length,
         "Happy": logs.where((e) => e.childMood == 'HAPPY').length,
@@ -128,17 +131,20 @@ class _ReflectYourEmotionsState extends State<ReflectYourEmotions> {
   }
 
   Widget _buildParentSection(ReflectEmotionState state) {
-    List<MoodLogModel> logs = context.read<ReflectEmotionCubit>().getLogsForWeek();
+    List<MoodLogModel> logs = context
+        .read<ReflectEmotionCubit>()
+        .getLogsForWeek();
 
     return _EmotionSummaryCard(
       title: "Parent's Moods",
-      subtitle: "This Week Mood Count for ${state.userModel?.parentName ?? 'You'}",
+      subtitle:
+          "This Week Mood Count for ${state.userModel?.parentName ?? 'You'}",
       moodCounts: {
-         "Calm": logs.where((e) => e.parentMood == 'CALM').length,
-         "Happy": logs.where((e) => e.parentMood == 'HAPPY').length,
-         "Worried": logs.where((e) => e.parentMood == 'WORRIED').length,
-         "Sad": logs.where((e) => e.parentMood == 'SAD').length,
-         "Mad": logs.where((e) => e.parentMood == 'MAD').length,
+        "Calm": logs.where((e) => e.parentMood == 'CALM').length,
+        "Happy": logs.where((e) => e.parentMood == 'HAPPY').length,
+        "Worried": logs.where((e) => e.parentMood == 'WORRIED').length,
+        "Sad": logs.where((e) => e.parentMood == 'SAD').length,
+        "Mad": logs.where((e) => e.parentMood == 'MAD').length,
       },
       chartData: context.read<ReflectEmotionCubit>().countMoodLogsByDay(),
       weekRange: state.selectedWeek,
@@ -170,7 +176,7 @@ class _EmotionSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final days = ['SUN', 'MON', 'TUES', 'WED', 'THUR', 'FRI', 'SAT'];
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -199,9 +205,9 @@ class _EmotionSummaryCard extends StatelessWidget {
               ),
               8.horizontalSpace,
               title.appText(
-                 fontSize: 16.sp,
-                 fontWeight: FontWeight.bold,
-                 color: Colors.black87,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ],
           ),
@@ -217,7 +223,7 @@ class _EmotionSummaryCard extends StatelessWidget {
           Container(
             height: 1,
             decoration: DottedDecoration(
-              shape: Shape.line, 
+              shape: Shape.line,
               color: Colors.grey.withValues(alpha: 0.3),
               strokeWidth: 1.5,
               dash: const [4, 4],
@@ -235,76 +241,85 @@ class _EmotionSummaryCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: counts.entries.map((entry) {
         return Expanded(
-          child: _MoodItem(
-            mood: entry.key,
-            count: entry.value,
-          ),
+          child: _MoodItem(mood: entry.key, count: entry.value),
         );
       }).toList(),
     );
   }
 
   Widget _buildChartSection(List<String> days) {
-     return Column(
-       crossAxisAlignment: CrossAxisAlignment.start,
-       children: [
-         Row(
-           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-           children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  LocaleKeys.moodActivity.tr().appText(
-                    fontSize: 14.sp, 
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LocaleKeys.moodActivity.tr().appText(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                if (weekRange != null)
+                  weekRange!.getFormattedRange.appText(
+                    fontSize: 10.sp,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w500,
                   ),
-                  if (weekRange != null)
-                   weekRange!.getFormattedRange.appText(
-                     fontSize: 10.sp,
-                     color: Colors.grey,
-                     fontWeight: FontWeight.w500
-                   ),
+              ],
+            ),
+            Container(
+              height: 32.h,
+              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              decoration: BoxDecoration(
+                color: buttonColor2,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
+                      size: 18.sp,
+                      color: Colors.black87,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: onPrevWeek,
+                  ),
+                  Container(
+                    width: 1,
+                    height: 14.h,
+                    color: Colors.grey.withValues(alpha: 0.3),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      size: 18.sp,
+                      color: Colors.black87,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: onNextWeek,
+                  ),
                 ],
               ),
-              Container(
-                height: 32.h,
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
-                decoration: BoxDecoration(
-                   color: buttonColor2,
-                   borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                     IconButton(
-                       icon: Icon(Icons.chevron_left, size: 18.sp, color: Colors.black87),
-                       padding: EdgeInsets.zero,
-                       constraints: const BoxConstraints(),
-                       onPressed: onPrevWeek,
-                     ),
-                     Container(width: 1, height: 14.h, color: Colors.grey.withValues(alpha: 0.3)),
-                     IconButton(
-                       icon: Icon(Icons.chevron_right, size: 18.sp, color: Colors.black87),
-                       padding: EdgeInsets.zero,
-                       constraints: const BoxConstraints(),
-                       onPressed: onNextWeek,
-                     ),
-                  ],
-                ),
-              )
-           ],
-         ),
-         16.verticalSpace,
-         AppBarGraph(
-            height: 180.h,
-            titles: days,
-            values: chartData,
-            showBest: true,
-            showTitles: false,
-         ),
-       ],
-     );
+            ),
+          ],
+        ),
+        16.verticalSpace,
+        AppBarGraph(
+          height: 180.h,
+          titles: days,
+          values: chartData,
+          showBest: true,
+          showTitles: false,
+        ),
+      ],
+    );
   }
 }
 
@@ -321,30 +336,30 @@ class _MoodItem extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(6.r),
           decoration: BoxDecoration(
-             color: _getMoodColorRaw(mood).withValues(alpha: 0.1),
-             shape: BoxShape.circle,
+            color: _getMoodColorRaw(mood).withValues(alpha: 0.1),
+            shape: BoxShape.circle,
           ),
           child: _getMoodImage(mood).image(height: 28.w, width: 28.w),
         ),
         6.verticalSpace,
         mood.appText(
-           fontSize: 11.sp,
-           fontWeight: FontWeight.w600,
-           color: Colors.black54,
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w600,
+          color: Colors.black54,
         ),
         2.verticalSpace,
         Container(
-           padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-           decoration: BoxDecoration(
-              color: Colors.grey[100],
-              borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(color: Colors.grey[300]!)
-           ),
-           child: count.toString().appText(
-              fontSize: 9.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87
-           ),
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: count.toString().appText(
+            fontSize: 9.sp,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
         ),
       ],
     );
@@ -352,23 +367,35 @@ class _MoodItem extends StatelessWidget {
 
   AssetGenImage _getMoodImage(String mood) {
     switch (mood.toUpperCase()) {
-      case 'CALM': return Assets.images.imgMoodCalm;
-      case 'HAPPY': return Assets.images.imgMoodHappy;
-      case 'WORRIED': return Assets.images.imgMoodWorried;
-      case 'SAD': return Assets.images.imgMoodSad;
-      case 'MAD': return Assets.images.imgMoodMad;
-      default: return Assets.images.imgMoodCalm;
+      case 'CALM':
+        return Assets.images.imgMoodCalm;
+      case 'HAPPY':
+        return Assets.images.imgMoodHappy;
+      case 'WORRIED':
+        return Assets.images.imgMoodWorried;
+      case 'SAD':
+        return Assets.images.imgMoodSad;
+      case 'MAD':
+        return Assets.images.imgMoodMad;
+      default:
+        return Assets.images.imgMoodCalm;
     }
   }
 
   Color _getMoodColorRaw(String mood) {
-     switch (mood.toUpperCase()) {
-      case 'CALM': return Colors.blue;
-      case 'HAPPY': return Colors.orange;
-      case 'WORRIED': return Colors.purple;
-      case 'SAD': return Colors.grey;
-      case 'MAD': return Colors.red;
-      default: return Colors.green;
+    switch (mood.toUpperCase()) {
+      case 'CALM':
+        return Colors.blue;
+      case 'HAPPY':
+        return Colors.orange;
+      case 'WORRIED':
+        return Colors.purple;
+      case 'SAD':
+        return Colors.grey;
+      case 'MAD':
+        return Colors.red;
+      default:
+        return Colors.green;
     }
   }
 }

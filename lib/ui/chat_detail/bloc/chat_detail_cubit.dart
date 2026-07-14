@@ -5,7 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/content/brain_ai_system_prompt.dart';
 import 'package:loving_brain/model/ai_response_model.dart';
+import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/conversation_model.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../model/api_result_status.dart';
@@ -203,11 +205,28 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       );
       removeSelectedImage();
       removeSelectedAudio();
+      ChildModel? childModel;
+      final DocumentReference<Object?>? defaultChildRef =
+          state.userModel?.defaultChild;
+      if (defaultChildRef != null) {
+        final DocumentSnapshot<Object?> childSnap = await defaultChildRef.get();
+        if (childSnap.data() != null) {
+          childModel = ChildModel.fromJson(
+            childSnap.data() as Map<String, dynamic>,
+            childSnap.reference,
+          );
+        }
+      }
+      final String systemPrompt = BrainAiSystemPrompt.build(
+        childModel: childModel,
+        parentName: state.userModel?.parentName ?? 'Parent',
+      );
       var allConversationResponse = await AiRepo.instance.createResponse(
         conversationId: state.conversationId!,
         messageText: textMessage,
         audioFile: selectedAudioRecordedFile,
         imageFile: selectedImageFile,
+        systemPrompt: systemPrompt,
       );
       allConversationResponse.whenOrNull(
         data: (data) async {

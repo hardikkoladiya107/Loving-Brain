@@ -18,9 +18,9 @@ abstract class RegisterState with _$RegisterState {
     @Default(false) bool isTermsAndConditionAccepted,
     @Default(ApiResultStatus.initial()) ApiResultStatus apiResultStatus,
     @Default(false) bool isAuthSubmitting,
+
     /// 0 = email step, 1 = password step
     @Default(0) int currentStep,
     @Default(false) bool isEmailChecking,
   }) = _RegisterState;
 }
-

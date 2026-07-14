@@ -48,10 +48,7 @@ class BehaviourModel {
 
   DateTime? get timeStamp => _timeStamp;
 
-  Map<String, dynamic> toJson({
-    bool forConvert = false,
-
-  }) {
+  Map<String, dynamic> toJson({bool forConvert = false}) {
     final map = <String, dynamic>{};
     map['behaviour'] = _behaviour;
     map['note'] = _note;

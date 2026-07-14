@@ -2,6 +2,44 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 
 /**
+ * FCM data payloads must be string key/value pairs.
+ * @param {object} data - Raw data payload.
+ * @return {object} Stringified data payload.
+ */
+function stringifyDataPayload(data = {}) {
+  const stringified = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined && value !== null) {
+      stringified[key] = String(value);
+    }
+  }
+  return stringified;
+}
+
+/**
+ * Builds APNS config for iOS delivery.
+ * @param {string} title - Notification title.
+ * @param {string} body - Notification body.
+ * @return {object} APNS config block.
+ */
+function buildApnsConfig(title, body) {
+  return {
+    headers: {
+      "apns-priority": "10",
+    },
+    payload: {
+      aps: {
+        alert: {
+          title,
+          body,
+        },
+        sound: "default",
+      },
+    },
+  };
+}
+
+/**
  * Sends a single notification to a specific token.
  * @param {string} token - The FCM registration token.
  * @param {string} title - The notification title.
@@ -20,19 +58,11 @@ async function sendNotification(token, title, body, data = {}) {
       title,
       body,
     },
-    data: {
-      ...data,
-    },
+    data: stringifyDataPayload(data),
     android: {
       priority: "high",
     },
-    apns: {
-      payload: {
-        aps: {
-          sound: "default",
-        },
-      },
-    },
+    apns: buildApnsConfig(title, body),
   };
 
   try {
@@ -67,22 +97,14 @@ async function sendMulticastNotification(tokens, title, body, data = {}) {
       title,
       body,
     },
-    data: {
-      ...data,
-    },
+    data: stringifyDataPayload(data),
     android: {
       priority: "high",
       notification: {
         sound: "default",
       },
     },
-    apns: {
-      payload: {
-        aps: {
-          sound: "default",
-        },
-      },
-    },
+    apns: buildApnsConfig(title, body),
   };
 
   try {

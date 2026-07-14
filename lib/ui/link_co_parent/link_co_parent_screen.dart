@@ -57,11 +57,21 @@ class _LinkCoParentScreenState extends State<LinkCoParentScreen> {
           loading: () => EasyLoading.show(),
           data: (dynamic data) {
             EasyLoading.dismiss();
-            showSnackBar(
-              message:
-                  'Invitation sent to ${state.coParentEmail ?? ''} ✓',
-              type: SnackBarType.SUCCESS,
-            );
+            if (state.emailDeliveryFailed) {
+              showSnackBar(
+                message: LocaleKeys.invitationEmailDeliveryFailed.tr(),
+                type: SnackBarType.ERROR,
+              );
+            } else {
+              showSnackBar(
+                message: LocaleKeys.invitationSentSuccess.tr(
+                  namedArgs: <String, String>{
+                    'email': state.coParentEmail ?? '',
+                  },
+                ),
+                type: SnackBarType.SUCCESS,
+              );
+            }
           },
           error: (Exception error) {
             EasyLoading.dismiss();

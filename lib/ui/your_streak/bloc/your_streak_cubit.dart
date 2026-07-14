@@ -7,11 +7,11 @@ import '../../../other/preferances.dart';
 class YourStreakCubit extends Cubit<YourStreakState> {
   YourStreakCubit() : super(YourStreakState());
 
-  void init(){
+  void init() {
     emit(YourStreakState(userModel: preferences.getUserModel()));
   }
 
-  void changeProps({UserModel? userModel}){
+  void changeProps({UserModel? userModel}) {
     emit(state.copyWith(userModel: userModel ?? state.userModel));
   }
 }

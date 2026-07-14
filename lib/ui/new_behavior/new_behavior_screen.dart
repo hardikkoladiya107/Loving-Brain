@@ -228,12 +228,11 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
                       fontSize: 18.sp,
                     ),
                 4.h.spaceH,
-                LocaleKeys.captureMomentsQuickly.tr()
-                    .appText(
-                      color: Colors.white.withValues(alpha: 0.88),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12.sp,
-                    ),
+                LocaleKeys.captureMomentsQuickly.tr().appText(
+                  color: Colors.white.withValues(alpha: 0.88),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.sp,
+                ),
               ],
             ),
           ),
@@ -291,11 +290,8 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
             fontSize: 16.sp,
           ),
           8.h.spaceH,
-          LocaleKeys.getPersonalizedBehaviorInsight.tr(
-            namedArgs: {
-              'parentName': state.userModel?.parentName ?? '',
-            },
-          )
+          LocaleKeys.getPersonalizedBehaviorInsight
+              .tr(namedArgs: {'parentName': state.userModel?.parentName ?? ''})
               .appText(
                 textAlign: TextAlign.start,
                 fontSize: 12.sp,
@@ -435,9 +431,7 @@ class _NewBehaviorScreenState extends State<NewBehaviorScreen> {
       fillColor: aiQuestionCardColor2,
       title: LocaleKeys.tellUsMore.tr(),
       hint: LocaleKeys.describeBehaviorHint.tr(
-        namedArgs: {
-          'childName': state.userModel?.childName ?? '',
-        },
+        namedArgs: {'childName': state.userModel?.childName ?? ''},
       ),
       maxLines: 4,
       contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),

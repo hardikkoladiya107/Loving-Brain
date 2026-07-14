@@ -76,12 +76,14 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           (state.sharedEvent?.title ?? "").appText(
                             fontWeight: FontWeight.w800,
                           ),
-                          LocaleKeys.forChildCreatedBy.tr(
-                            namedArgs: {
-                              'childName': _getChildName(state),
-                              'creatorName': _getCreatedByName(state),
-                            },
-                          ).appText(fontSize: 14),
+                          LocaleKeys.forChildCreatedBy
+                              .tr(
+                                namedArgs: {
+                                  'childName': _getChildName(state),
+                                  'creatorName': _getCreatedByName(state),
+                                },
+                              )
+                              .appText(fontSize: 14),
                         ],
                       ).appPadding(all: 8),
                     ),
@@ -184,7 +186,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           },
         ),
         20.w.spaceW,
-        LocaleKeys.eventDetails.tr().appText(fontWeight: FontWeight.w700, fontSize: 20),
+        LocaleKeys.eventDetails.tr().appText(
+          fontWeight: FontWeight.w700,
+          fontSize: 20,
+        ),
       ],
     );
   }
@@ -198,7 +203,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LocaleKeys.note.tr().appText(color: cardColor2, fontWeight: FontWeight.w700),
+          LocaleKeys.note.tr().appText(
+            color: cardColor2,
+            fontWeight: FontWeight.w700,
+          ),
           (note ?? "").appText(
             fontSize: 12,
             textAlign: TextAlign.start,
@@ -208,8 +216,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       ).appPadding(all: 8),
     );
   }
-
-
 
   Widget _history() {
     return Container(
@@ -289,7 +295,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           child: _bottomButton(
             onTap: () {
               if (state.sharedEvent != null) {
-                context.push(RoutePaths.proposeChange, extra: state.sharedEvent!);
+                context.push(
+                  RoutePaths.proposeChange,
+                  extra: state.sharedEvent!,
+                );
               }
             },
             text: LocaleKeys.proposeChange.tr(),
@@ -400,9 +409,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Column(
       children: [
         20.spaceH,
-        ...(state.sharedEvent?.documents ?? []).map(
-          (e) => _fileNameWidget(e),
-        ),
+        ...(state.sharedEvent?.documents ?? []).map((e) => _fileNameWidget(e)),
         20.spaceH,
       ],
     );

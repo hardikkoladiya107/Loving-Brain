@@ -1,0 +1,164 @@
+{
+  "states": {
+    "calm": {
+      "0_36": {
+        "activityTitle": "Connection Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "This is a calm window for bonding. Small, simple interactions help your child feel safe and connected.",
+        "steps": [
+          "Sit on the floor with {childName}.",
+          "Hold one soft toy and let {childName} touch it.",
+          "Say one calm word slowly and smile."
+        ]
+      },
+      "36_72": {
+        "activityTitle": "Story & Talk Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Calm moments are ideal for meaningful talk. A short story activity can strengthen communication.",
+        "steps": [
+          "Pick one short picture story.",
+          "Ask {childName} what they see on each page.",
+          "End with one warm sentence: \"I loved this time with you.\""
+        ]
+      },
+      "72_plus": {
+        "activityTitle": "Mini Reflection Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Calm periods support emotional learning. A short reflection builds confidence and trust.",
+        "steps": [
+          "Sit together in a quiet spot.",
+          "Ask one question: \"What felt good today?\"",
+          "Share one proud moment from your side too."
+        ]
+      }
+    },
+    "high_energy": {
+      "0_36": {
+        "activityTitle": "Energy Channel Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "High energy is easier to guide than to suppress. Channeling it now helps transition smoother later.",
+        "steps": [
+          "Start one active game (jumping, claps, or quick run).",
+          "Set a short timer and do the activity together.",
+          "Slow down with deep breaths for 30 seconds."
+        ]
+      },
+      "36_72": {
+        "activityTitle": "Active Play Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Use this energy window for structured play before winding down later.",
+        "steps": [
+          "Pick one movement game (obstacle course or dance).",
+          "Play together for 5-8 minutes.",
+          "End with a calm transition cue."
+        ]
+      },
+      "72_plus": {
+        "activityTitle": "Movement Challenge",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Channel energy into a short challenge to support focus and regulation.",
+        "steps": [
+          "Set a 5-minute movement challenge.",
+          "Cheer effort, not outcome.",
+          "Cool down with water and a quiet minute."
+        ]
+      }
+    },
+    "fussy": {
+      "0_36": {
+        "activityTitle": "Comfort First Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "When your child is fussy, regulation comes before instruction. First comfort, then reconnect.",
+        "steps": [
+          "Move to a low-noise corner.",
+          "Offer a hug or sit close quietly.",
+          "Use a soft phrase: \"I am here with you.\""
+        ]
+      },
+      "36_72": {
+        "activityTitle": "Co-Regulation Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Name the feeling, lower demands, and reconnect with calm presence.",
+        "steps": [
+          "Get down to eye level with {childName}.",
+          "Name what you see: \"You seem upset.\"",
+          "Offer one simple choice when calm returns."
+        ]
+      },
+      "72_plus": {
+        "activityTitle": "Pause & Repair",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "A short pause can prevent escalation and rebuild trust.",
+        "steps": [
+          "Step back from the task causing stress.",
+          "Breathe together for 20 seconds.",
+          "Ask: \"What would help right now?\""
+        ]
+      }
+    },
+    "tired": {
+      "0_36": {
+        "activityTitle": "Wind-Down Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "This is a good time to reduce stimulation. Gentle rhythm now supports better rest soon.",
+        "steps": [
+          "Dim lights and lower screen/sound input.",
+          "Use a quiet activity like cuddling or soft music.",
+          "Start the first bedtime cue you already use."
+        ]
+      },
+      "36_72": {
+        "activityTitle": "Quiet Transition",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Lower stimulation and use predictable cues to help rest arrive.",
+        "steps": [
+          "Switch to one calm activity (books or lullaby).",
+          "Keep voice soft and movements slow.",
+          "Start your usual bedtime routine step."
+        ]
+      },
+      "72_plus": {
+        "activityTitle": "Rest Prep Moment",
+        "subtitle": "Best in the next 10-15 minutes",
+        "message": "Tired signals are a cue to simplify and protect sleep.",
+        "steps": [
+          "Pause active play and screens.",
+          "Offer a snack or water if needed.",
+          "Begin wind-down routine together."
+        ]
+      }
+    },
+    "unknown": {
+      "0_36": {
+        "activityTitle": "Start With State Check",
+        "subtitle": "Best in the next 2 minutes",
+        "message": "To guide the right activity, first update your child state in Family Meter.",
+        "steps": [
+          "Open Family Meter.",
+          "Select your child current state.",
+          "Tap Guide me now again."
+        ]
+      },
+      "36_72": {
+        "activityTitle": "Start With State Check",
+        "subtitle": "Best in the next 2 minutes",
+        "message": "To guide the right activity, first update your child state in Family Meter.",
+        "steps": [
+          "Open Family Meter.",
+          "Select your child current state.",
+          "Tap Guide me now again."
+        ]
+      },
+      "72_plus": {
+        "activityTitle": "Start With State Check",
+        "subtitle": "Best in the next 2 minutes",
+        "message": "To guide the right activity, first update your child state in Family Meter.",
+        "steps": [
+          "Open Family Meter.",
+          "Select your child current state.",
+          "Tap Guide me now again."
+        ]
+      }
+    }
+  }
+}

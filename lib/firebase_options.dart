@@ -64,8 +64,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '779880600850',
     projectId: 'hugsand-heart-u86wap',
     storageBucket: 'hugsand-heart-u86wap.firebasestorage.app',
-    androidClientId: '779880600850-tberbmcrr7mv3075e8l9sans6oh8n0ss.apps.googleusercontent.com',
-    iosClientId: '779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it.apps.googleusercontent.com',
+    androidClientId:
+        '779880600850-tberbmcrr7mv3075e8l9sans6oh8n0ss.apps.googleusercontent.com',
+    iosClientId:
+        '779880600850-3fmj2q4ngfmm84vfb3rinnqclk9us4it.apps.googleusercontent.com',
     iosBundleId: 'com.app.lovingbrain',
   );
 

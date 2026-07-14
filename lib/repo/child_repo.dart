@@ -7,7 +7,9 @@ import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/model/invitation_model.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/energy_bridge_notification_helper.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
+import 'package:loving_brain/repo/energy_bridge_repo.dart';
 import 'package:mime/mime.dart';
 
 import '../generated/locale_keys.g.dart';
@@ -400,6 +402,8 @@ class ChildRepo {
     }
   }
 
+  /// Writes denormalized `child_state` on the child doc and an audit row under
+  /// `children/{id}/states/{timestamp}_{key}` for co-parent real-time sync.
   Future<ApiResultStatus> updateChildState({
     required String childId,
     required ChildState childState,
@@ -447,6 +451,7 @@ class ChildRepo {
     required String childId,
     required String actorUid,
     required String stateAtTime,
+    required int ageInMonths,
   }) async {
     try {
       if (childId.isEmpty || actorUid.isEmpty) {
@@ -458,8 +463,10 @@ class ChildRepo {
           .doc(childId)
           .collection('events')
           .add(<String, dynamic>{
+            'child_id': childId,
             'type': 'smart_moment',
             'state_at_time': stateAtTime,
+            'age_in_months': ageInMonths,
             'outcome': 'success',
             'timestamp': Timestamp.now(),
             'updated_by': actorUid,
@@ -503,6 +510,154 @@ class ChildRepo {
             'timestamp': Timestamp.now(),
             'updated_by': actorUid,
           });
+      return ApiResultStatus.data(data: childId);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<bool> isSleepInProgress({required String childId}) async {
+    try {
+      final DocumentSnapshot<Map<String, dynamic>> snap =
+          await childrenCollection.doc(childId).get();
+      return snap.data()?['sleep_in_progress'] == true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<ApiResultStatus> recordFeed({
+    required String childId,
+    required String actorUid,
+  }) async {
+    try {
+      if (childId.isEmpty || actorUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final DateTime now = DateTime.now();
+      await childrenCollection.doc(childId).update(<String, dynamic>{
+        'last_feed_time': Timestamp.fromDate(now),
+      });
+      await childrenCollection.doc(childId).collection('events').add(
+        <String, dynamic>{
+          'type': 'feed',
+          'child_id': childId,
+          'timestamp': Timestamp.fromDate(now),
+          'updated_by': actorUid,
+        },
+      );
+      final ApiResultStatus resetResult = await EnergyBridgeRepo.instance
+          .resetTimer(childId: childId, actorUid: actorUid, reason: 'feed');
+      resetResult.whenOrNull(
+        data: (_) async {
+          await EnergyBridgeNotificationHelper.cancelForChild(childId);
+        },
+      );
+      return ApiResultStatus.data(data: childId);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> startSleep({
+    required String childId,
+    required String actorUid,
+  }) async {
+    try {
+      if (childId.isEmpty || actorUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final DateTime now = DateTime.now();
+      final ApiResultStatus stateResult = await updateChildState(
+        childId: childId,
+        childState: ChildState.tired,
+        actorUid: actorUid,
+      );
+      bool stateSaved = false;
+      stateResult.whenOrNull(data: (_) => stateSaved = true);
+      if (!stateSaved) {
+        return stateResult;
+      }
+      await childrenCollection.doc(childId).update(<String, dynamic>{
+        'sleep_in_progress': true,
+        'sleep_started_at': Timestamp.fromDate(now),
+      });
+      await childrenCollection.doc(childId).collection('events').add(
+        <String, dynamic>{
+          'type': 'sleep_start',
+          'child_id': childId,
+          'timestamp': Timestamp.fromDate(now),
+          'updated_by': actorUid,
+        },
+      );
+      final ApiResultStatus resetResult = await EnergyBridgeRepo.instance
+          .resetTimer(childId: childId, actorUid: actorUid, reason: 'sleep');
+      resetResult.whenOrNull(
+        data: (_) async {
+          await EnergyBridgeNotificationHelper.cancelForChild(childId);
+        },
+      );
+      return ApiResultStatus.data(data: childId);
+    } on FirebaseException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  Future<ApiResultStatus> endSleep({
+    required String childId,
+    required String actorUid,
+  }) async {
+    try {
+      if (childId.isEmpty || actorUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final DocumentSnapshot<Map<String, dynamic>> snap =
+          await childrenCollection.doc(childId).get();
+      final Map<String, dynamic>? data = snap.data();
+      final Timestamp? startedTs = data?['sleep_started_at'] as Timestamp?;
+      final DateTime now = DateTime.now();
+      int durationMinutes = 0;
+      if (startedTs != null) {
+        durationMinutes = now.difference(startedTs.toDate()).inMinutes;
+      }
+      await childrenCollection.doc(childId).update(<String, dynamic>{
+        'sleep_in_progress': false,
+        'sleep_started_at': null,
+        'last_sleep_duration_minutes': durationMinutes,
+      });
+      await childrenCollection.doc(childId).collection('events').add(
+        <String, dynamic>{
+          'type': 'sleep_end',
+          'child_id': childId,
+          'duration_minutes': durationMinutes,
+          'timestamp': Timestamp.fromDate(now),
+          'updated_by': actorUid,
+        },
+      );
       return ApiResultStatus.data(data: childId);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(

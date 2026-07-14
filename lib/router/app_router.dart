@@ -35,6 +35,8 @@ import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart
 import 'package:loving_brain/ui/family_meter/family_meter_state_detail_screen.dart';
 import 'package:loving_brain/ui/family_meter/family_meter_state_picker_screen.dart';
 import 'package:loving_brain/ui/smart_moment/smart_moment_screen.dart';
+import 'package:loving_brain/ui/timeline/timeline_screen.dart';
+import 'package:loving_brain/ui/milestone_story/milestone_story_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_guidance_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_problem_selection_screen.dart';
 import 'package:loving_brain/ui/propose_change/propose_change_screen.dart';
@@ -55,6 +57,8 @@ class AppRouter {
       redirect: (BuildContext context, GoRouterState state) {
         final bool isLoggedIn =
             preferences.getBool(SharedPreference.isLogin) ?? false;
+        final bool hasSeenOnboarding =
+            preferences.getBool(SharedPreference.hasSeenOnboarding) ?? false;
         final String location = state.uri.path;
 
         // Auth / onboarding only: logged-in users are sent to the app shell.
@@ -70,6 +74,16 @@ class AppRouter {
           RoutePaths.forgotPassword,
           RoutePaths.coParentRegister,
         };
+
+        const Set<String> onboardingRoutes = <String>{
+          RoutePaths.onboarding1,
+          RoutePaths.onboarding2,
+          RoutePaths.onboarding3,
+        };
+
+        if (hasSeenOnboarding && onboardingRoutes.contains(location)) {
+          return RoutePaths.welcome;
+        }
 
         if (isLoggedIn && authFlowRoutes.contains(location)) {
           return RoutePaths.base;
@@ -181,6 +195,18 @@ class AppRouter {
           path: RoutePaths.smartMoment,
           builder: (BuildContext context, GoRouterState state) =>
               const SmartMomentScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.timeline,
+          builder: (BuildContext context, GoRouterState state) =>
+              const TimelineScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.milestoneStory,
+          builder: (BuildContext context, GoRouterState state) {
+            final String? milestoneKey = state.extra as String?;
+            return MilestoneStoryScreen(milestoneKey: milestoneKey);
+          },
         ),
         GoRoute(
           path: RoutePaths.helpProblemSelection,

@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show TargetPlatform, debugPrint, defaultTargetPlatform;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, debugPrint, defaultTargetPlatform;
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInManager {
@@ -41,8 +42,8 @@ class GoogleSignInManager {
         );
         return googleUser;
       }
-      final GoogleSignInAccount? googleUser =
-          await signIn.attemptLightweightAuthentication();
+      final GoogleSignInAccount? googleUser = await signIn
+          .attemptLightweightAuthentication();
       if (googleUser == null) {
         throw Exception('Google Sign-In could not start on this device.');
       }
@@ -90,5 +91,4 @@ class GoogleSignInManager {
       e;
     }
   }
-
 }

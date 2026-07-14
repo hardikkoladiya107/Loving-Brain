@@ -322,11 +322,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       size: 16.w,
                     ),
                     4.spaceW,
-                    LocaleKeys.dayStreakText.tr(namedArgs: {"count": userModel.displayStreak.toString()}).appText(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12,
-                    ),
+                    LocaleKeys.dayStreakText
+                        .tr(
+                          namedArgs: {
+                            "count": userModel.displayStreak.toString(),
+                          },
+                        )
+                        .appText(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12,
+                        ),
                   ],
                 ),
               ),

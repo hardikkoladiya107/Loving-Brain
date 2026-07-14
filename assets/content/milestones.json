@@ -1,0 +1,69 @@
+{
+  "milestones": [
+    {
+      "key": "the_laugher",
+      "chapter": 1,
+      "title": "The Laugher",
+      "ageRangeMonths": "3-5",
+      "whatThisMeans": "Shared surprise and joy — timing, surprise, and laughter are building blocks of humour and connection.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about hearing {childName} laugh at {ageMonths} months. Include who was there and what sparked the moment. No medical advice. No age comparison language."
+    },
+    {
+      "key": "first_smile",
+      "chapter": 1,
+      "title": "The First Smile",
+      "ageRangeMonths": "6-8",
+      "whatThisMeans": "This is the beginning of social communication — your child's expressions are starting to affect the world around them.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about witnessing {childName}'s first smile at {ageMonths} months. Include who was there, the time of day, and the mood in the room. No medical advice. No age comparison language."
+    },
+    {
+      "key": "first_word",
+      "chapter": 2,
+      "title": "The First Word",
+      "ageRangeMonths": "10-14",
+      "whatThisMeans": "Language is unlocking. This small word opens the door to a vocabulary explosion.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about {childName}'s first word at {ageMonths} months."
+    },
+    {
+      "key": "explorer_crawling",
+      "chapter": 3,
+      "title": "The Explorer",
+      "ageRangeMonths": "7-9",
+      "whatThisMeans": "Crawling is an act of independence — confidence in their own body is growing.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about {childName} exploring through crawling at {ageMonths} months."
+    },
+    {
+      "key": "the_pointer",
+      "chapter": 4,
+      "title": "The Pointer",
+      "ageRangeMonths": "9-12",
+      "whatThisMeans": "Pointing shares their inner world — the beginning of true communication beyond words.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about {childName} pointing to share something at {ageMonths} months."
+    },
+    {
+      "key": "first_steps",
+      "chapter": 4,
+      "title": "The Walker",
+      "ageRangeMonths": "12-15",
+      "whatThisMeans": "First steps are courage — letting go and trusting their body, not just physical movement.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about {childName}'s first steps at {ageMonths} months."
+    },
+    {
+      "key": "emotion_namer",
+      "chapter": 5,
+      "title": "The Emotion Namer",
+      "ageRangeMonths": "28-32",
+      "whatThisMeans": "Naming a feeling is the first step toward managing it — emotional literacy is growing.",
+      "storyPrompt": "Write a warm 3-paragraph story for {parentName} about {childName} naming a feeling at {ageMonths} months."
+    },
+    {
+      "key": "big_kid",
+      "chapter": 5,
+      "title": "The Big Kid",
+      "ageRangeMonths": "36",
+      "whatThisMeans": "A gentle close to the baby years — their brain is nearly adult-sized and a new chapter begins.",
+      "storyPrompt": "Write a warm 4-paragraph journey summary for {parentName} about {childName} turning three at {ageMonths} months, looking toward preschool. No age comparison language."
+    }
+  ],
+  "defaultKey": "first_smile"
+}

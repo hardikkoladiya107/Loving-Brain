@@ -4,6 +4,10 @@ import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/energy_bridge_timer_model.dart';
 
+/// Firestore access for `energy_bridge/{childId}` timer documents.
+///
+/// Fields: `is_active`, `fire_at`, `fired`, `duration_minutes` (default 105).
+/// Server scheduler (`onEnergyBridgeSchedule`) sets `fired=true` at `fire_at`.
 class EnergyBridgeRepo {
   EnergyBridgeRepo._();
   static final EnergyBridgeRepo _instance = EnergyBridgeRepo._();

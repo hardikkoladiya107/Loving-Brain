@@ -25,7 +25,7 @@ class _AppDropDownButtonState extends State<AppDropDownButton> {
 
   void _showDropdown() {
     final RenderBox renderBox =
-    _dropdownKey.currentContext!.findRenderObject() as RenderBox;
+        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
 
     final Size widgetSize = renderBox.size;
 
@@ -38,7 +38,8 @@ class _AppDropDownButtonState extends State<AppDropDownButton> {
               child: Container(color: Colors.transparent),
             ),
             Positioned(
-              width: widget.dropdownWidth ?? widgetSize.width, // 👈 static width
+              width:
+                  widget.dropdownWidth ?? widgetSize.width, // 👈 static width
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,

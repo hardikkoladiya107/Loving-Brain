@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/milestone_story/milestone_picker_sheet.dart';
 import 'package:loving_brain/model/api_result_status.dart' as status;
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -47,13 +49,17 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
             return;
           }
           if (isMilestone == true) {
-            await showSnackBar(
-              message: 'Milestone flow will open in Sprint 3.',
-              type: SnackBarType.None,
-            );
+            final String? milestoneKey = await showMilestonePickerSheet(context);
+            if (!context.mounted) {
+              return;
+            }
+            if (milestoneKey != null) {
+              context.push(RoutePaths.milestoneStory, extra: milestoneKey);
+            }
+            return;
           } else {
             await showSnackBar(
-              message: 'Nice timing - this builds connection.',
+              message: LocaleKeys.niceTimingBuildsConnection.tr(),
               type: SnackBarType.SUCCESS,
             );
           }
@@ -193,6 +199,30 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
                         fontWeight: FontWeight.w900,
                         fontSize: 15.sp,
                         color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  10.h.spaceH,
+                  BaseButton(
+                    onTap: () async {
+                      await showSnackBar(
+                        message: LocaleKeys.watchExampleComingSoon.tr(),
+                        type: SnackBarType.None,
+                      );
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 48.h,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1ECFF),
+                        borderRadius: BorderRadius.circular(14.r),
+                        border: Border.all(color: const Color(0xFFE0D4FF)),
+                      ),
+                      child: LocaleKeys.watchExample.tr().appText(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14.sp,
+                        color: const Color(0xFF6A24B8),
                       ),
                     ),
                   ),

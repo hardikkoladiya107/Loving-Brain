@@ -12,7 +12,8 @@ abstract class ProposeChangeState with _$ProposeChangeState {
     @Default("") String startTimeError,
     @Default("") String endTimeError,
     @Default("") String noteForCoParent,
-    @Default(ApiResultStatus.initial()) ApiResultStatus sendProposalApiResultStatus,
+    @Default(ApiResultStatus.initial())
+    ApiResultStatus sendProposalApiResultStatus,
     SharedEventModel? sharedEvent,
     DateTime? endTime,
     DateTime? startTime,

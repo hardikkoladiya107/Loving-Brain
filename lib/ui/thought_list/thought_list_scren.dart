@@ -23,7 +23,8 @@ class ThoughtListScreen extends StatefulWidget {
 }
 
 class _ThoughtListScreenState extends State<ThoughtListScreen> {
-  final TransformationController _transformationController = TransformationController();
+  final TransformationController _transformationController =
+      TransformationController();
 
   @override
   void initState() {
@@ -66,15 +67,17 @@ class _ThoughtListScreenState extends State<ThoughtListScreen> {
                 child: Container(
                   width: 4000,
                   height: 4000,
-                  decoration: const BoxDecoration(
-                    color: Color(0xff1A1A24),
-                  ),
+                  decoration: const BoxDecoration(color: Color(0xff1A1A24)),
                   child: CustomPaint(
                     painter: GridPainter(),
                     child: Stack(
                       children: state.journalList.map((journal) {
                         return DraggableJournalCard(
-                          key: ValueKey(journal.id ?? journal.logTime?.toIso8601String() ?? journal.hashCode.toString()),
+                          key: ValueKey(
+                            journal.id ??
+                                journal.logTime?.toIso8601String() ??
+                                journal.hashCode.toString(),
+                          ),
                           journal: journal,
                         );
                       }).toList(),
@@ -92,19 +95,30 @@ class _ThoughtListScreenState extends State<ThoughtListScreen> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 12.h,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             BaseButton(
                               child: ColorFiltered(
-                                colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                                child: Assets.icons.icBackIcon.image(height: 36, width: 36),
+                                colorFilter: const ColorFilter.mode(
+                                  Colors.white,
+                                  BlendMode.srcIn,
+                                ),
+                                child: Assets.icons.icBackIcon.image(
+                                  height: 36,
+                                  width: 36,
+                                ),
                               ),
                               onTap: () {
                                 context.pop();
@@ -153,7 +167,8 @@ class _DraggableJournalCardState extends State<DraggableJournalCard> {
   @override
   void didUpdateWidget(covariant DraggableJournalCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.journal.x != widget.journal.x || oldWidget.journal.y != widget.journal.y) {
+    if (oldWidget.journal.x != widget.journal.x ||
+        oldWidget.journal.y != widget.journal.y) {
       if (widget.journal.x != null) x = widget.journal.x!;
       if (widget.journal.y != null) y = widget.journal.y!;
     }
@@ -191,7 +206,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard> {
                 color: Colors.white.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.2), 
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 1.5,
                 ),
                 boxShadow: [
@@ -217,10 +232,12 @@ class _DraggableJournalCardState extends State<DraggableJournalCard> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xffFF7EB3).withValues(alpha: 0.5),
+                              color: const Color(
+                                0xffFF7EB3,
+                              ).withValues(alpha: 0.5),
                               blurRadius: 10,
                               spreadRadius: 2,
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -228,7 +245,7 @@ class _DraggableJournalCardState extends State<DraggableJournalCard> {
                       Expanded(
                         child: convertToMMMMDYYYY(widget.journal.logTime)
                             .appText(
-                              fontWeight: FontWeight.w700, 
+                              fontWeight: FontWeight.w700,
                               fontSize: 13,
                               color: Colors.white.withValues(alpha: 0.7),
                               textAlign: TextAlign.start,
@@ -259,10 +276,10 @@ class GridPainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
-      
+
     const double spacing = 40.0;
     const double radius = 1.5;
-    
+
     for (double i = 0; i < size.width; i += spacing) {
       for (double j = 0; j < size.height; j += spacing) {
         canvas.drawCircle(Offset(i, j), radius, paint);

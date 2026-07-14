@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:flutter/gestures.dart';
@@ -164,7 +165,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         ),
       ),
       onTap: () {
-        context.push(RoutePaths.onboarding1);
+        final bool hasSeenOnboarding =
+            preferences.getBool(SharedPreference.hasSeenOnboarding) ?? false;
+        if (hasSeenOnboarding) {
+          context.push(RoutePaths.login);
+        } else {
+          context.push(RoutePaths.onboarding1);
+        }
       },
     ).appPadding(left: 10, right: 10);
   }

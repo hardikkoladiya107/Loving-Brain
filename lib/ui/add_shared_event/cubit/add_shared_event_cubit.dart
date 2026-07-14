@@ -83,7 +83,9 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   }
 
   void selectChild(ChildModel child) {
-    final List<ChildModel> childrenList = List<ChildModel>.from(state.selectedChildren);
+    final List<ChildModel> childrenList = List<ChildModel>.from(
+      state.selectedChildren,
+    );
     if (childrenList.any(
       (element) => element.reference?.id == child.reference?.id,
     )) {
@@ -97,7 +99,9 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   }
 
   void selectParent(UserModel user) {
-    final List<UserModel> coParentList = List<UserModel>.from(state.selectedCoParentList);
+    final List<UserModel> coParentList = List<UserModel>.from(
+      state.selectedCoParentList,
+    );
     if (coParentList.any((element) => element.uid == user.uid)) {
       coParentList.removeWhere((element) => element.uid == user.uid);
     } else {
@@ -166,36 +170,38 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
   Future<void> requestApproval() async {
     if (isValidate()) {
       changeProps(requestApprovalApiResultStatus: ApiResultStatus.loading());
-      final ApiResultStatus apiResult = await CoParentRepo.instance.addSharedEvent(
-        request: {
-          "created_by": state.userModel?.uid,
-          "assigned_to": state.selectedCoParentList.map((e) => e.uid), //
-          "children": state.selectedChildren
-              .map((e) => e.reference?.id)
-              .join(","),
-          "note": state.note,
-          "title": state.title,
-          "date": Timestamp.fromDate(state.selectedDate!),
-          "start_time": Timestamp.fromDate(state.startTime!),
-          "end_time": Timestamp.fromDate(state.endTime!),
-          "location": state.locationText,
-          "documents": state.documentsList,
-          "required_approval": state.requiredApproval,
-          "created_date": Timestamp.now(),
-          if (state.requiredApproval) ...{
-            "status": "REQUESTED",
-          } else ...{
-            "status": "NONE",
-          },
-        },
-      );
+      final ApiResultStatus apiResult = await CoParentRepo.instance
+          .addSharedEvent(
+            request: {
+              "created_by": state.userModel?.uid,
+              "assigned_to": state.selectedCoParentList.map((e) => e.uid), //
+              "children": state.selectedChildren
+                  .map((e) => e.reference?.id)
+                  .join(","),
+              "note": state.note,
+              "title": state.title,
+              "date": Timestamp.fromDate(state.selectedDate!),
+              "start_time": Timestamp.fromDate(state.startTime!),
+              "end_time": Timestamp.fromDate(state.endTime!),
+              "location": state.locationText,
+              "documents": state.documentsList,
+              "required_approval": state.requiredApproval,
+              "created_date": Timestamp.now(),
+              if (state.requiredApproval) ...{
+                "status": "REQUESTED",
+              } else ...{
+                "status": "NONE",
+              },
+            },
+          );
       changeProps(requestApprovalApiResultStatus: apiResult);
     }
   }
 
   Future<void> _getMyCoParent() async {
     changeProps(getCoParentApiResultStatus: ApiResultStatus.loading());
-    final ApiResultStatus response = await CoParentRepo.instance.getMyCoParents();
+    final ApiResultStatus response = await CoParentRepo.instance
+        .getMyCoParents();
     changeProps(getCoParentApiResultStatus: response);
     response.whenOrNull(
       data: (data) {
@@ -250,6 +256,4 @@ class AddSharedEventCubit extends Cubit<AddSharedEventState> {
       );
     }
   }
-
-
 }

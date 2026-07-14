@@ -121,11 +121,14 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
           children: [
             const Icon(Icons.add_rounded, color: Colors.white, size: 22),
             8.spaceW,
-            (isDataState ? LocaleKeys.addSleepLog.tr() : LocaleKeys.addFirstSleepLog.tr()).appText(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-            ),
+            (isDataState
+                    ? LocaleKeys.addSleepLog.tr()
+                    : LocaleKeys.addFirstSleepLog.tr())
+                .appText(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
           ],
         ),
       ),
@@ -343,7 +346,9 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                     Expanded(
                       child: _statCard(
                         LocaleKeys.averageBedTime.tr(),
-                        context.read<SleepSummaryCubit>().getAverageBedTimeString(),
+                        context
+                            .read<SleepSummaryCubit>()
+                            .getAverageBedTimeString(),
                         Icons.nights_stay_rounded,
                         const Color(0xFF4F46E5),
                       ),
@@ -352,7 +357,9 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                     Expanded(
                       child: _statCard(
                         LocaleKeys.averageWakeUp.tr(),
-                        context.read<SleepSummaryCubit>().getAverageWakeTimeString(),
+                        context
+                            .read<SleepSummaryCubit>()
+                            .getAverageWakeTimeString(),
                         Icons.wb_sunny_rounded,
                         const Color(0xFFF59E0B),
                       ),
@@ -371,12 +378,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
     );
   }
 
-  Widget _statCard(
-    String title,
-    String value,
-    IconData icon,
-    Color iconColor,
-  ) {
+  Widget _statCard(String title, String value, IconData icon, Color iconColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
@@ -452,7 +454,11 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.list_alt_rounded, color: Color(0xFF64748B), size: 24),
+            const Icon(
+              Icons.list_alt_rounded,
+              color: Color(0xFF64748B),
+              size: 24,
+            ),
             8.spaceW,
             LocaleKeys.sleepLogs.tr().appText(
               color: const Color(0xFF0F172A),
@@ -495,17 +501,33 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            title: const Text("Delete Sleep Log", style: TextStyle(fontWeight: FontWeight.bold)),
-            content: const Text("Are you sure you want to delete this sleep log?"),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            title: const Text(
+              "Delete Sleep Log",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            content: const Text(
+              "Are you sure you want to delete this sleep log?",
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text("Cancel", style: TextStyle(color: Color(0xFF64748B))),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(color: Color(0xFF64748B)),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text("Delete", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Delete",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -538,7 +560,11 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                 color: Color(0xFFF8FAFC),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.bedtime_rounded, color: Color(0xFF4F46E5), size: 24),
+              child: const Icon(
+                Icons.bedtime_rounded,
+                color: Color(0xFF4F46E5),
+                size: 24,
+              ),
             ),
             16.spaceW,
             Expanded(
@@ -551,11 +577,12 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                   4.spaceH,
-                  "${coParentScheduleTime(log.bedTime)} - ${coParentScheduleTime(log.wakeTime)}".appText(
-                    color: const Color(0xFF64748B),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  "${coParentScheduleTime(log.bedTime)} - ${coParentScheduleTime(log.wakeTime)}"
+                      .appText(
+                        color: const Color(0xFF64748B),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                   if ((log.notes ?? "").isNotEmpty) ...[
                     8.spaceH,
                     "Notes: ${log.notes}".appText(
@@ -586,7 +613,11 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
             color: Colors.white.withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.arrow_back_rounded, color: Colors.white, size: 28),
+          child: const Icon(
+            Icons.arrow_back_rounded,
+            color: Colors.white,
+            size: 28,
+          ),
         ),
         onTap: () {
           context.pop();
@@ -610,10 +641,18 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                   children: [
                     8.spaceH,
                     week.getFormattedRange
-                        .appText(fontWeight: FontWeight.w600, fontSize: 13, color: const Color(0xFF1E293B))
+                        .appText(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          color: const Color(0xFF1E293B),
+                        )
                         .appPadding(left: 16),
                     8.spaceH,
-                    const Divider(height: 0.1, thickness: 0.5, color: Color(0xFFE2E8F0)),
+                    const Divider(
+                      height: 0.1,
+                      thickness: 0.5,
+                      color: Color(0xFFE2E8F0),
+                    ),
                   ],
                 ),
                 onTap: () {
@@ -663,7 +702,11 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF64748B), size: 20),
+              const Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: Color(0xFF64748B),
+                size: 20,
+              ),
             ],
           ),
         ),
@@ -683,7 +726,7 @@ class _SleepSummaryScreenState extends State<SleepSummaryScreen> {
     for (var v in values) {
       if (v > maxVal) maxVal = v;
     }
-    
+
     // Dynamic interval to prevent overlapped labels when values are high
     double interval = maxVal / 5;
     if (interval < 2) interval = 2; // minimum threshold

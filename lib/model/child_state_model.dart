@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum ChildState {
-  calm,
-  highEnergy,
-  fussy,
-  tired,
-}
+enum ChildState { calm, highEnergy, fussy, tired }
 
 extension ChildStateExtension on ChildState {
   String get key {
@@ -47,14 +42,18 @@ extension ChildStateExtension on ChildState {
     }
   }
 
-  String get insightText {
+  /// One-line Family Meter insight (Task 1). Use [insightTextFor] for child name.
+  String insightTextFor(String childName) {
+    final String name = childName.trim().isEmpty
+        ? 'your child'
+        : childName.trim();
     switch (this) {
       case ChildState.calm:
         return 'Good window for connection';
       case ChildState.highEnergy:
         return 'Energy running high — great for active play';
       case ChildState.fussy:
-        return 'Liam needs some support right now';
+        return '$name needs some support right now';
       case ChildState.tired:
         return 'Wind-down time — sleep may be coming';
     }

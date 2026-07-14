@@ -19,17 +19,19 @@ class _BaseButtonState extends State<BaseButton>
 
   @override
   void initState() {
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: clickAnimationDurationMillis),
-      lowerBound: 0.0,
-      upperBound: 0.05,
-    )..addListener(() {
-      setState(() => _scaleTransformValue = 1 - animationController.value);
-      setState(
-        () => _scaleTransparentValue = (1 - (animationController.value * 12)),
-      );
-    });
+    animationController =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: clickAnimationDurationMillis),
+          lowerBound: 0.0,
+          upperBound: 0.05,
+        )..addListener(() {
+          setState(() => _scaleTransformValue = 1 - animationController.value);
+          setState(
+            () =>
+                _scaleTransparentValue = (1 - (animationController.value * 12)),
+          );
+        });
     super.initState();
   }
 

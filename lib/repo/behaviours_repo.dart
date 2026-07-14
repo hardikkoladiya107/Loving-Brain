@@ -27,7 +27,9 @@ class BehavioursRepo {
       var behaviours = await behavioursCollection.get();
       if (behaviours.docs.isNotEmpty) {
         return ApiResultStatus.data(
-          data: behaviours.docs.map((e) => BehaviourCategoryModel.fromJson(e)).toList(),
+          data: behaviours.docs
+              .map((e) => BehaviourCategoryModel.fromJson(e))
+              .toList(),
         );
       } else {
         return ApiResultStatus.error(

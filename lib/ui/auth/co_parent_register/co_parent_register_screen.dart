@@ -88,8 +88,8 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
             );
           }
           if (_confirmPasswordController.text != state.confirmPassword) {
-            _confirmPasswordController.value =
-                _confirmPasswordController.value.copyWith(
+            _confirmPasswordController.value = _confirmPasswordController.value
+                .copyWith(
                   text: state.confirmPassword,
                   selection: TextSelection.collapsed(
                     offset: min(
@@ -118,7 +118,10 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.9),
                       shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFF0E5FC), width: 1.5),
+                      border: Border.all(
+                        color: const Color(0xFFF0E5FC),
+                        width: 1.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.03),
@@ -142,9 +145,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
               children: [
                 // Base background color
                 Positioned.fill(
-                  child: Container(
-                    color: const Color(0xFFFAFAFA),
-                  ),
+                  child: Container(color: const Color(0xFFFAFAFA)),
                 ),
                 // Premium Ambient Glow Background
                 Positioned(
@@ -186,9 +187,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 70, sigmaY: 70),
-                    child: Container(
-                      color: Colors.transparent,
-                    ),
+                    child: Container(color: Colors.transparent),
                   ),
                 ),
                 // Main content
@@ -254,12 +253,12 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
         ),
         8.spaceH,
         LocaleKeys.setPasswordToAcceptInvitation.tr().appText(
-              fontWeight: FontWeight.w500,
-              color: Colors.grey.shade600,
-              fontSize: 14,
-              textAlign: TextAlign.center,
-              height: 1.4,
-            ),
+          fontWeight: FontWeight.w500,
+          color: Colors.grey.shade600,
+          fontSize: 14,
+          textAlign: TextAlign.center,
+          height: 1.4,
+        ),
       ],
     );
   }
@@ -270,10 +269,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            primaryColor,
-            primaryColor.withValues(alpha: 0.85),
-          ],
+          colors: [primaryColor, primaryColor.withValues(alpha: 0.85)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -294,11 +290,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(14.r),
             ),
-            child: Icon(
-              Icons.email_rounded,
-              color: Colors.white,
-              size: 24.r,
-            ),
+            child: Icon(Icons.email_rounded, color: Colors.white, size: 24.r),
           ),
           14.spaceW,
           Expanded(
@@ -334,10 +326,7 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28.r),
-        border: Border.all(
-          color: const Color(0xFFF0E5FC),
-          width: 1.5,
-        ),
+        border: Border.all(color: const Color(0xFFF0E5FC), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -364,32 +353,29 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
             error: state.passwordError,
             maxLines: 1,
             fillColor: const Color(0xFFF9FAFB),
-            prefixIcon: Assets.icons.icPasswordPrefixIcon.image(
-              height: 20.r,
-              width: 20.r,
-              color: primaryColor.withValues(alpha: 0.7),
-            ).appPadding(all: 12),
+            prefixIcon: Assets.icons.icPasswordPrefixIcon
+                .image(
+                  height: 20.r,
+                  width: 20.r,
+                  color: primaryColor.withValues(alpha: 0.7),
+                )
+                .appPadding(all: 12),
             onChanged: (v) =>
-                context.read<CoParentRegisterCubit>().changeProps(
-                  password: v,
-                ),
+                context.read<CoParentRegisterCubit>().changeProps(password: v),
             suffixIcon: IconButton(
               icon: Icon(
-                state.obscurePassword
-                    ? Icons.visibility_off
-                    : Icons.visibility,
+                state.obscurePassword ? Icons.visibility_off : Icons.visibility,
                 color: Colors.grey.shade400,
               ),
-              onPressed: () =>
-                  context.read<CoParentRegisterCubit>().changeProps(
-                    obscurePassword: !state.obscurePassword,
-                  ),
+              onPressed: () => context
+                  .read<CoParentRegisterCubit>()
+                  .changeProps(obscurePassword: !state.obscurePassword),
             ),
           ).appPadding(left: 20, right: 20),
-          
+
           // Password Requirement Checklist Indicator
           _passwordRequirements(state.password),
-          
+
           16.spaceH,
           // Confirm Password Input Field
           AppTextField(
@@ -401,15 +387,16 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
             error: state.confirmPasswordError,
             maxLines: 1,
             fillColor: const Color(0xFFF9FAFB),
-            prefixIcon: Assets.icons.icPasswordPrefixIcon.image(
-              height: 20.r,
-              width: 20.r,
-              color: primaryColor.withValues(alpha: 0.7),
-            ).appPadding(all: 12),
-            onChanged: (v) =>
-                context.read<CoParentRegisterCubit>().changeProps(
-                  confirmPassword: v,
-                ),
+            prefixIcon: Assets.icons.icPasswordPrefixIcon
+                .image(
+                  height: 20.r,
+                  width: 20.r,
+                  color: primaryColor.withValues(alpha: 0.7),
+                )
+                .appPadding(all: 12),
+            onChanged: (v) => context.read<CoParentRegisterCubit>().changeProps(
+              confirmPassword: v,
+            ),
             suffixIcon: IconButton(
               icon: Icon(
                 state.obscureConfirmPassword
@@ -442,12 +429,14 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
       child: Row(
         children: [
           Icon(
-            hasLength ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            hasLength
+                ? Icons.check_circle_rounded
+                : Icons.radio_button_unchecked_rounded,
             color: hasLength ? Colors.green : Colors.grey.shade400,
             size: 14.r,
           ),
           6.spaceW,
-          "Password must be at least 6 characters".appText(
+          LocaleKeys.passwordMinSixCharacters.tr().appText(
             fontSize: 11,
             color: hasLength ? Colors.green.shade700 : Colors.grey.shade600,
             fontWeight: hasLength ? FontWeight.w600 : FontWeight.normal,
@@ -476,10 +465,9 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 side: BorderSide(color: Colors.grey.shade400, width: 1.5),
-                onChanged: (v) =>
-                    context.read<CoParentRegisterCubit>().changeProps(
-                      isTermsAccepted: v ?? false,
-                    ),
+                onChanged: (v) => context
+                    .read<CoParentRegisterCubit>()
+                    .changeProps(isTermsAccepted: v ?? false),
               ),
             ),
           ),
@@ -540,7 +528,10 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: submitting
-                ? [primaryColor.withValues(alpha: 0.6), primaryColor.withValues(alpha: 0.6)]
+                ? [
+                    primaryColor.withValues(alpha: 0.6),
+                    primaryColor.withValues(alpha: 0.6),
+                  ]
                 : [primaryColor, primaryColor.withValues(alpha: 0.85)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,

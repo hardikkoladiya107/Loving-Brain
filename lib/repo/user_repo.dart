@@ -89,13 +89,10 @@ class UserRepo {
 
     // ✅ Then upsert to Firestore (safe for new documents too)
     try {
-      await userCollection.doc(localUser.uid).set(
-        {
-          'streak': newStreak,
-          'last_streak_update': today,
-        },
-        SetOptions(merge: true),
-      );
+      await userCollection.doc(localUser.uid).set({
+        'streak': newStreak,
+        'last_streak_update': today,
+      }, SetOptions(merge: true));
       print("☁️ Synced streak with Firestore successfully");
     } catch (e) {
       print("⚠️ Failed to sync streak to Firestore: $e");
@@ -118,10 +115,9 @@ class UserRepo {
 
     // ✅ Upsert to Firestore (set with merge = create if not exists, update if exists)
     try {
-      await userCollection.doc(localUser.uid).set(
-        {'is_notification': updatedUser.isNotification},
-        SetOptions(merge: true),
-      );
+      await userCollection.doc(localUser.uid).set({
+        'is_notification': updatedUser.isNotification,
+      }, SetOptions(merge: true));
     } catch (e) {
       print("⚠️ Failed to update to Firestore: $e");
     }
@@ -215,6 +211,37 @@ class UserRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    }
+  }
+
+  /// Swaps active logger between co-parents without resetting Energy Bridge.
+  Future<ApiResultStatus> transferActiveLogger({
+    required String currentUid,
+    required String partnerUid,
+  }) async {
+    try {
+      if (currentUid.isEmpty || partnerUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final WriteBatch batch = FirebaseFirestore.instance.batch();
+      batch.update(userCollection.doc(currentUid), <String, dynamic>{
+        'is_active_logger': false,
+        'partner_user_id': partnerUid,
+      });
+      batch.update(userCollection.doc(partnerUid), <String, dynamic>{
+        'is_active_logger': true,
+        'partner_user_id': currentUid,
+      });
+      await batch.commit();
+      return ApiResultStatus.data(data: partnerUid);
+    } on FirebaseException catch (e) {
+      return onFirebaseException(e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
     }
   }
 }

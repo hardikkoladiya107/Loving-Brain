@@ -24,6 +24,14 @@ class NotificationUtil {
 
   static Future<void> initializePlatformNotifications() async {
     await _requestPermissionIfNeeded();
+    if (Platform.isIOS) {
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    }
     tz.initializeTimeZones();
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@drawable/ic_notification_icon');
@@ -207,7 +215,13 @@ class NotificationUtil {
     await _localNotifications.getNotificationAppLaunchDetails();
     NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: DarwinNotificationDetails(presentSound: sound),
+      iOS: DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: sound,
+        presentBanner: true,
+        presentList: true,
+      ),
     );
     return platformChannelSpecifics;
   }

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io' as io;
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 
 import '../generated/locale_keys.g.dart';
@@ -14,6 +14,7 @@ import '../model/api_result_status.dart';
 import '../env/env.dart';
 import '../model/invitation_model.dart';
 import 'child_repo.dart';
+import 'user_repo.dart';
 
 class CoParentRepo {
   CoParentRepo._();
@@ -37,14 +38,13 @@ class CoParentRepo {
   var userCollection = FirebaseFirestore.instance.collection('users');
 
   // ──────────────────────────────────────────────────────────────────────────
-  // BREVO — replace with your real API key when available.
-  // The key is intentionally stored here as a placeholder; move it to a
-  // secrets file or remote config before release.
+  // Brevo transactional email — API key from Env; sender must be verified in Brevo.
   // ──────────────────────────────────────────────────────────────────────────
   static final String _brevoApiKey = Env.brevoApiKey;
-  static const String _brevoSendUrl =
-      'https://api.brevo.com/v3/smtp/email';
-  static const String _senderEmail = 'ibuildmvp.com';
+  static const String _brevoSendUrl = 'https://api.brevo.com/v3/smtp/email';
+
+  /// Must match a verified sender domain in the Brevo dashboard.
+  static const String _senderEmail = 'noreply@lovingbrain.com';
   static const String _senderName = 'Loving Brain';
 
   Future<ApiResultStatus> addSharedEvent({
@@ -125,6 +125,8 @@ class CoParentRepo {
     }
   }
 
+  /// Creates a pending invitation in Firestore (`co-parent-invitation` collection).
+  /// Caller should then call [sendInvitationEmail] with the returned document id.
   Future<ApiResultStatus> createInvitation({
     required Map<String, dynamic> request,
   }) async {
@@ -155,9 +157,10 @@ class CoParentRepo {
   }) async {
     try {
       final String invitationLink =
-          'https://www.lovingbrain.com/$invitationId';
+          CoParentInvitationHelpers.buildInvitationLink(invitationId);
 
-      final String htmlContent = '''
+      final String htmlContent =
+          '''
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,94 +287,125 @@ class CoParentRepo {
     }
   }
 
+  /// Accepts a co-parent invitation: links shared children, updates the co-parent
+  /// user document, then marks the invitation ACCEPTED.
+  ///
+  /// Child/user updates run **before** status changes so a partial failure leaves
+  /// the invitation in REQUESTED state and the co-parent can retry.
   Future<ApiResultStatus> addUserAsCoParent(
     String invitationReferenceId,
   ) async {
     try {
-      final response = await coParentInvitationCollection
-          .doc(invitationReferenceId)
-          .get();
+      final DocumentSnapshot<Map<String, dynamic>> response =
+          await coParentInvitationCollection.doc(invitationReferenceId).get();
       final Map<String, dynamic>? data = response.data();
       if (data == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.thisInvitationIsNotForYou.tr()),
         );
       }
+
       final InvitationModel invitationModel = InvitationModel.fromJson(data);
       final UserModel? userModel = preferences.getUserModel();
 
-      // Guard: invitation must be REQUESTED and email must match
-      final String invitedEmail = (invitationModel.toParent ?? '').trim().toLowerCase();
-      final String loggedEmail = (userModel?.email ?? '').trim().toLowerCase();
-      if (loggedEmail != invitedEmail) {
+      final String? validationKey =
+          CoParentInvitationHelpers.validateInvitationForAccept(
+            invitedEmail: invitationModel.toParent,
+            loggedInEmail: userModel?.email,
+            invitationStatus: invitationModel.status,
+          );
+      if (validationKey != null) {
         return ApiResultStatus.error(
-          error: Exception(LocaleKeys.thisInvitationIsNotForYou.tr()),
+          error: Exception(_localizedInvitationError(validationKey)),
         );
       }
-      if (invitationModel.status != 'REQUESTED') {
+
+      final String? parentUid = userModel?.uid;
+      if (parentUid == null || parentUid.isEmpty) {
         return ApiResultStatus.error(
-          error: Exception(LocaleKeys.invitationAlreadyUsed.tr()),
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
 
-      // Mark invitation as ACCEPTED
-      await updateInvitation(
-        referenceId: invitationReferenceId,
-        request: {'status': 'ACCEPTED'},
-        invitationModel: invitationModel,
-      );
+      final List<String> childIds =
+          CoParentInvitationHelpers.parseChildIdsFromCsv(
+            invitationModel.children,
+          );
+      if (childIds.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
 
-      final String? parentUid = userModel!.uid;
-      if (parentUid != null && parentUid.isNotEmpty) {
-        final String? childrenStr = invitationModel.children;
-        if (childrenStr != null && childrenStr.trim().isNotEmpty) {
-          final List<String> childIds = childrenStr
-              .split(',')
-              .map((e) => e.trim())
-              .where((e) => e.isNotEmpty)
-              .toList();
+      // Step 1 — link each child to the accepting co-parent.
+      final List<DocumentReference> childRefs = <DocumentReference>[];
+      for (final String childId in childIds) {
+        final ApiResultStatus linkResult = await ChildRepo.instance
+            .addParentReference(childId: childId, parentUid: parentUid);
+        Exception? linkError;
+        linkResult.whenOrNull(error: (Exception error) => linkError = error);
+        if (linkError != null) {
+          return ApiResultStatus.error(error: linkError!);
+        }
+        childRefs.add(
+          FirebaseFirestore.instance.collection('children').doc(childId),
+        );
+      }
 
-          final List<DocumentReference> childRefs = [];
-          for (final String childId in childIds) {
-            // Add co-parent UID to child's parent_reference_ids
-            await ChildRepo.instance.addParentReference(
-              childId: childId,
-              parentUid: parentUid,
-            );
-            childRefs.add(
-              FirebaseFirestore.instance.collection('children').doc(childId),
-            );
-          }
+      // Step 2 — add child refs to the co-parent user doc (so children appear in their app).
+      final DocumentSnapshot<Map<String, dynamic>> coParentDoc =
+          await userCollection.doc(parentUid).get();
+      final Map<String, dynamic>? coParentData = coParentDoc.data();
+      final bool hasDefaultChild = coParentData?['default_child'] != null;
 
-          // BUG FIX: also add child refs to co-parent's user doc so they
-          // appear in the co-parent's own children list.
-          final DocumentSnapshot<Map<String, dynamic>> coParentDoc =
-              await userCollection.doc(parentUid).get();
-          final Map<String, dynamic>? coParentData = coParentDoc.data();
-          final bool hasDefaultChild =
-              coParentData?['default_child'] != null;
+      final Map<String, dynamic> userUpdate = <String, dynamic>{
+        'children': FieldValue.arrayUnion(childRefs),
+      };
+      if (!hasDefaultChild && childRefs.isNotEmpty) {
+        userUpdate['default_child'] = childRefs.first;
+      }
+      await userCollection.doc(parentUid).update(userUpdate);
 
-          final Map<String, dynamic> userUpdate = {
-            'children': FieldValue.arrayUnion(childRefs),
-          };
-          if (!hasDefaultChild && childRefs.isNotEmpty) {
-            userUpdate['default_child'] = childRefs.first;
-          }
-          await userCollection.doc(parentUid).update(userUpdate);
-
-          // Refresh and persist the updated UserModel
-          final DocumentSnapshot<Map<String, dynamic>> freshDoc =
-              await userCollection.doc(parentUid).get();
-          if (freshDoc.exists && freshDoc.data() != null) {
-            final Map<String, dynamic> freshData = freshDoc.data()!;
-            freshData['uid'] = parentUid;
-            final UserModel updatedUser = UserModel.fromJson(freshData);
-            await preferences.saveUserModel(updatedUser);
-          }
+      // Step 2b — link partners and set active logger (inviter logs, acceptor views).
+      final String? inviterEmail = invitationModel.fromParent?.trim();
+      if (inviterEmail != null && inviterEmail.isNotEmpty) {
+        final UserModel? inviterUser =
+            await UserRepo.instance.getUserFromEmail(email: inviterEmail);
+        final String? inviterUid = inviterUser?.uid;
+        if (inviterUid != null && inviterUid.isNotEmpty) {
+          final WriteBatch partnerBatch = FirebaseFirestore.instance.batch();
+          partnerBatch.update(userCollection.doc(inviterUid), <String, dynamic>{
+            'partner_user_id': parentUid,
+            'is_active_logger': true,
+          });
+          partnerBatch.update(userCollection.doc(parentUid), <String, dynamic>{
+            'partner_user_id': inviterUid,
+            'is_active_logger': false,
+          });
+          await partnerBatch.commit();
         }
       }
 
-      return ApiResultStatus.data(data: invitationModel);
+      // Step 3 — refresh cached user model for the current session.
+      final DocumentSnapshot<Map<String, dynamic>> freshDoc =
+          await userCollection.doc(parentUid).get();
+      if (freshDoc.exists && freshDoc.data() != null) {
+        final Map<String, dynamic> freshData = freshDoc.data()!;
+        freshData['uid'] = parentUid;
+        final UserModel updatedUser = UserModel.fromJson(freshData);
+        await preferences.saveUserModel(updatedUser);
+      }
+
+      // Step 4 — mark invitation accepted only after all linking succeeded.
+      await coParentInvitationCollection.doc(invitationReferenceId).update(
+        <String, dynamic>{'status': CoParentInvitationHelpers.statusAccepted},
+      );
+
+      return ApiResultStatus.data(
+        data: invitationModel.copyWith(
+          status: CoParentInvitationHelpers.statusAccepted,
+        ),
+      );
     } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -380,6 +414,18 @@ class CoParentRepo {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
+    }
+  }
+
+  String _localizedInvitationError(String validationKey) {
+    switch (validationKey) {
+      case 'deepLinkInvitationInvalidEmail':
+        return LocaleKeys.deepLinkInvitationInvalidEmail.tr();
+      case 'invitationAlreadyUsed':
+        return LocaleKeys.invitationAlreadyUsed.tr();
+      case 'thisInvitationIsNotForYou':
+      default:
+        return LocaleKeys.thisInvitationIsNotForYou.tr();
     }
   }
 
@@ -419,7 +465,7 @@ class CoParentRepo {
   }
 
   Future<ApiResultStatus> uploadFileToFirebaseStorage({
-    required File file,
+    required io.File file,
     required String? referenceId,
   }) async {
     try {
