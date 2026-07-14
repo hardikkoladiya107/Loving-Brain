@@ -33,4 +33,6 @@ firebase deploy --only functions
 | Smart Moment → Yes | Opens milestone story | ☐ |
 | I saw it | Generates + saves to Journey | ☐ |
 | Chapter unlock | Saved milestone unlocks matching chapter | ☐ |
-| Export | All 5 chapters → export ready message | ☐ |
+| Export | All 5 chapters → share PDF via system sheet | ☐ |
+| Milestone picker | Smart Moment Yes → choose milestone type | ☐ |
+| Help 3 suggestions | Each problem × age band returns 3 options | ☐ |

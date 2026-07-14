@@ -58,13 +58,39 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
     if (!type) {
       return res.status(400).send("Missing type");
     }
-    if (type !== "routine" && type !== "shared_event") {
+    if (type !== "routine" &&
+        type !== "shared_event" &&
+        type !== "energy_bridge") {
       return res.status(400).send("Invalid type");
     }
 
     logger.info("Received scheduled notification task", {type, docId});
 
-    if (type === "routine") {
+    if (type === "energy_bridge") {
+      if (!childId) {
+        return res.status(400).send("Missing childId");
+      }
+      const timerRef = db.collection("energy_bridge").doc(childId);
+      const timerSnap = await timerRef.get();
+      if (!timerSnap.exists) {
+        logger.warn("Energy bridge timer no longer exists, skipping");
+        return res.status(200).send("OK");
+      }
+      const timerData = timerSnap.data() || {};
+      if (timerData.is_active !== true || timerData.fired === true) {
+        logger.info("Energy bridge timer inactive or already fired, skipping", {
+          childId,
+        });
+        return res.status(200).send("OK");
+      }
+      await timerRef.set({
+        is_active: false,
+        fired: true,
+        fired_at: admin.firestore.FieldValue.serverTimestamp(),
+        updated_at: admin.firestore.FieldValue.serverTimestamp(),
+      }, {merge: true});
+      logger.info("Energy bridge timer marked fired by scheduler", {childId});
+    } else if (type === "routine") {
       if (!childId) {
         return res.status(400).send("Missing childId");
       }

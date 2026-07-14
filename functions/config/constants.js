@@ -25,9 +25,9 @@ const NOTIFICATION_COPY = {
     TITLE: "Streak update",
     BODY: "Don't forget to check in today to keep your streak alive!",
   },
-  /** Energy Bridge fired reminder. */
+  /** Energy Bridge fired reminder (Sprint 1 + Content Guide). */
   ENERGY_BRIDGE: {
-    TITLE: "Energy Bridge",
+    TITLE: "LovingBrain \u26a1",
     BODY: "Time to slow things down and begin a calming transition.",
   },
 };

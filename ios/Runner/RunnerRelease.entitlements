@@ -11,6 +11,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:lovingbrain.com</string>
+		<string>applinks:www.lovingbrain.com</string>
 	</array>
 </dict>
 </plist>

@@ -16,6 +16,9 @@ const {
 const {onRoutineWrite} = require("./triggers/routineTriggers");
 const {onSharedEventWrite} = require("./triggers/eventTriggers");
 const {onEnergyBridgeWrite} = require("./triggers/energyBridgeTriggers");
+const {onEnergyBridgeSchedule} = require(
+    "./triggers/energyBridgeSchedulerTriggers",
+);
 const {onUserDelete} = require("./triggers/userTriggers");
 
 exports.sendScheduledNotification = sendScheduledNotification;
@@ -24,4 +27,5 @@ exports.sendPushNotification = sendPushNotification;
 exports.onRoutineWrite = onRoutineWrite;
 exports.onSharedEventWrite = onSharedEventWrite;
 exports.onEnergyBridgeWrite = onEnergyBridgeWrite;
+exports.onEnergyBridgeSchedule = onEnergyBridgeSchedule;
 exports.onUserDelete = onUserDelete;

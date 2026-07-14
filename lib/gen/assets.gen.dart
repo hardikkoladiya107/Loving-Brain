@@ -14,6 +14,9 @@ import 'package:flutter/widgets.dart';
 class $AssetsContentGen {
   const $AssetsContentGen();
 
+  /// File path: assets/content/milestones.json
+  String get milestones => 'assets/content/milestones.json';
+
   /// File path: assets/content/part4_help_guidance.json
   String get part4HelpGuidance => 'assets/content/part4_help_guidance.json';
 
@@ -21,7 +24,11 @@ class $AssetsContentGen {
   String get smartMomentContent => 'assets/content/smart_moment_content.json';
 
   /// List of all assets
-  List<String> get values => [part4HelpGuidance, smartMomentContent];
+  List<String> get values => [
+    milestones,
+    part4HelpGuidance,
+    smartMomentContent,
+  ];
 }
 
 class $AssetsHtmlGen {
