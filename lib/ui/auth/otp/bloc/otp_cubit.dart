@@ -81,8 +81,8 @@ class OtpCubit extends Cubit<OtpState> {
       changeProps(otpError: 'Please enter verification code');
       return;
     }
-    if (code.length < 6) {
-      changeProps(otpError: 'Please enter 6-digit verification code');
+    if (code.length < 4) {
+      changeProps(otpError: 'Please enter 4-digit verification code');
       return;
     }
 
