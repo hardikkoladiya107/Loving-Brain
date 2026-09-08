@@ -132,6 +132,15 @@ class _OtpScreenState extends State<OtpScreen> {
                         )
                         .appPadding(left: 20.r, right: 20.r),
                   ],
+                  16.spaceH,
+                  "Retry in 10s".appText().appPadding(left: 20.r, right: 20.r),
+                  "Kindly check if mobile number entered is correct"
+                      .appText(
+                        textAlign: TextAlign.start,
+                        color: greyColor3,
+                        fontSize: 14,
+                      )
+                      .appPadding(left: 20.r, right: 20.r),
                   const Spacer(),
                   AppButton(
                     onTap: () {

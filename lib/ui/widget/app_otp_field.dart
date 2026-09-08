@@ -77,7 +77,7 @@ class AppOtpField extends StatefulWidget {
   /// Border color when `hasError` is true (defaults to `Colors.red.shade400`).
   final Color? errorBorderColor;
 
-  /// Border color when a box is inactive and not in error (defaults to transparent).
+  /// Border color when a box is inactive and not in error (defaults to `greyColor`).
   final Color? defaultBorderColor;
 
   /// Border width (defaults to `1.5`).
@@ -315,8 +315,8 @@ class _AppOtpFieldState extends State<AppOtpField> {
 
   @override
   Widget build(BuildContext context) {
-    final double defaultBoxWidth = 56.w;
-    final double defaultBoxHeight = 56.h;
+    final double defaultBoxWidth = 56.r;
+    final double defaultBoxHeight = 56.r;
     final double defaultSpacing = 14.w;
     final BorderRadius defaultRadius = BorderRadius.circular(16.r);
 
@@ -337,8 +337,8 @@ class _AppOtpFieldState extends State<AppOtpField> {
             fillColor: widget.fillColor ?? Colors.white,
             activeBorderColor: widget.activeBorderColor ?? primaryColor,
             errorBorderColor: widget.errorBorderColor ?? Colors.red.shade400,
-            defaultBorderColor: widget.defaultBorderColor ?? Colors.transparent,
-            borderWidth: widget.borderWidth ?? 1.5,
+            defaultBorderColor: widget.defaultBorderColor ?? greyColor2,
+            borderWidth: widget.borderWidth ?? 1,
             textStyle:
                 widget.textStyle ??
                 getTextStyle(
