@@ -8,6 +8,7 @@ import 'package:loving_brain/ui/auth/welcome/welcome_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
 import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/onboarding/onboarding_screen.dart';
+import 'package:loving_brain/ui/onboarding_snapshot/onboarding_snapshot_screen.dart';
 import 'package:loving_brain/ui/base_screen/base_screen.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
 import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
@@ -66,6 +67,7 @@ class AppRouter {
           RoutePaths.splash,
           RoutePaths.welcome,
           RoutePaths.onboarding,
+          RoutePaths.onboardingSnapshot,
           RoutePaths.login,
           RoutePaths.register,
           RoutePaths.otp,
@@ -273,6 +275,11 @@ class AppRouter {
           path: RoutePaths.onboarding,
           builder: (BuildContext context, GoRouterState state) =>
               const OnboardingScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.onboardingSnapshot,
+          builder: (BuildContext context, GoRouterState state) =>
+              const OnboardingSnapshotScreen(),
         ),
         GoRoute(
           path: RoutePaths.otp,
