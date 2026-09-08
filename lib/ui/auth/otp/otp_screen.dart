@@ -144,7 +144,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   const Spacer(),
                   AppButton(
                     onTap: () {
-                      // context.go(RoutePaths.o);
+                        context.go(RoutePaths.onboarding);
                     },
                     title: "Continue",
                   ),

@@ -27,6 +27,7 @@ class AppTextField extends StatefulWidget {
     this.contentPadding,
     this.borderRadius,
     this.focusNode,
+    this.border,
     this.fillColor = Colors.white,
     this.tfType = TFTYPE.FILLED,
     this.showAddButton = false,
@@ -72,6 +73,7 @@ class AppTextField extends StatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final BorderRadius? borderRadius;
   final FocusNode? focusNode;
+  final BoxBorder? border;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -133,9 +135,13 @@ class _AppTextFieldState extends State<AppTextField> {
     final BoxDecoration containerDecoration = BoxDecoration(
       color: widget.filled ? widget.fillColor : Colors.transparent,
       borderRadius: containerRadius,
-      border: widget.tfType == TFTYPE.FILLED
-          ? null
-          : Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
+      border:
+          widget.border ??
+          (widget.tfType == TFTYPE.FILLED
+              ? null
+              : Border(
+                  bottom: BorderSide(color: Colors.grey.shade300, width: 1.5),
+                )),
     );
 
     final EdgeInsetsGeometry effectivePadding =
