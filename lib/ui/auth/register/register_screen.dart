@@ -53,7 +53,16 @@ class _RegisterScreenState extends State<RegisterScreen>
                   "We only ask for what we need to make your first suggestion useful."
                       .appText(textAlign: TextAlign.start, fontSize: 14)
                       .appPadding(left: 20.r, right: 20.r),
-                  AppTextField(),
+                  21.spaceH,
+                  AppTextField(
+                    title: "Phone number",
+                    hint: "Enter mobile number",
+                  ).appPadding(left: 20.r, right: 20.r),
+                  12.spaceH,
+                  AppTextField(
+                    title: "Email",
+                    hint: "Enter email",
+                  ).appPadding(left: 20.r, right: 20.r),
                   32.spaceH,
                   Row(
                     children: [
@@ -108,7 +117,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                     ),
                   ),
                   Spacer(),
-                  AppButton(onTap: () {}, title: "Continue"),
+                  AppButton(
+                    onTap: () {
+                      context.go(RoutePaths.base);
+                    },
+                    title: "Continue",
+                  ),
                   32.spaceH,
                 ],
               ),

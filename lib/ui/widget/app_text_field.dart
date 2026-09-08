@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
 
 class AppTextField extends StatefulWidget {
   const AppTextField({
@@ -18,7 +20,13 @@ class AppTextField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.titleFontSize,
+    this.titleColor,
+    this.titleStyle,
+    this.titleUppercase = true,
+    this.style,
     this.contentPadding,
+    this.borderRadius,
+    this.focusNode,
     this.fillColor = Colors.white,
     this.tfType = TFTYPE.FILLED,
     this.showAddButton = false,
@@ -36,6 +44,10 @@ class AppTextField extends StatefulWidget {
   final String? title;
   final String? error;
   final double? titleFontSize;
+  final Color? titleColor;
+  final TextStyle? titleStyle;
+  final bool titleUppercase;
+  final TextStyle? style;
   final double? height;
   final int? maxLines;
   final int? minLines;
@@ -57,93 +69,228 @@ class AppTextField extends StatefulWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final TFTYPE? tfType;
-  final EdgeInsets? contentPadding;
+  final EdgeInsetsGeometry? contentPadding;
+  final BorderRadius? borderRadius;
+  final FocusNode? focusNode;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }
 
 class _AppTextFieldState extends State<AppTextField> {
+  FocusNode? _focusNode;
+
+  FocusNode get _effectiveFocusNode =>
+      widget.focusNode ?? (_focusNode ??= FocusNode());
+
+  @override
+  void didUpdateWidget(covariant AppTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.focusNode != oldWidget.focusNode) {
+      if (oldWidget.focusNode == null && widget.focusNode != null) {
+        _focusNode?.dispose();
+        _focusNode = null;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bool hasTitle =
+        widget.title != null && widget.title!.trim().isNotEmpty;
+    final bool isMultiline =
+        (widget.minLines != null && widget.minLines! > 1) ||
+        (widget.maxLines != null && widget.maxLines! > 1);
+
+    Widget? trailingIcon = widget.suffixIcon;
+    if (trailingIcon == null) {
+      if (widget.showAddButton) {
+        trailingIcon = BaseButton(
+          onTap: widget.onAddButtonTap,
+          child: Icon(Icons.add, color: primaryColor, size: 22.r),
+        );
+      } else if (widget.showInfoButton) {
+        trailingIcon = Icon(
+          Icons.info_outline,
+          color: const Color(0xFFADB5BD),
+          size: 20.r,
+        );
+      }
+    }
+
+    final BorderRadius containerRadius =
+        widget.borderRadius ??
+        (widget.tfType == TFTYPE.FILLED
+            ? BorderRadius.circular(24.r)
+            : BorderRadius.zero);
+
+    final BoxDecoration containerDecoration = BoxDecoration(
+      color: widget.filled ? widget.fillColor : Colors.transparent,
+      borderRadius: containerRadius,
+      border: widget.tfType == TFTYPE.FILLED
+          ? null
+          : Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1.5)),
+    );
+
+    final EdgeInsetsGeometry effectivePadding =
+        widget.contentPadding ??
+        EdgeInsets.only(
+          left: 22.w,
+          right: trailingIcon != null ? 12.w : 22.w,
+          top: hasTitle ? 14.h : 16.h,
+          bottom: hasTitle ? 14.h : 16.h,
+        );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.title != null)
-          Column(
-            children: [
-              Row(
-                children: [
-                  (widget.title ?? "").appText(
-                    fontSize: widget.titleFontSize ?? 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ],
-              ),
-              6.spaceH,
-            ],
-          ),
-        Theme(
-          data: Theme.of(context).copyWith(
-            textSelectionTheme: TextSelectionThemeData(
-              cursorColor: primaryColor,
-              selectionColor: primaryColor.withValues(alpha: 0.5),
-              selectionHandleColor: primaryColor,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            if (widget.onFieldTap != null) {
+              widget.onFieldTap!();
+            }
+            if (!(widget.readOnly ?? false)) {
+              _effectiveFocusNode.requestFocus();
+            }
+          },
+          child: Container(
+            height: widget.height,
+            constraints: BoxConstraints(
+              minHeight: widget.height ?? (hasTitle ? 72.h : 54.h),
             ),
-          ),
-          child: TextField(
-            textAlignVertical: TextAlignVertical.center,
-            readOnly: widget.readOnly ?? false,
-            enabled: !(widget.readOnly ?? false),
-            keyboardType: widget.keyboardType,
-            controller: widget.controller,
-            maxLines: widget.maxLines,
-            minLines: widget.minLines,
-            obscureText: widget.obscureText,
-            onChanged: widget.onChanged,
-            onTap: () {
-              if (widget.onFieldTap != null) {
-                widget.onFieldTap!();
-              }
-            },
-            style: getTextStyle(fontSize: 14),
-            inputFormatters: widget.inputFormatters,
-            decoration: InputDecoration(
-              contentPadding:
-                  widget.contentPadding ??
-                  EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-              prefixIcon: widget.prefixIcon,
-              suffixIcon: widget.suffixIcon,
-              hintText: widget.hint,
-              hintStyle:
-                  widget.hintStyle ??
-                  getTextStyle(fontSize: 14, color: Colors.grey.shade400),
-              filled: widget.filled,
-              fillColor: widget.fillColor,
-              border: widget.tfType == TFTYPE.FILLED
-                  ? OutlineInputBorder(
-                      borderSide: BorderSide.none, // Removes the visible border
-                      borderRadius: BorderRadius.circular(10),
-                    )
-                  : UnderlineInputBorder(),
+            padding: effectivePadding,
+            decoration: containerDecoration,
+            child: Row(
+              crossAxisAlignment: isMultiline
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
+              children: <Widget>[
+                if (widget.prefixIcon != null) ...<Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: isMultiline && hasTitle ? 4.h : 0,
+                    ),
+                    child: widget.prefixIcon!,
+                  ),
+                  12.w.spaceW,
+                ],
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      if (hasTitle) ...<Widget>[
+                        Text(
+                          widget.titleUppercase
+                              ? widget.title!.toUpperCase()
+                              : widget.title!,
+                          style:
+                              widget.titleStyle ??
+                              getTextStyle(
+                                fontSize: (widget.titleFontSize ?? 11).sp,
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    widget.titleColor ??
+                                    const Color(0xFFADB5BD),
+                                letterSpacing: 0.8,
+                              ),
+                          textAlign: TextAlign.start,
+                        ),
+                        4.h.spaceH,
+                      ],
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                          textSelectionTheme: TextSelectionThemeData(
+                            cursorColor: primaryColor,
+                            selectionColor: primaryColor.withValues(alpha: 0.5),
+                            selectionHandleColor: primaryColor,
+                          ),
+                        ),
+                        child: TextField(
+                          focusNode: _effectiveFocusNode,
+                          textAlignVertical: isMultiline
+                              ? TextAlignVertical.top
+                              : TextAlignVertical.center,
+                          readOnly: widget.readOnly ?? false,
+                          enabled: !(widget.readOnly ?? false),
+                          keyboardType: widget.keyboardType,
+                          controller: widget.controller,
+                          maxLines: widget.obscureText ? 1 : widget.maxLines,
+                          minLines: widget.obscureText ? 1 : widget.minLines,
+                          obscureText: widget.obscureText,
+                          onChanged: widget.onChanged,
+                          onTap: () {
+                            if (widget.onFieldTap != null) {
+                              widget.onFieldTap!();
+                            }
+                          },
+                          style:
+                              widget.style ??
+                              getTextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF212529),
+                              ),
+                          inputFormatters: widget.inputFormatters,
+                          cursorColor: primaryColor,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: widget.hint,
+                            hintStyle:
+                                widget.hintStyle ??
+                                getTextStyle(
+                                  fontSize: 16.sp,
+                                  color: const Color(0xFFADB5BD),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                            filled: false,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (trailingIcon != null) ...<Widget>[
+                  10.w.spaceW,
+                  trailingIcon,
+                ],
+              ],
             ),
           ),
         ),
-        if (widget.showError)
-          Column(
-            children: [
-              4.spaceH,
-              Row(
-                children: [
-                  (widget.error ?? "").appText(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
-                  ),
-                ],
-              ),
-            ],
+        if (widget.showError &&
+            widget.error != null &&
+            widget.error!.trim().isNotEmpty) ...<Widget>[
+          6.h.spaceH,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Row(
+              children: <Widget>[
+                widget.error!.appText(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.red,
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
           ),
+        ],
       ],
     );
   }
