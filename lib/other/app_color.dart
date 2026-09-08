@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 //NEW NEW
 const primaryColor = Color(0xFFF06D4D);
 const greyColor = Color(0xff495057);
+const greyColor2 = Color(0xffCED4DA);
 
 
 
@@ -47,7 +48,7 @@ const pendingColor = Color(0xFFFF9561);
 const blueColor1 = Color(0xFF247FC3);
 const blueColor2 = Color(0xFF7054FF);
 const yellowColor = Color(0xFFEBDD80);
-const greyColor2 = Color(0xFFC5C5C5);
+
 const greenPlayButtonColor = Color(0xFF8AC926);
 const purpleColor = Color(0xFFAE96C0);
 const blueColor = Color(0xFF2C378D);

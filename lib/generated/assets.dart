@@ -23,9 +23,6 @@ class $AssetsIconsGen {
   final AssetGenImage icAnimalWalkChallengeIcon = const AssetGenImage(
     'assets/icons/ic_animal_walk_challenge_icon.png',
   );
-  final AssetGenImage icAppleIcon = const AssetGenImage(
-    'assets/icons/ic_apple_icon.png',
-  );
   final AssetGenImage icApproveIcon = const AssetGenImage(
     'assets/icons/ic_approve_icon.png',
   );
@@ -109,9 +106,6 @@ class $AssetsIconsGen {
   );
   final AssetGenImage icForwardIcon2 = const AssetGenImage(
     'assets/icons/ic_forward_icon2.png',
-  );
-  final AssetGenImage icGoogleIcon = const AssetGenImage(
-    'assets/icons/ic_google_icon.png',
   );
   final AssetGenImage icHappyIcon = const AssetGenImage(
     'assets/icons/ic_happy_icon.png',
@@ -492,6 +486,13 @@ class $AssetsIconsGen {
 
   final SvgGenImage icAppIcon = const SvgGenImage(
     'assets/v2/icons/ic_app_icon.svg',
+  );
+  final AssetGenImage icAppleIcon = const AssetGenImage(
+    'assets/v2/icons/ic_apple_icon.png',
+  );
+  final SvgGenImage icBack = const SvgGenImage('assets/v2/icons/ic_back.svg');
+  final AssetGenImage icGoogleIcon = const AssetGenImage(
+    'assets/v2/icons/ic_google_icon.png',
   );
   final SvgGenImage icLovingBrainText = const SvgGenImage(
     'assets/v2/icons/ic_loving_brain_text.svg',

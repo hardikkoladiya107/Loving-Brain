@@ -58,10 +58,6 @@ class $AssetsIconsGen {
   AssetGenImage get icAnimalWalkChallengeIcon =>
       const AssetGenImage('assets/icons/ic_animal_walk_challenge_icon.png');
 
-  /// File path: assets/icons/ic_apple_icon.png
-  AssetGenImage get icAppleIcon =>
-      const AssetGenImage('assets/icons/ic_apple_icon.png');
-
   /// File path: assets/icons/ic_approve_icon.png
   AssetGenImage get icApproveIcon =>
       const AssetGenImage('assets/icons/ic_approve_icon.png');
@@ -172,10 +168,6 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_forward_icon2.png
   AssetGenImage get icForwardIcon2 =>
       const AssetGenImage('assets/icons/ic_forward_icon2.png');
-
-  /// File path: assets/icons/ic_google_icon.png
-  AssetGenImage get icGoogleIcon =>
-      const AssetGenImage('assets/icons/ic_google_icon.png');
 
   /// File path: assets/icons/ic_happy_icon.png
   AssetGenImage get icHappyIcon =>
@@ -405,7 +397,6 @@ class $AssetsIconsGen {
   List<AssetGenImage> get values => [
     icAiIcon,
     icAnimalWalkChallengeIcon,
-    icAppleIcon,
     icApproveIcon,
     icAttachmentPin,
     icBackIcon,
@@ -434,7 +425,6 @@ class $AssetsIconsGen {
     icForwardArrow,
     icForwardIcon,
     icForwardIcon2,
-    icGoogleIcon,
     icHappyIcon,
     icHeartIcon,
     icHomeIcon,
@@ -814,6 +804,17 @@ class $AssetsV2IconsGen {
   SvgGenImage get icAppIcon =>
       const SvgGenImage('assets/v2/icons/ic_app_icon.svg');
 
+  /// File path: assets/v2/icons/ic_apple_icon.png
+  AssetGenImage get icAppleIcon =>
+      const AssetGenImage('assets/v2/icons/ic_apple_icon.png');
+
+  /// File path: assets/v2/icons/ic_back.svg
+  SvgGenImage get icBack => const SvgGenImage('assets/v2/icons/ic_back.svg');
+
+  /// File path: assets/v2/icons/ic_google_icon.png
+  AssetGenImage get icGoogleIcon =>
+      const AssetGenImage('assets/v2/icons/ic_google_icon.png');
+
   /// File path: assets/v2/icons/ic_loving_brain_text.svg
   SvgGenImage get icLovingBrainText =>
       const SvgGenImage('assets/v2/icons/ic_loving_brain_text.svg');
@@ -823,8 +824,11 @@ class $AssetsV2IconsGen {
       const SvgGenImage('assets/v2/icons/ic_loving_brain_text2.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [
+  List<dynamic> get values => [
     icAppIcon,
+    icAppleIcon,
+    icBack,
+    icGoogleIcon,
     icLovingBrainText,
     icLovingBrainText2,
   ];

@@ -33,6 +33,37 @@ extension extOnString on String {
     );
   }
 
+  Widget appText2({
+    double? fontSize,
+    Color? color,
+    FontWeight? fontWeight,
+    double? letterSpacing,
+    TextAlign? textAlign,
+    FontStyle? fontStyle,
+    int? maxLines,
+    TextOverflow? overflow,
+    TextDecoration? textDecoration,
+    double? height,
+    TextStyle? textStyle,
+  }) {
+    return Text(
+      this,
+      maxLines: maxLines,
+      overflow: overflow,
+      textAlign: textAlign ?? TextAlign.center,
+      style: textStyle ?? getTextStyle2(
+        fontSize: (fontSize ?? 16).sp,
+        color: color,
+        fontStyle: fontStyle,
+        textDecoration: textDecoration,
+        fontWeight: fontWeight ?? FontWeight.normal,
+        letterSpacing: letterSpacing ?? 1,
+        height: height,
+      ),
+    );
+  }
+
+
   String replaceAll2(String from, String replace) {
     if (replace.isNotEmpty) {
       return replaceAll(from, replace);

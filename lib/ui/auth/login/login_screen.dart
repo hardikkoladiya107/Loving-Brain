@@ -220,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Assets.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
+            // Assets.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             if (isLoading)
               SizedBox(
@@ -271,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Assets.icons.icAppleIcon.image(height: 24.w, width: 24.w),
+            // Assets.icons.icAppleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             if (isLoading)
               SizedBox(
