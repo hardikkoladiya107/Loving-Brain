@@ -26,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen> {
         context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
       });
     });
-
     super.initState();
   }
 
@@ -44,18 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(),
-            240.spaceH,
-            LocaleKeys.appName.tr().appText(
-              fontWeight: FontWeight.w900,
-              color: Colors.white,
-              fontSize: 30,
-            ),
-            10.spaceH,
-            LocaleKeys.yourPersonalParentingCoPilot.tr().appText(
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
+
           ],
         ),
       ),

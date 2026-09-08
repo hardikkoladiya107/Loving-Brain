@@ -794,6 +794,23 @@ class $AssetsTranslationsGen {
   List<String> get values => [en];
 }
 
+class $AssetsV2Gen {
+  const $AssetsV2Gen();
+
+  /// Directory path: assets/v2/icons
+  $AssetsV2IconsGen get icons => const $AssetsV2IconsGen();
+}
+
+class $AssetsV2IconsGen {
+  const $AssetsV2IconsGen();
+
+  /// File path: assets/v2/icons/ic_app_icon.svg
+  String get icAppIcon => 'assets/v2/icons/ic_app_icon.svg';
+
+  /// List of all assets
+  List<String> get values => [icAppIcon];
+}
+
 class Assets {
   const Assets._();
 
@@ -802,6 +819,7 @@ class Assets {
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsTranslationsGen translations = $AssetsTranslationsGen();
+  static const $AssetsV2Gen v2 = $AssetsV2Gen();
 }
 
 class AssetGenImage {
