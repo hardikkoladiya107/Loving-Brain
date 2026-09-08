@@ -483,14 +483,32 @@ class $AssetsContentGen {
 class $AssetsV2Gen {
   const $AssetsV2Gen();
 
-  final $AssetsV2IconsGen icons = const $AssetsV2IconsGen();
+  final $AssetsIconsGen icons = const $AssetsIconsGen();
+  final $AssetsImagesGen images = const $AssetsImagesGen();
 }
 
-class $AssetsV2IconsGen {
-  const $AssetsV2IconsGen();
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
 
   final SvgGenImage icAppIcon = const SvgGenImage(
     'assets/v2/icons/ic_app_icon.svg',
+  );
+  final SvgGenImage icLovingBrainText = const SvgGenImage(
+    'assets/v2/icons/ic_loving_brain_text.svg',
+  );
+  final SvgGenImage icLovingBrainText2 = const SvgGenImage(
+    'assets/v2/icons/ic_loving_brain_text2.svg',
+  );
+}
+
+class $AssetsImagesGen {
+  const $AssetsImagesGen();
+
+  final AssetGenImage imgBg = const AssetGenImage(
+    'assets/v2/images/img_bg.png',
+  );
+  final AssetGenImage imgWelcomeBg = const AssetGenImage(
+    'assets/v2/images/img_welcome_bg.png',
   );
 }
 

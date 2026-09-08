@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-const primaryColor = Color(0xFF894BCD);
+//NEW NEW
+const primaryColor = Color(0xFFF06D4D);
+const greyColor = Color(0xff495057);
+
+
+
+
+//OLD
 const yellowButtonColor = Color(0xFFF2BA2B);
 const cardColor1 = Color(0xFFF68989);
 const cardColor2 = Color(0xFF805AFF);
@@ -24,7 +31,7 @@ const appButtonColor = Color(0xff05a88b);
 
 const blueButtonColor = Color(0xff805AFF);
 const blueTextColor = Color(0xff0157C8);
-const greyColor = Color(0xffDFDFDF);
+
 const buttonColor1 = Color(0xffa7dae9);
 const pinkColor1 = Color(0xffd6b1ef);
 const greyColor1 = Color(0xff717273);

@@ -802,6 +802,9 @@ class $AssetsV2Gen {
 
   /// Directory path: assets/v2/icons
   $AssetsV2IconsGen get icons => const $AssetsV2IconsGen();
+
+  /// Directory path: assets/v2/images
+  $AssetsV2ImagesGen get images => const $AssetsV2ImagesGen();
 }
 
 class $AssetsV2IconsGen {
@@ -811,8 +814,34 @@ class $AssetsV2IconsGen {
   SvgGenImage get icAppIcon =>
       const SvgGenImage('assets/v2/icons/ic_app_icon.svg');
 
+  /// File path: assets/v2/icons/ic_loving_brain_text.svg
+  SvgGenImage get icLovingBrainText =>
+      const SvgGenImage('assets/v2/icons/ic_loving_brain_text.svg');
+
+  /// File path: assets/v2/icons/ic_loving_brain_text2.svg
+  SvgGenImage get icLovingBrainText2 =>
+      const SvgGenImage('assets/v2/icons/ic_loving_brain_text2.svg');
+
   /// List of all assets
-  List<SvgGenImage> get values => [icAppIcon];
+  List<SvgGenImage> get values => [
+    icAppIcon,
+    icLovingBrainText,
+    icLovingBrainText2,
+  ];
+}
+
+class $AssetsV2ImagesGen {
+  const $AssetsV2ImagesGen();
+
+  /// File path: assets/v2/images/img_bg.png
+  AssetGenImage get imgBg => const AssetGenImage('assets/v2/images/img_bg.png');
+
+  /// File path: assets/v2/images/img_welcome_bg.png
+  AssetGenImage get imgWelcomeBg =>
+      const AssetGenImage('assets/v2/images/img_welcome_bg.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [imgBg, imgWelcomeBg];
 }
 
 class Assets {

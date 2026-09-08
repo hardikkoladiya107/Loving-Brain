@@ -14,13 +14,14 @@ extension extOnString on String {
     TextOverflow? overflow,
     TextDecoration? textDecoration,
     double? height,
+    TextStyle? textStyle,
   }) {
     return Text(
       this,
       maxLines: maxLines,
       overflow: overflow,
       textAlign: textAlign ?? TextAlign.center,
-      style: getTextStyle(
+      style: textStyle ?? getTextStyle(
         fontSize: (fontSize ?? 16).sp,
         color: color,
         fontStyle: fontStyle,
@@ -42,14 +43,6 @@ extension extOnString on String {
   bool get isValidEmail {
     final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return regex.hasMatch(this);
-  }
-
-  String replaceOrRemove(String from, String replace) {
-    if (replace.isEmpty) {
-      return removeTagBlockContainingText(this, from);
-    } else {
-      return replaceAll2(from, replace);
-    }
   }
 }
 
@@ -97,38 +90,6 @@ extension FirebaseUrlUtils on String {
   }
 }
 
-String removeTagBlockContainingText(
-  String input,
-  String keyword, {
-  String startTag = '{start_tag}',
-  String endTag = '{end_tag}',
-}) {
-  final keywordIndex = input.indexOf(keyword);
-  if (keywordIndex == -1) return input;
-
-  final startIndex = input.lastIndexOf(startTag, keywordIndex);
-  if (startIndex == -1) return input;
-
-  int depth = 1;
-  int i = startIndex + startTag.length;
-
-  while (i < input.length && depth > 0) {
-    final nextStart = input.indexOf(startTag, i);
-    final nextEnd = input.indexOf(endTag, i);
-
-    if (nextEnd == -1) break;
-
-    if (nextStart != -1 && nextStart < nextEnd) {
-      depth++;
-      i = nextStart + startTag.length;
-    } else {
-      depth--;
-      i = nextEnd + endTag.length;
-    }
-  }
-
-  return input.replaceRange(startIndex, i, '');
-}
 
 TextStyle getTextStyle({
   double? fontSize,
@@ -140,6 +101,46 @@ TextStyle getTextStyle({
   double? height,
 }) {
   return GoogleFonts.quicksand(
+    fontSize: fontSize ?? 16,
+    fontStyle: fontStyle,
+    decoration: textDecoration,
+    color: color,
+    fontWeight: fontWeight ?? FontWeight.normal,
+    letterSpacing: letterSpacing ?? 1,
+    height: height,
+  );
+}
+
+TextStyle getTextStyle2({
+  double? fontSize,
+  Color? color,
+  FontWeight? fontWeight,
+  double? letterSpacing,
+  FontStyle? fontStyle,
+  TextDecoration? textDecoration,
+  double? height,
+}) {
+  return GoogleFonts.fraunces(
+    fontSize: fontSize ?? 16,
+    fontStyle: fontStyle,
+    decoration: textDecoration,
+    color: color,
+    fontWeight: fontWeight ?? FontWeight.normal,
+    letterSpacing: letterSpacing ?? 1,
+    height: height,
+  );
+}
+
+TextStyle getTextStyle3({
+  double? fontSize,
+  Color? color,
+  FontWeight? fontWeight,
+  double? letterSpacing,
+  FontStyle? fontStyle,
+  TextDecoration? textDecoration,
+  double? height,
+}) {
+  return GoogleFonts.fraunces(
     fontSize: fontSize ?? 16,
     fontStyle: fontStyle,
     decoration: textDecoration,

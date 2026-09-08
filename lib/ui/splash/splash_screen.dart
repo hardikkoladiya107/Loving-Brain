@@ -20,10 +20,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future<void>.delayed(const Duration(seconds: 2), () {
-        // if (!mounted) return;
-        // final bool isLogin =
-        //     preferences.getBool(SharedPreference.isLogin) ?? false;
-        // context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
+        if (!mounted) return;
+        final bool isLogin =
+            preferences.getBool(SharedPreference.isLogin) ?? false;
+        context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
       });
     });
     super.initState();
@@ -35,14 +35,19 @@ class _SplashScreenState extends State<SplashScreen> {
       decoration: BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage(Assets.images.imgSplashBg.path),
+          image: AssetImage(Assets.v2.images.imgBg.path),
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [Assets.v2.icons.icAppIcon.svg()],
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(child: Assets.v2.icons.icAppIcon.svg()),
+            14.spaceH,
+            Assets.v2.icons.icLovingBrainText.svg()
+          ],
         ),
       ),
     );
