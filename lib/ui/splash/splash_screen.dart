@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -20,10 +22,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future<void>.delayed(const Duration(seconds: 2), () {
-        if (!mounted) return;
-        final bool isLogin =
-            preferences.getBool(SharedPreference.isLogin) ?? false;
-        context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
+        // if (!mounted) return;
+        // final bool isLogin =
+        //     preferences.getBool(SharedPreference.isLogin) ?? false;
+        // context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
       });
     });
     super.initState();
@@ -43,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-
+             Assets.v2.icons.icAppIcon.svg()
           ],
         ),
       ),
