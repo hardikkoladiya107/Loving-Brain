@@ -6,6 +6,7 @@ import 'package:loving_brain/ui/auth/login/login_screen.dart';
 import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen1.dart';
 import 'package:loving_brain/ui/auth/on_boarding/welcome_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
+import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/base_screen/base_screen.dart';
 import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
 import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
@@ -71,6 +72,7 @@ class AppRouter {
           RoutePaths.onboarding3,
           RoutePaths.login,
           RoutePaths.register,
+          RoutePaths.otp,
           RoutePaths.forgotPassword,
           RoutePaths.coParentRegister,
         };
@@ -294,6 +296,13 @@ class AppRouter {
           path: RoutePaths.register,
           builder: (BuildContext context, GoRouterState state) =>
               const RegisterScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.otp,
+          builder: (BuildContext context, GoRouterState state) {
+            final String? destination = state.extra as String?;
+            return OtpScreen(destination: destination);
+          },
         ),
         GoRoute(
           path: RoutePaths.forgotPassword,

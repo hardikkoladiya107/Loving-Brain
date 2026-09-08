@@ -25,6 +25,7 @@ import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/propose_change/bloc/propose_change_cubit.dart';
 import 'package:loving_brain/ui/reflect_your_emotions/bloc/reflect_emotion_cubit.dart';
 import 'package:loving_brain/ui/auth/register/bloc/register_cubit.dart';
+import 'package:loving_brain/ui/auth/otp/bloc/otp_cubit.dart';
 import 'package:loving_brain/ui/schedule/bloc/schedule_cubit.dart';
 import 'package:loving_brain/ui/sleep_summary/bloc/sleep_summary_cubit.dart';
 import 'package:loving_brain/ui/smart_moment/bloc/smart_moment_cubit.dart';
@@ -72,6 +73,7 @@ var blocProvider = [
   BlocProvider<RegisterCubit>(
     create: (BuildContext context) => RegisterCubit(),
   ),
+  BlocProvider<OtpCubit>(create: (BuildContext context) => OtpCubit()),
   BlocProvider<ForgotPasswordCubit>(
     create: (BuildContext context) => ForgotPasswordCubit(),
   ),
@@ -127,7 +129,5 @@ var blocProvider = [
   BlocProvider<TimelineCubit>(
     create: (BuildContext context) => TimelineCubit(),
   ),
-  BlocProvider<JournalCubit>(
-    create: (BuildContext context) => JournalCubit(),
-  ),
+  BlocProvider<JournalCubit>(create: (BuildContext context) => JournalCubit()),
 ];
