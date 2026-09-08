@@ -12,6 +12,7 @@ import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
+import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
 import '../../widget/app_text_field.dart';
@@ -68,73 +69,57 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
       builder: (context, state) {
-        // Sync controllers
         _syncController(emailController, state.emailAddress);
         _syncController(passwordController, state.password);
         _syncController(confirmPasswordController, state.confirmPassword);
 
-        return Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: const Color(0xFFFAFAFA),
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFFF6F0FF),
-                        Color(0xFFFFF0F5),
-                        Color(0xFFF9FAFB),
-                        Color(0xFFF9FAFB),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      stops: [0.0, 0.3, 0.6, 1.0],
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(Assets.v2.images.imgWelcomeBg.path),
+            ),
+          ),
+          child: Scaffold(
+            body: SafeArea(
+              child: Column(
+                children: [
+                  40.spaceH,
+                  _header(state),
+                  20.spaceH,
+                  _stepIndicator(state.currentStep),
+                  20.spaceH,
+                  Expanded(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: FadeTransition(
+                        opacity: _fadeAnim,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 32),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(32),
+                            boxShadow: [
+                              BoxShadow(
+                                color: primaryColor.withValues(
+                                  alpha: 0.08,
+                                ),
+                                blurRadius: 30,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: state.currentStep == 0
+                              ? _step0(state)
+                              : _step1(state),
+                        ),
+                      ).appPadding(left: 20, right: 20),
                     ),
                   ),
-                ),
+                  40.spaceH,
+                ],
               ),
-              Positioned.fill(
-                child: SafeArea(
-                  child: Column(
-                    children: [
-                      40.spaceH,
-                      _header(state),
-                      20.spaceH,
-                      _stepIndicator(state.currentStep),
-                      20.spaceH,
-                      Expanded(
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: FadeTransition(
-                            opacity: _fadeAnim,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 32),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(32),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: primaryColor.withValues(alpha: 0.08),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 10),
-                                  ),
-                                ],
-                              ),
-                              child: state.currentStep == 0
-                                  ? _step0(state)
-                                  : _step1(state),
-                            ),
-                          ).appPadding(left: 20, right: 20),
-                        ),
-                      ),
-                      40.spaceH,
-                    ],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
