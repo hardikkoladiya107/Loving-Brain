@@ -811,9 +811,27 @@ class $AssetsV2IconsGen {
   /// File path: assets/v2/icons/ic_back.svg
   SvgGenImage get icBack => const SvgGenImage('assets/v2/icons/ic_back.svg');
 
+  /// File path: assets/v2/icons/ic_calmer_tantrums.png
+  AssetGenImage get icCalmerTantrums =>
+      const AssetGenImage('assets/v2/icons/ic_calmer_tantrums.png');
+
+  /// File path: assets/v2/icons/ic_child.png
+  AssetGenImage get icChild =>
+      const AssetGenImage('assets/v2/icons/ic_child.png');
+
+  /// File path: assets/v2/icons/ic_clock.svg
+  SvgGenImage get icClock => const SvgGenImage('assets/v2/icons/ic_clock.svg');
+
+  /// File path: assets/v2/icons/ic_easier_bedtimes.png
+  AssetGenImage get icEasierBedtimes =>
+      const AssetGenImage('assets/v2/icons/ic_easier_bedtimes.png');
+
   /// File path: assets/v2/icons/ic_google_icon.png
   AssetGenImage get icGoogleIcon =>
       const AssetGenImage('assets/v2/icons/ic_google_icon.png');
+
+  /// File path: assets/v2/icons/ic_info.svg
+  SvgGenImage get icInfo => const SvgGenImage('assets/v2/icons/ic_info.svg');
 
   /// File path: assets/v2/icons/ic_loving_brain_text.svg
   SvgGenImage get icLovingBrainText =>
@@ -823,14 +841,54 @@ class $AssetsV2IconsGen {
   SvgGenImage get icLovingBrainText2 =>
       const SvgGenImage('assets/v2/icons/ic_loving_brain_text2.svg');
 
+  /// File path: assets/v2/icons/ic_more_confident.png
+  AssetGenImage get icMoreConfident =>
+      const AssetGenImage('assets/v2/icons/ic_more_confident.png');
+
+  /// File path: assets/v2/icons/ic_more_than_one.png
+  AssetGenImage get icMoreThanOne =>
+      const AssetGenImage('assets/v2/icons/ic_more_than_one.png');
+
+  /// File path: assets/v2/icons/ic_parenting_stress.png
+  AssetGenImage get icParentingStress =>
+      const AssetGenImage('assets/v2/icons/ic_parenting_stress.png');
+
+  /// File path: assets/v2/icons/ic_routine.png
+  AssetGenImage get icRoutine =>
+      const AssetGenImage('assets/v2/icons/ic_routine.png');
+
+  /// File path: assets/v2/icons/ic_sleep.png
+  AssetGenImage get icSleep =>
+      const AssetGenImage('assets/v2/icons/ic_sleep.png');
+
+  /// File path: assets/v2/icons/ic_tantrums.png
+  AssetGenImage get icTantrums =>
+      const AssetGenImage('assets/v2/icons/ic_tantrums.png');
+
+  /// File path: assets/v2/icons/ic_teamwork.png
+  AssetGenImage get icTeamwork =>
+      const AssetGenImage('assets/v2/icons/ic_teamwork.png');
+
   /// List of all assets
   List<dynamic> get values => [
     icAppIcon,
     icAppleIcon,
     icBack,
+    icCalmerTantrums,
+    icChild,
+    icClock,
+    icEasierBedtimes,
     icGoogleIcon,
+    icInfo,
     icLovingBrainText,
     icLovingBrainText2,
+    icMoreConfident,
+    icMoreThanOne,
+    icParentingStress,
+    icRoutine,
+    icSleep,
+    icTantrums,
+    icTeamwork,
   ];
 }
 

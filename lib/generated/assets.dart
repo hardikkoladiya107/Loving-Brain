@@ -491,14 +491,46 @@ class $AssetsIconsGen {
     'assets/v2/icons/ic_apple_icon.png',
   );
   final SvgGenImage icBack = const SvgGenImage('assets/v2/icons/ic_back.svg');
+  final AssetGenImage icCalmerTantrums = const AssetGenImage(
+    'assets/v2/icons/ic_calmer_tantrums.png',
+  );
+  final AssetGenImage icChild = const AssetGenImage(
+    'assets/v2/icons/ic_child.png',
+  );
+  final SvgGenImage icClock = const SvgGenImage('assets/v2/icons/ic_clock.svg');
+  final AssetGenImage icEasierBedtimes = const AssetGenImage(
+    'assets/v2/icons/ic_easier_bedtimes.png',
+  );
   final AssetGenImage icGoogleIcon = const AssetGenImage(
     'assets/v2/icons/ic_google_icon.png',
   );
+  final SvgGenImage icInfo = const SvgGenImage('assets/v2/icons/ic_info.svg');
   final SvgGenImage icLovingBrainText = const SvgGenImage(
     'assets/v2/icons/ic_loving_brain_text.svg',
   );
   final SvgGenImage icLovingBrainText2 = const SvgGenImage(
     'assets/v2/icons/ic_loving_brain_text2.svg',
+  );
+  final AssetGenImage icMoreConfident = const AssetGenImage(
+    'assets/v2/icons/ic_more_confident.png',
+  );
+  final AssetGenImage icMoreThanOne = const AssetGenImage(
+    'assets/v2/icons/ic_more_than_one.png',
+  );
+  final AssetGenImage icParentingStress = const AssetGenImage(
+    'assets/v2/icons/ic_parenting_stress.png',
+  );
+  final AssetGenImage icRoutine = const AssetGenImage(
+    'assets/v2/icons/ic_routine.png',
+  );
+  final AssetGenImage icSleep = const AssetGenImage(
+    'assets/v2/icons/ic_sleep.png',
+  );
+  final AssetGenImage icTantrums = const AssetGenImage(
+    'assets/v2/icons/ic_tantrums.png',
+  );
+  final AssetGenImage icTeamwork = const AssetGenImage(
+    'assets/v2/icons/ic_teamwork.png',
   );
 }
 

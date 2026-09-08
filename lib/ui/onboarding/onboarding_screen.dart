@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -25,6 +26,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   late final PageController _pageController;
   late final TextEditingController _nameController;
+  late final TextEditingController _childNameController;
 
   static const int _totalPages = 6;
   static const Color _accentPurple = Color(0xFF6560CA);
@@ -40,12 +42,46 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   static const List<String> _languages = <String>['English', 'Hindi', 'Other'];
 
+  static const List<String> _genders = <String>[
+    'Boy',
+    'Girl',
+    'Prefer not to say',
+  ];
+
+  static const List<String> _nightWakingsOptions = <String>[
+    'None',
+    '1-2',
+    '3+',
+    'Varies',
+  ];
+
+  static const List<String> _difficultTimes = <String>[
+    'Before meals',
+    'Bedtime',
+    'Transitions',
+    'Public outings',
+    'Morning rush',
+  ];
+
+  static const List<String> _possibleTriggers = <String>[
+    'Tiredness',
+    'Hunger',
+    'Overstimulation',
+    'Routine change',
+    'Not sure yet',
+  ];
+
+  String? _activeTimeField = 'wake'; // 'wake' or 'bed'
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
     _nameController = TextEditingController(
       text: context.read<OnboardingCubit>().state.parentName,
+    );
+    _childNameController = TextEditingController(
+      text: context.read<OnboardingCubit>().state.childName,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -58,6 +94,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void dispose() {
     _pageController.dispose();
     _nameController.dispose();
+    _childNameController.dispose();
     super.dispose();
   }
 
@@ -230,8 +267,789 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   // ---------------------------------------------------------------------------
-  // Page 1: "First, a little about you" (matches screenshot design)
+  // Page 2: "What brings you to LovingBrain?" (matches screenshot design)
   // ---------------------------------------------------------------------------
+  Widget _buildPage2(OnboardingState state) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Main Headline
+          "What brings you to\nLovingBrain?"
+              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appPadding(left: 20.r, right: 20.r),
+          8.spaceH,
+
+          // Subtitle
+          "Pick the one that feels biggest right now. You can change this later."
+              .appText(
+                textAlign: TextAlign.start,
+                fontSize: 14,
+                color: greyColor,
+                height: 1.35,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          22.spaceH,
+
+          // 2x2 Grid of Concern Cards
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    _buildGridCard(
+                      title: "Sleep",
+                      subtitle: "Bedtime, naps, night waking",
+                      isSelected: state.concerns.contains("Sleep"),
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectConcern("Sleep"),
+                      iconPlaceholder: Assets.v2.icons.icSleep.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                    12.spaceW,
+                    _buildGridCard(
+                      title: "Tantrums",
+                      subtitle: "Big feelings, hard moments",
+                      isSelected: state.concerns.contains("Tantrums"),
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectConcern("Tantrums"),
+                      iconPlaceholder: Assets.v2.icons.icTantrums.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                  ],
+                ),
+                12.spaceH,
+                Row(
+                  children: <Widget>[
+                    _buildGridCard(
+                      title: "Routine",
+                      subtitle: "Days feel unpredictable",
+                      isSelected: state.concerns.contains("Routine"),
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectConcern("Routine"),
+                      iconPlaceholder: Assets.v2.icons.icRoutine.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                    12.spaceW,
+                    _buildGridCard(
+                      title: "Parenting stress",
+                      subtitle: "Support for you, too",
+                      isSelected: state.concerns.contains("Parenting stress"),
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectConcern("Parenting stress"),
+                      iconPlaceholder: Assets.v2.icons.icParentingStress.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          16.spaceH,
+
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: BaseButton(
+              onTap: () {
+                context.read<OnboardingCubit>().toggleMoreThanOne();
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: 52.h,
+                padding: EdgeInsets.symmetric(horizontal: 18.w),
+                decoration: BoxDecoration(
+                  color: state.isMoreThanOneSelected
+                      ? const Color(0xFFF3F2FE)
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: state.isMoreThanOneSelected
+                        ? _accentPurple
+                        : Colors.transparent,
+                    width: 1.5,
+                  ),
+                  boxShadow: state.isMoreThanOneSelected
+                      ? null
+                      : <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Assets.v2.icons.icMoreThanOne.image(
+                      width: 24.r,
+                      height: 24.r,
+                    ),
+                    12.spaceW,
+                    "More than one".appText(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF252360),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          20.spaceH,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGridCard({
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required Widget iconPlaceholder,
+  }) {
+    return Expanded(
+      child: BaseButton(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: 152.h,
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFFF3F2FE) : Colors.white,
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(
+              color: isSelected ? _accentPurple : Colors.transparent,
+              width: 1.5,
+            ),
+            boxShadow: isSelected
+                ? null
+                : <BoxShadow>[
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              iconPlaceholder,
+              const Spacer(),
+              title.appText(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF212529),
+                textAlign: TextAlign.start,
+              ),
+              4.spaceH,
+              subtitle.appText(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: greyColor3,
+                textAlign: TextAlign.start,
+                height: 1.25,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Page 3: "What would feel like a win?" (matches screenshot design)
+  // ---------------------------------------------------------------------------
+  Widget _buildPage3(OnboardingState state) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Main Headline
+          "What would feel\nlike a win?"
+              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appPadding(left: 20.r, right: 20.r),
+          8.spaceH,
+
+          // Subtitle
+          "We’ll shape your weekly focus around this."
+              .appText(
+                textAlign: TextAlign.start,
+                fontSize: 14,
+                color: greyColor,
+                height: 1.35,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          24.spaceH,
+
+          // 2x2 Grid of Goal Cards
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    _buildGridCard(
+                      title: "Easier bedtimes",
+                      subtitle: "Less resistance, calmer nights",
+                      isSelected: state.successGoal == "Easier bedtimes",
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectSuccessGoal("Easier bedtimes"),
+                      iconPlaceholder: Assets.v2.icons.icEasierBedtimes.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                    12.spaceW,
+                    _buildGridCard(
+                      title: "Calmer tantrums",
+                      subtitle: "Shorter, less intense",
+                      isSelected: state.successGoal == "Calmer tantrums",
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectSuccessGoal("Calmer tantrums"),
+                      iconPlaceholder: Assets.v2.icons.icCalmerTantrums.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                  ],
+                ),
+                12.spaceH,
+                Row(
+                  children: <Widget>[
+                    _buildGridCard(
+                      title: "More confidence",
+                      subtitle: "Knowing what to try",
+                      isSelected: state.successGoal == "More confidence",
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectSuccessGoal("More confidence"),
+                      iconPlaceholder: Assets.v2.icons.icMoreConfident.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                    12.spaceW,
+                    _buildGridCard(
+                      title: "Teamwork",
+                      subtitle: "Same page as my partner",
+                      isSelected: state.successGoal == "Teamwork",
+                      onTap: () => context
+                          .read<OnboardingCubit>()
+                          .selectSuccessGoal("Teamwork"),
+                      iconPlaceholder: Assets.v2.icons.icTeamwork.image(
+                        width: 44.r,
+                        height: 44.r,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          20.spaceH,
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickChildDob(BuildContext context) async {
+    final OnboardingCubit cubit = context.read<OnboardingCubit>();
+    final DateTime initialDate = DateTime(2024, 3, 14);
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: cubit.state.childDob ?? initialDate,
+      firstDate: DateTime(2015),
+      lastDate: DateTime.now(),
+      builder: (BuildContext ctx, Widget? child) {
+        return Theme(
+          data: Theme.of(ctx).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: _accentPurple,
+              onPrimary: Colors.white,
+              onSurface: Color(0xFF212529),
+            ),
+          ),
+          child: child ?? const SizedBox(),
+        );
+      },
+    );
+
+    if (picked != null) {
+      final String formatted = DateFormat('d MMMM yyyy').format(picked);
+      cubit.updateChildDob(formattedDate: formatted, dob: picked);
+    }
+  }
+
+  Future<void> _pickTime({
+    required BuildContext context,
+    required bool isWakeTime,
+  }) async {
+    setState(() {
+      _activeTimeField = isWakeTime ? 'wake' : 'bed';
+    });
+
+    final OnboardingCubit cubit = context.read<OnboardingCubit>();
+    final TimeOfDay initial = isWakeTime
+        ? const TimeOfDay(hour: 6, minute: 45)
+        : const TimeOfDay(hour: 20, minute: 15);
+
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: initial,
+      builder: (BuildContext ctx, Widget? child) {
+        return Theme(
+          data: Theme.of(ctx).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: _accentPurple,
+              onPrimary: Colors.white,
+              onSurface: Color(0xFF212529),
+            ),
+          ),
+          child: child ?? const SizedBox(),
+        );
+      },
+    );
+
+    if (picked != null && mounted) {
+      final MaterialLocalizations localizations = MaterialLocalizations.of(
+        context,
+      );
+      final String formatted = localizations.formatTimeOfDay(
+        picked,
+        alwaysUse24HourFormat: false,
+      );
+      if (isWakeTime) {
+        cubit.updateWakeTime(formatted);
+      } else {
+        cubit.updateBedtime(formatted);
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Page 5: "How does a usual day look?" (matches screenshot design)
+  // ---------------------------------------------------------------------------
+  Widget _buildPage5(OnboardingState state) {
+    final bool isWakeSelected = _activeTimeField == 'wake';
+    final bool isBedSelected = _activeTimeField == 'bed';
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Main Headline
+          "How does a usual\nday look?"
+              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appPadding(left: 20.r, right: 20.r),
+          8.spaceH,
+
+          // Subtitle
+          "Rough answers are fine we’ll refine these as you go."
+              .appText(
+                textAlign: TextAlign.start,
+                fontSize: 14,
+                color: greyColor,
+                height: 1.35,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          22.spaceH,
+
+          // Card 1: USUAL WAKE TIME
+          BaseButton(
+            onTap: () => _pickTime(context: context, isWakeTime: true),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24.r),
+                border: isWakeSelected
+                    ? Border.all(color: _accentPurple, width: 1.2)
+                    : null,
+                boxShadow: isWakeSelected
+                    ? null
+                    : <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        "USUAL WAKE TIME".appText(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFADB5BD),
+                          letterSpacing: 0.8,
+                          textAlign: TextAlign.start,
+                        ),
+                        4.spaceH,
+                        state.usualWakeTime.appText(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF212529),
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
+                    ),
+                  ),
+                  10.spaceW,
+                  // TODO: Add clock icon here
+                  Assets.v2.icons.icClock.svg(width: 24.r, height: 24.r),
+                ],
+              ),
+            ),
+          ).appPadding(left: 20.r, right: 20.r),
+          14.spaceH,
+
+          // Card 2: USUAL BEDTIME
+          BaseButton(
+            onTap: () => _pickTime(context: context, isWakeTime: false),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24.r),
+                border: isBedSelected
+                    ? Border.all(color: _accentPurple, width: 1.2)
+                    : null,
+                boxShadow: isBedSelected
+                    ? null
+                    : <BoxShadow>[
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        "USUAL BEDTIME".appText(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFADB5BD),
+                          letterSpacing: 0.8,
+                          textAlign: TextAlign.start,
+                        ),
+                        4.spaceH,
+                        state.usualBedtime.appText(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF212529),
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
+                    ),
+                  ),
+                  10.spaceW,
+                  // TODO: Add clock icon here
+                  Assets.v2.icons.icClock.svg(width: 24.r, height: 24.r),
+                ],
+              ),
+            ),
+          ).appPadding(left: 20.r, right: 20.r),
+          14.spaceH,
+
+          // Card 3: Naps per day with Stepper
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24.r),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                "Naps per day".appText(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF212529),
+                  textAlign: TextAlign.start,
+                ),
+                // Stepper control: [ -  2  + ]
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _chipSelectedBg,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      BaseButton(
+                        onTap: () {
+                          context.read<OnboardingCubit>().updateUsualNaps(-1);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          child: const Icon(
+                            Icons.remove,
+                            size: 16,
+                            color: Color(0xFF212529),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        child: "${state.usualNaps}".appText(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF212529),
+                        ),
+                      ),
+                      BaseButton(
+                        onTap: () {
+                          context.read<OnboardingCubit>().updateUsualNaps(1);
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            size: 16,
+                            color: Color(0xFF212529),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ).appPadding(left: 20.r, right: 20.r),
+          20.spaceH,
+
+          // Section 4: NIGHT WAKINGS label
+          "NIGHT WAKINGS"
+              .appText(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: _accentPurple,
+                letterSpacing: 0.8,
+                textAlign: TextAlign.start,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          10.spaceH,
+
+          // 4 Night Wakings Chips: None, 1-2, 3+, Varies
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Row(
+              children: <Widget>[
+                for (
+                  int i = 0;
+                  i < _nightWakingsOptions.length;
+                  i++
+                ) ...<Widget>[
+                  if (i > 0) 10.spaceW,
+                  _buildChip(
+                    label: _nightWakingsOptions[i],
+                    isSelected: state.nightWakings == _nightWakingsOptions[i],
+                    onTap: () {
+                      context.read<OnboardingCubit>().selectNightWakings(
+                        _nightWakingsOptions[i],
+                      );
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+          20.spaceH,
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Page 4: "Now, about your little one" (matches screenshot design)
+  // ---------------------------------------------------------------------------
+  Widget _buildPage4(OnboardingState state) {
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Main Headline
+          "Now, about your\nlittle one"
+              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appPadding(left: 20.r, right: 20.r),
+          8.spaceH,
+
+          // Subtitle
+          "Age is what shapes most of our guidance."
+              .appText(
+                textAlign: TextAlign.start,
+                fontSize: 14,
+                color: greyColor,
+                height: 1.35,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          20.spaceH,
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Assets.v2.icons.icChild.image(width: 100.r, height: 100.r),
+            ],
+          ),
+          24.spaceH,
+
+          // Field 1: CHILD'S NAME
+          AppTextField(
+            controller: _childNameController,
+            title: "Child's name",
+            hint: "Ingredia Nutrisha",
+            border: Border.all(color: _accentPurple, width: 1.2),
+            borderRadius: BorderRadius.circular(24.r),
+            onChanged: (String value) {
+              context.read<OnboardingCubit>().updateChildName(value);
+            },
+          ).appPadding(left: 20.r, right: 20.r),
+          16.spaceH,
+
+          // Field 2: DATE OF BIRTH
+          BaseButton(
+            onTap: () => _pickChildDob(context),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24.r),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        "DATE OF BIRTH".appText(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFADB5BD),
+                          letterSpacing: 0.8,
+                          textAlign: TextAlign.start,
+                        ),
+                        4.spaceH,
+                        state.dateOfBirth.appText(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF212529),
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
+                    ),
+                  ),
+                  10.spaceW,
+                  // TODO: Add calendar icon here
+                  const SizedBox(
+                    width: 26,
+                    height: 26,
+                    // Calendar icon placeholder
+                  ),
+                ],
+              ),
+            ),
+          ).appPadding(left: 20.r, right: 20.r),
+          20.spaceH,
+
+          // GENDER label
+          "GENDER"
+              .appText(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: _accentPurple,
+                letterSpacing: 0.8,
+                textAlign: TextAlign.start,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          10.spaceH,
+
+          // 3 Gender Pill Chips: Boy, Girl, Prefer not to say
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Row(
+              children: <Widget>[
+                for (int i = 0; i < _genders.length; i++) ...<Widget>[
+                  if (i > 0) 10.spaceW,
+                  _buildChip(
+                    label: _genders[i],
+                    isSelected: state.childGender == _genders[i],
+                    onTap: () {
+                      context.read<OnboardingCubit>().selectChildGender(
+                        _genders[i],
+                      );
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+          20.spaceH,
+        ],
+      ),
+    );
+  }
+
   Widget _buildPage1(OnboardingState state) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
@@ -374,6 +1192,133 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Page 6: "When are things hardest?" (matches screenshot design)
+  // ---------------------------------------------------------------------------
+  Widget _buildPage6(OnboardingState state) {
+    final String childDisplayName = state.childName.trim().isNotEmpty
+        ? state.childName.trim()
+        : "Ira";
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Main Headline
+          "When are things\nhardest?"
+              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appPadding(left: 20.r, right: 20.r),
+          8.spaceH,
+
+          // Subtitle
+          "Choose any that apply. This helps us spot patterns sooner."
+              .appText(
+                textAlign: TextAlign.start,
+                fontSize: 14,
+                color: greyColor,
+                height: 1.35,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          22.spaceH,
+
+          // Section 1: DIFFICULT TIMES label
+          "DIFFICULT TIMES"
+              .appText(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: _accentPurple,
+                letterSpacing: 0.8,
+                textAlign: TextAlign.start,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          12.spaceH,
+
+          // Difficult times chips
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Wrap(
+              spacing: 8.w,
+              runSpacing: 10.h,
+              children: <Widget>[
+                for (final String time in _difficultTimes)
+                  _buildChip(
+                    label: time,
+                    isSelected: state.difficultTimes.contains(time),
+                    onTap: () {
+                      context.read<OnboardingCubit>().toggleDifficultTime(time);
+                    },
+                  ),
+              ],
+            ),
+          ),
+          22.spaceH,
+
+          // Section 2: POSSIBLE TRIGGERS label
+          "POSSIBLE TRIGGERS"
+              .appText(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: _accentPurple,
+                letterSpacing: 0.8,
+                textAlign: TextAlign.start,
+              )
+              .appPadding(left: 20.r, right: 20.r),
+          12.spaceH,
+
+          // Possible triggers chips
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Wrap(
+              spacing: 8.w,
+              runSpacing: 10.h,
+              children: <Widget>[
+                for (final String trigger in _possibleTriggers)
+                  _buildChip(
+                    label: trigger,
+                    isSelected: state.possibleTriggers.contains(trigger),
+                    onTap: () {
+                      context.read<OnboardingCubit>().togglePossibleTrigger(
+                        trigger,
+                      );
+                    },
+                  ),
+              ],
+            ),
+          ),
+          26.spaceH,
+
+          // Info Banner Note
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF3EA),
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Assets.v2.icons.icInfo.svg(width: 16.r, height: 16.r),
+                8.spaceW,
+                Flexible(
+                  child:
+                      "You can add or change these any time from $childDisplayName’s profile."
+                          .appText(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w400,
+                            color: const Color(0xFF8E8E93),
+                            textAlign: TextAlign.start,
+                          ),
+                ),
+              ],
+            ),
+          ).appPadding(left: 20.r, right: 20.r),
+          20.spaceH,
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<OnboardingCubit, OnboardingState>(
@@ -409,6 +1354,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   OnboardingPageIndicator(
                     totalPages: _totalPages,
                     currentPage: state.currentPage,
+                    controller: _pageController,
                     activeColor: _accentPurple,
                     onSegmentTap: (int index) {
                       _pageController.animateToPage(
@@ -430,11 +1376,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       },
                       children: <Widget>[
                         _buildPage1(state),
-                        const SizedBox(),
-                        const SizedBox(),
-                        const SizedBox(),
-                        const SizedBox(),
-                        const SizedBox(),
+                        _buildPage2(state),
+                        _buildPage3(state),
+                        _buildPage4(state),
+                        _buildPage5(state),
+                        _buildPage6(state),
                       ],
                     ),
                   ),

@@ -6,9 +6,10 @@ class OnboardingPageIndicator extends StatelessWidget {
     super.key,
     this.totalPages = 6,
     required this.currentPage,
+    this.controller,
     this.onSegmentTap,
     this.activeColor = const Color(0xFF6560CA),
-    this.inactiveColor = const Color(0xFFE0D6E8),
+    this.inactiveColor = const Color(0xFFE0D9EB),
     this.height,
     this.spacing,
     this.borderRadius,
@@ -16,6 +17,7 @@ class OnboardingPageIndicator extends StatelessWidget {
 
   final int totalPages;
   final int currentPage;
+  final PageController? controller;
   final ValueChanged<int>? onSegmentTap;
   final Color activeColor;
   final Color inactiveColor;
@@ -23,12 +25,12 @@ class OnboardingPageIndicator extends StatelessWidget {
   final double? spacing;
   final BorderRadius? borderRadius;
 
-  @override
-  Widget build(BuildContext context) {
-    final double segmentHeight = height ?? 4.5.h;
-    final double segmentSpacing = spacing ?? 8.w;
-    final BorderRadius radius = borderRadius ?? BorderRadius.circular(100.r);
-
+  Widget _buildRow({
+    required int activeIndex,
+    required double segmentHeight,
+    required double segmentSpacing,
+    required BorderRadius radius,
+  }) {
     return Row(
       children: <Widget>[
         for (int i = 0; i < totalPages; i++) ...<Widget>[
@@ -38,11 +40,13 @@ class OnboardingPageIndicator extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: onSegmentTap != null ? () => onSegmentTap!(i) : null,
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 260),
+                duration: const Duration(milliseconds: 250),
                 curve: Curves.easeInOut,
                 height: segmentHeight,
                 decoration: BoxDecoration(
-                  color: i == currentPage ? activeColor : inactiveColor,
+                  // Incrementally filled: all segments up to activeIndex are filled,
+                  // not just darkening the active page.
+                  color: i <= activeIndex ? activeColor : inactiveColor,
                   borderRadius: radius,
                 ),
               ),
@@ -50,6 +54,38 @@ class OnboardingPageIndicator extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double segmentHeight = height ?? 5.h;
+    final double segmentSpacing = spacing ?? 5.w;
+    final BorderRadius radius = borderRadius ?? BorderRadius.circular(100.r);
+
+    if (controller != null) {
+      return AnimatedBuilder(
+        animation: controller!,
+        builder: (BuildContext context, Widget? child) {
+          final int activeIndex =
+              controller!.hasClients && controller!.page != null
+              ? controller!.page!.round()
+              : currentPage;
+          return _buildRow(
+            activeIndex: activeIndex,
+            segmentHeight: segmentHeight,
+            segmentSpacing: segmentSpacing,
+            radius: radius,
+          );
+        },
+      );
+    }
+
+    return _buildRow(
+      activeIndex: currentPage,
+      segmentHeight: segmentHeight,
+      segmentSpacing: segmentSpacing,
+      radius: radius,
     );
   }
 }
