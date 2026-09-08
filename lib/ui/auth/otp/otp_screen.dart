@@ -144,11 +144,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   const Spacer(),
                   AppButton(
                     onTap: () {
-                      context.read<OtpCubit>().verifyOtp(
-                        onSuccess: () {
-                          context.go(RoutePaths.base);
-                        },
-                      );
+                      // context.go(RoutePaths.o);
                     },
                     title: "Continue",
                   ),

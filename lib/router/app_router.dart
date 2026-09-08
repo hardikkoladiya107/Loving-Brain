@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/auth/forgot_password/forgot_password_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
-import 'package:loving_brain/ui/auth/on_boarding/on_boarding_screen1.dart';
-import 'package:loving_brain/ui/auth/on_boarding/welcome_screen.dart';
+
+import 'package:loving_brain/ui/auth/welcome/welcome_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
 import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/base_screen/base_screen.dart';
@@ -58,34 +58,18 @@ class AppRouter {
       redirect: (BuildContext context, GoRouterState state) {
         final bool isLoggedIn =
             preferences.getBool(SharedPreference.isLogin) ?? false;
-        final bool hasSeenOnboarding =
-            preferences.getBool(SharedPreference.hasSeenOnboarding) ?? false;
+
         final String location = state.uri.path;
 
-        // Auth / onboarding only: logged-in users are sent to the app shell.
-        // Terms and privacy stay reachable from profile (do not list them here).
         const Set<String> authFlowRoutes = <String>{
           RoutePaths.splash,
           RoutePaths.welcome,
-          RoutePaths.onboarding1,
-          RoutePaths.onboarding2,
-          RoutePaths.onboarding3,
           RoutePaths.login,
           RoutePaths.register,
           RoutePaths.otp,
           RoutePaths.forgotPassword,
           RoutePaths.coParentRegister,
         };
-
-        const Set<String> onboardingRoutes = <String>{
-          RoutePaths.onboarding1,
-          RoutePaths.onboarding2,
-          RoutePaths.onboarding3,
-        };
-
-        if (hasSeenOnboarding && onboardingRoutes.contains(location)) {
-          return RoutePaths.welcome;
-        }
 
         if (isLoggedIn && authFlowRoutes.contains(location)) {
           return RoutePaths.base;
@@ -272,21 +256,7 @@ class AppRouter {
           builder: (BuildContext context, GoRouterState state) =>
               const WelcomeScreen(),
         ),
-        GoRoute(
-          path: RoutePaths.onboarding1,
-          builder: (BuildContext context, GoRouterState state) =>
-              const OnBoardingScreen1(),
-        ),
-        GoRoute(
-          path: RoutePaths.onboarding2,
-          builder: (BuildContext context, GoRouterState state) =>
-              const OnBoardingScreen1(),
-        ),
-        GoRoute(
-          path: RoutePaths.onboarding3,
-          builder: (BuildContext context, GoRouterState state) =>
-              const OnBoardingScreen1(),
-        ),
+
         GoRoute(
           path: RoutePaths.login,
           builder: (BuildContext context, GoRouterState state) =>

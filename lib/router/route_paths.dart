@@ -3,9 +3,7 @@ class RoutePaths {
 
   static const String splash = '/';
   static const String welcome = '/welcome';
-  static const String onboarding1 = '/onboarding-1';
-  static const String onboarding2 = '/onboarding-2';
-  static const String onboarding3 = '/onboarding-3';
+
   static const String login = '/login';
   static const String register = '/register';
   static const String otp = '/otp';

@@ -14,7 +14,7 @@ class SharedPreference {
 
   static const user = "user";
   static const isLogin = "isLogin";
-  static const hasSeenOnboarding = "hasSeenOnboarding";
+
   static const notificationPermissionRequested =
       "notificationPermissionRequested";
   static const energyBridgeStartTime = "energyBridgeStartTime";
