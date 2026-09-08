@@ -98,8 +98,8 @@ class _OtpScreenState extends State<OtpScreen> {
         }
 
         final String subtitle = state.destination.isNotEmpty
-            ? "We sent a 6-digit verification code to ${state.destination}."
-            : "We sent a 6-digit verification code to your mobile number.";
+            ? "We’ve sent a 4 digit verification code to ${state.destination}."
+            : "We’ve sent a 4 digit verification code to your mobile number.";
 
         return Container(
           decoration: BoxDecoration(
@@ -122,7 +122,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       }
                     },
                   ),
-                  "Enter verification code"
+                  "Enter OTP"
                       .appText2(fontSize: 28, textAlign: TextAlign.start)
                       .appPadding(left: 20.r, right: 20.r),
                   subtitle
@@ -148,32 +148,6 @@ class _OtpScreenState extends State<OtpScreen> {
                     },
                   ).appPadding(left: 20.r, right: 20.r),
                   16.spaceH,
-                  Row(
-                    children: <Widget>[
-                      "Didn’t receive the code? ".appText(
-                        textAlign: TextAlign.start,
-                        fontSize: 14,
-                        color: greyColor,
-                      ),
-                      BaseButton(
-                        onTap: state.canResend
-                            ? () => context.read<OtpCubit>().resendOtp()
-                            : null,
-                        child:
-                            (state.canResend
-                                    ? "Resend"
-                                    : "Resend in ${state.resendCountdown}s")
-                                .appText(
-                                  textAlign: TextAlign.start,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: state.canResend
-                                      ? primaryColor
-                                      : greyColor2,
-                                ),
-                      ),
-                    ],
-                  ).appPadding(left: 20.r, right: 20.r),
                   const Spacer(),
                   AppButton(
                     onTap: () {

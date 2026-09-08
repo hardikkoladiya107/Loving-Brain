@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   Spacer(),
                   AppButton(
                     onTap: () {
-                      context.go(RoutePaths.base);
+                      context.go(RoutePaths.otp);
                     },
                     title: "Continue",
                   ),
