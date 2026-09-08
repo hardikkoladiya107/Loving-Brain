@@ -1,7 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -44,9 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
         backgroundColor: Colors.transparent,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-             Assets.v2.icons.icAppIcon.svg()
-          ],
+          children: [Assets.v2.icons.icAppIcon.svg()],
         ),
       ),
     );
