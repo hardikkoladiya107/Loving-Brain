@@ -102,13 +102,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _onNextTap(OnboardingState state) {
     bool isValid = context.read<OnboardingCubit>().validateCurrentPage();
 
-    if (!isValid) {
-      showSnackBar(
-        message: 'Please fill all required fields in this step.',
-        type: SnackBarType.ERROR,
-      );
-      return;
-    }
+    if (!isValid) return;
 
     if (state.currentPage < _totalPages - 1) {
       _pageController.nextPage(
