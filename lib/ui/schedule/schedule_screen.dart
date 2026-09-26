@@ -7,17 +7,19 @@
 library;
 
 import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/widget/base_button.dart';
-import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/schedule/widget/add_daily_routine_dialog.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -25,7 +27,6 @@ import '../../model/routine_model.dart';
 import '../../model/shared_event_model.dart';
 import '../../other/app_color.dart';
 import '../../other/extra_methods.dart';
-import 'widget/add_daily_routine_dialog.dart';
 import '../widget/app_dialogs.dart';
 import 'bloc/schedule_cubit.dart';
 import 'bloc/schedule_state.dart';
@@ -207,7 +208,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       child: Container(
         height: 52.h,
         decoration: BoxDecoration(
-          color: greyColor3.withValues(alpha: 0.45),
+          color: greyColor6.withValues(alpha: 0.45),
           borderRadius: BorderRadius.circular(100.r),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.85),
@@ -894,7 +895,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(
-                            color: greyColor3.withValues(alpha: 0.5),
+                            color: greyColor6.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(16.r),
                           ),
                           alignment: Alignment.center,

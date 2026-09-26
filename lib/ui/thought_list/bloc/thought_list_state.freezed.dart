@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'thought_list_state.dart';
@@ -9,6 +9,7 @@ part of 'thought_list_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ThoughtListStateCopyWith<ThoughtListState> get copyWith => _$ThoughtListStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThoughtListState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.journalList, journalList));
+  final _this = this as ThoughtListState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThoughtListState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&const DeepCollectionEquality().equals(other.journalList, _this.journalList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(journalList));
+int get hashCode {
+  final _this = this as ThoughtListState;
+  return Object.hash(runtimeType,_this.userModel,const DeepCollectionEquality().hash(_this.journalList));
+}
 
 @override
 String toString() {
-  return 'ThoughtListState(userModel: $userModel, journalList: $journalList)';
+  final _this = this as ThoughtListState;
+  return 'ThoughtListState(userModel: ${_this.userModel}, journalList: ${_this.journalList})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ThoughtListStateCopyWithImpl<$Res>
 /// Create a copy of ThoughtListState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? journalList = null,}) {
-  return _then(_self.copyWith(
+  return _then(ThoughtListState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,journalList: null == journalList ? _self.journalList : journalList // ignore: cast_nullable_to_non_nullable
 as List<JournalModel>,
@@ -207,7 +213,7 @@ return $default(_that.userModel,_that.journalList);case _:
 
 
 class _ThoughtListState implements ThoughtListState {
-  const _ThoughtListState({this.userModel, final  List<JournalModel> journalList = const []}): _journalList = journalList;
+  const _ThoughtListState({this.userModel,  List<JournalModel> journalList = const []}): _journalList = journalList;
   
 
 @override final  UserModel? userModel;
@@ -229,16 +235,18 @@ _$ThoughtListStateCopyWith<_ThoughtListState> get copyWith => __$ThoughtListStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThoughtListState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._journalList, _journalList));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThoughtListState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.journalList, _journalList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(_journalList));
+int get hashCode {
+    return Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(_journalList));
+}
 
 @override
 String toString() {
-  return 'ThoughtListState(userModel: $userModel, journalList: $journalList)';
+    return 'ThoughtListState(userModel: $userModel, journalList: $journalList)';
 }
 
 

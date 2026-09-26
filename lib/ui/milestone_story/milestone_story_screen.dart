@@ -96,8 +96,9 @@ class _MilestoneStoryScreenState extends State<MilestoneStoryScreen> {
     String generatedText = '';
     response.whenOrNull(
       data: (dynamic data) {
-        final AiResponseModel aiResponse =
-            AiResponseModel.fromJson(data as Map<String, dynamic>);
+        final AiResponseModel aiResponse = AiResponseModel.fromJson(
+          data as Map<String, dynamic>,
+        );
         final List<ConversationItem> output =
             aiResponse.output ?? <ConversationItem>[];
         if (output.isNotEmpty &&
@@ -131,17 +132,17 @@ class _MilestoneStoryScreenState extends State<MilestoneStoryScreen> {
       dob: homeState.childModel?.childDob,
       legacyAgeText: homeState.childModel?.childAge ?? '',
     );
-    final ApiResultStatus<String> saveResult =
-        await MilestoneRepo.instance.saveMilestone(
-      childId: childId,
-      actorUid: uid,
-      milestoneKey: _milestone!.key,
-      title: _milestone!.title,
-      whatThisMeans: _milestone!.whatThisMeans,
-      storyText: generatedText,
-      chapter: _milestone!.chapter,
-      ageInMonths: ageInMonths,
-    );
+    final ApiResultStatus<String> saveResult = await MilestoneRepo.instance
+        .saveMilestone(
+          childId: childId,
+          actorUid: uid,
+          milestoneKey: _milestone!.key,
+          title: _milestone!.title,
+          whatThisMeans: _milestone!.whatThisMeans,
+          storyText: generatedText,
+          chapter: _milestone!.chapter,
+          ageInMonths: ageInMonths,
+        );
     EasyLoading.dismiss();
     saveResult.whenOrNull(
       data: (_) async {

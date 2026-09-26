@@ -75,10 +75,11 @@ class MilestoneRepo {
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
-      final QuerySnapshot<Map<String, dynamic>> snap = await _milestonesCollection
-          .where('child_id', isEqualTo: childId)
-          .orderBy('timestamp', descending: true)
-          .get();
+      final QuerySnapshot<Map<String, dynamic>> snap =
+          await _milestonesCollection
+              .where('child_id', isEqualTo: childId)
+              .orderBy('timestamp', descending: true)
+              .get();
       final List<MilestoneModel> milestones = snap.docs
           .map(MilestoneModel.fromFirestore)
           .toList();

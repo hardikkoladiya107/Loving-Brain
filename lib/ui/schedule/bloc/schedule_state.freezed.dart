@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'schedule_state.dart';
@@ -9,12 +9,13 @@ part of 'schedule_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ScheduleState {
 
- String get message; int get tabIndex; List<SharedEventModel> get sharedEventList; UserModel? get userModel; ChildModel? get childModel; bool get hasLinkedCoParent; ApiResultStatus get deleteRoutineApiResultStatus; ApiResultStatus get deleteSharedEventApiResultStatus;
+ String get message; int get tabIndex; List<SharedEventModel> get sharedEventList; UserModel? get userModel; ChildModel? get childModel; bool get hasLinkedCoParent; ApiResultStatus<dynamic> get deleteRoutineApiResultStatus; ApiResultStatus<dynamic> get deleteSharedEventApiResultStatus;
 /// Create a copy of ScheduleState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ScheduleStateCopyWith<ScheduleState> get copyWith => _$ScheduleStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&const DeepCollectionEquality().equals(other.sharedEventList, sharedEventList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.hasLinkedCoParent, hasLinkedCoParent) || other.hasLinkedCoParent == hasLinkedCoParent)&&(identical(other.deleteRoutineApiResultStatus, deleteRoutineApiResultStatus) || other.deleteRoutineApiResultStatus == deleteRoutineApiResultStatus)&&(identical(other.deleteSharedEventApiResultStatus, deleteSharedEventApiResultStatus) || other.deleteSharedEventApiResultStatus == deleteSharedEventApiResultStatus));
+  final _this = this as ScheduleState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScheduleState&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.tabIndex, _this.tabIndex) || other.tabIndex == _this.tabIndex)&&const DeepCollectionEquality().equals(other.sharedEventList, _this.sharedEventList)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&(identical(other.hasLinkedCoParent, _this.hasLinkedCoParent) || other.hasLinkedCoParent == _this.hasLinkedCoParent)&&(identical(other.deleteRoutineApiResultStatus, _this.deleteRoutineApiResultStatus) || other.deleteRoutineApiResultStatus == _this.deleteRoutineApiResultStatus)&&(identical(other.deleteSharedEventApiResultStatus, _this.deleteSharedEventApiResultStatus) || other.deleteSharedEventApiResultStatus == _this.deleteSharedEventApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,tabIndex,const DeepCollectionEquality().hash(sharedEventList),userModel,childModel,hasLinkedCoParent,deleteRoutineApiResultStatus,deleteSharedEventApiResultStatus);
+int get hashCode {
+  final _this = this as ScheduleState;
+  return Object.hash(runtimeType,_this.message,_this.tabIndex,const DeepCollectionEquality().hash(_this.sharedEventList),_this.userModel,_this.childModel,_this.hasLinkedCoParent,_this.deleteRoutineApiResultStatus,_this.deleteSharedEventApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'ScheduleState(message: $message, tabIndex: $tabIndex, sharedEventList: $sharedEventList, userModel: $userModel, childModel: $childModel, hasLinkedCoParent: $hasLinkedCoParent, deleteRoutineApiResultStatus: $deleteRoutineApiResultStatus, deleteSharedEventApiResultStatus: $deleteSharedEventApiResultStatus)';
+  final _this = this as ScheduleState;
+  return 'ScheduleState(message: ${_this.message}, tabIndex: ${_this.tabIndex}, sharedEventList: ${_this.sharedEventList}, userModel: ${_this.userModel}, childModel: ${_this.childModel}, hasLinkedCoParent: ${_this.hasLinkedCoParent}, deleteRoutineApiResultStatus: ${_this.deleteRoutineApiResultStatus}, deleteSharedEventApiResultStatus: ${_this.deleteSharedEventApiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ScheduleStateCopyWith<$Res>  {
   factory $ScheduleStateCopyWith(ScheduleState value, $Res Function(ScheduleState) _then) = _$ScheduleStateCopyWithImpl;
 @useResult
 $Res call({
- String message, int tabIndex, List<SharedEventModel> sharedEventList, UserModel? userModel, ChildModel? childModel, bool hasLinkedCoParent, ApiResultStatus deleteRoutineApiResultStatus, ApiResultStatus deleteSharedEventApiResultStatus
+ String message, int tabIndex, List<SharedEventModel> sharedEventList, UserModel? userModel, ChildModel? childModel, bool hasLinkedCoParent, ApiResultStatus<dynamic> deleteRoutineApiResultStatus, ApiResultStatus<dynamic> deleteSharedEventApiResultStatus
 });
 
 
@@ -63,7 +69,7 @@ class _$ScheduleStateCopyWithImpl<$Res>
 /// Create a copy of ScheduleState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? tabIndex = null,Object? sharedEventList = null,Object? userModel = freezed,Object? childModel = freezed,Object? hasLinkedCoParent = null,Object? deleteRoutineApiResultStatus = null,Object? deleteSharedEventApiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(ScheduleState(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,tabIndex: null == tabIndex ? _self.tabIndex : tabIndex // ignore: cast_nullable_to_non_nullable
 as int,sharedEventList: null == sharedEventList ? _self.sharedEventList : sharedEventList // ignore: cast_nullable_to_non_nullable
@@ -71,8 +77,8 @@ as List<SharedEventModel>,userModel: freezed == userModel ? _self.userModel : us
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,hasLinkedCoParent: null == hasLinkedCoParent ? _self.hasLinkedCoParent : hasLinkedCoParent // ignore: cast_nullable_to_non_nullable
 as bool,deleteRoutineApiResultStatus: null == deleteRoutineApiResultStatus ? _self.deleteRoutineApiResultStatus : deleteRoutineApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,deleteSharedEventApiResultStatus: null == deleteSharedEventApiResultStatus ? _self.deleteSharedEventApiResultStatus : deleteSharedEventApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,deleteSharedEventApiResultStatus: null == deleteSharedEventApiResultStatus ? _self.deleteSharedEventApiResultStatus : deleteSharedEventApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of ScheduleState
@@ -175,7 +181,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel,  bool hasLinkedCoParent,  ApiResultStatus deleteRoutineApiResultStatus,  ApiResultStatus deleteSharedEventApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel,  bool hasLinkedCoParent,  ApiResultStatus<dynamic> deleteRoutineApiResultStatus,  ApiResultStatus<dynamic> deleteSharedEventApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ScheduleState() when $default != null:
 return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userModel,_that.childModel,_that.hasLinkedCoParent,_that.deleteRoutineApiResultStatus,_that.deleteSharedEventApiResultStatus);case _:
@@ -196,7 +202,7 @@ return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userMod
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel,  bool hasLinkedCoParent,  ApiResultStatus deleteRoutineApiResultStatus,  ApiResultStatus deleteSharedEventApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel,  bool hasLinkedCoParent,  ApiResultStatus<dynamic> deleteRoutineApiResultStatus,  ApiResultStatus<dynamic> deleteSharedEventApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ScheduleState():
 return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userModel,_that.childModel,_that.hasLinkedCoParent,_that.deleteRoutineApiResultStatus,_that.deleteSharedEventApiResultStatus);case _:
@@ -216,7 +222,7 @@ return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userMod
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel,  bool hasLinkedCoParent,  ApiResultStatus deleteRoutineApiResultStatus,  ApiResultStatus deleteSharedEventApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  int tabIndex,  List<SharedEventModel> sharedEventList,  UserModel? userModel,  ChildModel? childModel,  bool hasLinkedCoParent,  ApiResultStatus<dynamic> deleteRoutineApiResultStatus,  ApiResultStatus<dynamic> deleteSharedEventApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ScheduleState() when $default != null:
 return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userModel,_that.childModel,_that.hasLinkedCoParent,_that.deleteRoutineApiResultStatus,_that.deleteSharedEventApiResultStatus);case _:
@@ -231,7 +237,7 @@ return $default(_that.message,_that.tabIndex,_that.sharedEventList,_that.userMod
 
 
 class _ScheduleState implements ScheduleState {
-  const _ScheduleState({this.message = "", this.tabIndex = 0, final  List<SharedEventModel> sharedEventList = const [], this.userModel, this.childModel, this.hasLinkedCoParent = false, this.deleteRoutineApiResultStatus = const ApiResultStatus.initial(), this.deleteSharedEventApiResultStatus = const ApiResultStatus.initial()}): _sharedEventList = sharedEventList;
+  const _ScheduleState({this.message = "", this.tabIndex = 0,  List<SharedEventModel> sharedEventList = const [], this.userModel, this.childModel, this.hasLinkedCoParent = false, this.deleteRoutineApiResultStatus = const ApiResultStatus.initial(), this.deleteSharedEventApiResultStatus = const ApiResultStatus.initial()}): _sharedEventList = sharedEventList;
   
 
 @override@JsonKey() final  String message;
@@ -246,8 +252,8 @@ class _ScheduleState implements ScheduleState {
 @override final  UserModel? userModel;
 @override final  ChildModel? childModel;
 @override@JsonKey() final  bool hasLinkedCoParent;
-@override@JsonKey() final  ApiResultStatus deleteRoutineApiResultStatus;
-@override@JsonKey() final  ApiResultStatus deleteSharedEventApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> deleteRoutineApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> deleteSharedEventApiResultStatus;
 
 /// Create a copy of ScheduleState
 /// with the given fields replaced by the non-null parameter values.
@@ -259,16 +265,18 @@ _$ScheduleStateCopyWith<_ScheduleState> get copyWith => __$ScheduleStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&const DeepCollectionEquality().equals(other._sharedEventList, _sharedEventList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.hasLinkedCoParent, hasLinkedCoParent) || other.hasLinkedCoParent == hasLinkedCoParent)&&(identical(other.deleteRoutineApiResultStatus, deleteRoutineApiResultStatus) || other.deleteRoutineApiResultStatus == deleteRoutineApiResultStatus)&&(identical(other.deleteSharedEventApiResultStatus, deleteSharedEventApiResultStatus) || other.deleteSharedEventApiResultStatus == deleteSharedEventApiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScheduleState&&(identical(other.message, message) || other.message == message)&&(identical(other.tabIndex, tabIndex) || other.tabIndex == tabIndex)&&const DeepCollectionEquality().equals(other.sharedEventList, _sharedEventList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.hasLinkedCoParent, hasLinkedCoParent) || other.hasLinkedCoParent == hasLinkedCoParent)&&(identical(other.deleteRoutineApiResultStatus, deleteRoutineApiResultStatus) || other.deleteRoutineApiResultStatus == deleteRoutineApiResultStatus)&&(identical(other.deleteSharedEventApiResultStatus, deleteSharedEventApiResultStatus) || other.deleteSharedEventApiResultStatus == deleteSharedEventApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,tabIndex,const DeepCollectionEquality().hash(_sharedEventList),userModel,childModel,hasLinkedCoParent,deleteRoutineApiResultStatus,deleteSharedEventApiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,message,tabIndex,const DeepCollectionEquality().hash(_sharedEventList),userModel,childModel,hasLinkedCoParent,deleteRoutineApiResultStatus,deleteSharedEventApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'ScheduleState(message: $message, tabIndex: $tabIndex, sharedEventList: $sharedEventList, userModel: $userModel, childModel: $childModel, hasLinkedCoParent: $hasLinkedCoParent, deleteRoutineApiResultStatus: $deleteRoutineApiResultStatus, deleteSharedEventApiResultStatus: $deleteSharedEventApiResultStatus)';
+    return 'ScheduleState(message: $message, tabIndex: $tabIndex, sharedEventList: $sharedEventList, userModel: $userModel, childModel: $childModel, hasLinkedCoParent: $hasLinkedCoParent, deleteRoutineApiResultStatus: $deleteRoutineApiResultStatus, deleteSharedEventApiResultStatus: $deleteSharedEventApiResultStatus)';
 }
 
 
@@ -279,7 +287,7 @@ abstract mixin class _$ScheduleStateCopyWith<$Res> implements $ScheduleStateCopy
   factory _$ScheduleStateCopyWith(_ScheduleState value, $Res Function(_ScheduleState) _then) = __$ScheduleStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message, int tabIndex, List<SharedEventModel> sharedEventList, UserModel? userModel, ChildModel? childModel, bool hasLinkedCoParent, ApiResultStatus deleteRoutineApiResultStatus, ApiResultStatus deleteSharedEventApiResultStatus
+ String message, int tabIndex, List<SharedEventModel> sharedEventList, UserModel? userModel, ChildModel? childModel, bool hasLinkedCoParent, ApiResultStatus<dynamic> deleteRoutineApiResultStatus, ApiResultStatus<dynamic> deleteSharedEventApiResultStatus
 });
 
 
@@ -305,8 +313,8 @@ as List<SharedEventModel>,userModel: freezed == userModel ? _self.userModel : us
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,hasLinkedCoParent: null == hasLinkedCoParent ? _self.hasLinkedCoParent : hasLinkedCoParent // ignore: cast_nullable_to_non_nullable
 as bool,deleteRoutineApiResultStatus: null == deleteRoutineApiResultStatus ? _self.deleteRoutineApiResultStatus : deleteRoutineApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,deleteSharedEventApiResultStatus: null == deleteSharedEventApiResultStatus ? _self.deleteSharedEventApiResultStatus : deleteSharedEventApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,deleteSharedEventApiResultStatus: null == deleteSharedEventApiResultStatus ? _self.deleteSharedEventApiResultStatus : deleteSharedEventApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 

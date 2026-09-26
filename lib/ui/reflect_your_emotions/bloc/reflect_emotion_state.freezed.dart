@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'reflect_emotion_state.dart';
@@ -9,12 +9,13 @@ part of 'reflect_emotion_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ReflectEmotionState {
 
- UserModel? get userModel; ChildModel? get childModel; List<ChildModel>? get children; WeekRange? get selectedWeek; List<MoodLogModel> get logs; ApiResultStatus get emotionsLogApiResult; ApiResultStatus get apiResultStatus; ApiResultStatus get childrenListApiResult;
+ UserModel? get userModel; ChildModel? get childModel; List<ChildModel>? get children; WeekRange? get selectedWeek; List<MoodLogModel> get logs; ApiResultStatus<dynamic> get emotionsLogApiResult; ApiResultStatus<dynamic> get apiResultStatus; ApiResultStatus<dynamic> get childrenListApiResult;
 /// Create a copy of ReflectEmotionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ReflectEmotionStateCopyWith<ReflectEmotionState> get copyWith => _$ReflectEmoti
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReflectEmotionState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&const DeepCollectionEquality().equals(other.children, children)&&(identical(other.selectedWeek, selectedWeek) || other.selectedWeek == selectedWeek)&&const DeepCollectionEquality().equals(other.logs, logs)&&(identical(other.emotionsLogApiResult, emotionsLogApiResult) || other.emotionsLogApiResult == emotionsLogApiResult)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childrenListApiResult, childrenListApiResult) || other.childrenListApiResult == childrenListApiResult));
+  final _this = this as ReflectEmotionState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReflectEmotionState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&const DeepCollectionEquality().equals(other.children, _this.children)&&(identical(other.selectedWeek, _this.selectedWeek) || other.selectedWeek == _this.selectedWeek)&&const DeepCollectionEquality().equals(other.logs, _this.logs)&&(identical(other.emotionsLogApiResult, _this.emotionsLogApiResult) || other.emotionsLogApiResult == _this.emotionsLogApiResult)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.childrenListApiResult, _this.childrenListApiResult) || other.childrenListApiResult == _this.childrenListApiResult));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,childModel,const DeepCollectionEquality().hash(children),selectedWeek,const DeepCollectionEquality().hash(logs),emotionsLogApiResult,apiResultStatus,childrenListApiResult);
+int get hashCode {
+  final _this = this as ReflectEmotionState;
+  return Object.hash(runtimeType,_this.userModel,_this.childModel,const DeepCollectionEquality().hash(_this.children),_this.selectedWeek,const DeepCollectionEquality().hash(_this.logs),_this.emotionsLogApiResult,_this.apiResultStatus,_this.childrenListApiResult);
+}
 
 @override
 String toString() {
-  return 'ReflectEmotionState(userModel: $userModel, childModel: $childModel, children: $children, selectedWeek: $selectedWeek, logs: $logs, emotionsLogApiResult: $emotionsLogApiResult, apiResultStatus: $apiResultStatus, childrenListApiResult: $childrenListApiResult)';
+  final _this = this as ReflectEmotionState;
+  return 'ReflectEmotionState(userModel: ${_this.userModel}, childModel: ${_this.childModel}, children: ${_this.children}, selectedWeek: ${_this.selectedWeek}, logs: ${_this.logs}, emotionsLogApiResult: ${_this.emotionsLogApiResult}, apiResultStatus: ${_this.apiResultStatus}, childrenListApiResult: ${_this.childrenListApiResult})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ReflectEmotionStateCopyWith<$Res>  {
   factory $ReflectEmotionStateCopyWith(ReflectEmotionState value, $Res Function(ReflectEmotionState) _then) = _$ReflectEmotionStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, ChildModel? childModel, List<ChildModel>? children, WeekRange? selectedWeek, List<MoodLogModel> logs, ApiResultStatus emotionsLogApiResult, ApiResultStatus apiResultStatus, ApiResultStatus childrenListApiResult
+ UserModel? userModel, ChildModel? childModel, List<ChildModel>? children, WeekRange? selectedWeek, List<MoodLogModel> logs, ApiResultStatus<dynamic> emotionsLogApiResult, ApiResultStatus<dynamic> apiResultStatus, ApiResultStatus<dynamic> childrenListApiResult
 });
 
 
@@ -63,16 +69,16 @@ class _$ReflectEmotionStateCopyWithImpl<$Res>
 /// Create a copy of ReflectEmotionState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? childModel = freezed,Object? children = freezed,Object? selectedWeek = freezed,Object? logs = null,Object? emotionsLogApiResult = null,Object? apiResultStatus = null,Object? childrenListApiResult = null,}) {
-  return _then(_self.copyWith(
+  return _then(ReflectEmotionState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,children: freezed == children ? _self.children : children // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>?,selectedWeek: freezed == selectedWeek ? _self.selectedWeek : selectedWeek // ignore: cast_nullable_to_non_nullable
 as WeekRange?,logs: null == logs ? _self.logs : logs // ignore: cast_nullable_to_non_nullable
 as List<MoodLogModel>,emotionsLogApiResult: null == emotionsLogApiResult ? _self.emotionsLogApiResult : emotionsLogApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of ReflectEmotionState
@@ -184,7 +190,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  List<ChildModel>? children,  WeekRange? selectedWeek,  List<MoodLogModel> logs,  ApiResultStatus emotionsLogApiResult,  ApiResultStatus apiResultStatus,  ApiResultStatus childrenListApiResult)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  List<ChildModel>? children,  WeekRange? selectedWeek,  List<MoodLogModel> logs,  ApiResultStatus<dynamic> emotionsLogApiResult,  ApiResultStatus<dynamic> apiResultStatus,  ApiResultStatus<dynamic> childrenListApiResult)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ReflectEmotionState() when $default != null:
 return $default(_that.userModel,_that.childModel,_that.children,_that.selectedWeek,_that.logs,_that.emotionsLogApiResult,_that.apiResultStatus,_that.childrenListApiResult);case _:
@@ -205,7 +211,7 @@ return $default(_that.userModel,_that.childModel,_that.children,_that.selectedWe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  List<ChildModel>? children,  WeekRange? selectedWeek,  List<MoodLogModel> logs,  ApiResultStatus emotionsLogApiResult,  ApiResultStatus apiResultStatus,  ApiResultStatus childrenListApiResult)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  List<ChildModel>? children,  WeekRange? selectedWeek,  List<MoodLogModel> logs,  ApiResultStatus<dynamic> emotionsLogApiResult,  ApiResultStatus<dynamic> apiResultStatus,  ApiResultStatus<dynamic> childrenListApiResult)  $default,) {final _that = this;
 switch (_that) {
 case _ReflectEmotionState():
 return $default(_that.userModel,_that.childModel,_that.children,_that.selectedWeek,_that.logs,_that.emotionsLogApiResult,_that.apiResultStatus,_that.childrenListApiResult);case _:
@@ -225,7 +231,7 @@ return $default(_that.userModel,_that.childModel,_that.children,_that.selectedWe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  List<ChildModel>? children,  WeekRange? selectedWeek,  List<MoodLogModel> logs,  ApiResultStatus emotionsLogApiResult,  ApiResultStatus apiResultStatus,  ApiResultStatus childrenListApiResult)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  List<ChildModel>? children,  WeekRange? selectedWeek,  List<MoodLogModel> logs,  ApiResultStatus<dynamic> emotionsLogApiResult,  ApiResultStatus<dynamic> apiResultStatus,  ApiResultStatus<dynamic> childrenListApiResult)?  $default,) {final _that = this;
 switch (_that) {
 case _ReflectEmotionState() when $default != null:
 return $default(_that.userModel,_that.childModel,_that.children,_that.selectedWeek,_that.logs,_that.emotionsLogApiResult,_that.apiResultStatus,_that.childrenListApiResult);case _:
@@ -240,7 +246,7 @@ return $default(_that.userModel,_that.childModel,_that.children,_that.selectedWe
 
 
 class _ReflectEmotionState implements ReflectEmotionState {
-  const _ReflectEmotionState({this.userModel, this.childModel, final  List<ChildModel>? children, this.selectedWeek, final  List<MoodLogModel> logs = const [], this.emotionsLogApiResult = const ApiResultStatus.initial(), this.apiResultStatus = const ApiResultStatus.initial(), this.childrenListApiResult = const ApiResultStatus.initial()}): _children = children,_logs = logs;
+  const _ReflectEmotionState({this.userModel, this.childModel,  List<ChildModel>? children, this.selectedWeek,  List<MoodLogModel> logs = const [], this.emotionsLogApiResult = const ApiResultStatus.initial(), this.apiResultStatus = const ApiResultStatus.initial(), this.childrenListApiResult = const ApiResultStatus.initial()}): _children = children,_logs = logs;
   
 
 @override final  UserModel? userModel;
@@ -262,9 +268,9 @@ class _ReflectEmotionState implements ReflectEmotionState {
   return EqualUnmodifiableListView(_logs);
 }
 
-@override@JsonKey() final  ApiResultStatus emotionsLogApiResult;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
-@override@JsonKey() final  ApiResultStatus childrenListApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> emotionsLogApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> childrenListApiResult;
 
 /// Create a copy of ReflectEmotionState
 /// with the given fields replaced by the non-null parameter values.
@@ -276,16 +282,18 @@ _$ReflectEmotionStateCopyWith<_ReflectEmotionState> get copyWith => __$ReflectEm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReflectEmotionState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&const DeepCollectionEquality().equals(other._children, _children)&&(identical(other.selectedWeek, selectedWeek) || other.selectedWeek == selectedWeek)&&const DeepCollectionEquality().equals(other._logs, _logs)&&(identical(other.emotionsLogApiResult, emotionsLogApiResult) || other.emotionsLogApiResult == emotionsLogApiResult)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childrenListApiResult, childrenListApiResult) || other.childrenListApiResult == childrenListApiResult));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReflectEmotionState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&const DeepCollectionEquality().equals(other.children, _children)&&(identical(other.selectedWeek, selectedWeek) || other.selectedWeek == selectedWeek)&&const DeepCollectionEquality().equals(other.logs, _logs)&&(identical(other.emotionsLogApiResult, emotionsLogApiResult) || other.emotionsLogApiResult == emotionsLogApiResult)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childrenListApiResult, childrenListApiResult) || other.childrenListApiResult == childrenListApiResult));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,childModel,const DeepCollectionEquality().hash(_children),selectedWeek,const DeepCollectionEquality().hash(_logs),emotionsLogApiResult,apiResultStatus,childrenListApiResult);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,childModel,const DeepCollectionEquality().hash(_children),selectedWeek,const DeepCollectionEquality().hash(_logs),emotionsLogApiResult,apiResultStatus,childrenListApiResult);
+}
 
 @override
 String toString() {
-  return 'ReflectEmotionState(userModel: $userModel, childModel: $childModel, children: $children, selectedWeek: $selectedWeek, logs: $logs, emotionsLogApiResult: $emotionsLogApiResult, apiResultStatus: $apiResultStatus, childrenListApiResult: $childrenListApiResult)';
+    return 'ReflectEmotionState(userModel: $userModel, childModel: $childModel, children: $children, selectedWeek: $selectedWeek, logs: $logs, emotionsLogApiResult: $emotionsLogApiResult, apiResultStatus: $apiResultStatus, childrenListApiResult: $childrenListApiResult)';
 }
 
 
@@ -296,7 +304,7 @@ abstract mixin class _$ReflectEmotionStateCopyWith<$Res> implements $ReflectEmot
   factory _$ReflectEmotionStateCopyWith(_ReflectEmotionState value, $Res Function(_ReflectEmotionState) _then) = __$ReflectEmotionStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, ChildModel? childModel, List<ChildModel>? children, WeekRange? selectedWeek, List<MoodLogModel> logs, ApiResultStatus emotionsLogApiResult, ApiResultStatus apiResultStatus, ApiResultStatus childrenListApiResult
+ UserModel? userModel, ChildModel? childModel, List<ChildModel>? children, WeekRange? selectedWeek, List<MoodLogModel> logs, ApiResultStatus<dynamic> emotionsLogApiResult, ApiResultStatus<dynamic> apiResultStatus, ApiResultStatus<dynamic> childrenListApiResult
 });
 
 
@@ -321,9 +329,9 @@ as ChildModel?,children: freezed == children ? _self._children : children // ign
 as List<ChildModel>?,selectedWeek: freezed == selectedWeek ? _self.selectedWeek : selectedWeek // ignore: cast_nullable_to_non_nullable
 as WeekRange?,logs: null == logs ? _self._logs : logs // ignore: cast_nullable_to_non_nullable
 as List<MoodLogModel>,emotionsLogApiResult: null == emotionsLogApiResult ? _self.emotionsLogApiResult : emotionsLogApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 

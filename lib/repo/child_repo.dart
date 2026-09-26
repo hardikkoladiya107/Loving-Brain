@@ -390,7 +390,7 @@ class ChildRepo {
           if (id.isNotEmpty) childIds.add(id);
         }
       }
-      return getChildren(childrenIds: childIds.toList());
+      return await getChildren(childrenIds: childIds.toList());
     } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -546,14 +546,15 @@ class ChildRepo {
       await childrenCollection.doc(childId).update(<String, dynamic>{
         'last_feed_time': Timestamp.fromDate(now),
       });
-      await childrenCollection.doc(childId).collection('events').add(
-        <String, dynamic>{
-          'type': 'feed',
-          'child_id': childId,
-          'timestamp': Timestamp.fromDate(now),
-          'updated_by': actorUid,
-        },
-      );
+      await childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add(<String, dynamic>{
+            'type': 'feed',
+            'child_id': childId,
+            'timestamp': Timestamp.fromDate(now),
+            'updated_by': actorUid,
+          });
       final ApiResultStatus resetResult = await EnergyBridgeRepo.instance
           .resetTimer(childId: childId, actorUid: actorUid, reason: 'feed');
       resetResult.whenOrNull(
@@ -598,14 +599,15 @@ class ChildRepo {
         'sleep_in_progress': true,
         'sleep_started_at': Timestamp.fromDate(now),
       });
-      await childrenCollection.doc(childId).collection('events').add(
-        <String, dynamic>{
-          'type': 'sleep_start',
-          'child_id': childId,
-          'timestamp': Timestamp.fromDate(now),
-          'updated_by': actorUid,
-        },
-      );
+      await childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add(<String, dynamic>{
+            'type': 'sleep_start',
+            'child_id': childId,
+            'timestamp': Timestamp.fromDate(now),
+            'updated_by': actorUid,
+          });
       final ApiResultStatus resetResult = await EnergyBridgeRepo.instance
           .resetTimer(childId: childId, actorUid: actorUid, reason: 'sleep');
       resetResult.whenOrNull(
@@ -649,15 +651,16 @@ class ChildRepo {
         'sleep_started_at': null,
         'last_sleep_duration_minutes': durationMinutes,
       });
-      await childrenCollection.doc(childId).collection('events').add(
-        <String, dynamic>{
-          'type': 'sleep_end',
-          'child_id': childId,
-          'duration_minutes': durationMinutes,
-          'timestamp': Timestamp.fromDate(now),
-          'updated_by': actorUid,
-        },
-      );
+      await childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add(<String, dynamic>{
+            'type': 'sleep_end',
+            'child_id': childId,
+            'duration_minutes': durationMinutes,
+            'timestamp': Timestamp.fromDate(now),
+            'updated_by': actorUid,
+          });
       return ApiResultStatus.data(data: childId);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(

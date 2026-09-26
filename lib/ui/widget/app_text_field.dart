@@ -40,6 +40,7 @@ class AppTextField extends StatefulWidget {
     this.obscureText = false,
     this.showError = true,
     this.onFieldTap,
+    this.onSubmitted,
   });
 
   final String? title;
@@ -64,6 +65,7 @@ class AppTextField extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final Function? onFieldTap;
+  final ValueChanged<String>? onSubmitted;
   final GestureTapCallback? onAddButtonTap;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
@@ -86,18 +88,36 @@ class _AppTextFieldState extends State<AppTextField> {
       widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @override
+  void initState() {
+    super.initState();
+    _effectiveFocusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() {});
+  }
+
+  @override
   void didUpdateWidget(covariant AppTextField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.focusNode != oldWidget.focusNode) {
-      if (oldWidget.focusNode == null && widget.focusNode != null) {
-        _focusNode?.dispose();
-        _focusNode = null;
+      oldWidget.focusNode?.removeListener(_onFocusChange);
+      if (widget.focusNode != null) {
+        if (oldWidget.focusNode == null) {
+          _focusNode?.dispose();
+          _focusNode = null;
+        }
+        widget.focusNode!.addListener(_onFocusChange);
+      } else {
+        _focusNode ??= FocusNode();
+        _focusNode!.addListener(_onFocusChange);
       }
     }
   }
 
   @override
   void dispose() {
+    _effectiveFocusNode.removeListener(_onFocusChange);
     _focusNode?.dispose();
     super.dispose();
   }
@@ -118,11 +138,7 @@ class _AppTextFieldState extends State<AppTextField> {
           child: Icon(Icons.add, color: primaryColor, size: 22.r),
         );
       } else if (widget.showInfoButton) {
-        trailingIcon = Icon(
-          Icons.info_outline,
-          color: const Color(0xFFADB5BD),
-          size: 20.r,
-        );
+        trailingIcon = Icon(Icons.info_outline, color: greyColor4, size: 20.r);
       }
     }
 
@@ -138,9 +154,19 @@ class _AppTextFieldState extends State<AppTextField> {
       border:
           widget.border ??
           (widget.tfType == TFTYPE.FILLED
-              ? null
+              ? Border.all(
+                  color: _effectiveFocusNode.hasFocus
+                      ? secondaryColor
+                      : Colors.transparent,
+                  width: 1,
+                )
               : Border(
-                  bottom: BorderSide(color: Colors.grey.shade300, width: 1.5),
+                  bottom: BorderSide(
+                    color: _effectiveFocusNode.hasFocus
+                        ? secondaryColor
+                        : Colors.grey.shade300,
+                    width: 1.5,
+                  ),
                 )),
     );
 
@@ -204,9 +230,7 @@ class _AppTextFieldState extends State<AppTextField> {
                               getTextStyle(
                                 fontSize: (widget.titleFontSize ?? 11).sp,
                                 fontWeight: FontWeight.w600,
-                                color:
-                                    widget.titleColor ??
-                                    const Color(0xFFADB5BD),
+                                color: widget.titleColor ?? greyColor4,
                                 letterSpacing: 0.8,
                               ),
                           textAlign: TextAlign.start,
@@ -234,6 +258,7 @@ class _AppTextFieldState extends State<AppTextField> {
                           minLines: widget.obscureText ? 1 : widget.minLines,
                           obscureText: widget.obscureText,
                           onChanged: widget.onChanged,
+                          onSubmitted: widget.onSubmitted,
                           onTap: () {
                             if (widget.onFieldTap != null) {
                               widget.onFieldTap!();
@@ -244,7 +269,7 @@ class _AppTextFieldState extends State<AppTextField> {
                               getTextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
-                                color: const Color(0xFF212529),
+                                color: greyColor9,
                               ),
                           inputFormatters: widget.inputFormatters,
                           cursorColor: primaryColor,
@@ -256,7 +281,7 @@ class _AppTextFieldState extends State<AppTextField> {
                                 widget.hintStyle ??
                                 getTextStyle(
                                   fontSize: 16.sp,
-                                  color: const Color(0xFFADB5BD),
+                                  color: greyColor4,
                                   fontWeight: FontWeight.w400,
                                 ),
                             filled: false,

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'write_your_thought_state.dart';
@@ -9,12 +9,13 @@ part of 'write_your_thought_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WriteYourThoughtState {
 
- UserModel? get userModel; ApiResultStatus get apiResultStatus; String get thoughtsText; String get thoughtsErrorText; List<JournalModel> get journalList;
+ UserModel? get userModel; ApiResultStatus<dynamic> get apiResultStatus; String get thoughtsText; String get thoughtsErrorText; List<JournalModel> get journalList;
 /// Create a copy of WriteYourThoughtState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $WriteYourThoughtStateCopyWith<WriteYourThoughtState> get copyWith => _$WriteYou
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WriteYourThoughtState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.thoughtsText, thoughtsText) || other.thoughtsText == thoughtsText)&&(identical(other.thoughtsErrorText, thoughtsErrorText) || other.thoughtsErrorText == thoughtsErrorText)&&const DeepCollectionEquality().equals(other.journalList, journalList));
+  final _this = this as WriteYourThoughtState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WriteYourThoughtState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.thoughtsText, _this.thoughtsText) || other.thoughtsText == _this.thoughtsText)&&(identical(other.thoughtsErrorText, _this.thoughtsErrorText) || other.thoughtsErrorText == _this.thoughtsErrorText)&&const DeepCollectionEquality().equals(other.journalList, _this.journalList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,apiResultStatus,thoughtsText,thoughtsErrorText,const DeepCollectionEquality().hash(journalList));
+int get hashCode {
+  final _this = this as WriteYourThoughtState;
+  return Object.hash(runtimeType,_this.userModel,_this.apiResultStatus,_this.thoughtsText,_this.thoughtsErrorText,const DeepCollectionEquality().hash(_this.journalList));
+}
 
 @override
 String toString() {
-  return 'WriteYourThoughtState(userModel: $userModel, apiResultStatus: $apiResultStatus, thoughtsText: $thoughtsText, thoughtsErrorText: $thoughtsErrorText, journalList: $journalList)';
+  final _this = this as WriteYourThoughtState;
+  return 'WriteYourThoughtState(userModel: ${_this.userModel}, apiResultStatus: ${_this.apiResultStatus}, thoughtsText: ${_this.thoughtsText}, thoughtsErrorText: ${_this.thoughtsErrorText}, journalList: ${_this.journalList})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $WriteYourThoughtStateCopyWith<$Res>  {
   factory $WriteYourThoughtStateCopyWith(WriteYourThoughtState value, $Res Function(WriteYourThoughtState) _then) = _$WriteYourThoughtStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, ApiResultStatus apiResultStatus, String thoughtsText, String thoughtsErrorText, List<JournalModel> journalList
+ UserModel? userModel, ApiResultStatus<dynamic> apiResultStatus, String thoughtsText, String thoughtsErrorText, List<JournalModel> journalList
 });
 
 
@@ -63,10 +69,10 @@ class _$WriteYourThoughtStateCopyWithImpl<$Res>
 /// Create a copy of WriteYourThoughtState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? apiResultStatus = null,Object? thoughtsText = null,Object? thoughtsErrorText = null,Object? journalList = null,}) {
-  return _then(_self.copyWith(
+  return _then(WriteYourThoughtState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,thoughtsText: null == thoughtsText ? _self.thoughtsText : thoughtsText // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,thoughtsText: null == thoughtsText ? _self.thoughtsText : thoughtsText // ignore: cast_nullable_to_non_nullable
 as String,thoughtsErrorText: null == thoughtsErrorText ? _self.thoughtsErrorText : thoughtsErrorText // ignore: cast_nullable_to_non_nullable
 as String,journalList: null == journalList ? _self.journalList : journalList // ignore: cast_nullable_to_non_nullable
 as List<JournalModel>,
@@ -163,7 +169,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WriteYourThoughtState() when $default != null:
 return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.thoughtsErrorText,_that.journalList);case _:
@@ -184,7 +190,7 @@ return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)  $default,) {final _that = this;
 switch (_that) {
 case _WriteYourThoughtState():
 return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.thoughtsErrorText,_that.journalList);case _:
@@ -204,7 +210,7 @@ return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus,  String thoughtsText,  String thoughtsErrorText,  List<JournalModel> journalList)?  $default,) {final _that = this;
 switch (_that) {
 case _WriteYourThoughtState() when $default != null:
 return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.thoughtsErrorText,_that.journalList);case _:
@@ -219,11 +225,11 @@ return $default(_that.userModel,_that.apiResultStatus,_that.thoughtsText,_that.t
 
 
 class _WriteYourThoughtState implements WriteYourThoughtState {
-  const _WriteYourThoughtState({this.userModel, this.apiResultStatus = const ApiResultStatus.initial(), this.thoughtsText = "", this.thoughtsErrorText = "", final  List<JournalModel> journalList = const []}): _journalList = journalList;
+  const _WriteYourThoughtState({this.userModel, this.apiResultStatus = const ApiResultStatus.initial(), this.thoughtsText = "", this.thoughtsErrorText = "",  List<JournalModel> journalList = const []}): _journalList = journalList;
   
 
 @override final  UserModel? userModel;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 @override@JsonKey() final  String thoughtsText;
 @override@JsonKey() final  String thoughtsErrorText;
  final  List<JournalModel> _journalList;
@@ -244,16 +250,18 @@ _$WriteYourThoughtStateCopyWith<_WriteYourThoughtState> get copyWith => __$Write
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WriteYourThoughtState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.thoughtsText, thoughtsText) || other.thoughtsText == thoughtsText)&&(identical(other.thoughtsErrorText, thoughtsErrorText) || other.thoughtsErrorText == thoughtsErrorText)&&const DeepCollectionEquality().equals(other._journalList, _journalList));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WriteYourThoughtState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.thoughtsText, thoughtsText) || other.thoughtsText == thoughtsText)&&(identical(other.thoughtsErrorText, thoughtsErrorText) || other.thoughtsErrorText == thoughtsErrorText)&&const DeepCollectionEquality().equals(other.journalList, _journalList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,apiResultStatus,thoughtsText,thoughtsErrorText,const DeepCollectionEquality().hash(_journalList));
+int get hashCode {
+    return Object.hash(runtimeType,userModel,apiResultStatus,thoughtsText,thoughtsErrorText,const DeepCollectionEquality().hash(_journalList));
+}
 
 @override
 String toString() {
-  return 'WriteYourThoughtState(userModel: $userModel, apiResultStatus: $apiResultStatus, thoughtsText: $thoughtsText, thoughtsErrorText: $thoughtsErrorText, journalList: $journalList)';
+    return 'WriteYourThoughtState(userModel: $userModel, apiResultStatus: $apiResultStatus, thoughtsText: $thoughtsText, thoughtsErrorText: $thoughtsErrorText, journalList: $journalList)';
 }
 
 
@@ -264,7 +272,7 @@ abstract mixin class _$WriteYourThoughtStateCopyWith<$Res> implements $WriteYour
   factory _$WriteYourThoughtStateCopyWith(_WriteYourThoughtState value, $Res Function(_WriteYourThoughtState) _then) = __$WriteYourThoughtStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, ApiResultStatus apiResultStatus, String thoughtsText, String thoughtsErrorText, List<JournalModel> journalList
+ UserModel? userModel, ApiResultStatus<dynamic> apiResultStatus, String thoughtsText, String thoughtsErrorText, List<JournalModel> journalList
 });
 
 
@@ -285,7 +293,7 @@ class __$WriteYourThoughtStateCopyWithImpl<$Res>
   return _then(_WriteYourThoughtState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,thoughtsText: null == thoughtsText ? _self.thoughtsText : thoughtsText // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,thoughtsText: null == thoughtsText ? _self.thoughtsText : thoughtsText // ignore: cast_nullable_to_non_nullable
 as String,thoughtsErrorText: null == thoughtsErrorText ? _self.thoughtsErrorText : thoughtsErrorText // ignore: cast_nullable_to_non_nullable
 as String,journalList: null == journalList ? _self._journalList : journalList // ignore: cast_nullable_to_non_nullable
 as List<JournalModel>,

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'daily_mood_check_in_state.dart';
@@ -9,12 +9,13 @@ part of 'daily_mood_check_in_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailyMoodCheckInState {
 
- String get childMood; String get parentMood; UserModel? get userModel; ApiResultStatus get apiResultStatus;
+ String get childMood; String get parentMood; UserModel? get userModel; ApiResultStatus<dynamic> get apiResultStatus;
 /// Create a copy of DailyMoodCheckInState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $DailyMoodCheckInStateCopyWith<DailyMoodCheckInState> get copyWith => _$DailyMoo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyMoodCheckInState&&(identical(other.childMood, childMood) || other.childMood == childMood)&&(identical(other.parentMood, parentMood) || other.parentMood == parentMood)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
+  final _this = this as DailyMoodCheckInState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyMoodCheckInState&&(identical(other.childMood, _this.childMood) || other.childMood == _this.childMood)&&(identical(other.parentMood, _this.parentMood) || other.parentMood == _this.parentMood)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,childMood,parentMood,userModel,apiResultStatus);
+int get hashCode {
+  final _this = this as DailyMoodCheckInState;
+  return Object.hash(runtimeType,_this.childMood,_this.parentMood,_this.userModel,_this.apiResultStatus);
+}
 
 @override
 String toString() {
-  return 'DailyMoodCheckInState(childMood: $childMood, parentMood: $parentMood, userModel: $userModel, apiResultStatus: $apiResultStatus)';
+  final _this = this as DailyMoodCheckInState;
+  return 'DailyMoodCheckInState(childMood: ${_this.childMood}, parentMood: ${_this.parentMood}, userModel: ${_this.userModel}, apiResultStatus: ${_this.apiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $DailyMoodCheckInStateCopyWith<$Res>  {
   factory $DailyMoodCheckInStateCopyWith(DailyMoodCheckInState value, $Res Function(DailyMoodCheckInState) _then) = _$DailyMoodCheckInStateCopyWithImpl;
 @useResult
 $Res call({
- String childMood, String parentMood, UserModel? userModel, ApiResultStatus apiResultStatus
+ String childMood, String parentMood, UserModel? userModel, ApiResultStatus<dynamic> apiResultStatus
 });
 
 
@@ -63,12 +69,12 @@ class _$DailyMoodCheckInStateCopyWithImpl<$Res>
 /// Create a copy of DailyMoodCheckInState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? childMood = null,Object? parentMood = null,Object? userModel = freezed,Object? apiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(DailyMoodCheckInState(
 childMood: null == childMood ? _self.childMood : childMood // ignore: cast_nullable_to_non_nullable
 as String,parentMood: null == parentMood ? _self.parentMood : parentMood // ignore: cast_nullable_to_non_nullable
 as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of DailyMoodCheckInState
@@ -162,7 +168,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childMood,  String parentMood,  UserModel? userModel,  ApiResultStatus apiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childMood,  String parentMood,  UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DailyMoodCheckInState() when $default != null:
 return $default(_that.childMood,_that.parentMood,_that.userModel,_that.apiResultStatus);case _:
@@ -183,7 +189,7 @@ return $default(_that.childMood,_that.parentMood,_that.userModel,_that.apiResult
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childMood,  String parentMood,  UserModel? userModel,  ApiResultStatus apiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childMood,  String parentMood,  UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _DailyMoodCheckInState():
 return $default(_that.childMood,_that.parentMood,_that.userModel,_that.apiResultStatus);case _:
@@ -203,7 +209,7 @@ return $default(_that.childMood,_that.parentMood,_that.userModel,_that.apiResult
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childMood,  String parentMood,  UserModel? userModel,  ApiResultStatus apiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childMood,  String parentMood,  UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _DailyMoodCheckInState() when $default != null:
 return $default(_that.childMood,_that.parentMood,_that.userModel,_that.apiResultStatus);case _:
@@ -224,7 +230,7 @@ class _DailyMoodCheckInState implements DailyMoodCheckInState {
 @override@JsonKey() final  String childMood;
 @override@JsonKey() final  String parentMood;
 @override final  UserModel? userModel;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 
 /// Create a copy of DailyMoodCheckInState
 /// with the given fields replaced by the non-null parameter values.
@@ -236,16 +242,18 @@ _$DailyMoodCheckInStateCopyWith<_DailyMoodCheckInState> get copyWith => __$Daily
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyMoodCheckInState&&(identical(other.childMood, childMood) || other.childMood == childMood)&&(identical(other.parentMood, parentMood) || other.parentMood == parentMood)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyMoodCheckInState&&(identical(other.childMood, childMood) || other.childMood == childMood)&&(identical(other.parentMood, parentMood) || other.parentMood == parentMood)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,childMood,parentMood,userModel,apiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,childMood,parentMood,userModel,apiResultStatus);
+}
 
 @override
 String toString() {
-  return 'DailyMoodCheckInState(childMood: $childMood, parentMood: $parentMood, userModel: $userModel, apiResultStatus: $apiResultStatus)';
+    return 'DailyMoodCheckInState(childMood: $childMood, parentMood: $parentMood, userModel: $userModel, apiResultStatus: $apiResultStatus)';
 }
 
 
@@ -256,7 +264,7 @@ abstract mixin class _$DailyMoodCheckInStateCopyWith<$Res> implements $DailyMood
   factory _$DailyMoodCheckInStateCopyWith(_DailyMoodCheckInState value, $Res Function(_DailyMoodCheckInState) _then) = __$DailyMoodCheckInStateCopyWithImpl;
 @override @useResult
 $Res call({
- String childMood, String parentMood, UserModel? userModel, ApiResultStatus apiResultStatus
+ String childMood, String parentMood, UserModel? userModel, ApiResultStatus<dynamic> apiResultStatus
 });
 
 
@@ -279,7 +287,7 @@ childMood: null == childMood ? _self.childMood : childMood // ignore: cast_nulla
 as String,parentMood: null == parentMood ? _self.parentMood : parentMood // ignore: cast_nullable_to_non_nullable
 as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'otp_state.dart';
@@ -9,12 +9,13 @@ part of 'otp_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OtpState {
 
- String get otpCode; String get otpError; ApiResultStatus get verifyStatus; ApiResultStatus get resendStatus; bool get isSubmitting; int get resendCountdown; bool get canResend; String get destination;
+ String get otpCode; String get otpError; ApiResultStatus<dynamic> get verifyStatus; ApiResultStatus<dynamic> get resendStatus; bool get isSubmitting; int get resendCountdown; bool get canResend; String get destination;
 /// Create a copy of OtpState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $OtpStateCopyWith<OtpState> get copyWith => _$OtpStateCopyWithImpl<OtpState>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OtpState&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.otpError, otpError) || other.otpError == otpError)&&(identical(other.verifyStatus, verifyStatus) || other.verifyStatus == verifyStatus)&&(identical(other.resendStatus, resendStatus) || other.resendStatus == resendStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.resendCountdown, resendCountdown) || other.resendCountdown == resendCountdown)&&(identical(other.canResend, canResend) || other.canResend == canResend)&&(identical(other.destination, destination) || other.destination == destination));
+  final _this = this as OtpState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OtpState&&(identical(other.otpCode, _this.otpCode) || other.otpCode == _this.otpCode)&&(identical(other.otpError, _this.otpError) || other.otpError == _this.otpError)&&(identical(other.verifyStatus, _this.verifyStatus) || other.verifyStatus == _this.verifyStatus)&&(identical(other.resendStatus, _this.resendStatus) || other.resendStatus == _this.resendStatus)&&(identical(other.isSubmitting, _this.isSubmitting) || other.isSubmitting == _this.isSubmitting)&&(identical(other.resendCountdown, _this.resendCountdown) || other.resendCountdown == _this.resendCountdown)&&(identical(other.canResend, _this.canResend) || other.canResend == _this.canResend)&&(identical(other.destination, _this.destination) || other.destination == _this.destination));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,otpCode,otpError,verifyStatus,resendStatus,isSubmitting,resendCountdown,canResend,destination);
+int get hashCode {
+  final _this = this as OtpState;
+  return Object.hash(runtimeType,_this.otpCode,_this.otpError,_this.verifyStatus,_this.resendStatus,_this.isSubmitting,_this.resendCountdown,_this.canResend,_this.destination);
+}
 
 @override
 String toString() {
-  return 'OtpState(otpCode: $otpCode, otpError: $otpError, verifyStatus: $verifyStatus, resendStatus: $resendStatus, isSubmitting: $isSubmitting, resendCountdown: $resendCountdown, canResend: $canResend, destination: $destination)';
+  final _this = this as OtpState;
+  return 'OtpState(otpCode: ${_this.otpCode}, otpError: ${_this.otpError}, verifyStatus: ${_this.verifyStatus}, resendStatus: ${_this.resendStatus}, isSubmitting: ${_this.isSubmitting}, resendCountdown: ${_this.resendCountdown}, canResend: ${_this.canResend}, destination: ${_this.destination})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $OtpStateCopyWith<$Res>  {
   factory $OtpStateCopyWith(OtpState value, $Res Function(OtpState) _then) = _$OtpStateCopyWithImpl;
 @useResult
 $Res call({
- String otpCode, String otpError, ApiResultStatus verifyStatus, ApiResultStatus resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination
+ String otpCode, String otpError, ApiResultStatus<dynamic> verifyStatus, ApiResultStatus<dynamic> resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination
 });
 
 
@@ -63,12 +69,12 @@ class _$OtpStateCopyWithImpl<$Res>
 /// Create a copy of OtpState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? otpCode = null,Object? otpError = null,Object? verifyStatus = null,Object? resendStatus = null,Object? isSubmitting = null,Object? resendCountdown = null,Object? canResend = null,Object? destination = null,}) {
-  return _then(_self.copyWith(
+  return _then(OtpState(
 otpCode: null == otpCode ? _self.otpCode : otpCode // ignore: cast_nullable_to_non_nullable
 as String,otpError: null == otpError ? _self.otpError : otpError // ignore: cast_nullable_to_non_nullable
 as String,verifyStatus: null == verifyStatus ? _self.verifyStatus : verifyStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,resendStatus: null == resendStatus ? _self.resendStatus : resendStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,resendStatus: null == resendStatus ? _self.resendStatus : resendStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,resendCountdown: null == resendCountdown ? _self.resendCountdown : resendCountdown // ignore: cast_nullable_to_non_nullable
 as int,canResend: null == canResend ? _self.canResend : canResend // ignore: cast_nullable_to_non_nullable
 as bool,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
@@ -175,7 +181,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus verifyStatus,  ApiResultStatus resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OtpState() when $default != null:
 return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination);case _:
@@ -196,7 +202,7 @@ return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus verifyStatus,  ApiResultStatus resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination)  $default,) {final _that = this;
 switch (_that) {
 case _OtpState():
 return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination);case _:
@@ -216,7 +222,7 @@ return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String otpCode,  String otpError,  ApiResultStatus verifyStatus,  ApiResultStatus resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination)?  $default,) {final _that = this;
 switch (_that) {
 case _OtpState() when $default != null:
 return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination);case _:
@@ -236,8 +242,8 @@ class _OtpState implements OtpState {
 
 @override@JsonKey() final  String otpCode;
 @override@JsonKey() final  String otpError;
-@override@JsonKey() final  ApiResultStatus verifyStatus;
-@override@JsonKey() final  ApiResultStatus resendStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> verifyStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> resendStatus;
 @override@JsonKey() final  bool isSubmitting;
 @override@JsonKey() final  int resendCountdown;
 @override@JsonKey() final  bool canResend;
@@ -253,16 +259,18 @@ _$OtpStateCopyWith<_OtpState> get copyWith => __$OtpStateCopyWithImpl<_OtpState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OtpState&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.otpError, otpError) || other.otpError == otpError)&&(identical(other.verifyStatus, verifyStatus) || other.verifyStatus == verifyStatus)&&(identical(other.resendStatus, resendStatus) || other.resendStatus == resendStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.resendCountdown, resendCountdown) || other.resendCountdown == resendCountdown)&&(identical(other.canResend, canResend) || other.canResend == canResend)&&(identical(other.destination, destination) || other.destination == destination));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OtpState&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.otpError, otpError) || other.otpError == otpError)&&(identical(other.verifyStatus, verifyStatus) || other.verifyStatus == verifyStatus)&&(identical(other.resendStatus, resendStatus) || other.resendStatus == resendStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.resendCountdown, resendCountdown) || other.resendCountdown == resendCountdown)&&(identical(other.canResend, canResend) || other.canResend == canResend)&&(identical(other.destination, destination) || other.destination == destination));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,otpCode,otpError,verifyStatus,resendStatus,isSubmitting,resendCountdown,canResend,destination);
+int get hashCode {
+    return Object.hash(runtimeType,otpCode,otpError,verifyStatus,resendStatus,isSubmitting,resendCountdown,canResend,destination);
+}
 
 @override
 String toString() {
-  return 'OtpState(otpCode: $otpCode, otpError: $otpError, verifyStatus: $verifyStatus, resendStatus: $resendStatus, isSubmitting: $isSubmitting, resendCountdown: $resendCountdown, canResend: $canResend, destination: $destination)';
+    return 'OtpState(otpCode: $otpCode, otpError: $otpError, verifyStatus: $verifyStatus, resendStatus: $resendStatus, isSubmitting: $isSubmitting, resendCountdown: $resendCountdown, canResend: $canResend, destination: $destination)';
 }
 
 
@@ -273,7 +281,7 @@ abstract mixin class _$OtpStateCopyWith<$Res> implements $OtpStateCopyWith<$Res>
   factory _$OtpStateCopyWith(_OtpState value, $Res Function(_OtpState) _then) = __$OtpStateCopyWithImpl;
 @override @useResult
 $Res call({
- String otpCode, String otpError, ApiResultStatus verifyStatus, ApiResultStatus resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination
+ String otpCode, String otpError, ApiResultStatus<dynamic> verifyStatus, ApiResultStatus<dynamic> resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination
 });
 
 
@@ -295,8 +303,8 @@ class __$OtpStateCopyWithImpl<$Res>
 otpCode: null == otpCode ? _self.otpCode : otpCode // ignore: cast_nullable_to_non_nullable
 as String,otpError: null == otpError ? _self.otpError : otpError // ignore: cast_nullable_to_non_nullable
 as String,verifyStatus: null == verifyStatus ? _self.verifyStatus : verifyStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,resendStatus: null == resendStatus ? _self.resendStatus : resendStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,resendStatus: null == resendStatus ? _self.resendStatus : resendStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,resendCountdown: null == resendCountdown ? _self.resendCountdown : resendCountdown // ignore: cast_nullable_to_non_nullable
 as int,canResend: null == canResend ? _self.canResend : canResend // ignore: cast_nullable_to_non_nullable
 as bool,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable

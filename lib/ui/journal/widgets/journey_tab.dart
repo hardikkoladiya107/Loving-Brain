@@ -139,11 +139,13 @@ class JourneyTab extends StatelessWidget {
                 color: const Color(0xFF2F2A44),
               ),
               8.h.spaceH,
-              DateFormat.yMMMd().format(milestone.timestamp).appText(
-                fontWeight: FontWeight.w700,
-                fontSize: 12.sp,
-                color: const Color(0xFF9A8FB8),
-              ),
+              DateFormat.yMMMd()
+                  .format(milestone.timestamp)
+                  .appText(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.sp,
+                    color: const Color(0xFF9A8FB8),
+                  ),
               14.h.spaceH,
               Expanded(
                 child: SingleChildScrollView(

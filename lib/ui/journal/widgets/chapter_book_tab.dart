@@ -74,15 +74,14 @@ class ChapterBookTab extends StatelessWidget {
                 title.appText(
                   fontWeight: FontWeight.w800,
                   fontSize: 14.sp,
-                  color:
-                      locked ? const Color(0xFF9A8FB8) : const Color(0xFF2F2A44),
+                  color: locked
+                      ? const Color(0xFF9A8FB8)
+                      : const Color(0xFF2F2A44),
                 ),
                 if (!locked && milestoneCount > 0)
                   LocaleKeys.chapterMemoryCount
                       .tr(
-                        namedArgs: <String, String>{
-                          'count': '$milestoneCount',
-                        },
+                        namedArgs: <String, String>{'count': '$milestoneCount'},
                       )
                       .appText(
                         fontWeight: FontWeight.w600,

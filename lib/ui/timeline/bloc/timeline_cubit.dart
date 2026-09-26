@@ -59,11 +59,15 @@ class TimelineCubit extends Cubit<TimelineState> {
       return;
     }
     changeProps(loadStatus: ApiResultStatus.loading());
-    final ApiResultStatus<List<TimelineEventModel>> result =
-        await TimelineRepo.instance.fetchTodayEvents(childId: childId);
+    final ApiResultStatus<List<TimelineEventModel>> result = await TimelineRepo
+        .instance
+        .fetchTodayEvents(childId: childId);
     result.whenOrNull(
       data: (List<TimelineEventModel> events) {
-        changeProps(events: events, loadStatus: ApiResultStatus.data(data: events));
+        changeProps(
+          events: events,
+          loadStatus: ApiResultStatus.data(data: events),
+        );
       },
       error: (Exception error) {
         changeProps(loadStatus: ApiResultStatus.error(error: error));

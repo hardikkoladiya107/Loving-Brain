@@ -1,11 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
-import '../../generated/locale_keys.g.dart';
 import '../../other/preferances.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -46,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Center(child: Assets.v2.icons.icAppIcon.svg()),
             14.spaceH,
-            Assets.v2.icons.icLovingBrainText.svg()
+            Assets.v2.icons.icLovingBrainText.svg(),
           ],
         ),
       ),

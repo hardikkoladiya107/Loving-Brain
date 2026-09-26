@@ -21,10 +21,10 @@ Future<String?> showMilestonePickerSheet(BuildContext context) async {
   );
   final List<MilestoneDefinition> options =
       await MilestoneContent.catalogForAge(
-    childName: childName,
-    parentName: parentName,
-    ageInMonths: ageInMonths,
-  );
+        childName: childName,
+        parentName: parentName,
+        ageInMonths: ageInMonths,
+      );
   if (!context.mounted) {
     return null;
   }
@@ -73,7 +73,7 @@ class MilestonePickerSheet extends StatelessWidget {
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: options.length,
-              separatorBuilder: (_, __) => 8.h.spaceH,
+              separatorBuilder: (_, _) => 8.h.spaceH,
               itemBuilder: (BuildContext context, int index) {
                 final MilestoneDefinition item = options[index];
                 return BaseButton(

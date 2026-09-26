@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'essentials_state.dart';
@@ -9,12 +9,13 @@ part of 'essentials_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EssentialsState {
 
- String get titleError; String get descriptionError; UserModel? get userModel; ChildModel? get childModel; List<ChildModel> get childList; ApiResultStatus get addEssentialsApiResult; ApiResultStatus get childrenListApiResult; ApiResultStatus get uploadDocumentApiResultStatus;
+ String get titleError; String get descriptionError; UserModel? get userModel; ChildModel? get childModel; List<ChildModel> get childList; ApiResultStatus<dynamic> get addEssentialsApiResult; ApiResultStatus<dynamic> get childrenListApiResult; ApiResultStatus<dynamic> get uploadDocumentApiResultStatus;
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $EssentialsStateCopyWith<EssentialsState> get copyWith => _$EssentialsStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EssentialsState&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&const DeepCollectionEquality().equals(other.childList, childList)&&(identical(other.addEssentialsApiResult, addEssentialsApiResult) || other.addEssentialsApiResult == addEssentialsApiResult)&&(identical(other.childrenListApiResult, childrenListApiResult) || other.childrenListApiResult == childrenListApiResult)&&(identical(other.uploadDocumentApiResultStatus, uploadDocumentApiResultStatus) || other.uploadDocumentApiResultStatus == uploadDocumentApiResultStatus));
+  final _this = this as EssentialsState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EssentialsState&&(identical(other.titleError, _this.titleError) || other.titleError == _this.titleError)&&(identical(other.descriptionError, _this.descriptionError) || other.descriptionError == _this.descriptionError)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&const DeepCollectionEquality().equals(other.childList, _this.childList)&&(identical(other.addEssentialsApiResult, _this.addEssentialsApiResult) || other.addEssentialsApiResult == _this.addEssentialsApiResult)&&(identical(other.childrenListApiResult, _this.childrenListApiResult) || other.childrenListApiResult == _this.childrenListApiResult)&&(identical(other.uploadDocumentApiResultStatus, _this.uploadDocumentApiResultStatus) || other.uploadDocumentApiResultStatus == _this.uploadDocumentApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,titleError,descriptionError,userModel,childModel,const DeepCollectionEquality().hash(childList),addEssentialsApiResult,childrenListApiResult,uploadDocumentApiResultStatus);
+int get hashCode {
+  final _this = this as EssentialsState;
+  return Object.hash(runtimeType,_this.titleError,_this.descriptionError,_this.userModel,_this.childModel,const DeepCollectionEquality().hash(_this.childList),_this.addEssentialsApiResult,_this.childrenListApiResult,_this.uploadDocumentApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'EssentialsState(titleError: $titleError, descriptionError: $descriptionError, userModel: $userModel, childModel: $childModel, childList: $childList, addEssentialsApiResult: $addEssentialsApiResult, childrenListApiResult: $childrenListApiResult, uploadDocumentApiResultStatus: $uploadDocumentApiResultStatus)';
+  final _this = this as EssentialsState;
+  return 'EssentialsState(titleError: ${_this.titleError}, descriptionError: ${_this.descriptionError}, userModel: ${_this.userModel}, childModel: ${_this.childModel}, childList: ${_this.childList}, addEssentialsApiResult: ${_this.addEssentialsApiResult}, childrenListApiResult: ${_this.childrenListApiResult}, uploadDocumentApiResultStatus: ${_this.uploadDocumentApiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $EssentialsStateCopyWith<$Res>  {
   factory $EssentialsStateCopyWith(EssentialsState value, $Res Function(EssentialsState) _then) = _$EssentialsStateCopyWithImpl;
 @useResult
 $Res call({
- String titleError, String descriptionError, UserModel? userModel, ChildModel? childModel, List<ChildModel> childList, ApiResultStatus addEssentialsApiResult, ApiResultStatus childrenListApiResult, ApiResultStatus uploadDocumentApiResultStatus
+ String titleError, String descriptionError, UserModel? userModel, ChildModel? childModel, List<ChildModel> childList, ApiResultStatus<dynamic> addEssentialsApiResult, ApiResultStatus<dynamic> childrenListApiResult, ApiResultStatus<dynamic> uploadDocumentApiResultStatus
 });
 
 
@@ -63,16 +69,16 @@ class _$EssentialsStateCopyWithImpl<$Res>
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? titleError = null,Object? descriptionError = null,Object? userModel = freezed,Object? childModel = freezed,Object? childList = null,Object? addEssentialsApiResult = null,Object? childrenListApiResult = null,Object? uploadDocumentApiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(EssentialsState(
 titleError: null == titleError ? _self.titleError : titleError // ignore: cast_nullable_to_non_nullable
 as String,descriptionError: null == descriptionError ? _self.descriptionError : descriptionError // ignore: cast_nullable_to_non_nullable
 as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,childList: null == childList ? _self.childList : childList // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>,addEssentialsApiResult: null == addEssentialsApiResult ? _self.addEssentialsApiResult : addEssentialsApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,uploadDocumentApiResultStatus: null == uploadDocumentApiResultStatus ? _self.uploadDocumentApiResultStatus : uploadDocumentApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,uploadDocumentApiResultStatus: null == uploadDocumentApiResultStatus ? _self.uploadDocumentApiResultStatus : uploadDocumentApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of EssentialsState
@@ -184,7 +190,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String titleError,  String descriptionError,  UserModel? userModel,  ChildModel? childModel,  List<ChildModel> childList,  ApiResultStatus addEssentialsApiResult,  ApiResultStatus childrenListApiResult,  ApiResultStatus uploadDocumentApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String titleError,  String descriptionError,  UserModel? userModel,  ChildModel? childModel,  List<ChildModel> childList,  ApiResultStatus<dynamic> addEssentialsApiResult,  ApiResultStatus<dynamic> childrenListApiResult,  ApiResultStatus<dynamic> uploadDocumentApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EssentialsState() when $default != null:
 return $default(_that.titleError,_that.descriptionError,_that.userModel,_that.childModel,_that.childList,_that.addEssentialsApiResult,_that.childrenListApiResult,_that.uploadDocumentApiResultStatus);case _:
@@ -205,7 +211,7 @@ return $default(_that.titleError,_that.descriptionError,_that.userModel,_that.ch
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String titleError,  String descriptionError,  UserModel? userModel,  ChildModel? childModel,  List<ChildModel> childList,  ApiResultStatus addEssentialsApiResult,  ApiResultStatus childrenListApiResult,  ApiResultStatus uploadDocumentApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String titleError,  String descriptionError,  UserModel? userModel,  ChildModel? childModel,  List<ChildModel> childList,  ApiResultStatus<dynamic> addEssentialsApiResult,  ApiResultStatus<dynamic> childrenListApiResult,  ApiResultStatus<dynamic> uploadDocumentApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _EssentialsState():
 return $default(_that.titleError,_that.descriptionError,_that.userModel,_that.childModel,_that.childList,_that.addEssentialsApiResult,_that.childrenListApiResult,_that.uploadDocumentApiResultStatus);case _:
@@ -225,7 +231,7 @@ return $default(_that.titleError,_that.descriptionError,_that.userModel,_that.ch
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String titleError,  String descriptionError,  UserModel? userModel,  ChildModel? childModel,  List<ChildModel> childList,  ApiResultStatus addEssentialsApiResult,  ApiResultStatus childrenListApiResult,  ApiResultStatus uploadDocumentApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String titleError,  String descriptionError,  UserModel? userModel,  ChildModel? childModel,  List<ChildModel> childList,  ApiResultStatus<dynamic> addEssentialsApiResult,  ApiResultStatus<dynamic> childrenListApiResult,  ApiResultStatus<dynamic> uploadDocumentApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _EssentialsState() when $default != null:
 return $default(_that.titleError,_that.descriptionError,_that.userModel,_that.childModel,_that.childList,_that.addEssentialsApiResult,_that.childrenListApiResult,_that.uploadDocumentApiResultStatus);case _:
@@ -240,7 +246,7 @@ return $default(_that.titleError,_that.descriptionError,_that.userModel,_that.ch
 
 
 class _EssentialsState implements EssentialsState {
-  const _EssentialsState({this.titleError = "", this.descriptionError = "", this.userModel, this.childModel, final  List<ChildModel> childList = const [], this.addEssentialsApiResult = const ApiResultStatus.initial(), this.childrenListApiResult = const ApiResultStatus.initial(), this.uploadDocumentApiResultStatus = const ApiResultStatus.initial()}): _childList = childList;
+  const _EssentialsState({this.titleError = "", this.descriptionError = "", this.userModel, this.childModel,  List<ChildModel> childList = const [], this.addEssentialsApiResult = const ApiResultStatus.initial(), this.childrenListApiResult = const ApiResultStatus.initial(), this.uploadDocumentApiResultStatus = const ApiResultStatus.initial()}): _childList = childList;
   
 
 @override@JsonKey() final  String titleError;
@@ -254,9 +260,9 @@ class _EssentialsState implements EssentialsState {
   return EqualUnmodifiableListView(_childList);
 }
 
-@override@JsonKey() final  ApiResultStatus addEssentialsApiResult;
-@override@JsonKey() final  ApiResultStatus childrenListApiResult;
-@override@JsonKey() final  ApiResultStatus uploadDocumentApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> addEssentialsApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> childrenListApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> uploadDocumentApiResultStatus;
 
 /// Create a copy of EssentialsState
 /// with the given fields replaced by the non-null parameter values.
@@ -268,16 +274,18 @@ _$EssentialsStateCopyWith<_EssentialsState> get copyWith => __$EssentialsStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EssentialsState&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&const DeepCollectionEquality().equals(other._childList, _childList)&&(identical(other.addEssentialsApiResult, addEssentialsApiResult) || other.addEssentialsApiResult == addEssentialsApiResult)&&(identical(other.childrenListApiResult, childrenListApiResult) || other.childrenListApiResult == childrenListApiResult)&&(identical(other.uploadDocumentApiResultStatus, uploadDocumentApiResultStatus) || other.uploadDocumentApiResultStatus == uploadDocumentApiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EssentialsState&&(identical(other.titleError, titleError) || other.titleError == titleError)&&(identical(other.descriptionError, descriptionError) || other.descriptionError == descriptionError)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&const DeepCollectionEquality().equals(other.childList, _childList)&&(identical(other.addEssentialsApiResult, addEssentialsApiResult) || other.addEssentialsApiResult == addEssentialsApiResult)&&(identical(other.childrenListApiResult, childrenListApiResult) || other.childrenListApiResult == childrenListApiResult)&&(identical(other.uploadDocumentApiResultStatus, uploadDocumentApiResultStatus) || other.uploadDocumentApiResultStatus == uploadDocumentApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,titleError,descriptionError,userModel,childModel,const DeepCollectionEquality().hash(_childList),addEssentialsApiResult,childrenListApiResult,uploadDocumentApiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,titleError,descriptionError,userModel,childModel,const DeepCollectionEquality().hash(_childList),addEssentialsApiResult,childrenListApiResult,uploadDocumentApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'EssentialsState(titleError: $titleError, descriptionError: $descriptionError, userModel: $userModel, childModel: $childModel, childList: $childList, addEssentialsApiResult: $addEssentialsApiResult, childrenListApiResult: $childrenListApiResult, uploadDocumentApiResultStatus: $uploadDocumentApiResultStatus)';
+    return 'EssentialsState(titleError: $titleError, descriptionError: $descriptionError, userModel: $userModel, childModel: $childModel, childList: $childList, addEssentialsApiResult: $addEssentialsApiResult, childrenListApiResult: $childrenListApiResult, uploadDocumentApiResultStatus: $uploadDocumentApiResultStatus)';
 }
 
 
@@ -288,7 +296,7 @@ abstract mixin class _$EssentialsStateCopyWith<$Res> implements $EssentialsState
   factory _$EssentialsStateCopyWith(_EssentialsState value, $Res Function(_EssentialsState) _then) = __$EssentialsStateCopyWithImpl;
 @override @useResult
 $Res call({
- String titleError, String descriptionError, UserModel? userModel, ChildModel? childModel, List<ChildModel> childList, ApiResultStatus addEssentialsApiResult, ApiResultStatus childrenListApiResult, ApiResultStatus uploadDocumentApiResultStatus
+ String titleError, String descriptionError, UserModel? userModel, ChildModel? childModel, List<ChildModel> childList, ApiResultStatus<dynamic> addEssentialsApiResult, ApiResultStatus<dynamic> childrenListApiResult, ApiResultStatus<dynamic> uploadDocumentApiResultStatus
 });
 
 
@@ -313,9 +321,9 @@ as String,userModel: freezed == userModel ? _self.userModel : userModel // ignor
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,childList: null == childList ? _self._childList : childList // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>,addEssentialsApiResult: null == addEssentialsApiResult ? _self.addEssentialsApiResult : addEssentialsApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,uploadDocumentApiResultStatus: null == uploadDocumentApiResultStatus ? _self.uploadDocumentApiResultStatus : uploadDocumentApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,childrenListApiResult: null == childrenListApiResult ? _self.childrenListApiResult : childrenListApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,uploadDocumentApiResultStatus: null == uploadDocumentApiResultStatus ? _self.uploadDocumentApiResultStatus : uploadDocumentApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 

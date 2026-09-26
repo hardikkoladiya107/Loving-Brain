@@ -15,21 +15,25 @@ extension extOnString on String {
     TextDecoration? textDecoration,
     double? height,
     TextStyle? textStyle,
+    bool? fraunces,
   }) {
     return Text(
       this,
       maxLines: maxLines,
       overflow: overflow,
       textAlign: textAlign ?? TextAlign.center,
-      style: textStyle ?? getTextStyle(
-        fontSize: (fontSize ?? 16).sp,
-        color: color,
-        fontStyle: fontStyle,
-        textDecoration: textDecoration,
-        fontWeight: fontWeight ?? FontWeight.normal,
-        letterSpacing: letterSpacing ?? 1,
-        height: height,
-      ),
+      style:
+          textStyle ??
+          getTextStyle(
+            fontSize: (fontSize ?? 16).sp,
+            color: color,
+            fontStyle: fontStyle,
+            textDecoration: textDecoration,
+            fontWeight: fontWeight ?? FontWeight.normal,
+            letterSpacing: letterSpacing ?? 1,
+            height: height,
+            fraunces: fraunces,
+          ),
     );
   }
 
@@ -51,18 +55,20 @@ extension extOnString on String {
       maxLines: maxLines,
       overflow: overflow,
       textAlign: textAlign ?? TextAlign.center,
-      style: textStyle ?? getTextStyle2(
-        fontSize: (fontSize ?? 16).sp,
-        color: color,
-        fontStyle: fontStyle,
-        textDecoration: textDecoration,
-        fontWeight: fontWeight ?? FontWeight.normal,
-        letterSpacing: letterSpacing ?? 1,
-        height: height,
-      ),
+      style:
+          textStyle ??
+          getTextStyle(
+            fraunces: true,
+            fontSize: (fontSize ?? 16).sp,
+            color: color,
+            fontStyle: fontStyle,
+            textDecoration: textDecoration,
+            fontWeight: fontWeight ?? FontWeight.normal,
+            letterSpacing: letterSpacing ?? 1,
+            height: height,
+          ),
     );
   }
-
 
   String replaceAll2(String from, String replace) {
     if (replace.isNotEmpty) {
@@ -121,7 +127,6 @@ extension FirebaseUrlUtils on String {
   }
 }
 
-
 TextStyle getTextStyle({
   double? fontSize,
   Color? color,
@@ -130,16 +135,29 @@ TextStyle getTextStyle({
   FontStyle? fontStyle,
   TextDecoration? textDecoration,
   double? height,
+  bool? fraunces,
 }) {
-  return GoogleFonts.quicksand(
-    fontSize: fontSize ?? 16,
-    fontStyle: fontStyle,
-    decoration: textDecoration,
-    color: color,
-    fontWeight: fontWeight ?? FontWeight.normal,
-    letterSpacing: letterSpacing ?? 1,
-    height: height,
-  );
+  if (fraunces ?? false) {
+    return GoogleFonts.fraunces(
+      fontSize: fontSize ?? 16,
+      fontStyle: fontStyle,
+      decoration: textDecoration,
+      color: color,
+      fontWeight: fontWeight ?? FontWeight.normal,
+      letterSpacing: letterSpacing ?? 1,
+      height: height,
+    );
+  } else {
+    return GoogleFonts.quicksand(
+      fontSize: fontSize ?? 16,
+      fontStyle: fontStyle,
+      decoration: textDecoration,
+      color: color,
+      fontWeight: fontWeight ?? FontWeight.normal,
+      letterSpacing: letterSpacing ?? 1,
+      height: height,
+    );
+  }
 }
 
 TextStyle getTextStyle2({

@@ -14,9 +14,7 @@ class ReadinessScore {
     final int moodWeight = moodLoggedToday ? 100 : 0;
     final int sleepWeight = _sleepWeight(sleepHoursLastNight);
     final int stabilityWeight = _stabilityWeight(childState);
-    return ((moodWeight * 40) +
-            (sleepWeight * 35) +
-            (stabilityWeight * 25)) ~/
+    return ((moodWeight * 40) + (sleepWeight * 35) + (stabilityWeight * 25)) ~/
         100;
   }
 

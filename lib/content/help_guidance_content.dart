@@ -59,9 +59,10 @@ class HelpGuidanceContent {
     }
 
     final List<dynamic> problems = root['problems'] as List<dynamic>;
-    final Map<String, dynamic>? problem = problems.cast<Map<String, dynamic>>().where(
-      (Map<String, dynamic> p) => p['problemKey'] == part4ProblemKey,
-    ).firstOrNull;
+    final Map<String, dynamic>? problem = problems
+        .cast<Map<String, dynamic>>()
+        .where((Map<String, dynamic> p) => p['problemKey'] == part4ProblemKey)
+        .firstOrNull;
 
     if (problem == null) {
       return <HelpGuidanceSuggestion>[];
@@ -85,10 +86,8 @@ class HelpGuidanceContent {
 
     return bandMatches
         .map(
-          (Map<String, dynamic> json) => HelpGuidanceSuggestion.fromJson(
-            json,
-            childName: childName,
-          ),
+          (Map<String, dynamic> json) =>
+              HelpGuidanceSuggestion.fromJson(json, childName: childName),
         )
         .toList();
   }
@@ -125,10 +124,8 @@ class HelpGuidanceSuggestion {
     final List<String> stepInstructions = stepList
         .cast<Map<String, dynamic>>()
         .map(
-          (Map<String, dynamic> step) => _interpolateChildName(
-            step['instruction'] as String?,
-            childName,
-          ),
+          (Map<String, dynamic> step) =>
+              _interpolateChildName(step['instruction'] as String?, childName),
         )
         .where((String s) => s.isNotEmpty)
         .toList();

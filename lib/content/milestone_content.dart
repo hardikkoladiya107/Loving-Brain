@@ -95,12 +95,12 @@ class MilestoneContent {
       parentName: parentName,
       ageInMonths: ageInMonths,
     );
-    final List<MilestoneDefinition> filtered = all
-        .where((MilestoneDefinition m) {
-          return _ageInRange(ageInMonths, m.ageRangeMonths) ||
-              (ageInMonths - _parseRangeMidpoint(m.ageRangeMonths)).abs() <= 12;
-        })
-        .toList();
+    final List<MilestoneDefinition> filtered = all.where((
+      MilestoneDefinition m,
+    ) {
+      return _ageInRange(ageInMonths, m.ageRangeMonths) ||
+          (ageInMonths - _parseRangeMidpoint(m.ageRangeMonths)).abs() <= 12;
+    }).toList();
     if (filtered.isEmpty) {
       return all;
     }
@@ -154,7 +154,8 @@ class MilestoneContent {
   }
 
   static List<Map<String, dynamic>> _allItems() {
-    final List<dynamic> milestones = _cachedRoot!['milestones'] as List<dynamic>;
+    final List<dynamic> milestones =
+        _cachedRoot!['milestones'] as List<dynamic>;
     return milestones.cast<Map<String, dynamic>>();
   }
 

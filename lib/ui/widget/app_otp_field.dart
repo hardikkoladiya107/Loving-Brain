@@ -344,7 +344,7 @@ class _AppOtpFieldState extends State<AppOtpField> {
                 getTextStyle(
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF212529),
+                  color: greyColor9,
                 ),
             onChanged: (String value) => _onDigitChanged(i, value),
             onTap: () => _selectBoxText(i),

@@ -800,6 +800,10 @@ class $AssetsV2Gen {
 class $AssetsV2IconsGen {
   const $AssetsV2IconsGen();
 
+  /// File path: assets/v2/icons/ic_allergies.png
+  AssetGenImage get icAllergies =>
+      const AssetGenImage('assets/v2/icons/ic_allergies.png');
+
   /// File path: assets/v2/icons/ic_app_icon.svg
   SvgGenImage get icAppIcon =>
       const SvgGenImage('assets/v2/icons/ic_app_icon.svg');
@@ -810,6 +814,10 @@ class $AssetsV2IconsGen {
 
   /// File path: assets/v2/icons/ic_back.svg
   SvgGenImage get icBack => const SvgGenImage('assets/v2/icons/ic_back.svg');
+
+  /// File path: assets/v2/icons/ic_brainy.svg
+  SvgGenImage get icBrainy =>
+      const SvgGenImage('assets/v2/icons/ic_brainy.svg');
 
   /// File path: assets/v2/icons/ic_calmer_tantrums.png
   AssetGenImage get icCalmerTantrums =>
@@ -822,9 +830,25 @@ class $AssetsV2IconsGen {
   /// File path: assets/v2/icons/ic_clock.svg
   SvgGenImage get icClock => const SvgGenImage('assets/v2/icons/ic_clock.svg');
 
+  /// File path: assets/v2/icons/ic_contact_support.png
+  AssetGenImage get icContactSupport =>
+      const AssetGenImage('assets/v2/icons/ic_contact_support.png');
+
   /// File path: assets/v2/icons/ic_easier_bedtimes.png
   AssetGenImage get icEasierBedtimes =>
       const AssetGenImage('assets/v2/icons/ic_easier_bedtimes.png');
+
+  /// File path: assets/v2/icons/ic_edit_field.png
+  AssetGenImage get icEditField =>
+      const AssetGenImage('assets/v2/icons/ic_edit_field.png');
+
+  /// File path: assets/v2/icons/ic_faqs.png
+  AssetGenImage get icFaqs =>
+      const AssetGenImage('assets/v2/icons/ic_faqs.png');
+
+  /// File path: assets/v2/icons/ic_fell_asleep.svg
+  SvgGenImage get icFellAsleep =>
+      const SvgGenImage('assets/v2/icons/ic_fell_asleep.svg');
 
   /// File path: assets/v2/icons/ic_google_icon.png
   AssetGenImage get icGoogleIcon =>
@@ -832,6 +856,14 @@ class $AssetsV2IconsGen {
 
   /// File path: assets/v2/icons/ic_info.svg
   SvgGenImage get icInfo => const SvgGenImage('assets/v2/icons/ic_info.svg');
+
+  /// File path: assets/v2/icons/ic_journey.svg
+  SvgGenImage get icJourney =>
+      const SvgGenImage('assets/v2/icons/ic_journey.svg');
+
+  /// File path: assets/v2/icons/ic_linked_caregivers.png
+  AssetGenImage get icLinkedCaregivers =>
+      const AssetGenImage('assets/v2/icons/ic_linked_caregivers.png');
 
   /// File path: assets/v2/icons/ic_loving_brain_text.svg
   SvgGenImage get icLovingBrainText =>
@@ -841,6 +873,14 @@ class $AssetsV2IconsGen {
   SvgGenImage get icLovingBrainText2 =>
       const SvgGenImage('assets/v2/icons/ic_loving_brain_text2.svg');
 
+  /// File path: assets/v2/icons/ic_medications.png
+  AssetGenImage get icMedications =>
+      const AssetGenImage('assets/v2/icons/ic_medications.png');
+
+  /// File path: assets/v2/icons/ic_mentorship_booking.png
+  AssetGenImage get icMentorshipBooking =>
+      const AssetGenImage('assets/v2/icons/ic_mentorship_booking.png');
+
   /// File path: assets/v2/icons/ic_more_confident.png
   AssetGenImage get icMoreConfident =>
       const AssetGenImage('assets/v2/icons/ic_more_confident.png');
@@ -849,9 +889,17 @@ class $AssetsV2IconsGen {
   AssetGenImage get icMoreThanOne =>
       const AssetGenImage('assets/v2/icons/ic_more_than_one.png');
 
+  /// File path: assets/v2/icons/ic_next_session.png
+  AssetGenImage get icNextSession =>
+      const AssetGenImage('assets/v2/icons/ic_next_session.png');
+
   /// File path: assets/v2/icons/ic_parenting_stress.png
   AssetGenImage get icParentingStress =>
       const AssetGenImage('assets/v2/icons/ic_parenting_stress.png');
+
+  /// File path: assets/v2/icons/ic_privacy_policy.png
+  AssetGenImage get icPrivacyPolicy =>
+      const AssetGenImage('assets/v2/icons/ic_privacy_policy.png');
 
   /// File path: assets/v2/icons/ic_routine.png
   AssetGenImage get icRoutine =>
@@ -869,46 +917,308 @@ class $AssetsV2IconsGen {
   AssetGenImage get icTeamwork =>
       const AssetGenImage('assets/v2/icons/ic_teamwork.png');
 
+  /// File path: assets/v2/icons/ic_time_in_sleep.svg
+  SvgGenImage get icTimeInSleep =>
+      const SvgGenImage('assets/v2/icons/ic_time_in_sleep.svg');
+
+  /// File path: assets/v2/icons/ic_today.svg
+  SvgGenImage get icToday => const SvgGenImage('assets/v2/icons/ic_today.svg');
+
+  /// File path: assets/v2/icons/ic_tonights_plan.svg
+  SvgGenImage get icTonightsPlan =>
+      const SvgGenImage('assets/v2/icons/ic_tonights_plan.svg');
+
+  /// File path: assets/v2/icons/ic_wake_up_time.svg
+  SvgGenImage get icWakeUpTime =>
+      const SvgGenImage('assets/v2/icons/ic_wake_up_time.svg');
+
+  /// File path: assets/v2/icons/ic_went_to_bed.svg
+  SvgGenImage get icWentToBed =>
+      const SvgGenImage('assets/v2/icons/ic_went_to_bed.svg');
+
   /// List of all assets
   List<dynamic> get values => [
+    icAllergies,
     icAppIcon,
     icAppleIcon,
     icBack,
+    icBrainy,
     icCalmerTantrums,
     icChild,
     icClock,
+    icContactSupport,
     icEasierBedtimes,
+    icEditField,
+    icFaqs,
+    icFellAsleep,
     icGoogleIcon,
     icInfo,
+    icJourney,
+    icLinkedCaregivers,
     icLovingBrainText,
     icLovingBrainText2,
+    icMedications,
+    icMentorshipBooking,
     icMoreConfident,
     icMoreThanOne,
+    icNextSession,
     icParentingStress,
+    icPrivacyPolicy,
     icRoutine,
     icSleep,
     icTantrums,
     icTeamwork,
+    icTimeInSleep,
+    icToday,
+    icTonightsPlan,
+    icWakeUpTime,
+    icWentToBed,
   ];
 }
 
 class $AssetsV2ImagesGen {
   const $AssetsV2ImagesGen();
 
+  /// File path: assets/v2/images/img_ask_brainy.png
+  AssetGenImage get imgAskBrainy =>
+      const AssetGenImage('assets/v2/images/img_ask_brainy.png');
+
+  /// File path: assets/v2/images/img_behaviour_pattern_common_times.png
+  AssetGenImage get imgBehaviourPatternCommonTimes => const AssetGenImage(
+    'assets/v2/images/img_behaviour_pattern_common_times.png',
+  );
+
   /// File path: assets/v2/images/img_bg.png
   AssetGenImage get imgBg => const AssetGenImage('assets/v2/images/img_bg.png');
+
+  /// File path: assets/v2/images/img_brainy_home.png
+  AssetGenImage get imgBrainyHome =>
+      const AssetGenImage('assets/v2/images/img_brainy_home.png');
+
+  /// File path: assets/v2/images/img_conversation_history.png
+  AssetGenImage get imgConversationHistory =>
+      const AssetGenImage('assets/v2/images/img_conversation_history.png');
+
+  /// File path: assets/v2/images/img_cute_cloud.png
+  AssetGenImage get imgCuteCloud =>
+      const AssetGenImage('assets/v2/images/img_cute_cloud.png');
+
+  /// File path: assets/v2/images/img_family_snapshot_bg.png
+  AssetGenImage get imgFamilySnapshotBg =>
+      const AssetGenImage('assets/v2/images/img_family_snapshot_bg.png');
+
+  /// File path: assets/v2/images/img_guided_mentorship_human_support.png
+  AssetGenImage get imgGuidedMentorshipHumanSupport => const AssetGenImage(
+    'assets/v2/images/img_guided_mentorship_human_support.png',
+  );
+
+  /// File path: assets/v2/images/img_guided_mentorship_parent_calm.png
+  AssetGenImage get imgGuidedMentorshipParentCalm => const AssetGenImage(
+    'assets/v2/images/img_guided_mentorship_parent_calm.png',
+  );
+
+  /// File path: assets/v2/images/img_guided_mentorship_parenting_support.png
+  AssetGenImage get imgGuidedMentorshipParentingSupport => const AssetGenImage(
+    'assets/v2/images/img_guided_mentorship_parenting_support.png',
+  );
+
+  /// File path: assets/v2/images/img_guided_mentorship_sleep_reset.png
+  AssetGenImage get imgGuidedMentorshipSleepReset => const AssetGenImage(
+    'assets/v2/images/img_guided_mentorship_sleep_reset.png',
+  );
+
+  /// File path: assets/v2/images/img_guided_mentorship_tantrum_understanding.png
+  AssetGenImage get imgGuidedMentorshipTantrumUnderstanding =>
+      const AssetGenImage(
+        'assets/v2/images/img_guided_mentorship_tantrum_understanding.png',
+      );
+
+  /// File path: assets/v2/images/img_heads_up.png
+  AssetGenImage get imgHeadsUp =>
+      const AssetGenImage('assets/v2/images/img_heads_up.png');
+
+  /// File path: assets/v2/images/img_health.png
+  AssetGenImage get imgHealth =>
+      const AssetGenImage('assets/v2/images/img_health.png');
+
+  /// File path: assets/v2/images/img_humi.png
+  AssetGenImage get imgHumi =>
+      const AssetGenImage('assets/v2/images/img_humi.png');
+
+  /// File path: assets/v2/images/img_journey_consistency_recognition.png
+  AssetGenImage get imgJourneyConsistencyRecognition => const AssetGenImage(
+    'assets/v2/images/img_journey_consistency_recognition.png',
+  );
+
+  /// File path: assets/v2/images/img_journey_one_positive_change.png
+  AssetGenImage get imgJourneyOnePositiveChange => const AssetGenImage(
+    'assets/v2/images/img_journey_one_positive_change.png',
+  );
+
+  /// File path: assets/v2/images/img_journey_this_week.png
+  AssetGenImage get imgJourneyThisWeek =>
+      const AssetGenImage('assets/v2/images/img_journey_this_week.png');
+
+  /// File path: assets/v2/images/img_journy_weekly_review.png
+  AssetGenImage get imgJournyWeeklyReview =>
+      const AssetGenImage('assets/v2/images/img_journy_weekly_review.png');
+
+  /// File path: assets/v2/images/img_luma.png
+  AssetGenImage get imgLuma =>
+      const AssetGenImage('assets/v2/images/img_luma.png');
+
+  /// File path: assets/v2/images/img_mood.png
+  AssetGenImage get imgMood =>
+      const AssetGenImage('assets/v2/images/img_mood.png');
+
+  /// File path: assets/v2/images/img_mood_bad.png
+  AssetGenImage get imgMoodBad =>
+      const AssetGenImage('assets/v2/images/img_mood_bad.png');
+
+  /// File path: assets/v2/images/img_mood_good.png
+  AssetGenImage get imgMoodGood =>
+      const AssetGenImage('assets/v2/images/img_mood_good.png');
+
+  /// File path: assets/v2/images/img_mood_happy.png
+  AssetGenImage get imgMoodHappy =>
+      const AssetGenImage('assets/v2/images/img_mood_happy.png');
+
+  /// File path: assets/v2/images/img_mood_sad.png
+  AssetGenImage get imgMoodSad =>
+      const AssetGenImage('assets/v2/images/img_mood_sad.png');
+
+  /// File path: assets/v2/images/img_mood_stable.png
+  AssetGenImage get imgMoodStable =>
+      const AssetGenImage('assets/v2/images/img_mood_stable.png');
+
+  /// File path: assets/v2/images/img_nori_program_recommendation.png
+  AssetGenImage get imgNoriProgramRecommendation => const AssetGenImage(
+    'assets/v2/images/img_nori_program_recommendation.png',
+  );
+
+  /// File path: assets/v2/images/img_nori_sleep_details.png
+  AssetGenImage get imgNoriSleepDetails =>
+      const AssetGenImage('assets/v2/images/img_nori_sleep_details.png');
+
+  /// File path: assets/v2/images/img_nori_sleep_forecaste.png
+  AssetGenImage get imgNoriSleepForecaste =>
+      const AssetGenImage('assets/v2/images/img_nori_sleep_forecaste.png');
+
+  /// File path: assets/v2/images/img_nori_sleep_pattern.png
+  AssetGenImage get imgNoriSleepPattern =>
+      const AssetGenImage('assets/v2/images/img_nori_sleep_pattern.png');
+
+  /// File path: assets/v2/images/img_nori_tonights_plan.png
+  AssetGenImage get imgNoriTonightsPlan =>
+      const AssetGenImage('assets/v2/images/img_nori_tonights_plan.png');
+
+  /// File path: assets/v2/images/img_notes.png
+  AssetGenImage get imgNotes =>
+      const AssetGenImage('assets/v2/images/img_notes.png');
+
+  /// File path: assets/v2/images/img_noticed.png
+  AssetGenImage get imgNoticed =>
+      const AssetGenImage('assets/v2/images/img_noticed.png');
+
+  /// File path: assets/v2/images/img_saved_guidance.png
+  AssetGenImage get imgSavedGuidance =>
+      const AssetGenImage('assets/v2/images/img_saved_guidance.png');
+
+  /// File path: assets/v2/images/img_sleep.png
+  AssetGenImage get imgSleep =>
+      const AssetGenImage('assets/v2/images/img_sleep.png');
+
+  /// File path: assets/v2/images/img_sleep_background.jpg
+  AssetGenImage get imgSleepBackground =>
+      const AssetGenImage('assets/v2/images/img_sleep_background.jpg');
+
+  /// File path: assets/v2/images/img_sleep_restore_01.png
+  AssetGenImage get imgSleepRestore01 =>
+      const AssetGenImage('assets/v2/images/img_sleep_restore_01.png');
+
+  /// File path: assets/v2/images/img_sleep_restore_02.png
+  AssetGenImage get imgSleepRestore02 =>
+      const AssetGenImage('assets/v2/images/img_sleep_restore_02.png');
+
+  /// File path: assets/v2/images/img_sleep_restore_03.png
+  AssetGenImage get imgSleepRestore03 =>
+      const AssetGenImage('assets/v2/images/img_sleep_restore_03.png');
+
+  /// File path: assets/v2/images/img_sleep_restore_04.png
+  AssetGenImage get imgSleepRestore04 =>
+      const AssetGenImage('assets/v2/images/img_sleep_restore_04.png');
+
+  /// File path: assets/v2/images/img_sprout.png
+  AssetGenImage get imgSprout =>
+      const AssetGenImage('assets/v2/images/img_sprout.png');
+
+  /// File path: assets/v2/images/img_success_guide.png
+  AssetGenImage get imgSuccessGuide =>
+      const AssetGenImage('assets/v2/images/img_success_guide.png');
+
+  /// File path: assets/v2/images/img_tantrums.png
+  AssetGenImage get imgTantrums =>
+      const AssetGenImage('assets/v2/images/img_tantrums.png');
+
+  /// File path: assets/v2/images/img_tonights_plan.png
+  AssetGenImage get imgTonightsPlan =>
+      const AssetGenImage('assets/v2/images/img_tonights_plan.png');
 
   /// File path: assets/v2/images/img_welcome_bg.png
   AssetGenImage get imgWelcomeBg =>
       const AssetGenImage('assets/v2/images/img_welcome_bg.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [imgBg, imgWelcomeBg];
+  List<AssetGenImage> get values => [
+    imgAskBrainy,
+    imgBehaviourPatternCommonTimes,
+    imgBg,
+    imgBrainyHome,
+    imgConversationHistory,
+    imgCuteCloud,
+    imgFamilySnapshotBg,
+    imgGuidedMentorshipHumanSupport,
+    imgGuidedMentorshipParentCalm,
+    imgGuidedMentorshipParentingSupport,
+    imgGuidedMentorshipSleepReset,
+    imgGuidedMentorshipTantrumUnderstanding,
+    imgHeadsUp,
+    imgHealth,
+    imgHumi,
+    imgJourneyConsistencyRecognition,
+    imgJourneyOnePositiveChange,
+    imgJourneyThisWeek,
+    imgJournyWeeklyReview,
+    imgLuma,
+    imgMood,
+    imgMoodBad,
+    imgMoodGood,
+    imgMoodHappy,
+    imgMoodSad,
+    imgMoodStable,
+    imgNoriProgramRecommendation,
+    imgNoriSleepDetails,
+    imgNoriSleepForecaste,
+    imgNoriSleepPattern,
+    imgNoriTonightsPlan,
+    imgNotes,
+    imgNoticed,
+    imgSavedGuidance,
+    imgSleep,
+    imgSleepBackground,
+    imgSleepRestore01,
+    imgSleepRestore02,
+    imgSleepRestore03,
+    imgSleepRestore04,
+    imgSprout,
+    imgSuccessGuide,
+    imgTantrums,
+    imgTonightsPlan,
+    imgWelcomeBg,
+  ];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const $AssetsContentGen content = $AssetsContentGen();
   static const $AssetsHtmlGen html = $AssetsHtmlGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();

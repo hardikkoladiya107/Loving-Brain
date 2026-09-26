@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../model/api_result_status.dart';
+import '../../../../repo/auth_repo.dart';
 import 'otp_state.dart';
 
 class OtpCubit extends Cubit<OtpState> {
@@ -65,9 +66,13 @@ class OtpCubit extends Cubit<OtpState> {
     if (!state.canResend) return;
     changeProps(resendStatus: ApiResultStatus.loading());
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 600));
-      changeProps(resendStatus: ApiResultStatus.data(data: true));
-      startResendTimer();
+      final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
+        email: state.destination,
+      );
+      changeProps(resendStatus: apiResult);
+      if (apiResult is Data) {
+        startResendTimer();
+      }
     } catch (e) {
       changeProps(
         resendStatus: ApiResultStatus.error(error: Exception(e.toString())),
@@ -92,19 +97,20 @@ class OtpCubit extends Cubit<OtpState> {
       otpError: '',
     );
     try {
-      await Future<void>.delayed(const Duration(milliseconds: 800));
-      changeProps(
-        verifyStatus: ApiResultStatus.data(data: true),
-        isSubmitting: false,
+      final ApiResultStatus apiResult = await AuthRepo.instance.verifyEmailOtp(
+        email: state.destination,
+        otpCode: code,
       );
-      if (onSuccess != null) {
+
+      changeProps(verifyStatus: apiResult, isSubmitting: false);
+
+      if (apiResult is Data && onSuccess != null) {
         onSuccess();
       }
     } catch (e) {
       changeProps(
         verifyStatus: ApiResultStatus.error(error: Exception(e.toString())),
         isSubmitting: false,
-        otpError: e.toString().replaceAll('Exception: ', ''),
       );
     }
   }

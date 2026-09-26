@@ -46,6 +46,7 @@ class RoutePaths {
   static const String successScreen = '/success-screen';
   static const String baseScreen = '/base';
   static const String coParentRegister = '/co-parent-register';
+  static const String familySnapshot = '/family-snapshot';
   static const String timeline = '/timeline';
   static const String milestoneStory = '/milestone-story';
 

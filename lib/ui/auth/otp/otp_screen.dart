@@ -45,8 +45,9 @@ class _OtpScreenState extends State<OtpScreen> {
           },
           data: (dynamic _) {
             EasyLoading.dismiss();
-            context.go(RoutePaths.base);
+            // Navigation is handled in onSuccess callback
           },
+
           error: (Exception error) {
             EasyLoading.dismiss();
             showSnackBar(
@@ -117,6 +118,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     length: 4,
                     value: state.otpCode,
                     hasError: state.otpError.isNotEmpty,
+                    activeBorderColor: secondaryColor,
                     onChanged: (String value) {
                       context.read<OtpCubit>().onOtpChanged(value);
                     },
@@ -137,16 +139,23 @@ class _OtpScreenState extends State<OtpScreen> {
                   "Kindly check if mobile number entered is correct"
                       .appText(
                         textAlign: TextAlign.start,
-                        color: greyColor3,
+                        color: greyColor6,
                         fontSize: 14,
                       )
                       .appPadding(left: 20.r, right: 20.r),
                   const Spacer(),
                   AppButton(
                     onTap: () {
-                        context.go(RoutePaths.onboarding);
+                      FocusScope.of(context).unfocus();
+                      context.read<OtpCubit>().verifyOtp(
+                        onSuccess: () {
+                          context.go(RoutePaths.onboarding);
+                        },
+                      );
                     },
+
                     title: "Continue",
+                    isLoading: state.isSubmitting,
                   ),
                   32.spaceH,
                 ],

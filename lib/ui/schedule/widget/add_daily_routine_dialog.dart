@@ -1,9 +1,9 @@
-import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/routine_category_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -184,7 +184,7 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
             height: 52.h,
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: greyColor3.withValues(alpha: 0.3),
+              color: greyColor6.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(16.r),
               border: Border.all(color: greyColor.withValues(alpha: 0.5)),
             ),
@@ -234,7 +234,7 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
           decoration: BoxDecoration(
-            color: greyColor3.withValues(alpha: 0.3),
+            color: greyColor6.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(color: greyColor.withValues(alpha: 0.5)),
           ),
@@ -336,7 +336,7 @@ class _AddDailyRoutineDialogState extends State<AddDailyRoutineDialog> {
             height: 52.h,
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: greyColor3.withValues(alpha: 0.3),
+              color: greyColor6.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(16.r),
               border: Border.all(color: greyColor.withValues(alpha: 0.5)),
             ),

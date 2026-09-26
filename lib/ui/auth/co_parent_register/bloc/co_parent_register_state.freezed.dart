@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'co_parent_register_state.dart';
@@ -9,12 +9,13 @@ part of 'co_parent_register_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CoParentRegisterState {
 
- String get password; String get confirmPassword; String get passwordError; String get confirmPasswordError; bool get obscurePassword; bool get obscureConfirmPassword; bool get isTermsAccepted; ApiResultStatus get apiResultStatus; bool get isSubmitting;
+ String get password; String get confirmPassword; String get passwordError; String get confirmPasswordError; bool get obscurePassword; bool get obscureConfirmPassword; bool get isTermsAccepted; ApiResultStatus<dynamic> get apiResultStatus; bool get isSubmitting;
 /// Create a copy of CoParentRegisterState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $CoParentRegisterStateCopyWith<CoParentRegisterState> get copyWith => _$CoParent
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CoParentRegisterState&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.obscurePassword, obscurePassword) || other.obscurePassword == obscurePassword)&&(identical(other.obscureConfirmPassword, obscureConfirmPassword) || other.obscureConfirmPassword == obscureConfirmPassword)&&(identical(other.isTermsAccepted, isTermsAccepted) || other.isTermsAccepted == isTermsAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting));
+  final _this = this as CoParentRegisterState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CoParentRegisterState&&(identical(other.password, _this.password) || other.password == _this.password)&&(identical(other.confirmPassword, _this.confirmPassword) || other.confirmPassword == _this.confirmPassword)&&(identical(other.passwordError, _this.passwordError) || other.passwordError == _this.passwordError)&&(identical(other.confirmPasswordError, _this.confirmPasswordError) || other.confirmPasswordError == _this.confirmPasswordError)&&(identical(other.obscurePassword, _this.obscurePassword) || other.obscurePassword == _this.obscurePassword)&&(identical(other.obscureConfirmPassword, _this.obscureConfirmPassword) || other.obscureConfirmPassword == _this.obscureConfirmPassword)&&(identical(other.isTermsAccepted, _this.isTermsAccepted) || other.isTermsAccepted == _this.isTermsAccepted)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.isSubmitting, _this.isSubmitting) || other.isSubmitting == _this.isSubmitting));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,password,confirmPassword,passwordError,confirmPasswordError,obscurePassword,obscureConfirmPassword,isTermsAccepted,apiResultStatus,isSubmitting);
+int get hashCode {
+  final _this = this as CoParentRegisterState;
+  return Object.hash(runtimeType,_this.password,_this.confirmPassword,_this.passwordError,_this.confirmPasswordError,_this.obscurePassword,_this.obscureConfirmPassword,_this.isTermsAccepted,_this.apiResultStatus,_this.isSubmitting);
+}
 
 @override
 String toString() {
-  return 'CoParentRegisterState(password: $password, confirmPassword: $confirmPassword, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, obscurePassword: $obscurePassword, obscureConfirmPassword: $obscureConfirmPassword, isTermsAccepted: $isTermsAccepted, apiResultStatus: $apiResultStatus, isSubmitting: $isSubmitting)';
+  final _this = this as CoParentRegisterState;
+  return 'CoParentRegisterState(password: ${_this.password}, confirmPassword: ${_this.confirmPassword}, passwordError: ${_this.passwordError}, confirmPasswordError: ${_this.confirmPasswordError}, obscurePassword: ${_this.obscurePassword}, obscureConfirmPassword: ${_this.obscureConfirmPassword}, isTermsAccepted: ${_this.isTermsAccepted}, apiResultStatus: ${_this.apiResultStatus}, isSubmitting: ${_this.isSubmitting})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $CoParentRegisterStateCopyWith<$Res>  {
   factory $CoParentRegisterStateCopyWith(CoParentRegisterState value, $Res Function(CoParentRegisterState) _then) = _$CoParentRegisterStateCopyWithImpl;
 @useResult
 $Res call({
- String password, String confirmPassword, String passwordError, String confirmPasswordError, bool obscurePassword, bool obscureConfirmPassword, bool isTermsAccepted, ApiResultStatus apiResultStatus, bool isSubmitting
+ String password, String confirmPassword, String passwordError, String confirmPasswordError, bool obscurePassword, bool obscureConfirmPassword, bool isTermsAccepted, ApiResultStatus<dynamic> apiResultStatus, bool isSubmitting
 });
 
 
@@ -63,7 +69,7 @@ class _$CoParentRegisterStateCopyWithImpl<$Res>
 /// Create a copy of CoParentRegisterState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? password = null,Object? confirmPassword = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? obscurePassword = null,Object? obscureConfirmPassword = null,Object? isTermsAccepted = null,Object? apiResultStatus = null,Object? isSubmitting = null,}) {
-  return _then(_self.copyWith(
+  return _then(CoParentRegisterState(
 password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,confirmPassword: null == confirmPassword ? _self.confirmPassword : confirmPassword // ignore: cast_nullable_to_non_nullable
 as String,passwordError: null == passwordError ? _self.passwordError : passwordError // ignore: cast_nullable_to_non_nullable
@@ -72,7 +78,7 @@ as String,obscurePassword: null == obscurePassword ? _self.obscurePassword : obs
 as bool,obscureConfirmPassword: null == obscureConfirmPassword ? _self.obscureConfirmPassword : obscureConfirmPassword // ignore: cast_nullable_to_non_nullable
 as bool,isTermsAccepted: null == isTermsAccepted ? _self.isTermsAccepted : isTermsAccepted // ignore: cast_nullable_to_non_nullable
 as bool,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -167,7 +173,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String password,  String confirmPassword,  String passwordError,  String confirmPasswordError,  bool obscurePassword,  bool obscureConfirmPassword,  bool isTermsAccepted,  ApiResultStatus apiResultStatus,  bool isSubmitting)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String password,  String confirmPassword,  String passwordError,  String confirmPasswordError,  bool obscurePassword,  bool obscureConfirmPassword,  bool isTermsAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isSubmitting)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CoParentRegisterState() when $default != null:
 return $default(_that.password,_that.confirmPassword,_that.passwordError,_that.confirmPasswordError,_that.obscurePassword,_that.obscureConfirmPassword,_that.isTermsAccepted,_that.apiResultStatus,_that.isSubmitting);case _:
@@ -188,7 +194,7 @@ return $default(_that.password,_that.confirmPassword,_that.passwordError,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String password,  String confirmPassword,  String passwordError,  String confirmPasswordError,  bool obscurePassword,  bool obscureConfirmPassword,  bool isTermsAccepted,  ApiResultStatus apiResultStatus,  bool isSubmitting)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String password,  String confirmPassword,  String passwordError,  String confirmPasswordError,  bool obscurePassword,  bool obscureConfirmPassword,  bool isTermsAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isSubmitting)  $default,) {final _that = this;
 switch (_that) {
 case _CoParentRegisterState():
 return $default(_that.password,_that.confirmPassword,_that.passwordError,_that.confirmPasswordError,_that.obscurePassword,_that.obscureConfirmPassword,_that.isTermsAccepted,_that.apiResultStatus,_that.isSubmitting);case _:
@@ -208,7 +214,7 @@ return $default(_that.password,_that.confirmPassword,_that.passwordError,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String password,  String confirmPassword,  String passwordError,  String confirmPasswordError,  bool obscurePassword,  bool obscureConfirmPassword,  bool isTermsAccepted,  ApiResultStatus apiResultStatus,  bool isSubmitting)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String password,  String confirmPassword,  String passwordError,  String confirmPasswordError,  bool obscurePassword,  bool obscureConfirmPassword,  bool isTermsAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isSubmitting)?  $default,) {final _that = this;
 switch (_that) {
 case _CoParentRegisterState() when $default != null:
 return $default(_that.password,_that.confirmPassword,_that.passwordError,_that.confirmPasswordError,_that.obscurePassword,_that.obscureConfirmPassword,_that.isTermsAccepted,_that.apiResultStatus,_that.isSubmitting);case _:
@@ -233,7 +239,7 @@ class _CoParentRegisterState implements CoParentRegisterState {
 @override@JsonKey() final  bool obscurePassword;
 @override@JsonKey() final  bool obscureConfirmPassword;
 @override@JsonKey() final  bool isTermsAccepted;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 @override@JsonKey() final  bool isSubmitting;
 
 /// Create a copy of CoParentRegisterState
@@ -246,16 +252,18 @@ _$CoParentRegisterStateCopyWith<_CoParentRegisterState> get copyWith => __$CoPar
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CoParentRegisterState&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.obscurePassword, obscurePassword) || other.obscurePassword == obscurePassword)&&(identical(other.obscureConfirmPassword, obscureConfirmPassword) || other.obscureConfirmPassword == obscureConfirmPassword)&&(identical(other.isTermsAccepted, isTermsAccepted) || other.isTermsAccepted == isTermsAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CoParentRegisterState&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.obscurePassword, obscurePassword) || other.obscurePassword == obscurePassword)&&(identical(other.obscureConfirmPassword, obscureConfirmPassword) || other.obscureConfirmPassword == obscureConfirmPassword)&&(identical(other.isTermsAccepted, isTermsAccepted) || other.isTermsAccepted == isTermsAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,password,confirmPassword,passwordError,confirmPasswordError,obscurePassword,obscureConfirmPassword,isTermsAccepted,apiResultStatus,isSubmitting);
+int get hashCode {
+    return Object.hash(runtimeType,password,confirmPassword,passwordError,confirmPasswordError,obscurePassword,obscureConfirmPassword,isTermsAccepted,apiResultStatus,isSubmitting);
+}
 
 @override
 String toString() {
-  return 'CoParentRegisterState(password: $password, confirmPassword: $confirmPassword, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, obscurePassword: $obscurePassword, obscureConfirmPassword: $obscureConfirmPassword, isTermsAccepted: $isTermsAccepted, apiResultStatus: $apiResultStatus, isSubmitting: $isSubmitting)';
+    return 'CoParentRegisterState(password: $password, confirmPassword: $confirmPassword, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, obscurePassword: $obscurePassword, obscureConfirmPassword: $obscureConfirmPassword, isTermsAccepted: $isTermsAccepted, apiResultStatus: $apiResultStatus, isSubmitting: $isSubmitting)';
 }
 
 
@@ -266,7 +274,7 @@ abstract mixin class _$CoParentRegisterStateCopyWith<$Res> implements $CoParentR
   factory _$CoParentRegisterStateCopyWith(_CoParentRegisterState value, $Res Function(_CoParentRegisterState) _then) = __$CoParentRegisterStateCopyWithImpl;
 @override @useResult
 $Res call({
- String password, String confirmPassword, String passwordError, String confirmPasswordError, bool obscurePassword, bool obscureConfirmPassword, bool isTermsAccepted, ApiResultStatus apiResultStatus, bool isSubmitting
+ String password, String confirmPassword, String passwordError, String confirmPasswordError, bool obscurePassword, bool obscureConfirmPassword, bool isTermsAccepted, ApiResultStatus<dynamic> apiResultStatus, bool isSubmitting
 });
 
 
@@ -293,7 +301,7 @@ as String,obscurePassword: null == obscurePassword ? _self.obscurePassword : obs
 as bool,obscureConfirmPassword: null == obscureConfirmPassword ? _self.obscureConfirmPassword : obscureConfirmPassword // ignore: cast_nullable_to_non_nullable
 as bool,isTermsAccepted: null == isTermsAccepted ? _self.isTermsAccepted : isTermsAccepted // ignore: cast_nullable_to_non_nullable
 as bool,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

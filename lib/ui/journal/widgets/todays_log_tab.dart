@@ -34,7 +34,7 @@ class TodaysLogTab extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.all(20.w),
               itemCount: state.todayEvents.length,
-              separatorBuilder: (_, __) => 10.h.spaceH,
+              separatorBuilder: (_, _) => 10.h.spaceH,
               itemBuilder: (BuildContext context, int index) {
                 final TimelineEventModel event = state.todayEvents[index];
                 return _LogRow(event: event);

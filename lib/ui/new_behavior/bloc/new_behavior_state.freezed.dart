@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'new_behavior_state.dart';
@@ -9,12 +9,13 @@ part of 'new_behavior_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NewBehaviorState {
 
- String get selectedBehaviour; String get tellUsMoreText; String get tellUsMoreError; String get behaviourError; List<BehaviourCategoryModel> get behaviourCategoryList; List<BehaviourModel> get behaviourList; UserModel? get userModel; ApiResultStatus get getBehaviourApiResultStatus; ApiResultStatus get addBehaviourApiResultStatus;
+ String get selectedBehaviour; String get tellUsMoreText; String get tellUsMoreError; String get behaviourError; List<BehaviourCategoryModel> get behaviourCategoryList; List<BehaviourModel> get behaviourList; UserModel? get userModel; ApiResultStatus<dynamic> get getBehaviourApiResultStatus; ApiResultStatus<dynamic> get addBehaviourApiResultStatus;
 /// Create a copy of NewBehaviorState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $NewBehaviorStateCopyWith<NewBehaviorState> get copyWith => _$NewBehaviorStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewBehaviorState&&(identical(other.selectedBehaviour, selectedBehaviour) || other.selectedBehaviour == selectedBehaviour)&&(identical(other.tellUsMoreText, tellUsMoreText) || other.tellUsMoreText == tellUsMoreText)&&(identical(other.tellUsMoreError, tellUsMoreError) || other.tellUsMoreError == tellUsMoreError)&&(identical(other.behaviourError, behaviourError) || other.behaviourError == behaviourError)&&const DeepCollectionEquality().equals(other.behaviourCategoryList, behaviourCategoryList)&&const DeepCollectionEquality().equals(other.behaviourList, behaviourList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.getBehaviourApiResultStatus, getBehaviourApiResultStatus) || other.getBehaviourApiResultStatus == getBehaviourApiResultStatus)&&(identical(other.addBehaviourApiResultStatus, addBehaviourApiResultStatus) || other.addBehaviourApiResultStatus == addBehaviourApiResultStatus));
+  final _this = this as NewBehaviorState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NewBehaviorState&&(identical(other.selectedBehaviour, _this.selectedBehaviour) || other.selectedBehaviour == _this.selectedBehaviour)&&(identical(other.tellUsMoreText, _this.tellUsMoreText) || other.tellUsMoreText == _this.tellUsMoreText)&&(identical(other.tellUsMoreError, _this.tellUsMoreError) || other.tellUsMoreError == _this.tellUsMoreError)&&(identical(other.behaviourError, _this.behaviourError) || other.behaviourError == _this.behaviourError)&&const DeepCollectionEquality().equals(other.behaviourCategoryList, _this.behaviourCategoryList)&&const DeepCollectionEquality().equals(other.behaviourList, _this.behaviourList)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.getBehaviourApiResultStatus, _this.getBehaviourApiResultStatus) || other.getBehaviourApiResultStatus == _this.getBehaviourApiResultStatus)&&(identical(other.addBehaviourApiResultStatus, _this.addBehaviourApiResultStatus) || other.addBehaviourApiResultStatus == _this.addBehaviourApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedBehaviour,tellUsMoreText,tellUsMoreError,behaviourError,const DeepCollectionEquality().hash(behaviourCategoryList),const DeepCollectionEquality().hash(behaviourList),userModel,getBehaviourApiResultStatus,addBehaviourApiResultStatus);
+int get hashCode {
+  final _this = this as NewBehaviorState;
+  return Object.hash(runtimeType,_this.selectedBehaviour,_this.tellUsMoreText,_this.tellUsMoreError,_this.behaviourError,const DeepCollectionEquality().hash(_this.behaviourCategoryList),const DeepCollectionEquality().hash(_this.behaviourList),_this.userModel,_this.getBehaviourApiResultStatus,_this.addBehaviourApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'NewBehaviorState(selectedBehaviour: $selectedBehaviour, tellUsMoreText: $tellUsMoreText, tellUsMoreError: $tellUsMoreError, behaviourError: $behaviourError, behaviourCategoryList: $behaviourCategoryList, behaviourList: $behaviourList, userModel: $userModel, getBehaviourApiResultStatus: $getBehaviourApiResultStatus, addBehaviourApiResultStatus: $addBehaviourApiResultStatus)';
+  final _this = this as NewBehaviorState;
+  return 'NewBehaviorState(selectedBehaviour: ${_this.selectedBehaviour}, tellUsMoreText: ${_this.tellUsMoreText}, tellUsMoreError: ${_this.tellUsMoreError}, behaviourError: ${_this.behaviourError}, behaviourCategoryList: ${_this.behaviourCategoryList}, behaviourList: ${_this.behaviourList}, userModel: ${_this.userModel}, getBehaviourApiResultStatus: ${_this.getBehaviourApiResultStatus}, addBehaviourApiResultStatus: ${_this.addBehaviourApiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $NewBehaviorStateCopyWith<$Res>  {
   factory $NewBehaviorStateCopyWith(NewBehaviorState value, $Res Function(NewBehaviorState) _then) = _$NewBehaviorStateCopyWithImpl;
 @useResult
 $Res call({
- String selectedBehaviour, String tellUsMoreText, String tellUsMoreError, String behaviourError, List<BehaviourCategoryModel> behaviourCategoryList, List<BehaviourModel> behaviourList, UserModel? userModel, ApiResultStatus getBehaviourApiResultStatus, ApiResultStatus addBehaviourApiResultStatus
+ String selectedBehaviour, String tellUsMoreText, String tellUsMoreError, String behaviourError, List<BehaviourCategoryModel> behaviourCategoryList, List<BehaviourModel> behaviourList, UserModel? userModel, ApiResultStatus<dynamic> getBehaviourApiResultStatus, ApiResultStatus<dynamic> addBehaviourApiResultStatus
 });
 
 
@@ -63,7 +69,7 @@ class _$NewBehaviorStateCopyWithImpl<$Res>
 /// Create a copy of NewBehaviorState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? selectedBehaviour = null,Object? tellUsMoreText = null,Object? tellUsMoreError = null,Object? behaviourError = null,Object? behaviourCategoryList = null,Object? behaviourList = null,Object? userModel = freezed,Object? getBehaviourApiResultStatus = null,Object? addBehaviourApiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(NewBehaviorState(
 selectedBehaviour: null == selectedBehaviour ? _self.selectedBehaviour : selectedBehaviour // ignore: cast_nullable_to_non_nullable
 as String,tellUsMoreText: null == tellUsMoreText ? _self.tellUsMoreText : tellUsMoreText // ignore: cast_nullable_to_non_nullable
 as String,tellUsMoreError: null == tellUsMoreError ? _self.tellUsMoreError : tellUsMoreError // ignore: cast_nullable_to_non_nullable
@@ -72,8 +78,8 @@ as String,behaviourCategoryList: null == behaviourCategoryList ? _self.behaviour
 as List<BehaviourCategoryModel>,behaviourList: null == behaviourList ? _self.behaviourList : behaviourList // ignore: cast_nullable_to_non_nullable
 as List<BehaviourModel>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,getBehaviourApiResultStatus: null == getBehaviourApiResultStatus ? _self.getBehaviourApiResultStatus : getBehaviourApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,addBehaviourApiResultStatus: null == addBehaviourApiResultStatus ? _self.addBehaviourApiResultStatus : addBehaviourApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,addBehaviourApiResultStatus: null == addBehaviourApiResultStatus ? _self.addBehaviourApiResultStatus : addBehaviourApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of NewBehaviorState
@@ -176,7 +182,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedBehaviour,  String tellUsMoreText,  String tellUsMoreError,  String behaviourError,  List<BehaviourCategoryModel> behaviourCategoryList,  List<BehaviourModel> behaviourList,  UserModel? userModel,  ApiResultStatus getBehaviourApiResultStatus,  ApiResultStatus addBehaviourApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedBehaviour,  String tellUsMoreText,  String tellUsMoreError,  String behaviourError,  List<BehaviourCategoryModel> behaviourCategoryList,  List<BehaviourModel> behaviourList,  UserModel? userModel,  ApiResultStatus<dynamic> getBehaviourApiResultStatus,  ApiResultStatus<dynamic> addBehaviourApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NewBehaviorState() when $default != null:
 return $default(_that.selectedBehaviour,_that.tellUsMoreText,_that.tellUsMoreError,_that.behaviourError,_that.behaviourCategoryList,_that.behaviourList,_that.userModel,_that.getBehaviourApiResultStatus,_that.addBehaviourApiResultStatus);case _:
@@ -197,7 +203,7 @@ return $default(_that.selectedBehaviour,_that.tellUsMoreText,_that.tellUsMoreErr
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedBehaviour,  String tellUsMoreText,  String tellUsMoreError,  String behaviourError,  List<BehaviourCategoryModel> behaviourCategoryList,  List<BehaviourModel> behaviourList,  UserModel? userModel,  ApiResultStatus getBehaviourApiResultStatus,  ApiResultStatus addBehaviourApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedBehaviour,  String tellUsMoreText,  String tellUsMoreError,  String behaviourError,  List<BehaviourCategoryModel> behaviourCategoryList,  List<BehaviourModel> behaviourList,  UserModel? userModel,  ApiResultStatus<dynamic> getBehaviourApiResultStatus,  ApiResultStatus<dynamic> addBehaviourApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _NewBehaviorState():
 return $default(_that.selectedBehaviour,_that.tellUsMoreText,_that.tellUsMoreError,_that.behaviourError,_that.behaviourCategoryList,_that.behaviourList,_that.userModel,_that.getBehaviourApiResultStatus,_that.addBehaviourApiResultStatus);case _:
@@ -217,7 +223,7 @@ return $default(_that.selectedBehaviour,_that.tellUsMoreText,_that.tellUsMoreErr
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedBehaviour,  String tellUsMoreText,  String tellUsMoreError,  String behaviourError,  List<BehaviourCategoryModel> behaviourCategoryList,  List<BehaviourModel> behaviourList,  UserModel? userModel,  ApiResultStatus getBehaviourApiResultStatus,  ApiResultStatus addBehaviourApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedBehaviour,  String tellUsMoreText,  String tellUsMoreError,  String behaviourError,  List<BehaviourCategoryModel> behaviourCategoryList,  List<BehaviourModel> behaviourList,  UserModel? userModel,  ApiResultStatus<dynamic> getBehaviourApiResultStatus,  ApiResultStatus<dynamic> addBehaviourApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _NewBehaviorState() when $default != null:
 return $default(_that.selectedBehaviour,_that.tellUsMoreText,_that.tellUsMoreError,_that.behaviourError,_that.behaviourCategoryList,_that.behaviourList,_that.userModel,_that.getBehaviourApiResultStatus,_that.addBehaviourApiResultStatus);case _:
@@ -232,7 +238,7 @@ return $default(_that.selectedBehaviour,_that.tellUsMoreText,_that.tellUsMoreErr
 
 
 class _NewBehaviorState implements NewBehaviorState {
-  const _NewBehaviorState({this.selectedBehaviour = "", this.tellUsMoreText = "", this.tellUsMoreError = "", this.behaviourError = "", final  List<BehaviourCategoryModel> behaviourCategoryList = const [], final  List<BehaviourModel> behaviourList = const [], this.userModel, this.getBehaviourApiResultStatus = const ApiResultStatus.initial(), this.addBehaviourApiResultStatus = const ApiResultStatus.initial()}): _behaviourCategoryList = behaviourCategoryList,_behaviourList = behaviourList;
+  const _NewBehaviorState({this.selectedBehaviour = "", this.tellUsMoreText = "", this.tellUsMoreError = "", this.behaviourError = "",  List<BehaviourCategoryModel> behaviourCategoryList = const [],  List<BehaviourModel> behaviourList = const [], this.userModel, this.getBehaviourApiResultStatus = const ApiResultStatus.initial(), this.addBehaviourApiResultStatus = const ApiResultStatus.initial()}): _behaviourCategoryList = behaviourCategoryList,_behaviourList = behaviourList;
   
 
 @override@JsonKey() final  String selectedBehaviour;
@@ -254,8 +260,8 @@ class _NewBehaviorState implements NewBehaviorState {
 }
 
 @override final  UserModel? userModel;
-@override@JsonKey() final  ApiResultStatus getBehaviourApiResultStatus;
-@override@JsonKey() final  ApiResultStatus addBehaviourApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> getBehaviourApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> addBehaviourApiResultStatus;
 
 /// Create a copy of NewBehaviorState
 /// with the given fields replaced by the non-null parameter values.
@@ -267,16 +273,18 @@ _$NewBehaviorStateCopyWith<_NewBehaviorState> get copyWith => __$NewBehaviorStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewBehaviorState&&(identical(other.selectedBehaviour, selectedBehaviour) || other.selectedBehaviour == selectedBehaviour)&&(identical(other.tellUsMoreText, tellUsMoreText) || other.tellUsMoreText == tellUsMoreText)&&(identical(other.tellUsMoreError, tellUsMoreError) || other.tellUsMoreError == tellUsMoreError)&&(identical(other.behaviourError, behaviourError) || other.behaviourError == behaviourError)&&const DeepCollectionEquality().equals(other._behaviourCategoryList, _behaviourCategoryList)&&const DeepCollectionEquality().equals(other._behaviourList, _behaviourList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.getBehaviourApiResultStatus, getBehaviourApiResultStatus) || other.getBehaviourApiResultStatus == getBehaviourApiResultStatus)&&(identical(other.addBehaviourApiResultStatus, addBehaviourApiResultStatus) || other.addBehaviourApiResultStatus == addBehaviourApiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NewBehaviorState&&(identical(other.selectedBehaviour, selectedBehaviour) || other.selectedBehaviour == selectedBehaviour)&&(identical(other.tellUsMoreText, tellUsMoreText) || other.tellUsMoreText == tellUsMoreText)&&(identical(other.tellUsMoreError, tellUsMoreError) || other.tellUsMoreError == tellUsMoreError)&&(identical(other.behaviourError, behaviourError) || other.behaviourError == behaviourError)&&const DeepCollectionEquality().equals(other.behaviourCategoryList, _behaviourCategoryList)&&const DeepCollectionEquality().equals(other.behaviourList, _behaviourList)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.getBehaviourApiResultStatus, getBehaviourApiResultStatus) || other.getBehaviourApiResultStatus == getBehaviourApiResultStatus)&&(identical(other.addBehaviourApiResultStatus, addBehaviourApiResultStatus) || other.addBehaviourApiResultStatus == addBehaviourApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,selectedBehaviour,tellUsMoreText,tellUsMoreError,behaviourError,const DeepCollectionEquality().hash(_behaviourCategoryList),const DeepCollectionEquality().hash(_behaviourList),userModel,getBehaviourApiResultStatus,addBehaviourApiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,selectedBehaviour,tellUsMoreText,tellUsMoreError,behaviourError,const DeepCollectionEquality().hash(_behaviourCategoryList),const DeepCollectionEquality().hash(_behaviourList),userModel,getBehaviourApiResultStatus,addBehaviourApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'NewBehaviorState(selectedBehaviour: $selectedBehaviour, tellUsMoreText: $tellUsMoreText, tellUsMoreError: $tellUsMoreError, behaviourError: $behaviourError, behaviourCategoryList: $behaviourCategoryList, behaviourList: $behaviourList, userModel: $userModel, getBehaviourApiResultStatus: $getBehaviourApiResultStatus, addBehaviourApiResultStatus: $addBehaviourApiResultStatus)';
+    return 'NewBehaviorState(selectedBehaviour: $selectedBehaviour, tellUsMoreText: $tellUsMoreText, tellUsMoreError: $tellUsMoreError, behaviourError: $behaviourError, behaviourCategoryList: $behaviourCategoryList, behaviourList: $behaviourList, userModel: $userModel, getBehaviourApiResultStatus: $getBehaviourApiResultStatus, addBehaviourApiResultStatus: $addBehaviourApiResultStatus)';
 }
 
 
@@ -287,7 +295,7 @@ abstract mixin class _$NewBehaviorStateCopyWith<$Res> implements $NewBehaviorSta
   factory _$NewBehaviorStateCopyWith(_NewBehaviorState value, $Res Function(_NewBehaviorState) _then) = __$NewBehaviorStateCopyWithImpl;
 @override @useResult
 $Res call({
- String selectedBehaviour, String tellUsMoreText, String tellUsMoreError, String behaviourError, List<BehaviourCategoryModel> behaviourCategoryList, List<BehaviourModel> behaviourList, UserModel? userModel, ApiResultStatus getBehaviourApiResultStatus, ApiResultStatus addBehaviourApiResultStatus
+ String selectedBehaviour, String tellUsMoreText, String tellUsMoreError, String behaviourError, List<BehaviourCategoryModel> behaviourCategoryList, List<BehaviourModel> behaviourList, UserModel? userModel, ApiResultStatus<dynamic> getBehaviourApiResultStatus, ApiResultStatus<dynamic> addBehaviourApiResultStatus
 });
 
 
@@ -314,8 +322,8 @@ as String,behaviourCategoryList: null == behaviourCategoryList ? _self._behaviou
 as List<BehaviourCategoryModel>,behaviourList: null == behaviourList ? _self._behaviourList : behaviourList // ignore: cast_nullable_to_non_nullable
 as List<BehaviourModel>,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,getBehaviourApiResultStatus: null == getBehaviourApiResultStatus ? _self.getBehaviourApiResultStatus : getBehaviourApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,addBehaviourApiResultStatus: null == addBehaviourApiResultStatus ? _self.addBehaviourApiResultStatus : addBehaviourApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,addBehaviourApiResultStatus: null == addBehaviourApiResultStatus ? _self.addBehaviourApiResultStatus : addBehaviourApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 

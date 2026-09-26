@@ -35,9 +35,9 @@ class ChildModel {
   }
 
   ChildModel.fromJson(
-    Map<String, dynamic> jsonObject,
-    DocumentReference<Object?> reference,
-  ) {
+    Map<String, dynamic> jsonObject, [
+    DocumentReference<Object?>? reference,
+  ]) {
     _reference = reference;
     _childAge = jsonObject['child_age'];
     final dynamic rawChildDob = jsonObject['child_dob'];

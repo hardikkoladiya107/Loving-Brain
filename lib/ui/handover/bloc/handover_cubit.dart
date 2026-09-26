@@ -13,10 +13,7 @@ class HandoverCubit extends Cubit<HandoverState> {
     emit(HandoverState(userModel: preferences.getUserModel()));
   }
 
-  void changeProps({
-    UserModel? userModel,
-    ApiResultStatus? transferStatus,
-  }) {
+  void changeProps({UserModel? userModel, ApiResultStatus? transferStatus}) {
     emit(
       state.copyWith(
         userModel: userModel ?? state.userModel,
@@ -64,8 +61,11 @@ class HandoverCubit extends Cubit<HandoverState> {
   }
 
   Future<UserModel?> _refreshUser(String uid) async {
-    final DocumentSnapshot<Map<String, dynamic>> snap =
-        await UserRepo.instance.userCollection.doc(uid).get();
+    final DocumentSnapshot<Map<String, dynamic>> snap = await UserRepo
+        .instance
+        .userCollection
+        .doc(uid)
+        .get();
     if (!snap.exists || snap.data() == null) {
       return state.userModel;
     }

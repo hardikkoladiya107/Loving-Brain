@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'login_state.dart';
@@ -9,12 +9,13 @@ part of 'login_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LoginState {
 
- String get emailAddress; String get password; String get emailAddressError; String get passwordError; ApiResultStatus get apiResultStatus; bool get obscureTextPassword; LoginSubmitAction get submittingAction;
+ String get emailAddress; String get password; String get emailAddressError; String get passwordError; ApiResultStatus<dynamic> get apiResultStatus; bool get obscureTextPassword; LoginSubmitAction get submittingAction;
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $LoginStateCopyWith<LoginState> get copyWith => _$LoginStateCopyWithImpl<LoginSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.submittingAction, submittingAction) || other.submittingAction == submittingAction));
+  final _this = this as LoginState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoginState&&(identical(other.emailAddress, _this.emailAddress) || other.emailAddress == _this.emailAddress)&&(identical(other.password, _this.password) || other.password == _this.password)&&(identical(other.emailAddressError, _this.emailAddressError) || other.emailAddressError == _this.emailAddressError)&&(identical(other.passwordError, _this.passwordError) || other.passwordError == _this.passwordError)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.obscureTextPassword, _this.obscureTextPassword) || other.obscureTextPassword == _this.obscureTextPassword)&&(identical(other.submittingAction, _this.submittingAction) || other.submittingAction == _this.submittingAction));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,emailAddress,password,emailAddressError,passwordError,apiResultStatus,obscureTextPassword,submittingAction);
+int get hashCode {
+  final _this = this as LoginState;
+  return Object.hash(runtimeType,_this.emailAddress,_this.password,_this.emailAddressError,_this.passwordError,_this.apiResultStatus,_this.obscureTextPassword,_this.submittingAction);
+}
 
 @override
 String toString() {
-  return 'LoginState(emailAddress: $emailAddress, password: $password, emailAddressError: $emailAddressError, passwordError: $passwordError, apiResultStatus: $apiResultStatus, obscureTextPassword: $obscureTextPassword, submittingAction: $submittingAction)';
+  final _this = this as LoginState;
+  return 'LoginState(emailAddress: ${_this.emailAddress}, password: ${_this.password}, emailAddressError: ${_this.emailAddressError}, passwordError: ${_this.passwordError}, apiResultStatus: ${_this.apiResultStatus}, obscureTextPassword: ${_this.obscureTextPassword}, submittingAction: ${_this.submittingAction})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $LoginStateCopyWith<$Res>  {
   factory $LoginStateCopyWith(LoginState value, $Res Function(LoginState) _then) = _$LoginStateCopyWithImpl;
 @useResult
 $Res call({
- String emailAddress, String password, String emailAddressError, String passwordError, ApiResultStatus apiResultStatus, bool obscureTextPassword, LoginSubmitAction submittingAction
+ String emailAddress, String password, String emailAddressError, String passwordError, ApiResultStatus<dynamic> apiResultStatus, bool obscureTextPassword, LoginSubmitAction submittingAction
 });
 
 
@@ -63,13 +69,13 @@ class _$LoginStateCopyWithImpl<$Res>
 /// Create a copy of LoginState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? emailAddress = null,Object? password = null,Object? emailAddressError = null,Object? passwordError = null,Object? apiResultStatus = null,Object? obscureTextPassword = null,Object? submittingAction = null,}) {
-  return _then(_self.copyWith(
+  return _then(LoginState(
 emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
 as String,passwordError: null == passwordError ? _self.passwordError : passwordError // ignore: cast_nullable_to_non_nullable
 as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
 as bool,submittingAction: null == submittingAction ? _self.submittingAction : submittingAction // ignore: cast_nullable_to_non_nullable
 as LoginSubmitAction,
   ));
@@ -165,7 +171,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus apiResultStatus,  bool obscureTextPassword,  LoginSubmitAction submittingAction)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus<dynamic> apiResultStatus,  bool obscureTextPassword,  LoginSubmitAction submittingAction)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LoginState() when $default != null:
 return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.passwordError,_that.apiResultStatus,_that.obscureTextPassword,_that.submittingAction);case _:
@@ -186,7 +192,7 @@ return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus apiResultStatus,  bool obscureTextPassword,  LoginSubmitAction submittingAction)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus<dynamic> apiResultStatus,  bool obscureTextPassword,  LoginSubmitAction submittingAction)  $default,) {final _that = this;
 switch (_that) {
 case _LoginState():
 return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.passwordError,_that.apiResultStatus,_that.obscureTextPassword,_that.submittingAction);case _:
@@ -206,7 +212,7 @@ return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus apiResultStatus,  bool obscureTextPassword,  LoginSubmitAction submittingAction)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String emailAddress,  String password,  String emailAddressError,  String passwordError,  ApiResultStatus<dynamic> apiResultStatus,  bool obscureTextPassword,  LoginSubmitAction submittingAction)?  $default,) {final _that = this;
 switch (_that) {
 case _LoginState() when $default != null:
 return $default(_that.emailAddress,_that.password,_that.emailAddressError,_that.passwordError,_that.apiResultStatus,_that.obscureTextPassword,_that.submittingAction);case _:
@@ -228,7 +234,7 @@ class _LoginState implements LoginState {
 @override@JsonKey() final  String password;
 @override@JsonKey() final  String emailAddressError;
 @override@JsonKey() final  String passwordError;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 @override@JsonKey() final  bool obscureTextPassword;
 @override@JsonKey() final  LoginSubmitAction submittingAction;
 
@@ -242,16 +248,18 @@ _$LoginStateCopyWith<_LoginState> get copyWith => __$LoginStateCopyWithImpl<_Log
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.submittingAction, submittingAction) || other.submittingAction == submittingAction));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LoginState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.submittingAction, submittingAction) || other.submittingAction == submittingAction));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,emailAddress,password,emailAddressError,passwordError,apiResultStatus,obscureTextPassword,submittingAction);
+int get hashCode {
+    return Object.hash(runtimeType,emailAddress,password,emailAddressError,passwordError,apiResultStatus,obscureTextPassword,submittingAction);
+}
 
 @override
 String toString() {
-  return 'LoginState(emailAddress: $emailAddress, password: $password, emailAddressError: $emailAddressError, passwordError: $passwordError, apiResultStatus: $apiResultStatus, obscureTextPassword: $obscureTextPassword, submittingAction: $submittingAction)';
+    return 'LoginState(emailAddress: $emailAddress, password: $password, emailAddressError: $emailAddressError, passwordError: $passwordError, apiResultStatus: $apiResultStatus, obscureTextPassword: $obscureTextPassword, submittingAction: $submittingAction)';
 }
 
 
@@ -262,7 +270,7 @@ abstract mixin class _$LoginStateCopyWith<$Res> implements $LoginStateCopyWith<$
   factory _$LoginStateCopyWith(_LoginState value, $Res Function(_LoginState) _then) = __$LoginStateCopyWithImpl;
 @override @useResult
 $Res call({
- String emailAddress, String password, String emailAddressError, String passwordError, ApiResultStatus apiResultStatus, bool obscureTextPassword, LoginSubmitAction submittingAction
+ String emailAddress, String password, String emailAddressError, String passwordError, ApiResultStatus<dynamic> apiResultStatus, bool obscureTextPassword, LoginSubmitAction submittingAction
 });
 
 
@@ -286,7 +294,7 @@ as String,password: null == password ? _self.password : password // ignore: cast
 as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
 as String,passwordError: null == passwordError ? _self.passwordError : passwordError // ignore: cast_nullable_to_non_nullable
 as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
 as bool,submittingAction: null == submittingAction ? _self.submittingAction : submittingAction // ignore: cast_nullable_to_non_nullable
 as LoginSubmitAction,
   ));

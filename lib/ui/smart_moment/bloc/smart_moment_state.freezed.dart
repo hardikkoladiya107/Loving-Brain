@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'smart_moment_state.dart';
@@ -9,12 +9,13 @@ part of 'smart_moment_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SmartMomentState {
 
- UserModel? get userModel; ChildModel? get childModel; ChildState? get stateAtTime; String get activityTitle; String get subtitle; String get message; List<String> get steps; ApiResultStatus get saveApiResultStatus;
+ UserModel? get userModel; ChildModel? get childModel; ChildState? get stateAtTime; String get activityTitle; String get subtitle; String get message; List<String> get steps; ApiResultStatus<dynamic> get saveApiResultStatus;
 /// Create a copy of SmartMomentState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $SmartMomentStateCopyWith<SmartMomentState> get copyWith => _$SmartMomentStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SmartMomentState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.stateAtTime, stateAtTime) || other.stateAtTime == stateAtTime)&&(identical(other.activityTitle, activityTitle) || other.activityTitle == activityTitle)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.steps, steps)&&(identical(other.saveApiResultStatus, saveApiResultStatus) || other.saveApiResultStatus == saveApiResultStatus));
+  final _this = this as SmartMomentState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SmartMomentState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&(identical(other.stateAtTime, _this.stateAtTime) || other.stateAtTime == _this.stateAtTime)&&(identical(other.activityTitle, _this.activityTitle) || other.activityTitle == _this.activityTitle)&&(identical(other.subtitle, _this.subtitle) || other.subtitle == _this.subtitle)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.steps, _this.steps)&&(identical(other.saveApiResultStatus, _this.saveApiResultStatus) || other.saveApiResultStatus == _this.saveApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,childModel,stateAtTime,activityTitle,subtitle,message,const DeepCollectionEquality().hash(steps),saveApiResultStatus);
+int get hashCode {
+  final _this = this as SmartMomentState;
+  return Object.hash(runtimeType,_this.userModel,_this.childModel,_this.stateAtTime,_this.activityTitle,_this.subtitle,_this.message,const DeepCollectionEquality().hash(_this.steps),_this.saveApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'SmartMomentState(userModel: $userModel, childModel: $childModel, stateAtTime: $stateAtTime, activityTitle: $activityTitle, subtitle: $subtitle, message: $message, steps: $steps, saveApiResultStatus: $saveApiResultStatus)';
+  final _this = this as SmartMomentState;
+  return 'SmartMomentState(userModel: ${_this.userModel}, childModel: ${_this.childModel}, stateAtTime: ${_this.stateAtTime}, activityTitle: ${_this.activityTitle}, subtitle: ${_this.subtitle}, message: ${_this.message}, steps: ${_this.steps}, saveApiResultStatus: ${_this.saveApiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $SmartMomentStateCopyWith<$Res>  {
   factory $SmartMomentStateCopyWith(SmartMomentState value, $Res Function(SmartMomentState) _then) = _$SmartMomentStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, ChildModel? childModel, ChildState? stateAtTime, String activityTitle, String subtitle, String message, List<String> steps, ApiResultStatus saveApiResultStatus
+ UserModel? userModel, ChildModel? childModel, ChildState? stateAtTime, String activityTitle, String subtitle, String message, List<String> steps, ApiResultStatus<dynamic> saveApiResultStatus
 });
 
 
@@ -63,7 +69,7 @@ class _$SmartMomentStateCopyWithImpl<$Res>
 /// Create a copy of SmartMomentState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? childModel = freezed,Object? stateAtTime = freezed,Object? activityTitle = null,Object? subtitle = null,Object? message = null,Object? steps = null,Object? saveApiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(SmartMomentState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,stateAtTime: freezed == stateAtTime ? _self.stateAtTime : stateAtTime // ignore: cast_nullable_to_non_nullable
@@ -72,7 +78,7 @@ as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,steps: null == steps ? _self.steps : steps // ignore: cast_nullable_to_non_nullable
 as List<String>,saveApiResultStatus: null == saveApiResultStatus ? _self.saveApiResultStatus : saveApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of SmartMomentState
@@ -166,7 +172,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? stateAtTime,  String activityTitle,  String subtitle,  String message,  List<String> steps,  ApiResultStatus saveApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? stateAtTime,  String activityTitle,  String subtitle,  String message,  List<String> steps,  ApiResultStatus<dynamic> saveApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SmartMomentState() when $default != null:
 return $default(_that.userModel,_that.childModel,_that.stateAtTime,_that.activityTitle,_that.subtitle,_that.message,_that.steps,_that.saveApiResultStatus);case _:
@@ -187,7 +193,7 @@ return $default(_that.userModel,_that.childModel,_that.stateAtTime,_that.activit
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? stateAtTime,  String activityTitle,  String subtitle,  String message,  List<String> steps,  ApiResultStatus saveApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? stateAtTime,  String activityTitle,  String subtitle,  String message,  List<String> steps,  ApiResultStatus<dynamic> saveApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _SmartMomentState():
 return $default(_that.userModel,_that.childModel,_that.stateAtTime,_that.activityTitle,_that.subtitle,_that.message,_that.steps,_that.saveApiResultStatus);case _:
@@ -207,7 +213,7 @@ return $default(_that.userModel,_that.childModel,_that.stateAtTime,_that.activit
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  ChildState? stateAtTime,  String activityTitle,  String subtitle,  String message,  List<String> steps,  ApiResultStatus saveApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  ChildState? stateAtTime,  String activityTitle,  String subtitle,  String message,  List<String> steps,  ApiResultStatus<dynamic> saveApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _SmartMomentState() when $default != null:
 return $default(_that.userModel,_that.childModel,_that.stateAtTime,_that.activityTitle,_that.subtitle,_that.message,_that.steps,_that.saveApiResultStatus);case _:
@@ -222,7 +228,7 @@ return $default(_that.userModel,_that.childModel,_that.stateAtTime,_that.activit
 
 
 class _SmartMomentState implements SmartMomentState {
-  const _SmartMomentState({this.userModel, this.childModel, this.stateAtTime, this.activityTitle = '', this.subtitle = '', this.message = '', final  List<String> steps = const <String>[], this.saveApiResultStatus = const ApiResultStatus.initial()}): _steps = steps;
+  const _SmartMomentState({this.userModel, this.childModel, this.stateAtTime, this.activityTitle = '', this.subtitle = '', this.message = '',  List<String> steps = const <String>[], this.saveApiResultStatus = const ApiResultStatus.initial()}): _steps = steps;
   
 
 @override final  UserModel? userModel;
@@ -238,7 +244,7 @@ class _SmartMomentState implements SmartMomentState {
   return EqualUnmodifiableListView(_steps);
 }
 
-@override@JsonKey() final  ApiResultStatus saveApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> saveApiResultStatus;
 
 /// Create a copy of SmartMomentState
 /// with the given fields replaced by the non-null parameter values.
@@ -250,16 +256,18 @@ _$SmartMomentStateCopyWith<_SmartMomentState> get copyWith => __$SmartMomentStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SmartMomentState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.stateAtTime, stateAtTime) || other.stateAtTime == stateAtTime)&&(identical(other.activityTitle, activityTitle) || other.activityTitle == activityTitle)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._steps, _steps)&&(identical(other.saveApiResultStatus, saveApiResultStatus) || other.saveApiResultStatus == saveApiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SmartMomentState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.stateAtTime, stateAtTime) || other.stateAtTime == stateAtTime)&&(identical(other.activityTitle, activityTitle) || other.activityTitle == activityTitle)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.steps, _steps)&&(identical(other.saveApiResultStatus, saveApiResultStatus) || other.saveApiResultStatus == saveApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,childModel,stateAtTime,activityTitle,subtitle,message,const DeepCollectionEquality().hash(_steps),saveApiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,childModel,stateAtTime,activityTitle,subtitle,message,const DeepCollectionEquality().hash(_steps),saveApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'SmartMomentState(userModel: $userModel, childModel: $childModel, stateAtTime: $stateAtTime, activityTitle: $activityTitle, subtitle: $subtitle, message: $message, steps: $steps, saveApiResultStatus: $saveApiResultStatus)';
+    return 'SmartMomentState(userModel: $userModel, childModel: $childModel, stateAtTime: $stateAtTime, activityTitle: $activityTitle, subtitle: $subtitle, message: $message, steps: $steps, saveApiResultStatus: $saveApiResultStatus)';
 }
 
 
@@ -270,7 +278,7 @@ abstract mixin class _$SmartMomentStateCopyWith<$Res> implements $SmartMomentSta
   factory _$SmartMomentStateCopyWith(_SmartMomentState value, $Res Function(_SmartMomentState) _then) = __$SmartMomentStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, ChildModel? childModel, ChildState? stateAtTime, String activityTitle, String subtitle, String message, List<String> steps, ApiResultStatus saveApiResultStatus
+ UserModel? userModel, ChildModel? childModel, ChildState? stateAtTime, String activityTitle, String subtitle, String message, List<String> steps, ApiResultStatus<dynamic> saveApiResultStatus
 });
 
 
@@ -297,7 +305,7 @@ as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast
 as String,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,steps: null == steps ? _self._steps : steps // ignore: cast_nullable_to_non_nullable
 as List<String>,saveApiResultStatus: null == saveApiResultStatus ? _self.saveApiResultStatus : saveApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 

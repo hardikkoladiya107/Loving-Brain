@@ -123,20 +123,20 @@ void main() {
 
   group('CoParentInvitationHelpers.toggleChildSelection', () {
     test('adds and removes items by id', () {
-      final List<_TestChild> selected = CoParentInvitationHelpers
-          .toggleChildSelection<_TestChild>(
-        selected: <_TestChild>[],
-        child: const _TestChild(id: 'c1', name: 'Emma'),
-        idForItem: (_TestChild item) => item.id,
-      );
+      final List<_TestChild> selected =
+          CoParentInvitationHelpers.toggleChildSelection<_TestChild>(
+            selected: <_TestChild>[],
+            child: const _TestChild(id: 'c1', name: 'Emma'),
+            idForItem: (_TestChild item) => item.id,
+          );
       expect(selected.length, 1);
 
-      final List<_TestChild> deselected = CoParentInvitationHelpers
-          .toggleChildSelection<_TestChild>(
-        selected: selected,
-        child: const _TestChild(id: 'c1', name: 'Emma'),
-        idForItem: (_TestChild item) => item.id,
-      );
+      final List<_TestChild> deselected =
+          CoParentInvitationHelpers.toggleChildSelection<_TestChild>(
+            selected: selected,
+            child: const _TestChild(id: 'c1', name: 'Emma'),
+            idForItem: (_TestChild item) => item.id,
+          );
       expect(deselected, isEmpty);
     });
   });

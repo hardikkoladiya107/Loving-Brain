@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'manage_children_state.dart';
@@ -9,12 +9,13 @@ part of 'manage_children_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ManageChildrenState {
 
- UserModel? get userModel; List<ChildModel> get children; ApiResultStatus get loadStatus; ApiResultStatus get setDefaultStatus; ApiResultStatus get deleteChildStatus;
+ UserModel? get userModel; List<ChildModel> get children; ApiResultStatus<dynamic> get loadStatus; ApiResultStatus<dynamic> get setDefaultStatus; ApiResultStatus<dynamic> get deleteChildStatus;
 /// Create a copy of ManageChildrenState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ManageChildrenStateCopyWith<ManageChildrenState> get copyWith => _$ManageChildr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ManageChildrenState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.children, children)&&(identical(other.loadStatus, loadStatus) || other.loadStatus == loadStatus)&&(identical(other.setDefaultStatus, setDefaultStatus) || other.setDefaultStatus == setDefaultStatus)&&(identical(other.deleteChildStatus, deleteChildStatus) || other.deleteChildStatus == deleteChildStatus));
+  final _this = this as ManageChildrenState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ManageChildrenState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&const DeepCollectionEquality().equals(other.children, _this.children)&&(identical(other.loadStatus, _this.loadStatus) || other.loadStatus == _this.loadStatus)&&(identical(other.setDefaultStatus, _this.setDefaultStatus) || other.setDefaultStatus == _this.setDefaultStatus)&&(identical(other.deleteChildStatus, _this.deleteChildStatus) || other.deleteChildStatus == _this.deleteChildStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(children),loadStatus,setDefaultStatus,deleteChildStatus);
+int get hashCode {
+  final _this = this as ManageChildrenState;
+  return Object.hash(runtimeType,_this.userModel,const DeepCollectionEquality().hash(_this.children),_this.loadStatus,_this.setDefaultStatus,_this.deleteChildStatus);
+}
 
 @override
 String toString() {
-  return 'ManageChildrenState(userModel: $userModel, children: $children, loadStatus: $loadStatus, setDefaultStatus: $setDefaultStatus, deleteChildStatus: $deleteChildStatus)';
+  final _this = this as ManageChildrenState;
+  return 'ManageChildrenState(userModel: ${_this.userModel}, children: ${_this.children}, loadStatus: ${_this.loadStatus}, setDefaultStatus: ${_this.setDefaultStatus}, deleteChildStatus: ${_this.deleteChildStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ManageChildrenStateCopyWith<$Res>  {
   factory $ManageChildrenStateCopyWith(ManageChildrenState value, $Res Function(ManageChildrenState) _then) = _$ManageChildrenStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, List<ChildModel> children, ApiResultStatus loadStatus, ApiResultStatus setDefaultStatus, ApiResultStatus deleteChildStatus
+ UserModel? userModel, List<ChildModel> children, ApiResultStatus<dynamic> loadStatus, ApiResultStatus<dynamic> setDefaultStatus, ApiResultStatus<dynamic> deleteChildStatus
 });
 
 
@@ -63,13 +69,13 @@ class _$ManageChildrenStateCopyWithImpl<$Res>
 /// Create a copy of ManageChildrenState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? children = null,Object? loadStatus = null,Object? setDefaultStatus = null,Object? deleteChildStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(ManageChildrenState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,children: null == children ? _self.children : children // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>,loadStatus: null == loadStatus ? _self.loadStatus : loadStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,setDefaultStatus: null == setDefaultStatus ? _self.setDefaultStatus : setDefaultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,deleteChildStatus: null == deleteChildStatus ? _self.deleteChildStatus : deleteChildStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,setDefaultStatus: null == setDefaultStatus ? _self.setDefaultStatus : setDefaultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteChildStatus: null == deleteChildStatus ? _self.deleteChildStatus : deleteChildStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of ManageChildrenState
@@ -181,7 +187,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  List<ChildModel> children,  ApiResultStatus loadStatus,  ApiResultStatus setDefaultStatus,  ApiResultStatus deleteChildStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  List<ChildModel> children,  ApiResultStatus<dynamic> loadStatus,  ApiResultStatus<dynamic> setDefaultStatus,  ApiResultStatus<dynamic> deleteChildStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ManageChildrenState() when $default != null:
 return $default(_that.userModel,_that.children,_that.loadStatus,_that.setDefaultStatus,_that.deleteChildStatus);case _:
@@ -202,7 +208,7 @@ return $default(_that.userModel,_that.children,_that.loadStatus,_that.setDefault
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  List<ChildModel> children,  ApiResultStatus loadStatus,  ApiResultStatus setDefaultStatus,  ApiResultStatus deleteChildStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  List<ChildModel> children,  ApiResultStatus<dynamic> loadStatus,  ApiResultStatus<dynamic> setDefaultStatus,  ApiResultStatus<dynamic> deleteChildStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ManageChildrenState():
 return $default(_that.userModel,_that.children,_that.loadStatus,_that.setDefaultStatus,_that.deleteChildStatus);case _:
@@ -222,7 +228,7 @@ return $default(_that.userModel,_that.children,_that.loadStatus,_that.setDefault
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  List<ChildModel> children,  ApiResultStatus loadStatus,  ApiResultStatus setDefaultStatus,  ApiResultStatus deleteChildStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  List<ChildModel> children,  ApiResultStatus<dynamic> loadStatus,  ApiResultStatus<dynamic> setDefaultStatus,  ApiResultStatus<dynamic> deleteChildStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ManageChildrenState() when $default != null:
 return $default(_that.userModel,_that.children,_that.loadStatus,_that.setDefaultStatus,_that.deleteChildStatus);case _:
@@ -237,7 +243,7 @@ return $default(_that.userModel,_that.children,_that.loadStatus,_that.setDefault
 
 
 class _ManageChildrenState implements ManageChildrenState {
-  const _ManageChildrenState({this.userModel, final  List<ChildModel> children = const [], this.loadStatus = const ApiResultStatus.initial(), this.setDefaultStatus = const ApiResultStatus.initial(), this.deleteChildStatus = const ApiResultStatus.initial()}): _children = children;
+  const _ManageChildrenState({this.userModel,  List<ChildModel> children = const [], this.loadStatus = const ApiResultStatus.initial(), this.setDefaultStatus = const ApiResultStatus.initial(), this.deleteChildStatus = const ApiResultStatus.initial()}): _children = children;
   
 
 @override final  UserModel? userModel;
@@ -248,9 +254,9 @@ class _ManageChildrenState implements ManageChildrenState {
   return EqualUnmodifiableListView(_children);
 }
 
-@override@JsonKey() final  ApiResultStatus loadStatus;
-@override@JsonKey() final  ApiResultStatus setDefaultStatus;
-@override@JsonKey() final  ApiResultStatus deleteChildStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> loadStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> setDefaultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> deleteChildStatus;
 
 /// Create a copy of ManageChildrenState
 /// with the given fields replaced by the non-null parameter values.
@@ -262,16 +268,18 @@ _$ManageChildrenStateCopyWith<_ManageChildrenState> get copyWith => __$ManageChi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ManageChildrenState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._children, _children)&&(identical(other.loadStatus, loadStatus) || other.loadStatus == loadStatus)&&(identical(other.setDefaultStatus, setDefaultStatus) || other.setDefaultStatus == setDefaultStatus)&&(identical(other.deleteChildStatus, deleteChildStatus) || other.deleteChildStatus == deleteChildStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ManageChildrenState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.children, _children)&&(identical(other.loadStatus, loadStatus) || other.loadStatus == loadStatus)&&(identical(other.setDefaultStatus, setDefaultStatus) || other.setDefaultStatus == setDefaultStatus)&&(identical(other.deleteChildStatus, deleteChildStatus) || other.deleteChildStatus == deleteChildStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(_children),loadStatus,setDefaultStatus,deleteChildStatus);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(_children),loadStatus,setDefaultStatus,deleteChildStatus);
+}
 
 @override
 String toString() {
-  return 'ManageChildrenState(userModel: $userModel, children: $children, loadStatus: $loadStatus, setDefaultStatus: $setDefaultStatus, deleteChildStatus: $deleteChildStatus)';
+    return 'ManageChildrenState(userModel: $userModel, children: $children, loadStatus: $loadStatus, setDefaultStatus: $setDefaultStatus, deleteChildStatus: $deleteChildStatus)';
 }
 
 
@@ -282,7 +290,7 @@ abstract mixin class _$ManageChildrenStateCopyWith<$Res> implements $ManageChild
   factory _$ManageChildrenStateCopyWith(_ManageChildrenState value, $Res Function(_ManageChildrenState) _then) = __$ManageChildrenStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, List<ChildModel> children, ApiResultStatus loadStatus, ApiResultStatus setDefaultStatus, ApiResultStatus deleteChildStatus
+ UserModel? userModel, List<ChildModel> children, ApiResultStatus<dynamic> loadStatus, ApiResultStatus<dynamic> setDefaultStatus, ApiResultStatus<dynamic> deleteChildStatus
 });
 
 
@@ -304,9 +312,9 @@ class __$ManageChildrenStateCopyWithImpl<$Res>
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,children: null == children ? _self._children : children // ignore: cast_nullable_to_non_nullable
 as List<ChildModel>,loadStatus: null == loadStatus ? _self.loadStatus : loadStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,setDefaultStatus: null == setDefaultStatus ? _self.setDefaultStatus : setDefaultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,deleteChildStatus: null == deleteChildStatus ? _self.deleteChildStatus : deleteChildStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,setDefaultStatus: null == setDefaultStatus ? _self.setDefaultStatus : setDefaultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteChildStatus: null == deleteChildStatus ? _self.deleteChildStatus : deleteChildStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 

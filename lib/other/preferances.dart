@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/model/child_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final preferences = SharedPreference();
@@ -13,6 +14,7 @@ class SharedPreference {
   }
 
   static const user = "user";
+  static const child = "child";
   static const isLogin = "isLogin";
 
   static const notificationPermissionRequested =
@@ -70,7 +72,7 @@ class SharedPreference {
       if (_preferences == null) {
         return null;
       } else {
-        return _preferences!.setString(
+        return await _preferences!.setString(
           user,
           json.encode(value.toJson(forConvert: true)),
         );
@@ -93,6 +95,45 @@ class SharedPreference {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<bool?> saveChildModel(ChildModel value) async {
+    try {
+      if (_preferences == null) {
+        return null;
+      } else {
+        return await _preferences!.setString(
+          child,
+          json.encode(value.toJson()),
+        );
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  ChildModel? getChildModel() {
+    try {
+      if (_preferences == null) {
+        return null;
+      } else {
+        final str = _preferences!.getString(child);
+        if (str == null) return null;
+        return ChildModel.fromJson(
+          json.decode(str),
+          null, // No DocumentReference available in local cache easily
+        );
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<bool> clearChild() async {
+    if (_preferences == null) {
+      return false;
+    }
+    return await _preferences?.remove(child) ?? false;
   }
 
   Future<bool> clearUser() async {

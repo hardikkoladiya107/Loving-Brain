@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:intl/intl.dart';
+import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
@@ -99,6 +100,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _onNextTap(OnboardingState state) {
+    bool isValid = context.read<OnboardingCubit>().validateCurrentPage();
+
+    if (!isValid) {
+      showSnackBar(
+        message: 'Please fill all required fields in this step.',
+        type: SnackBarType.ERROR,
+      );
+      return;
+    }
+
     if (state.currentPage < _totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 320),
@@ -277,7 +288,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: <Widget>[
           // Main Headline
           "What brings you to\nLovingBrain?"
-              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appText2(
+                fontSize: 26, 
+                textAlign: TextAlign.start,
+                color: state.concernsError.isNotEmpty ? Colors.red : null,
+              )
               .appPadding(left: 20.r, right: 20.r),
           8.spaceH,
 
@@ -409,6 +424,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ),
+          if (state.concernsError.isNotEmpty) ...[
+            12.spaceH,
+            state.concernsError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           20.spaceH,
         ],
       ),
@@ -454,14 +477,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               title.appText(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF212529),
+                color: greyColor9,
                 textAlign: TextAlign.start,
               ),
               4.spaceH,
               subtitle.appText(
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
-                color: greyColor3,
+                color: greyColor6,
                 textAlign: TextAlign.start,
                 height: 1.25,
               ),
@@ -483,7 +506,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: <Widget>[
           // Main Headline
           "What would feel\nlike a win?"
-              .appText2(fontSize: 26, textAlign: TextAlign.start)
+              .appText2(
+                fontSize: 26, 
+                textAlign: TextAlign.start,
+                color: state.successGoalError.isNotEmpty ? Colors.red : null,
+              )
               .appPadding(left: 20.r, right: 20.r),
           8.spaceH,
 
@@ -565,6 +592,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ),
+          if (state.successGoalError.isNotEmpty) ...[
+            12.spaceH,
+            state.successGoalError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           20.spaceH,
         ],
       ),
@@ -585,7 +620,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             colorScheme: const ColorScheme.light(
               primary: _accentPurple,
               onPrimary: Colors.white,
-              onSurface: Color(0xFF212529),
+              onSurface: greyColor9,
             ),
           ),
           child: child ?? const SizedBox(),
@@ -621,7 +656,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             colorScheme: const ColorScheme.light(
               primary: _accentPurple,
               onPrimary: Colors.white,
-              onSurface: Color(0xFF212529),
+              onSurface: greyColor9,
             ),
           ),
           child: child ?? const SizedBox(),
@@ -682,9 +717,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24.r),
-                border: isWakeSelected
-                    ? Border.all(color: _accentPurple, width: 1.2)
-                    : null,
+                border: Border.all(
+                  color: state.usualWakeTimeError.isNotEmpty ? Colors.red : (isWakeSelected ? _accentPurple : Colors.transparent),
+                  width: (state.usualWakeTimeError.isNotEmpty || isWakeSelected) ? 1.2 : 0,
+                ),
                 boxShadow: isWakeSelected
                     ? null
                     : <BoxShadow>[
@@ -706,17 +742,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         "USUAL WAKE TIME".appText(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFFADB5BD),
+                          color: state.usualWakeTimeError.isNotEmpty ? Colors.red : greyColor4,
                           letterSpacing: 0.8,
                           textAlign: TextAlign.start,
                         ),
                         4.spaceH,
-                        state.usualWakeTime.appText(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF212529),
-                          textAlign: TextAlign.start,
-                        ),
+                        (state.usualWakeTime.isEmpty
+                                ? 'Select Time'
+                                : state.usualWakeTime)
+                            .appText(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: state.usualWakeTime.isEmpty
+                                  ? greyColor
+                                  : greyColor9,
+                              textAlign: TextAlign.start,
+                            ),
                       ],
                     ),
                   ),
@@ -727,6 +768,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ).appPadding(left: 20.r, right: 20.r),
+          if (state.usualWakeTimeError.isNotEmpty) ...[
+            6.spaceH,
+            state.usualWakeTimeError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 32.r, right: 20.r),
+          ],
           14.spaceH,
 
           // Card 2: USUAL BEDTIME
@@ -737,9 +786,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24.r),
-                border: isBedSelected
-                    ? Border.all(color: _accentPurple, width: 1.2)
-                    : null,
+                border: Border.all(
+                  color: state.usualBedtimeError.isNotEmpty ? Colors.red : (isBedSelected ? _accentPurple : Colors.transparent),
+                  width: (state.usualBedtimeError.isNotEmpty || isBedSelected) ? 1.2 : 0,
+                ),
                 boxShadow: isBedSelected
                     ? null
                     : <BoxShadow>[
@@ -761,17 +811,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         "USUAL BEDTIME".appText(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFFADB5BD),
+                          color: state.usualBedtimeError.isNotEmpty ? Colors.red : greyColor4,
                           letterSpacing: 0.8,
                           textAlign: TextAlign.start,
                         ),
                         4.spaceH,
-                        state.usualBedtime.appText(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF212529),
-                          textAlign: TextAlign.start,
-                        ),
+                        (state.usualBedtime.isEmpty
+                                ? 'Select Time'
+                                : state.usualBedtime)
+                            .appText(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: state.usualBedtime.isEmpty
+                                  ? greyColor
+                                  : greyColor9,
+                              textAlign: TextAlign.start,
+                            ),
                       ],
                     ),
                   ),
@@ -782,6 +837,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ).appPadding(left: 20.r, right: 20.r),
+          if (state.usualBedtimeError.isNotEmpty) ...[
+            6.spaceH,
+            state.usualBedtimeError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 32.r, right: 20.r),
+          ],
           14.spaceH,
 
           // Card 3: Naps per day with Stepper
@@ -805,7 +868,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 "Naps per day".appText(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF212529),
+                  color: greyColor9,
                   textAlign: TextAlign.start,
                 ),
                 // Stepper control: [ -  2  + ]
@@ -833,7 +896,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const Icon(
                             Icons.remove,
                             size: 16,
-                            color: Color(0xFF212529),
+                            color: greyColor9,
                           ),
                         ),
                       ),
@@ -842,7 +905,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: "${state.usualNaps}".appText(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF212529),
+                          color: greyColor9,
                         ),
                       ),
                       BaseButton(
@@ -857,7 +920,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const Icon(
                             Icons.add,
                             size: 16,
-                            color: Color(0xFF212529),
+                            color: greyColor9,
                           ),
                         ),
                       ),
@@ -874,7 +937,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               .appText(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: _accentPurple,
+                color: state.nightWakingsError.isNotEmpty ? Colors.red : _accentPurple,
                 letterSpacing: 0.8,
                 textAlign: TextAlign.start,
               )
@@ -905,6 +968,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ),
+          if (state.nightWakingsError.isNotEmpty) ...[
+            6.spaceH,
+            state.nightWakingsError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           20.spaceH,
         ],
       ),
@@ -949,9 +1020,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           AppTextField(
             controller: _childNameController,
             title: "Child's name",
+            titleColor: state.childNameError.isNotEmpty ? Colors.red : null,
             hint: "Ingredia Nutrisha",
-            border: Border.all(color: _accentPurple, width: 1.2),
+            border: Border.all(
+                color: state.childNameError.isNotEmpty ? Colors.red : _accentPurple, 
+                width: 1.2,
+            ),
             borderRadius: BorderRadius.circular(24.r),
+            error: state.childNameError,
             onChanged: (String value) {
               context.read<OnboardingCubit>().updateChildName(value);
             },
@@ -966,6 +1042,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(24.r),
+                border: state.dateOfBirthError.isNotEmpty 
+                    ? Border.all(color: Colors.red, width: 1.2)
+                    : null,
                 boxShadow: <BoxShadow>[
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.03),
@@ -985,17 +1064,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         "DATE OF BIRTH".appText(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFFADB5BD),
+                          color: state.dateOfBirthError.isNotEmpty ? Colors.red : greyColor4,
                           letterSpacing: 0.8,
                           textAlign: TextAlign.start,
                         ),
                         4.spaceH,
-                        state.dateOfBirth.appText(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF212529),
-                          textAlign: TextAlign.start,
-                        ),
+                        (state.dateOfBirth.isEmpty
+                                ? 'Select Date'
+                                : state.dateOfBirth)
+                            .appText(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: state.dateOfBirth.isEmpty
+                                  ? greyColor
+                                  : greyColor9,
+                              textAlign: TextAlign.start,
+                            ),
                       ],
                     ),
                   ),
@@ -1010,6 +1094,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
           ).appPadding(left: 20.r, right: 20.r),
+          if (state.dateOfBirthError.isNotEmpty) ...[
+            6.spaceH,
+            state.dateOfBirthError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 32.r, right: 20.r),
+          ],
           20.spaceH,
 
           // GENDER label
@@ -1017,7 +1109,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               .appText(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: _accentPurple,
+                color: state.childGenderError.isNotEmpty ? Colors.red : _accentPurple,
                 letterSpacing: 0.8,
                 textAlign: TextAlign.start,
               )
@@ -1044,6 +1136,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ),
+          if (state.childGenderError.isNotEmpty) ...[
+            6.spaceH,
+            state.childGenderError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           20.spaceH,
         ],
       ),
@@ -1077,9 +1177,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           AppTextField(
             controller: _nameController,
             title: "Your name",
+            titleColor: state.parentNameError.isNotEmpty ? Colors.red : null,
             hint: "Russell Sprout",
-            border: Border.all(color: _accentPurple, width: 1.2),
+            border: Border.all(
+                color: state.parentNameError.isNotEmpty ? Colors.red : _accentPurple, 
+                width: 1.2,
+            ),
             borderRadius: BorderRadius.circular(24.r),
+            error: state.parentNameError,
             onChanged: (String value) {
               context.read<OnboardingCubit>().updateParentName(value);
             },
@@ -1088,7 +1193,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
           // Section 2: "You are the child’s"
           "You are the child’s"
-              .appText2(fontSize: 20, textAlign: TextAlign.start)
+              .appText2(
+                fontSize: 20, 
+                textAlign: TextAlign.start,
+                color: state.parentRoleError.isNotEmpty ? Colors.red : null,
+              )
               .appPadding(left: 20.r, right: 20.r),
           12.spaceH,
 
@@ -1113,11 +1222,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ).appPadding(left: 20.r, right: 20.r),
+          if (state.parentRoleError.isNotEmpty) ...[
+            6.spaceH,
+            state.parentRoleError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           22.spaceH,
 
           // Section 3: "Preferred Language"
           "Preferred Language"
-              .appText2(fontSize: 20, textAlign: TextAlign.start)
+              .appText2(
+                fontSize: 20, 
+                textAlign: TextAlign.start,
+                color: state.preferredLanguageError.isNotEmpty ? Colors.red : null,
+              )
               .appPadding(left: 20.r, right: 20.r),
           12.spaceH,
 
@@ -1138,6 +1259,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ],
           ).appPadding(left: 20.r, right: 20.r),
+          if (state.preferredLanguageError.isNotEmpty) ...[
+            6.spaceH,
+            state.preferredLanguageError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           22.spaceH,
 
           // Section 4: Location card with "Change" button
@@ -1146,7 +1275,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24.r),
-              border: Border.all(color: _accentPurple, width: 1.2),
+              border: Border.all(
+                  color: state.locationError.isNotEmpty ? Colors.red : _accentPurple, 
+                  width: 1.2,
+              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -1159,17 +1291,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       "LOCATION".appText(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFFADB5BD),
+                        color: state.locationError.isNotEmpty ? Colors.red : greyColor4,
                         letterSpacing: 0.8,
                         textAlign: TextAlign.start,
                       ),
                       4.spaceH,
-                      state.location.appText(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF212529),
-                        textAlign: TextAlign.start,
-                      ),
+                      (state.location.isEmpty
+                              ? 'Select Location'
+                              : state.location)
+                          .appText(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: state.location.isEmpty
+                                ? greyColor
+                                : greyColor9,
+                            textAlign: TextAlign.start,
+                          ),
                     ],
                   ),
                 ),
@@ -1186,6 +1323,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ).appPadding(left: 20.r, right: 20.r),
+          if (state.locationError.isNotEmpty) ...[
+            6.spaceH,
+            state.locationError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 32.r, right: 20.r),
+          ],
           20.spaceH,
         ],
       ),
@@ -1227,7 +1372,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               .appText(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: _accentPurple,
+                color: state.difficultTimesError.isNotEmpty ? Colors.red : _accentPurple,
                 letterSpacing: 0.8,
                 textAlign: TextAlign.start,
               )
@@ -1252,6 +1397,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ),
+          if (state.difficultTimesError.isNotEmpty) ...[
+            6.spaceH,
+            state.difficultTimesError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           22.spaceH,
 
           // Section 2: POSSIBLE TRIGGERS label
@@ -1259,7 +1412,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               .appText(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: _accentPurple,
+                color: state.possibleTriggersError.isNotEmpty ? Colors.red : _accentPurple,
                 letterSpacing: 0.8,
                 textAlign: TextAlign.start,
               )
@@ -1286,14 +1439,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ],
             ),
           ),
+          if (state.possibleTriggersError.isNotEmpty) ...[
+            6.spaceH,
+            state.possibleTriggersError.appText(
+              fontSize: 12,
+              color: Colors.red,
+              textAlign: TextAlign.start,
+            ).appPadding(left: 20.r, right: 20.r),
+          ],
           26.spaceH,
 
           // Info Banner Note
           Container(
             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF3EA),
+              color: orangeLightColor,
               borderRadius: BorderRadius.circular(20.r),
+              boxShadow: [
+                BoxShadow(color: Colors.white, spreadRadius: 2, blurRadius: 20),
+              ],
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1304,9 +1469,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child:
                       "You can add or change these any time from $childDisplayName’s profile."
                           .appText(
-                            fontSize: 11.5,
+                            fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            color: const Color(0xFF8E8E93),
+                            color: greyColor6,
                             textAlign: TextAlign.start,
                           ),
                 ),
@@ -1325,7 +1490,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       listener: (BuildContext context, OnboardingState state) {
         state.completeStatus.whenOrNull(
           data: (dynamic _) {
-            context.go(RoutePaths.base);
+            context.push(RoutePaths.familySnapshot);
+          },
+          error: (Exception exception) {
+            showSnackBar(
+              message: exception.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
           },
         );
       },
@@ -1370,7 +1541,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Expanded(
                     child: PageView(
                       controller: _pageController,
-                      physics: const BouncingScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       onPageChanged: (int index) {
                         context.read<OnboardingCubit>().onPageChanged(index);
                       },
@@ -1387,7 +1558,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                   // Bottom Action Button: Continue
                   16.spaceH,
-                  AppButton(onTap: () => _onNextTap(state), title: "Continue"),
+                  AppButton(
+                    onTap: () => _onNextTap(state),
+                    title: "Continue",
+                    isLoading: state.completeStatus.maybeWhen(
+                      loading: () => true,
+                      orElse: () => false,
+                    ),
+                  ),
                   32.spaceH,
                 ],
               ),

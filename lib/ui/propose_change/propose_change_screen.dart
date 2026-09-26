@@ -1,14 +1,15 @@
-import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/shared_event_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
+
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
@@ -45,7 +46,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
             state.noteForCoParent) {
           noteForCoParentTextEditingController.value =
               noteForCoParentTextEditingController.value.copyWith(
-                text: state.noteForCoParent ?? '',
+                text: state.noteForCoParent,
                 selection: noteForCoParentTextEditingController.selection,
               );
         }
@@ -221,7 +222,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
               4.spaceH,
               Row(
                 children: [
-                  (state.dateError ?? "").appText(
+                  (state.dateError).appText(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Colors.red,
@@ -355,7 +356,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
                       4.spaceH,
                       Row(
                         children: [
-                          (state.startTimeError ?? "").appText(
+                          (state.startTimeError).appText(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: Colors.red,
@@ -415,7 +416,7 @@ class _ProposeChangeScreenState extends State<ProposeChangeScreen> {
                       4.spaceH,
                       Row(
                         children: [
-                          (state.endTimeError ?? "").appText(
+                          (state.endTimeError).appText(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: Colors.red,

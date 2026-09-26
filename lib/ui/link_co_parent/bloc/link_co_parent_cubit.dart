@@ -67,11 +67,12 @@ class LinkCoParentCubit extends Cubit<LinkCoParentState> {
   /// Toggles a child in the multi-select list for the invitation.
   void selectChild(ChildModel child) {
     changeProps(
-      selectedChildren: CoParentInvitationHelpers.toggleChildSelection<ChildModel>(
-        selected: state.selectedChildren,
-        child: child,
-        idForItem: (ChildModel item) => item.reference?.id,
-      ),
+      selectedChildren:
+          CoParentInvitationHelpers.toggleChildSelection<ChildModel>(
+            selected: state.selectedChildren,
+            child: child,
+            idForItem: (ChildModel item) => item.reference?.id,
+          ),
     );
   }
 

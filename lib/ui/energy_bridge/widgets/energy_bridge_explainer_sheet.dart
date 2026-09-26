@@ -46,7 +46,11 @@ class EnergyBridgeExplainerSheet extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(Icons.bolt_rounded, color: const Color(0xFF6A24B8), size: 28.sp),
+              Icon(
+                Icons.bolt_rounded,
+                color: const Color(0xFF6A24B8),
+                size: 28.sp,
+              ),
               10.w.spaceW,
               Expanded(
                 child: LocaleKeys.energyBridgeExplainerTitle.tr().appText(

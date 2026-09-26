@@ -1,23 +1,29 @@
 import 'dart:ui';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/widget/app_image.dart';
-import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
+import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
+import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
+import 'package:loving_brain/ui/notifications/notifications_screen.dart';
+import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
+import 'package:loving_brain/ui/privacy_data/privacy_data_screen.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
-import 'package:go_router/go_router.dart';
-import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/widget/app_image.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
@@ -110,19 +116,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _buildHeader(state.userModel),
                             8.h.spaceH,
 
+                            _buildSectionTitle("Support & Mentorship"),
+                            _buildGroup([
+                              _settingItem(
+                                title: "Talk to an expert mentor",
+                                iconBgColor: primaryColor,
+                                assetIcon: Assets.v2.icons.icMentorshipBooking,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const MentorshipLandingScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ]),
+
                             _buildSectionTitle("General Preferences"),
                             _buildGroup([
                               _settingItem(
-                                title: LocaleKeys.getGentleRemindersForPlay
-                                    .tr(),
-                                showCheckBox: true,
+                                title: "My Profile",
+                                icon: LucideIcons.user,
+                                iconBgColor: primaryColor,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ParentProfileScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: "Notifications",
                                 icon: LucideIcons.bell,
                                 iconBgColor: gentleReminderIconColor,
-                                check: state.userModel?.isNotification ?? false,
-                                onChanged: (value) {
-                                  context
-                                      .read<ProfileCubit>()
-                                      .updateNotification();
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const NotificationsScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: false,
+                              ),
+                              _settingItem(
+                                title: "Family & Co-parenting",
+                                icon: LucideIcons.users,
+                                iconBgColor: const Color(0xFF6366F1), // Indigo
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const FamilyMenuScreen(),
+                                    ),
+                                  );
                                 },
                                 isLast: false,
                               ),
@@ -158,11 +212,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 isLast: false,
                               ),
                               _settingItem(
-                                title: LocaleKeys.privacyPolicy.tr(),
+                                title: "Privacy & Data",
                                 icon: LucideIcons.shieldCheck,
                                 iconBgColor: privacyPolicyIconColor,
                                 onTap: () {
-                                  context.push(RoutePaths.privacy);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const PrivacyDataScreen(),
+                                    ),
+                                  );
                                 },
                                 isLast: true,
                               ),
@@ -170,6 +229,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             _buildSectionTitle("About Loving Brain"),
                             _buildGroup([
+                              _settingItem(
+                                title: "Help & Safety",
+                                icon: LucideIcons.lifeBuoy,
+                                iconBgColor: const Color(0xFF2E7D32),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const HelpSafetyScreen(),
+                                    ),
+                                  );
+                                },
+                                isLast: false,
+                              ),
                               _settingItem(
                                 title: LocaleKeys.rateThisApp.tr(),
                                 icon: LucideIcons.star,

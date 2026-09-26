@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/home/home_screen.dart';
-import 'package:loving_brain/ui/profile/profile_screen.dart';
-import 'package:loving_brain/ui/schedule/schedule_screen.dart';
+import 'package:loving_brain/ui/brainy_home/brainy_home_screen.dart';
+import 'package:loving_brain/ui/journey/journey_screen.dart';
+import 'package:loving_brain/ui/today_screen/today_screen.dart';
 
 import '../../other/app_color.dart';
-import '../ai_chat/ai_chat_screen.dart';
-import '../journal/journal_screen.dart';
 import 'bloc/base_cubit.dart';
 import 'bloc/base_state.dart';
 
@@ -35,18 +34,16 @@ class _BaseScreenState extends State<BaseScreen> {
       builder: (context, state) {
         return Scaffold(
           // Match primary tabs so any gap under transparent layers is neutral.
-          backgroundColor: const Color(0xFFFAFAFA),
+          backgroundColor: Colors.white,
           // Lets tab bodies paint under the nav slot; removes the full-width white
-          // “plate” behind the pill’s transparent margins (Scaffold Material is full-screen).
+          // â€œplateâ€ behind the pillâ€™s transparent margins (Scaffold Material is full-screen).
           extendBody: true,
           body: IndexedStack(
             index: state.bottomNavigationIndex,
             children: const [
-              HomeScreen(),
-              ScheduleScreen(),
-              AiChatScreen(),
-              JournalScreen(),
-              ProfileScreen(),
+              TodayScreen(),
+              BrainyHomeScreen(),
+              JourneyScreen(),
             ],
           ),
           bottomNavigationBar: _floatingBottomNavigation(context, state),
@@ -56,82 +53,56 @@ class _BaseScreenState extends State<BaseScreen> {
   }
 
   Widget _floatingBottomNavigation(BuildContext context, BaseState state) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30.r),
+          topRight: Radius.circular(30.r),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            offset: const Offset(0, -5),
+            blurRadius: 30,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
       padding: EdgeInsets.only(
         left: 20.w,
         right: 20.w,
-        bottom: MediaQuery.of(context).padding.bottom + 16.h,
+        top: 12.h,
+        bottom: MediaQuery.of(context).padding.bottom + 12.h,
       ),
-      child: Container(
-        height: 68.h,
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(100.r), // pill shaped
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              offset: const Offset(0, 15),
-              blurRadius: 30,
-              spreadRadius: 2,
-            ),
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              offset: const Offset(0, 5),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _animatedNavItem(
-              index: 0,
-              selectedIndex: state.bottomNavigationIndex,
-              icon: Icons.home_rounded,
-              title: "Home",
-              onTap: () => context.read<BaseCubit>().changeProps(
-                bottomNavigationIndex: 0,
-              ),
-            ),
-            _animatedNavItem(
-              index: 1,
-              selectedIndex: state.bottomNavigationIndex,
-              icon: Icons.calendar_month_rounded,
-              title: "Schedules",
-              onTap: () => context.read<BaseCubit>().changeProps(
-                bottomNavigationIndex: 1,
-              ),
-            ),
-            _animatedNavItem(
-              index: 2,
-              selectedIndex: state.bottomNavigationIndex,
-              icon: Icons.auto_awesome_rounded,
-              title: "Brain AI",
-              onTap: () => context.read<BaseCubit>().changeProps(
-                bottomNavigationIndex: 2,
-              ),
-            ),
-            _animatedNavItem(
-              index: 3,
-              selectedIndex: state.bottomNavigationIndex,
-              icon: Icons.menu_book_rounded,
-              title: "Journal",
-              onTap: () => context.read<BaseCubit>().changeProps(
-                bottomNavigationIndex: 3,
-              ),
-            ),
-            _animatedNavItem(
-              index: 4,
-              selectedIndex: state.bottomNavigationIndex,
-              icon: Icons.account_circle_rounded,
-              title: "Profile",
-              onTap: () => context.read<BaseCubit>().changeProps(
-                bottomNavigationIndex: 4,
-              ),
-            ),
-          ],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _animatedNavItem(
+            index: 0,
+            selectedIndex: state.bottomNavigationIndex,
+            iconPath: "assets/v2/icons/ic_today.svg",
+            title: "Today",
+            onTap: () =>
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 0),
+          ),
+          _animatedNavItem(
+            index: 1,
+            selectedIndex: state.bottomNavigationIndex,
+            iconPath: "assets/v2/icons/ic_brainy.svg",
+            title: "Brainy AI",
+            onTap: () =>
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1),
+          ),
+          _animatedNavItem(
+            index: 2,
+            selectedIndex: state.bottomNavigationIndex,
+            iconPath: "assets/v2/icons/ic_journey.svg",
+            title: "Journey",
+            onTap: () =>
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 2),
+          ),
+        ],
       ),
     );
   }
@@ -139,7 +110,7 @@ class _BaseScreenState extends State<BaseScreen> {
   Widget _animatedNavItem({
     required int index,
     required int selectedIndex,
-    required IconData icon,
+    required String iconPath,
     required String title,
     required VoidCallback onTap,
   }) {
@@ -150,51 +121,43 @@ class _BaseScreenState extends State<BaseScreen> {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutQuint,
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 16.w : 10.w,
-          vertical: 12.h,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? activeColor.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(100.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedSwitcher(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutQuint,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? activeColor.withValues(alpha: 0.1)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(100.r),
+            ),
+            child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               transitionBuilder: (child, anim) =>
                   ScaleTransition(scale: anim, child: child),
-              child: Icon(
-                icon,
+              child: SvgPicture.asset(
+                iconPath,
                 key: ValueKey(isSelected),
-                color: isSelected ? activeColor : inactiveColor,
-                size: 26.sp,
+                colorFilter: ColorFilter.mode(
+                  isSelected ? activeColor : inactiveColor,
+                  BlendMode.srcIn,
+                ),
+                width: 24.w,
+                height: 24.w,
               ),
             ),
-            AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutQuint,
-              alignment: Alignment.centerLeft,
-              child: isSelected
-                  ? Padding(
-                      padding: EdgeInsets.only(left: 6.w),
-                      child: title.appText(
-                        color: activeColor,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13.sp,
-                        letterSpacing: 0.2,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: 4.h),
+          title.appText(
+            color: isSelected ? activeColor : inactiveColor,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 12.sp,
+          ),
+        ],
       ),
     );
   }

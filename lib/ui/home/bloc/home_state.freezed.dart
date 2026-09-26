@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'home_state.dart';
@@ -9,12 +9,13 @@ part of 'home_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- UserModel? get userModel; ApiResultStatus get apiResultStatus; ChildModel? get childModel; bool get moodLoggedForToday; String get todayParentingTip;
+ UserModel? get userModel; ApiResultStatus<dynamic> get apiResultStatus; ChildModel? get childModel; bool get moodLoggedForToday; String get todayParentingTip;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.moodLoggedForToday, moodLoggedForToday) || other.moodLoggedForToday == moodLoggedForToday)&&(identical(other.todayParentingTip, todayParentingTip) || other.todayParentingTip == todayParentingTip));
+  final _this = this as HomeState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&(identical(other.moodLoggedForToday, _this.moodLoggedForToday) || other.moodLoggedForToday == _this.moodLoggedForToday)&&(identical(other.todayParentingTip, _this.todayParentingTip) || other.todayParentingTip == _this.todayParentingTip));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,apiResultStatus,childModel,moodLoggedForToday,todayParentingTip);
+int get hashCode {
+  final _this = this as HomeState;
+  return Object.hash(runtimeType,_this.userModel,_this.apiResultStatus,_this.childModel,_this.moodLoggedForToday,_this.todayParentingTip);
+}
 
 @override
 String toString() {
-  return 'HomeState(userModel: $userModel, apiResultStatus: $apiResultStatus, childModel: $childModel, moodLoggedForToday: $moodLoggedForToday, todayParentingTip: $todayParentingTip)';
+  final _this = this as HomeState;
+  return 'HomeState(userModel: ${_this.userModel}, apiResultStatus: ${_this.apiResultStatus}, childModel: ${_this.childModel}, moodLoggedForToday: ${_this.moodLoggedForToday}, todayParentingTip: ${_this.todayParentingTip})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, ApiResultStatus apiResultStatus, ChildModel? childModel, bool moodLoggedForToday, String todayParentingTip
+ UserModel? userModel, ApiResultStatus<dynamic> apiResultStatus, ChildModel? childModel, bool moodLoggedForToday, String todayParentingTip
 });
 
 
@@ -63,10 +69,10 @@ class _$HomeStateCopyWithImpl<$Res>
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? apiResultStatus = null,Object? childModel = freezed,Object? moodLoggedForToday = null,Object? todayParentingTip = null,}) {
-  return _then(_self.copyWith(
+  return _then(HomeState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,moodLoggedForToday: null == moodLoggedForToday ? _self.moodLoggedForToday : moodLoggedForToday // ignore: cast_nullable_to_non_nullable
 as bool,todayParentingTip: null == todayParentingTip ? _self.todayParentingTip : todayParentingTip // ignore: cast_nullable_to_non_nullable
 as String,
@@ -163,7 +169,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  ChildModel? childModel,  bool moodLoggedForToday,  String todayParentingTip)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus,  ChildModel? childModel,  bool moodLoggedForToday,  String todayParentingTip)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
 return $default(_that.userModel,_that.apiResultStatus,_that.childModel,_that.moodLoggedForToday,_that.todayParentingTip);case _:
@@ -184,7 +190,7 @@ return $default(_that.userModel,_that.apiResultStatus,_that.childModel,_that.moo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  ChildModel? childModel,  bool moodLoggedForToday,  String todayParentingTip)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus,  ChildModel? childModel,  bool moodLoggedForToday,  String todayParentingTip)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
 return $default(_that.userModel,_that.apiResultStatus,_that.childModel,_that.moodLoggedForToday,_that.todayParentingTip);case _:
@@ -204,7 +210,7 @@ return $default(_that.userModel,_that.apiResultStatus,_that.childModel,_that.moo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus apiResultStatus,  ChildModel? childModel,  bool moodLoggedForToday,  String todayParentingTip)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus<dynamic> apiResultStatus,  ChildModel? childModel,  bool moodLoggedForToday,  String todayParentingTip)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
 return $default(_that.userModel,_that.apiResultStatus,_that.childModel,_that.moodLoggedForToday,_that.todayParentingTip);case _:
@@ -223,7 +229,7 @@ class _HomeState implements HomeState {
   
 
 @override final  UserModel? userModel;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 @override final  ChildModel? childModel;
 @override@JsonKey() final  bool moodLoggedForToday;
 @override@JsonKey() final  String todayParentingTip;
@@ -238,16 +244,18 @@ _$HomeStateCopyWith<_HomeState> get copyWith => __$HomeStateCopyWithImpl<_HomeSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.moodLoggedForToday, moodLoggedForToday) || other.moodLoggedForToday == moodLoggedForToday)&&(identical(other.todayParentingTip, todayParentingTip) || other.todayParentingTip == todayParentingTip));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.moodLoggedForToday, moodLoggedForToday) || other.moodLoggedForToday == moodLoggedForToday)&&(identical(other.todayParentingTip, todayParentingTip) || other.todayParentingTip == todayParentingTip));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,apiResultStatus,childModel,moodLoggedForToday,todayParentingTip);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,apiResultStatus,childModel,moodLoggedForToday,todayParentingTip);
+}
 
 @override
 String toString() {
-  return 'HomeState(userModel: $userModel, apiResultStatus: $apiResultStatus, childModel: $childModel, moodLoggedForToday: $moodLoggedForToday, todayParentingTip: $todayParentingTip)';
+    return 'HomeState(userModel: $userModel, apiResultStatus: $apiResultStatus, childModel: $childModel, moodLoggedForToday: $moodLoggedForToday, todayParentingTip: $todayParentingTip)';
 }
 
 
@@ -258,7 +266,7 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, ApiResultStatus apiResultStatus, ChildModel? childModel, bool moodLoggedForToday, String todayParentingTip
+ UserModel? userModel, ApiResultStatus<dynamic> apiResultStatus, ChildModel? childModel, bool moodLoggedForToday, String todayParentingTip
 });
 
 
@@ -279,7 +287,7 @@ class __$HomeStateCopyWithImpl<$Res>
   return _then(_HomeState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,moodLoggedForToday: null == moodLoggedForToday ? _self.moodLoggedForToday : moodLoggedForToday // ignore: cast_nullable_to_non_nullable
 as bool,todayParentingTip: null == todayParentingTip ? _self.todayParentingTip : todayParentingTip // ignore: cast_nullable_to_non_nullable
 as String,

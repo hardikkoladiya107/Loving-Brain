@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +25,7 @@ class NotificationUtil {
 
   static Future<void> initializePlatformNotifications() async {
     await _requestPermissionIfNeeded();
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
             alert: true,
@@ -49,7 +50,7 @@ class NotificationUtil {
     );
 
     await _localNotifications.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse? payload) {
         onDidReceiveLocalNotification(payload);
       },
@@ -127,7 +128,7 @@ class NotificationUtil {
       iOS: initializationSettingsIOS,
     );
 
-    await _localNotifications.initialize(initializationSettings);
+    await _localNotifications.initialize(settings: initializationSettings);
   }
 
   static void onDidReceiveLocalNotification(dynamic payload) {
@@ -151,10 +152,10 @@ class NotificationUtil {
       channelDesc: channelDesc,
     );
     await _localNotifications.show(
-      id,
-      title,
-      body,
-      platformChannelSpecifics,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: platformChannelSpecifics,
       payload: payload,
     );
   }
@@ -172,18 +173,18 @@ class NotificationUtil {
       channelDesc: channelDesc,
     );
     await _localNotifications.zonedSchedule(
-      id,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledDate, tz.local),
-      platformChannelSpecifics,
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+      notificationDetails: platformChannelSpecifics,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       payload: payload,
     );
   }
 
   static Future<void> cancelNotification(int id) async {
-    await _localNotifications.cancel(id);
+    await _localNotifications.cancel(id: id);
   }
 
   static Future<NotificationDetails> _notificationDetails({

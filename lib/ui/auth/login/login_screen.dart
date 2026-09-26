@@ -1,11 +1,12 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -22,7 +23,6 @@ import '../../../other/app_color.dart';
 import '../../../other/snack_bar.dart';
 import '../../widget/base_button.dart';
 import 'bloc/login_state.dart';
-import 'package:flutter/gestures.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -486,7 +486,7 @@ class _LoginScreenState extends State<LoginScreen> {
     context.read<LoginCubit>().clearFields();
     if (userModel.uid == null) return;
 
-    // ── Pending co-parent invitation (saved by DeepLinkManager before login) ──
+    // â”€â”€ Pending co-parent invitation (saved by DeepLinkManager before login) â”€â”€
     if (PendingInvitationManager.hasPending()) {
       final String pendingId = PendingInvitationManager.getId();
       final String pendingEmail = PendingInvitationManager.getEmail();
@@ -528,7 +528,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await PendingInvitationManager.clear();
       }
     }
-    // ─────────────────────────────────────────────────────────────────────────
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     if (!mounted) return;
     if ((userModel.parentName ?? '').isEmpty ||

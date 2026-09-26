@@ -49,7 +49,9 @@ class _SmartMomentScreenState extends State<SmartMomentScreen> {
             return;
           }
           if (isMilestone == true) {
-            final String? milestoneKey = await showMilestonePickerSheet(context);
+            final String? milestoneKey = await showMilestonePickerSheet(
+              context,
+            );
             if (!context.mounted) {
               return;
             }

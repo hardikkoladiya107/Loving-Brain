@@ -1,0 +1,282 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'calm_plan_state.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format off
+T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$CalmPlanState {
+
+ bool get isLoading; bool get isAudioPlaying;
+/// Create a copy of CalmPlanState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CalmPlanStateCopyWith<CalmPlanState> get copyWith => _$CalmPlanStateCopyWithImpl<CalmPlanState>(this as CalmPlanState, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as CalmPlanState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CalmPlanState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.isAudioPlaying, _this.isAudioPlaying) || other.isAudioPlaying == _this.isAudioPlaying));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as CalmPlanState;
+  return Object.hash(runtimeType,_this.isLoading,_this.isAudioPlaying);
+}
+
+@override
+String toString() {
+  final _this = this as CalmPlanState;
+  return 'CalmPlanState(isLoading: ${_this.isLoading}, isAudioPlaying: ${_this.isAudioPlaying})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CalmPlanStateCopyWith<$Res>  {
+  factory $CalmPlanStateCopyWith(CalmPlanState value, $Res Function(CalmPlanState) _then) = _$CalmPlanStateCopyWithImpl;
+@useResult
+$Res call({
+ bool isLoading, bool isAudioPlaying
+});
+
+
+
+
+}
+/// @nodoc
+class _$CalmPlanStateCopyWithImpl<$Res>
+    implements $CalmPlanStateCopyWith<$Res> {
+  _$CalmPlanStateCopyWithImpl(this._self, this._then);
+
+  final CalmPlanState _self;
+  final $Res Function(CalmPlanState) _then;
+
+/// Create a copy of CalmPlanState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isAudioPlaying = null,}) {
+  return _then(CalmPlanState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,isAudioPlaying: null == isAudioPlaying ? _self.isAudioPlaying : isAudioPlaying // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [CalmPlanState].
+extension CalmPlanStatePatterns on CalmPlanState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CalmPlanState value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CalmPlanState() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CalmPlanState value)  $default,){
+final _that = this;
+switch (_that) {
+case _CalmPlanState():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CalmPlanState value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CalmPlanState() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isAudioPlaying)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CalmPlanState() when $default != null:
+return $default(_that.isLoading,_that.isAudioPlaying);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isAudioPlaying)  $default,) {final _that = this;
+switch (_that) {
+case _CalmPlanState():
+return $default(_that.isLoading,_that.isAudioPlaying);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isAudioPlaying)?  $default,) {final _that = this;
+switch (_that) {
+case _CalmPlanState() when $default != null:
+return $default(_that.isLoading,_that.isAudioPlaying);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _CalmPlanState implements CalmPlanState {
+  const _CalmPlanState({this.isLoading = false, this.isAudioPlaying = false});
+  
+
+@override@JsonKey() final  bool isLoading;
+@override@JsonKey() final  bool isAudioPlaying;
+
+/// Create a copy of CalmPlanState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CalmPlanStateCopyWith<_CalmPlanState> get copyWith => __$CalmPlanStateCopyWithImpl<_CalmPlanState>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CalmPlanState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isAudioPlaying, isAudioPlaying) || other.isAudioPlaying == isAudioPlaying));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,isLoading,isAudioPlaying);
+}
+
+@override
+String toString() {
+    return 'CalmPlanState(isLoading: $isLoading, isAudioPlaying: $isAudioPlaying)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CalmPlanStateCopyWith<$Res> implements $CalmPlanStateCopyWith<$Res> {
+  factory _$CalmPlanStateCopyWith(_CalmPlanState value, $Res Function(_CalmPlanState) _then) = __$CalmPlanStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool isLoading, bool isAudioPlaying
+});
+
+
+
+
+}
+/// @nodoc
+class __$CalmPlanStateCopyWithImpl<$Res>
+    implements _$CalmPlanStateCopyWith<$Res> {
+  __$CalmPlanStateCopyWithImpl(this._self, this._then);
+
+  final _CalmPlanState _self;
+  final $Res Function(_CalmPlanState) _then;
+
+/// Create a copy of CalmPlanState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isAudioPlaying = null,}) {
+  return _then(_CalmPlanState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,isAudioPlaying: null == isAudioPlaying ? _self.isAudioPlaying : isAudioPlaying // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+// dart format on

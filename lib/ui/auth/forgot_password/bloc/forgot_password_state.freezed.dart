@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'forgot_password_state.dart';
@@ -9,12 +9,13 @@ part of 'forgot_password_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ForgotPasswordState {
 
- String get emailAddress; String get emailAddressError; ApiResultStatus get apiResultStatus; bool get isAuthSubmitting;
+ String get emailAddress; String get emailAddressError; ApiResultStatus<dynamic> get apiResultStatus; bool get isAuthSubmitting;
 /// Create a copy of ForgotPasswordState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ForgotPasswordStateCopyWith<ForgotPasswordState> get copyWith => _$ForgotPasswo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForgotPasswordState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting));
+  final _this = this as ForgotPasswordState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForgotPasswordState&&(identical(other.emailAddress, _this.emailAddress) || other.emailAddress == _this.emailAddress)&&(identical(other.emailAddressError, _this.emailAddressError) || other.emailAddressError == _this.emailAddressError)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.isAuthSubmitting, _this.isAuthSubmitting) || other.isAuthSubmitting == _this.isAuthSubmitting));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,emailAddress,emailAddressError,apiResultStatus,isAuthSubmitting);
+int get hashCode {
+  final _this = this as ForgotPasswordState;
+  return Object.hash(runtimeType,_this.emailAddress,_this.emailAddressError,_this.apiResultStatus,_this.isAuthSubmitting);
+}
 
 @override
 String toString() {
-  return 'ForgotPasswordState(emailAddress: $emailAddress, emailAddressError: $emailAddressError, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting)';
+  final _this = this as ForgotPasswordState;
+  return 'ForgotPasswordState(emailAddress: ${_this.emailAddress}, emailAddressError: ${_this.emailAddressError}, apiResultStatus: ${_this.apiResultStatus}, isAuthSubmitting: ${_this.isAuthSubmitting})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ForgotPasswordStateCopyWith<$Res>  {
   factory $ForgotPasswordStateCopyWith(ForgotPasswordState value, $Res Function(ForgotPasswordState) _then) = _$ForgotPasswordStateCopyWithImpl;
 @useResult
 $Res call({
- String emailAddress, String emailAddressError, ApiResultStatus apiResultStatus, bool isAuthSubmitting
+ String emailAddress, String emailAddressError, ApiResultStatus<dynamic> apiResultStatus, bool isAuthSubmitting
 });
 
 
@@ -63,11 +69,11 @@ class _$ForgotPasswordStateCopyWithImpl<$Res>
 /// Create a copy of ForgotPasswordState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? emailAddress = null,Object? emailAddressError = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,}) {
-  return _then(_self.copyWith(
+  return _then(ForgotPasswordState(
 emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
 as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,isAuthSubmitting: null == isAuthSubmitting ? _self.isAuthSubmitting : isAuthSubmitting // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isAuthSubmitting: null == isAuthSubmitting ? _self.isAuthSubmitting : isAuthSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -162,7 +168,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String emailAddress,  String emailAddressError,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String emailAddress,  String emailAddressError,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ForgotPasswordState() when $default != null:
 return $default(_that.emailAddress,_that.emailAddressError,_that.apiResultStatus,_that.isAuthSubmitting);case _:
@@ -183,7 +189,7 @@ return $default(_that.emailAddress,_that.emailAddressError,_that.apiResultStatus
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String emailAddress,  String emailAddressError,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String emailAddress,  String emailAddressError,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting)  $default,) {final _that = this;
 switch (_that) {
 case _ForgotPasswordState():
 return $default(_that.emailAddress,_that.emailAddressError,_that.apiResultStatus,_that.isAuthSubmitting);case _:
@@ -203,7 +209,7 @@ return $default(_that.emailAddress,_that.emailAddressError,_that.apiResultStatus
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String emailAddress,  String emailAddressError,  ApiResultStatus apiResultStatus,  bool isAuthSubmitting)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String emailAddress,  String emailAddressError,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting)?  $default,) {final _that = this;
 switch (_that) {
 case _ForgotPasswordState() when $default != null:
 return $default(_that.emailAddress,_that.emailAddressError,_that.apiResultStatus,_that.isAuthSubmitting);case _:
@@ -223,7 +229,7 @@ class _ForgotPasswordState implements ForgotPasswordState {
 
 @override@JsonKey() final  String emailAddress;
 @override@JsonKey() final  String emailAddressError;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 @override@JsonKey() final  bool isAuthSubmitting;
 
 /// Create a copy of ForgotPasswordState
@@ -236,16 +242,18 @@ _$ForgotPasswordStateCopyWith<_ForgotPasswordState> get copyWith => __$ForgotPas
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ForgotPasswordState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ForgotPasswordState&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,emailAddress,emailAddressError,apiResultStatus,isAuthSubmitting);
+int get hashCode {
+    return Object.hash(runtimeType,emailAddress,emailAddressError,apiResultStatus,isAuthSubmitting);
+}
 
 @override
 String toString() {
-  return 'ForgotPasswordState(emailAddress: $emailAddress, emailAddressError: $emailAddressError, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting)';
+    return 'ForgotPasswordState(emailAddress: $emailAddress, emailAddressError: $emailAddressError, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting)';
 }
 
 
@@ -256,7 +264,7 @@ abstract mixin class _$ForgotPasswordStateCopyWith<$Res> implements $ForgotPassw
   factory _$ForgotPasswordStateCopyWith(_ForgotPasswordState value, $Res Function(_ForgotPasswordState) _then) = __$ForgotPasswordStateCopyWithImpl;
 @override @useResult
 $Res call({
- String emailAddress, String emailAddressError, ApiResultStatus apiResultStatus, bool isAuthSubmitting
+ String emailAddress, String emailAddressError, ApiResultStatus<dynamic> apiResultStatus, bool isAuthSubmitting
 });
 
 
@@ -278,7 +286,7 @@ class __$ForgotPasswordStateCopyWithImpl<$Res>
 emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
 as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,isAuthSubmitting: null == isAuthSubmitting ? _self.isAuthSubmitting : isAuthSubmitting // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isAuthSubmitting: null == isAuthSubmitting ? _self.isAuthSubmitting : isAuthSubmitting // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

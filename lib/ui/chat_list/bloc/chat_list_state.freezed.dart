@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'chat_list_state.dart';
@@ -9,12 +9,13 @@ part of 'chat_list_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChatListState {
 
- String get message; UserModel? get userModel; ApiResultStatus get getConversationsApiResult; ApiResultStatus get deleteConversationsApiResult; List<ConversationListItem> get conversationList;
+ String get message; UserModel? get userModel; ApiResultStatus<dynamic> get getConversationsApiResult; ApiResultStatus<dynamic> get deleteConversationsApiResult; List<ConversationListItem> get conversationList;
 /// Create a copy of ChatListState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ChatListStateCopyWith<ChatListState> get copyWith => _$ChatListStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatListState&&(identical(other.message, message) || other.message == message)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.getConversationsApiResult, getConversationsApiResult) || other.getConversationsApiResult == getConversationsApiResult)&&(identical(other.deleteConversationsApiResult, deleteConversationsApiResult) || other.deleteConversationsApiResult == deleteConversationsApiResult)&&const DeepCollectionEquality().equals(other.conversationList, conversationList));
+  final _this = this as ChatListState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChatListState&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.getConversationsApiResult, _this.getConversationsApiResult) || other.getConversationsApiResult == _this.getConversationsApiResult)&&(identical(other.deleteConversationsApiResult, _this.deleteConversationsApiResult) || other.deleteConversationsApiResult == _this.deleteConversationsApiResult)&&const DeepCollectionEquality().equals(other.conversationList, _this.conversationList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,userModel,getConversationsApiResult,deleteConversationsApiResult,const DeepCollectionEquality().hash(conversationList));
+int get hashCode {
+  final _this = this as ChatListState;
+  return Object.hash(runtimeType,_this.message,_this.userModel,_this.getConversationsApiResult,_this.deleteConversationsApiResult,const DeepCollectionEquality().hash(_this.conversationList));
+}
 
 @override
 String toString() {
-  return 'ChatListState(message: $message, userModel: $userModel, getConversationsApiResult: $getConversationsApiResult, deleteConversationsApiResult: $deleteConversationsApiResult, conversationList: $conversationList)';
+  final _this = this as ChatListState;
+  return 'ChatListState(message: ${_this.message}, userModel: ${_this.userModel}, getConversationsApiResult: ${_this.getConversationsApiResult}, deleteConversationsApiResult: ${_this.deleteConversationsApiResult}, conversationList: ${_this.conversationList})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ChatListStateCopyWith<$Res>  {
   factory $ChatListStateCopyWith(ChatListState value, $Res Function(ChatListState) _then) = _$ChatListStateCopyWithImpl;
 @useResult
 $Res call({
- String message, UserModel? userModel, ApiResultStatus getConversationsApiResult, ApiResultStatus deleteConversationsApiResult, List<ConversationListItem> conversationList
+ String message, UserModel? userModel, ApiResultStatus<dynamic> getConversationsApiResult, ApiResultStatus<dynamic> deleteConversationsApiResult, List<ConversationListItem> conversationList
 });
 
 
@@ -63,12 +69,12 @@ class _$ChatListStateCopyWithImpl<$Res>
 /// Create a copy of ChatListState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? userModel = freezed,Object? getConversationsApiResult = null,Object? deleteConversationsApiResult = null,Object? conversationList = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChatListState(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,getConversationsApiResult: null == getConversationsApiResult ? _self.getConversationsApiResult : getConversationsApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,deleteConversationsApiResult: null == deleteConversationsApiResult ? _self.deleteConversationsApiResult : deleteConversationsApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,conversationList: null == conversationList ? _self.conversationList : conversationList // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteConversationsApiResult: null == deleteConversationsApiResult ? _self.deleteConversationsApiResult : deleteConversationsApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,conversationList: null == conversationList ? _self.conversationList : conversationList // ignore: cast_nullable_to_non_nullable
 as List<ConversationListItem>,
   ));
 }
@@ -172,7 +178,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  UserModel? userModel,  ApiResultStatus getConversationsApiResult,  ApiResultStatus deleteConversationsApiResult,  List<ConversationListItem> conversationList)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  UserModel? userModel,  ApiResultStatus<dynamic> getConversationsApiResult,  ApiResultStatus<dynamic> deleteConversationsApiResult,  List<ConversationListItem> conversationList)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChatListState() when $default != null:
 return $default(_that.message,_that.userModel,_that.getConversationsApiResult,_that.deleteConversationsApiResult,_that.conversationList);case _:
@@ -193,7 +199,7 @@ return $default(_that.message,_that.userModel,_that.getConversationsApiResult,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  UserModel? userModel,  ApiResultStatus getConversationsApiResult,  ApiResultStatus deleteConversationsApiResult,  List<ConversationListItem> conversationList)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  UserModel? userModel,  ApiResultStatus<dynamic> getConversationsApiResult,  ApiResultStatus<dynamic> deleteConversationsApiResult,  List<ConversationListItem> conversationList)  $default,) {final _that = this;
 switch (_that) {
 case _ChatListState():
 return $default(_that.message,_that.userModel,_that.getConversationsApiResult,_that.deleteConversationsApiResult,_that.conversationList);case _:
@@ -213,7 +219,7 @@ return $default(_that.message,_that.userModel,_that.getConversationsApiResult,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  UserModel? userModel,  ApiResultStatus getConversationsApiResult,  ApiResultStatus deleteConversationsApiResult,  List<ConversationListItem> conversationList)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  UserModel? userModel,  ApiResultStatus<dynamic> getConversationsApiResult,  ApiResultStatus<dynamic> deleteConversationsApiResult,  List<ConversationListItem> conversationList)?  $default,) {final _that = this;
 switch (_that) {
 case _ChatListState() when $default != null:
 return $default(_that.message,_that.userModel,_that.getConversationsApiResult,_that.deleteConversationsApiResult,_that.conversationList);case _:
@@ -228,13 +234,13 @@ return $default(_that.message,_that.userModel,_that.getConversationsApiResult,_t
 
 
 class _ChatListState implements ChatListState {
-  const _ChatListState({this.message = "", this.userModel, this.getConversationsApiResult = const ApiResultStatus.initial(), this.deleteConversationsApiResult = const ApiResultStatus.initial(), final  List<ConversationListItem> conversationList = const []}): _conversationList = conversationList;
+  const _ChatListState({this.message = "", this.userModel, this.getConversationsApiResult = const ApiResultStatus.initial(), this.deleteConversationsApiResult = const ApiResultStatus.initial(),  List<ConversationListItem> conversationList = const []}): _conversationList = conversationList;
   
 
 @override@JsonKey() final  String message;
 @override final  UserModel? userModel;
-@override@JsonKey() final  ApiResultStatus getConversationsApiResult;
-@override@JsonKey() final  ApiResultStatus deleteConversationsApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> getConversationsApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> deleteConversationsApiResult;
  final  List<ConversationListItem> _conversationList;
 @override@JsonKey() List<ConversationListItem> get conversationList {
   if (_conversationList is EqualUnmodifiableListView) return _conversationList;
@@ -253,16 +259,18 @@ _$ChatListStateCopyWith<_ChatListState> get copyWith => __$ChatListStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatListState&&(identical(other.message, message) || other.message == message)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.getConversationsApiResult, getConversationsApiResult) || other.getConversationsApiResult == getConversationsApiResult)&&(identical(other.deleteConversationsApiResult, deleteConversationsApiResult) || other.deleteConversationsApiResult == deleteConversationsApiResult)&&const DeepCollectionEquality().equals(other._conversationList, _conversationList));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChatListState&&(identical(other.message, message) || other.message == message)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.getConversationsApiResult, getConversationsApiResult) || other.getConversationsApiResult == getConversationsApiResult)&&(identical(other.deleteConversationsApiResult, deleteConversationsApiResult) || other.deleteConversationsApiResult == deleteConversationsApiResult)&&const DeepCollectionEquality().equals(other.conversationList, _conversationList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,userModel,getConversationsApiResult,deleteConversationsApiResult,const DeepCollectionEquality().hash(_conversationList));
+int get hashCode {
+    return Object.hash(runtimeType,message,userModel,getConversationsApiResult,deleteConversationsApiResult,const DeepCollectionEquality().hash(_conversationList));
+}
 
 @override
 String toString() {
-  return 'ChatListState(message: $message, userModel: $userModel, getConversationsApiResult: $getConversationsApiResult, deleteConversationsApiResult: $deleteConversationsApiResult, conversationList: $conversationList)';
+    return 'ChatListState(message: $message, userModel: $userModel, getConversationsApiResult: $getConversationsApiResult, deleteConversationsApiResult: $deleteConversationsApiResult, conversationList: $conversationList)';
 }
 
 
@@ -273,7 +281,7 @@ abstract mixin class _$ChatListStateCopyWith<$Res> implements $ChatListStateCopy
   factory _$ChatListStateCopyWith(_ChatListState value, $Res Function(_ChatListState) _then) = __$ChatListStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message, UserModel? userModel, ApiResultStatus getConversationsApiResult, ApiResultStatus deleteConversationsApiResult, List<ConversationListItem> conversationList
+ String message, UserModel? userModel, ApiResultStatus<dynamic> getConversationsApiResult, ApiResultStatus<dynamic> deleteConversationsApiResult, List<ConversationListItem> conversationList
 });
 
 
@@ -295,8 +303,8 @@ class __$ChatListStateCopyWithImpl<$Res>
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,getConversationsApiResult: null == getConversationsApiResult ? _self.getConversationsApiResult : getConversationsApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,deleteConversationsApiResult: null == deleteConversationsApiResult ? _self.deleteConversationsApiResult : deleteConversationsApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,conversationList: null == conversationList ? _self._conversationList : conversationList // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteConversationsApiResult: null == deleteConversationsApiResult ? _self.deleteConversationsApiResult : deleteConversationsApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,conversationList: null == conversationList ? _self._conversationList : conversationList // ignore: cast_nullable_to_non_nullable
 as List<ConversationListItem>,
   ));
 }

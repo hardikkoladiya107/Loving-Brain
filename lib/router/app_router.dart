@@ -1,54 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/model/shared_event_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/ui/add_shared_event/add_shared_event_screen.dart';
+import 'package:loving_brain/ui/ai_chat/ai_chat_screen.dart';
+import 'package:loving_brain/ui/auth/co_parent_register/co_parent_register_screen.dart';
 import 'package:loving_brain/ui/auth/forgot_password/forgot_password_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
-
-import 'package:loving_brain/ui/auth/welcome/welcome_screen.dart';
-import 'package:loving_brain/ui/auth/register/register_screen.dart';
 import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
-import 'package:loving_brain/ui/onboarding/onboarding_screen.dart';
-import 'package:loving_brain/ui/onboarding_snapshot/onboarding_snapshot_screen.dart';
+import 'package:loving_brain/ui/auth/register/register_screen.dart';
+import 'package:loving_brain/ui/auth/welcome/welcome_screen.dart';
 import 'package:loving_brain/ui/base_screen/base_screen.dart';
-import 'package:loving_brain/ui/child_profile/child_profile_screen.dart';
-import 'package:loving_brain/ui/parent_profile/parent_profile_screen.dart';
-import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
-import 'package:loving_brain/ui/splash/splash_screen.dart';
-import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
-import 'package:loving_brain/ui/success_screen/success_screen.dart';
-
-import 'route_paths.dart';
-
-import 'package:loving_brain/ui/subscription/subscription_screen.dart';
+import 'package:loving_brain/ui/chat_detail/chat_detail_screen.dart';
+import 'package:loving_brain/ui/chat_list/chat_list_screen.dart';
+import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/daily_mood_check_in/daily_mood_check_in_screen.dart';
 import 'package:loving_brain/ui/daily_mood_log/daily_mood_log.dart';
-import 'package:loving_brain/ui/schedule/schedule_screen.dart';
-import 'package:loving_brain/ui/chat_list/chat_list_screen.dart';
-import 'package:loving_brain/ui/write_your_thought/write_your_thought_screen.dart';
-import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
-import 'package:loving_brain/ui/event_detail/event_detail_screen.dart';
-import 'package:loving_brain/ui/event_approval/event_approval_screen.dart';
-import 'package:loving_brain/ui/ai_chat/ai_chat_screen.dart';
-import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
-import 'package:loving_brain/ui/essentials/essentials_screen.dart';
 import 'package:loving_brain/ui/energy_bridge/energy_bridge_screen.dart';
-import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
-import 'package:loving_brain/ui/new_behavior/new_behavior_screen.dart';
-import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart';
+import 'package:loving_brain/ui/essentials/essentials_screen.dart';
+import 'package:loving_brain/ui/event_approval/event_approval_screen.dart';
+import 'package:loving_brain/ui/event_detail/event_detail_screen.dart';
 import 'package:loving_brain/ui/family_meter/family_meter_state_detail_screen.dart';
 import 'package:loving_brain/ui/family_meter/family_meter_state_picker_screen.dart';
-import 'package:loving_brain/ui/smart_moment/smart_moment_screen.dart';
-import 'package:loving_brain/ui/timeline/timeline_screen.dart';
-import 'package:loving_brain/ui/milestone_story/milestone_story_screen.dart';
+import 'package:loving_brain/ui/family_snapsshot/family_snapshot_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_guidance_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_problem_selection_screen.dart';
-import 'package:loving_brain/ui/propose_change/propose_change_screen.dart';
-import 'package:loving_brain/ui/thought_list/thought_list_scren.dart';
-import 'package:loving_brain/ui/chat_detail/chat_detail_screen.dart';
-import 'package:loving_brain/ui/add_shared_event/add_shared_event_screen.dart';
 import 'package:loving_brain/ui/link_co_parent/link_co_parent_screen.dart';
-import 'package:loving_brain/ui/auth/co_parent_register/co_parent_register_screen.dart';
-import 'package:loving_brain/model/shared_event_model.dart';
+import 'package:loving_brain/ui/manage_children/manage_children_screen.dart';
+import 'package:loving_brain/ui/milestone_story/milestone_story_screen.dart';
+import 'package:loving_brain/ui/new_behavior/new_behavior_screen.dart';
+import 'package:loving_brain/ui/onboarding/onboarding_screen.dart';
+import 'package:loving_brain/ui/onboarding_snapshot/onboarding_snapshot_screen.dart';
+import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
+import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
+import 'package:loving_brain/ui/propose_change/propose_change_screen.dart';
+import 'package:loving_brain/ui/reflect_your_emotions/reflect_your_emotions.dart';
+import 'package:loving_brain/ui/schedule/schedule_screen.dart';
+import 'package:loving_brain/ui/sleep_summary/sleep_summary_screen.dart';
+import 'package:loving_brain/ui/smart_moment/smart_moment_screen.dart';
+import 'package:loving_brain/ui/splash/splash_screen.dart';
+import 'package:loving_brain/ui/subscription/subscription_screen.dart';
+import 'package:loving_brain/ui/success_screen/success_screen.dart';
+import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
+import 'package:loving_brain/ui/thought_list/thought_list_scren.dart';
+import 'package:loving_brain/ui/timeline/timeline_screen.dart';
+import 'package:loving_brain/ui/write_your_thought/write_your_thought_screen.dart';
+import 'package:loving_brain/ui/your_streak/your_streak_screen.dart';
+
+import 'route_paths.dart';
 
 class AppRouter {
   AppRouter._();
@@ -74,7 +73,7 @@ class AppRouter {
           RoutePaths.forgotPassword,
           RoutePaths.coParentRegister,
         };
-
+        // return RoutePaths.familySnapshot;
         if (isLoggedIn && authFlowRoutes.contains(location)) {
           return RoutePaths.base;
         }
@@ -331,6 +330,11 @@ class AppRouter {
           path: RoutePaths.base,
           builder: (BuildContext context, GoRouterState state) =>
               const BaseScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.familySnapshot,
+          builder: (BuildContext context, GoRouterState state) =>
+              const FamilySnapshotScreen(),
         ),
       ],
     );

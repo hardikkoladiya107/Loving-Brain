@@ -1,9 +1,9 @@
-/**
- * Firebase Cloud Functions – entry point.
+﻿/**
+ * Firebase Cloud Functions â€“ entry point.
  *
  * Exports:
- * - Triggers: onRoutineWrite, onSharedEventWrite (Firestore → Cloud Tasks)
- * - HTTP: sendScheduledNotification (Tasks → FCM), sendNotificationToAll,
+ * - Triggers: onRoutineWrite, onSharedEventWrite (Firestore â†’ Cloud Tasks)
+ * - HTTP: sendScheduledNotification (Tasks â†’ FCM), sendNotificationToAll,
  *   sendPushNotification
  *
  * See functions/README.md for folder structure and flow.
@@ -20,6 +20,7 @@ const {onEnergyBridgeSchedule} = require(
     "./triggers/energyBridgeSchedulerTriggers",
 );
 const {onUserDelete} = require("./triggers/userTriggers");
+const {sendEmailOtp, verifyEmailOtp} = require("./controllers/authController");
 
 exports.sendScheduledNotification = sendScheduledNotification;
 exports.sendNotificationToAll = sendNotificationToAll;
@@ -29,3 +30,6 @@ exports.onSharedEventWrite = onSharedEventWrite;
 exports.onEnergyBridgeWrite = onEnergyBridgeWrite;
 exports.onEnergyBridgeSchedule = onEnergyBridgeSchedule;
 exports.onUserDelete = onUserDelete;
+exports.sendEmailOtp = sendEmailOtp;
+exports.verifyEmailOtp = verifyEmailOtp;
+

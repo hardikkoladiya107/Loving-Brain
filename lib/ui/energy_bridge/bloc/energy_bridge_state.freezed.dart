@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'energy_bridge_state.dart';
@@ -9,12 +9,13 @@ part of 'energy_bridge_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EnergyBridgeState {
 
- ApiResultStatus get apiResultStatus; String? get childId; EnergyBridgeTimerModel? get timer;
+ ApiResultStatus<dynamic> get apiResultStatus; String? get childId; EnergyBridgeTimerModel? get timer;
 /// Create a copy of EnergyBridgeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $EnergyBridgeStateCopyWith<EnergyBridgeState> get copyWith => _$EnergyBridgeStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnergyBridgeState&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childId, childId) || other.childId == childId)&&(identical(other.timer, timer) || other.timer == timer));
+  final _this = this as EnergyBridgeState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnergyBridgeState&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.childId, _this.childId) || other.childId == _this.childId)&&(identical(other.timer, _this.timer) || other.timer == _this.timer));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,apiResultStatus,childId,timer);
+int get hashCode {
+  final _this = this as EnergyBridgeState;
+  return Object.hash(runtimeType,_this.apiResultStatus,_this.childId,_this.timer);
+}
 
 @override
 String toString() {
-  return 'EnergyBridgeState(apiResultStatus: $apiResultStatus, childId: $childId, timer: $timer)';
+  final _this = this as EnergyBridgeState;
+  return 'EnergyBridgeState(apiResultStatus: ${_this.apiResultStatus}, childId: ${_this.childId}, timer: ${_this.timer})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $EnergyBridgeStateCopyWith<$Res>  {
   factory $EnergyBridgeStateCopyWith(EnergyBridgeState value, $Res Function(EnergyBridgeState) _then) = _$EnergyBridgeStateCopyWithImpl;
 @useResult
 $Res call({
- ApiResultStatus apiResultStatus, String? childId, EnergyBridgeTimerModel? timer
+ ApiResultStatus<dynamic> apiResultStatus, String? childId, EnergyBridgeTimerModel? timer
 });
 
 
@@ -63,9 +69,9 @@ class _$EnergyBridgeStateCopyWithImpl<$Res>
 /// Create a copy of EnergyBridgeState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? apiResultStatus = null,Object? childId = freezed,Object? timer = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(EnergyBridgeState(
 apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childId: freezed == childId ? _self.childId : childId // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,childId: freezed == childId ? _self.childId : childId // ignore: cast_nullable_to_non_nullable
 as String?,timer: freezed == timer ? _self.timer : timer // ignore: cast_nullable_to_non_nullable
 as EnergyBridgeTimerModel?,
   ));
@@ -161,7 +167,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ApiResultStatus apiResultStatus,  String? childId,  EnergyBridgeTimerModel? timer)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ApiResultStatus<dynamic> apiResultStatus,  String? childId,  EnergyBridgeTimerModel? timer)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EnergyBridgeState() when $default != null:
 return $default(_that.apiResultStatus,_that.childId,_that.timer);case _:
@@ -182,7 +188,7 @@ return $default(_that.apiResultStatus,_that.childId,_that.timer);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ApiResultStatus apiResultStatus,  String? childId,  EnergyBridgeTimerModel? timer)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ApiResultStatus<dynamic> apiResultStatus,  String? childId,  EnergyBridgeTimerModel? timer)  $default,) {final _that = this;
 switch (_that) {
 case _EnergyBridgeState():
 return $default(_that.apiResultStatus,_that.childId,_that.timer);case _:
@@ -202,7 +208,7 @@ return $default(_that.apiResultStatus,_that.childId,_that.timer);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ApiResultStatus apiResultStatus,  String? childId,  EnergyBridgeTimerModel? timer)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ApiResultStatus<dynamic> apiResultStatus,  String? childId,  EnergyBridgeTimerModel? timer)?  $default,) {final _that = this;
 switch (_that) {
 case _EnergyBridgeState() when $default != null:
 return $default(_that.apiResultStatus,_that.childId,_that.timer);case _:
@@ -220,7 +226,7 @@ class _EnergyBridgeState implements EnergyBridgeState {
   const _EnergyBridgeState({this.apiResultStatus = const ApiResultStatus.initial(), this.childId, this.timer});
   
 
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 @override final  String? childId;
 @override final  EnergyBridgeTimerModel? timer;
 
@@ -234,16 +240,18 @@ _$EnergyBridgeStateCopyWith<_EnergyBridgeState> get copyWith => __$EnergyBridgeS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnergyBridgeState&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childId, childId) || other.childId == childId)&&(identical(other.timer, timer) || other.timer == timer));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnergyBridgeState&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.childId, childId) || other.childId == childId)&&(identical(other.timer, timer) || other.timer == timer));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,apiResultStatus,childId,timer);
+int get hashCode {
+    return Object.hash(runtimeType,apiResultStatus,childId,timer);
+}
 
 @override
 String toString() {
-  return 'EnergyBridgeState(apiResultStatus: $apiResultStatus, childId: $childId, timer: $timer)';
+    return 'EnergyBridgeState(apiResultStatus: $apiResultStatus, childId: $childId, timer: $timer)';
 }
 
 
@@ -254,7 +262,7 @@ abstract mixin class _$EnergyBridgeStateCopyWith<$Res> implements $EnergyBridgeS
   factory _$EnergyBridgeStateCopyWith(_EnergyBridgeState value, $Res Function(_EnergyBridgeState) _then) = __$EnergyBridgeStateCopyWithImpl;
 @override @useResult
 $Res call({
- ApiResultStatus apiResultStatus, String? childId, EnergyBridgeTimerModel? timer
+ ApiResultStatus<dynamic> apiResultStatus, String? childId, EnergyBridgeTimerModel? timer
 });
 
 
@@ -274,7 +282,7 @@ class __$EnergyBridgeStateCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? apiResultStatus = null,Object? childId = freezed,Object? timer = freezed,}) {
   return _then(_EnergyBridgeState(
 apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,childId: freezed == childId ? _self.childId : childId // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,childId: freezed == childId ? _self.childId : childId // ignore: cast_nullable_to_non_nullable
 as String?,timer: freezed == timer ? _self.timer : timer // ignore: cast_nullable_to_non_nullable
 as EnergyBridgeTimerModel?,
   ));

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'help_flow_state.dart';
@@ -9,12 +9,13 @@ part of 'help_flow_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HelpFlowState {
 
- UserModel? get userModel; ChildModel? get childModel; ChildState? get childState; String get selectedProblemType; String get contextLine; String get primaryAction; List<String> get steps; String get fallbackText; int get solutionIndex; int get failedAttempts; bool get showEscalationHint; ApiResultStatus get saveApiResultStatus;
+ UserModel? get userModel; ChildModel? get childModel; ChildState? get childState; String get selectedProblemType; String get contextLine; String get primaryAction; List<String> get steps; String get fallbackText; int get solutionIndex; int get failedAttempts; bool get showEscalationHint; ApiResultStatus<dynamic> get saveApiResultStatus;
 /// Create a copy of HelpFlowState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $HelpFlowStateCopyWith<HelpFlowState> get copyWith => _$HelpFlowStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HelpFlowState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.childState, childState) || other.childState == childState)&&(identical(other.selectedProblemType, selectedProblemType) || other.selectedProblemType == selectedProblemType)&&(identical(other.contextLine, contextLine) || other.contextLine == contextLine)&&(identical(other.primaryAction, primaryAction) || other.primaryAction == primaryAction)&&const DeepCollectionEquality().equals(other.steps, steps)&&(identical(other.fallbackText, fallbackText) || other.fallbackText == fallbackText)&&(identical(other.solutionIndex, solutionIndex) || other.solutionIndex == solutionIndex)&&(identical(other.failedAttempts, failedAttempts) || other.failedAttempts == failedAttempts)&&(identical(other.showEscalationHint, showEscalationHint) || other.showEscalationHint == showEscalationHint)&&(identical(other.saveApiResultStatus, saveApiResultStatus) || other.saveApiResultStatus == saveApiResultStatus));
+  final _this = this as HelpFlowState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HelpFlowState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&(identical(other.childState, _this.childState) || other.childState == _this.childState)&&(identical(other.selectedProblemType, _this.selectedProblemType) || other.selectedProblemType == _this.selectedProblemType)&&(identical(other.contextLine, _this.contextLine) || other.contextLine == _this.contextLine)&&(identical(other.primaryAction, _this.primaryAction) || other.primaryAction == _this.primaryAction)&&const DeepCollectionEquality().equals(other.steps, _this.steps)&&(identical(other.fallbackText, _this.fallbackText) || other.fallbackText == _this.fallbackText)&&(identical(other.solutionIndex, _this.solutionIndex) || other.solutionIndex == _this.solutionIndex)&&(identical(other.failedAttempts, _this.failedAttempts) || other.failedAttempts == _this.failedAttempts)&&(identical(other.showEscalationHint, _this.showEscalationHint) || other.showEscalationHint == _this.showEscalationHint)&&(identical(other.saveApiResultStatus, _this.saveApiResultStatus) || other.saveApiResultStatus == _this.saveApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,childModel,childState,selectedProblemType,contextLine,primaryAction,const DeepCollectionEquality().hash(steps),fallbackText,solutionIndex,failedAttempts,showEscalationHint,saveApiResultStatus);
+int get hashCode {
+  final _this = this as HelpFlowState;
+  return Object.hash(runtimeType,_this.userModel,_this.childModel,_this.childState,_this.selectedProblemType,_this.contextLine,_this.primaryAction,const DeepCollectionEquality().hash(_this.steps),_this.fallbackText,_this.solutionIndex,_this.failedAttempts,_this.showEscalationHint,_this.saveApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'HelpFlowState(userModel: $userModel, childModel: $childModel, childState: $childState, selectedProblemType: $selectedProblemType, contextLine: $contextLine, primaryAction: $primaryAction, steps: $steps, fallbackText: $fallbackText, solutionIndex: $solutionIndex, failedAttempts: $failedAttempts, showEscalationHint: $showEscalationHint, saveApiResultStatus: $saveApiResultStatus)';
+  final _this = this as HelpFlowState;
+  return 'HelpFlowState(userModel: ${_this.userModel}, childModel: ${_this.childModel}, childState: ${_this.childState}, selectedProblemType: ${_this.selectedProblemType}, contextLine: ${_this.contextLine}, primaryAction: ${_this.primaryAction}, steps: ${_this.steps}, fallbackText: ${_this.fallbackText}, solutionIndex: ${_this.solutionIndex}, failedAttempts: ${_this.failedAttempts}, showEscalationHint: ${_this.showEscalationHint}, saveApiResultStatus: ${_this.saveApiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $HelpFlowStateCopyWith<$Res>  {
   factory $HelpFlowStateCopyWith(HelpFlowState value, $Res Function(HelpFlowState) _then) = _$HelpFlowStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, ChildModel? childModel, ChildState? childState, String selectedProblemType, String contextLine, String primaryAction, List<String> steps, String fallbackText, int solutionIndex, int failedAttempts, bool showEscalationHint, ApiResultStatus saveApiResultStatus
+ UserModel? userModel, ChildModel? childModel, ChildState? childState, String selectedProblemType, String contextLine, String primaryAction, List<String> steps, String fallbackText, int solutionIndex, int failedAttempts, bool showEscalationHint, ApiResultStatus<dynamic> saveApiResultStatus
 });
 
 
@@ -63,7 +69,7 @@ class _$HelpFlowStateCopyWithImpl<$Res>
 /// Create a copy of HelpFlowState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? childModel = freezed,Object? childState = freezed,Object? selectedProblemType = null,Object? contextLine = null,Object? primaryAction = null,Object? steps = null,Object? fallbackText = null,Object? solutionIndex = null,Object? failedAttempts = null,Object? showEscalationHint = null,Object? saveApiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(HelpFlowState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,childState: freezed == childState ? _self.childState : childState // ignore: cast_nullable_to_non_nullable
@@ -76,7 +82,7 @@ as String,solutionIndex: null == solutionIndex ? _self.solutionIndex : solutionI
 as int,failedAttempts: null == failedAttempts ? _self.failedAttempts : failedAttempts // ignore: cast_nullable_to_non_nullable
 as int,showEscalationHint: null == showEscalationHint ? _self.showEscalationHint : showEscalationHint // ignore: cast_nullable_to_non_nullable
 as bool,saveApiResultStatus: null == saveApiResultStatus ? _self.saveApiResultStatus : saveApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of HelpFlowState
@@ -170,7 +176,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? childState,  String selectedProblemType,  String contextLine,  String primaryAction,  List<String> steps,  String fallbackText,  int solutionIndex,  int failedAttempts,  bool showEscalationHint,  ApiResultStatus saveApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? childState,  String selectedProblemType,  String contextLine,  String primaryAction,  List<String> steps,  String fallbackText,  int solutionIndex,  int failedAttempts,  bool showEscalationHint,  ApiResultStatus<dynamic> saveApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HelpFlowState() when $default != null:
 return $default(_that.userModel,_that.childModel,_that.childState,_that.selectedProblemType,_that.contextLine,_that.primaryAction,_that.steps,_that.fallbackText,_that.solutionIndex,_that.failedAttempts,_that.showEscalationHint,_that.saveApiResultStatus);case _:
@@ -191,7 +197,7 @@ return $default(_that.userModel,_that.childModel,_that.childState,_that.selected
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? childState,  String selectedProblemType,  String contextLine,  String primaryAction,  List<String> steps,  String fallbackText,  int solutionIndex,  int failedAttempts,  bool showEscalationHint,  ApiResultStatus saveApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ChildModel? childModel,  ChildState? childState,  String selectedProblemType,  String contextLine,  String primaryAction,  List<String> steps,  String fallbackText,  int solutionIndex,  int failedAttempts,  bool showEscalationHint,  ApiResultStatus<dynamic> saveApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _HelpFlowState():
 return $default(_that.userModel,_that.childModel,_that.childState,_that.selectedProblemType,_that.contextLine,_that.primaryAction,_that.steps,_that.fallbackText,_that.solutionIndex,_that.failedAttempts,_that.showEscalationHint,_that.saveApiResultStatus);case _:
@@ -211,7 +217,7 @@ return $default(_that.userModel,_that.childModel,_that.childState,_that.selected
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  ChildState? childState,  String selectedProblemType,  String contextLine,  String primaryAction,  List<String> steps,  String fallbackText,  int solutionIndex,  int failedAttempts,  bool showEscalationHint,  ApiResultStatus saveApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ChildModel? childModel,  ChildState? childState,  String selectedProblemType,  String contextLine,  String primaryAction,  List<String> steps,  String fallbackText,  int solutionIndex,  int failedAttempts,  bool showEscalationHint,  ApiResultStatus<dynamic> saveApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _HelpFlowState() when $default != null:
 return $default(_that.userModel,_that.childModel,_that.childState,_that.selectedProblemType,_that.contextLine,_that.primaryAction,_that.steps,_that.fallbackText,_that.solutionIndex,_that.failedAttempts,_that.showEscalationHint,_that.saveApiResultStatus);case _:
@@ -226,7 +232,7 @@ return $default(_that.userModel,_that.childModel,_that.childState,_that.selected
 
 
 class _HelpFlowState implements HelpFlowState {
-  const _HelpFlowState({this.userModel, this.childModel, this.childState, this.selectedProblemType = '', this.contextLine = '', this.primaryAction = '', final  List<String> steps = const <String>[], this.fallbackText = '', this.solutionIndex = 0, this.failedAttempts = 0, this.showEscalationHint = false, this.saveApiResultStatus = const ApiResultStatus.initial()}): _steps = steps;
+  const _HelpFlowState({this.userModel, this.childModel, this.childState, this.selectedProblemType = '', this.contextLine = '', this.primaryAction = '',  List<String> steps = const <String>[], this.fallbackText = '', this.solutionIndex = 0, this.failedAttempts = 0, this.showEscalationHint = false, this.saveApiResultStatus = const ApiResultStatus.initial()}): _steps = steps;
   
 
 @override final  UserModel? userModel;
@@ -246,7 +252,7 @@ class _HelpFlowState implements HelpFlowState {
 @override@JsonKey() final  int solutionIndex;
 @override@JsonKey() final  int failedAttempts;
 @override@JsonKey() final  bool showEscalationHint;
-@override@JsonKey() final  ApiResultStatus saveApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> saveApiResultStatus;
 
 /// Create a copy of HelpFlowState
 /// with the given fields replaced by the non-null parameter values.
@@ -258,16 +264,18 @@ _$HelpFlowStateCopyWith<_HelpFlowState> get copyWith => __$HelpFlowStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HelpFlowState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.childState, childState) || other.childState == childState)&&(identical(other.selectedProblemType, selectedProblemType) || other.selectedProblemType == selectedProblemType)&&(identical(other.contextLine, contextLine) || other.contextLine == contextLine)&&(identical(other.primaryAction, primaryAction) || other.primaryAction == primaryAction)&&const DeepCollectionEquality().equals(other._steps, _steps)&&(identical(other.fallbackText, fallbackText) || other.fallbackText == fallbackText)&&(identical(other.solutionIndex, solutionIndex) || other.solutionIndex == solutionIndex)&&(identical(other.failedAttempts, failedAttempts) || other.failedAttempts == failedAttempts)&&(identical(other.showEscalationHint, showEscalationHint) || other.showEscalationHint == showEscalationHint)&&(identical(other.saveApiResultStatus, saveApiResultStatus) || other.saveApiResultStatus == saveApiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HelpFlowState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.childState, childState) || other.childState == childState)&&(identical(other.selectedProblemType, selectedProblemType) || other.selectedProblemType == selectedProblemType)&&(identical(other.contextLine, contextLine) || other.contextLine == contextLine)&&(identical(other.primaryAction, primaryAction) || other.primaryAction == primaryAction)&&const DeepCollectionEquality().equals(other.steps, _steps)&&(identical(other.fallbackText, fallbackText) || other.fallbackText == fallbackText)&&(identical(other.solutionIndex, solutionIndex) || other.solutionIndex == solutionIndex)&&(identical(other.failedAttempts, failedAttempts) || other.failedAttempts == failedAttempts)&&(identical(other.showEscalationHint, showEscalationHint) || other.showEscalationHint == showEscalationHint)&&(identical(other.saveApiResultStatus, saveApiResultStatus) || other.saveApiResultStatus == saveApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,childModel,childState,selectedProblemType,contextLine,primaryAction,const DeepCollectionEquality().hash(_steps),fallbackText,solutionIndex,failedAttempts,showEscalationHint,saveApiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,childModel,childState,selectedProblemType,contextLine,primaryAction,const DeepCollectionEquality().hash(_steps),fallbackText,solutionIndex,failedAttempts,showEscalationHint,saveApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'HelpFlowState(userModel: $userModel, childModel: $childModel, childState: $childState, selectedProblemType: $selectedProblemType, contextLine: $contextLine, primaryAction: $primaryAction, steps: $steps, fallbackText: $fallbackText, solutionIndex: $solutionIndex, failedAttempts: $failedAttempts, showEscalationHint: $showEscalationHint, saveApiResultStatus: $saveApiResultStatus)';
+    return 'HelpFlowState(userModel: $userModel, childModel: $childModel, childState: $childState, selectedProblemType: $selectedProblemType, contextLine: $contextLine, primaryAction: $primaryAction, steps: $steps, fallbackText: $fallbackText, solutionIndex: $solutionIndex, failedAttempts: $failedAttempts, showEscalationHint: $showEscalationHint, saveApiResultStatus: $saveApiResultStatus)';
 }
 
 
@@ -278,7 +286,7 @@ abstract mixin class _$HelpFlowStateCopyWith<$Res> implements $HelpFlowStateCopy
   factory _$HelpFlowStateCopyWith(_HelpFlowState value, $Res Function(_HelpFlowState) _then) = __$HelpFlowStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, ChildModel? childModel, ChildState? childState, String selectedProblemType, String contextLine, String primaryAction, List<String> steps, String fallbackText, int solutionIndex, int failedAttempts, bool showEscalationHint, ApiResultStatus saveApiResultStatus
+ UserModel? userModel, ChildModel? childModel, ChildState? childState, String selectedProblemType, String contextLine, String primaryAction, List<String> steps, String fallbackText, int solutionIndex, int failedAttempts, bool showEscalationHint, ApiResultStatus<dynamic> saveApiResultStatus
 });
 
 
@@ -309,7 +317,7 @@ as String,solutionIndex: null == solutionIndex ? _self.solutionIndex : solutionI
 as int,failedAttempts: null == failedAttempts ? _self.failedAttempts : failedAttempts // ignore: cast_nullable_to_non_nullable
 as int,showEscalationHint: null == showEscalationHint ? _self.showEscalationHint : showEscalationHint // ignore: cast_nullable_to_non_nullable
 as bool,saveApiResultStatus: null == saveApiResultStatus ? _self.saveApiResultStatus : saveApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 

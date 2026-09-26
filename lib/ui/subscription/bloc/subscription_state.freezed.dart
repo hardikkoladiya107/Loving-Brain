@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'subscription_state.dart';
@@ -9,6 +9,7 @@ part of 'subscription_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SubscriptionStateCopyWith<SubscriptionState> get copyWith => _$SubscriptionStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.subsProductDetails, subsProductDetails)&&(identical(other.userModel, userModel) || other.userModel == userModel));
+  final _this = this as SubscriptionState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.selectedPlan, _this.selectedPlan) || other.selectedPlan == _this.selectedPlan)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.subsProductDetails, _this.subsProductDetails)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(subsProductDetails),userModel);
+int get hashCode {
+  final _this = this as SubscriptionState;
+  return Object.hash(runtimeType,_this.isLoading,_this.selectedPlan,_this.message,const DeepCollectionEquality().hash(_this.subsProductDetails),_this.userModel);
+}
 
 @override
 String toString() {
-  return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, subsProductDetails: $subsProductDetails, userModel: $userModel)';
+  final _this = this as SubscriptionState;
+  return 'SubscriptionState(isLoading: ${_this.isLoading}, selectedPlan: ${_this.selectedPlan}, message: ${_this.message}, subsProductDetails: ${_this.subsProductDetails}, userModel: ${_this.userModel})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SubscriptionStateCopyWithImpl<$Res>
 /// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? selectedPlan = null,Object? message = null,Object? subsProductDetails = null,Object? userModel = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SubscriptionState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,selectedPlan: null == selectedPlan ? _self.selectedPlan : selectedPlan // ignore: cast_nullable_to_non_nullable
 as int,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
@@ -210,7 +216,7 @@ return $default(_that.isLoading,_that.selectedPlan,_that.message,_that.subsProdu
 
 
 class _SubscriptionState implements SubscriptionState {
-  const _SubscriptionState({this.isLoading = false, this.selectedPlan = 0, this.message = "", final  List<SubsProductDetails> subsProductDetails = const [], this.userModel}): _subsProductDetails = subsProductDetails;
+  const _SubscriptionState({this.isLoading = false, this.selectedPlan = 0, this.message = "",  List<SubsProductDetails> subsProductDetails = const [], this.userModel}): _subsProductDetails = subsProductDetails;
   
 
 @override@JsonKey() final  bool isLoading;
@@ -235,16 +241,18 @@ _$SubscriptionStateCopyWith<_SubscriptionState> get copyWith => __$SubscriptionS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._subsProductDetails, _subsProductDetails)&&(identical(other.userModel, userModel) || other.userModel == userModel));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SubscriptionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedPlan, selectedPlan) || other.selectedPlan == selectedPlan)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.subsProductDetails, _subsProductDetails)&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(_subsProductDetails),userModel);
+int get hashCode {
+    return Object.hash(runtimeType,isLoading,selectedPlan,message,const DeepCollectionEquality().hash(_subsProductDetails),userModel);
+}
 
 @override
 String toString() {
-  return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, subsProductDetails: $subsProductDetails, userModel: $userModel)';
+    return 'SubscriptionState(isLoading: $isLoading, selectedPlan: $selectedPlan, message: $message, subsProductDetails: $subsProductDetails, userModel: $userModel)';
 }
 
 

@@ -9,9 +9,9 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 
+import '../env/env.dart';
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
-import '../env/env.dart';
 import '../model/invitation_model.dart';
 import 'child_repo.dart';
 import 'user_repo.dart';
@@ -89,9 +89,9 @@ class CoParentRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var eventCollection = await sharedEventCollection
-          .doc(documentReference)
-          .update(request);
+      // var eventCollection = await sharedEventCollection
+      //     .doc(documentReference)
+      //     .update(request);
       return ApiResultStatus.data(data: "");
     } on FirebaseException {
       return ApiResultStatus.error(
@@ -369,8 +369,9 @@ class CoParentRepo {
       // Step 2b — link partners and set active logger (inviter logs, acceptor views).
       final String? inviterEmail = invitationModel.fromParent?.trim();
       if (inviterEmail != null && inviterEmail.isNotEmpty) {
-        final UserModel? inviterUser =
-            await UserRepo.instance.getUserFromEmail(email: inviterEmail);
+        final UserModel? inviterUser = await UserRepo.instance.getUserFromEmail(
+          email: inviterEmail,
+        );
         final String? inviterUid = inviterUser?.uid;
         if (inviterUid != null && inviterUid.isNotEmpty) {
           final WriteBatch partnerBatch = FirebaseFirestore.instance.batch();

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'event_approval_state.dart';
@@ -9,12 +9,13 @@ part of 'event_approval_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EventApprovalState {
 
- String get message; SharedEventModel? get sharedEvent; ApiResultStatus get getAssigneeApiResult; ApiResultStatus get getChildrenResult; ApiResultStatus get getCreatedByUserApiResult; ApiResultStatus get updatedSharedEventApiResult; UserModel? get createdByUser; UserModel? get userModel; List<UserModel> get assignedUserList; List<ChildModel> get childrenList;
+ String get message; SharedEventModel? get sharedEvent; ApiResultStatus<dynamic> get getAssigneeApiResult; ApiResultStatus<dynamic> get getChildrenResult; ApiResultStatus<dynamic> get getCreatedByUserApiResult; ApiResultStatus<dynamic> get updatedSharedEventApiResult; UserModel? get createdByUser; UserModel? get userModel; List<UserModel> get assignedUserList; List<ChildModel> get childrenList;
 /// Create a copy of EventApprovalState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $EventApprovalStateCopyWith<EventApprovalState> get copyWith => _$EventApprovalS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventApprovalState&&(identical(other.message, message) || other.message == message)&&(identical(other.sharedEvent, sharedEvent) || other.sharedEvent == sharedEvent)&&(identical(other.getAssigneeApiResult, getAssigneeApiResult) || other.getAssigneeApiResult == getAssigneeApiResult)&&(identical(other.getChildrenResult, getChildrenResult) || other.getChildrenResult == getChildrenResult)&&(identical(other.getCreatedByUserApiResult, getCreatedByUserApiResult) || other.getCreatedByUserApiResult == getCreatedByUserApiResult)&&(identical(other.updatedSharedEventApiResult, updatedSharedEventApiResult) || other.updatedSharedEventApiResult == updatedSharedEventApiResult)&&(identical(other.createdByUser, createdByUser) || other.createdByUser == createdByUser)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.assignedUserList, assignedUserList)&&const DeepCollectionEquality().equals(other.childrenList, childrenList));
+  final _this = this as EventApprovalState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EventApprovalState&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.sharedEvent, _this.sharedEvent) || other.sharedEvent == _this.sharedEvent)&&(identical(other.getAssigneeApiResult, _this.getAssigneeApiResult) || other.getAssigneeApiResult == _this.getAssigneeApiResult)&&(identical(other.getChildrenResult, _this.getChildrenResult) || other.getChildrenResult == _this.getChildrenResult)&&(identical(other.getCreatedByUserApiResult, _this.getCreatedByUserApiResult) || other.getCreatedByUserApiResult == _this.getCreatedByUserApiResult)&&(identical(other.updatedSharedEventApiResult, _this.updatedSharedEventApiResult) || other.updatedSharedEventApiResult == _this.updatedSharedEventApiResult)&&(identical(other.createdByUser, _this.createdByUser) || other.createdByUser == _this.createdByUser)&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&const DeepCollectionEquality().equals(other.assignedUserList, _this.assignedUserList)&&const DeepCollectionEquality().equals(other.childrenList, _this.childrenList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,sharedEvent,getAssigneeApiResult,getChildrenResult,getCreatedByUserApiResult,updatedSharedEventApiResult,createdByUser,userModel,const DeepCollectionEquality().hash(assignedUserList),const DeepCollectionEquality().hash(childrenList));
+int get hashCode {
+  final _this = this as EventApprovalState;
+  return Object.hash(runtimeType,_this.message,_this.sharedEvent,_this.getAssigneeApiResult,_this.getChildrenResult,_this.getCreatedByUserApiResult,_this.updatedSharedEventApiResult,_this.createdByUser,_this.userModel,const DeepCollectionEquality().hash(_this.assignedUserList),const DeepCollectionEquality().hash(_this.childrenList));
+}
 
 @override
 String toString() {
-  return 'EventApprovalState(message: $message, sharedEvent: $sharedEvent, getAssigneeApiResult: $getAssigneeApiResult, getChildrenResult: $getChildrenResult, getCreatedByUserApiResult: $getCreatedByUserApiResult, updatedSharedEventApiResult: $updatedSharedEventApiResult, createdByUser: $createdByUser, userModel: $userModel, assignedUserList: $assignedUserList, childrenList: $childrenList)';
+  final _this = this as EventApprovalState;
+  return 'EventApprovalState(message: ${_this.message}, sharedEvent: ${_this.sharedEvent}, getAssigneeApiResult: ${_this.getAssigneeApiResult}, getChildrenResult: ${_this.getChildrenResult}, getCreatedByUserApiResult: ${_this.getCreatedByUserApiResult}, updatedSharedEventApiResult: ${_this.updatedSharedEventApiResult}, createdByUser: ${_this.createdByUser}, userModel: ${_this.userModel}, assignedUserList: ${_this.assignedUserList}, childrenList: ${_this.childrenList})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $EventApprovalStateCopyWith<$Res>  {
   factory $EventApprovalStateCopyWith(EventApprovalState value, $Res Function(EventApprovalState) _then) = _$EventApprovalStateCopyWithImpl;
 @useResult
 $Res call({
- String message, SharedEventModel? sharedEvent, ApiResultStatus getAssigneeApiResult, ApiResultStatus getChildrenResult, ApiResultStatus getCreatedByUserApiResult, ApiResultStatus updatedSharedEventApiResult, UserModel? createdByUser, UserModel? userModel, List<UserModel> assignedUserList, List<ChildModel> childrenList
+ String message, SharedEventModel? sharedEvent, ApiResultStatus<dynamic> getAssigneeApiResult, ApiResultStatus<dynamic> getChildrenResult, ApiResultStatus<dynamic> getCreatedByUserApiResult, ApiResultStatus<dynamic> updatedSharedEventApiResult, UserModel? createdByUser, UserModel? userModel, List<UserModel> assignedUserList, List<ChildModel> childrenList
 });
 
 
@@ -63,14 +69,14 @@ class _$EventApprovalStateCopyWithImpl<$Res>
 /// Create a copy of EventApprovalState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? sharedEvent = freezed,Object? getAssigneeApiResult = null,Object? getChildrenResult = null,Object? getCreatedByUserApiResult = null,Object? updatedSharedEventApiResult = null,Object? createdByUser = freezed,Object? userModel = freezed,Object? assignedUserList = null,Object? childrenList = null,}) {
-  return _then(_self.copyWith(
+  return _then(EventApprovalState(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,sharedEvent: freezed == sharedEvent ? _self.sharedEvent : sharedEvent // ignore: cast_nullable_to_non_nullable
 as SharedEventModel?,getAssigneeApiResult: null == getAssigneeApiResult ? _self.getAssigneeApiResult : getAssigneeApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,getChildrenResult: null == getChildrenResult ? _self.getChildrenResult : getChildrenResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,getCreatedByUserApiResult: null == getCreatedByUserApiResult ? _self.getCreatedByUserApiResult : getCreatedByUserApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,updatedSharedEventApiResult: null == updatedSharedEventApiResult ? _self.updatedSharedEventApiResult : updatedSharedEventApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,createdByUser: freezed == createdByUser ? _self.createdByUser : createdByUser // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,getChildrenResult: null == getChildrenResult ? _self.getChildrenResult : getChildrenResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,getCreatedByUserApiResult: null == getCreatedByUserApiResult ? _self.getCreatedByUserApiResult : getCreatedByUserApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,updatedSharedEventApiResult: null == updatedSharedEventApiResult ? _self.updatedSharedEventApiResult : updatedSharedEventApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,createdByUser: freezed == createdByUser ? _self.createdByUser : createdByUser // ignore: cast_nullable_to_non_nullable
 as UserModel?,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,assignedUserList: null == assignedUserList ? _self.assignedUserList : assignedUserList // ignore: cast_nullable_to_non_nullable
 as List<UserModel>,childrenList: null == childrenList ? _self.childrenList : childrenList // ignore: cast_nullable_to_non_nullable
@@ -195,7 +201,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  SharedEventModel? sharedEvent,  ApiResultStatus getAssigneeApiResult,  ApiResultStatus getChildrenResult,  ApiResultStatus getCreatedByUserApiResult,  ApiResultStatus updatedSharedEventApiResult,  UserModel? createdByUser,  UserModel? userModel,  List<UserModel> assignedUserList,  List<ChildModel> childrenList)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  SharedEventModel? sharedEvent,  ApiResultStatus<dynamic> getAssigneeApiResult,  ApiResultStatus<dynamic> getChildrenResult,  ApiResultStatus<dynamic> getCreatedByUserApiResult,  ApiResultStatus<dynamic> updatedSharedEventApiResult,  UserModel? createdByUser,  UserModel? userModel,  List<UserModel> assignedUserList,  List<ChildModel> childrenList)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EventApprovalState() when $default != null:
 return $default(_that.message,_that.sharedEvent,_that.getAssigneeApiResult,_that.getChildrenResult,_that.getCreatedByUserApiResult,_that.updatedSharedEventApiResult,_that.createdByUser,_that.userModel,_that.assignedUserList,_that.childrenList);case _:
@@ -216,7 +222,7 @@ return $default(_that.message,_that.sharedEvent,_that.getAssigneeApiResult,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  SharedEventModel? sharedEvent,  ApiResultStatus getAssigneeApiResult,  ApiResultStatus getChildrenResult,  ApiResultStatus getCreatedByUserApiResult,  ApiResultStatus updatedSharedEventApiResult,  UserModel? createdByUser,  UserModel? userModel,  List<UserModel> assignedUserList,  List<ChildModel> childrenList)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  SharedEventModel? sharedEvent,  ApiResultStatus<dynamic> getAssigneeApiResult,  ApiResultStatus<dynamic> getChildrenResult,  ApiResultStatus<dynamic> getCreatedByUserApiResult,  ApiResultStatus<dynamic> updatedSharedEventApiResult,  UserModel? createdByUser,  UserModel? userModel,  List<UserModel> assignedUserList,  List<ChildModel> childrenList)  $default,) {final _that = this;
 switch (_that) {
 case _EventApprovalState():
 return $default(_that.message,_that.sharedEvent,_that.getAssigneeApiResult,_that.getChildrenResult,_that.getCreatedByUserApiResult,_that.updatedSharedEventApiResult,_that.createdByUser,_that.userModel,_that.assignedUserList,_that.childrenList);case _:
@@ -236,7 +242,7 @@ return $default(_that.message,_that.sharedEvent,_that.getAssigneeApiResult,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  SharedEventModel? sharedEvent,  ApiResultStatus getAssigneeApiResult,  ApiResultStatus getChildrenResult,  ApiResultStatus getCreatedByUserApiResult,  ApiResultStatus updatedSharedEventApiResult,  UserModel? createdByUser,  UserModel? userModel,  List<UserModel> assignedUserList,  List<ChildModel> childrenList)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  SharedEventModel? sharedEvent,  ApiResultStatus<dynamic> getAssigneeApiResult,  ApiResultStatus<dynamic> getChildrenResult,  ApiResultStatus<dynamic> getCreatedByUserApiResult,  ApiResultStatus<dynamic> updatedSharedEventApiResult,  UserModel? createdByUser,  UserModel? userModel,  List<UserModel> assignedUserList,  List<ChildModel> childrenList)?  $default,) {final _that = this;
 switch (_that) {
 case _EventApprovalState() when $default != null:
 return $default(_that.message,_that.sharedEvent,_that.getAssigneeApiResult,_that.getChildrenResult,_that.getCreatedByUserApiResult,_that.updatedSharedEventApiResult,_that.createdByUser,_that.userModel,_that.assignedUserList,_that.childrenList);case _:
@@ -251,15 +257,15 @@ return $default(_that.message,_that.sharedEvent,_that.getAssigneeApiResult,_that
 
 
 class _EventApprovalState implements EventApprovalState {
-  const _EventApprovalState({this.message = "", this.sharedEvent, this.getAssigneeApiResult = const ApiResultStatus.initial(), this.getChildrenResult = const ApiResultStatus.initial(), this.getCreatedByUserApiResult = const ApiResultStatus.initial(), this.updatedSharedEventApiResult = const ApiResultStatus.initial(), this.createdByUser, this.userModel, final  List<UserModel> assignedUserList = const [], final  List<ChildModel> childrenList = const []}): _assignedUserList = assignedUserList,_childrenList = childrenList;
+  const _EventApprovalState({this.message = "", this.sharedEvent, this.getAssigneeApiResult = const ApiResultStatus.initial(), this.getChildrenResult = const ApiResultStatus.initial(), this.getCreatedByUserApiResult = const ApiResultStatus.initial(), this.updatedSharedEventApiResult = const ApiResultStatus.initial(), this.createdByUser, this.userModel,  List<UserModel> assignedUserList = const [],  List<ChildModel> childrenList = const []}): _assignedUserList = assignedUserList,_childrenList = childrenList;
   
 
 @override@JsonKey() final  String message;
 @override final  SharedEventModel? sharedEvent;
-@override@JsonKey() final  ApiResultStatus getAssigneeApiResult;
-@override@JsonKey() final  ApiResultStatus getChildrenResult;
-@override@JsonKey() final  ApiResultStatus getCreatedByUserApiResult;
-@override@JsonKey() final  ApiResultStatus updatedSharedEventApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> getAssigneeApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> getChildrenResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> getCreatedByUserApiResult;
+@override@JsonKey() final  ApiResultStatus<dynamic> updatedSharedEventApiResult;
 @override final  UserModel? createdByUser;
 @override final  UserModel? userModel;
  final  List<UserModel> _assignedUserList;
@@ -287,16 +293,18 @@ _$EventApprovalStateCopyWith<_EventApprovalState> get copyWith => __$EventApprov
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventApprovalState&&(identical(other.message, message) || other.message == message)&&(identical(other.sharedEvent, sharedEvent) || other.sharedEvent == sharedEvent)&&(identical(other.getAssigneeApiResult, getAssigneeApiResult) || other.getAssigneeApiResult == getAssigneeApiResult)&&(identical(other.getChildrenResult, getChildrenResult) || other.getChildrenResult == getChildrenResult)&&(identical(other.getCreatedByUserApiResult, getCreatedByUserApiResult) || other.getCreatedByUserApiResult == getCreatedByUserApiResult)&&(identical(other.updatedSharedEventApiResult, updatedSharedEventApiResult) || other.updatedSharedEventApiResult == updatedSharedEventApiResult)&&(identical(other.createdByUser, createdByUser) || other.createdByUser == createdByUser)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._assignedUserList, _assignedUserList)&&const DeepCollectionEquality().equals(other._childrenList, _childrenList));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EventApprovalState&&(identical(other.message, message) || other.message == message)&&(identical(other.sharedEvent, sharedEvent) || other.sharedEvent == sharedEvent)&&(identical(other.getAssigneeApiResult, getAssigneeApiResult) || other.getAssigneeApiResult == getAssigneeApiResult)&&(identical(other.getChildrenResult, getChildrenResult) || other.getChildrenResult == getChildrenResult)&&(identical(other.getCreatedByUserApiResult, getCreatedByUserApiResult) || other.getCreatedByUserApiResult == getCreatedByUserApiResult)&&(identical(other.updatedSharedEventApiResult, updatedSharedEventApiResult) || other.updatedSharedEventApiResult == updatedSharedEventApiResult)&&(identical(other.createdByUser, createdByUser) || other.createdByUser == createdByUser)&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.assignedUserList, _assignedUserList)&&const DeepCollectionEquality().equals(other.childrenList, _childrenList));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,sharedEvent,getAssigneeApiResult,getChildrenResult,getCreatedByUserApiResult,updatedSharedEventApiResult,createdByUser,userModel,const DeepCollectionEquality().hash(_assignedUserList),const DeepCollectionEquality().hash(_childrenList));
+int get hashCode {
+    return Object.hash(runtimeType,message,sharedEvent,getAssigneeApiResult,getChildrenResult,getCreatedByUserApiResult,updatedSharedEventApiResult,createdByUser,userModel,const DeepCollectionEquality().hash(_assignedUserList),const DeepCollectionEquality().hash(_childrenList));
+}
 
 @override
 String toString() {
-  return 'EventApprovalState(message: $message, sharedEvent: $sharedEvent, getAssigneeApiResult: $getAssigneeApiResult, getChildrenResult: $getChildrenResult, getCreatedByUserApiResult: $getCreatedByUserApiResult, updatedSharedEventApiResult: $updatedSharedEventApiResult, createdByUser: $createdByUser, userModel: $userModel, assignedUserList: $assignedUserList, childrenList: $childrenList)';
+    return 'EventApprovalState(message: $message, sharedEvent: $sharedEvent, getAssigneeApiResult: $getAssigneeApiResult, getChildrenResult: $getChildrenResult, getCreatedByUserApiResult: $getCreatedByUserApiResult, updatedSharedEventApiResult: $updatedSharedEventApiResult, createdByUser: $createdByUser, userModel: $userModel, assignedUserList: $assignedUserList, childrenList: $childrenList)';
 }
 
 
@@ -307,7 +315,7 @@ abstract mixin class _$EventApprovalStateCopyWith<$Res> implements $EventApprova
   factory _$EventApprovalStateCopyWith(_EventApprovalState value, $Res Function(_EventApprovalState) _then) = __$EventApprovalStateCopyWithImpl;
 @override @useResult
 $Res call({
- String message, SharedEventModel? sharedEvent, ApiResultStatus getAssigneeApiResult, ApiResultStatus getChildrenResult, ApiResultStatus getCreatedByUserApiResult, ApiResultStatus updatedSharedEventApiResult, UserModel? createdByUser, UserModel? userModel, List<UserModel> assignedUserList, List<ChildModel> childrenList
+ String message, SharedEventModel? sharedEvent, ApiResultStatus<dynamic> getAssigneeApiResult, ApiResultStatus<dynamic> getChildrenResult, ApiResultStatus<dynamic> getCreatedByUserApiResult, ApiResultStatus<dynamic> updatedSharedEventApiResult, UserModel? createdByUser, UserModel? userModel, List<UserModel> assignedUserList, List<ChildModel> childrenList
 });
 
 
@@ -329,10 +337,10 @@ class __$EventApprovalStateCopyWithImpl<$Res>
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,sharedEvent: freezed == sharedEvent ? _self.sharedEvent : sharedEvent // ignore: cast_nullable_to_non_nullable
 as SharedEventModel?,getAssigneeApiResult: null == getAssigneeApiResult ? _self.getAssigneeApiResult : getAssigneeApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,getChildrenResult: null == getChildrenResult ? _self.getChildrenResult : getChildrenResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,getCreatedByUserApiResult: null == getCreatedByUserApiResult ? _self.getCreatedByUserApiResult : getCreatedByUserApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,updatedSharedEventApiResult: null == updatedSharedEventApiResult ? _self.updatedSharedEventApiResult : updatedSharedEventApiResult // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,createdByUser: freezed == createdByUser ? _self.createdByUser : createdByUser // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,getChildrenResult: null == getChildrenResult ? _self.getChildrenResult : getChildrenResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,getCreatedByUserApiResult: null == getCreatedByUserApiResult ? _self.getCreatedByUserApiResult : getCreatedByUserApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,updatedSharedEventApiResult: null == updatedSharedEventApiResult ? _self.updatedSharedEventApiResult : updatedSharedEventApiResult // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,createdByUser: freezed == createdByUser ? _self.createdByUser : createdByUser // ignore: cast_nullable_to_non_nullable
 as UserModel?,userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,assignedUserList: null == assignedUserList ? _self._assignedUserList : assignedUserList // ignore: cast_nullable_to_non_nullable
 as List<UserModel>,childrenList: null == childrenList ? _self._childrenList : childrenList // ignore: cast_nullable_to_non_nullable

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, debugPrint, defaultTargetPlatform;
+    show TargetPlatform, debugPrint, defaultTargetPlatform, kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleSignInManager {
@@ -19,9 +19,18 @@ class GoogleSignInManager {
   /// On Android, omit [serverClientId] so the plugin reads the Web client ID from
   /// `google-services.json` (avoids mismatch). Other platforms still pass it for Firebase ID tokens.
   Future<void> initialise() {
-    _initializationFuture ??= defaultTargetPlatform == TargetPlatform.android
-        ? signIn.initialize()
-        : signIn.initialize(serverClientId: _serverClientId);
+    if (_initializationFuture != null) return _initializationFuture!;
+
+    if (kIsWeb) {
+      _initializationFuture = signIn.initialize(clientId: _serverClientId);
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      _initializationFuture = signIn.initialize();
+    } else {
+      _initializationFuture = signIn.initialize(
+        clientId: _serverClientId,
+        serverClientId: _serverClientId,
+      );
+    }
     return _initializationFuture!;
   }
 

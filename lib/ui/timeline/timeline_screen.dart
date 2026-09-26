@@ -82,13 +82,10 @@ class _TimelineScreenState extends State<TimelineScreen> {
                         vertical: 12.h,
                       ),
                       itemCount: state.events.length,
-                      separatorBuilder: (_, __) => 10.h.spaceH,
+                      separatorBuilder: (_, _) => 10.h.spaceH,
                       itemBuilder: (BuildContext context, int index) {
                         final TimelineEventModel event = state.events[index];
-                        return _TimelineRow(
-                          event: event,
-                          childName: childName,
-                        );
+                        return _TimelineRow(event: event, childName: childName);
                       },
                     ),
             ),

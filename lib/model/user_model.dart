@@ -32,6 +32,8 @@ class UserModel {
     String? profileImage,
     bool? isActiveLogger,
     String? partnerUserId,
+    String? preferredLanguage,
+    String? location,
   }) {
     _uid = uid;
     _platform = platform;
@@ -63,6 +65,8 @@ class UserModel {
     _profileImage = profileImage;
     _isActiveLogger = isActiveLogger;
     _partnerUserId = partnerUserId;
+    _preferredLanguage = preferredLanguage;
+    _location = location;
   }
 
   UserModel.fromJson(
@@ -92,6 +96,9 @@ class UserModel {
     _profileImage = jsonObject['profile_image'];
     _isActiveLogger = jsonObject['is_active_logger'] as bool?;
     _partnerUserId = jsonObject['partner_user_id'] as String?;
+    _preferredLanguage = jsonObject['preferred_language']?.toString();
+    _location = jsonObject['location']?.toString();
+    _originalJson = jsonObject;
 
     try {
       if (fromConvert) {
@@ -259,6 +266,9 @@ class UserModel {
   String? _profileImage;
   bool? _isActiveLogger;
   String? _partnerUserId;
+  String? _preferredLanguage;
+  String? _location;
+  Map<String, dynamic>? _originalJson;
 
   UserModel copyWith({
     String? uid,
@@ -403,6 +413,9 @@ class UserModel {
   bool get isActiveLogger => _isActiveLogger ?? true;
 
   String? get partnerUserId => _partnerUserId;
+  String? get preferredLanguage => _preferredLanguage;
+  String? get location => _location;
+  Map<String, dynamic>? get jsonObject => _originalJson;
 
   Map<String, dynamic> toJson({
     bool forConvert = false,
@@ -435,6 +448,8 @@ class UserModel {
     map['profile_image'] = _profileImage;
     map['is_active_logger'] = _isActiveLogger;
     map['partner_user_id'] = _partnerUserId;
+    map['preferred_language'] = _preferredLanguage;
+    map['location'] = _location;
 
     try {
       if (forConvert) {

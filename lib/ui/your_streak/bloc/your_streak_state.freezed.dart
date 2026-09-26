@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'your_streak_state.dart';
@@ -9,6 +9,7 @@ part of 'your_streak_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $YourStreakStateCopyWith<YourStreakState> get copyWith => _$YourStreakStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is YourStreakState&&(identical(other.userModel, userModel) || other.userModel == userModel));
+  final _this = this as YourStreakState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is YourStreakState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel);
+int get hashCode {
+  final _this = this as YourStreakState;
+  return Object.hash(runtimeType,_this.userModel);
+}
 
 @override
 String toString() {
-  return 'YourStreakState(userModel: $userModel)';
+  final _this = this as YourStreakState;
+  return 'YourStreakState(userModel: ${_this.userModel})';
 }
 
 
@@ -63,7 +69,7 @@ class _$YourStreakStateCopyWithImpl<$Res>
 /// Create a copy of YourStreakState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(YourStreakState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,
   ));
@@ -221,16 +227,18 @@ _$YourStreakStateCopyWith<_YourStreakState> get copyWith => __$YourStreakStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _YourStreakState&&(identical(other.userModel, userModel) || other.userModel == userModel));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _YourStreakState&&(identical(other.userModel, userModel) || other.userModel == userModel));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel);
+int get hashCode {
+    return Object.hash(runtimeType,userModel);
+}
 
 @override
 String toString() {
-  return 'YourStreakState(userModel: $userModel)';
+    return 'YourStreakState(userModel: $userModel)';
 }
 
 

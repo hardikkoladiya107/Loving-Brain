@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'handover_state.dart';
@@ -9,12 +9,13 @@ part of 'handover_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HandoverState {
 
- UserModel? get userModel; ApiResultStatus get transferStatus;
+ UserModel? get userModel; ApiResultStatus<dynamic> get transferStatus;
 /// Create a copy of HandoverState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $HandoverStateCopyWith<HandoverState> get copyWith => _$HandoverStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HandoverState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.transferStatus, transferStatus) || other.transferStatus == transferStatus));
+  final _this = this as HandoverState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HandoverState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.transferStatus, _this.transferStatus) || other.transferStatus == _this.transferStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,transferStatus);
+int get hashCode {
+  final _this = this as HandoverState;
+  return Object.hash(runtimeType,_this.userModel,_this.transferStatus);
+}
 
 @override
 String toString() {
-  return 'HandoverState(userModel: $userModel, transferStatus: $transferStatus)';
+  final _this = this as HandoverState;
+  return 'HandoverState(userModel: ${_this.userModel}, transferStatus: ${_this.transferStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $HandoverStateCopyWith<$Res>  {
   factory $HandoverStateCopyWith(HandoverState value, $Res Function(HandoverState) _then) = _$HandoverStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, ApiResultStatus transferStatus
+ UserModel? userModel, ApiResultStatus<dynamic> transferStatus
 });
 
 
@@ -63,10 +69,10 @@ class _$HandoverStateCopyWithImpl<$Res>
 /// Create a copy of HandoverState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? transferStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(HandoverState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,transferStatus: null == transferStatus ? _self.transferStatus : transferStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of HandoverState
@@ -160,7 +166,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus transferStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus<dynamic> transferStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HandoverState() when $default != null:
 return $default(_that.userModel,_that.transferStatus);case _:
@@ -181,7 +187,7 @@ return $default(_that.userModel,_that.transferStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus transferStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  ApiResultStatus<dynamic> transferStatus)  $default,) {final _that = this;
 switch (_that) {
 case _HandoverState():
 return $default(_that.userModel,_that.transferStatus);case _:
@@ -201,7 +207,7 @@ return $default(_that.userModel,_that.transferStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus transferStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  ApiResultStatus<dynamic> transferStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _HandoverState() when $default != null:
 return $default(_that.userModel,_that.transferStatus);case _:
@@ -220,7 +226,7 @@ class _HandoverState implements HandoverState {
   
 
 @override final  UserModel? userModel;
-@override@JsonKey() final  ApiResultStatus transferStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> transferStatus;
 
 /// Create a copy of HandoverState
 /// with the given fields replaced by the non-null parameter values.
@@ -232,16 +238,18 @@ _$HandoverStateCopyWith<_HandoverState> get copyWith => __$HandoverStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HandoverState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.transferStatus, transferStatus) || other.transferStatus == transferStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HandoverState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.transferStatus, transferStatus) || other.transferStatus == transferStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,transferStatus);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,transferStatus);
+}
 
 @override
 String toString() {
-  return 'HandoverState(userModel: $userModel, transferStatus: $transferStatus)';
+    return 'HandoverState(userModel: $userModel, transferStatus: $transferStatus)';
 }
 
 
@@ -252,7 +260,7 @@ abstract mixin class _$HandoverStateCopyWith<$Res> implements $HandoverStateCopy
   factory _$HandoverStateCopyWith(_HandoverState value, $Res Function(_HandoverState) _then) = __$HandoverStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, ApiResultStatus transferStatus
+ UserModel? userModel, ApiResultStatus<dynamic> transferStatus
 });
 
 
@@ -273,7 +281,7 @@ class __$HandoverStateCopyWithImpl<$Res>
   return _then(_HandoverState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,transferStatus: null == transferStatus ? _self.transferStatus : transferStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 

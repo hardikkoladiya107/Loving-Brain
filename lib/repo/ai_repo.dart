@@ -1,11 +1,12 @@
-import 'dart:io';
 import 'dart:io' as io;
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/api_result_status.dart';
-import 'package:loving_brain/secrets.dart'; // Import secrets
 
-import '../model/ai_file_upload_model.dart';
+// import 'package:loving_brain/secrets.dart'; // Import secrets
+
 import '../model/transcribe_model.dart';
 
 class AiRepo {
@@ -13,7 +14,7 @@ class AiRepo {
 
   static final AiRepo _instance = AiRepo._();
 
-  static final String secretKey = "Bearer ${Secrets.openAiApiKey}";
+  static final String secretKey = "Bearer "; //${Secrets.openAiApiKey}";
 
   // Standard OpenAI Chat Completion Endpoint
   static final String chatUrl = "https://api.openai.com/v1/chat/completions";
@@ -100,7 +101,7 @@ class AiRepo {
     String? systemPrompt,
   }) async {
     try {
-      AiFileUploadModel? imageFileModel;
+      // AiFileUploadModel? imageFileModel;
       TranscribeModel? transcribeModel;
       String finalText = messageText;
 

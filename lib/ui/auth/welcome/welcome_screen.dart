@@ -1,18 +1,11 @@
-import 'dart:ui';
-
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/widget/base_button.dart';
-import 'package:flutter/gestures.dart';
 
 import '../../../gen/assets.gen.dart';
-import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -48,14 +41,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
               Spacer(),
               "Understand\npatterns.".appText(
-                textStyle: getTextStyle2(fontSize: 30, height: 0.8),
+                textStyle: getTextStyle(
+                  fraunces: true,
+                  fontSize: 30,
+                  height: 0.8,
+                ),
               ),
               10.spaceH,
               "Know what to try next.".appText(color: greyColor),
               24.spaceH,
-              AppButton(onTap: () {
-                context.push(RoutePaths.register);
-              }, title: "Get Started"),
+              AppButton(
+                onTap: () {
+                  context.push(RoutePaths.register);
+                },
+                title: "Get Started",
+              ),
               32.spaceH,
             ],
           ),

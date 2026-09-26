@@ -39,11 +39,11 @@ class AppBarGraph extends StatelessWidget {
 
     final maxValue = values.reduce((a, b) => a > b ? a : b);
     final maxIndex = values.indexOf(maxValue);
-    final chartHeight = height - maxValue; //
+    // final chartHeight = height - maxValue; //
     // because you used .padding(top: 50)
 
     // ✅ Convert data value → pixel offset
-    final barPixelHeight = (maxValue / 100) * chartHeight;
+    // final barPixelHeight = (maxValue / 100) * chartHeight;
     return SizedBox(
       height: height,
       child: Stack(

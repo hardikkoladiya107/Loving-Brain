@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -43,6 +44,9 @@ void notificationTapBackground(NotificationResponse? payload) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+  );
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

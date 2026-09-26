@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'daily_mood_log_state.dart';
@@ -9,12 +9,13 @@ part of 'daily_mood_log_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailyMoodLogState {
 
- UserModel? get userModel; List<MoodLogModel> get logs; ApiResultStatus get apiResultStatus; ApiResultStatus get logsApiResultStatus;
+ UserModel? get userModel; List<MoodLogModel> get logs; ApiResultStatus<dynamic> get apiResultStatus; ApiResultStatus<dynamic> get logsApiResultStatus;
 /// Create a copy of DailyMoodLogState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $DailyMoodLogStateCopyWith<DailyMoodLogState> get copyWith => _$DailyMoodLogStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyMoodLogState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.logs, logs)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.logsApiResultStatus, logsApiResultStatus) || other.logsApiResultStatus == logsApiResultStatus));
+  final _this = this as DailyMoodLogState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyMoodLogState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&const DeepCollectionEquality().equals(other.logs, _this.logs)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.logsApiResultStatus, _this.logsApiResultStatus) || other.logsApiResultStatus == _this.logsApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(logs),apiResultStatus,logsApiResultStatus);
+int get hashCode {
+  final _this = this as DailyMoodLogState;
+  return Object.hash(runtimeType,_this.userModel,const DeepCollectionEquality().hash(_this.logs),_this.apiResultStatus,_this.logsApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'DailyMoodLogState(userModel: $userModel, logs: $logs, apiResultStatus: $apiResultStatus, logsApiResultStatus: $logsApiResultStatus)';
+  final _this = this as DailyMoodLogState;
+  return 'DailyMoodLogState(userModel: ${_this.userModel}, logs: ${_this.logs}, apiResultStatus: ${_this.apiResultStatus}, logsApiResultStatus: ${_this.logsApiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $DailyMoodLogStateCopyWith<$Res>  {
   factory $DailyMoodLogStateCopyWith(DailyMoodLogState value, $Res Function(DailyMoodLogState) _then) = _$DailyMoodLogStateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? userModel, List<MoodLogModel> logs, ApiResultStatus apiResultStatus, ApiResultStatus logsApiResultStatus
+ UserModel? userModel, List<MoodLogModel> logs, ApiResultStatus<dynamic> apiResultStatus, ApiResultStatus<dynamic> logsApiResultStatus
 });
 
 
@@ -63,12 +69,12 @@ class _$DailyMoodLogStateCopyWithImpl<$Res>
 /// Create a copy of DailyMoodLogState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? logs = null,Object? apiResultStatus = null,Object? logsApiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(DailyMoodLogState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,logs: null == logs ? _self.logs : logs // ignore: cast_nullable_to_non_nullable
 as List<MoodLogModel>,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,logsApiResultStatus: null == logsApiResultStatus ? _self.logsApiResultStatus : logsApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,logsApiResultStatus: null == logsApiResultStatus ? _self.logsApiResultStatus : logsApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of DailyMoodLogState
@@ -171,7 +177,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  List<MoodLogModel> logs,  ApiResultStatus apiResultStatus,  ApiResultStatus logsApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? userModel,  List<MoodLogModel> logs,  ApiResultStatus<dynamic> apiResultStatus,  ApiResultStatus<dynamic> logsApiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DailyMoodLogState() when $default != null:
 return $default(_that.userModel,_that.logs,_that.apiResultStatus,_that.logsApiResultStatus);case _:
@@ -192,7 +198,7 @@ return $default(_that.userModel,_that.logs,_that.apiResultStatus,_that.logsApiRe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  List<MoodLogModel> logs,  ApiResultStatus apiResultStatus,  ApiResultStatus logsApiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? userModel,  List<MoodLogModel> logs,  ApiResultStatus<dynamic> apiResultStatus,  ApiResultStatus<dynamic> logsApiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _DailyMoodLogState():
 return $default(_that.userModel,_that.logs,_that.apiResultStatus,_that.logsApiResultStatus);case _:
@@ -212,7 +218,7 @@ return $default(_that.userModel,_that.logs,_that.apiResultStatus,_that.logsApiRe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  List<MoodLogModel> logs,  ApiResultStatus apiResultStatus,  ApiResultStatus logsApiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? userModel,  List<MoodLogModel> logs,  ApiResultStatus<dynamic> apiResultStatus,  ApiResultStatus<dynamic> logsApiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _DailyMoodLogState() when $default != null:
 return $default(_that.userModel,_that.logs,_that.apiResultStatus,_that.logsApiResultStatus);case _:
@@ -227,7 +233,7 @@ return $default(_that.userModel,_that.logs,_that.apiResultStatus,_that.logsApiRe
 
 
 class _DailyMoodLogState implements DailyMoodLogState {
-  const _DailyMoodLogState({this.userModel, final  List<MoodLogModel> logs = const [], this.apiResultStatus = const ApiResultStatus.initial(), this.logsApiResultStatus = const ApiResultStatus.initial()}): _logs = logs;
+  const _DailyMoodLogState({this.userModel,  List<MoodLogModel> logs = const [], this.apiResultStatus = const ApiResultStatus.initial(), this.logsApiResultStatus = const ApiResultStatus.initial()}): _logs = logs;
   
 
 @override final  UserModel? userModel;
@@ -238,8 +244,8 @@ class _DailyMoodLogState implements DailyMoodLogState {
   return EqualUnmodifiableListView(_logs);
 }
 
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
-@override@JsonKey() final  ApiResultStatus logsApiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> logsApiResultStatus;
 
 /// Create a copy of DailyMoodLogState
 /// with the given fields replaced by the non-null parameter values.
@@ -251,16 +257,18 @@ _$DailyMoodLogStateCopyWith<_DailyMoodLogState> get copyWith => __$DailyMoodLogS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyMoodLogState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other._logs, _logs)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.logsApiResultStatus, logsApiResultStatus) || other.logsApiResultStatus == logsApiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyMoodLogState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&const DeepCollectionEquality().equals(other.logs, _logs)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.logsApiResultStatus, logsApiResultStatus) || other.logsApiResultStatus == logsApiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(_logs),apiResultStatus,logsApiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,const DeepCollectionEquality().hash(_logs),apiResultStatus,logsApiResultStatus);
+}
 
 @override
 String toString() {
-  return 'DailyMoodLogState(userModel: $userModel, logs: $logs, apiResultStatus: $apiResultStatus, logsApiResultStatus: $logsApiResultStatus)';
+    return 'DailyMoodLogState(userModel: $userModel, logs: $logs, apiResultStatus: $apiResultStatus, logsApiResultStatus: $logsApiResultStatus)';
 }
 
 
@@ -271,7 +279,7 @@ abstract mixin class _$DailyMoodLogStateCopyWith<$Res> implements $DailyMoodLogS
   factory _$DailyMoodLogStateCopyWith(_DailyMoodLogState value, $Res Function(_DailyMoodLogState) _then) = __$DailyMoodLogStateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? userModel, List<MoodLogModel> logs, ApiResultStatus apiResultStatus, ApiResultStatus logsApiResultStatus
+ UserModel? userModel, List<MoodLogModel> logs, ApiResultStatus<dynamic> apiResultStatus, ApiResultStatus<dynamic> logsApiResultStatus
 });
 
 
@@ -293,8 +301,8 @@ class __$DailyMoodLogStateCopyWithImpl<$Res>
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,logs: null == logs ? _self._logs : logs // ignore: cast_nullable_to_non_nullable
 as List<MoodLogModel>,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,logsApiResultStatus: null == logsApiResultStatus ? _self.logsApiResultStatus : logsApiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,logsApiResultStatus: null == logsApiResultStatus ? _self.logsApiResultStatus : logsApiResultStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 

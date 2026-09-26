@@ -57,8 +57,7 @@ class SmartMomentContent {
   }) async {
     await _ensureLoaded();
     final Map<String, dynamic> root = _cachedRoot!;
-    final Map<String, dynamic> states =
-        root['states'] as Map<String, dynamic>;
+    final Map<String, dynamic> states = root['states'] as Map<String, dynamic>;
     final String stateKeyValue = stateKey(childState);
     final String band = ageBandKey(ageInMonths);
 

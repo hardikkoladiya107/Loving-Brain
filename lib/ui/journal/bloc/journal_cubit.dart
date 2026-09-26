@@ -105,10 +105,12 @@ class JournalCubit extends Cubit<JournalState> {
     milestonesResult.whenOrNull(
       data: (List<MilestoneModel> data) => milestones = data,
     );
-    final Set<int> unlockedChapters =
-        MilestoneRepo.unlockedChaptersFrom(milestones);
-    final bool exportUnlocked =
-        MilestoneRepo.isExportUnlocked(unlockedChapters);
+    final Set<int> unlockedChapters = MilestoneRepo.unlockedChaptersFrom(
+      milestones,
+    );
+    final bool exportUnlocked = MilestoneRepo.isExportUnlocked(
+      unlockedChapters,
+    );
     final ChildState? childState = state.childModel?.childState;
     final int score = ReadinessScore.calculate(
       moodLoggedToday: state.moodLoggedToday,
@@ -141,8 +143,9 @@ class JournalCubit extends Cubit<JournalState> {
 
   Future<double> _lastNightSleepHours(String childId) async {
     final DateTime today = DateTime.now();
-    final ApiResultStatus<List<SleepLogModel>> result =
-        await SleepLogRepo.instance.getSleepLogsForChild(
+    final ApiResultStatus<List<SleepLogModel>> result = await SleepLogRepo
+        .instance
+        .getSleepLogsForChild(
           childId,
           fromInclusive: today.subtract(const Duration(days: 2)),
           toInclusive: today,

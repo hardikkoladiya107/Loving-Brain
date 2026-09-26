@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'onboarding_snapshot_state.dart';
@@ -9,12 +9,13 @@ part of 'onboarding_snapshot_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OnboardingSnapshotState {
 
- ApiResultStatus get status;
+ ApiResultStatus<dynamic> get status;
 /// Create a copy of OnboardingSnapshotState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $OnboardingSnapshotStateCopyWith<OnboardingSnapshotState> get copyWith => _$Onbo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingSnapshotState&&(identical(other.status, status) || other.status == status));
+  final _this = this as OnboardingSnapshotState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingSnapshotState&&(identical(other.status, _this.status) || other.status == _this.status));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status);
+int get hashCode {
+  final _this = this as OnboardingSnapshotState;
+  return Object.hash(runtimeType,_this.status);
+}
 
 @override
 String toString() {
-  return 'OnboardingSnapshotState(status: $status)';
+  final _this = this as OnboardingSnapshotState;
+  return 'OnboardingSnapshotState(status: ${_this.status})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $OnboardingSnapshotStateCopyWith<$Res>  {
   factory $OnboardingSnapshotStateCopyWith(OnboardingSnapshotState value, $Res Function(OnboardingSnapshotState) _then) = _$OnboardingSnapshotStateCopyWithImpl;
 @useResult
 $Res call({
- ApiResultStatus status
+ ApiResultStatus<dynamic> status
 });
 
 
@@ -63,9 +69,9 @@ class _$OnboardingSnapshotStateCopyWithImpl<$Res>
 /// Create a copy of OnboardingSnapshotState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,}) {
-  return _then(_self.copyWith(
+  return _then(OnboardingSnapshotState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of OnboardingSnapshotState
@@ -159,7 +165,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ApiResultStatus status)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ApiResultStatus<dynamic> status)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingSnapshotState() when $default != null:
 return $default(_that.status);case _:
@@ -180,7 +186,7 @@ return $default(_that.status);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ApiResultStatus status)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ApiResultStatus<dynamic> status)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingSnapshotState():
 return $default(_that.status);case _:
@@ -200,7 +206,7 @@ return $default(_that.status);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ApiResultStatus status)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ApiResultStatus<dynamic> status)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingSnapshotState() when $default != null:
 return $default(_that.status);case _:
@@ -218,7 +224,7 @@ class _OnboardingSnapshotState implements OnboardingSnapshotState {
   const _OnboardingSnapshotState({this.status = const ApiResultStatus.initial()});
   
 
-@override@JsonKey() final  ApiResultStatus status;
+@override@JsonKey() final  ApiResultStatus<dynamic> status;
 
 /// Create a copy of OnboardingSnapshotState
 /// with the given fields replaced by the non-null parameter values.
@@ -230,16 +236,18 @@ _$OnboardingSnapshotStateCopyWith<_OnboardingSnapshotState> get copyWith => __$O
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingSnapshotState&&(identical(other.status, status) || other.status == status));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingSnapshotState&&(identical(other.status, status) || other.status == status));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,status);
+int get hashCode {
+    return Object.hash(runtimeType,status);
+}
 
 @override
 String toString() {
-  return 'OnboardingSnapshotState(status: $status)';
+    return 'OnboardingSnapshotState(status: $status)';
 }
 
 
@@ -250,7 +258,7 @@ abstract mixin class _$OnboardingSnapshotStateCopyWith<$Res> implements $Onboard
   factory _$OnboardingSnapshotStateCopyWith(_OnboardingSnapshotState value, $Res Function(_OnboardingSnapshotState) _then) = __$OnboardingSnapshotStateCopyWithImpl;
 @override @useResult
 $Res call({
- ApiResultStatus status
+ ApiResultStatus<dynamic> status
 });
 
 
@@ -270,7 +278,7 @@ class __$OnboardingSnapshotStateCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? status = null,}) {
   return _then(_OnboardingSnapshotState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 

@@ -164,4 +164,28 @@ class RegisterCubit extends Cubit<RegisterState> {
       isEmailChecking: false,
     );
   }
+
+  Future<void> sendOtp() async {
+    final String email = state.emailAddress.trim();
+    if (email.isEmpty) {
+      changeProps(emailAddressError: LocaleKeys.pleaseEnterEmailAddress.tr());
+      return;
+    }
+    if (!email.isValidEmail) {
+      changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
+      return;
+    }
+
+    changeProps(
+      emailAddressError: '',
+      apiResultStatus: ApiResultStatus.loading(),
+      isAuthSubmitting: true,
+    );
+
+    final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
+      email: email,
+    );
+
+    changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
+  }
 }

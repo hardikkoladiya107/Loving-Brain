@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -766,6 +767,90 @@ class AuthRepo {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
+    }
+  }
+  // ---------------------------------------------------------------------------
+  // OTP Passwordless Authentication
+  // ---------------------------------------------------------------------------
+
+  Future<ApiResultStatus> sendEmailOtp({required String email}) async {
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'sendEmailOtp',
+      );
+      final response = await callable.call(<String, dynamic>{
+        'email': email.trim(),
+      });
+      return ApiResultStatus.data(data: response.data);
+    } on FirebaseFunctionsException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? 'Failed to send OTP'),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception('Something went wrong'));
+    }
+  }
+
+  Future<ApiResultStatus> verifyEmailOtp({
+    required String email,
+    required String otpCode,
+  }) async {
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'verifyEmailOtp',
+      );
+      final response = await callable.call(<String, dynamic>{
+        'email': email.trim(),
+        'otp': otpCode.trim(),
+      });
+
+      final String? token = response.data['token'];
+      if (token == null) {
+        return ApiResultStatus.error(
+          error: Exception('Failed to retrieve authentication token.'),
+        );
+      }
+
+      final UserCredential credential = await FirebaseAuth.instance
+          .signInWithCustomToken(token);
+
+      if (credential.user != null) {
+        UserModel? userModel = await getUserFromUid(
+          uId: credential.user!.uid,
+        );
+        
+        if (userModel == null) {
+          // If the user doesn't exist in Firestore, this is a new registration.
+          await addUserToFireStore(
+            uId: credential.user!.uid,
+            request: {
+              "uid": credential.user!.uid,
+              "display_name": credential.user!.displayName ?? email.split('@')[0],
+              "email": email,
+              "is_google_sign_in": false,
+              "is_apple_in": false,
+              "streak": 0,
+              "last_opened": DateTime.now(),
+            },
+          );
+          userModel = await getUserFromUid(uId: credential.user!.uid);
+          
+          if (userModel == null) {
+            return ApiResultStatus.error(error: Exception('Failed to create user account.'));
+          }
+        }
+        
+        await preferences.saveUserModel(userModel);
+        return ApiResultStatus.data(data: userModel.toJson());
+      } else {
+        return ApiResultStatus.error(error: Exception('User not found'));
+      }
+    } on FirebaseFunctionsException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? 'Invalid OTP'),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception('Something went wrong'));
     }
   }
 }

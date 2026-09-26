@@ -45,7 +45,9 @@ class ChapterBookPdfExporter {
     );
 
     final Directory tempDir = await getTemporaryDirectory();
-    final String safeName = childName.replaceAll(RegExp(r'[^\w\s-]'), '').trim();
+    final String safeName = childName
+        .replaceAll(RegExp(r'[^\w\s-]'), '')
+        .trim();
     final String filePath =
         '${tempDir.path}/lovingbrain_chapter_book_${safeName}_${DateTime.now().millisecondsSinceEpoch}.pdf';
     final File file = File(filePath);
@@ -62,21 +64,13 @@ class ChapterBookPdfExporter {
       if (chapterItems.isEmpty) {
         continue;
       }
-      widgets.add(
-        pw.Header(
-          level: 1,
-          child: pw.Text('Chapter $chapter'),
-        ),
-      );
+      widgets.add(pw.Header(level: 1, child: pw.Text('Chapter $chapter')));
       for (final MilestoneModel milestone in chapterItems) {
         widgets.add(pw.SizedBox(height: 8));
         widgets.add(
           pw.Text(
             milestone.title,
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-            ),
+            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
           ),
         );
         widgets.add(

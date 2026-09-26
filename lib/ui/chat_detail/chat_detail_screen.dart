@@ -1,5 +1,5 @@
-import 'package:go_router/go_router.dart';
 import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:gpt_markdown/gpt_markdown.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -19,6 +20,7 @@ import 'package:loving_brain/ui/widget/app_dropdown.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../main.dart';
@@ -61,7 +63,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       builder: (context, state) {
         if (textEditingController.text != state.chatText) {
           textEditingController.value = textEditingController.value.copyWith(
-            text: state.chatText ?? '',
+            text: state.chatText,
             selection: textEditingController.selection,
           );
         }
@@ -865,15 +867,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 overlayShape: SliderComponentShape.noOverlay,
                 trackShape: const RoundedRectSliderTrackShape(),
                 activeTrackColor: cardColor2,
-                inactiveTrackColor: greyColor3,
+                inactiveTrackColor: greyColor6,
               ),
               child: Slider(
                 value: state.currentPlayingItem == chatReferenceId
-                    ? (state.currentAudioDuration.inMilliseconds ?? 0)
-                          .toDouble()
+                    ? (state.currentAudioDuration.inMilliseconds).toDouble()
                     : 0,
                 max: state.currentPlayingItem == chatReferenceId
-                    ? (state.totalAudioDuration.inMilliseconds ?? 0).toDouble()
+                    ? (state.totalAudioDuration.inMilliseconds).toDouble()
                     : 0,
                 min: 0,
                 onChanged: (value) {

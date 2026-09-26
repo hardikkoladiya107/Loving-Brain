@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'ai_chat_state.dart';
@@ -9,6 +9,7 @@ part of 'ai_chat_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AiChatStateCopyWith<AiChatState> get copyWith => _$AiChatStateCopyWithImpl<AiCh
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiChatState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.chatText, chatText) || other.chatText == chatText));
+  final _this = this as AiChatState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AiChatState&&(identical(other.userModel, _this.userModel) || other.userModel == _this.userModel)&&(identical(other.chatText, _this.chatText) || other.chatText == _this.chatText));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,chatText);
+int get hashCode {
+  final _this = this as AiChatState;
+  return Object.hash(runtimeType,_this.userModel,_this.chatText);
+}
 
 @override
 String toString() {
-  return 'AiChatState(userModel: $userModel, chatText: $chatText)';
+  final _this = this as AiChatState;
+  return 'AiChatState(userModel: ${_this.userModel}, chatText: ${_this.chatText})';
 }
 
 
@@ -63,7 +69,7 @@ class _$AiChatStateCopyWithImpl<$Res>
 /// Create a copy of AiChatState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? userModel = freezed,Object? chatText = null,}) {
-  return _then(_self.copyWith(
+  return _then(AiChatState(
 userModel: freezed == userModel ? _self.userModel : userModel // ignore: cast_nullable_to_non_nullable
 as UserModel?,chatText: null == chatText ? _self.chatText : chatText // ignore: cast_nullable_to_non_nullable
 as String,
@@ -223,16 +229,18 @@ _$AiChatStateCopyWith<_AiChatState> get copyWith => __$AiChatStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiChatState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.chatText, chatText) || other.chatText == chatText));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AiChatState&&(identical(other.userModel, userModel) || other.userModel == userModel)&&(identical(other.chatText, chatText) || other.chatText == chatText));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,userModel,chatText);
+int get hashCode {
+    return Object.hash(runtimeType,userModel,chatText);
+}
 
 @override
 String toString() {
-  return 'AiChatState(userModel: $userModel, chatText: $chatText)';
+    return 'AiChatState(userModel: $userModel, chatText: $chatText)';
 }
 
 

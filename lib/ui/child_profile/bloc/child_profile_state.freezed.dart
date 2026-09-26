@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'child_profile_state.dart';
@@ -9,12 +9,13 @@ part of 'child_profile_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChildProfileState {
 
- String get childName; String get childNameError; DateTime? get childDob; String get childDobError; ApiResultStatus get apiResultStatus;
+ String get childName; String get childNameError; DateTime? get childDob; String get childDobError; ApiResultStatus<dynamic> get apiResultStatus;
 /// Create a copy of ChildProfileState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,21 @@ $ChildProfileStateCopyWith<ChildProfileState> get copyWith => _$ChildProfileStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChildProfileState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.childNameError, childNameError) || other.childNameError == childNameError)&&(identical(other.childDob, childDob) || other.childDob == childDob)&&(identical(other.childDobError, childDobError) || other.childDobError == childDobError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
+  final _this = this as ChildProfileState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChildProfileState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.childNameError, _this.childNameError) || other.childNameError == _this.childNameError)&&(identical(other.childDob, _this.childDob) || other.childDob == _this.childDob)&&(identical(other.childDobError, _this.childDobError) || other.childDobError == _this.childDobError)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,childName,childNameError,childDob,childDobError,apiResultStatus);
+int get hashCode {
+  final _this = this as ChildProfileState;
+  return Object.hash(runtimeType,_this.childName,_this.childNameError,_this.childDob,_this.childDobError,_this.apiResultStatus);
+}
 
 @override
 String toString() {
-  return 'ChildProfileState(childName: $childName, childNameError: $childNameError, childDob: $childDob, childDobError: $childDobError, apiResultStatus: $apiResultStatus)';
+  final _this = this as ChildProfileState;
+  return 'ChildProfileState(childName: ${_this.childName}, childNameError: ${_this.childNameError}, childDob: ${_this.childDob}, childDobError: ${_this.childDobError}, apiResultStatus: ${_this.apiResultStatus})';
 }
 
 
@@ -45,7 +51,7 @@ abstract mixin class $ChildProfileStateCopyWith<$Res>  {
   factory $ChildProfileStateCopyWith(ChildProfileState value, $Res Function(ChildProfileState) _then) = _$ChildProfileStateCopyWithImpl;
 @useResult
 $Res call({
- String childName, String childNameError, DateTime? childDob, String childDobError, ApiResultStatus apiResultStatus
+ String childName, String childNameError, DateTime? childDob, String childDobError, ApiResultStatus<dynamic> apiResultStatus
 });
 
 
@@ -63,13 +69,13 @@ class _$ChildProfileStateCopyWithImpl<$Res>
 /// Create a copy of ChildProfileState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? childNameError = null,Object? childDob = freezed,Object? childDobError = null,Object? apiResultStatus = null,}) {
-  return _then(_self.copyWith(
+  return _then(ChildProfileState(
 childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,childNameError: null == childNameError ? _self.childNameError : childNameError // ignore: cast_nullable_to_non_nullable
 as String,childDob: freezed == childDob ? _self.childDob : childDob // ignore: cast_nullable_to_non_nullable
 as DateTime?,childDobError: null == childDobError ? _self.childDobError : childDobError // ignore: cast_nullable_to_non_nullable
 as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of ChildProfileState
@@ -163,7 +169,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  String childNameError,  DateTime? childDob,  String childDobError,  ApiResultStatus apiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  String childNameError,  DateTime? childDob,  String childDobError,  ApiResultStatus<dynamic> apiResultStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChildProfileState() when $default != null:
 return $default(_that.childName,_that.childNameError,_that.childDob,_that.childDobError,_that.apiResultStatus);case _:
@@ -184,7 +190,7 @@ return $default(_that.childName,_that.childNameError,_that.childDob,_that.childD
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  String childNameError,  DateTime? childDob,  String childDobError,  ApiResultStatus apiResultStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  String childNameError,  DateTime? childDob,  String childDobError,  ApiResultStatus<dynamic> apiResultStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ChildProfileState():
 return $default(_that.childName,_that.childNameError,_that.childDob,_that.childDobError,_that.apiResultStatus);case _:
@@ -204,7 +210,7 @@ return $default(_that.childName,_that.childNameError,_that.childDob,_that.childD
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  String childNameError,  DateTime? childDob,  String childDobError,  ApiResultStatus apiResultStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  String childNameError,  DateTime? childDob,  String childDobError,  ApiResultStatus<dynamic> apiResultStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ChildProfileState() when $default != null:
 return $default(_that.childName,_that.childNameError,_that.childDob,_that.childDobError,_that.apiResultStatus);case _:
@@ -226,7 +232,7 @@ class _ChildProfileState implements ChildProfileState {
 @override@JsonKey() final  String childNameError;
 @override final  DateTime? childDob;
 @override@JsonKey() final  String childDobError;
-@override@JsonKey() final  ApiResultStatus apiResultStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> apiResultStatus;
 
 /// Create a copy of ChildProfileState
 /// with the given fields replaced by the non-null parameter values.
@@ -238,16 +244,18 @@ _$ChildProfileStateCopyWith<_ChildProfileState> get copyWith => __$ChildProfileS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChildProfileState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.childNameError, childNameError) || other.childNameError == childNameError)&&(identical(other.childDob, childDob) || other.childDob == childDob)&&(identical(other.childDobError, childDobError) || other.childDobError == childDobError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChildProfileState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.childNameError, childNameError) || other.childNameError == childNameError)&&(identical(other.childDob, childDob) || other.childDob == childDob)&&(identical(other.childDobError, childDobError) || other.childDobError == childDobError)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,childName,childNameError,childDob,childDobError,apiResultStatus);
+int get hashCode {
+    return Object.hash(runtimeType,childName,childNameError,childDob,childDobError,apiResultStatus);
+}
 
 @override
 String toString() {
-  return 'ChildProfileState(childName: $childName, childNameError: $childNameError, childDob: $childDob, childDobError: $childDobError, apiResultStatus: $apiResultStatus)';
+    return 'ChildProfileState(childName: $childName, childNameError: $childNameError, childDob: $childDob, childDobError: $childDobError, apiResultStatus: $apiResultStatus)';
 }
 
 
@@ -258,7 +266,7 @@ abstract mixin class _$ChildProfileStateCopyWith<$Res> implements $ChildProfileS
   factory _$ChildProfileStateCopyWith(_ChildProfileState value, $Res Function(_ChildProfileState) _then) = __$ChildProfileStateCopyWithImpl;
 @override @useResult
 $Res call({
- String childName, String childNameError, DateTime? childDob, String childDobError, ApiResultStatus apiResultStatus
+ String childName, String childNameError, DateTime? childDob, String childDobError, ApiResultStatus<dynamic> apiResultStatus
 });
 
 
@@ -282,7 +290,7 @@ as String,childNameError: null == childNameError ? _self.childNameError : childN
 as String,childDob: freezed == childDob ? _self.childDob : childDob // ignore: cast_nullable_to_non_nullable
 as DateTime?,childDobError: null == childDobError ? _self.childDobError : childDobError // ignore: cast_nullable_to_non_nullable
 as String,apiResultStatus: null == apiResultStatus ? _self.apiResultStatus : apiResultStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus,
+as ApiResultStatus<dynamic>,
   ));
 }
 
