@@ -35,12 +35,11 @@ class TonightsPlanScreen extends StatelessWidget {
                         16.spaceH,
                         _buildTimelineCard(),
                         16.spaceH,
-                        _buildInfoCard(),
+                        _buildInfoCard(state),
                         16.spaceH,
                       ],
                     ),
                   ),
-
                   Row(
                     children: [
                       Expanded(
@@ -136,7 +135,6 @@ class TonightsPlanScreen extends StatelessWidget {
             textAlign: TextAlign.start,
           ),
         ),
-
         SafeArea(bottom: false, child: 160.spaceH),
       ],
     );
@@ -156,7 +154,6 @@ class TonightsPlanScreen extends StatelessWidget {
         children: [
           const InfoChip(
             chipTitle: "About 50 minutes",
-
             color: primaryColor,
             bgColor: orangeLightColor,
           ),
@@ -257,7 +254,7 @@ class TonightsPlanScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard() {
+  Widget _buildInfoCard(TonightsPlanState state) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
@@ -269,9 +266,8 @@ class TonightsPlanScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const InfoChip(
-            chipTitle: "If Ira resists",
-
+          InfoChip(
+            chipTitle: "If ${state.childName} resists",
             color: primaryColor,
             bgColor: orangeLightColor,
           ),
@@ -286,7 +282,6 @@ class TonightsPlanScreen extends StatelessWidget {
               .appText(
                 fontSize: 14.sp,
                 color: greyColor,
-
                 textAlign: TextAlign.start,
               ),
         ],

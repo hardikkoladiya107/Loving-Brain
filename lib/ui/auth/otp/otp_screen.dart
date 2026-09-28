@@ -5,11 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_otp_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -43,12 +44,20 @@ class _OtpScreenState extends State<OtpScreen> {
         state.verifyStatus.whenOrNull(
           loading: () {
             EasyLoading.show();
-          },
-          data: (dynamic _) {
+          },````````````````````````````````````````````
+          data: (dynamic data) async {
             EasyLoading.dismiss();
-            // Navigation is handled in onSuccess callback
+            if (data == null) return;
+            final UserModel userModel =
+                preferences.getUserModel() ??
+                UserModel.fromJson(data as Map<String, dynamic>);
+            final GoRouter router = GoRouter.of(context);
+            if (!userModel.isOnboardingCompleted) {
+              router.go(RoutePaths.onboarding);
+            } else {
+              router.go(RoutePaths.base);
+            }
           },
-
           error: (Exception error) {
             EasyLoading.dismiss();
             showSnackBar(
@@ -81,7 +90,7 @@ class _OtpScreenState extends State<OtpScreen> {
       builder: (BuildContext context, OtpState state) {
         final String subtitle = state.destination.isNotEmpty
             ? "We’ve sent a 4 digit verification code to ${state.destination}."
-            : "We’ve sent a 4 digit verification code to your mobile number.";
+            : "We’ve sent a 4 digit verification code to your email.";
 
         return Container(
           decoration: BoxDecoration(
@@ -136,8 +145,21 @@ class _OtpScreenState extends State<OtpScreen> {
                         .appPadding(left: 20.r, right: 20.r),
                   ],
                   16.spaceH,
-                  "Retry in 10s".appText().appPadding(left: 20.r, right: 20.r),
-                  "Kindly check if mobile number entered is correct"
+                  if (state.canResend)
+                    BaseButton(
+                      onTap: () => context.read<OtpCubit>().resendOtp(),
+                      child: "Resend OTP"
+                          .appText(
+                            fontWeight: FontWeight.w700,
+                            color: secondaryColor,
+                          )
+                          .appPadding(left: 20.r, right: 20.r),
+                    )
+                  else
+                    "Retry in ${state.resendCountdown}s"
+                        .appText()
+                        .appPadding(left: 20.r, right: 20.r),
+                  "Kindly check if email entered is correct"
                       .appText(
                         textAlign: TextAlign.start,
                         color: greyColor6,
@@ -149,12 +171,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     onTap: () {
                       FocusScope.of(context).unfocus();
                       context.read<OtpCubit>().verifyOtp(
-                        onSuccess: () {
-                          context.go(RoutePaths.onboarding);
-                        },
+                        onSuccess: () {},
                       );
                     },
-
                     title: "Continue",
                     isLoading: state.isSubmitting,
                   ),

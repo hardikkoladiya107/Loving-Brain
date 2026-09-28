@@ -12,6 +12,7 @@ abstract class ChildProfileV2State with _$ChildProfileV2State {
     @Default('') String age,
     @Default('') String conditions,
     @Default('') String dob,
+    DateTime? childDob,
     @Default('') String concerns,
     @Default('') String location,
     @Default(ApiResultStatus<String>.initial()) ApiResultStatus<String> saveStatus,

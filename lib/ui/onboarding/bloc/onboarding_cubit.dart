@@ -1,18 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/age_utils.dart';
+import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/auth_repo.dart';
 
 import '../../../../model/api_result_status.dart';
 import 'onboarding_state.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:loving_brain/repo/auth_repo.dart';
-import 'package:loving_brain/other/preferances.dart';
-import 'package:loving_brain/model/user_model.dart';
-import 'package:loving_brain/model/child_model.dart';
 
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit() : super(const OnboardingState());
 
   void init() {
-    emit(const OnboardingState());
+    final UserModel? user = preferences.getUserModel();
+    final String initialParentName =
+        (user?.parentName != null && user!.parentName!.trim().isNotEmpty)
+        ? user.parentName!.trim()
+        : '';
+    emit(OnboardingState(parentName: initialParentName));
   }
 
   void changeProps({
@@ -50,6 +56,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     String? difficultTimesError,
     List<String>? possibleTriggers,
     String? possibleTriggersError,
+    String? activeTimeField,
     ApiResultStatus? completeStatus,
   }) {
     emit(
@@ -66,7 +73,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         parentRole: parentRole ?? state.parentRole,
         parentRoleError: parentRoleError ?? state.parentRoleError,
         preferredLanguage: preferredLanguage ?? state.preferredLanguage,
-        preferredLanguageError: preferredLanguageError ?? state.preferredLanguageError,
+        preferredLanguageError:
+            preferredLanguageError ?? state.preferredLanguageError,
         location: location ?? state.location,
         primaryConcern: primaryConcern ?? state.primaryConcern,
         concerns: concerns ?? state.concerns,
@@ -88,15 +96,17 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         difficultTimes: difficultTimes ?? state.difficultTimes,
         difficultTimesError: difficultTimesError ?? state.difficultTimesError,
         possibleTriggers: possibleTriggers ?? state.possibleTriggers,
-        possibleTriggersError: possibleTriggersError ?? state.possibleTriggersError,
-        completeStatus: completeStatus ?? ApiResultStatus.initial(),
+        possibleTriggersError:
+            possibleTriggersError ?? state.possibleTriggersError,
+        activeTimeField: activeTimeField ?? state.activeTimeField,
+        completeStatus: completeStatus ?? const ApiResultStatus.initial(),
       ),
     );
   }
 
   bool validateCurrentPage() {
     bool isValid = true;
-    
+
     // Reset errors first
     changeProps(
       parentNameError: "",
@@ -117,7 +127,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
     switch (state.currentPage) {
       case 0:
-        if (state.parentName.isEmpty) {
+        if (state.parentName.trim().isEmpty) {
           changeProps(parentNameError: "Please enter your name");
           isValid = false;
         }
@@ -126,7 +136,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
           isValid = false;
         }
         if (state.preferredLanguage.isEmpty) {
-          changeProps(preferredLanguageError: "Please select preferred language");
+          changeProps(
+            preferredLanguageError: "Please select preferred language",
+          );
           isValid = false;
         }
         if (state.location.isEmpty) {
@@ -147,7 +159,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         }
         break;
       case 3:
-        if (state.childName.isEmpty) {
+        if (state.childName.trim().isEmpty) {
           changeProps(childNameError: "Please enter child's name");
           isValid = false;
         }
@@ -176,16 +188,20 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         break;
       case 5:
         if (state.difficultTimes.isEmpty) {
-          changeProps(difficultTimesError: "Please select at least one difficult time");
+          changeProps(
+            difficultTimesError: "Please select at least one difficult time",
+          );
           isValid = false;
         }
         if (state.possibleTriggers.isEmpty) {
-          changeProps(possibleTriggersError: "Please select at least one trigger");
+          changeProps(
+            possibleTriggersError: "Please select at least one trigger",
+          );
           isValid = false;
         }
         break;
     }
-    
+
     return isValid;
   }
 
@@ -194,19 +210,19 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void updateParentName(String name) {
-    changeProps(parentName: name);
+    changeProps(parentName: name, parentNameError: "");
   }
 
   void selectParentRole(String role) {
-    changeProps(parentRole: role);
+    changeProps(parentRole: role, parentRoleError: "");
   }
 
   void selectPreferredLanguage(String language) {
-    changeProps(preferredLanguage: language);
+    changeProps(preferredLanguage: language, preferredLanguageError: "");
   }
 
   void updateLocation(String location) {
-    changeProps(location: location);
+    changeProps(location: location, locationError: "");
   }
 
   void selectConcern(String concern) {
@@ -222,9 +238,14 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       changeProps(
         concerns: updated,
         primaryConcern: updated.isNotEmpty ? updated.first : concern,
+        concernsError: "",
       );
     } else {
-      changeProps(primaryConcern: concern, concerns: <String>[concern]);
+      changeProps(
+        primaryConcern: concern,
+        concerns: <String>[concern],
+        concernsError: "",
+      );
     }
   }
 
@@ -234,7 +255,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void selectSuccessGoal(String goal) {
-    changeProps(successGoal: goal);
+    changeProps(successGoal: goal, successGoalError: "");
   }
 
   void updateChildName(String name) {
@@ -249,12 +270,24 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     changeProps(childGender: gender, childGenderError: "");
   }
 
+  void setActiveTimeField(String field) {
+    changeProps(activeTimeField: field);
+  }
+
   void updateWakeTime(String time) {
-    changeProps(usualWakeTime: time, usualWakeTimeError: "");
+    changeProps(
+      usualWakeTime: time,
+      usualWakeTimeError: "",
+      activeTimeField: 'wake',
+    );
   }
 
   void updateBedtime(String time) {
-    changeProps(usualBedtime: time, usualBedtimeError: "");
+    changeProps(
+      usualBedtime: time,
+      usualBedtimeError: "",
+      activeTimeField: 'bed',
+    );
   }
 
   void updateUsualNaps(int delta) {
@@ -287,49 +320,79 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   Future<void> completeOnboarding() async {
-    changeProps(completeStatus: ApiResultStatus.loading());
+    changeProps(completeStatus: const ApiResultStatus.loading());
     try {
-      final user = preferences.getUserModel();
+      final UserModel? user = preferences.getUserModel();
       if (user == null || user.uid == null) {
         throw Exception("User not found. Please log in again.");
       }
 
-      final firestore = FirebaseFirestore.instance;
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      final int ageInMonths = AgeUtils.resolvedAgeInMonths(
+        dob: state.childDob,
+        legacyAgeText: '',
+      );
+      final String computedChildAge = AgeUtils.ageLabelFromMonths(ageInMonths);
 
-      // 1. Create Child Document
-      final childDoc = firestore.collection('children').doc();
-      final childModel = ChildModel(
-        childName: state.childName.isNotEmpty ? state.childName : null,
+      // 1. Create Child Document with full onboarding details
+      final DocumentReference<Map<String, dynamic>> childDoc =
+          firestore.collection('children').doc();
+      final ChildModel childModel = ChildModel(
+        childName: state.childName.trim().isNotEmpty
+            ? state.childName.trim()
+            : null,
         childDob: state.childDob,
+        childAge: computedChildAge.isNotEmpty ? computedChildAge : null,
+        childGender: state.childGender.isNotEmpty ? state.childGender : null,
         relationshipToChild: state.parentRole.isNotEmpty
             ? state.parentRole
             : null,
-        parentReferenceIds: [user.uid!],
+        parentReferenceIds: <String>[user.uid!],
+        reference: childDoc,
+        concerns: state.concerns,
+        primaryConcern: state.primaryConcern.isNotEmpty
+            ? state.primaryConcern
+            : (state.concerns.isNotEmpty ? state.concerns.first : null),
+        successGoal: state.successGoal.isNotEmpty ? state.successGoal : null,
+        usualWakeTime: state.usualWakeTime.isNotEmpty
+            ? state.usualWakeTime
+            : null,
+        usualBedtime: state.usualBedtime.isNotEmpty
+            ? state.usualBedtime
+            : null,
+        usualNaps: state.usualNaps.toString(),
+        nightWakings: state.nightWakings.isNotEmpty
+            ? state.nightWakings
+            : null,
+        difficultTimes: state.difficultTimes,
+        possibleTriggers: state.possibleTriggers,
+        location: state.location.isNotEmpty ? state.location : null,
       );
       await childDoc.set(childModel.toJson());
 
-      // 2. Update User Document
-      final updatedUser = user.toJson();
-      updatedUser['parent_name'] = state.parentName;
-      updatedUser['relationship_to_child'] = state.parentRole;
-      updatedUser['children'] = [childDoc.path];
-      updatedUser['default_child'] = childDoc.path;
+      // 2. Update User Document in Firestore
+      final Map<String, dynamic> userUpdate = <String, dynamic>{
+        'parent_name': state.parentName.trim(),
+        'relationship_to_child': state.parentRole,
+        'preferred_language': state.preferredLanguage,
+        'location': state.location,
+        'child_name': state.childName.trim(),
+        'child_age': computedChildAge,
+        'children': <DocumentReference>[childDoc],
+        'default_child': childDoc,
+        'is_onboarding_completed': true,
+      };
 
       await AuthRepo.instance.updateUserToFireStore(
         uId: user.uid,
-        request: updatedUser,
+        request: userUpdate,
       );
 
-      // Update local storage
-      final newUserModel = await AuthRepo.instance.getUserFromUid(
-        uId: user.uid!,
-      );
-      if (newUserModel != null) {
-        await preferences.saveUserModel(newUserModel);
-        await preferences.saveChildModel(childModel);
-      }
+      // 3. Sync User & Child models into local SharedPreferences
+      await AuthRepo.instance.syncUserAndDefaultChild(uId: user.uid!);
+      await preferences.saveDefaultChildModel(childModel);
 
-      changeProps(completeStatus: ApiResultStatus.data(data: true));
+      changeProps(completeStatus: const ApiResultStatus.data(data: true));
     } catch (e) {
       changeProps(
         completeStatus: ApiResultStatus.error(error: Exception(e.toString())),

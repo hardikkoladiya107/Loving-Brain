@@ -15,110 +15,109 @@ class CalmHeadsUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: [
-          // Top Left Glow
-          Positioned(
-            left: -150,
-            top: -150,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(
-                      0xFFFFD4C8,
-                    ).withValues(alpha: 0.8), // Inner peach glow
-                    const Color(
-                      0xFFFFD4C8,
-                    ).withValues(alpha: 0.0), // Fade to transparent
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          // Bottom Right Glow
-          Positioned(
-            right: -150,
-            bottom: -150,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(
-                      0xFFFFD4C8,
-                    ).withValues(alpha: 0.6), // Inner peach glow
-                    const Color(
-                      0xFFFFD4C8,
-                    ).withValues(alpha: 0.0), // Fade to transparent
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  16.spaceH,
-                  Material(
-                    color: Colors.transparent,
-                    child: Ink(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: () => Navigator.pop(context),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: darkBlue,
-                            size: 24.sp,
-                          ),
-                        ),
+    return BlocProvider(
+      create: (_) => CalmHeadsUpCubit()..init(),
+      child: BlocBuilder<CalmHeadsUpCubit, CalmHeadsUpState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150,
+                  top: -150,
+                  child: Container(
+                    width: 400,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
-                  24.spaceH,
-                  "Calm Heads-Up".appText(
-                    fontSize: 32.sp,
-                    color: darkBlue,
-                    fraunces: true,
-                    textAlign: TextAlign.start,
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150,
+                  bottom: -150,
+                  child: Container(
+                    width: 400,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.6),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
                   ),
-                  16.spaceH,
-                  _buildConfidencePill(),
-                  24.spaceH,
-                  _buildMainCard(context),
-                  24.spaceH,
-                  _buildBottomNotice(),
-                  const Spacer(),
-                  AppButton(
-                    title: "Add update",
-                    onTap: () {},
-                    backgroundColor: Colors.white,
-                    textColor: greyColor9,
+                ),
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        16.spaceH,
+                        Material(
+                          color: Colors.transparent,
+                          child: Ink(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(24),
+                              onTap: () => Navigator.pop(context),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: darkBlue,
+                                  size: 24.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        24.spaceH,
+                        "Calm Heads-Up".appText(
+                          fontSize: 32.sp,
+                          color: darkBlue,
+                          fraunces: true,
+                          textAlign: TextAlign.start,
+                        ),
+                        16.spaceH,
+                        _buildConfidencePill(),
+                        24.spaceH,
+                        _buildMainCard(context),
+                        24.spaceH,
+                        _buildBottomNotice(),
+                        const Spacer(),
+                        AppButton(
+                          title: "Add update",
+                          onTap: () {},
+                          backgroundColor: Colors.white,
+                          textColor: greyColor9,
+                        ),
+                        16.spaceH,
+                      ],
+                    ),
                   ),
-                  16.spaceH,
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

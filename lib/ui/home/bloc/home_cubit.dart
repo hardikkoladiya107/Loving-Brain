@@ -86,14 +86,14 @@ class HomeCubit extends Cubit<HomeState> {
 
   void _listenToChild(DocumentReference<Object?>? defaultChild) {
     childSubscription?.cancel();
-    childSubscription = defaultChild?.snapshots().listen((event) {
+    childSubscription = defaultChild?.snapshots().listen((event) async {
       if (event.data() != null) {
-        changeProps(
-          childModel: ChildModel.fromJson(
-            event.data() as Map<String, dynamic>,
-            event.reference,
-          ),
+        final childModel = ChildModel.fromJson(
+          event.data() as Map<String, dynamic>,
+          event.reference,
         );
+        await preferences.saveChildModel(childModel);
+        changeProps(childModel: childModel);
       }
     });
   }

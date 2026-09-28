@@ -59,27 +59,45 @@ class AppRouter {
       redirect: (BuildContext context, GoRouterState state) {
         final bool isLoggedIn =
             preferences.getBool(SharedPreference.isLogin) ?? false;
+        final bool isOnboarded =
+            preferences.getUserModel()?.isOnboardingCompleted ?? false;
 
         final String location = state.uri.path;
 
-        const Set<String> authFlowRoutes = <String>{
-          RoutePaths.splash,
+        if (location == RoutePaths.splash) {
+          return null;
+        }
+
+        const Set<String> unauthenticatedOnlyRoutes = <String>{
           RoutePaths.welcome,
-          RoutePaths.onboarding,
-          RoutePaths.onboardingSnapshot,
           RoutePaths.login,
           RoutePaths.register,
           RoutePaths.otp,
           RoutePaths.forgotPassword,
-          RoutePaths.coParentRegister,
         };
-        // return RoutePaths.familySnapshot;
-        if (isLoggedIn && authFlowRoutes.contains(location)) {
-          return RoutePaths.base;
-        }
 
-        if (!isLoggedIn && location == RoutePaths.base) {
-          return RoutePaths.welcome;
+        if (isLoggedIn) {
+          if (!isOnboarded) {
+            if (location == RoutePaths.onboarding ||
+                location == RoutePaths.coParentRegister ||
+                location == RoutePaths.terms ||
+                location == RoutePaths.privacy) {
+              return null;
+            }
+            if (unauthenticatedOnlyRoutes.contains(location) ||
+                location == RoutePaths.base) {
+              return RoutePaths.onboarding;
+            }
+          } else {
+            if (unauthenticatedOnlyRoutes.contains(location) ||
+                location == RoutePaths.onboarding) {
+              return RoutePaths.base;
+            }
+          }
+        } else {
+          if (location == RoutePaths.base) {
+            return RoutePaths.welcome;
+          }
         }
         return null;
       },
@@ -259,7 +277,6 @@ class AppRouter {
           builder: (BuildContext context, GoRouterState state) =>
               const WelcomeScreen(),
         ),
-
         GoRoute(
           path: RoutePaths.login,
           builder: (BuildContext context, GoRouterState state) =>

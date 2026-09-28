@@ -15,5 +15,7 @@ abstract class ParentProfileV2State with _$ParentProfileV2State {
     @Default('') String language,
     @Default('') String location,
     @Default(ApiResultStatus<String>.initial()) ApiResultStatus<String> saveStatus,
+    @Default(ApiResultStatus<String>.initial()) ApiResultStatus<String> logoutStatus,
+    @Default(ApiResultStatus<String>.initial()) ApiResultStatus<String> deleteAccountStatus,
   }) = _ParentProfileV2State;
 }

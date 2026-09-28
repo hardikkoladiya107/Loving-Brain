@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/today_cubit.dart';
-import '../bloc/today_state.dart';
-import 'package:loving_brain/ui/profile/profile_screen.dart';
-import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
 import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
+import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
+
+import '../bloc/today_cubit.dart';
 
 class TodayHeader extends StatelessWidget {
   const TodayHeader({super.key});
@@ -22,11 +21,13 @@ class TodayHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                final todayCubit = context.read<TodayCubit>();
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const ChildProfileScreen()),
                 );
+                todayCubit.init();
               },
               child: Container(
                 height: 40,
@@ -55,13 +56,15 @@ class TodayHeader extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                Navigator.push(
+              onTap: () async {
+                final todayCubit = context.read<TodayCubit>();
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => const ParentProfileScreen(),
                   ),
                 );
+                todayCubit.init();
               },
               child: CircleAvatar(
                 radius: 20.r,

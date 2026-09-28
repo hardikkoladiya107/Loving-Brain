@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -65,6 +67,40 @@ class AuthRepo {
     }
   }
 
+  /// Syncs the user document and their default child document from Firestore
+  /// into local SharedPreferences and marks [SharedPreference.isLogin] true.
+  Future<UserModel?> syncUserAndDefaultChild({required String uId}) async {
+    final UserModel? userModel = await getUserFromUid(uId: uId);
+    if (userModel == null) return null;
+
+    await preferences.saveUserModel(userModel);
+    await preferences.putBool(SharedPreference.isLogin, true);
+
+    try {
+      final DocumentReference? childRef =
+          userModel.defaultChild ??
+          ((userModel.children != null && userModel.children!.isNotEmpty)
+              ? userModel.children!.first
+              : null);
+      if (childRef != null) {
+        final DocumentSnapshot<Object?> childSnap = await childRef.get();
+        if (childSnap.exists && childSnap.data() is Map<String, dynamic>) {
+          final ChildModel childModel = ChildModel.fromJson(
+            childSnap.data()! as Map<String, dynamic>,
+            childRef,
+          );
+          await preferences.saveDefaultChildModel(childModel);
+        }
+      } else {
+        await preferences.putString(SharedPreference.child, '');
+      }
+    } catch (e) {
+      debugPrint('Failed to sync default child on login: $e');
+    }
+
+    return userModel;
+  }
+
   Future<bool> isAccountExistWithEmail({required String email}) async {
     try {
       final QuerySnapshot<Map<String, dynamic>> usersSnapshot =
@@ -114,11 +150,13 @@ class AuthRepo {
             "email": credential.user!.email,
             "streak": 0,
             "last_opened": DateTime.now(),
+            "is_onboarding_completed": false,
           },
         );
-        var userModel = await getUserFromUid(uId: credential.user!.uid);
+        final UserModel? userModel = await syncUserAndDefaultChild(
+          uId: credential.user!.uid,
+        );
         if (userModel != null) {
-          await preferences.saveUserModel(userModel);
           return ApiResultStatus.data(data: userModel.toJson());
         } else {
           return ApiResultStatus.error(
@@ -147,7 +185,9 @@ class AuthRepo {
         password: password.trim(),
       );
       if (credential.user != null) {
-        var userModel = await getUserFromUid(uId: credential.user!.uid);
+        final UserModel? userModel = await syncUserAndDefaultChild(
+          uId: credential.user!.uid,
+        );
         if (userModel != null) {
           return ApiResultStatus.data(data: userModel.toJson());
         } else {
@@ -180,37 +220,56 @@ class AuthRepo {
     }
   }
 
-  /// Deletes all Firestore data for the user, then deletes the Auth account.
-  /// Call while user is still signed in so Firestore rules allow deletion.
+  /// Deletes all Firestore data for the user, then deletes the Auth account
+  /// (or signs out if re-authentication would be required) and clears local session.
   Future<ApiResultStatus> deleteAccount() async {
     try {
       final User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.somethingWentWrong.tr()),
-        );
-      }
-      final String uid = currentUser.uid;
       final UserModel? userModel = preferences.getUserModel();
-      final String? email = userModel?.email ?? currentUser.email;
+      final String uid = currentUser?.uid ?? userModel?.uid ?? '';
+      final String? email = userModel?.email ?? currentUser?.email;
 
-      await _deleteAllUserData(uid: uid, email: email, userModel: userModel);
-
-      await currentUser.delete();
-      await preferences.clearUser();
-      return ApiResultStatus.data(data: "");
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'requires-recent-login') {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.pleaseSignInAgainToDeleteAccount.tr()),
-        );
+      if (uid.isNotEmpty) {
+        try {
+          await _deleteAllUserData(
+            uid: uid,
+            email: email,
+            userModel: userModel,
+          );
+        } catch (e) {
+          debugPrint('Partial error deleting user Firestore data: $e');
+        }
       }
-      return ApiResultStatus.error(
-        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
-      );
-    } on FirebaseException catch (e) {
-      return onFirebaseException(e);
+
+      if (currentUser != null) {
+        try {
+          await currentUser.delete();
+        } on FirebaseAuthException catch (e) {
+          debugPrint('FirebaseAuth user.delete warning (${e.code}): ${e.message}');
+        } catch (e) {
+          debugPrint('FirebaseAuth user.delete error: $e');
+        }
+      }
+
+      try {
+        await GoogleSignInManager.instance.signOut();
+      } catch (_) {}
+      try {
+        await FirebaseAuth.instance.signOut();
+      } catch (_) {}
+
+      await preferences.clearUser();
+      await preferences.putBool(SharedPreference.isLogin, false);
+      return const ApiResultStatus.data(data: "");
     } on Exception catch (e) {
+      try {
+        await GoogleSignInManager.instance.signOut();
+      } catch (_) {}
+      try {
+        await FirebaseAuth.instance.signOut();
+      } catch (_) {}
+      await preferences.clearUser();
+      await preferences.putBool(SharedPreference.isLogin, false);
       return ApiResultStatus.error(error: e);
     }
   }
@@ -224,20 +283,42 @@ class AuthRepo {
       uid,
     );
 
-    await _deleteUserSubcollections(userRef);
-    await userRef.delete();
+    try {
+      await _deleteUserSubcollections(userRef);
+    } catch (e) {
+      debugPrint('Error deleting user subcollections: $e');
+    }
 
     final List<DocumentReference<Object?>>? childRefs = userModel?.children;
     if (childRefs != null && childRefs.isNotEmpty) {
       for (final DocumentReference<Object?> ref in childRefs) {
-        await _deleteOrUnlinkChild(ref.id, uid);
+        try {
+          await _deleteOrUnlinkChild(ref.id, uid);
+        } catch (e) {
+          debugPrint('Error deleting/unlinking child ${ref.id}: $e');
+        }
       }
     }
 
     if (email != null && email.isNotEmpty) {
-      await _deleteCoParentInvitations(email);
+      try {
+        await _deleteCoParentInvitations(email);
+      } catch (e) {
+        debugPrint('Error deleting co-parent invitations: $e');
+      }
     }
-    await _deleteSharedEventsByCreator(uid);
+
+    try {
+      await _deleteSharedEventsByCreator(uid);
+    } catch (e) {
+      debugPrint('Error deleting shared events: $e');
+    }
+
+    try {
+      await userRef.delete();
+    } catch (e) {
+      debugPrint('Error deleting user document: $e');
+    }
   }
 
   Future<void> _deleteUserSubcollections(
@@ -245,28 +326,32 @@ class AuthRepo {
   ) async {
     final List<String> subcollections = [
       'conversations',
+      'saved_guidance',
       'journals',
       'mood',
       'connect_prompt_history',
     ];
     for (final String name in subcollections) {
-      final QuerySnapshot<Map<String, dynamic>> snapshot = await userRef
-          .collection(name)
-          .get();
-      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
-          in snapshot.docs) {
-        if (name == 'conversations') {
-          final CollectionReference<Map<String, dynamic>> chats = doc.reference
-              .collection('chats');
-          final QuerySnapshot<Map<String, dynamic>> chatSnap = await chats
-              .get();
-          for (final DocumentSnapshot<Map<String, dynamic>> chat
-              in chatSnap.docs) {
-            await chat.reference.delete();
+      try {
+        final QuerySnapshot<Map<String, dynamic>> snapshot = await userRef
+            .collection(name)
+            .get();
+        for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+            in snapshot.docs) {
+          if (name == 'conversations') {
+            final CollectionReference<Map<String, dynamic>> chats = doc
+                .reference
+                .collection('chats');
+            final QuerySnapshot<Map<String, dynamic>> chatSnap = await chats
+                .get();
+            for (final DocumentSnapshot<Map<String, dynamic>> chat
+                in chatSnap.docs) {
+              await chat.reference.delete();
+            }
           }
+          await doc.reference.delete();
         }
-        await doc.reference.delete();
-      }
+      } catch (_) {}
     }
   }
 
@@ -283,23 +368,27 @@ class AuthRepo {
             .toList() ??
         [];
 
-    if (ids.isEmpty || ids.length == 1 && ids.first == uid) {
+    if (ids.isEmpty || (ids.length == 1 && ids.first == uid)) {
       final DocumentReference<Map<String, dynamic>> childRef =
           childrenCollection.doc(childId);
-      final CollectionReference<Map<String, dynamic>> sleepLogs = childRef
-          .collection('sleep_logs');
-      final QuerySnapshot<Map<String, dynamic>> sleepSnap = await sleepLogs
-          .get();
-      for (final DocumentSnapshot<Map<String, dynamic>> d in sleepSnap.docs) {
-        await d.reference.delete();
-      }
-      final CollectionReference<Map<String, dynamic>> behaviours = childRef
-          .collection('behaviours');
-      final QuerySnapshot<Map<String, dynamic>> behSnap = await behaviours
-          .get();
-      for (final DocumentSnapshot<Map<String, dynamic>> d in behSnap.docs) {
-        await d.reference.delete();
-      }
+      try {
+        final CollectionReference<Map<String, dynamic>> sleepLogs = childRef
+            .collection('sleep_logs');
+        final QuerySnapshot<Map<String, dynamic>> sleepSnap = await sleepLogs
+            .get();
+        for (final DocumentSnapshot<Map<String, dynamic>> d in sleepSnap.docs) {
+          await d.reference.delete();
+        }
+      } catch (_) {}
+      try {
+        final CollectionReference<Map<String, dynamic>> behaviours = childRef
+            .collection('behaviours');
+        final QuerySnapshot<Map<String, dynamic>> behSnap = await behaviours
+            .get();
+        for (final DocumentSnapshot<Map<String, dynamic>> d in behSnap.docs) {
+          await d.reference.delete();
+        }
+      } catch (_) {}
       await childRef.delete();
     } else {
       await childrenCollection.doc(childId).update({
@@ -335,12 +424,20 @@ class AuthRepo {
 
   Future<ApiResultStatus> logout() async {
     try {
-      // await FirebaseAuth.instance.signInAnonymously();
+      try {
+        await GoogleSignInManager.instance.signOut();
+      } catch (_) {}
       await FirebaseAuth.instance.signOut();
-      return ApiResultStatus.data(data: "");
+      await preferences.clearUser();
+      await preferences.putBool(SharedPreference.isLogin, false);
+      return const ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
+      await preferences.clearUser();
+      await preferences.putBool(SharedPreference.isLogin, false);
       return onFirebaseException(e);
     } on Exception catch (e) {
+      await preferences.clearUser();
+      await preferences.putBool(SharedPreference.isLogin, false);
       return ApiResultStatus.error(error: e);
     }
   }
@@ -394,36 +491,29 @@ class AuthRepo {
         credential,
       );
       if (signInUser.user != null) {
-        var userModel = await getUserFromUid(uId: signInUser.user!.uid);
+        UserModel? userModel = await getUserFromUid(uId: signInUser.user!.uid);
+        if (userModel == null) {
+          await addUserToFireStore(
+            uId: signInUser.user!.uid,
+            request: {
+              "uid": signInUser.user!.uid,
+              "display_name": signInUser.user!.displayName,
+              "email": signInUser.user!.email,
+              "is_google_sign_in": true,
+              "is_apple_in": false,
+              "streak": 0,
+              "last_opened": DateTime.now(),
+              "is_onboarding_completed": false,
+            },
+          );
+        }
+        userModel = await syncUserAndDefaultChild(uId: signInUser.user!.uid);
         if (userModel != null) {
           return ApiResultStatus.data(data: userModel.toJson());
         } else {
-          if (signInUser.user != null) {
-            await addUserToFireStore(
-              uId: signInUser.user!.uid,
-              request: {
-                "uid": signInUser.user!.uid,
-                "display_name": signInUser.user!.displayName,
-                "email": signInUser.user!.email,
-                "is_google_sign_in": true,
-                "is_apple_in": false,
-                "streak": 0,
-                "last_opened": DateTime.now(),
-              },
-            );
-            var userModel = await getUserFromUid(uId: signInUser.user!.uid);
-            if (userModel != null) {
-              return ApiResultStatus.data(data: userModel.toJson());
-            } else {
-              return ApiResultStatus.error(
-                error: Exception(LocaleKeys.somethingWentWrong.tr()),
-              );
-            }
-          } else {
-            return ApiResultStatus.error(
-              error: Exception(LocaleKeys.somethingWentWrong.tr()),
-            );
-          }
+          return ApiResultStatus.error(
+            error: Exception(LocaleKeys.somethingWentWrong.tr()),
+          );
         }
       } else {
         return ApiResultStatus.error(
@@ -448,60 +538,125 @@ class AuthRepo {
 
   Future<ApiResultStatus> signInWithApple() async {
     try {
-      var appleSignInAccount = await AppleSignInManager.instance.authenticate();
-      if (appleSignInAccount == null) {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      UserCredential signInUser;
+      String appleFullName = '';
+      String appleEmail = '';
+
+      if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+        final appleSignInResult = await AppleSignInManager.instance
+            .authenticateWithNonce();
+        if (appleSignInResult == null) {
+          return ApiResultStatus.error(
+            error: Exception(
+              'Apple Sign-In cancelled by the user (code=canceled)',
+            ),
+          );
+        }
+
+        final appleSignInAccount = appleSignInResult.credential;
+        appleFullName = [
+          appleSignInAccount.givenName?.trim() ?? '',
+          appleSignInAccount.familyName?.trim() ?? '',
+        ].where((part) => part.isNotEmpty).join(' ');
+        appleEmail = appleSignInAccount.email ?? '';
+
+        final oauthCredential = OAuthProvider("apple.com").credential(
+          idToken: appleSignInAccount.identityToken,
+          accessToken: appleSignInAccount.authorizationCode,
+          rawNonce: appleSignInResult.rawNonce,
+        );
+
+        signInUser = await FirebaseAuth.instance.signInWithCredential(
+          oauthCredential,
+        );
+      } else {
+        // On Android (or Web), Firebase Auth automatically opens the Apple OAuth
+        // web flow (Chrome Custom Tab / WebView) and redirects back via Firebase Auth handler.
+        final appleProvider = AppleAuthProvider()
+          ..addScope('email')
+          ..addScope('name');
+        signInUser = await FirebaseAuth.instance.signInWithProvider(
+          appleProvider,
         );
       }
-      final oauthCredential = OAuthProvider("apple.com").credential(
-        idToken: appleSignInAccount.identityToken,
-        accessToken: appleSignInAccount.authorizationCode,
-      );
 
-      final signInUser = await FirebaseAuth.instance.signInWithCredential(
-        oauthCredential,
-      );
       if (signInUser.user != null) {
-        var userModel = await getUserFromUid(uId: signInUser.user!.uid);
+        if (appleFullName.isNotEmpty &&
+            (signInUser.user!.displayName ?? '').trim().isEmpty) {
+          try {
+            await signInUser.user!.updateDisplayName(appleFullName);
+          } catch (_) {}
+        }
+
+        final String resolvedName = appleFullName.isNotEmpty
+            ? appleFullName
+            : (signInUser.user!.displayName ?? '');
+        final String resolvedEmail =
+            signInUser.user!.email ?? appleEmail;
+
+        UserModel? userModel = await getUserFromUid(uId: signInUser.user!.uid);
+        if (userModel == null) {
+          await addUserToFireStore(
+            uId: signInUser.user!.uid,
+            request: {
+              "uid": signInUser.user!.uid,
+              "display_name": resolvedName,
+              if (resolvedName.isNotEmpty) "parent_name": resolvedName,
+              "email": resolvedEmail,
+              "is_google_sign_in": false,
+              "is_apple_in": true,
+              "streak": 0,
+              "last_opened": DateTime.now(),
+              "is_onboarding_completed": false,
+            },
+          );
+        } else {
+          final Map<String, dynamic> updates = {
+            "is_apple_in": true,
+            "last_opened": DateTime.now(),
+          };
+          if ((userModel.displayName ?? '').trim().isEmpty &&
+              resolvedName.isNotEmpty) {
+            updates["display_name"] = resolvedName;
+          }
+          if ((userModel.email ?? '').trim().isEmpty &&
+              resolvedEmail.isNotEmpty) {
+            updates["email"] = resolvedEmail;
+          }
+          try {
+            await userCollection.doc(signInUser.user!.uid).update(updates);
+          } catch (_) {}
+        }
+
+        userModel = await syncUserAndDefaultChild(uId: signInUser.user!.uid);
         if (userModel != null) {
           return ApiResultStatus.data(data: userModel.toJson());
         } else {
-          if (signInUser.user != null) {
-            await addUserToFireStore(
-              uId: signInUser.user!.uid,
-              request: {
-                "uid": signInUser.user!.uid,
-                "display_name": signInUser.user!.displayName,
-                "email": signInUser.user!.email,
-                "is_google_sign_in": false,
-                "is_apple_in": true,
-                "streak": 0,
-                "last_opened": DateTime.now(),
-              },
-            );
-            var userModel = await getUserFromUid(uId: signInUser.user!.uid);
-            if (userModel != null) {
-              return ApiResultStatus.data(data: userModel.toJson());
-            } else {
-              return ApiResultStatus.error(
-                error: Exception(LocaleKeys.somethingWentWrong.tr()),
-              );
-            }
-          } else {
-            return ApiResultStatus.error(
-              error: Exception(LocaleKeys.somethingWentWrong.tr()),
-            );
-          }
+          return ApiResultStatus.error(
+            error: Exception(LocaleKeys.somethingWentWrong.tr()),
+          );
         }
       } else {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.userNotFound.tr()),
         );
       }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'canceled' ||
+          e.code == 'web-context-canceled' ||
+          e.code == 'user-cancelled') {
+        return ApiResultStatus.error(
+          error: Exception('Apple Sign-In cancelled by the user (code=canceled)'),
+        );
+      }
+      final String message =
+          'FirebaseAuth Apple Sign-In failed. code=${e.code}, message=${e.message ?? "no_message"}';
+      debugPrint(message);
+      return ApiResultStatus.error(error: Exception(message));
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } on Exception catch (e) {
+      debugPrint('Apple Sign-In exception in AuthRepo: $e');
       return ApiResultStatus.error(error: e);
     }
   }
@@ -641,7 +796,7 @@ class AuthRepo {
       }
       await userCollection.doc(tUid).update(userUpdate);
 
-      final UserModel? updatedUser = await getUserFromUid(uId: tUid);
+      final UserModel? updatedUser = await syncUserAndDefaultChild(uId: tUid);
       if (updatedUser == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -667,13 +822,12 @@ class AuthRepo {
         );
       }
       await userCollection.doc(tUid).update({"default_child": childRef});
-      final UserModel? updatedUser = await getUserFromUid(uId: tUid);
+      final UserModel? updatedUser = await syncUserAndDefaultChild(uId: tUid);
       if (updatedUser == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
-      await preferences.saveUserModel(updatedUser);
       return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
       return onFirebaseException(e) as ApiResultStatus<UserModel>;
@@ -717,13 +871,12 @@ class AuthRepo {
       }
       await userCollection.doc(tUid).update(userUpdate);
       await _deleteOrUnlinkChild(childId, tUid);
-      final UserModel? updatedUser = await getUserFromUid(uId: tUid);
+      final UserModel? updatedUser = await syncUserAndDefaultChild(uId: tUid);
       if (updatedUser == null) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
-      await preferences.saveUserModel(updatedUser);
       return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
       return onFirebaseException(e) as ApiResultStatus<UserModel>;
@@ -818,29 +971,32 @@ class AuthRepo {
         UserModel? userModel = await getUserFromUid(
           uId: credential.user!.uid,
         );
-        
+
         if (userModel == null) {
           // If the user doesn't exist in Firestore, this is a new registration.
           await addUserToFireStore(
             uId: credential.user!.uid,
             request: {
               "uid": credential.user!.uid,
-              "display_name": credential.user!.displayName ?? email.split('@')[0],
+              "display_name":
+                  credential.user!.displayName ?? email.split('@')[0],
               "email": email,
               "is_google_sign_in": false,
               "is_apple_in": false,
               "streak": 0,
               "last_opened": DateTime.now(),
+              "is_onboarding_completed": false,
             },
           );
-          userModel = await getUserFromUid(uId: credential.user!.uid);
-          
-          if (userModel == null) {
-            return ApiResultStatus.error(error: Exception('Failed to create user account.'));
-          }
         }
-        
-        await preferences.saveUserModel(userModel);
+
+        userModel = await syncUserAndDefaultChild(uId: credential.user!.uid);
+        if (userModel == null) {
+          return ApiResultStatus.error(
+            error: Exception('Failed to create user account.'),
+          );
+        }
+
         return ApiResultStatus.data(data: userModel.toJson());
       } else {
         return ApiResultStatus.error(error: Exception('User not found'));

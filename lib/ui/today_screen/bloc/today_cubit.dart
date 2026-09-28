@@ -1,7 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'today_state.dart';
-
+import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/auth_repo.dart';
+
+import 'today_state.dart';
 
 class TodayCubit extends Cubit<TodayState> {
   void toggleMode() {
@@ -18,9 +20,6 @@ class TodayCubit extends Cubit<TodayState> {
   TodayCubit() : super(const TodayState());
 
   Future<void> init() async {
-    emit(state.copyWith(isLoading: true));
-    await Future.delayed(const Duration(milliseconds: 500));
-
     final hour = DateTime.now().hour;
     String greeting = 'GOOD MORNING';
     if (hour >= 12 && hour < 17) {
@@ -29,20 +28,59 @@ class TodayCubit extends Cubit<TodayState> {
       greeting = 'GOOD EVENING';
     }
 
-    final user = preferences.getUserModel();
-    final child = preferences.getChildModel();
+    var user = preferences.getUserModel();
+    var child = preferences.getChildModel();
+
+    String initialPName = user?.parentName ?? 'Parent';
+    String initialCName = child?.childName ?? user?.childName ?? 'Child';
+    if (initialPName.trim().isEmpty) initialPName = 'Parent';
+    if (initialCName.trim().isEmpty) initialCName = 'Child';
+
+    emit(
+      state.copyWith(
+        isLoading: true,
+        timeOfDayGreeting: greeting,
+        parentName: initialPName.toUpperCase(),
+        childName: initialCName,
+      ),
+    );
+
+    if (user?.uid != null && user!.uid!.isNotEmpty) {
+      try {
+        final freshUser = await AuthRepo.instance.syncUserAndDefaultChild(
+          uId: user.uid!,
+        );
+        if (freshUser != null) {
+          user = freshUser;
+          child = preferences.getChildModel();
+        }
+      } catch (_) {}
+    } else if (user != null && user.defaultChild != null) {
+      try {
+        final childSnap = await user.defaultChild!.get();
+        if (childSnap.data() != null) {
+          child = ChildModel.fromJson(
+            childSnap.data() as Map<String, dynamic>,
+            childSnap.reference,
+          );
+          await preferences.saveChildModel(child);
+        }
+      } catch (_) {}
+    }
 
     String pName = user?.parentName ?? 'Parent';
-    String cName = child?.childName ?? 'Child';
+    String cName = child?.childName ?? user?.childName ?? 'Child';
     if (pName.trim().isEmpty) pName = 'Parent';
     if (cName.trim().isEmpty) cName = 'Child';
 
-    emit(state.copyWith(
-      isLoading: false, 
-      timeOfDayGreeting: greeting,
-      parentName: pName.toUpperCase(),
-      childName: cName,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: false,
+        timeOfDayGreeting: greeting,
+        parentName: pName.toUpperCase(),
+        childName: cName,
+      ),
+    );
   }
 
   // Sleep
@@ -75,10 +113,11 @@ class TodayCubit extends Cubit<TodayState> {
       emit(state.copyWith(tantrumIntensity: value));
   void toggleTantrumTrigger(String trigger) {
     final triggers = List<String>.from(state.selectedTantrumTriggers);
-    if (triggers.contains(trigger))
+    if (triggers.contains(trigger)) {
       triggers.remove(trigger);
-    else
+    } else {
       triggers.add(trigger);
+    }
     emit(
       state.copyWith(
         selectedTantrumTriggers: triggers,
@@ -96,10 +135,11 @@ class TodayCubit extends Cubit<TodayState> {
   // Health
   void toggleHealthIssue(String issue) {
     final issues = List<String>.from(state.selectedHealthIssues);
-    if (issues.contains(issue))
+    if (issues.contains(issue)) {
       issues.remove(issue);
-    else
+    } else {
       issues.add(issue);
+    }
     emit(
       state.copyWith(
         selectedHealthIssues: issues,

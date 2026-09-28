@@ -104,13 +104,15 @@ class SharedPreference {
       } else {
         return await _preferences!.setString(
           child,
-          json.encode(value.toJson()),
+          json.encode(value.toJson(forConvert: true)),
         );
       }
     } catch (e) {
       return null;
     }
   }
+
+  Future<bool?> saveDefaultChildModel(ChildModel value) => saveChildModel(value);
 
   ChildModel? getChildModel() {
     try {
@@ -119,10 +121,7 @@ class SharedPreference {
       } else {
         final str = _preferences!.getString(child);
         if (str == null) return null;
-        return ChildModel.fromJson(
-          json.decode(str),
-          null, // No DocumentReference available in local cache easily
-        );
+        return ChildModel.fromJson(json.decode(str));
       }
     } catch (e) {
       return null;
@@ -140,6 +139,7 @@ class SharedPreference {
     if (_preferences == null) {
       return false;
     }
+    await _preferences?.remove(child);
     return await _preferences?.remove(user) ?? false;
   }
 }

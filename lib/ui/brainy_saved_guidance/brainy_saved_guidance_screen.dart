@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/brainy_saved_guidance_cubit.dart';
 import 'bloc/brainy_saved_guidance_state.dart';
 
@@ -81,13 +81,7 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
                       ...state.sleepItems.map((item) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(
-                            context,
-                            imagePath: item.imagePath,
-                            imageBgColor: Color(item.imageBgColorValue),
-                            title: item.title,
-                            subtitle: item.subtitle,
-                          ),
+                          child: _buildGuidanceItem(context, item: item),
                         );
                       }),
                       32.spaceH,
@@ -96,13 +90,7 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
                       ...state.behaviourItems.map((item) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(
-                            context,
-                            imagePath: item.imagePath,
-                            imageBgColor: Color(item.imageBgColorValue),
-                            title: item.title,
-                            subtitle: item.subtitle,
-                          ),
+                          child: _buildGuidanceItem(context, item: item),
                         );
                       }),
                       32.spaceH,
@@ -111,13 +99,7 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
                       ...state.parentWellbeingItems.map((item) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(
-                            context,
-                            imagePath: item.imagePath,
-                            imageBgColor: Color(item.imageBgColorValue),
-                            title: item.title,
-                            subtitle: item.subtitle,
-                          ),
+                          child: _buildGuidanceItem(context, item: item),
                         );
                       }),
                       32.spaceH,
@@ -143,10 +125,7 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
 
   Widget _buildGuidanceItem(
     BuildContext context, {
-    required String imagePath,
-    required Color imageBgColor,
-    required String title,
-    required String subtitle,
+    required BrainySavedItem item,
   }) {
     return Material(
       color: Colors.transparent,
@@ -161,7 +140,11 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => const BrainyConversationScreen(),
+                builder: (_) => BrainyConversationScreen(
+                  conversationId: item.conversationId,
+                  initialChat: item.title,
+                  topic: item.topic,
+                ),
               ),
             );
           },
@@ -173,11 +156,11 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
                   width: 56.w,
                   height: 56.w,
                   decoration: BoxDecoration(
-                    color: imageBgColor,
+                    color: Color(item.imageBgColorValue),
                     borderRadius: BorderRadius.circular(16),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: AssetImage(imagePath),
+                      image: AssetImage(item.imagePath),
                     ),
                   ),
                 ),
@@ -186,14 +169,14 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      title.appText(
+                      item.title.appText(
                         fontSize: 14.sp,
                         color: greyColor9,
                         fontWeight: FontWeight.w500,
                         textAlign: TextAlign.start,
                       ),
                       4.spaceH,
-                      subtitle.appText(
+                      item.subtitle.appText(
                         fontSize: 12.sp,
                         color: greyColor4,
                         textAlign: TextAlign.start,

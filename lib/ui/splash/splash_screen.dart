@@ -21,7 +21,17 @@ class _SplashScreenState extends State<SplashScreen> {
         if (!mounted) return;
         final bool isLogin =
             preferences.getBool(SharedPreference.isLogin) ?? false;
-        context.go(isLogin ? RoutePaths.base : RoutePaths.welcome);
+
+        if (isLogin) {
+          final userModel = preferences.getUserModel();
+          if (userModel == null || !userModel.isOnboardingCompleted) {
+            context.go(RoutePaths.onboarding);
+            return;
+          }
+          context.go(RoutePaths.base);
+        } else {
+          context.go(RoutePaths.welcome);
+        }
       });
     });
     super.initState();

@@ -1,11 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'tonights_plan_state.dart';
 
 class TonightsPlanCubit extends Cubit<TonightsPlanState> {
   TonightsPlanCubit() : super(const TonightsPlanState());
 
   Future<void> init() async {
-    emit(state.copyWith(isLoading: true));
+    final user = preferences.getUserModel();
+    final child = preferences.getChildModel();
+    final cName =
+        (child?.childName != null && child!.childName!.trim().isNotEmpty)
+        ? child.childName!.trim()
+        : (user?.childName != null && user!.childName!.trim().isNotEmpty)
+        ? user.childName!.trim()
+        : 'your child';
+
+    emit(state.copyWith(isLoading: true, childName: cName));
     await Future.delayed(const Duration(milliseconds: 500));
     emit(state.copyWith(isLoading: false));
   }

@@ -9,7 +9,9 @@ class EditableFieldCard extends StatefulWidget {
   final String value;
   final String? hintText;
   final VoidCallback? onEdit;
+  final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
+  final bool readOnly;
 
   const EditableFieldCard({
     super.key,
@@ -17,7 +19,9 @@ class EditableFieldCard extends StatefulWidget {
     required this.value,
     this.hintText,
     this.onEdit,
+    this.onTap,
     this.onChanged,
+    this.readOnly = false,
   });
 
   @override
@@ -85,6 +89,8 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                 TextField(
                   controller: _controller,
                   focusNode: _focusNode,
+                  readOnly: widget.readOnly,
+                  onTap: widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
                   onChanged: widget.onChanged,
                   style: TextStyle(
                     fontSize: 16.sp,
@@ -112,7 +118,9 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
             16.spaceW,
             InkWell(
               onTap: () {
-                _focusNode.requestFocus();
+                if (!widget.readOnly) {
+                  _focusNode.requestFocus();
+                }
                 widget.onEdit?.call();
               },
               child: Image.asset(

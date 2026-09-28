@@ -40,6 +40,7 @@ abstract class OnboardingState with _$OnboardingState {
     @Default('') String difficultTimesError,
     @Default(<String>[]) List<String> possibleTriggers,
     @Default('') String possibleTriggersError,
+    @Default('wake') String activeTimeField,
     @Default(ApiResultStatus.initial()) ApiResultStatus completeStatus,
   }) = _OnboardingState;
 }

@@ -188,4 +188,24 @@ class RegisterCubit extends Cubit<RegisterState> {
 
     changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
   }
+
+  Future<void> googleAuthenticate() async {
+    changeProps(
+      apiResultStatus: const ApiResultStatus.loading(),
+      isAuthSubmitting: true,
+    );
+    final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
+        .signInWithGoogle();
+    changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
+  }
+
+  Future<void> signInWithApple() async {
+    changeProps(
+      apiResultStatus: const ApiResultStatus.loading(),
+      isAuthSubmitting: true,
+    );
+    final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
+        .signInWithApple();
+    changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
+  }
 }

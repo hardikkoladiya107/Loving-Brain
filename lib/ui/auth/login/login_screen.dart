@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -99,13 +99,13 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Positioned.fill(
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          const Color(0xFFF6F0FF),
-                          const Color(0xFFFFF0F5),
-                          const Color(0xFFF9FAFB),
-                          const Color(0xFFF9FAFB),
+                          Color(0xFFF6F0FF),
+                          Color(0xFFFFF0F5),
+                          Color(0xFFF9FAFB),
+                          Color(0xFFF9FAFB),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           _loginIcon(),
                           40.spaceH,
                           Container(
-                            padding: EdgeInsets.symmetric(vertical: 32),
+                            padding: const EdgeInsets.symmetric(vertical: 32),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(32),
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 BoxShadow(
                                   color: primaryColor.withValues(alpha: 0.08),
                                   blurRadius: 30,
-                                  offset: Offset(0, 10),
+                                  offset: const Offset(0, 10),
                                 ),
                               ],
                             ),
@@ -184,7 +184,8 @@ class _LoginScreenState extends State<LoginScreen> {
             final bool isGoogleSignInCancelled =
                 normalizedMessage.contains('code=canceled') ||
                 normalizedMessage.contains('cancelled by the user') ||
-                normalizedMessage.contains('canceled');
+                normalizedMessage.contains('canceled') ||
+                normalizedMessage.contains('empty account');
             if (isGoogleSignInCancelled) {
               return;
             }
@@ -213,14 +214,14 @@ class _LoginScreenState extends State<LoginScreen> {
             BoxShadow(
               color: primaryColor.withValues(alpha: 0.08),
               blurRadius: 20,
-              offset: Offset(0, 8),
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Assets.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
+            Assets.v2.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             if (isLoading)
               SizedBox(
@@ -264,14 +265,14 @@ class _LoginScreenState extends State<LoginScreen> {
             BoxShadow(
               color: primaryColor.withValues(alpha: 0.08),
               blurRadius: 20,
-              offset: Offset(0, 8),
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Assets.icons.icAppleIcon.image(height: 24.w, width: 24.w),
+            Assets.v2.icons.icAppleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             if (isLoading)
               SizedBox(
@@ -309,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
               BoxShadow(
                 color: primaryColor.withValues(alpha: 0.08),
                 blurRadius: 30,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -352,7 +353,7 @@ class _LoginScreenState extends State<LoginScreen> {
             BoxShadow(
               color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 15,
-              offset: Offset(0, 6),
+              offset: const Offset(0, 6),
             ),
           ],
         ),
@@ -479,14 +480,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
-    final UserModel userModel = UserModel.fromJson(data);
+    final UserModel userModel =
+        preferences.getUserModel() ?? UserModel.fromJson(data);
     final GoRouter router = GoRouter.of(context);
-    await preferences.saveUserModel(userModel);
     if (!mounted) return;
     context.read<LoginCubit>().clearFields();
     if (userModel.uid == null) return;
 
-    // â”€â”€ Pending co-parent invitation (saved by DeepLinkManager before login) â”€â”€
+    // ── Pending co-parent invitation (saved by DeepLinkManager before login) ──
     if (PendingInvitationManager.hasPending()) {
       final String pendingId = PendingInvitationManager.getId();
       final String pendingEmail = PendingInvitationManager.getEmail();
@@ -528,20 +529,12 @@ class _LoginScreenState extends State<LoginScreen> {
         await PendingInvitationManager.clear();
       }
     }
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─────────────────────────────────────────────────────────────────────────
 
     if (!mounted) return;
-    if ((userModel.parentName ?? '').isEmpty ||
-        (userModel.parentGender ?? '').isEmpty ||
-        (userModel.parentEmail ?? '').isEmpty ||
-        userModel.parentDateOfBirth == null) {
-      router.go(RoutePaths.parentProfile);
-    } else if ((userModel.childName ?? '').isEmpty ||
-        (userModel.childAge ?? '').isEmpty ||
-        (userModel.relationshipToChild ?? '').isEmpty) {
-      router.go(RoutePaths.childProfilePath(userModel.uid!));
+    if (!userModel.isOnboardingCompleted) {
+      router.go(RoutePaths.onboarding);
     } else {
-      await preferences.putBool(SharedPreference.isLogin, true);
       router.go(RoutePaths.base);
     }
   }
@@ -556,7 +549,7 @@ class _LoginScreenState extends State<LoginScreen> {
           fontWeight: FontWeight.w500,
         ),
         children: [
-          TextSpan(text: "By continuing, you agree to our\n"),
+          const TextSpan(text: "By continuing, you agree to our\n"),
           TextSpan(
             text: "Terms & Conditions",
             style: getTextStyle(
@@ -571,7 +564,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 context.push(RoutePaths.terms);
               },
           ),
-          TextSpan(text: " and "),
+          const TextSpan(text: " and "),
           TextSpan(
             text: "Privacy Policy",
             style: getTextStyle(
@@ -586,7 +579,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 context.push(RoutePaths.privacy);
               },
           ),
-          TextSpan(text: "."),
+          const TextSpan(text: "."),
         ],
       ),
     ).appPadding(left: 24, right: 24);

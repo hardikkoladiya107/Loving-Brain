@@ -55,35 +55,35 @@ class JourneyScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     children: [
                       16.spaceH,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(24),
-                              onTap: () {
-                                if (Navigator.canPop(context)) {
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: darkBlue,
-                                  size: 24.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      24.spaceH,
+                      // Align(
+                      //   alignment: Alignment.centerLeft,
+                      //   child: Material(
+                      //     color: Colors.transparent,
+                      //     child: Ink(
+                      //       decoration: const BoxDecoration(
+                      //         color: Colors.white,
+                      //         shape: BoxShape.circle,
+                      //       ),
+                      //       child: InkWell(
+                      //         borderRadius: BorderRadius.circular(24),
+                      //         onTap: () {
+                      //           if (Navigator.canPop(context)) {
+                      //             Navigator.pop(context);
+                      //           }
+                      //         },
+                      //         child: Padding(
+                      //           padding: const EdgeInsets.all(8),
+                      //           child: Icon(
+                      //             Icons.arrow_back,
+                      //             color: darkBlue,
+                      //             size: 24.sp,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // 24.spaceH,
                       GestureDetector(
                         onTap: () {
                           context.read<JourneyCubit>().cycleMode();

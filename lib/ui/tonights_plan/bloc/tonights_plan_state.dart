@@ -8,5 +8,6 @@ abstract class TonightsPlanState with _$TonightsPlanState {
     @Default(false) bool isLoading,
     @Default(false) bool isPlanStarted,
     @Default(false) bool isAudioPlaying,
+    @Default('your child') String childName,
   }) = _TonightsPlanState;
 }

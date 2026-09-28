@@ -34,6 +34,7 @@ class UserModel {
     String? partnerUserId,
     String? preferredLanguage,
     String? location,
+    bool? isOnboardingCompleted,
   }) {
     _uid = uid;
     _platform = platform;
@@ -67,6 +68,7 @@ class UserModel {
     _partnerUserId = partnerUserId;
     _preferredLanguage = preferredLanguage;
     _location = location;
+    _isOnboardingCompleted = isOnboardingCompleted;
   }
 
   UserModel.fromJson(
@@ -98,6 +100,7 @@ class UserModel {
     _partnerUserId = jsonObject['partner_user_id'] as String?;
     _preferredLanguage = jsonObject['preferred_language']?.toString();
     _location = jsonObject['location']?.toString();
+    _isOnboardingCompleted = jsonObject['is_onboarding_completed'] as bool?;
     _originalJson = jsonObject;
 
     try {
@@ -117,7 +120,8 @@ class UserModel {
           if (rawDefaultChild is DocumentReference) {
             _defaultChild = rawDefaultChild;
           } else if (rawDefaultChild is String &&
-              rawDefaultChild.trim().isNotEmpty) {
+              rawDefaultChild.trim().isNotEmpty &&
+              rawDefaultChild != 'null') {
             _defaultChild = FirebaseFirestore.instance.doc(
               rawDefaultChild.trim(),
             );
@@ -149,7 +153,7 @@ class UserModel {
           for (final dynamic e in raw) {
             if (e is DocumentReference) {
               refs.add(e);
-            } else if (e is String && e.trim().isNotEmpty) {
+            } else if (e is String && e.trim().isNotEmpty && e != 'null') {
               refs.add(FirebaseFirestore.instance.doc(e.trim()));
             }
           }
@@ -268,6 +272,7 @@ class UserModel {
   String? _partnerUserId;
   String? _preferredLanguage;
   String? _location;
+  bool? _isOnboardingCompleted;
   Map<String, dynamic>? _originalJson;
 
   UserModel copyWith({
@@ -301,6 +306,9 @@ class UserModel {
     String? profileImage,
     bool? isActiveLogger,
     String? partnerUserId,
+    String? preferredLanguage,
+    String? location,
+    bool? isOnboardingCompleted,
   }) {
     return UserModel(
       uid: uid ?? _uid,
@@ -333,6 +341,10 @@ class UserModel {
       profileImage: profileImage ?? _profileImage,
       isActiveLogger: isActiveLogger ?? _isActiveLogger,
       partnerUserId: partnerUserId ?? _partnerUserId,
+      preferredLanguage: preferredLanguage ?? _preferredLanguage,
+      location: location ?? _location,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? _isOnboardingCompleted,
     );
   }
 
@@ -415,6 +427,19 @@ class UserModel {
   String? get partnerUserId => _partnerUserId;
   String? get preferredLanguage => _preferredLanguage;
   String? get location => _location;
+
+  /// Returns true if onboarding is explicitly marked completed OR if the user
+  /// already has both a parent name and at least one linked child.
+  bool get isOnboardingCompleted {
+    if (_isOnboardingCompleted == true) return true;
+    final bool hasParentName = (_parentName ?? '').trim().isNotEmpty;
+    final bool hasChild =
+        _defaultChild != null ||
+        (_children != null && _children!.isNotEmpty) ||
+        (_childName ?? '').trim().isNotEmpty;
+    return hasParentName && hasChild;
+  }
+
   Map<String, dynamic>? get jsonObject => _originalJson;
 
   Map<String, dynamic> toJson({
@@ -450,6 +475,7 @@ class UserModel {
     map['partner_user_id'] = _partnerUserId;
     map['preferred_language'] = _preferredLanguage;
     map['location'] = _location;
+    map['is_onboarding_completed'] = _isOnboardingCompleted;
 
     try {
       if (forConvert) {

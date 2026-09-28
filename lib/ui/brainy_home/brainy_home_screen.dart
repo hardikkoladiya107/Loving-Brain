@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -8,19 +9,60 @@ import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.d
 import 'package:loving_brain/ui/brainy_history/brainy_history_screen.dart';
 import 'package:loving_brain/ui/brainy_saved_guidance/brainy_saved_guidance_screen.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/brainy_home_cubit.dart';
 import 'bloc/brainy_home_state.dart';
 
-class BrainyHomeScreen extends StatelessWidget {
+class BrainyHomeScreen extends StatefulWidget {
   const BrainyHomeScreen({super.key});
+
+  @override
+  State<BrainyHomeScreen> createState() => _BrainyHomeScreenState();
+}
+
+class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _openConversation(
+    BuildContext context, {
+    required String initialChat,
+    required String topic,
+  }) {
+    final trimmed = initialChat.trim();
+    if (trimmed.isEmpty) return;
+    context.read<BrainyHomeCubit>().clearChatText();
+    _textController.clear();
+    FocusScope.of(context).unfocus();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            BrainyConversationScreen(initialChat: trimmed, topic: topic),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BrainyHomeCubit(),
+      create: (context) => BrainyHomeCubit()..init(),
       child: BlocBuilder<BrainyHomeCubit, BrainyHomeState>(
         builder: (context, state) {
+          if (_textController.text != state.chatText) {
+            _textController.value = _textController.value.copyWith(
+              text: state.chatText,
+              selection: TextSelection.collapsed(
+                offset: state.chatText.length,
+              ),
+            );
+          }
+
           return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
@@ -74,15 +116,16 @@ class BrainyHomeScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      "Hi Asha, I'm Brainy".appText(
-                                        fontSize: 24.sp,
-                                        fraunces: true,
-                                        color: darkBlue,
-                                        textAlign: TextAlign.start,
-                                        height: 1.2,
-                                      ),
+                                      "Hi ${state.parentName}, I'm Brainy"
+                                          .appText(
+                                            fontSize: 24.sp,
+                                            fraunces: true,
+                                            color: darkBlue,
+                                            textAlign: TextAlign.start,
+                                            height: 1.2,
+                                          ),
                                       12.spaceH,
-                                      "I know Ira's age, her recent\nsleep and what you're\nworking on."
+                                      "I know ${state.childName}'s age, recent\nsleep and what you're\nworking on."
                                           .appText(
                                             fontSize: 14.sp,
                                             color: greyColor,
@@ -121,20 +164,21 @@ class BrainyHomeScreen extends StatelessWidget {
                               textAlign: TextAlign.start,
                             ),
                             12.spaceH,
-                            _buildSuggestedCard(
-                              context,
-                              "Why is bedtime harder lately?",
-                            ),
-                            12.spaceH,
-                            _buildSuggestedCard(
-                              context,
-                              "What can I try tonight?",
+                            ...state.suggestedQuestions.map(
+                              (q) => Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: _buildSuggestedCard(
+                                  context,
+                                  state,
+                                  q,
+                                ),
+                              ),
                             ),
                             120.spaceH,
                           ],
                         ),
                       ),
-                      _buildBottomInputAndNav(context),
+                      _buildBottomInputAndNav(context, state),
                     ],
                   ),
                 ),
@@ -152,23 +196,7 @@ class BrainyHomeScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Material(
-            color: Colors.transparent,
-            child: Ink(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24),
-                onTap: () => Navigator.pop(context),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Icon(Icons.arrow_back, color: darkBlue, size: 24.sp),
-                ),
-              ),
-            ),
-          ),
+          const Spacer(),
           Row(
             children: [
               Material(
@@ -274,7 +302,11 @@ class BrainyHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSuggestedCard(BuildContext context, String text) {
+  Widget _buildSuggestedCard(
+    BuildContext context,
+    BrainyHomeState state,
+    String text,
+  ) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Material(
@@ -286,14 +318,11 @@ class BrainyHomeScreen extends StatelessWidget {
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(24),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const BrainyConversationScreen(),
-                ),
-              );
-            },
+            onTap: () => _openConversation(
+              context,
+              initialChat: text,
+              topic: state.selectedTopic,
+            ),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: text.appText(
@@ -309,16 +338,23 @@ class BrainyHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomInputAndNav(BuildContext context) {
+  Widget _buildBottomInputAndNav(BuildContext context, BrainyHomeState state) {
+    final bool hasText = state.chatText.trim().isNotEmpty;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 0.h),
+          padding: EdgeInsets.only(
+            right: 20.w,
+            left: 20.w,
+            top: 0.h,
+            bottom: 16.h,
+          ),
           child: Row(
             children: [
               Expanded(
                 child: AppTextField(
+                  controller: _textController,
                   hint: "Ask Brainy anything...",
                   tfType: TFTYPE.FILLED,
                   filled: true,
@@ -329,6 +365,14 @@ class BrainyHomeScreen extends StatelessWidget {
                     right: 20.w,
                     top: 0.h,
                     bottom: 6.h,
+                  ),
+                  onChanged: (val) {
+                    context.read<BrainyHomeCubit>().updateChatText(val);
+                  },
+                  onSubmitted: (val) => _openConversation(
+                    context,
+                    initialChat: val,
+                    topic: state.selectedTopic,
                   ),
                 ),
               ),
@@ -343,17 +387,30 @@ class BrainyHomeScreen extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(30),
                     onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => const BrainyVoiceSheet(),
-                      );
+                      if (hasText) {
+                        _openConversation(
+                          context,
+                          initialChat: state.chatText,
+                          topic: state.selectedTopic,
+                        );
+                      } else {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (sheetContext) =>
+                              BrainyVoiceSheet(topic: state.selectedTopic),
+                        );
+                      }
                     },
                     child: SizedBox(
                       width: 56.w,
                       height: 56.w,
-                      child: Icon(Icons.mic, color: Colors.white, size: 28.sp),
+                      child: Icon(
+                        hasText ? Icons.send : Icons.mic,
+                        color: Colors.white,
+                        size: hasText ? 24.sp : 28.sp,
+                      ),
                     ),
                   ),
                 ),
