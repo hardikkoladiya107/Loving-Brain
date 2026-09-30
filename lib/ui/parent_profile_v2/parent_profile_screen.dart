@@ -13,6 +13,7 @@ import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_state.d
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/editable_field_card.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
+import 'package:loving_brain/ui/widget/location_picker_sheet.dart';
 
 class ParentProfileScreen extends StatelessWidget {
   const ParentProfileScreen({super.key});
@@ -150,10 +151,18 @@ class _ParentProfileView extends StatelessWidget {
                             ),
                           ),
                           PopupMenuButton<String>(
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: darkBlue,
-                              size: 24.sp,
+                            position: PopupMenuPosition.under,
+                            offset: Offset(0, 8.h),
+                            color: Colors.white,
+                            surfaceTintColor: Colors.transparent,
+                            elevation: 12,
+                            shadowColor: Colors.black.withValues(alpha: 0.12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.r),
+                              side: const BorderSide(
+                                color: Color(0xFFF3ECE7),
+                                width: 1,
+                              ),
                             ),
                             onSelected: (value) {
                               if (value == 'logout') {
@@ -164,18 +173,86 @@ class _ParentProfileView extends StatelessWidget {
                             },
                             itemBuilder: (BuildContext context) =>
                                 <PopupMenuEntry<String>>[
-                                  const PopupMenuItem<String>(
+                                  PopupMenuItem<String>(
                                     value: 'logout',
-                                    child: Text('Log out'),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 6.h,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 36.w,
+                                          height: 36.w,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFFF0E5),
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.logout_rounded,
+                                            color: primaryColor,
+                                            size: 18.sp,
+                                          ),
+                                        ),
+                                        12.spaceW,
+                                        "Log out".appText(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: greyColor9,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const PopupMenuItem<String>(
+                                  const PopupMenuDivider(height: 1),
+                                  PopupMenuItem<String>(
                                     value: 'delete',
-                                    child: Text(
-                                      'Delete Account',
-                                      style: TextStyle(color: Colors.red),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 6.h,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 36.w,
+                                          height: 36.w,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFFFEBEE),
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.delete_outline_rounded,
+                                            color: const Color(0xFFD84315),
+                                            size: 18.sp,
+                                          ),
+                                        ),
+                                        12.spaceW,
+                                        "Delete account".appText(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFFD84315),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.more_vert_rounded,
+                                color: darkBlue,
+                                size: 24.sp,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -204,6 +281,7 @@ class _ParentProfileView extends StatelessWidget {
                           EditableFieldCard(
                             label: "YOUR NAME",
                             value: state.name,
+                            maxLength: 50,
                             onChanged: (v) => cubit.updateField(name: v),
                             onEdit: () {},
                           ),
@@ -224,8 +302,20 @@ class _ParentProfileView extends StatelessWidget {
                           EditableFieldCard(
                             label: "LOCATION / TIME ZONE",
                             value: state.location,
-                            onChanged: (v) => cubit.updateField(location: v),
-                            onEdit: () {},
+                            hintText: "Select location & time zone",
+                            readOnly: true,
+                            onTap: () => showLocationPickerSheet(
+                              context,
+                              initialLocation: state.location,
+                              initialLocationData: cubit.locationData,
+                              onLocationSelected: cubit.updateLocationData,
+                            ),
+                            onEdit: () => showLocationPickerSheet(
+                              context,
+                              initialLocation: state.location,
+                              initialLocationData: cubit.locationData,
+                              onLocationSelected: cubit.updateLocationData,
+                            ),
                           ),
                           24.spaceH,
                           InfoBox.orange(
@@ -285,53 +375,117 @@ class _ParentProfileView extends StatelessWidget {
 
   void _showLogoutDialog(BuildContext context) {
     final ParentProfileV2Cubit cubit = context.read<ParentProfileV2Cubit>();
-    showDialog(
+    _showThemedConfirmDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Log out?'),
-          content: const Text('Are you sure you want to log out?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                cubit.logout();
-              },
-              child: const Text('Log out'),
-            ),
-          ],
-        );
-      },
+      icon: Icons.logout_rounded,
+      iconColor: primaryColor,
+      iconBgColor: const Color(0xFFFFF0E5),
+      title: 'Log out?',
+      message: 'Are you sure you want to log out of your account?',
+      confirmText: 'Log out',
+      confirmColor: primaryColor,
+      onConfirm: cubit.logout,
     );
   }
 
   void _showDeleteAccountDialog(BuildContext context) {
     final ParentProfileV2Cubit cubit = context.read<ParentProfileV2Cubit>();
-    showDialog(
+    _showThemedConfirmDialog(
       context: context,
+      icon: Icons.delete_outline_rounded,
+      iconColor: const Color(0xFFD84315),
+      iconBgColor: const Color(0xFFFFEBEE),
+      title: 'Delete account?',
+      message:
+          'Are you sure you want to delete your account? This action is permanent and cannot be undone.',
+      confirmText: 'Delete',
+      confirmColor: const Color(0xFFD84315),
+      onConfirm: cubit.deleteAccount,
+    );
+  }
+
+  void _showThemedConfirmDialog({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required String title,
+    required String message,
+    required String confirmText,
+    required Color confirmColor,
+    required VoidCallback onConfirm,
+  }) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Delete Account?'),
-          content: const Text(
-            'Are you sure you want to delete your account? This action cannot be undone.',
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28.r),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56.w,
+                  height: 56.w,
+                  decoration: BoxDecoration(
+                    color: iconBgColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: iconColor, size: 28.sp),
+                ),
+                18.spaceH,
+                title.appText(
+                  fontSize: 22.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                message.appText(
+                  fontSize: 14.sp,
+                  color: greyColor,
+                  height: 1.4,
+                ),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: confirmText,
+                        backgroundColor: confirmColor,
+                        borderColor: confirmColor,
+                        textColor: Colors.white,
+                        onTap: () {
+                          Navigator.pop(dialogContext);
+                          onConfirm();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                cubit.deleteAccount();
-              },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+          ),
         );
       },
     );

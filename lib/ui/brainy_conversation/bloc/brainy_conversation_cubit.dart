@@ -49,12 +49,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         ? topic!.trim()
         : 'Sleep';
 
-    emit(
-      state.copyWith(
-        conversationId: conversationId,
-        topic: effectiveTopic,
-      ),
-    );
+    emit(state.copyWith(conversationId: conversationId, topic: effectiveTopic));
 
     if (conversationId != null && conversationId.isNotEmpty) {
       _listenToConversation(
@@ -355,8 +350,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     final String systemPrompt = BrainAiSystemPrompt.build(
       childModel: childModel,
-      parentName:
-          userModel?.parentName ?? userModel?.displayName ?? 'Parent',
+      parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
       topic: state.topic,
     );
 
@@ -529,9 +523,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           subtext:
               'Shifts in daytime naps or evening stimulation$bedtimeNote can trigger a second wind of cortisol right when sleep pressure should peak.',
         ),
-        BrainyMessage(
-          type: MessageType.aiAction,
+        BrainyMessage( 
+          type: MessageType.aiInfo,
           chipTitle: 'What to try now',
+
           headline: 'Start a quiet wind-down 20–30 minutes earlier',
           subtext:
               'Dim the lights, lower voice volume, and repeat the same 2–3 calm bedtime cues so $childName feels safe and ready to rest.',

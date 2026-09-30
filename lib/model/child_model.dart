@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/model/essential_model.dart';
+import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/model/routine_model.dart';
 
 class ChildModel {
@@ -27,6 +28,7 @@ class ChildModel {
     List<String>? difficultTimes,
     List<String>? possibleTriggers,
     String? location,
+    LocationDataModel? locationData,
     List<String>? conditions,
   }) {
     _childAge = childAge;
@@ -50,7 +52,8 @@ class ChildModel {
     _nightWakings = nightWakings;
     _difficultTimes = difficultTimes;
     _possibleTriggers = possibleTriggers;
-    _location = location;
+    _locationData = locationData ?? LocationDataModel.tryParse(location);
+    _location = location ?? _locationData?.formatted;
     _conditions = conditions;
   }
 
@@ -144,7 +147,16 @@ class ChildModel {
           .where((s) => s.isNotEmpty)
           .toList();
     }
-    _location = jsonObject['location']?.toString();
+    final dynamic rawLocation =
+        jsonObject['location_data'] ?? jsonObject['location'];
+    _locationData = LocationDataModel.tryParse(rawLocation);
+    if (jsonObject['location'] is String &&
+        (jsonObject['location'] as String).trim().isNotEmpty &&
+        !(jsonObject['location'] as String).trim().startsWith('{')) {
+      _location = (jsonObject['location'] as String).trim();
+    } else {
+      _location = _locationData?.formatted;
+    }
     if (jsonObject['conditions'] is List<dynamic>) {
       _conditions = (jsonObject['conditions'] as List<dynamic>)
           .map((e) => e?.toString() ?? '')
@@ -175,6 +187,7 @@ class ChildModel {
   List<String>? _difficultTimes;
   List<String>? _possibleTriggers;
   String? _location;
+  LocationDataModel? _locationData;
   List<String>? _conditions;
 
   // Getters
@@ -199,7 +212,8 @@ class ChildModel {
   String? get nightWakings => _nightWakings;
   List<String>? get difficultTimes => _difficultTimes;
   List<String>? get possibleTriggers => _possibleTriggers;
-  String? get location => _location;
+  String? get location => _location ?? _locationData?.formatted;
+  LocationDataModel? get locationData => _locationData;
   List<String>? get conditions => _conditions;
 
   // CopyWith method
@@ -226,6 +240,7 @@ class ChildModel {
     List<String>? difficultTimes,
     List<String>? possibleTriggers,
     String? location,
+    LocationDataModel? locationData,
     List<String>? conditions,
   }) => ChildModel(
     childAge: childAge ?? _childAge,
@@ -250,6 +265,7 @@ class ChildModel {
     difficultTimes: difficultTimes ?? _difficultTimes,
     possibleTriggers: possibleTriggers ?? _possibleTriggers,
     location: location ?? _location,
+    locationData: locationData ?? _locationData,
     conditions: conditions ?? _conditions,
   );
 
@@ -294,7 +310,12 @@ class ChildModel {
     map['night_wakings'] = _nightWakings;
     map['difficult_times'] = _difficultTimes;
     map['possible_triggers'] = _possibleTriggers;
-    map['location'] = _location;
+    final LocationDataModel? resolvedLoc =
+        _locationData ?? LocationDataModel.tryParse(_location);
+    map['location'] = resolvedLoc?.toJson() ?? _location;
+    if (resolvedLoc != null) {
+      map['location_data'] = resolvedLoc.toJson();
+    }
     map['conditions'] = _conditions;
     return map;
   }

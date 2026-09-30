@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/brainy_history_cubit.dart';
 import 'bloc/brainy_history_state.dart';
@@ -219,45 +220,82 @@ class BrainyHistoryScreen extends StatelessWidget {
 
   void _showDeleteDialog(BuildContext context, String conversationId) {
     final cubit = context.read<BrainyHistoryCubit>();
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(28.r),
           ),
-          title: "Delete Conversation".appText(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: darkBlue,
-            textAlign: TextAlign.start,
-          ),
-          content: "Are you sure you want to delete this conversation?".appText(
-            fontSize: 14.sp,
-            color: greyColor,
-            textAlign: TextAlign.start,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: "Cancel".appText(
-                fontSize: 14.sp,
-                color: greyColor,
-                fontWeight: FontWeight.w600,
-              ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56.w,
+                  height: 56.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: const Color(0xFFD84315),
+                    size: 28.sp,
+                  ),
+                ),
+                18.spaceH,
+                "Delete conversation?".appText(
+                  fontSize: 22.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                "Are you sure you want to delete this conversation? This action cannot be undone."
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      height: 1.4,
+                    ),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Delete',
+                        backgroundColor: const Color(0xFFD84315),
+                        borderColor: const Color(0xFFD84315),
+                        textColor: Colors.white,
+                        onTap: () {
+                          Navigator.pop(dialogContext);
+                          cubit.deleteConversation(conversationId);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                cubit.deleteConversation(conversationId);
-              },
-              child: "Delete".appText(
-                fontSize: 14.sp,
-                color: Colors.redAccent,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+          ),
         );
       },
     );

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
@@ -12,6 +13,9 @@ import 'child_profile_v2_state.dart';
 
 class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
   ChildProfileV2Cubit() : super(const ChildProfileV2State());
+
+  LocationDataModel? _locationData;
+  LocationDataModel? get locationData => _locationData;
 
   static String formatDobWithAge(DateTime? dob, String fallbackAge) {
     if (dob == null) {
@@ -53,11 +57,16 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
   }
 
   Future<void> init({bool createNew = false}) async {
+    final DateTime today = DateTime.now();
     if (createNew) {
       final UserModel? user = preferences.getUserModel();
+      _locationData =
+          user?.locationData ?? LocationDataModel.tryParse(user?.location);
       emit(
         ChildProfileV2State(
-          location: user?.location ?? '',
+          childDob: today,
+          dob: formatDobWithAge(today, ''),
+          location: user?.location ?? _locationData?.formatted ?? '',
         ),
       );
       return;
@@ -68,25 +77,37 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
 
     if (localChild != null) {
       final String initialAge = localChild.childAge ?? user?.childAge ?? '';
+      final DateTime initialDob = localChild.childDob ?? today;
+      _locationData =
+          localChild.locationData ??
+          user?.locationData ??
+          LocationDataModel.tryParse(localChild.location ?? user?.location);
       emit(
         state.copyWith(
           childModel: localChild,
           name: localChild.childName ?? user?.childName ?? '',
           age: initialAge,
-          childDob: localChild.childDob,
-          dob: formatDobWithAge(localChild.childDob, initialAge),
+          childDob: initialDob,
+          dob: formatDobWithAge(initialDob, initialAge),
           conditions: (localChild.conditions ?? const <String>[]).join(', '),
           concerns: _extractConcernsText(localChild, null),
-          location: localChild.location ?? user?.location ?? '',
+          location:
+              localChild.location ??
+              user?.location ??
+              _locationData?.formatted ??
+              '',
         ),
       );
     } else if (user != null) {
+      _locationData =
+          user.locationData ?? LocationDataModel.tryParse(user.location);
       emit(
         state.copyWith(
           name: user.childName ?? '',
           age: user.childAge ?? '',
-          dob: user.childAge ?? '',
-          location: user.location ?? '',
+          childDob: today,
+          dob: formatDobWithAge(today, user.childAge ?? ''),
+          location: user.location ?? _locationData?.formatted ?? '',
         ),
       );
     }
@@ -112,13 +133,17 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
 
           final String resolvedAge =
               childModel.childAge ?? user?.childAge ?? '';
-          final DateTime? resolvedDob = childModel.childDob;
+          final DateTime resolvedDob = childModel.childDob ?? today;
           final String conditionsStr = data['conditions'] is List
               ? (data['conditions'] as List)
                     .map((e) => e?.toString() ?? '')
                     .where((s) => s.isNotEmpty)
                     .join(', ')
               : (data['conditions']?.toString() ?? '');
+          _locationData =
+              childModel.locationData ??
+              user?.locationData ??
+              LocationDataModel.tryParse(childModel.location ?? user?.location);
 
           emit(
             state.copyWith(
@@ -133,12 +158,17 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
                   (childModel.location != null &&
                       childModel.location!.trim().isNotEmpty)
                   ? childModel.location!
-                  : (user?.location ?? ''),
+                  : (user?.location ?? _locationData?.formatted ?? ''),
             ),
           );
         }
       } catch (_) {}
     }
+  }
+
+  void updateLocationData(LocationDataModel data) {
+    _locationData = data;
+    updateField(location: data.formatted);
   }
 
   void updateField({
@@ -150,6 +180,9 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     String? concerns,
     String? location,
   }) {
+    if (location != null && _locationData?.formatted != location) {
+      _locationData = LocationDataModel.tryParse(location);
+    }
     emit(
       state.copyWith(
         name: name ?? state.name,
@@ -207,6 +240,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       final String computedAge = ageInMonths > 0
           ? AgeUtils.ageLabelFromMonths(ageInMonths)
           : state.age;
+      final LocationDataModel? resolvedLoc =
+          _locationData ?? LocationDataModel.tryParse(state.location);
 
       final List<String> concernsList = state.concerns
           .split(',')
@@ -225,7 +260,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
           'primary_concern': concernsList.isNotEmpty
               ? concernsList.first
               : null,
-          'location': state.location.trim(),
+          'location': resolvedLoc?.toJson() ?? state.location.trim(),
+          if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
         };
         if (selectedDob != null) {
           updatePayload['child_dob'] = Timestamp.fromDate(selectedDob);
@@ -245,8 +281,12 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
             'child_name': trimmedName,
             'child_age': computedAge,
           };
-          if (state.location.trim().isNotEmpty) {
-            userUpdate['location'] = state.location.trim();
+          if (state.location.trim().isNotEmpty || resolvedLoc != null) {
+            userUpdate['location'] =
+                resolvedLoc?.toJson() ?? state.location.trim();
+            if (resolvedLoc != null) {
+              userUpdate['location_data'] = resolvedLoc.toJson();
+            }
           }
           await AuthRepo.instance.updateUserToFireStore(
             uId: user.uid,
@@ -286,7 +326,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
           'primary_concern': concernsList.isNotEmpty
               ? concernsList.first
               : null,
-          'location': state.location.trim(),
+          'location': resolvedLoc?.toJson() ?? state.location.trim(),
+          if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
         };
         if (selectedDob != null) {
           createRequest['child_dob'] = Timestamp.fromDate(selectedDob);

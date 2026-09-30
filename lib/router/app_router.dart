@@ -57,10 +57,11 @@ class AppRouter {
       navigatorKey: navigatorKey,
       initialLocation: RoutePaths.splash,
       redirect: (BuildContext context, GoRouterState state) {
+        final userModel = preferences.getUserModel();
         final bool isLoggedIn =
-            preferences.getBool(SharedPreference.isLogin) ?? false;
-        final bool isOnboarded =
-            preferences.getUserModel()?.isOnboardingCompleted ?? false;
+            (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+            (userModel?.uid?.trim().isNotEmpty ?? false);
+        final bool isOnboarded = userModel?.isOnboardingCompleted ?? false;
 
         final String location = state.uri.path;
 
@@ -79,6 +80,7 @@ class AppRouter {
         if (isLoggedIn) {
           if (!isOnboarded) {
             if (location == RoutePaths.onboarding ||
+                location == RoutePaths.onboardingSnapshot ||
                 location == RoutePaths.coParentRegister ||
                 location == RoutePaths.terms ||
                 location == RoutePaths.privacy) {
@@ -95,7 +97,9 @@ class AppRouter {
             }
           }
         } else {
-          if (location == RoutePaths.base) {
+          if (location == RoutePaths.base ||
+              location == RoutePaths.onboarding ||
+              location == RoutePaths.onboardingSnapshot) {
             return RoutePaths.welcome;
           }
         }

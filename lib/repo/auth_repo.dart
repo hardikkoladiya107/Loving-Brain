@@ -934,7 +934,15 @@ class AuthRepo {
       final response = await callable.call(<String, dynamic>{
         'email': email.trim(),
       });
-      return ApiResultStatus.data(data: response.data);
+      final dynamic responseData = response.data;
+      if (responseData is Map && responseData['success'] == false) {
+        return ApiResultStatus.error(
+          error: Exception(
+            responseData['message']?.toString() ?? 'Failed to send OTP',
+          ),
+        );
+      }
+      return const ApiResultStatus.data(data: true);
     } on FirebaseFunctionsException catch (e) {
       return ApiResultStatus.error(
         error: Exception(e.message ?? 'Failed to send OTP'),

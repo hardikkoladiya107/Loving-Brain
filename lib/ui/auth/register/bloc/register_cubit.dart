@@ -10,7 +10,12 @@ import '../../../../../repo/auth_repo.dart';
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit() : super(RegisterState());
 
+  /// Tracks which button initiated submission: `'email'`, `'google'`, `'apple'`, or `''`.
+  String _submittingMethod = '';
+  String get submittingMethod => _submittingMethod;
+
   void init() {
+    _submittingMethod = '';
     emit(RegisterState());
   }
 
@@ -28,7 +33,13 @@ class RegisterCubit extends Cubit<RegisterState> {
     bool? isAuthSubmitting,
     int? currentStep,
     bool? isEmailChecking,
+    String? submittingMethod,
   }) {
+    if (submittingMethod != null) {
+      _submittingMethod = submittingMethod;
+    } else if (isAuthSubmitting == false) {
+      _submittingMethod = '';
+    }
     emit(
       state.copyWith(
         obscureTextPassword: obscureTextPassword ?? state.obscureTextPassword,
@@ -137,6 +148,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     changeProps(
       apiResultStatus: ApiResultStatus.loading(),
       isAuthSubmitting: true,
+      submittingMethod: 'email',
     );
 
     final ApiResultStatus<dynamic> credential = await AuthRepo.instance
@@ -144,7 +156,11 @@ class RegisterCubit extends Cubit<RegisterState> {
           email: state.emailAddress.trim(),
           password: state.password.trim(),
         );
-    changeProps(apiResultStatus: credential, isAuthSubmitting: false);
+    changeProps(
+      apiResultStatus: credential,
+      isAuthSubmitting: false,
+      submittingMethod: '',
+    );
   }
 
   void clearFields() {
@@ -162,6 +178,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       isAuthSubmitting: false,
       currentStep: 0,
       isEmailChecking: false,
+      submittingMethod: '',
     );
   }
 
@@ -180,32 +197,47 @@ class RegisterCubit extends Cubit<RegisterState> {
       emailAddressError: '',
       apiResultStatus: ApiResultStatus.loading(),
       isAuthSubmitting: true,
+      submittingMethod: 'email',
     );
 
     final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
       email: email,
     );
 
-    changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
+    changeProps(
+      apiResultStatus: apiResult,
+      isAuthSubmitting: false,
+      submittingMethod: '',
+    );
   }
 
   Future<void> googleAuthenticate() async {
     changeProps(
       apiResultStatus: const ApiResultStatus.loading(),
       isAuthSubmitting: true,
+      submittingMethod: 'google',
     );
     final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
         .signInWithGoogle();
-    changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
+    changeProps(
+      apiResultStatus: apiResult,
+      isAuthSubmitting: false,
+      submittingMethod: '',
+    );
   }
 
   Future<void> signInWithApple() async {
     changeProps(
       apiResultStatus: const ApiResultStatus.loading(),
       isAuthSubmitting: true,
+      submittingMethod: 'apple',
     );
     final ApiResultStatus<dynamic> apiResult = await AuthRepo.instance
         .signInWithApple();
-    changeProps(apiResultStatus: apiResult, isAuthSubmitting: false);
+    changeProps(
+      apiResultStatus: apiResult,
+      isAuthSubmitting: false,
+      submittingMethod: '',
+    );
   }
 }

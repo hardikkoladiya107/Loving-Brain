@@ -13,6 +13,7 @@ import 'firebase_options.dart';
 import 'generated/locale_keys.g.dart';
 import 'manager/deep_link/deep_link_manager.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
+import 'other/app_color.dart';
 import 'other/app_extentions.dart';
 import 'other/notification_util.dart';
 import 'other/preferances.dart';
@@ -115,38 +116,39 @@ class _MyAppState extends State<MyApp> {
 }
 
 void configLoading() {
-  final Color indicatorColor = const Color(0xFF9F35B1);
-  final Color backgroundColor = Colors.white;
-  final Color textColor = const Color(0xFF1A1A1A);
-  final Color maskColor = const Color(0x80FFFFFF);
+  const Color indicatorColor = primaryColor;
+  const Color backgroundColor = Color(0xFFFEF8F4);
+  const Color textColor = greyColor9;
+  final Color maskColor = Colors.black.withValues(alpha: 0.25);
 
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
-    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..indicatorType = EasyLoadingIndicatorType.threeBounce
     ..loadingStyle = EasyLoadingStyle.custom
-    ..indicatorSize = 50.0
-    ..radius = 12.0
+    ..indicatorSize = 36.0
+    ..radius = 24.0
     ..progressColor = indicatorColor
     ..backgroundColor = backgroundColor
     ..indicatorColor = indicatorColor
     ..textColor = textColor
     ..maskColor = maskColor
+    ..maskType = EasyLoadingMaskType.custom
     ..userInteractions = false
     ..dismissOnTap = false
     ..textStyle = getTextStyle(
       fontSize: 15,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
       color: textColor,
-      letterSpacing: 0.3,
+      letterSpacing: 0.2,
     )
-    ..contentPadding = const EdgeInsets.symmetric(horizontal: 24, vertical: 20)
+    ..contentPadding = const EdgeInsets.symmetric(horizontal: 28, vertical: 22)
     ..textPadding = const EdgeInsets.only(top: 12)
     ..boxShadow = [
       BoxShadow(
-        color: Colors.black.withValues(alpha: 0.15),
-        blurRadius: 20.0,
+        color: primaryColor.withValues(alpha: 0.16),
+        blurRadius: 24.0,
         spreadRadius: 2.0,
-        offset: const Offset(0, 4),
+        offset: const Offset(0, 8),
       ),
     ];
 }

@@ -22,40 +22,81 @@ class PrivacyDataScreen extends StatelessWidget {
 
   void _confirmDeleteAccount(BuildContext context) {
     final cubit = context.read<PrivacyDataCubit>();
-    showDialog(
+    showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: "Delete Account".appText(
-          fontWeight: FontWeight.w700,
-          fontSize: 18,
-          textAlign: TextAlign.start,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (dialogContext) => Dialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28.r),
         ),
-        content:
-            "Are you sure you want to permanently delete your account and all associated data? This action cannot be undone."
-                .appText(
-                  fontSize: 14,
-                  color: greyColor,
-                  textAlign: TextAlign.start,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56.w,
+                height: 56.w,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFEBEE),
+                  shape: BoxShape.circle,
                 ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: "Cancel".appText(
-              color: greyColor9,
-              fontWeight: FontWeight.w600,
-            ),
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  color: const Color(0xFFD84315),
+                  size: 28.sp,
+                ),
+              ),
+              18.spaceH,
+              "Delete account?".appText(
+                fontSize: 22.sp,
+                color: greyColor9,
+                fraunces: true,
+              ),
+              10.spaceH,
+              "Are you sure you want to permanently delete your account and all associated data? This action cannot be undone."
+                  .appText(
+                    fontSize: 14.sp,
+                    color: greyColor,
+                    height: 1.4,
+                  ),
+              24.spaceH,
+              Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      height: 48.h,
+                      padding: EdgeInsets.zero,
+                      title: "Cancel",
+                      backgroundColor: const Color(0xFFF8F5F2),
+                      borderColor: const Color(0xFFE9E2DC),
+                      textColor: greyColor9,
+                      onTap: () => Navigator.pop(dialogContext),
+                    ),
+                  ),
+                  12.spaceW,
+                  Expanded(
+                    child: AppButton(
+                      height: 48.h,
+                      padding: EdgeInsets.zero,
+                      title: "Delete",
+                      backgroundColor: const Color(0xFFD84315),
+                      borderColor: const Color(0xFFD84315),
+                      textColor: Colors.white,
+                      onTap: () {
+                        Navigator.pop(dialogContext);
+                        cubit.deleteAccount();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              cubit.deleteAccount();
-            },
-            child: "Delete".appText(
-              color: const Color(0xFFD84315),
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

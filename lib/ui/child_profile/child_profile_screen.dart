@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -259,6 +260,9 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
       hint: LocaleKeys.enterChildName.tr(),
       error: state.childNameError,
       controller: childNameTextEditingController,
+      inputFormatters: <TextInputFormatter>[
+        LengthLimitingTextInputFormatter(50),
+      ],
       onChanged: (value) {
         context.read<ChildProfileCubit>().changeProps(childName: value);
       },
@@ -321,9 +325,9 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
 
   Future<void> _pickChildDob() async {
     final DateTime now = DateTime.now();
-    final DateTime initialDate =
-        context.read<ChildProfileCubit>().state.childDob ??
-        DateTime(now.year - 2, now.month, now.day);
+    final DateTime rawInitial =
+        context.read<ChildProfileCubit>().state.childDob ?? now;
+    final DateTime initialDate = rawInitial.isAfter(now) ? now : rawInitial;
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,

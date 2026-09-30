@@ -93,23 +93,29 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                   ),
                 ),
                 32.spaceH,
-                // Animated equalizer
-                AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildEqBar(16.0 + _random.nextDouble() * 10),
-                        _buildEqBar(24.0 + _random.nextDouble() * 20),
-                        _buildEqBar(32.0 + _random.nextDouble() * 30),
-                        _buildEqBar(48.0 + _random.nextDouble() * 40),
-                        _buildEqBar(32.0 + _random.nextDouble() * 30),
-                        _buildEqBar(24.0 + _random.nextDouble() * 20),
-                        _buildEqBar(16.0 + _random.nextDouble() * 10),
-                      ],
-                    );
-                  },
+                // Animated equalizer (fixed height container so sheet doesn't jump)
+                SizedBox(
+                  height: 90.h,
+                  child: Center(
+                    child: AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, child) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            _buildEqBar(16.0 + _random.nextDouble() * 10),
+                            _buildEqBar(24.0 + _random.nextDouble() * 20),
+                            _buildEqBar(32.0 + _random.nextDouble() * 30),
+                            _buildEqBar(48.0 + _random.nextDouble() * 40),
+                            _buildEqBar(32.0 + _random.nextDouble() * 30),
+                            _buildEqBar(24.0 + _random.nextDouble() * 20),
+                            _buildEqBar(16.0 + _random.nextDouble() * 10),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                 ),
                 40.spaceH,
                 Padding(

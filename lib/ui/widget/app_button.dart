@@ -17,6 +17,7 @@ class AppButton extends StatelessWidget {
     this.height,
     this.padding = const EdgeInsets.only(left: 16, right: 16),
     this.isLoading = false,
+    this.loaderColor,
   });
 
   final String? title;
@@ -29,6 +30,7 @@ class AppButton extends StatelessWidget {
   final Color? textColor;
   final EdgeInsetsGeometry padding;
   final bool isLoading;
+  final Color? loaderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +46,12 @@ class AppButton extends StatelessWidget {
             border: Border.all(color: borderColor ?? backgroundColor, width: 1),
           ),
           child: isLoading
-              ? const Center(
+              ? Center(
                   child: SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      color: Colors.white,
+                      color: loaderColor ?? textColor ?? Colors.white,
                       strokeWidth: 2,
                     ),
                   ),

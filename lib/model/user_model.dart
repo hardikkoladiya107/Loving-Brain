@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:loving_brain/model/location_data_model.dart';
 
 class UserModel {
   UserModel({
@@ -34,6 +35,7 @@ class UserModel {
     String? partnerUserId,
     String? preferredLanguage,
     String? location,
+    LocationDataModel? locationData,
     bool? isOnboardingCompleted,
   }) {
     _uid = uid;
@@ -67,7 +69,8 @@ class UserModel {
     _isActiveLogger = isActiveLogger;
     _partnerUserId = partnerUserId;
     _preferredLanguage = preferredLanguage;
-    _location = location;
+    _locationData = locationData ?? LocationDataModel.tryParse(location);
+    _location = location ?? _locationData?.formatted;
     _isOnboardingCompleted = isOnboardingCompleted;
   }
 
@@ -99,7 +102,16 @@ class UserModel {
     _isActiveLogger = jsonObject['is_active_logger'] as bool?;
     _partnerUserId = jsonObject['partner_user_id'] as String?;
     _preferredLanguage = jsonObject['preferred_language']?.toString();
-    _location = jsonObject['location']?.toString();
+    final dynamic rawLocation =
+        jsonObject['location_data'] ?? jsonObject['location'];
+    _locationData = LocationDataModel.tryParse(rawLocation);
+    if (jsonObject['location'] is String &&
+        (jsonObject['location'] as String).trim().isNotEmpty &&
+        !(jsonObject['location'] as String).trim().startsWith('{')) {
+      _location = (jsonObject['location'] as String).trim();
+    } else {
+      _location = _locationData?.formatted;
+    }
     _isOnboardingCompleted = jsonObject['is_onboarding_completed'] as bool?;
     _originalJson = jsonObject;
 
@@ -272,6 +284,7 @@ class UserModel {
   String? _partnerUserId;
   String? _preferredLanguage;
   String? _location;
+  LocationDataModel? _locationData;
   bool? _isOnboardingCompleted;
   Map<String, dynamic>? _originalJson;
 
@@ -308,6 +321,7 @@ class UserModel {
     String? partnerUserId,
     String? preferredLanguage,
     String? location,
+    LocationDataModel? locationData,
     bool? isOnboardingCompleted,
   }) {
     return UserModel(
@@ -343,6 +357,7 @@ class UserModel {
       partnerUserId: partnerUserId ?? _partnerUserId,
       preferredLanguage: preferredLanguage ?? _preferredLanguage,
       location: location ?? _location,
+      locationData: locationData ?? _locationData,
       isOnboardingCompleted:
           isOnboardingCompleted ?? _isOnboardingCompleted,
     );
@@ -426,7 +441,8 @@ class UserModel {
 
   String? get partnerUserId => _partnerUserId;
   String? get preferredLanguage => _preferredLanguage;
-  String? get location => _location;
+  String? get location => _location ?? _locationData?.formatted;
+  LocationDataModel? get locationData => _locationData;
 
   /// Returns true if onboarding is explicitly marked completed OR if the user
   /// already has both a parent name and at least one linked child.
@@ -474,7 +490,12 @@ class UserModel {
     map['is_active_logger'] = _isActiveLogger;
     map['partner_user_id'] = _partnerUserId;
     map['preferred_language'] = _preferredLanguage;
-    map['location'] = _location;
+    final LocationDataModel? resolvedLoc =
+        _locationData ?? LocationDataModel.tryParse(_location);
+    map['location'] = resolvedLoc?.toJson() ?? _location;
+    if (resolvedLoc != null) {
+      map['location_data'] = resolvedLoc.toJson();
+    }
     map['is_onboarding_completed'] = _isOnboardingCompleted;
 
     try {

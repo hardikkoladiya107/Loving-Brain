@@ -19,12 +19,13 @@ class _SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future<void>.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
+        final userModel = preferences.getUserModel();
         final bool isLogin =
-            preferences.getBool(SharedPreference.isLogin) ?? false;
+            (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+            (userModel?.uid?.trim().isNotEmpty ?? false);
 
         if (isLogin) {
-          final userModel = preferences.getUserModel();
-          if (userModel == null || !userModel.isOnboardingCompleted) {
+          if (!userModel!.isOnboardingCompleted) {
             context.go(RoutePaths.onboarding);
             return;
           }

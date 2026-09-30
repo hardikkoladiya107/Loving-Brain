@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -12,6 +13,8 @@ class EditableFieldCard extends StatefulWidget {
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
   final bool readOnly;
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
 
   const EditableFieldCard({
     super.key,
@@ -22,6 +25,8 @@ class EditableFieldCard extends StatefulWidget {
     this.onTap,
     this.onChanged,
     this.readOnly = false,
+    this.maxLength,
+    this.inputFormatters,
   });
 
   @override
@@ -90,6 +95,15 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                   controller: _controller,
                   focusNode: _focusNode,
                   readOnly: widget.readOnly,
+                  inputFormatters:
+                      widget.inputFormatters ??
+                      (widget.maxLength != null
+                          ? <TextInputFormatter>[
+                              LengthLimitingTextInputFormatter(
+                                widget.maxLength!,
+                              ),
+                            ]
+                          : null),
                   onTap: widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
                   onChanged: widget.onChanged,
                   style: TextStyle(

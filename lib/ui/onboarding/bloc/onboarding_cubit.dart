@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
@@ -12,13 +14,26 @@ import 'onboarding_state.dart';
 class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit() : super(const OnboardingState());
 
+  LocationDataModel? _locationData;
+  LocationDataModel? get locationData => _locationData;
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final String initialParentName =
         (user?.parentName != null && user!.parentName!.trim().isNotEmpty)
         ? user.parentName!.trim()
         : '';
-    emit(OnboardingState(parentName: initialParentName));
+    _locationData = user?.locationData;
+    final DateTime today = DateTime.now();
+    final String todayFormatted = DateFormat('d MMMM yyyy').format(today);
+    emit(
+      OnboardingState(
+        parentName: initialParentName,
+        location: user?.location ?? '',
+        childDob: today,
+        dateOfBirth: todayFormatted,
+      ),
+    );
   }
 
   void changeProps({
@@ -222,22 +237,26 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void updateLocation(String location) {
+    _locationData = LocationDataModel.tryParse(location);
     changeProps(location: location, locationError: "");
+  }
+
+  void updateLocationData(LocationDataModel data) {
+    _locationData = data;
+    changeProps(location: data.formatted, locationError: "");
   }
 
   void selectConcern(String concern) {
     if (state.isMoreThanOneSelected) {
       final List<String> updated = List<String>.from(state.concerns);
       if (updated.contains(concern)) {
-        if (updated.length > 1) {
-          updated.remove(concern);
-        }
+        updated.remove(concern);
       } else {
         updated.add(concern);
       }
       changeProps(
         concerns: updated,
-        primaryConcern: updated.isNotEmpty ? updated.first : concern,
+        primaryConcern: updated.isNotEmpty ? updated.first : '',
         concernsError: "",
       );
     } else {
@@ -251,7 +270,15 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void toggleMoreThanOne() {
     final bool updated = !state.isMoreThanOneSelected;
-    changeProps(isMoreThanOneSelected: updated);
+    if (!updated && state.concerns.length > 1) {
+      changeProps(
+        isMoreThanOneSelected: false,
+        concerns: const <String>[],
+        primaryConcern: '',
+      );
+    } else {
+      changeProps(isMoreThanOneSelected: updated);
+    }
   }
 
   void selectSuccessGoal(String goal) {
@@ -333,6 +360,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         legacyAgeText: '',
       );
       final String computedChildAge = AgeUtils.ageLabelFromMonths(ageInMonths);
+      final LocationDataModel? resolvedLoc =
+          _locationData ?? LocationDataModel.tryParse(state.location);
 
       // 1. Create Child Document with full onboarding details
       final DocumentReference<Map<String, dynamic>> childDoc =
@@ -367,15 +396,17 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         difficultTimes: state.difficultTimes,
         possibleTriggers: state.possibleTriggers,
         location: state.location.isNotEmpty ? state.location : null,
+        locationData: resolvedLoc,
       );
       await childDoc.set(childModel.toJson());
 
-      // 2. Update User Document in Firestore
+      // 2. Update User Document in Firestore with location JSON
       final Map<String, dynamic> userUpdate = <String, dynamic>{
         'parent_name': state.parentName.trim(),
         'relationship_to_child': state.parentRole,
         'preferred_language': state.preferredLanguage,
-        'location': state.location,
+        'location': resolvedLoc?.toJson() ?? state.location,
+        if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
         'child_name': state.childName.trim(),
         'child_age': computedChildAge,
         'children': <DocumentReference>[childDoc],

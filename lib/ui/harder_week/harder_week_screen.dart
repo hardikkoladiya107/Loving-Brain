@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
-import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/widget/common_info_card.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
+import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
+import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/widget/common_info_card.dart';
 
 class HarderWeekScreen extends StatelessWidget {
   const HarderWeekScreen({super.key});

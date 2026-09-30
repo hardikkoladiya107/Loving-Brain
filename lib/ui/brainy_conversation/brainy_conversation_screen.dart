@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -366,33 +367,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   }
 
   Widget _buildTypingIndicator() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(24.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 16.w,
-            height: 16.w,
-            child: const CircularProgressIndicator(
-              strokeWidth: 2,
-              color: primaryColor,
-            ),
-          ),
-          12.spaceW,
-          "Brainy is thinking...".appText(
-            fontSize: 14.sp,
-            color: greyColor,
-            fontWeight: FontWeight.w500,
-          ),
-        ],
-      ),
-    );
+    return const _BrainyThinkingIndicator();
   }
 
   Widget _buildMessageCard({
@@ -528,6 +503,149 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _BrainyThinkingIndicator extends StatefulWidget {
+  const _BrainyThinkingIndicator();
+
+  @override
+  State<_BrainyThinkingIndicator> createState() =>
+      _BrainyThinkingIndicatorState();
+}
+
+class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildDot(int index) {
+    final double phase = (_controller.value * 2 * math.pi) - (index * 0.65);
+    final double offset = math.sin(phase) * 3.5;
+    final double opacity = 0.45 + 0.55 * ((math.sin(phase) + 1) / 2);
+    return Transform.translate(
+      offset: Offset(0, -offset.clamp(-3.5, 3.5)),
+      child: Container(
+        width: 7.w,
+        height: 7.w,
+        margin: EdgeInsets.symmetric(horizontal: 2.5.w),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Color.lerp(secondaryColor, primaryColor, index / 2)!
+              .withValues(alpha: opacity),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(
+          color: const Color(0xFFF3ECE7),
+          width: 1,
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: primaryColor.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (BuildContext context, Widget? child) {
+          final double pulse =
+              0.92 + 0.08 * math.sin(_controller.value * 2 * math.pi);
+          return Row(
+            children: <Widget>[
+              Transform.scale(
+                scale: pulse,
+                child: Container(
+                  width: 44.w,
+                  height: 44.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[
+                        Color(0xFFFFEDE6),
+                        Color(0xFFECEAFF),
+                      ],
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: secondaryColor.withValues(alpha: 0.18),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      color: secondaryColor,
+                      size: 22.sp,
+                    ),
+                  ),
+                ),
+              ),
+              14.spaceW,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        "Brainy is thinking".appText(
+                          fontSize: 15.sp,
+                          color: greyColor9,
+                          fontWeight: FontWeight.w600,
+                          textAlign: TextAlign.start,
+                        ),
+                        6.spaceW,
+                        _buildDot(0),
+                        _buildDot(1),
+                        _buildDot(2),
+                      ],
+                    ),
+                    3.spaceH,
+                    "Crafting a thoughtful response for you".appText(
+                      fontSize: 12.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

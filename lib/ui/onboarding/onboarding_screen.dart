@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/widget/location_picker_sheet.dart';
 
 import 'bloc/onboarding_cubit.dart';
 import 'bloc/onboarding_state.dart';
@@ -131,120 +133,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _showChangeLocationSheet(BuildContext context, String currentLocation) {
-    final TextEditingController locationController = TextEditingController(
-      text: currentLocation,
-    );
     final OnboardingCubit cubit = context.read<OnboardingCubit>();
-
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-      ),
-      builder: (BuildContext ctx) {
-        final List<String> quickLocations = <String>[
-          'Chennai, India (GMT+5:30)',
-          'Mumbai, India (GMT+5:30)',
-          'New Delhi, India (GMT+5:30)',
-          'London, UK (GMT+0:00)',
-          'New York, US (GMT-5:00)',
-          'San Francisco, US (GMT-8:00)',
-          'Sydney, Australia (GMT+11:00)',
-        ];
-
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 20.w,
-            right: 20.w,
-            top: 20.h,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(
-                child: Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: greyColor2,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                ),
-              ),
-              16.spaceH,
-              "Change Location".appText2(
-                fontSize: 22,
-                textAlign: TextAlign.start,
-              ),
-              6.spaceH,
-              "Enter your city and timezone to receive timely suggestions."
-                  .appText(
-                    fontSize: 13,
-                    color: greyColor,
-                    textAlign: TextAlign.start,
-                  ),
-              20.spaceH,
-              AppTextField(
-                controller: locationController,
-                title: "Location & Timezone",
-                hint: "City, Country (GMT offset)",
-                border: Border.all(color: _accentPurple, width: 1.2),
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              16.spaceH,
-              "Common Locations".appText(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: greyColor,
-              ),
-              10.spaceH,
-              Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: quickLocations.map((String loc) {
-                  return BaseButton(
-                    onTap: () {
-                      locationController.text = loc;
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F9FA),
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(color: greyColor2),
-                      ),
-                      child: loc.appText(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF495057),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              24.spaceH,
-              AppButton(
-                padding: EdgeInsets.zero,
-                onTap: () {
-                  final String trimmed = locationController.text.trim();
-                  if (trimmed.isNotEmpty) {
-                    cubit.updateLocation(trimmed);
-                  }
-                  Navigator.of(ctx).pop();
-                },
-                title: "Save Location",
-              ),
-            ],
-          ),
-        );
-      },
+    showLocationPickerSheet(
+      context,
+      initialLocation: currentLocation,
+      initialLocationData: cubit.locationData,
+      onLocationSelected: cubit.updateLocationData,
     );
   }
 
@@ -611,12 +505,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _pickChildDob(BuildContext context) async {
     final OnboardingCubit cubit = context.read<OnboardingCubit>();
-    final DateTime initialDate = DateTime(2024, 3, 14);
+    final DateTime now = DateTime.now();
+    final DateTime rawInitial = cubit.state.childDob ?? now;
+    final DateTime initialDate = rawInitial.isAfter(now) ? now : rawInitial;
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: cubit.state.childDob ?? initialDate,
+      initialDate: initialDate,
       firstDate: DateTime(2015),
-      lastDate: DateTime.now(),
+      lastDate: now,
       builder: (BuildContext ctx, Widget? child) {
         return Theme(
           data: Theme.of(ctx).copyWith(
@@ -889,13 +785,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 // Stepper control: [ -  2  + ]
                 Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
-                  ),
                   decoration: BoxDecoration(
                     color: _chipSelectedBg,
-                    borderRadius: BorderRadius.circular(20.r),
+                    borderRadius: BorderRadius.circular(24.r),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -904,39 +796,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         onTap: () {
                           context.read<OnboardingCubit>().updateUsualNaps(-1);
                         },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.w,
-                            vertical: 2.h,
-                          ),
-                          child: const Icon(
-                            Icons.remove,
-                            size: 16,
-                            color: greyColor9,
+                        child: ColoredBox(
+                          color: Colors.transparent,
+                          child: SizedBox(
+                            width: 44.w,
+                            height: 38.h,
+                            child: Center(
+                              child: Icon(
+                                Icons.remove_rounded,
+                                size: 20.sp,
+                                color: greyColor9,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: "${state.usualNaps}".appText(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: greyColor9,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: 24.w),
+                        child: Center(
+                          child: "${state.usualNaps}".appText(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: greyColor9,
+                          ),
                         ),
                       ),
                       BaseButton(
                         onTap: () {
                           context.read<OnboardingCubit>().updateUsualNaps(1);
                         },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.w,
-                            vertical: 2.h,
-                          ),
-                          child: const Icon(
-                            Icons.add,
-                            size: 16,
-                            color: greyColor9,
+                        child: ColoredBox(
+                          color: Colors.transparent,
+                          child: SizedBox(
+                            width: 44.w,
+                            height: 38.h,
+                            child: Center(
+                              child: Icon(
+                                Icons.add_rounded,
+                                size: 20.sp,
+                                color: greyColor9,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -1042,6 +942,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             title: "Child's name",
             titleColor: state.childNameError.isNotEmpty ? Colors.red : null,
             hint: "Ingredia Nutrisha",
+            inputFormatters: <TextInputFormatter>[
+              LengthLimitingTextInputFormatter(50),
+            ],
             border: Border.all(
               color: state.childNameError.isNotEmpty
                   ? Colors.red
@@ -1207,6 +1110,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             title: "Your name",
             titleColor: state.parentNameError.isNotEmpty ? Colors.red : null,
             hint: "Russell Sprout",
+            inputFormatters: <TextInputFormatter>[
+              LengthLimitingTextInputFormatter(50),
+            ],
             border: Border.all(
               color: state.parentNameError.isNotEmpty
                   ? Colors.red
@@ -1306,61 +1212,60 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           22.spaceH,
 
           // Section 4: Location card with "Change" button
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24.r),
-              border: Border.all(
-                color: state.locationError.isNotEmpty
-                    ? Colors.red
-                    : _accentPurple,
-                width: 1.2,
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      "LOCATION".appText(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: state.locationError.isNotEmpty
-                            ? Colors.red
-                            : greyColor4,
-                        letterSpacing: 0.8,
-                        textAlign: TextAlign.start,
-                      ),
-                      4.spaceH,
-                      (state.location.isEmpty
-                              ? 'Select Location'
-                              : state.location)
-                          .appText(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: state.location.isEmpty
-                                ? greyColor
-                                : greyColor9,
-                            textAlign: TextAlign.start,
-                          ),
-                    ],
-                  ),
+          BaseButton(
+            onTap: () => _showChangeLocationSheet(context, state.location),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24.r),
+                border: Border.all(
+                  color: state.locationError.isNotEmpty
+                      ? Colors.red
+                      : _accentPurple,
+                  width: 1.2,
                 ),
-                10.spaceW,
-                BaseButton(
-                  onTap: () =>
-                      _showChangeLocationSheet(context, state.location),
-                  child: "Change".appText(
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        "LOCATION".appText(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: state.locationError.isNotEmpty
+                              ? Colors.red
+                              : greyColor4,
+                          letterSpacing: 0.8,
+                          textAlign: TextAlign.start,
+                        ),
+                        4.spaceH,
+                        (state.location.isEmpty
+                                ? 'Select Location'
+                                : state.location)
+                            .appText(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: state.location.isEmpty
+                                  ? greyColor
+                                  : greyColor9,
+                              textAlign: TextAlign.start,
+                            ),
+                      ],
+                    ),
+                  ),
+                  10.spaceW,
+                  "Change".appText(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: _accentPurple,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ).appPadding(left: 20.r, right: 20.r),
           if (state.locationError.isNotEmpty) ...[

@@ -20,41 +20,52 @@ class TodayHeader extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
-              onTap: () async {
-                final todayCubit = context.read<TodayCubit>();
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChildProfileScreen()),
-                );
-                todayCubit.init();
-              },
-              child: Container(
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(40),
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16.r,
-                      backgroundColor: Colors.amber,
-                      child: Icon(
-                        Icons.person,
-                        size: 20.sp,
-                        color: Colors.white,
+            Flexible(
+              child: GestureDetector(
+                onTap: () async {
+                  final todayCubit = context.read<TodayCubit>();
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ChildProfileScreen(),
+                    ),
+                  );
+                  todayCubit.init();
+                },
+                child: Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 16.r,
+                        backgroundColor: Colors.amber,
+                        child: Icon(
+                          Icons.person,
+                          size: 20.sp,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 8.w),
-                    state.childName.appText(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16.sp,
-                    ),
-                  ],
-                ).appPadding(left: 6, right: 6, top: 6, bottom: 6),
+                      SizedBox(width: 8.w),
+                      Flexible(
+                        child: state.childName.appText(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    ],
+                  ).appPadding(left: 6, right: 12, top: 6, bottom: 6),
+                ),
               ),
             ),
+            SizedBox(width: 12.w),
             GestureDetector(
               onTap: () async {
                 final todayCubit = context.read<TodayCubit>();
@@ -81,11 +92,17 @@ class TodayHeader extends StatelessWidget {
             children: [
               Icon(Icons.mood, color: Colors.orange, size: 20.sp),
               SizedBox(width: 8.w),
-              "${state.timeOfDayGreeting} ${state.parentName}!".appText(
-                fontWeight: FontWeight.w700,
-                fontSize: 14.sp,
-                color: greyColor,
-                letterSpacing: 1.2,
+              Expanded(
+                child: "${state.timeOfDayGreeting} ${state.parentName}!"
+                    .appText(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      letterSpacing: 1.2,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
+                    ),
               ),
             ],
           ),

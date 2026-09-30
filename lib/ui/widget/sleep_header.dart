@@ -76,34 +76,46 @@ class SleepHeader extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: darkBlue,
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
+                Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: darkBlue,
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 16.r,
-                        backgroundColor: Colors.amber,
-                        child: Icon(
-                          Icons.person,
-                          size: 20.sp,
-                          color: Colors.white,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          radius: 16.r,
+                          backgroundColor: Colors.amber,
+                          child: Icon(
+                            Icons.person,
+                            size: 20.sp,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      8.spaceW,
-                      (preferences.getChildModel()?.childName ?? 'Child').appText(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ).appPadding(left: 6, right: 12, top: 8, bottom: 8),
+                        8.spaceW,
+                        Flexible(
+                          child:
+                              (preferences.getChildModel()?.childName ??
+                                      'Child')
+                                  .appText(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16.sp,
+                                    color: Colors.white,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.start,
+                                  ),
+                        ),
+                      ],
+                    ).appPadding(left: 6, right: 12, top: 8, bottom: 8),
+                  ),
                 ),
+                12.spaceW,
                 CircleAvatar(
                   radius: 20.r,
                   backgroundColor: primaryColor,

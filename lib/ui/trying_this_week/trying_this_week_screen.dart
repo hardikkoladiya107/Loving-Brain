@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -123,7 +122,7 @@ class TryingThisWeekScreen extends StatelessWidget {
             height: 1.2,
           ),
           12.spaceH,
-          "Started 3 days ago ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â· day 3 of 7".appText(
+          "Started 3 days ago · day 3 of 7".appText(
             fontSize: 12.sp,
             color: greyColor,
             textAlign: TextAlign.start,
@@ -236,27 +235,83 @@ class TryingThisWeekScreen extends StatelessWidget {
             12.spaceH,
             GestureDetector(
               onTap: () {
-                showDialog(
+                showDialog<void>(
                   context: context,
-                  builder: (ctx) => CupertinoAlertDialog(
-                    title: const Text("Finish Early"),
-                    content: const Text(
-                      "Are you sure you want to end this recommendation early?",
+                  barrierColor: Colors.black.withValues(alpha: 0.4),
+                  builder: (BuildContext ctx) => Dialog(
+                    backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.transparent,
+                    insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28.r),
                     ),
-                    actions: [
-                      CupertinoDialogAction(
-                        child: const Text("Cancel"),
-                        onPressed: () => Navigator.pop(ctx),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 56.w,
+                            height: 56.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFF0E5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.flag_outlined,
+                              color: primaryColor,
+                              size: 28.sp,
+                            ),
+                          ),
+                          18.spaceH,
+                          "Finish early?".appText(
+                            fontSize: 22.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                          ),
+                          10.spaceH,
+                          "Are you sure you want to end this recommendation early?"
+                              .appText(
+                                fontSize: 14.sp,
+                                color: greyColor,
+                                height: 1.4,
+                              ),
+                          24.spaceH,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AppButton(
+                                  height: 48.h,
+                                  padding: EdgeInsets.zero,
+                                  title: 'Cancel',
+                                  backgroundColor: const Color(0xFFF8F5F2),
+                                  borderColor: const Color(0xFFE9E2DC),
+                                  textColor: greyColor9,
+                                  onTap: () => Navigator.pop(ctx),
+                                ),
+                              ),
+                              12.spaceW,
+                              Expanded(
+                                child: AppButton(
+                                  height: 48.h,
+                                  padding: EdgeInsets.zero,
+                                  title: 'Finish',
+                                  backgroundColor: primaryColor,
+                                  borderColor: primaryColor,
+                                  textColor: Colors.white,
+                                  onTap: () {
+                                    Navigator.pop(ctx); // Close dialog
+                                    Navigator.pop(
+                                      context,
+                                    ); // Close TryingThisWeekScreen
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      CupertinoDialogAction(
-                        isDestructiveAction: true,
-                        child: const Text("Finish"),
-                        onPressed: () {
-                          Navigator.pop(ctx); // Close dialog
-                          Navigator.pop(context); // Close TryingThisWeekScreen
-                        },
-                      ),
-                    ],
+                    ),
                   ),
                 );
               },

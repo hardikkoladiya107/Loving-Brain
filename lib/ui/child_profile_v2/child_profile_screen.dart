@@ -12,6 +12,7 @@ import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_state.dar
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/editable_field_card.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
+import 'package:loving_brain/ui/widget/location_picker_sheet.dart';
 
 class ChildProfileScreen extends StatelessWidget {
   final String? userId;
@@ -42,8 +43,7 @@ class _ChildProfileView extends StatelessWidget {
     DateTime? currentDob,
   ) async {
     final DateTime now = DateTime.now();
-    final DateTime initialDate =
-        currentDob ?? DateTime(now.year - 1, now.month, now.day);
+    final DateTime initialDate = currentDob ?? now;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate.isAfter(now) ? now : initialDate,
@@ -186,6 +186,7 @@ class _ChildProfileView extends StatelessWidget {
                           EditableFieldCard(
                             label: "CHILD'S NAME",
                             value: state.name,
+                            maxLength: 50,
                             onChanged: (v) => cubit.updateField(name: v),
                             onEdit: () {},
                           ),
@@ -217,8 +218,20 @@ class _ChildProfileView extends StatelessWidget {
                           EditableFieldCard(
                             label: "LOCATION / TIME ZONE",
                             value: state.location,
-                            onChanged: (v) => cubit.updateField(location: v),
-                            onEdit: () {},
+                            hintText: "Select location & time zone",
+                            readOnly: true,
+                            onTap: () => showLocationPickerSheet(
+                              context,
+                              initialLocation: state.location,
+                              initialLocationData: cubit.locationData,
+                              onLocationSelected: cubit.updateLocationData,
+                            ),
+                            onEdit: () => showLocationPickerSheet(
+                              context,
+                              initialLocation: state.location,
+                              initialLocationData: cubit.locationData,
+                              onLocationSelected: cubit.updateLocationData,
+                            ),
                           ),
                           24.spaceH,
                           Center(
