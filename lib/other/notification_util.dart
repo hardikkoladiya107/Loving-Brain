@@ -203,6 +203,8 @@ class NotificationUtil {
           channelId,
           channelName,
           channelDescription: channelDesc,
+          icon: '@drawable/ic_notification_icon',
+          color: const Color(0xFFFA8676),
           importance: Importance.max,
           priority: Priority.max,
           playSound: sound,
