@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -53,7 +54,9 @@ class _SplashScreenState extends State<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: Assets.v2.icons.icAppIcon.svg()),
+            Center(
+              child: Assets.v2.icons.icAppIcon.svg(height: 110.h, width: 110.w),
+            ),
             14.spaceH,
             Assets.v2.icons.icLovingBrainText.svg(),
           ],

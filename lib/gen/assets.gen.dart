@@ -808,6 +808,10 @@ class $AssetsV2IconsGen {
   SvgGenImage get icAppIcon =>
       const SvgGenImage('assets/v2/icons/ic_app_icon.svg');
 
+  /// File path: assets/v2/icons/ic_app_icon.png
+  AssetGenImage get icAppIconPng =>
+      const AssetGenImage('assets/v2/icons/ic_app_icon.png');
+
   /// File path: assets/v2/icons/ic_apple_icon.png
   AssetGenImage get icAppleIcon =>
       const AssetGenImage('assets/v2/icons/ic_apple_icon.png');
@@ -940,6 +944,7 @@ class $AssetsV2IconsGen {
   List<dynamic> get values => [
     icAllergies,
     icAppIcon,
+    icAppIconPng,
     icAppleIcon,
     icBack,
     icBrainy,
