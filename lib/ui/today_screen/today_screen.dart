@@ -17,7 +17,6 @@ import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
 // Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 
 class TodayScreen extends StatelessWidget {
   const TodayScreen({super.key});

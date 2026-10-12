@@ -7,9 +7,6 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/sleep_pattern_cubit.dart';
-import 'bloc/sleep_pattern_state.dart';
 
 class SleepPatternScreen extends StatelessWidget {
   const SleepPatternScreen({super.key});
@@ -348,53 +345,4 @@ class SleepPatternScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _buildTimeframeToggles(BuildContext context, SleepPatternState state) {
-  return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 16.w),
-    child: Container(
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: greyColor12),
-      ),
-      child: Row(
-        children: [
-          _buildToggleOption(context, 'Day', 0, state.selectedToggleIndex),
-          _buildToggleOption(context, 'Week', 1, state.selectedToggleIndex),
-          _buildToggleOption(context, 'Month', 2, state.selectedToggleIndex),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildToggleOption(
-  BuildContext context,
-  String title,
-  int index,
-  int selectedIndex,
-) {
-  final isSelected = index == selectedIndex;
-  return Expanded(
-    child: GestureDetector(
-      onTap: () => context.read<SleepPatternCubit>().setToggleIndex(index),
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.h),
-        decoration: BoxDecoration(
-          color: isSelected ? primaryColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: Center(
-          child: title.appText(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : greyColor4,
-          ),
-        ),
-      ),
-    ),
-  );
 }

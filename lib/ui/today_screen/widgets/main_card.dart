@@ -8,7 +8,6 @@ import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/today_cubit.dart';
-import '../bloc/today_state.dart';
 
 class MainCard extends StatelessWidget {
   const MainCard({super.key});

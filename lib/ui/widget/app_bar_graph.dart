@@ -4,7 +4,7 @@ import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
 class AppBarGraph extends StatelessWidget {
-  AppBarGraph({
+  const AppBarGraph({
     super.key,
     required this.height,
     this.interval = 2,
@@ -17,14 +17,14 @@ class AppBarGraph extends StatelessWidget {
     this.textColor,
   });
   final double height;
-  Color? textColor;
+  final Color? textColor;
   final double interval;
   final List<String> titles;
   final List<double> values;
-  double topPAdding = 50;
+  final double topPAdding;
   final bool showBest;
   final bool showTitles;
-  Widget Function(double, TitleMeta) hrTitlesWidget;
+  final Widget Function(double, TitleMeta) hrTitlesWidget;
   @override
   Widget build(BuildContext context) {
     final colors = [
