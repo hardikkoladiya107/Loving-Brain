@@ -1,5 +1,6 @@
-# LOVINGBRAIN — Simple Screen Connection Flow
+# LOVINGBRAIN — Simple Screen Connection + Logic Flow
 
+**Simple Screen Connection + Logic Flow | For Hardik**  
 **How Every Parent Action Connects Through the App**  
 **Developer Reference for Hardik | Based on Deepak's Final 74-Screen UI**
 

@@ -147,7 +147,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 
 - Automatic  →  After app initialization, move to Welcome. No user tap required.  →  Welcome (p2)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Check whether the user already has a valid signed-in session.
 - If already authenticated and onboarding is complete, skip onboarding and open Today instead.
@@ -181,7 +181,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 
 - Get Started  →  Open account setup.  →  Create Account (p3)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - This is shown only to a new or signed-out user.
 - Do not show repeated marketing slides; one clear promise is enough.
@@ -221,7 +221,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Auth user record)*
 - Back  →  Return to Welcome without deleting any already typed local values.  →  Welcome (p2)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - The separate OTP screen means phone authentication should route through OTP.
 - The Figma prototype wiring is inconsistent here; use this document as the intended behavior.
@@ -260,7 +260,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: OTP request metadata)*
 - Back  →  Return to account setup so the parent can correct the number.  →  Create Account (p3)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Disable Continue until four digits are entered.
 - Show a clear inline error for wrong/expired code; do not clear the phone number.
@@ -303,7 +303,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Parent profile)*
 - Back  →  Return to OTP/account step.  →  Create Account / OTP
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Time zone is important because sleep windows and notification times depend on local time.
 - Language choice should later be reused for Brainy, notifications and mentor matching.
@@ -343,7 +343,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Onboarding preference)*
 - Back  →  Return to About You.  →  About You (p5)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - The screen says the parent can change this later, so this must remain editable from profile/settings.
 - Concern influences home emphasis, suggested Brainy prompts and weekly focus.
@@ -381,7 +381,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Goal preference)*
 - Back  →  Return to Main Concern.  →  Main Concern (p6)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Use this goal to shape weekly review language and recommendations.
 - Avoid claiming guaranteed outcomes; it is a focus, not a promise.
@@ -423,7 +423,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Child profile)*
 - Back  →  Return to Success Goal.  →  Success Goal (p7)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Age is a key input for sleep guidance, so DOB must be stored as a date, not only an age number.
 - If DOB changes later, age-based guidance should re-base from the next calculation cycle.
@@ -467,7 +467,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Sleep baseline)*
 - Back  →  Return to Child Profile.  →  About Your Child (p8)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - These are rough baseline values only; actual logs should gradually replace assumptions.
 - Use the child's age and baseline for the initial general sleep estimate until real data is available.
@@ -507,7 +507,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Behaviour baseline)*
 - Back  →  Return to Sleep Setup.  →  Sleep Setup (p9)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - These are parent observations, not diagnoses.
 - Later behaviour logs should confirm, weaken or replace these initial assumptions.
@@ -542,7 +542,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Go to Today  →  Finish onboarding and open the new-parent Today state.  →  Today - New Parent (p13)
   *(Data/state: onboardingComplete=true)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Generate the snapshot from onboarding answers and age guidance only; label it as an early suggestion, not a learned pattern.
 - The Figma prototype links this button incorrectly. The intended destination is Today, not Splash.
@@ -593,7 +593,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Quick actions  →  Sleep -> p17; Tantrums -> p18; Mood -> p19; Health -> p20; Notes -> p21; Ask Brainy -> p32.  →  Matching screen
 - Bottom navigation  →  Brainy AI -> p32; Journey -> p37; Today keeps the user here.  →  p32 / p37 / Today
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Today is assembled from the latest sleep forecast, behaviour heads-up, weekly pattern and positive progress signal.
 - If there is not enough data, show p13 instead of inventing precision.
@@ -631,7 +631,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Quick action tiles  →  Open the matching update/Brainy screen.  →  p17-p21 / p32
 - Bottom nav  →  Switch Today / Brainy AI / Journey.  →  p32 or p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Never fabricate a personalised forecast with zero data.
 - After the first saved update, recalculate what can be shown; if still low confidence, use p64 or p69 states.
@@ -669,7 +669,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Ask Brainy  →  Open Brainy with the current heads-up context attached.  →  Brainy Home / Conversation (p32-p33)
 - Bottom nav  →  Switch tabs.  →  p32/p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Only show a heads-up when there is a clear reason and confidence level.
 - Always show the reason (for example overtiredness + skipped nap) and time window.
@@ -708,7 +708,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Not now  →  Dismiss and remember dismissal for a cooling-off period.  →  Today (p12)
   *(Data/state: Dismissal timestamp)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Trigger only after a defined persistence threshold, e.g. repeated inconsistent sleep across several days, not after one bad night.
 - Do not show on every app open once dismissed.
@@ -764,7 +764,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Ask Brainy  →  Open Brainy Home.  →  p32
 - Dismiss sheet  →  Return to the underlying Today screen.  →  Today
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - This sheet is a convenience entry point. Today quick-action tiles may open the same forms directly.
 - Keep selected/typed data if the sheet is temporarily dismissed and reopened during the same session.
@@ -807,7 +807,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Save update  →  Validate, save log, recalculate sleep forecast and behaviour risk.  →  Instant Result (p22) if output changed; otherwise Today/Check-in Menu
   *(Data/state: SleepLog)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Use timestamps and child/timezone, not display strings, for calculations.
 - A saved sleep update must trigger forecast recalculation.
@@ -853,7 +853,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Save update  →  Save event and recalculate behaviour patterns/heads-up confidence.  →  Today or Behaviour Pattern when enough data exists
   *(Data/state: TantrumLog)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Treat triggers as parent-reported possibilities, not factual causes.
 - Repeated events should feed common-time and trigger combinations on p30.
@@ -893,7 +893,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Save update  →  Save timestamped mood context and return.  →  Today / Check-in Menu
   *(Data/state: MoodLog)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Parent state is optional and private by default.
 - Child mood may be used as one context signal for behaviour heads-ups; parent state should not be used to diagnose.
@@ -932,7 +932,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Save update  →  Save health context. Recalculate only where the model is designed to consider it.  →  Today / Check-in Menu
   *(Data/state: HealthLog)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - This is context, not symptom assessment.
 - Always retain the medical disclaimer and escalation route.
@@ -972,7 +972,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Save note  →  Save the note and return.  →  Today / Check-in Menu
   *(Data/state: Note)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Quick notes do not automatically become predictions unless the backend has a safe structured extraction step.
 - The Figma drag link to Instant Result is prototype-only; normal Save should not pretend the note changed the forecast.
@@ -1008,7 +1008,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Saved insight)*
 - Done  →  Close the result and return to Today.  →  Today (p12)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Show only when the new log materially changes a recommendation.
 - The reason must reference the data change that caused it, and the action must be specific.
@@ -1059,7 +1059,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - View details  →  Open Sleep Details.  →  Sleep Details (p24)
 - Child/profile controls  →  Use the same profile routes as Today.  →  p59/p60
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Forecast should be based on child age, baseline and recent sleep logs.
 - Always show a confidence label. Wider windows are required when confidence is low (see p69).
@@ -1096,7 +1096,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - View tonight's plan  →  Open the detailed plan.  →  Tonight Plan (p25)
 - Back  →  Return to Sleep Forecast.  →  Sleep Forecast (p23)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Display actual recent timestamps and derived sleep duration.
 - Why we expect it should use only factors that genuinely influenced the forecast.
@@ -1135,7 +1135,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Audio event)*
 - Back  →  Return to Sleep Details.  →  Sleep Details (p24)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not auto-navigate to Sleep Pattern when Start Plan is tapped; that is prototype wiring, not sensible product behavior.
 - Plan times should shift when forecast changes.
@@ -1172,7 +1172,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Active experiment if accepted)*
 - Back  →  Return to Sleep Details.  →  Sleep Details (p24)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not show a chart until enough real data exists.
 - The written pattern is more important than the graph: explain what changed and why it matters.
@@ -1213,7 +1213,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: recommendationDismissedAt)*
 - Back  →  Return to Sleep Details.  →  Sleep Details (p24)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - The four Sleep Restore cards appear to be placeholder duplicates in the design; backend content should provide real program records rather than hard-code duplicates.
 - Recommendation reason should come from actual observed persistence.
@@ -1262,7 +1262,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Add update  →  Open Check-in Menu to add new context.  →  Check-in Menu (p16)
 - Back  →  Return to Today.  →  Today (p12/p14)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Use probabilistic language: may be more likely, not will happen.
 - Show confidence and the two or three strongest input signals.
@@ -1301,7 +1301,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Ask Brainy  →  Open Brainy with the current heads-up attached as context.  →  Brainy Home/Conversation (p32-p33)
 - Back  →  Return to Calm Heads-Up.  →  p28
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Keep actions short and immediately doable.
 - Advice must match the detected context and child age; do not show a generic three-step list for every situation if the backend has more specific rules.
@@ -1337,7 +1337,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - View mentorship  →  Open Guided Mentorship with behaviour context.  →  Mentorship Landing (p43)
 - Back  →  Return to Calm Plan/Today.  →  p29 / Today
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Only show claims supported by enough logged events.
 - Use wording such as possible triggers and often rather than causal claims.
@@ -1384,7 +1384,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Tantrum reflection)*
 - Skip  →  Exit without saving the optional reflection.  →  Today / Calm Heads-Up
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not shame the parent for skipping.
 - Parent feeling remains private and is not shared with caregivers.
@@ -1441,7 +1441,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Saved  →  Open Saved Guidance.  →  Saved Guidance (p35)
 - Bottom nav  →  Switch Today / Journey.  →  p12/p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Brainy should receive only the family context needed to answer the current question.
 - Answers must separate what may be happening, what to try now and when to get help as designed.
@@ -1480,7 +1480,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Voice draft)*
 - Back  →  Return to Brainy Home while preserving conversation.  →  p32
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Ground the answer in visible recent data when referenced.
 - Never invent log facts.
@@ -1518,7 +1518,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Send  →  Stop recording, transcribe/submit the message, then show loading and answer.  →  Loading (p65) -> Conversation (p33)
   *(Data/state: Conversation message)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Record only while the recording interaction is active as the permission explainer states.
 - Show transcript before/while sending if transcription is available.
@@ -1554,7 +1554,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Saved item  →  Open the saved answer/conversation detail.  →  Conversation/answer detail (p33)
 - Back  →  Return to Brainy Home.  →  p32
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Saved guidance is user-curated, not every chat automatically.
 - Group by topic as designed.
@@ -1590,7 +1590,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Conversation row  →  Open that conversation thread.  →  Conversation (p33)
 - Back  →  Return to Brainy Home.  →  p32
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - The design states conversations are kept for 90 days. Implement retention/clearing consistently with Privacy & Data.
 - Do not expose another caregiver's private conversations.
@@ -1640,7 +1640,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Family timeline / View full story  →  Open Family Timeline.  →  p39
 - Bottom nav  →  Switch Today / Brainy AI.  →  p12/p32
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Journey is the longitudinal view; it should not duplicate Today.
 - Only show modules that exist for this family (for example program row only when relevant).
@@ -1678,7 +1678,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Conversation context)*
 - Back  →  Return to Journey Home.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Generate only after enough weekly data exists.
 - Use real comparisons (e.g. settling time) and avoid overclaiming.
@@ -1716,7 +1716,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Timeline item  →  Open the related detail when available (program, weekly review or pattern).  →  Relevant detail
 - Back  →  Return to Journey Home.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Timeline should contain meaningful milestones in the app experience, not every individual log.
 - Use event type + timestamp + related object ID.
@@ -1753,7 +1753,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: experiment status=end)*
 - Back  →  Return to Journey.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not require extra logging beyond usual check-ins, as the screen promises.
 - At the review date compare the observed outcome with the baseline and create a Journey event.
@@ -1789,7 +1789,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Conversation context)*
 - Back to Journey  →  Return to Journey Home.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - A harder week should not be framed as failure.
 - Context such as travel should reduce confidence in normal pattern comparisons.
@@ -1823,7 +1823,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 
 - Back to Journey  →  Return to Journey Home.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Trigger based on meaningful check-in participation, not perfect daily completion.
 - Do not send guilt-based missed-day notifications.
@@ -1879,7 +1879,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Co-parenting Support  →  Open matching support detail when available.  →  Template/detail - design gap
 - Human support card  →  Open support-area selection.  →  Choose Support Area (p45)
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - This screen is a directory, not a medical consultation screen.
 - Only show programs/mentor categories that are actually available.
@@ -1918,7 +1918,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: AI context)*
 - Back  →  Return to Mentorship Landing/Program List.  →  p43/p27
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not promise a specific result; preserve the design disclaimer.
 - Eligibility language can use recent sleep duration/persistence but must not block parents from viewing support.
@@ -1956,7 +1956,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Selected support area)*
 - Back  →  Return to program/mentorship landing.  →  p43/p44
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Language preference and support area should filter mentors.
 - If more than one mentor is available, a guide-list screen is required but is not supplied in this final PDF; this is a known design gap.
@@ -1993,7 +1993,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - View Sleep Reset programme  →  Open Program Detail.  →  p44
 - Back  →  Return to guide selection/support area.  →  p45
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Verified badge should only appear after internal verification.
 - Keep claims factual: experience, languages and style; do not imply clinical treatment if the role is mentorship.
@@ -2035,7 +2035,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: External booking event)*
 - Back  →  Return to Guide Profile.  →  p46
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not send private parent reflections unless explicitly included in the approved summary design.
 - If using an external calendar, do not build duplicate scheduling logic in the app.
@@ -2071,7 +2071,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Back to Journey  →  Return to Journey Home.  →  p37
 - View your request  →  Open request status. A dedicated request-status screen is not supplied; reuse current status/Parent Success Guide once assigned.  →  Request status / p51 after assignment
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Keep logging prompt is useful because recent data can give the mentor context.
 - Payment status must reflect the actual commercial flow.
@@ -2109,7 +2109,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Module progress)*
 - Back  →  Return to Journey Home.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Progress is program-week based, not a generic course percentage.
 - Mentor notes should be read-only here unless a reply flow is separately designed.
@@ -2147,7 +2147,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Back to Journey  →  Return to Journey.  →  p37
 - View your request  →  Open current mentor/request details.  →  Request status
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Plan should be created/updated by approved mentor workflow or internal admin process, not generated as medical instruction.
 - Some tasks can be automatically satisfied from normal logs (for example log three nights).
@@ -2185,7 +2185,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Request status=cancelled)*
 - Back  →  Return to Journey.  →  p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - One guide should not automatically gain access to private data beyond the explicit sharing consent.
 - Active goals should match what was agreed with the parent.
@@ -2220,7 +2220,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Manage access  →  Open permissions for the linked caregiver.  →  Permissions (p58)
 - Back  →  Return to Family/Journey depending entry point.  →  p54/p37
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Only show data types the linked caregiver is permitted to see.
 - Health notes and mentorship summaries are private by default as the screen states.
@@ -2258,7 +2258,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: New ChildEssential)*
 - Back  →  Return to Child Profile/shared family view.  →  p60/p52
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Keep this intentionally small; it is not a full medical record.
 - Visibility must follow caregiver permissions.
@@ -2308,7 +2308,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Invite a caregiver  →  On first use show consent explainer, then invite form.  →  Consent (p74) -> Invite (p55)
 - Back  →  Return to previous profile/Journey entry point.  →  Previous
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Status must be live: linked, awaiting response, expired or removed.
 - Never start sharing until the invite is accepted.
@@ -2348,7 +2348,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: CaregiverInvite)*
 - Back  →  Return to Family Menu.  →  p54
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Default grandparent access is sleep + plans only, as the design states.
 - Do not share data before acceptance.
@@ -2387,7 +2387,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: Invite status=cancelled)*
 - Back  →  Return to Family Menu.  →  p54
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Invites expire after 14 days according to the UI.
 - Nothing should be shared while status is pending.
@@ -2423,7 +2423,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Back to Family  →  Return to Family Menu.  →  p54
 - Caregiver row  →  Open shared caregiver summary.  →  p52
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Acceptance should atomically create caregiver access using the invite's default permissions.
 - Notify the inviting parent when acceptance occurs.
@@ -2463,7 +2463,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: CaregiverLink revoked)*
 - Back  →  Return without discarding already saved values.  →  p54/p52
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Parent reflections are never shareable, as the design states.
 - All backend reads for the caregiver must enforce permissions; hiding UI alone is not sufficient.
@@ -2513,7 +2513,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: ParentProfile)*
 - Back  →  Return to previous screen.  →  Previous
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Timezone change affects sleep windows and notification schedules.
 - Language change should update future app content; existing stored data does not need rewriting.
@@ -2552,7 +2552,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: ChildProfile)*
 - Back  →  Return to previous screen.  →  Previous
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - DOB changes must trigger re-calculation of age-based guidance from the next calculation cycle.
 - Changing routine concerns may update recommended focus but should not delete historical logs.
@@ -2594,7 +2594,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: notificationPrefs.weeklyReview)*
 - Back  →  Return to settings.  →  Previous
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - First app-level enable may require OS permission p72.
 - Never send streak-loss or missed-day guilt messaging, consistent with the design.
@@ -2634,7 +2634,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: DeletionRequest)*
 - Back  →  Return to settings.  →  Previous
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Deletion must remove/revoke child data and linked caregiver access as the UI states.
 - Do not execute destructive actions from one accidental tap.
@@ -2674,7 +2674,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Emergency services  →  Use device/local emergency route where implemented.  →  OS phone / emergency info
 - Back  →  Return to settings.  →  Previous
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - LovingBrain is not monitored for emergencies.
 - Medical disclaimer must be consistently reachable from health/Brainy safety surfaces.
@@ -2727,7 +2727,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Add a sleep update  →  Open Sleep Update.  →  p17
 - Back  →  Return to Today.  →  Today
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Use age-based general guidance only and clearly label it as not the child's own pattern.
 - The screen says two or three updates is usually enough to start showing a personal window; implementation can use a minimum-data rule agreed by product.
@@ -2761,7 +2761,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 
 - Automatic  →  On success, replace with the requested answer/detail. On failure, show a recoverable error.  →  Conversation (p33) / error
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not leave the parent on an indefinite spinner.
 - Keep the submitted question visible so the parent knows what is being processed.
@@ -2797,7 +2797,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Quick actions  →  Open matching update/Brainy route.  →  p17-p21/p32
 - Bottom nav  →  Switch tabs.  →  Today/Brainy/Journey
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Show the delta clearly, e.g. bedtime estimate moved 15 minutes earlier.
 - This screen should use the recalculated forecast timestamp just saved.
@@ -2836,7 +2836,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Back/dismiss  →  Keep draft locally for current session and warn before discarding.  →  Previous
   *(Data/state: Draft state)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - The screen promises nothing typed is lost; implementation must preserve the full update payload.
 - Avoid duplicate server records when retrying after an uncertain network response; use idempotent client IDs.
@@ -2872,7 +2872,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - New updates if supported  →  Save locally to pending queue, then sync when online.  →  Stay / success local
   *(Data/state: Local pending log)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Clearly distinguish cached plan from a live recalculated plan.
 - When connectivity returns, sync pending logs, recalculate forecasts and resolve conflicts using timestamps/client IDs.
@@ -2907,7 +2907,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Add tonight's update  →  Open Sleep Update.  →  p17
 - Back  →  Return to Sleep/Today.  →  p23/p12
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Confidence must be derived from data sufficiency/consistency rules, not cosmetic labels.
 - Prefer an honest wide window to false precision.
@@ -2944,7 +2944,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Read safety information  →  Open Help & Safety / relevant safety article.  →  p63
 - Not now - go back to Brainy  →  Return to Brainy without generating a reassuring medical answer.  →  p32
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Safety classifier/rules run before normal AI response.
 - Do not diagnose. State that LovingBrain cannot assess symptoms.
@@ -2984,7 +2984,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
   *(Data/state: AI context)*
 - Back  →  Return to previous mentorship screen.  →  p45/p46
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Do not charge for a waitlist.
 - Only suggest other mentor categories if their scope actually fits the problem.
@@ -3022,7 +3022,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Not now  →  Do not trigger OS prompt; continue with notifications disabled.  →  Return
   *(Data/state: Preference/permission state)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Show this at a useful moment, e.g. after first personalised sleep plan, not immediately at launch.
 - If OS permission is permanently denied, Settings should explain how to enable it at system level.
@@ -3059,7 +3059,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Not now  →  Keep typed input available and return without recording.  →  Originating screen
   *(Data/state: Permission state)*
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Ask only when the parent first taps a microphone/record action.
 - Recording should only occur during the explicit recording interaction.
@@ -3094,7 +3094,7 @@ These are the actual Deepak UI screens. Arrows show the intended implementation 
 - Continue  →  Open Invite Caregiver.  →  p55
 - Not now  →  Return to Family Menu without creating an invite.  →  p54
 
-### Logic Requirements
+### Logic Hardik Should Implement
 
 - Show before first invite or when sharing rules materially change.
 - Reinforce that parent reflections are never shared and health/mentorship are private by default.
