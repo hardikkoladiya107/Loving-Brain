@@ -153,8 +153,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ).appPadding(left: 20, right: 20),
                           30.spaceH,
                           _signUpWithGoogle(state),
-                          16.spaceH,
-                          if (Platform.isIOS) _signUpWithApple(state),
+                          if (Platform.isIOS) ...[
+                            16.spaceH,
+                            _signUpWithApple(state),
+                          ],
                           60.spaceH,
                           _buildTermsText(),
                           40.spaceH,

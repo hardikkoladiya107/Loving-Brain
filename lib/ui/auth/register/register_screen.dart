@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,35 +130,37 @@ class _RegisterScreenState extends State<RegisterScreen>
                               ],
                             ).appPadding(left: 20.r, right: 20.r),
                             32.spaceH,
-                            AppButton(
-                              onTap: state.isAuthSubmitting
-                                  ? null
-                                  : () {
-                                      FocusScope.of(context).unfocus();
-                                      context
-                                          .read<RegisterCubit>()
-                                          .signInWithApple();
-                                    },
-                              backgroundColor: Colors.black,
-                              isLoading: isAppleLoading,
-                              loaderColor: Colors.white,
-                              widget: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Assets.v2.icons.icAppleIcon.image(
-                                    color: Colors.white,
-                                    height: 24.r,
-                                    width: 24.r,
-                                  ),
-                                  10.spaceW,
-                                  "Continue with Apple".appText(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ],
+                            if (Platform.isIOS) ...[
+                              AppButton(
+                                onTap: state.isAuthSubmitting
+                                    ? null
+                                    : () {
+                                        FocusScope.of(context).unfocus();
+                                        context
+                                            .read<RegisterCubit>()
+                                            .signInWithApple();
+                                      },
+                                backgroundColor: Colors.black,
+                                isLoading: isAppleLoading,
+                                loaderColor: Colors.white,
+                                widget: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Assets.v2.icons.icAppleIcon.image(
+                                      color: Colors.white,
+                                      height: 24.r,
+                                      width: 24.r,
+                                    ),
+                                    10.spaceW,
+                                    "Continue with Apple".appText(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            16.spaceH,
+                              16.spaceH,
+                            ],
                             AppButton(
                               onTap: state.isAuthSubmitting
                                   ? null
