@@ -552,5 +552,11 @@
   "chapterBookExportSuccess": "Chapter book PDF ready to share.",
   "chapterBookShareText": "Our LovingBrain chapter book",
   "milestonePickerTitle": "Which milestone?",
-  "milestonePickerSubtitle": "Choose the moment you want to remember."
+  "milestonePickerSubtitle": "Choose the moment you want to remember.",
+  "sleepLogSaved": "Sleep update saved to timeline.",
+  "tantrumLogSaved": "Tantrum update saved to timeline.",
+  "moodLogSaved": "Mood check-in saved.",
+  "healthLogSaved": "Health update saved.",
+  "noteSaved": "Quick note saved.",
+  "pleaseSelectChildFirst": "Please select a child profile first."
 }

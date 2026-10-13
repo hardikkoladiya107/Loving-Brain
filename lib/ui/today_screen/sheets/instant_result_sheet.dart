@@ -5,20 +5,51 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
-void showInstantResultSheet(BuildContext context) {
+void showInstantResultSheet(
+  BuildContext context, {
+  String? title,
+  String? reason,
+  String? action,
+  String? actionSubtitle,
+}) {
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
-    builder: (context) => const InstantResultSheet(),
+    builder: (BuildContext context) => InstantResultSheet(
+      title: title,
+      reason: reason,
+      action: action,
+      actionSubtitle: actionSubtitle,
+    ),
   );
 }
 
 class InstantResultSheet extends StatelessWidget {
-  const InstantResultSheet({super.key});
+  final String? title;
+  final String? reason;
+  final String? action;
+  final String? actionSubtitle;
+
+  const InstantResultSheet({
+    super.key,
+    this.title,
+    this.reason,
+    this.action,
+    this.actionSubtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final String resolvedTitle =
+        title ?? "Bedtime may shift a little earlier";
+    final String resolvedReason = reason ??
+        "Today’s nap ran 25 minutes short, which usually brings the settling window forward.";
+    final String resolvedAction =
+        action ?? "Start wind-down at 7:30 PM";
+    final String resolvedActionSubtitle =
+        actionSubtitle ?? "About 15 minutes earlier than usual tonight.";
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +68,7 @@ class InstantResultSheet extends StatelessWidget {
           ],
         ),
         12.spaceH,
-        "Bedtime may shift a little earlier".appText(
+        resolvedTitle.appText(
           fontSize: 28.sp,
           fraunces: true,
           textAlign: TextAlign.start,
@@ -62,13 +93,12 @@ class InstantResultSheet extends StatelessWidget {
               const InfoChip(iconData: Icons.info, chipTitle: "Reason"),
               10.h.spaceH,
               SizedBox(width: 12.h),
-              "Today’s nap ran 25 minutes short, which usually brings the settling window forward."
-                  .appText(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    textAlign: TextAlign.start,
-                    color: greyColor6,
-                  ),
+              resolvedReason.appText(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                textAlign: TextAlign.start,
+                color: greyColor6,
+              ),
               6.h.spaceH,
             ],
           ),
@@ -96,12 +126,12 @@ class InstantResultSheet extends StatelessWidget {
               ),
               10.h.spaceH,
               SizedBox(width: 12.h),
-              "Start wind-down at 7:30 PM".appText(
+              resolvedAction.appText(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.w600,
                 textAlign: TextAlign.start,
               ),
-              "About 15 minutes earlier than usual tonight.".appText(
+              resolvedActionSubtitle.appText(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
                 textAlign: TextAlign.start,
@@ -112,7 +142,12 @@ class InstantResultSheet extends StatelessWidget {
           ),
         ),
         20.spaceH,
-        AppButton(title: "Save Note", onTap: () {}),
+        AppButton(
+          title: "Done",
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
         12.spaceH,
       ],
     ).appPadding(left: 16, right: 16, top: 16);

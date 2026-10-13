@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 
 part 'today_state.freezed.dart';
 
@@ -9,6 +10,8 @@ abstract class TodayState with _$TodayState {
   const factory TodayState({
     @Default(false) bool isLoading,
     @Default(false) bool isSuccess,
+    @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
+    @Default('') String activeChildId,
     @Default(TodayMode.normal) TodayMode mode,
     @Default('') String childName,
     @Default('') String parentName,

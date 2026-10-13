@@ -7,6 +7,10 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
+import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';

@@ -60,8 +60,18 @@ class TimelineEventModel {
         return 'State updated';
       case 'milestone':
         return (data['title'] as String?) ?? 'Milestone saved';
+      case 'sleep_log':
+        return (data['title'] as String?) ?? 'Sleep logged';
+      case 'tantrum_log':
+        return (data['title'] as String?) ?? 'Tantrum logged';
+      case 'mood_log':
+        return (data['title'] as String?) ?? 'Mood check-in';
+      case 'health_log':
+        return (data['title'] as String?) ?? 'Health update';
+      case 'quick_note':
+        return (data['title'] as String?) ?? 'Quick note';
       default:
-        return 'Activity';
+        return (data['title'] as String?) ?? 'Activity';
     }
   }
 
@@ -90,8 +100,14 @@ class TimelineEventModel {
           return 'Chapter $chapter';
         }
         return 'Memory saved';
+      case 'sleep_log':
+      case 'tantrum_log':
+      case 'mood_log':
+      case 'health_log':
+      case 'quick_note':
+        return (data['subtitle'] as String?) ?? '';
       default:
-        return '';
+        return (data['subtitle'] as String?) ?? '';
     }
   }
 }
