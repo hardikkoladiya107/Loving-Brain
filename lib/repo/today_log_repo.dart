@@ -9,6 +9,7 @@ import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
+import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 
@@ -441,6 +442,53 @@ class TodayLogRepo {
           .map(QuickNoteModel.fromDoc)
           .toList();
       return ApiResultStatus.data(data: list);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  Future<ApiResultStatus<List<TimelineEventModel>>> getTimelineEvents(
+    String childId, {
+    int limit = 50,
+  }) async {
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snap = await _childrenCollection
+          .doc(childId)
+          .collection('events')
+          .orderBy('timestamp', descending: true)
+          .limit(limit)
+          .get();
+
+      final List<TimelineEventModel> list = snap.docs
+          .map(TimelineEventModel.fromFirestore)
+          .toList();
+      return ApiResultStatus.data(data: list);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  Future<ApiResultStatus<String>> addTimelineEvent({
+    required String childId,
+    required String type,
+    required String title,
+    required String subtitle,
+    DateTime? timestamp,
+  }) async {
+    try {
+      final DateTime now = timestamp ?? DateTime.now();
+      final DocumentReference<Map<String, dynamic>> docRef =
+          await _childrenCollection
+              .doc(childId)
+              .collection('events')
+              .add(<String, dynamic>{
+                'type': type,
+                'title': title,
+                'subtitle': subtitle,
+                'timestamp': Timestamp.fromDate(now.toUtc()),
+                'createdAt': FieldValue.serverTimestamp(),
+              });
+      return ApiResultStatus.data(data: docRef.id);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }

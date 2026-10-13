@@ -15,30 +15,77 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HarderWeekState {
 
-
+ ChildModel? get child; WeeklyInsightsResult? get insights; ApiResultStatus<dynamic> get fetchStatus;
+/// Create a copy of HarderWeekState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$HarderWeekStateCopyWith<HarderWeekState> get copyWith => _$HarderWeekStateCopyWithImpl<HarderWeekState>(this as HarderWeekState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is HarderWeekState);
+  final _this = this as HarderWeekState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HarderWeekState&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.insights, _this.insights) || other.insights == _this.insights)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as HarderWeekState;
+  return Object.hash(runtimeType,_this.child,_this.insights,_this.fetchStatus);
+}
 
 @override
 String toString() {
-    return 'HarderWeekState()';
+  final _this = this as HarderWeekState;
+  return 'HarderWeekState(child: ${_this.child}, insights: ${_this.insights}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
 }
 
 /// @nodoc
-class $HarderWeekStateCopyWith<$Res>  {
-$HarderWeekStateCopyWith(HarderWeekState _, $Res Function(HarderWeekState) __);
+abstract mixin class $HarderWeekStateCopyWith<$Res>  {
+  factory $HarderWeekStateCopyWith(HarderWeekState value, $Res Function(HarderWeekState) _then) = _$HarderWeekStateCopyWithImpl;
+@useResult
+$Res call({
+ ChildModel? child, WeeklyInsightsResult? insights, ApiResultStatus<dynamic> fetchStatus
+});
+
+
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class _$HarderWeekStateCopyWithImpl<$Res>
+    implements $HarderWeekStateCopyWith<$Res> {
+  _$HarderWeekStateCopyWithImpl(this._self, this._then);
+
+  final HarderWeekState _self;
+  final $Res Function(HarderWeekState) _then;
+
+/// Create a copy of HarderWeekState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? child = freezed,Object? insights = freezed,Object? fetchStatus = null,}) {
+  return _then(HarderWeekState(
+child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
+as ChildModel?,insights: freezed == insights ? _self.insights : insights // ignore: cast_nullable_to_non_nullable
+as WeeklyInsightsResult?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+/// Create a copy of HarderWeekState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -120,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChildModel? child,  WeeklyInsightsResult? insights,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HarderWeekState() when $default != null:
-return $default();case _:
+return $default(_that.child,_that.insights,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -141,10 +188,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChildModel? child,  WeeklyInsightsResult? insights,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _HarderWeekState():
-return $default();case _:
+return $default(_that.child,_that.insights,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +208,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChildModel? child,  WeeklyInsightsResult? insights,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _HarderWeekState() when $default != null:
-return $default();case _:
+return $default(_that.child,_that.insights,_that.fetchStatus);case _:
   return null;
 
 }
@@ -176,32 +223,81 @@ return $default();case _:
 
 
 class _HarderWeekState implements HarderWeekState {
-  const _HarderWeekState();
+  const _HarderWeekState({this.child, this.insights, this.fetchStatus = const ApiResultStatus.initial()});
   
 
+@override final  ChildModel? child;
+@override final  WeeklyInsightsResult? insights;
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
-
+/// Create a copy of HarderWeekState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$HarderWeekStateCopyWith<_HarderWeekState> get copyWith => __$HarderWeekStateCopyWithImpl<_HarderWeekState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HarderWeekState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HarderWeekState&&(identical(other.child, child) || other.child == child)&&(identical(other.insights, insights) || other.insights == insights)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,child,insights,fetchStatus);
+}
 
 @override
 String toString() {
-    return 'HarderWeekState()';
+    return 'HarderWeekState(child: $child, insights: $insights, fetchStatus: $fetchStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$HarderWeekStateCopyWith<$Res> implements $HarderWeekStateCopyWith<$Res> {
+  factory _$HarderWeekStateCopyWith(_HarderWeekState value, $Res Function(_HarderWeekState) _then) = __$HarderWeekStateCopyWithImpl;
+@override @useResult
+$Res call({
+ ChildModel? child, WeeklyInsightsResult? insights, ApiResultStatus<dynamic> fetchStatus
+});
 
 
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class __$HarderWeekStateCopyWithImpl<$Res>
+    implements _$HarderWeekStateCopyWith<$Res> {
+  __$HarderWeekStateCopyWithImpl(this._self, this._then);
+
+  final _HarderWeekState _self;
+  final $Res Function(_HarderWeekState) _then;
+
+/// Create a copy of HarderWeekState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? child = freezed,Object? insights = freezed,Object? fetchStatus = null,}) {
+  return _then(_HarderWeekState(
+child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
+as ChildModel?,insights: freezed == insights ? _self.insights : insights // ignore: cast_nullable_to_non_nullable
+as WeeklyInsightsResult?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+
+/// Create a copy of HarderWeekState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
+}
 
 // dart format on

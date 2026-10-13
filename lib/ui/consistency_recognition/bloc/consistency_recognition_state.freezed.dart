@@ -15,30 +15,77 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ConsistencyRecognitionState {
 
-
+ int get daysCheckedIn; ChildModel? get child; ApiResultStatus<dynamic> get fetchStatus;
+/// Create a copy of ConsistencyRecognitionState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ConsistencyRecognitionStateCopyWith<ConsistencyRecognitionState> get copyWith => _$ConsistencyRecognitionStateCopyWithImpl<ConsistencyRecognitionState>(this as ConsistencyRecognitionState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is ConsistencyRecognitionState);
+  final _this = this as ConsistencyRecognitionState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ConsistencyRecognitionState&&(identical(other.daysCheckedIn, _this.daysCheckedIn) || other.daysCheckedIn == _this.daysCheckedIn)&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as ConsistencyRecognitionState;
+  return Object.hash(runtimeType,_this.daysCheckedIn,_this.child,_this.fetchStatus);
+}
 
 @override
 String toString() {
-    return 'ConsistencyRecognitionState()';
+  final _this = this as ConsistencyRecognitionState;
+  return 'ConsistencyRecognitionState(daysCheckedIn: ${_this.daysCheckedIn}, child: ${_this.child}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
 }
 
 /// @nodoc
-class $ConsistencyRecognitionStateCopyWith<$Res>  {
-$ConsistencyRecognitionStateCopyWith(ConsistencyRecognitionState _, $Res Function(ConsistencyRecognitionState) __);
+abstract mixin class $ConsistencyRecognitionStateCopyWith<$Res>  {
+  factory $ConsistencyRecognitionStateCopyWith(ConsistencyRecognitionState value, $Res Function(ConsistencyRecognitionState) _then) = _$ConsistencyRecognitionStateCopyWithImpl;
+@useResult
+$Res call({
+ int daysCheckedIn, ChildModel? child, ApiResultStatus<dynamic> fetchStatus
+});
+
+
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class _$ConsistencyRecognitionStateCopyWithImpl<$Res>
+    implements $ConsistencyRecognitionStateCopyWith<$Res> {
+  _$ConsistencyRecognitionStateCopyWithImpl(this._self, this._then);
+
+  final ConsistencyRecognitionState _self;
+  final $Res Function(ConsistencyRecognitionState) _then;
+
+/// Create a copy of ConsistencyRecognitionState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? daysCheckedIn = null,Object? child = freezed,Object? fetchStatus = null,}) {
+  return _then(ConsistencyRecognitionState(
+daysCheckedIn: null == daysCheckedIn ? _self.daysCheckedIn : daysCheckedIn // ignore: cast_nullable_to_non_nullable
+as int,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
+as ChildModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+/// Create a copy of ConsistencyRecognitionState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -120,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int daysCheckedIn,  ChildModel? child,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ConsistencyRecognitionState() when $default != null:
-return $default();case _:
+return $default(_that.daysCheckedIn,_that.child,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -141,10 +188,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int daysCheckedIn,  ChildModel? child,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ConsistencyRecognitionState():
-return $default();case _:
+return $default(_that.daysCheckedIn,_that.child,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +208,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int daysCheckedIn,  ChildModel? child,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ConsistencyRecognitionState() when $default != null:
-return $default();case _:
+return $default(_that.daysCheckedIn,_that.child,_that.fetchStatus);case _:
   return null;
 
 }
@@ -176,32 +223,81 @@ return $default();case _:
 
 
 class _ConsistencyRecognitionState implements ConsistencyRecognitionState {
-  const _ConsistencyRecognitionState();
+  const _ConsistencyRecognitionState({this.daysCheckedIn = 5, this.child, this.fetchStatus = const ApiResultStatus.initial()});
   
 
+@override@JsonKey() final  int daysCheckedIn;
+@override final  ChildModel? child;
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
-
+/// Create a copy of ConsistencyRecognitionState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ConsistencyRecognitionStateCopyWith<_ConsistencyRecognitionState> get copyWith => __$ConsistencyRecognitionStateCopyWithImpl<_ConsistencyRecognitionState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConsistencyRecognitionState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConsistencyRecognitionState&&(identical(other.daysCheckedIn, daysCheckedIn) || other.daysCheckedIn == daysCheckedIn)&&(identical(other.child, child) || other.child == child)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,daysCheckedIn,child,fetchStatus);
+}
 
 @override
 String toString() {
-    return 'ConsistencyRecognitionState()';
+    return 'ConsistencyRecognitionState(daysCheckedIn: $daysCheckedIn, child: $child, fetchStatus: $fetchStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$ConsistencyRecognitionStateCopyWith<$Res> implements $ConsistencyRecognitionStateCopyWith<$Res> {
+  factory _$ConsistencyRecognitionStateCopyWith(_ConsistencyRecognitionState value, $Res Function(_ConsistencyRecognitionState) _then) = __$ConsistencyRecognitionStateCopyWithImpl;
+@override @useResult
+$Res call({
+ int daysCheckedIn, ChildModel? child, ApiResultStatus<dynamic> fetchStatus
+});
 
 
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class __$ConsistencyRecognitionStateCopyWithImpl<$Res>
+    implements _$ConsistencyRecognitionStateCopyWith<$Res> {
+  __$ConsistencyRecognitionStateCopyWithImpl(this._self, this._then);
+
+  final _ConsistencyRecognitionState _self;
+  final $Res Function(_ConsistencyRecognitionState) _then;
+
+/// Create a copy of ConsistencyRecognitionState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? daysCheckedIn = null,Object? child = freezed,Object? fetchStatus = null,}) {
+  return _then(_ConsistencyRecognitionState(
+daysCheckedIn: null == daysCheckedIn ? _self.daysCheckedIn : daysCheckedIn // ignore: cast_nullable_to_non_nullable
+as int,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
+as ChildModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+
+/// Create a copy of ConsistencyRecognitionState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
+}
 
 // dart format on

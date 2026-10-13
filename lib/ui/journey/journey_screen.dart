@@ -17,15 +17,38 @@ import 'package:loving_brain/ui/widget/app_button.dart';
 import 'bloc/journey_cubit.dart';
 import 'bloc/journey_state.dart';
 
-class JourneyScreen extends StatelessWidget {
+class JourneyScreen extends StatefulWidget {
   const JourneyScreen({super.key});
 
   @override
+  State<JourneyScreen> createState() => _JourneyScreenState();
+}
+
+class _JourneyScreenState extends State<JourneyScreen> {
+  late final JourneyCubit _journeyCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _journeyCubit = JourneyCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _journeyCubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _journeyCubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => JourneyCubit(),
-      child: BlocBuilder<JourneyCubit, JourneyState>(
-        builder: (context, state) {
+    return BlocProvider<JourneyCubit>.value(
+      value: _journeyCubit,
+      child: BlocConsumer<JourneyCubit, JourneyState>(
+        listener: (BuildContext context, JourneyState state) {},
+        builder: (BuildContext context, JourneyState state) {
           return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
@@ -35,8 +58,8 @@ class JourneyScreen extends StatelessWidget {
                   left: -150,
                   top: -150,
                   child: Container(
-                    width: 400,
-                    height: 400,
+                    width: 400.w,
+                    height: 400.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
@@ -55,41 +78,11 @@ class JourneyScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 20.w),
                     children: [
                       16.spaceH,
-                      // Align(
-                      //   alignment: Alignment.centerLeft,
-                      //   child: Material(
-                      //     color: Colors.transparent,
-                      //     child: Ink(
-                      //       decoration: const BoxDecoration(
-                      //         color: Colors.white,
-                      //         shape: BoxShape.circle,
-                      //       ),
-                      //       child: InkWell(
-                      //         borderRadius: BorderRadius.circular(24),
-                      //         onTap: () {
-                      //           if (Navigator.canPop(context)) {
-                      //             Navigator.pop(context);
-                      //           }
-                      //         },
-                      //         child: Padding(
-                      //           padding: const EdgeInsets.all(8),
-                      //           child: Icon(
-                      //             Icons.arrow_back,
-                      //             color: darkBlue,
-                      //             size: 24.sp,
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                      // 24.spaceH,
                       GestureDetector(
                         onTap: () {
-                          context.read<JourneyCubit>().cycleMode();
-                          // Show consistency screen as a surprise when mode cycles to normal
-                          if (context.read<JourneyCubit>().state.mode ==
-                              JourneyMode.normal) {
+                          // Tap header to cycle modes for testing
+                          _journeyCubit.cycleMode();
+                          if (_journeyCubit.state.mode == JourneyMode.normal) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -99,7 +92,7 @@ class JourneyScreen extends StatelessWidget {
                             );
                           }
                         },
-                        child: "Journey".appText(
+                        child: 'Journey'.appText(
                           fontSize: 28.sp,
                           color: greyColor9,
                           fraunces: true,
@@ -107,7 +100,7 @@ class JourneyScreen extends StatelessWidget {
                         ),
                       ),
                       8.spaceH,
-                      "How things have been changing for your family.".appText(
+                      'How things have been changing for your family.'.appText(
                         fontSize: 16.sp,
                         color: greyColor9,
                         textAlign: TextAlign.start,
@@ -115,22 +108,24 @@ class JourneyScreen extends StatelessWidget {
                       12.spaceH,
                       _buildWeeklyReviewCard(context, state),
                       32.spaceH,
-                      "ALSO HERE".appText(
+                      'ALSO HERE'.appText(
                         fontSize: 12.sp,
                         color: secondaryColor,
                         fontWeight: FontWeight.w700,
                         textAlign: TextAlign.start,
                       ),
                       16.spaceH,
-                      _buildSleepJourneyCard(),
+                      _buildSleepJourneyCard(context, state),
                       12.spaceH,
                       _buildFamilyTimelineCard(context),
                       12.spaceH,
-                      _buildSavedGuidanceCard(context),
+                      _buildSavedGuidanceCard(context, state),
+                      12.spaceH,
+                      _buildConsistencyCard(context, state),
                       24.spaceH,
                       _buildMentorshipTestLink(
                         context,
-                        "Guided Mentorship (Test)",
+                        'Guided Mentorship (Test)',
                         const MentorshipLandingScreen(),
                       ),
                       128.spaceH,
@@ -146,26 +141,30 @@ class JourneyScreen extends StatelessWidget {
   }
 
   Widget _buildWeeklyReviewCard(BuildContext context, JourneyState state) {
-    String chipTitle = "Weekly review";
+    String chipTitle = 'Weekly review';
     String titleText = "This week's review is ready";
     String subtitleText =
         "One positive change, one thing that's still hard, and one focus for next week.";
-    String buttonText = "Open review";
+    String buttonText = 'Open review';
     String imagePath = Assets.v2.images.imgJournyWeeklyReview.path;
     Widget targetScreen = const WeeklyFamilyReviewScreen();
 
     if (state.mode == JourneyMode.harder) {
+      chipTitle = 'Disrupted week';
+      titleText = 'This week was harder';
+      subtitleText =
+          state.weeklyInsights?.harderExplanation ??
+          "Travel or illness disrupted the routine. That's expected, and routines take a few days to settle again.";
+      imagePath = Assets.v2.images.imgJourneyThisWeek.path;
       targetScreen = const HarderWeekScreen();
     } else if (state.mode == JourneyMode.trying) {
-      chipTitle = "Active recommendation";
+      chipTitle = 'Active recommendation';
       titleText = "What we're trying this week";
-      subtitleText = "An earlier, shorter afternoon nap.";
-      buttonText = "View progress";
-      imagePath = Assets
-          .v2
-          .images
-          .imgSprout
-          .path; // Just using a placeholder image for active
+      subtitleText =
+          state.activeExperiment?.changeTitle ??
+          'An earlier, shorter afternoon nap.';
+      buttonText = 'View progress';
+      imagePath = Assets.v2.images.imgSprout.path;
       targetScreen = const TryingThisWeekScreen();
     }
 
@@ -174,7 +173,7 @@ class JourneyScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         children: [
@@ -227,7 +226,9 @@ class JourneyScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => targetScreen),
-              );
+              ).then((_) {
+                _journeyCubit.init();
+              });
             },
           ),
         ],
@@ -235,71 +236,83 @@ class JourneyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSleepJourneyCard() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48.w,
-            height: 48.w,
-            decoration: BoxDecoration(
-              color: const Color(0xFFF1EEFF),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: Image.asset(
-                Assets.v2.images.imgSleep.path,
-                width: 24.w,
-                height: 24.w,
-                fit: BoxFit.contain,
+  Widget _buildSleepJourneyCard(BuildContext context, JourneyState state) {
+    final int currentWeek = state.sleepJourneyWeek;
+    final int totalWeeks = state.sleepJourneyTotalWeeks;
+    final double fraction = (currentWeek / totalWeeks).clamp(0.0, 1.0);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MentorshipLandingScreen()),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48.w,
+              height: 48.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1EEFF),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Center(
+                child: Image.asset(
+                  Assets.v2.images.imgSleep.path,
+                  width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
-          ),
-          16.spaceW,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                "6-Week Sleep Journey".appText(
-                  fontSize: 16.sp,
-                  color: greyColor9,
-                  fontWeight: FontWeight.w500,
-                  textAlign: TextAlign.start,
-                ),
-                4.spaceH,
-                "Week 2 of 6".appText(
-                  fontSize: 14.sp,
-                  color: greyColor11,
-                  textAlign: TextAlign.start,
-                ),
-                8.spaceH,
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: 2 / 6,
-                    backgroundColor: const Color(0xFFF1EEFF),
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      secondaryColor,
-                    ),
-                    minHeight: 4.h,
+            16.spaceW,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  '6-Week Sleep Journey'.appText(
+                    fontSize: 16.sp,
+                    color: greyColor9,
+                    fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.start,
                   ),
-                ),
-              ],
+                  4.spaceH,
+                  'Week $currentWeek of $totalWeeks'.appText(
+                    fontSize: 14.sp,
+                    color: greyColor11,
+                    textAlign: TextAlign.start,
+                  ),
+                  8.spaceH,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4.r),
+                    child: LinearProgressIndicator(
+                      value: fraction,
+                      backgroundColor: const Color(0xFFF1EEFF),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        secondaryColor,
+                      ),
+                      minHeight: 4.h,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
-        ],
+            Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSavedGuidanceCard(BuildContext context) {
+  Widget _buildSavedGuidanceCard(BuildContext context, JourneyState state) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -312,7 +325,7 @@ class JourneyScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
           children: [
@@ -320,8 +333,8 @@ class JourneyScreen extends StatelessWidget {
               width: 48.w,
               height: 48.w,
               decoration: BoxDecoration(
-                color: const Color(0xFFF0FAFF), // light blue
-                borderRadius: BorderRadius.circular(12),
+                color: const Color(0xFFF0FAFF),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Center(
                 child: Image.asset(
@@ -337,14 +350,14 @@ class JourneyScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  "Saved guidance".appText(
+                  'Saved guidance'.appText(
                     fontSize: 14.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
                   ),
                   4.spaceH,
-                  "3 saved answers".appText(
+                  '${state.savedGuidanceCount} saved answers'.appText(
                     fontSize: 12.sp,
                     color: greyColor,
                     textAlign: TextAlign.start,
@@ -372,7 +385,7 @@ class JourneyScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
           children: [
@@ -380,8 +393,8 @@ class JourneyScreen extends StatelessWidget {
               width: 48.w,
               height: 48.w,
               decoration: BoxDecoration(
-                color: const Color(0xFFFEF0E8), // light orange
-                borderRadius: BorderRadius.circular(12),
+                color: const Color(0xFFFEF0E8),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Center(
                 child: Icon(
@@ -396,7 +409,7 @@ class JourneyScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  "Family timeline".appText(
+                  'Family timeline'.appText(
                     fontSize: 14.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w600,
@@ -404,6 +417,70 @@ class JourneyScreen extends StatelessWidget {
                   ),
                   4.spaceH,
                   "View your family's journey".appText(
+                    fontSize: 12.sp,
+                    color: greyColor,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConsistencyCard(BuildContext context, JourneyState state) {
+    final int days = state.weeklyInsights?.daysCheckedIn ?? 5;
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                ConsistencyRecognitionScreen(initialDaysCheckedIn: days),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48.w,
+              height: 48.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF0E5),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Center(
+                child: Image.asset(
+                  Assets.v2.images.imgJourneyConsistencyRecognition.path,
+                  width: 28.w,
+                  height: 28.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            16.spaceW,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  'Consistency recognition'.appText(
+                    fontSize: 14.sp,
+                    color: greyColor9,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.start,
+                  ),
+                  4.spaceH,
+                  "Checked in $days days this week".appText(
                     fontSize: 12.sp,
                     color: greyColor,
                     textAlign: TextAlign.start,
@@ -432,7 +509,7 @@ class JourneyScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(color: primaryColor.withValues(alpha: 0.6)),
         ),
         child: Row(

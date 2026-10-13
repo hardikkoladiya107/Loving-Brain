@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FamilyTimelineState {
 
- List<TimelineEvent> get events;
+ List<TimelineEventModel> get allEvents; List<TimelineEventModel> get filteredEvents; String get selectedFilter; ChildModel? get child; int get weeksWithLovingBrain; int get averageBedtimeShiftMinutes; ApiResultStatus<dynamic> get fetchStatus;
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $FamilyTimelineStateCopyWith<FamilyTimelineState> get copyWith => _$FamilyTimeli
 @override
 bool operator ==(Object other) {
   final _this = this as FamilyTimelineState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilyTimelineState&&const DeepCollectionEquality().equals(other.events, _this.events));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilyTimelineState&&const DeepCollectionEquality().equals(other.allEvents, _this.allEvents)&&const DeepCollectionEquality().equals(other.filteredEvents, _this.filteredEvents)&&(identical(other.selectedFilter, _this.selectedFilter) || other.selectedFilter == _this.selectedFilter)&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.weeksWithLovingBrain, _this.weeksWithLovingBrain) || other.weeksWithLovingBrain == _this.weeksWithLovingBrain)&&(identical(other.averageBedtimeShiftMinutes, _this.averageBedtimeShiftMinutes) || other.averageBedtimeShiftMinutes == _this.averageBedtimeShiftMinutes)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as FamilyTimelineState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.events));
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.allEvents),const DeepCollectionEquality().hash(_this.filteredEvents),_this.selectedFilter,_this.child,_this.weeksWithLovingBrain,_this.averageBedtimeShiftMinutes,_this.fetchStatus);
 }
 
 @override
 String toString() {
   final _this = this as FamilyTimelineState;
-  return 'FamilyTimelineState(events: ${_this.events})';
+  return 'FamilyTimelineState(allEvents: ${_this.allEvents}, filteredEvents: ${_this.filteredEvents}, selectedFilter: ${_this.selectedFilter}, child: ${_this.child}, weeksWithLovingBrain: ${_this.weeksWithLovingBrain}, averageBedtimeShiftMinutes: ${_this.averageBedtimeShiftMinutes}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $FamilyTimelineStateCopyWith<$Res>  {
   factory $FamilyTimelineStateCopyWith(FamilyTimelineState value, $Res Function(FamilyTimelineState) _then) = _$FamilyTimelineStateCopyWithImpl;
 @useResult
 $Res call({
- List<TimelineEvent> events
+ List<TimelineEventModel> allEvents, List<TimelineEventModel> filteredEvents, String selectedFilter, ChildModel? child, int weeksWithLovingBrain, int averageBedtimeShiftMinutes, ApiResultStatus<dynamic> fetchStatus
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
 
 }
 /// @nodoc
@@ -68,13 +68,28 @@ class _$FamilyTimelineStateCopyWithImpl<$Res>
 
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? events = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? allEvents = null,Object? filteredEvents = null,Object? selectedFilter = null,Object? child = freezed,Object? weeksWithLovingBrain = null,Object? averageBedtimeShiftMinutes = null,Object? fetchStatus = null,}) {
   return _then(FamilyTimelineState(
-events: null == events ? _self.events : events // ignore: cast_nullable_to_non_nullable
-as List<TimelineEvent>,
+allEvents: null == allEvents ? _self.allEvents : allEvents // ignore: cast_nullable_to_non_nullable
+as List<TimelineEventModel>,filteredEvents: null == filteredEvents ? _self.filteredEvents : filteredEvents // ignore: cast_nullable_to_non_nullable
+as List<TimelineEventModel>,selectedFilter: null == selectedFilter ? _self.selectedFilter : selectedFilter // ignore: cast_nullable_to_non_nullable
+as String,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
+as ChildModel?,weeksWithLovingBrain: null == weeksWithLovingBrain ? _self.weeksWithLovingBrain : weeksWithLovingBrain // ignore: cast_nullable_to_non_nullable
+as int,averageBedtimeShiftMinutes: null == averageBedtimeShiftMinutes ? _self.averageBedtimeShiftMinutes : averageBedtimeShiftMinutes // ignore: cast_nullable_to_non_nullable
+as int,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
-
+/// Create a copy of FamilyTimelineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -156,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TimelineEvent> events)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FamilyTimelineState() when $default != null:
-return $default(_that.events);case _:
+return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -177,10 +192,10 @@ return $default(_that.events);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TimelineEvent> events)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _FamilyTimelineState():
-return $default(_that.events);case _:
+return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +212,10 @@ return $default(_that.events);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TimelineEvent> events)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _FamilyTimelineState() when $default != null:
-return $default(_that.events);case _:
+return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.fetchStatus);case _:
   return null;
 
 }
@@ -212,16 +227,28 @@ return $default(_that.events);case _:
 
 
 class _FamilyTimelineState implements FamilyTimelineState {
-  const _FamilyTimelineState({ List<TimelineEvent> events = const []}): _events = events;
+  const _FamilyTimelineState({ List<TimelineEventModel> allEvents = const [],  List<TimelineEventModel> filteredEvents = const [], this.selectedFilter = 'All', this.child, this.weeksWithLovingBrain = 5, this.averageBedtimeShiftMinutes = 22, this.fetchStatus = const ApiResultStatus.initial()}): _allEvents = allEvents,_filteredEvents = filteredEvents;
   
 
- final  List<TimelineEvent> _events;
-@override@JsonKey() List<TimelineEvent> get events {
-  if (_events is EqualUnmodifiableListView) return _events;
+ final  List<TimelineEventModel> _allEvents;
+@override@JsonKey() List<TimelineEventModel> get allEvents {
+  if (_allEvents is EqualUnmodifiableListView) return _allEvents;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_events);
+  return EqualUnmodifiableListView(_allEvents);
 }
 
+ final  List<TimelineEventModel> _filteredEvents;
+@override@JsonKey() List<TimelineEventModel> get filteredEvents {
+  if (_filteredEvents is EqualUnmodifiableListView) return _filteredEvents;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_filteredEvents);
+}
+
+@override@JsonKey() final  String selectedFilter;
+@override final  ChildModel? child;
+@override@JsonKey() final  int weeksWithLovingBrain;
+@override@JsonKey() final  int averageBedtimeShiftMinutes;
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
@@ -233,18 +260,18 @@ _$FamilyTimelineStateCopyWith<_FamilyTimelineState> get copyWith => __$FamilyTim
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilyTimelineState&&const DeepCollectionEquality().equals(other.events, _events));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilyTimelineState&&const DeepCollectionEquality().equals(other.allEvents, _allEvents)&&const DeepCollectionEquality().equals(other.filteredEvents, _filteredEvents)&&(identical(other.selectedFilter, selectedFilter) || other.selectedFilter == selectedFilter)&&(identical(other.child, child) || other.child == child)&&(identical(other.weeksWithLovingBrain, weeksWithLovingBrain) || other.weeksWithLovingBrain == weeksWithLovingBrain)&&(identical(other.averageBedtimeShiftMinutes, averageBedtimeShiftMinutes) || other.averageBedtimeShiftMinutes == averageBedtimeShiftMinutes)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_events));
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_allEvents),const DeepCollectionEquality().hash(_filteredEvents),selectedFilter,child,weeksWithLovingBrain,averageBedtimeShiftMinutes,fetchStatus);
 }
 
 @override
 String toString() {
-    return 'FamilyTimelineState(events: $events)';
+    return 'FamilyTimelineState(allEvents: $allEvents, filteredEvents: $filteredEvents, selectedFilter: $selectedFilter, child: $child, weeksWithLovingBrain: $weeksWithLovingBrain, averageBedtimeShiftMinutes: $averageBedtimeShiftMinutes, fetchStatus: $fetchStatus)';
 }
 
 
@@ -255,11 +282,11 @@ abstract mixin class _$FamilyTimelineStateCopyWith<$Res> implements $FamilyTimel
   factory _$FamilyTimelineStateCopyWith(_FamilyTimelineState value, $Res Function(_FamilyTimelineState) _then) = __$FamilyTimelineStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<TimelineEvent> events
+ List<TimelineEventModel> allEvents, List<TimelineEventModel> filteredEvents, String selectedFilter, ChildModel? child, int weeksWithLovingBrain, int averageBedtimeShiftMinutes, ApiResultStatus<dynamic> fetchStatus
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
 
 }
 /// @nodoc
@@ -272,14 +299,29 @@ class __$FamilyTimelineStateCopyWithImpl<$Res>
 
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? events = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? allEvents = null,Object? filteredEvents = null,Object? selectedFilter = null,Object? child = freezed,Object? weeksWithLovingBrain = null,Object? averageBedtimeShiftMinutes = null,Object? fetchStatus = null,}) {
   return _then(_FamilyTimelineState(
-events: null == events ? _self._events : events // ignore: cast_nullable_to_non_nullable
-as List<TimelineEvent>,
+allEvents: null == allEvents ? _self._allEvents : allEvents // ignore: cast_nullable_to_non_nullable
+as List<TimelineEventModel>,filteredEvents: null == filteredEvents ? _self._filteredEvents : filteredEvents // ignore: cast_nullable_to_non_nullable
+as List<TimelineEventModel>,selectedFilter: null == selectedFilter ? _self.selectedFilter : selectedFilter // ignore: cast_nullable_to_non_nullable
+as String,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
+as ChildModel?,weeksWithLovingBrain: null == weeksWithLovingBrain ? _self.weeksWithLovingBrain : weeksWithLovingBrain // ignore: cast_nullable_to_non_nullable
+as int,averageBedtimeShiftMinutes: null == averageBedtimeShiftMinutes ? _self.averageBedtimeShiftMinutes : averageBedtimeShiftMinutes // ignore: cast_nullable_to_non_nullable
+as int,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 
-
+/// Create a copy of FamilyTimelineState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 // dart format on

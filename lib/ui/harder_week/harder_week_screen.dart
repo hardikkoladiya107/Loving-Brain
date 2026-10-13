@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -10,112 +11,151 @@ import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
 
-class HarderWeekScreen extends StatelessWidget {
+import 'bloc/harder_week_cubit.dart';
+import 'bloc/harder_week_state.dart';
+
+class HarderWeekScreen extends StatefulWidget {
   const HarderWeekScreen({super.key});
 
   @override
+  State<HarderWeekScreen> createState() => _HarderWeekScreenState();
+}
+
+class _HarderWeekScreenState extends State<HarderWeekScreen> {
+  late final HarderWeekCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = HarderWeekCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: [
-          // Top Left Glow
-          Positioned(
-            left: -150,
-            top: -150,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Column(
+    return BlocProvider<HarderWeekCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<HarderWeekCubit, HarderWeekState>(
+        listener: (BuildContext context, HarderWeekState state) {},
+        builder: (BuildContext context, HarderWeekState state) {
+          final String dateLabel =
+              state.insights?.dateRangeLabel ?? 'This week';
+
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 8.h,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: darkBlue,
-                          size: 24.sp,
-                        ),
+                // Top Left Glow
+                Positioned(
+                  left: -150,
+                  top: -150,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
                     children: [
-                      16.spaceH,
-                      "This week".appText(
-                        fontSize: 32.sp,
-                        color: greyColor9,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
-                      8.spaceH,
-                      "Sunday 5 May ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ Saturday 11 May"
-                          .appText(
-                            fontSize: 14.sp,
-                            color: greyColor9,
-                            textAlign: TextAlign.start,
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
+                              ),
+                            ),
                           ),
-                      24.spaceH,
-                      _buildThisWeekCard(),
-                      16.spaceH,
-                      _buildWhatWeNoticedCard(),
-                      16.spaceH,
-                      _buildSmallThingToTryCard(),
-                      160.spaceH,
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            'This week'.appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            8.spaceH,
+                            dateLabel.appText(
+                              fontSize: 14.sp,
+                              color: greyColor9,
+                              textAlign: TextAlign.start,
+                            ),
+                            24.spaceH,
+                            _buildThisWeekCard(state),
+                            16.spaceH,
+                            _buildWhatWeNoticedCard(state),
+                            16.spaceH,
+                            _buildSmallThingToTryCard(state),
+                            200.spaceH,
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                _buildBottomActions(context),
               ],
             ),
-          ),
-          _buildBottomActions(context),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildThisWeekCard() {
+  Widget _buildThisWeekCard(HarderWeekState state) {
+    final String explanation =
+        state.insights?.harderExplanation ??
+        "Travel disrupted the routine. That's expected, and it isn't a setback routines take a few days to settle again.";
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoChip(
-            chipTitle: "This week",
+            chipTitle: 'This week',
             iconData: Icons.stars,
             color: secondaryColor,
             bgColor: const Color(0xFFF1EEFF),
@@ -137,7 +177,7 @@ class HarderWeekScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    "This week\nwas harder".appText(
+                    'This week\nwas harder'.appText(
                       fontSize: 20.sp,
                       color: greyColor9,
                       fraunces: true,
@@ -145,13 +185,12 @@ class HarderWeekScreen extends StatelessWidget {
                       height: 1.2,
                     ),
                     8.spaceH,
-                    "Travel disrupted the routine. That's expected, and it isn't a setback routines take a few days to settle again."
-                        .appText(
-                          fontSize: 12.sp,
-                          color: greyColor,
-                          textAlign: TextAlign.start,
-                          height: 1.4,
-                        ),
+                    explanation.appText(
+                      fontSize: 12.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                      height: 1.4,
+                    ),
                   ],
                 ),
               ),
@@ -162,38 +201,48 @@ class HarderWeekScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWhatWeNoticedCard() {
+  Widget _buildWhatWeNoticedCard(HarderWeekState state) {
+    final String title =
+        state.insights?.harderNoticedTitle ??
+        'Sleep windows shifted later most nights';
+    final String detail =
+        state.insights?.harderNoticedDetail ??
+        'Bedtime averaged later than usual during the disrupted days.';
+
     return CommonInfoCard(
       chipTitle: 'What we noticed',
       chipIcon: Icons.info,
       chipColor: primaryColor,
       chipBgColor: orangeLightColor,
-      title: 'Sleep windows shifted later most nights',
+      title: title,
       titleFontSize: 20.sp,
-      subtitle: 'Bedtime averaged 9:05 PM, about 50 minutes later than usual.',
+      subtitle: detail,
     );
   }
 
-  Widget _buildSmallThingToTryCard() {
+  Widget _buildSmallThingToTryCard(HarderWeekState state) {
+    final String suggestion =
+        state.insights?.harderSmallThingToTry ?? 'Focus on morning sunlight';
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
         border: Border.all(color: primaryColor, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoChip(
-            chipTitle: "One small thing to try",
+            chipTitle: 'One small thing to try',
             iconData: Icons.stars,
             color: primaryColor,
             bgColor: orangeLightColor,
           ),
           16.spaceH,
-          "Focus on morning sunlight".appText(
+          suggestion.appText(
             fontSize: 20.sp,
             color: greyColor9,
             fraunces: true,
@@ -213,28 +262,32 @@ class HarderWeekScreen extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.only(
           top: 12.h,
-          bottom: 20.h,
+          bottom: 24.h,
           left: 20.w,
           right: 20.w,
         ),
-        decoration: BoxDecoration(color: Color(0xffFEF2EA)),
+        decoration: const BoxDecoration(color: Color(0xFFFEF2EA)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             AppButton(
-              title: "Talk to Brainy about this",
+              title: 'Talk to Brainy about this',
               onTap: () {
+                final String prompt = _cubit.buildBrainyDisruptionPrompt();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const BrainyConversationScreen(),
+                    builder: (_) => BrainyConversationScreen(
+                      topic: 'Harder Week Support',
+                      initialChat: prompt,
+                    ),
                   ),
                 );
               },
             ),
             12.spaceH,
             AppButton(
-              title: "Talk to an expert mentor",
+              title: 'Talk to an expert mentor',
               backgroundColor: Colors.white,
               textColor: darkBlue,
               onTap: () {
@@ -248,14 +301,13 @@ class HarderWeekScreen extends StatelessWidget {
             ),
             16.spaceH,
             BaseButton(
-              child: "Back to Journey".appText(
+              child: 'Back to Journey'.appText(
                 fontSize: 14.sp,
                 color: greyColor,
                 fontWeight: FontWeight.w500,
                 textAlign: TextAlign.center,
               ),
               onTap: () {
-                // Assuming we pop back to the Journey Screen
                 Navigator.pop(context);
               },
             ),

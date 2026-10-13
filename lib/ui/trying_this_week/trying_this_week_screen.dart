@@ -1,120 +1,190 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_notes_update_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
 
-class TryingThisWeekScreen extends StatelessWidget {
+import 'bloc/trying_this_week_cubit.dart';
+import 'bloc/trying_this_week_state.dart';
+
+class TryingThisWeekScreen extends StatefulWidget {
   const TryingThisWeekScreen({super.key});
 
   @override
+  State<TryingThisWeekScreen> createState() => _TryingThisWeekScreenState();
+}
+
+class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
+  late final TryingThisWeekCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = TryingThisWeekCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: [
-          // Top Left Glow
-          Positioned(
-            left: -150,
-            top: -150,
-            child: Container(
-              width: 400,
-              height: 400,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Column(
+    return BlocProvider<TryingThisWeekCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<TryingThisWeekCubit, TryingThisWeekState>(
+        listener: (BuildContext context, TryingThisWeekState state) {
+          if (state.finishStatus is Data) {
+            showSnackBar(
+              message: 'Experiment finished early.',
+              type: SnackBarType.SUCCESS,
+            );
+          }
+        },
+        builder: (BuildContext context, TryingThisWeekState state) {
+          final String changeTitle =
+              state.experiment?.changeTitle ??
+              'An earlier, shorter\nafternoon nap';
+          final String observeTarget =
+              state.experiment?.observeTarget ??
+              'Evening mood and how easily\nbedtime goes';
+          final DateTime reviewDate =
+              state.experiment?.reviewDate ??
+              DateTime.now().add(const Duration(days: 4));
+          final String reviewDateStr = DateFormat(
+            'EEEE d MMMM',
+          ).format(reviewDate);
+
+          final int currentDay = state.currentDay;
+          final int totalDays = state.totalDays;
+          final double progress = (currentDay / totalDays).clamp(0.0, 1.0);
+
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 8.h,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.arrow_back,
-                          color: darkBlue,
-                          size: 24.sp,
-                        ),
+                // Top Left Glow
+                Positioned(
+                  left: -150,
+                  top: -150,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
                     children: [
-                      16.spaceH,
-                      "What we're trying this week".appText(
-                        fontSize: 32.sp,
-                        color: greyColor9,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                        height: 1.2,
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      24.spaceH,
-                      _buildChangeCard(),
-                      16.spaceH,
-                      _buildObserveCard(),
-                      16.spaceH,
-                      _buildReviewDateCard(),
-                      160.spaceH,
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "What we're trying this week".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                              height: 1.2,
+                            ),
+                            24.spaceH,
+                            _buildChangeCard(
+                              changeTitle,
+                              currentDay,
+                              totalDays,
+                              progress,
+                            ),
+                            16.spaceH,
+                            _buildObserveCard(observeTarget),
+                            16.spaceH,
+                            _buildReviewDateCard(reviewDateStr),
+                            180.spaceH,
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
+                _buildBottomActions(context),
               ],
             ),
-          ),
-          _buildBottomActions(context),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildChangeCard() {
+  Widget _buildChangeCard(
+    String changeTitle,
+    int currentDay,
+    int totalDays,
+    double progress,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoChip(
-            chipTitle: "The change being tried",
+            chipTitle: 'The change being tried',
             iconData: Icons.info,
             color: primaryColor,
             bgColor: orangeLightColor,
           ),
           16.spaceH,
-          "An earlier, shorter\nafternoon nap".appText(
+          changeTitle.appText(
             fontSize: 20.sp,
             color: greyColor9,
             fraunces: true,
@@ -122,16 +192,17 @@ class TryingThisWeekScreen extends StatelessWidget {
             height: 1.2,
           ),
           12.spaceH,
-          "Started 3 days ago · day 3 of 7".appText(
-            fontSize: 12.sp,
-            color: greyColor,
-            textAlign: TextAlign.start,
-          ),
+          'Started ${currentDay - 1} days ago · day $currentDay of $totalDays'
+              .appText(
+                fontSize: 12.sp,
+                color: greyColor,
+                textAlign: TextAlign.start,
+              ),
           16.spaceH,
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(4.r),
             child: LinearProgressIndicator(
-              value: 3 / 7,
+              value: progress,
               backgroundColor: orangeLightColor,
               valueColor: const AlwaysStoppedAnimation<Color>(primaryColor),
               minHeight: 6.h,
@@ -142,25 +213,25 @@ class TryingThisWeekScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildObserveCard() {
+  Widget _buildObserveCard(String observeTarget) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InfoChip(
-            chipTitle: "What to observe",
+            chipTitle: 'What to observe',
             iconData: Icons.info,
             color: primaryColor,
             bgColor: orangeLightColor,
           ),
           16.spaceH,
-          "Evening mood and how easily\nbedtime goes".appText(
+          observeTarget.appText(
             fontSize: 20.sp,
             color: greyColor9,
             fraunces: true,
@@ -180,13 +251,13 @@ class TryingThisWeekScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewDateCard() {
+  Widget _buildReviewDateCard(String reviewDateStr) {
     return CommonInfoCard(
       chipTitle: 'Review date',
       chipIcon: Icons.info,
       chipColor: primaryColor,
       chipBgColor: orangeLightColor,
-      title: 'Saturday 25 May',
+      title: reviewDateStr,
       titleFontSize: 20.sp,
     );
   }
@@ -219,13 +290,13 @@ class TryingThisWeekScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             AppButton(
-              title: "Add update",
+              title: 'Add update',
               onTap: () {
-                showModalBottomSheet(
+                showModalBottomSheet<void>(
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.white,
-                  builder: (context) => BlocProvider(
+                  builder: (BuildContext ctx) => BlocProvider<TodayCubit>(
                     create: (_) => TodayCubit(),
                     child: const AddNotesUpdateSheet(),
                   ),
@@ -264,13 +335,13 @@ class TryingThisWeekScreen extends StatelessWidget {
                             ),
                           ),
                           18.spaceH,
-                          "Finish early?".appText(
+                          'Finish early?'.appText(
                             fontSize: 22.sp,
                             color: greyColor9,
                             fraunces: true,
                           ),
                           10.spaceH,
-                          "Are you sure you want to end this recommendation early?"
+                          'Are you sure you want to end this recommendation early?'
                               .appText(
                                 fontSize: 14.sp,
                                 color: greyColor,
@@ -299,11 +370,14 @@ class TryingThisWeekScreen extends StatelessWidget {
                                   backgroundColor: primaryColor,
                                   borderColor: primaryColor,
                                   textColor: Colors.white,
-                                  onTap: () {
-                                    Navigator.pop(ctx); // Close dialog
-                                    Navigator.pop(
-                                      context,
-                                    ); // Close TryingThisWeekScreen
+                                  onTap: () async {
+                                    Navigator.pop(ctx);
+                                    await _cubit.finishEarly(
+                                      'Ended early by parent',
+                                    );
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
                                   },
                                 ),
                               ),
@@ -320,9 +394,9 @@ class TryingThisWeekScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 16.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30.r),
                 ),
-                child: "Finish early".appText(
+                child: 'Finish early'.appText(
                   fontSize: 16.sp,
                   color: greyColor9,
                   fontWeight: FontWeight.w600,

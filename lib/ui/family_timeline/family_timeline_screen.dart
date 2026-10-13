@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/family_timeline_cubit.dart';
 import 'bloc/family_timeline_state.dart';
 
@@ -14,14 +16,30 @@ class FamilyTimelineScreen extends StatefulWidget {
 }
 
 class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
-  String _selectedFilter = "All";
+  late final FamilyTimelineCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = FamilyTimelineCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => FamilyTimelineCubit()..init(),
-      child: BlocBuilder<FamilyTimelineCubit, FamilyTimelineState>(
-        builder: (context, state) {
+    return BlocProvider<FamilyTimelineCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<FamilyTimelineCubit, FamilyTimelineState>(
+        listener: (BuildContext context, FamilyTimelineState state) {},
+        builder: (BuildContext context, FamilyTimelineState state) {
           return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
@@ -31,8 +49,8 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                   left: -150,
                   top: -150,
                   child: Container(
-                    width: 400,
-                    height: 400,
+                    width: 400.w,
+                    height: 400.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
@@ -61,7 +79,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                               shape: BoxShape.circle,
                             ),
                             child: InkWell(
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(24.r),
                               onTap: () {
                                 if (Navigator.canPop(context)) {
                                   Navigator.pop(context);
@@ -80,7 +98,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         ),
                       ),
                       24.spaceH,
-                      "Family timeline".appText(
+                      'Family timeline'.appText(
                         fontSize: 28.sp,
                         color: greyColor9,
                         fraunces: true,
@@ -91,13 +109,13 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            _buildFilterChip("All"),
+                            _buildFilterChip('All', state),
                             8.spaceW,
-                            _buildFilterChip("Sleep"),
+                            _buildFilterChip('Sleep', state),
                             8.spaceW,
-                            _buildFilterChip("Behaviour"),
+                            _buildFilterChip('Behaviour', state),
                             8.spaceW,
-                            _buildFilterChip("Mentorship"),
+                            _buildFilterChip('Mentorship', state),
                           ],
                         ),
                       ),
@@ -106,32 +124,42 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
                           horizontal: 24.w,
-                          vertical: 32.h,
+                          vertical: 28.h,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(24.r),
                         ),
-                        child: Column(
-                          children: [
-                            ...state.events.asMap().entries.map((entry) {
-                              int idx = entry.key;
-                              var event = entry.value;
-                              return Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: _buildTimelineItem(
-                                    title: event.title,
-                                    subtitle: event.subtitle ?? '',
-                                    isFirst: idx == 0,
-                                    isLast: idx == state.events.length - 1,
-                                  ),
+                        child: state.filteredEvents.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 32.h),
+                                  child: 'No events found for this filter.'
+                                      .appText(
+                                        fontSize: 14.sp,
+                                        color: greyColor,
+                                      ),
                                 ),
-                              );
-                            }),
-                          ],
-                        ),
+                              )
+                            : Column(
+                                children: [
+                                  ...state.filteredEvents.asMap().entries.map((
+                                    MapEntry<int, TimelineEventModel> entry,
+                                  ) {
+                                    final int idx = entry.key;
+                                    final TimelineEventModel event =
+                                        entry.value;
+                                    return _buildTimelineItem(
+                                      title: event.title,
+                                      subtitle: event.subtitle,
+                                      isFirst: idx == 0,
+                                      isLast:
+                                          idx ==
+                                          state.filteredEvents.length - 1,
+                                    );
+                                  }),
+                                ],
+                              ),
                       ),
                       24.spaceH,
                       Container(
@@ -141,11 +169,11 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                           vertical: 20.h,
                         ),
                         decoration: BoxDecoration(
-                          color: orangeLightColor, // soft peach/orange
-                          borderRadius: BorderRadius.circular(16),
+                          color: orangeLightColor,
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
                         child:
-                            "Five weeks with LovingBrain. Bedtime has moved 22 minutes earlier on average since you started."
+                            '${state.weeksWithLovingBrain} weeks with LovingBrain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
                                 .appText(
                                   fontSize: 14.sp,
                                   color: greyColor9,
@@ -165,15 +193,15 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
     );
   }
 
-  Widget _buildFilterChip(String title) {
-    bool isSelected = title == _selectedFilter;
+  Widget _buildFilterChip(String title, FamilyTimelineState state) {
+    final bool isSelected = title == state.selectedFilter;
     return GestureDetector(
-      onTap: () => setState(() => _selectedFilter = title),
+      onTap: () => _cubit.setFilter(title),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFFF1EEFF) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
             color: isSelected ? secondaryColor : Colors.transparent,
             width: 1,
@@ -233,7 +261,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                12.spaceH, // slight offset to align with dot
+                12.spaceH,
                 title.appText(
                   fontSize: 16.sp,
                   color: greyColor9,
@@ -246,7 +274,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                   color: greyColor,
                   textAlign: TextAlign.start,
                 ),
-                32.spaceH, // spacing before next item
+                32.spaceH,
               ],
             ),
           ),
