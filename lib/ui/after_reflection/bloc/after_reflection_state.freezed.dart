@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AfterReflectionState {
 
- bool get isLoading; double get intensityValue; String get selectedHelped; String get selectedFeeling;
+ bool get isLoading; ApiResultStatus<dynamic> get saveStatus; String get beforeEvent; String get durationText; double get intensityValue; String get selectedHelped; String get selectedFeeling;
 /// Create a copy of AfterReflectionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $AfterReflectionStateCopyWith<AfterReflectionState> get copyWith => _$AfterRefle
 @override
 bool operator ==(Object other) {
   final _this = this as AfterReflectionState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AfterReflectionState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.intensityValue, _this.intensityValue) || other.intensityValue == _this.intensityValue)&&(identical(other.selectedHelped, _this.selectedHelped) || other.selectedHelped == _this.selectedHelped)&&(identical(other.selectedFeeling, _this.selectedFeeling) || other.selectedFeeling == _this.selectedFeeling));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AfterReflectionState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus)&&(identical(other.beforeEvent, _this.beforeEvent) || other.beforeEvent == _this.beforeEvent)&&(identical(other.durationText, _this.durationText) || other.durationText == _this.durationText)&&(identical(other.intensityValue, _this.intensityValue) || other.intensityValue == _this.intensityValue)&&(identical(other.selectedHelped, _this.selectedHelped) || other.selectedHelped == _this.selectedHelped)&&(identical(other.selectedFeeling, _this.selectedFeeling) || other.selectedFeeling == _this.selectedFeeling));
 }
 
 
 @override
 int get hashCode {
   final _this = this as AfterReflectionState;
-  return Object.hash(runtimeType,_this.isLoading,_this.intensityValue,_this.selectedHelped,_this.selectedFeeling);
+  return Object.hash(runtimeType,_this.isLoading,_this.saveStatus,_this.beforeEvent,_this.durationText,_this.intensityValue,_this.selectedHelped,_this.selectedFeeling);
 }
 
 @override
 String toString() {
   final _this = this as AfterReflectionState;
-  return 'AfterReflectionState(isLoading: ${_this.isLoading}, intensityValue: ${_this.intensityValue}, selectedHelped: ${_this.selectedHelped}, selectedFeeling: ${_this.selectedFeeling})';
+  return 'AfterReflectionState(isLoading: ${_this.isLoading}, saveStatus: ${_this.saveStatus}, beforeEvent: ${_this.beforeEvent}, durationText: ${_this.durationText}, intensityValue: ${_this.intensityValue}, selectedHelped: ${_this.selectedHelped}, selectedFeeling: ${_this.selectedFeeling})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $AfterReflectionStateCopyWith<$Res>  {
   factory $AfterReflectionStateCopyWith(AfterReflectionState value, $Res Function(AfterReflectionState) _then) = _$AfterReflectionStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, double intensityValue, String selectedHelped, String selectedFeeling
+ bool isLoading, ApiResultStatus<dynamic> saveStatus, String beforeEvent, String durationText, double intensityValue, String selectedHelped, String selectedFeeling
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus;
 
 }
 /// @nodoc
@@ -68,16 +68,28 @@ class _$AfterReflectionStateCopyWithImpl<$Res>
 
 /// Create a copy of AfterReflectionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? intensityValue = null,Object? selectedHelped = null,Object? selectedFeeling = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? saveStatus = null,Object? beforeEvent = null,Object? durationText = null,Object? intensityValue = null,Object? selectedHelped = null,Object? selectedFeeling = null,}) {
   return _then(AfterReflectionState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,intensityValue: null == intensityValue ? _self.intensityValue : intensityValue // ignore: cast_nullable_to_non_nullable
+as bool,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,beforeEvent: null == beforeEvent ? _self.beforeEvent : beforeEvent // ignore: cast_nullable_to_non_nullable
+as String,durationText: null == durationText ? _self.durationText : durationText // ignore: cast_nullable_to_non_nullable
+as String,intensityValue: null == intensityValue ? _self.intensityValue : intensityValue // ignore: cast_nullable_to_non_nullable
 as double,selectedHelped: null == selectedHelped ? _self.selectedHelped : selectedHelped // ignore: cast_nullable_to_non_nullable
 as String,selectedFeeling: null == selectedFeeling ? _self.selectedFeeling : selectedFeeling // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
-
+/// Create a copy of AfterReflectionState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveStatus, (value) {
+    return _then(_self.copyWith(saveStatus: value));
+  });
+}
 }
 
 
@@ -159,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  double intensityValue,  String selectedHelped,  String selectedFeeling)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  ApiResultStatus<dynamic> saveStatus,  String beforeEvent,  String durationText,  double intensityValue,  String selectedHelped,  String selectedFeeling)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AfterReflectionState() when $default != null:
-return $default(_that.isLoading,_that.intensityValue,_that.selectedHelped,_that.selectedFeeling);case _:
+return $default(_that.isLoading,_that.saveStatus,_that.beforeEvent,_that.durationText,_that.intensityValue,_that.selectedHelped,_that.selectedFeeling);case _:
   return orElse();
 
 }
@@ -180,10 +192,10 @@ return $default(_that.isLoading,_that.intensityValue,_that.selectedHelped,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  double intensityValue,  String selectedHelped,  String selectedFeeling)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  ApiResultStatus<dynamic> saveStatus,  String beforeEvent,  String durationText,  double intensityValue,  String selectedHelped,  String selectedFeeling)  $default,) {final _that = this;
 switch (_that) {
 case _AfterReflectionState():
-return $default(_that.isLoading,_that.intensityValue,_that.selectedHelped,_that.selectedFeeling);case _:
+return $default(_that.isLoading,_that.saveStatus,_that.beforeEvent,_that.durationText,_that.intensityValue,_that.selectedHelped,_that.selectedFeeling);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +212,10 @@ return $default(_that.isLoading,_that.intensityValue,_that.selectedHelped,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  double intensityValue,  String selectedHelped,  String selectedFeeling)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  ApiResultStatus<dynamic> saveStatus,  String beforeEvent,  String durationText,  double intensityValue,  String selectedHelped,  String selectedFeeling)?  $default,) {final _that = this;
 switch (_that) {
 case _AfterReflectionState() when $default != null:
-return $default(_that.isLoading,_that.intensityValue,_that.selectedHelped,_that.selectedFeeling);case _:
+return $default(_that.isLoading,_that.saveStatus,_that.beforeEvent,_that.durationText,_that.intensityValue,_that.selectedHelped,_that.selectedFeeling);case _:
   return null;
 
 }
@@ -215,10 +227,13 @@ return $default(_that.isLoading,_that.intensityValue,_that.selectedHelped,_that.
 
 
 class _AfterReflectionState implements AfterReflectionState {
-  const _AfterReflectionState({this.isLoading = false, this.intensityValue = 0.5, this.selectedHelped = 'Holding close', this.selectedFeeling = 'Tired'});
+  const _AfterReflectionState({this.isLoading = false, this.saveStatus = const ApiResultStatus.initial(), this.beforeEvent = '', this.durationText = '', this.intensityValue = 0.5, this.selectedHelped = 'Holding close', this.selectedFeeling = 'Tired'});
   
 
 @override@JsonKey() final  bool isLoading;
+@override@JsonKey() final  ApiResultStatus<dynamic> saveStatus;
+@override@JsonKey() final  String beforeEvent;
+@override@JsonKey() final  String durationText;
 @override@JsonKey() final  double intensityValue;
 @override@JsonKey() final  String selectedHelped;
 @override@JsonKey() final  String selectedFeeling;
@@ -233,18 +248,18 @@ _$AfterReflectionStateCopyWith<_AfterReflectionState> get copyWith => __$AfterRe
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AfterReflectionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.intensityValue, intensityValue) || other.intensityValue == intensityValue)&&(identical(other.selectedHelped, selectedHelped) || other.selectedHelped == selectedHelped)&&(identical(other.selectedFeeling, selectedFeeling) || other.selectedFeeling == selectedFeeling));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AfterReflectionState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus)&&(identical(other.beforeEvent, beforeEvent) || other.beforeEvent == beforeEvent)&&(identical(other.durationText, durationText) || other.durationText == durationText)&&(identical(other.intensityValue, intensityValue) || other.intensityValue == intensityValue)&&(identical(other.selectedHelped, selectedHelped) || other.selectedHelped == selectedHelped)&&(identical(other.selectedFeeling, selectedFeeling) || other.selectedFeeling == selectedFeeling));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoading,intensityValue,selectedHelped,selectedFeeling);
+    return Object.hash(runtimeType,isLoading,saveStatus,beforeEvent,durationText,intensityValue,selectedHelped,selectedFeeling);
 }
 
 @override
 String toString() {
-    return 'AfterReflectionState(isLoading: $isLoading, intensityValue: $intensityValue, selectedHelped: $selectedHelped, selectedFeeling: $selectedFeeling)';
+    return 'AfterReflectionState(isLoading: $isLoading, saveStatus: $saveStatus, beforeEvent: $beforeEvent, durationText: $durationText, intensityValue: $intensityValue, selectedHelped: $selectedHelped, selectedFeeling: $selectedFeeling)';
 }
 
 
@@ -255,11 +270,11 @@ abstract mixin class _$AfterReflectionStateCopyWith<$Res> implements $AfterRefle
   factory _$AfterReflectionStateCopyWith(_AfterReflectionState value, $Res Function(_AfterReflectionState) _then) = __$AfterReflectionStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, double intensityValue, String selectedHelped, String selectedFeeling
+ bool isLoading, ApiResultStatus<dynamic> saveStatus, String beforeEvent, String durationText, double intensityValue, String selectedHelped, String selectedFeeling
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get saveStatus;
 
 }
 /// @nodoc
@@ -272,17 +287,29 @@ class __$AfterReflectionStateCopyWithImpl<$Res>
 
 /// Create a copy of AfterReflectionState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? intensityValue = null,Object? selectedHelped = null,Object? selectedFeeling = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? saveStatus = null,Object? beforeEvent = null,Object? durationText = null,Object? intensityValue = null,Object? selectedHelped = null,Object? selectedFeeling = null,}) {
   return _then(_AfterReflectionState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,intensityValue: null == intensityValue ? _self.intensityValue : intensityValue // ignore: cast_nullable_to_non_nullable
+as bool,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,beforeEvent: null == beforeEvent ? _self.beforeEvent : beforeEvent // ignore: cast_nullable_to_non_nullable
+as String,durationText: null == durationText ? _self.durationText : durationText // ignore: cast_nullable_to_non_nullable
+as String,intensityValue: null == intensityValue ? _self.intensityValue : intensityValue // ignore: cast_nullable_to_non_nullable
 as double,selectedHelped: null == selectedHelped ? _self.selectedHelped : selectedHelped // ignore: cast_nullable_to_non_nullable
 as String,selectedFeeling: null == selectedFeeling ? _self.selectedFeeling : selectedFeeling // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
 
-
+/// Create a copy of AfterReflectionState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveStatus, (value) {
+    return _then(_self.copyWith(saveStatus: value));
+  });
+}
 }
 
 // dart format on
