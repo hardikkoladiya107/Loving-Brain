@@ -8,6 +8,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
 import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_state.dart';
+import 'package:loving_brain/ui/tonights_plan/tonights_plan_screen.dart';
 
 class ForecastDetailsCard extends StatelessWidget {
   const ForecastDetailsCard({super.key});
@@ -86,78 +87,99 @@ class ForecastDetailsCard extends StatelessWidget {
               ],
             ),
           ),
-          24.spaceH,
-          "TONIGHT’S PLAN".appText(
-            color: secondaryColor,
-            fontWeight: FontWeight.w600,
-            fontSize: 16.sp,
-            letterSpacing: 1.0,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const TonightsPlanScreen()),
+              );
+            },
+            child: "TONIGHT’S PLAN".appText(
+              color: secondaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 16.sp,
+              letterSpacing: 1.0,
+            ),
           ),
           16.spaceH,
           if (steps.isNotEmpty)
             for (int i = 0; i < steps.length; i++) ...[
-              _buildPlanItem(steps[i].title, steps[i].subtitle),
+              _buildPlanItem(context, steps[i].title, steps[i].subtitle),
               if (i < steps.length - 1) 12.spaceH,
             ]
           else ...[
-            _buildPlanItem("Wind-down starts", "${state.windowStart} - 25 min"),
+            _buildPlanItem(
+              context,
+              "Wind-down starts",
+              "${state.windowStart} - 25 min",
+            ),
             12.spaceH,
             _buildPlanItem(
+              context,
               "Book in the bedroom",
               "${state.bedtimeEstimate} - 20 min",
             ),
             12.spaceH,
-            _buildPlanItem("Lights out", state.bedtimeEstimate),
+            _buildPlanItem(context, "Lights out", state.bedtimeEstimate),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildPlanItem(String title, String subtitle) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 40.h,
-            width: 40.w,
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEEFC),
-              borderRadius: BorderRadius.circular(13.r),
-            ),
-            child: Container(
-              height: 30.h,
-              width: 30.w,
+  Widget _buildPlanItem(BuildContext context, String title, String subtitle) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TonightsPlanScreen()),
+        );
+      },
+      borderRadius: BorderRadius.circular(16.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 40.h,
+              width: 40.w,
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(Assets.v2.images.imgTonightsPlan.path),
-                  fit: BoxFit.contain,
-                ),
+                color: const Color(0xFFEEEEFC),
+                borderRadius: BorderRadius.circular(13.r),
               ),
-            ).appPadding(all: 4.r),
-          ),
-          16.spaceW,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title.appText(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.sp,
-                  color: Colors.black87,
+              child: Container(
+                height: 30.h,
+                width: 30.w,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(Assets.v2.images.imgTonightsPlan.path),
+                    fit: BoxFit.contain,
+                  ),
                 ),
-                4.spaceH,
-                subtitle.appText(fontSize: 12.sp, color: Colors.grey),
-              ],
+              ).appPadding(all: 4.r),
             ),
-          ),
-          Icon(Icons.chevron_right, color: Colors.grey, size: 24.sp),
-        ],
+            16.spaceW,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  title.appText(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    color: Colors.black87,
+                  ),
+                  4.spaceH,
+                  subtitle.appText(fontSize: 12.sp, color: Colors.grey),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: Colors.grey, size: 24.sp),
+          ],
+        ),
       ),
     );
   }
