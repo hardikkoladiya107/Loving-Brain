@@ -1,0 +1,117 @@
+/**
+ * emailTemplate.js
+ * Generates responsive, branded HTML email templates for Loving Brain.
+ */
+
+/**
+ * Returns a fully styled HTML email for OTP verification.
+ * @param {string} otpCode 4-digit verification code.
+ * @param {string} [logoUrl] Optional hosted image URL for the logo.
+ * @returns {string} Fully formatted HTML string.
+ */
+function getOtpEmailHtml(otpCode, logoUrl = null) {
+  const brandLogoHtml = logoUrl
+    ? `<img src="${logoUrl}" alt="Loving Brain" width="64" height="64" style="display: block; margin: 0 auto 12px auto; border-radius: 16px; border: 0;" />`
+    : `
+      <div style="display: inline-block; width: 56px; height: 56px; line-height: 56px; border-radius: 18px; background: linear-gradient(135deg, #F06D4D 0%, #FFA07A 100%); margin-bottom: 12px; box-shadow: 0 4px 12px rgba(240, 109, 77, 0.25);">
+        <span style="font-size: 28px; line-height: 56px; vertical-align: middle;">☁️</span>
+      </div>
+    `;
+
+  return `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>Loving Brain Verification Code</title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
+  </style>
+  <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; background-color: #FEF8F4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FEF8F4; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container Card -->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; background-color: #FFFFFF; border-radius: 28px; border: 1px solid #F5EAE4; box-shadow: 0 8px 30px rgba(240, 109, 77, 0.08); overflow: hidden;">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td align="center" style="padding: 40px 32px 18px 32px; background: linear-gradient(180deg, #FFF7F2 0%, #FFFFFF 100%);">
+              ${brandLogoHtml}
+              <h1 style="margin: 0; font-size: 26px; font-weight: 800; color: #212E5A; letter-spacing: -0.5px;">
+                Loving Brain
+              </h1>
+              <p style="margin: 6px 0 0 0; font-size: 13px; color: #8A8A8A; font-weight: 500; letter-spacing: 0.2px;">
+                Understand patterns. Know what to try next.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Main Body -->
+          <tr>
+            <td style="padding: 12px 36px 36px 36px; text-align: center;">
+              <h2 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 700; color: #212E5A;">
+                Your Verification Code
+              </h2>
+              <p style="margin: 0 0 28px 0; font-size: 14px; line-height: 22px; color: #545454;">
+                Welcome to Loving Brain! Use the verification code below to confirm your email and access your account.
+              </p>
+
+              <!-- OTP Code Display Card -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+                <tr>
+                  <td align="center">
+                    <div style="display: inline-block; background-color: #FFF2ED; border: 2px dashed #F06D4D; border-radius: 20px; padding: 18px 36px; text-align: center;">
+                      <span style="font-family: 'Courier New', Courier, monospace, sans-serif; font-size: 38px; font-weight: 800; color: #F06D4D; letter-spacing: 12px; margin-left: 12px; display: inline-block;">
+                        ${otpCode}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Expiration Notice -->
+              <div style="background-color: #FAF8F6; border-radius: 14px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid #F0ECE9;">
+                <p style="margin: 0; font-size: 13px; color: #495057; font-weight: 600;">
+                  ⏱️ This code will expire in <span style="color: #F06D4D;">10 minutes</span>.
+                </p>
+              </div>
+
+              <!-- Security Warning -->
+              <p style="margin: 0; font-size: 12px; line-height: 18px; color: #939393;">
+                If you didn't request this verification code, you can safely ignore this email. Never share this code with anyone.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 22px 32px; background-color: #FAF6F3; border-top: 1px solid #F1E9E3; text-align: center;">
+              <p style="margin: 0 0 6px 0; font-size: 12px; font-weight: 600; color: #6C757D;">
+                Loving Brain
+              </p>
+              <p style="margin: 0; font-size: 11px; line-height: 16px; color: #ADB5BD;">
+                Nurturing calm, connected families.<br />
+                This is an automated security email. Please do not reply directly.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <!-- End Main Container Card -->
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+module.exports = {
+  getOtpEmailHtml,
+};

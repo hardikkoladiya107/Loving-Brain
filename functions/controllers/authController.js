@@ -1,6 +1,7 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
+const { getOtpEmailHtml } = require("../utils/emailTemplate");
 
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
@@ -55,7 +56,7 @@ exports.sendEmailOtp = onCall(async (request) => { // 👈 Expose the secret to 
         sender: { name: SENDER_NAME, email: SENDER_EMAIL },
         to: [{ email: email }],
         subject: "Your Loving Brain Verification Code",
-        htmlContent: `<p>Your verification code is: <strong>${otpCode}</strong></p><p>This code will expire in 10 minutes.</p>`,
+        htmlContent: getOtpEmailHtml(otpCode),
       }),
     });
 
