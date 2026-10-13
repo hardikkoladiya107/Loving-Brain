@@ -41,10 +41,7 @@ class TodayLogRepo {
 
   /// Parses a display time string (e.g., "01:30 PM" or "5:20 PM") into a full DateTime
   /// anchored to the given [referenceDate] (defaults to DateTime.now()).
-  static DateTime parseTimeString(
-    String timeStr, {
-    DateTime? referenceDate,
-  }) {
+  static DateTime parseTimeString(String timeStr, {DateTime? referenceDate}) {
     final DateTime base = referenceDate ?? DateTime.now();
     try {
       final String trimmed = timeStr.trim();
@@ -149,7 +146,8 @@ class TodayLogRepo {
       try {
         await _childrenCollection.doc(childId).collection('behaviours').add({
           'behaviour': log.whatHappened,
-          'note': 'Triggers: ${log.triggers.join(", ")} | Helped: ${log.whatHelped}',
+          'note':
+              'Triggers: ${log.triggers.join(", ")} | Helped: ${log.whatHelped}',
           'time_stamp': Timestamp.fromDate(log.timestamp.toUtc()),
           'intensity': log.intensity,
           'triggers': log.triggers,
@@ -161,13 +159,15 @@ class TodayLogRepo {
       } catch (_) {}
 
       // Write to unified events timeline
-      final String triggersStr =
-          log.triggers.isNotEmpty ? ' (${log.triggers.join(", ")})' : '';
+      final String triggersStr = log.triggers.isNotEmpty
+          ? ' (${log.triggers.join(", ")})'
+          : '';
       await _childrenCollection.doc(childId).collection('events').add({
         'type': 'tantrum_log',
         'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
         'title': LocaleKeys.tantrumLogSaved.tr(),
-        'subtitle': '${log.whatHappened}$triggersStr • Helped: ${log.whatHelped}',
+        'subtitle':
+            '${log.whatHappened}$triggersStr • Helped: ${log.whatHelped}',
         'createdAt': FieldValue.serverTimestamp(),
         'userId': log.userId,
         'childId': childId,
@@ -224,8 +224,9 @@ class TodayLogRepo {
       }
 
       // Write to unified events timeline
-      final String parentPart =
-          log.parentMood.isNotEmpty ? ' • Parent: ${log.parentMood}' : '';
+      final String parentPart = log.parentMood.isNotEmpty
+          ? ' • Parent: ${log.parentMood}'
+          : '';
       await _childrenCollection.doc(childId).collection('events').add({
         'type': 'mood_log',
         'timestamp': Timestamp.fromDate(log.logTime.toUtc()),
@@ -269,8 +270,9 @@ class TodayLogRepo {
               .add(log.toMap());
 
       // Write to unified events timeline
-      final String notesPart =
-          log.notes.trim().isNotEmpty ? ' • ${log.notes.trim()}' : '';
+      final String notesPart = log.notes.trim().isNotEmpty
+          ? ' • ${log.notes.trim()}'
+          : '';
       await _childrenCollection.doc(childId).collection('events').add({
         'type': 'health_log',
         'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
@@ -351,8 +353,9 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      final List<SleepLogModel> list =
-          snap.docs.map(SleepLogModel.fromDoc).toList();
+      final List<SleepLogModel> list = snap.docs
+          .map(SleepLogModel.fromDoc)
+          .toList();
       return ApiResultStatus.data(data: list);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
@@ -371,8 +374,9 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      final List<TantrumLogModel> list =
-          snap.docs.map(TantrumLogModel.fromDoc).toList();
+      final List<TantrumLogModel> list = snap.docs
+          .map(TantrumLogModel.fromDoc)
+          .toList();
       return ApiResultStatus.data(data: list);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
@@ -391,8 +395,9 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      final List<MoodLogModel> list =
-          snap.docs.map(MoodLogModel.fromDoc).toList();
+      final List<MoodLogModel> list = snap.docs
+          .map(MoodLogModel.fromDoc)
+          .toList();
       return ApiResultStatus.data(data: list);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
@@ -411,8 +416,9 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      final List<HealthLogModel> list =
-          snap.docs.map(HealthLogModel.fromDoc).toList();
+      final List<HealthLogModel> list = snap.docs
+          .map(HealthLogModel.fromDoc)
+          .toList();
       return ApiResultStatus.data(data: list);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
@@ -431,8 +437,9 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      final List<QuickNoteModel> list =
-          snap.docs.map(QuickNoteModel.fromDoc).toList();
+      final List<QuickNoteModel> list = snap.docs
+          .map(QuickNoteModel.fromDoc)
+          .toList();
       return ApiResultStatus.data(data: list);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));

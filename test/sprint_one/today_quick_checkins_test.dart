@@ -8,42 +8,44 @@ import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
-import 'package:loving_brain/ui/today_screen/bloc/today_state.dart';
 
 void main() {
   group('Today Tab - Sprint 1 Models & Serialization Tests', () {
-    test('SleepLogModel serializes and deserializes accurately with V2 fields', () {
-      final DateTime now = DateTime(2026, 10, 13, 14, 30);
-      final DateTime bed = DateTime(2026, 10, 13, 13, 0);
-      final DateTime wake = DateTime(2026, 10, 13, 14, 30);
+    test(
+      'SleepLogModel serializes and deserializes accurately with V2 fields',
+      () {
+        final DateTime now = DateTime(2026, 10, 13, 14, 30);
+        final DateTime bed = DateTime(2026, 10, 13, 13, 0);
+        final DateTime wake = DateTime(2026, 10, 13, 14, 30);
 
-      final SleepLogModel model = SleepLogModel(
-        id: 'sleep_123',
-        date: DateTime(2026, 10, 13),
-        bedTime: bed,
-        wakeTime: wake,
-        fellAsleepTime: '01:00 PM',
-        wokeUpTime: '02:30 PM',
-        isNightWaking: false,
-        sleepQualityIndex: 4,
-        durationMinutes: 90,
-        userId: 'user_xyz',
-        childId: 'child_abc',
-        createdAt: now,
-      );
+        final SleepLogModel model = SleepLogModel(
+          id: 'sleep_123',
+          date: DateTime(2026, 10, 13),
+          bedTime: bed,
+          wakeTime: wake,
+          fellAsleepTime: '01:00 PM',
+          wokeUpTime: '02:30 PM',
+          isNightWaking: false,
+          sleepQualityIndex: 4,
+          durationMinutes: 90,
+          userId: 'user_xyz',
+          childId: 'child_abc',
+          createdAt: now,
+        );
 
-      final Map<String, dynamic> map = model.toMap();
-      expect(map['fellAsleepTime'], equals('01:00 PM'));
-      expect(map['wokeUpTime'], equals('02:30 PM'));
-      expect(map['isNightWaking'], isFalse);
-      expect(map['sleepQualityIndex'], equals(4));
-      expect(map['durationMinutes'], equals(90));
-      expect(map['userId'], equals('user_xyz'));
-      expect(map['childId'], equals('child_abc'));
-      expect(map['date'], isA<Timestamp>());
-      expect(map['bedTime'], isA<Timestamp>());
-      expect(map['wakeTime'], isA<Timestamp>());
-    });
+        final Map<String, dynamic> map = model.toMap();
+        expect(map['fellAsleepTime'], equals('01:00 PM'));
+        expect(map['wokeUpTime'], equals('02:30 PM'));
+        expect(map['isNightWaking'], isFalse);
+        expect(map['sleepQualityIndex'], equals(4));
+        expect(map['durationMinutes'], equals(90));
+        expect(map['userId'], equals('user_xyz'));
+        expect(map['childId'], equals('child_abc'));
+        expect(map['date'], isA<Timestamp>());
+        expect(map['bedTime'], isA<Timestamp>());
+        expect(map['wakeTime'], isA<Timestamp>());
+      },
+    );
 
     test('TantrumLogModel handles round-trip data accurately', () {
       final DateTime eventTime = DateTime(2026, 10, 13, 17, 20);
@@ -67,7 +69,10 @@ void main() {
       expect(map['triggers'], containsAll(<String>['Hunger', 'Transition']));
       expect(map['whatHelped'], equals('Holding her close and soft singing'));
 
-      final TantrumLogModel parsed = TantrumLogModel.fromMap(map, id: 'tantrum_456');
+      final TantrumLogModel parsed = TantrumLogModel.fromMap(
+        map,
+        id: 'tantrum_456',
+      );
       expect(parsed.whatHappened, equals(model.whatHappened));
       expect(parsed.time, equals(model.time));
       expect(parsed.intensity, equals(model.intensity));
@@ -118,7 +123,10 @@ void main() {
       expect(map['issues'], containsAll(<String>['Teething', 'Low appetite']));
       expect(map['notes'], equals('Warm cheeks since this afternoon'));
 
-      final HealthLogModel parsed = HealthLogModel.fromMap(map, id: 'health_999');
+      final HealthLogModel parsed = HealthLogModel.fromMap(
+        map,
+        id: 'health_999',
+      );
       expect(parsed.issues, equals(<String>['Teething', 'Low appetite']));
       expect(parsed.notes, equals('Warm cheeks since this afternoon'));
     });
@@ -135,7 +143,10 @@ void main() {
       );
 
       final Map<String, dynamic> map = model.toMap();
-      expect(map['note'], equals('Grandparents visited today. Skipped afternoon quiet time.'));
+      expect(
+        map['note'],
+        equals('Grandparents visited today. Skipped afternoon quiet time.'),
+      );
 
       final QuickNoteModel parsed = QuickNoteModel.fromMap(map, id: 'note_111');
       expect(parsed.note, equals(model.note));
@@ -144,15 +155,24 @@ void main() {
 
     test('TodayLogRepo.parseTimeString parses 12h AM/PM strings correctly', () {
       final DateTime base = DateTime(2026, 10, 13);
-      final DateTime dtMorning = TodayLogRepo.parseTimeString('07:30 AM', referenceDate: base);
+      final DateTime dtMorning = TodayLogRepo.parseTimeString(
+        '07:30 AM',
+        referenceDate: base,
+      );
       expect(dtMorning.hour, equals(7));
       expect(dtMorning.minute, equals(30));
 
-      final DateTime dtEvening = TodayLogRepo.parseTimeString('08:15 PM', referenceDate: base);
+      final DateTime dtEvening = TodayLogRepo.parseTimeString(
+        '08:15 PM',
+        referenceDate: base,
+      );
       expect(dtEvening.hour, equals(20));
       expect(dtEvening.minute, equals(15));
 
-      final DateTime dtNoPad = TodayLogRepo.parseTimeString('5:20 PM', referenceDate: base);
+      final DateTime dtNoPad = TodayLogRepo.parseTimeString(
+        '5:20 PM',
+        referenceDate: base,
+      );
       expect(dtNoPad.hour, equals(17));
       expect(dtNoPad.minute, equals(20));
     });
@@ -165,17 +185,12 @@ void main() {
         'timestamp': Timestamp.fromDate(DateTime(2026, 10, 13, 14, 0)),
       };
 
-      // Mock DocumentSnapshot behavior via static parsing methods
       expect(
-        TimelineEventModel.fromFirestore(
-          _FakeDocSnapshot('event_1', sleepData),
-        ).title,
+        TimelineEventModel.fromMap(sleepData, id: 'event_1').title,
         equals('Sleep logged'),
       );
       expect(
-        TimelineEventModel.fromFirestore(
-          _FakeDocSnapshot('event_1', sleepData),
-        ).subtitle,
+        TimelineEventModel.fromMap(sleepData, id: 'event_1').subtitle,
         equals('90 min sleep • Quality: 4/5'),
       );
     });
@@ -232,7 +247,10 @@ void main() {
       expect(cubit.state.selectedTantrumTriggers, contains('Hunger'));
 
       cubit.toggleTantrumTrigger('Transition');
-      expect(cubit.state.selectedTantrumTriggers, containsAll(<String>['Hunger', 'Transition']));
+      expect(
+        cubit.state.selectedTantrumTriggers,
+        containsAll(<String>['Hunger', 'Transition']),
+      );
 
       cubit.toggleTantrumTrigger('Hunger');
       expect(cubit.state.selectedTantrumTriggers, isNot(contains('Hunger')));
@@ -244,7 +262,10 @@ void main() {
       expect(cubit.state.selectedHealthIssues, contains('Fever'));
 
       cubit.toggleHealthIssue('Teething');
-      expect(cubit.state.selectedHealthIssues, containsAll(<String>['Fever', 'Teething']));
+      expect(
+        cubit.state.selectedHealthIssues,
+        containsAll(<String>['Fever', 'Teething']),
+      );
 
       cubit.toggleHealthIssue('Fever');
       expect(cubit.state.selectedHealthIssues, equals(<String>['Teething']));
@@ -267,48 +288,34 @@ void main() {
       expect(cubit.state.showNotesUpdateErrors, isTrue);
     });
 
-    test('saving with incomplete fields flags errors without throwing', () async {
-      // Incomplete sleep log: fellAsleepTime missing
-      await cubit.saveSleepLog();
-      expect(cubit.state.showSleepUpdateErrors, isTrue);
-      expect(cubit.state.isLoading, isFalse);
+    test(
+      'saving with incomplete fields flags errors without throwing',
+      () async {
+        // Incomplete sleep log: fellAsleepTime missing
+        await cubit.saveSleepLog();
+        expect(cubit.state.showSleepUpdateErrors, isTrue);
+        expect(cubit.state.isLoading, isFalse);
 
-      // Incomplete mood log: no face selected (-1)
-      await cubit.saveMoodLog();
-      expect(cubit.state.showMoodUpdateErrors, isTrue);
-      expect(cubit.state.isLoading, isFalse);
+        // Incomplete mood log: no face selected (-1)
+        await cubit.saveMoodLog();
+        expect(cubit.state.showMoodUpdateErrors, isTrue);
+        expect(cubit.state.isLoading, isFalse);
 
-      // Incomplete tantrum log: empty description
-      await cubit.saveTantrumLog();
-      expect(cubit.state.showTantrumUpdateErrors, isTrue);
-      expect(cubit.state.isLoading, isFalse);
+        // Incomplete tantrum log: empty description
+        await cubit.saveTantrumLog();
+        expect(cubit.state.showTantrumUpdateErrors, isTrue);
+        expect(cubit.state.isLoading, isFalse);
 
-      // Incomplete health log: no issues selected
-      await cubit.saveHealthLog();
-      expect(cubit.state.showHealthUpdateErrors, isTrue);
-      expect(cubit.state.isLoading, isFalse);
+        // Incomplete health log: no issues selected
+        await cubit.saveHealthLog();
+        expect(cubit.state.showHealthUpdateErrors, isTrue);
+        expect(cubit.state.isLoading, isFalse);
 
-      // Incomplete quick note: empty string
-      await cubit.saveQuickNote();
-      expect(cubit.state.showNotesUpdateErrors, isTrue);
-      expect(cubit.state.isLoading, isFalse);
-    });
+        // Incomplete quick note: empty string
+        await cubit.saveQuickNote();
+        expect(cubit.state.showNotesUpdateErrors, isTrue);
+        expect(cubit.state.isLoading, isFalse);
+      },
+    );
   });
-}
-
-/// Lightweight mock DocumentSnapshot for testing TimelineEventModel.
-class _FakeDocSnapshot implements DocumentSnapshot<Map<String, dynamic>> {
-  _FakeDocSnapshot(this._id, this._data);
-
-  final String _id;
-  final Map<String, dynamic> _data;
-
-  @override
-  String get id => _id;
-
-  @override
-  Map<String, dynamic>? data() => _data;
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

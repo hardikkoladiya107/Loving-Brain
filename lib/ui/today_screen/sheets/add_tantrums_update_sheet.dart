@@ -4,10 +4,13 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
-import 'package:intl/intl.dart';
 
 void showAddTantrumsUpdateSheet(BuildContext context) {
   final cubit = context.read<TodayCubit>();
@@ -64,11 +67,31 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     List<String> triggers = ["Hunger", "Tiredness", "Transition", "Unknown"];
 
     return BlocConsumer<TodayCubit, TodayState>(
-      listener: (context, state) {
-        if (state.isSuccess) {
-          Navigator.pop(context);
-          showInstantResultSheet(context);
-        }
+      listener: (BuildContext context, TodayState state) {
+        state.saveStatus.whenOrNull(
+          data: (_) {
+            Navigator.pop(context);
+            showInstantResultSheet(
+              context,
+              title: "Tantrum update logged",
+              reason:
+                  "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
+              action: "Explore Calm Plan",
+              actionSubtitle:
+                  "Proven responses ready for upcoming challenging windows.",
+            );
+            showSnackBar(
+              message: LocaleKeys.tantrumLogSaved.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
       },
       builder: (context, state) {
         final bool isWhatHappenedError =
@@ -222,7 +245,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                         state.tantrumWhatHelped.trim().isEmpty) {
                       context.read<TodayCubit>().triggerTantrumUpdateErrors();
                     } else {
-                      context.read<TodayCubit>().saveUpdate();
+                      context.read<TodayCubit>().saveTantrumLog();
                     }
                   },
                   backgroundColor: primaryColor,

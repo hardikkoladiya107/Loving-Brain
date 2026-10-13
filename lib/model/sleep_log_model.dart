@@ -43,7 +43,8 @@ class SleepLogModel {
     'wokeUpTime': wokeUpTime,
     'isNightWaking': isNightWaking,
     'sleepQualityIndex': sleepQualityIndex,
-    'durationMinutes': durationMinutes ?? wakeTime.difference(bedTime).inMinutes,
+    'durationMinutes':
+        durationMinutes ?? wakeTime.difference(bedTime).inMinutes,
     'userId': userId,
     'childId': childId,
     'createdAt': createdAt != null

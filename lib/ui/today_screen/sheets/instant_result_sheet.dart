@@ -41,12 +41,11 @@ class InstantResultSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String resolvedTitle =
-        title ?? "Bedtime may shift a little earlier";
-    final String resolvedReason = reason ??
+    final String resolvedTitle = title ?? "Bedtime may shift a little earlier";
+    final String resolvedReason =
+        reason ??
         "Today’s nap ran 25 minutes short, which usually brings the settling window forward.";
-    final String resolvedAction =
-        action ?? "Start wind-down at 7:30 PM";
+    final String resolvedAction = action ?? "Start wind-down at 7:30 PM";
     final String resolvedActionSubtitle =
         actionSubtitle ?? "About 15 minutes earlier than usual tonight.";
 

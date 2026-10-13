@@ -75,7 +75,8 @@ class TodayCubit extends Cubit<TodayState> {
         selectedChildMoodIndex:
             selectedChildMoodIndex ?? state.selectedChildMoodIndex,
         selectedParentMood: selectedParentMood ?? state.selectedParentMood,
-        showMoodUpdateErrors: showMoodUpdateErrors ?? state.showMoodUpdateErrors,
+        showMoodUpdateErrors:
+            showMoodUpdateErrors ?? state.showMoodUpdateErrors,
         tantrumWhatHappened: tantrumWhatHappened ?? state.tantrumWhatHappened,
         tantrumTime: tantrumTime ?? state.tantrumTime,
         tantrumIntensity: tantrumIntensity ?? state.tantrumIntensity,
@@ -152,8 +153,8 @@ class TodayCubit extends Cubit<TodayState> {
       } catch (_) {}
     } else if (user != null && user.defaultChild != null) {
       try {
-        final DocumentSnapshot<Object?> childSnap =
-            await user.defaultChild!.get();
+        final DocumentSnapshot<Object?> childSnap = await user.defaultChild!
+            .get();
         if (childSnap.data() != null) {
           child = ChildModel.fromJson(
             childSnap.data() as Map<String, dynamic>,
@@ -206,24 +207,17 @@ class TodayCubit extends Cubit<TodayState> {
   // Sleep Update
   // =========================================================================
 
-  void setSleepQuality(int index) =>
-      changeProps(sleepQualityIndex: index);
+  void setSleepQuality(int index) => changeProps(sleepQualityIndex: index);
 
-  void setFellAsleepTime(String time) => changeProps(
-    fellAsleepTime: time,
-    showSleepUpdateErrors: false,
-  );
+  void setFellAsleepTime(String time) =>
+      changeProps(fellAsleepTime: time, showSleepUpdateErrors: false);
 
-  void setWokeUpTime(String time) => changeProps(
-    wokeUpTime: time,
-    showSleepUpdateErrors: false,
-  );
+  void setWokeUpTime(String time) =>
+      changeProps(wokeUpTime: time, showSleepUpdateErrors: false);
 
-  void triggerSleepUpdateErrors() =>
-      changeProps(showSleepUpdateErrors: true);
+  void triggerSleepUpdateErrors() => changeProps(showSleepUpdateErrors: true);
 
-  void toggleNightWaking(bool val) =>
-      changeProps(isNightWaking: val);
+  void toggleNightWaking(bool val) => changeProps(isNightWaking: val);
 
   Future<void> saveSleepLog() async {
     if (state.fellAsleepTime == null || state.wokeUpTime == null) {
@@ -234,10 +228,7 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
 
-    changeProps(
-      isLoading: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final DateTime now = DateTime.now();
     final DateTime bedTime = TodayLogRepo.parseTimeString(
@@ -270,11 +261,8 @@ class TodayCubit extends Cubit<TodayState> {
       createdAt: now,
     );
 
-    final ApiResultStatus<String> result =
-        await TodayLogRepo.instance.addSleepLog(
-      childId: childId,
-      log: log,
-    );
+    final ApiResultStatus<String> result = await TodayLogRepo.instance
+        .addSleepLog(childId: childId, log: log);
 
     if (result is Data<String>) {
       changeProps(
@@ -291,11 +279,7 @@ class TodayCubit extends Cubit<TodayState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
-      changeProps(
-        isLoading: false,
-        isSuccess: false,
-        saveStatus: result,
-      );
+      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
   }
 
@@ -303,16 +287,12 @@ class TodayCubit extends Cubit<TodayState> {
   // Mood Update
   // =========================================================================
 
-  void setChildMood(int index) => changeProps(
-    selectedChildMoodIndex: index,
-    showMoodUpdateErrors: false,
-  );
+  void setChildMood(int index) =>
+      changeProps(selectedChildMoodIndex: index, showMoodUpdateErrors: false);
 
-  void setParentMood(String mood) =>
-      changeProps(selectedParentMood: mood);
+  void setParentMood(String mood) => changeProps(selectedParentMood: mood);
 
-  void triggerMoodUpdateErrors() =>
-      changeProps(showMoodUpdateErrors: true);
+  void triggerMoodUpdateErrors() => changeProps(showMoodUpdateErrors: true);
 
   Future<void> saveMoodLog() async {
     if (state.selectedChildMoodIndex == -1) {
@@ -323,10 +303,7 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
 
-    changeProps(
-      isLoading: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final List<String> moodLabels = <String>[
       'Happy',
@@ -335,7 +312,8 @@ class TodayCubit extends Cubit<TodayState> {
       'Difficult',
       'Sad',
     ];
-    final String childMoodLabel = (state.selectedChildMoodIndex >= 0 &&
+    final String childMoodLabel =
+        (state.selectedChildMoodIndex >= 0 &&
             state.selectedChildMoodIndex < moodLabels.length)
         ? moodLabels[state.selectedChildMoodIndex]
         : 'Normal';
@@ -351,11 +329,8 @@ class TodayCubit extends Cubit<TodayState> {
       createdAt: now,
     );
 
-    final ApiResultStatus<String> result =
-        await TodayLogRepo.instance.addMoodLog(
-      childId: childId,
-      log: log,
-    );
+    final ApiResultStatus<String> result = await TodayLogRepo.instance
+        .addMoodLog(childId: childId, log: log);
 
     if (result is Data<String>) {
       changeProps(
@@ -369,11 +344,7 @@ class TodayCubit extends Cubit<TodayState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
-      changeProps(
-        isLoading: false,
-        isSuccess: false,
-        saveStatus: result,
-      );
+      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
   }
 
@@ -381,22 +352,19 @@ class TodayCubit extends Cubit<TodayState> {
   // Tantrum / Meltdown Update
   // =========================================================================
 
-  void setTantrumWhatHappened(String val) => changeProps(
-    tantrumWhatHappened: val,
-    showTantrumUpdateErrors: false,
-  );
+  void setTantrumWhatHappened(String val) =>
+      changeProps(tantrumWhatHappened: val, showTantrumUpdateErrors: false);
 
-  void setTantrumTime(String time) => changeProps(
-    tantrumTime: time,
-    showTantrumUpdateErrors: false,
-  );
+  void setTantrumTime(String time) =>
+      changeProps(tantrumTime: time, showTantrumUpdateErrors: false);
 
   void setTantrumIntensity(double value) =>
       changeProps(tantrumIntensity: value);
 
   void toggleTantrumTrigger(String trigger) {
-    final List<String> triggers =
-        List<String>.from(state.selectedTantrumTriggers);
+    final List<String> triggers = List<String>.from(
+      state.selectedTantrumTriggers,
+    );
     if (triggers.contains(trigger)) {
       triggers.remove(trigger);
     } else {
@@ -408,10 +376,8 @@ class TodayCubit extends Cubit<TodayState> {
     );
   }
 
-  void setTantrumWhatHelped(String val) => changeProps(
-    tantrumWhatHelped: val,
-    showTantrumUpdateErrors: false,
-  );
+  void setTantrumWhatHelped(String val) =>
+      changeProps(tantrumWhatHelped: val, showTantrumUpdateErrors: false);
 
   void triggerTantrumUpdateErrors() =>
       changeProps(showTantrumUpdateErrors: true);
@@ -428,10 +394,7 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
 
-    changeProps(
-      isLoading: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final DateTime now = DateTime.now();
     final DateTime eventTime = state.tantrumTime != null
@@ -450,11 +413,8 @@ class TodayCubit extends Cubit<TodayState> {
       createdAt: now,
     );
 
-    final ApiResultStatus<String> result =
-        await TodayLogRepo.instance.addTantrumLog(
-      childId: childId,
-      log: log,
-    );
+    final ApiResultStatus<String> result = await TodayLogRepo.instance
+        .addTantrumLog(childId: childId, log: log);
 
     if (result is Data<String>) {
       changeProps(
@@ -471,11 +431,7 @@ class TodayCubit extends Cubit<TodayState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
-      changeProps(
-        isLoading: false,
-        isSuccess: false,
-        saveStatus: result,
-      );
+      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
   }
 
@@ -484,26 +440,19 @@ class TodayCubit extends Cubit<TodayState> {
   // =========================================================================
 
   void toggleHealthIssue(String issue) {
-    final List<String> issues =
-        List<String>.from(state.selectedHealthIssues);
+    final List<String> issues = List<String>.from(state.selectedHealthIssues);
     if (issues.contains(issue)) {
       issues.remove(issue);
     } else {
       issues.add(issue);
     }
-    changeProps(
-      selectedHealthIssues: issues,
-      showHealthUpdateErrors: false,
-    );
+    changeProps(selectedHealthIssues: issues, showHealthUpdateErrors: false);
   }
 
-  void setHealthNotes(String val) => changeProps(
-    healthNotes: val,
-    showHealthUpdateErrors: false,
-  );
+  void setHealthNotes(String val) =>
+      changeProps(healthNotes: val, showHealthUpdateErrors: false);
 
-  void triggerHealthUpdateErrors() =>
-      changeProps(showHealthUpdateErrors: true);
+  void triggerHealthUpdateErrors() => changeProps(showHealthUpdateErrors: true);
 
   Future<void> saveHealthLog() async {
     if (state.selectedHealthIssues.isEmpty) {
@@ -514,10 +463,7 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
 
-    changeProps(
-      isLoading: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final DateTime now = DateTime.now();
     final HealthLogModel log = HealthLogModel(
@@ -529,11 +475,8 @@ class TodayCubit extends Cubit<TodayState> {
       createdAt: now,
     );
 
-    final ApiResultStatus<String> result =
-        await TodayLogRepo.instance.addHealthLog(
-      childId: childId,
-      log: log,
-    );
+    final ApiResultStatus<String> result = await TodayLogRepo.instance
+        .addHealthLog(childId: childId, log: log);
 
     if (result is Data<String>) {
       changeProps(
@@ -547,11 +490,7 @@ class TodayCubit extends Cubit<TodayState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
-      changeProps(
-        isLoading: false,
-        isSuccess: false,
-        saveStatus: result,
-      );
+      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
   }
 
@@ -559,13 +498,10 @@ class TodayCubit extends Cubit<TodayState> {
   // Notes Update
   // =========================================================================
 
-  void setQuickNoteText(String val) => changeProps(
-    quickNoteText: val,
-    showNotesUpdateErrors: false,
-  );
+  void setQuickNoteText(String val) =>
+      changeProps(quickNoteText: val, showNotesUpdateErrors: false);
 
-  void triggerNotesUpdateErrors() =>
-      changeProps(showNotesUpdateErrors: true);
+  void triggerNotesUpdateErrors() => changeProps(showNotesUpdateErrors: true);
 
   Future<void> saveQuickNote() async {
     if (state.quickNoteText.trim().isEmpty) {
@@ -576,10 +512,7 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
 
-    changeProps(
-      isLoading: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final DateTime now = DateTime.now();
     final QuickNoteModel log = QuickNoteModel(
@@ -590,11 +523,8 @@ class TodayCubit extends Cubit<TodayState> {
       createdAt: now,
     );
 
-    final ApiResultStatus<String> result =
-        await TodayLogRepo.instance.addQuickNote(
-      childId: childId,
-      log: log,
-    );
+    final ApiResultStatus<String> result = await TodayLogRepo.instance
+        .addQuickNote(childId: childId, log: log);
 
     if (result is Data<String>) {
       changeProps(
@@ -607,11 +537,7 @@ class TodayCubit extends Cubit<TodayState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
-      changeProps(
-        isLoading: false,
-        isSuccess: false,
-        saveStatus: result,
-      );
+      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
   }
 

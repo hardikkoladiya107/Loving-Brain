@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -72,11 +72,30 @@ class AddSleepUpdateSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TodayCubit, TodayState>(
-      listener: (context, state) {
-        if (state.isSuccess) {
-          Navigator.pop(context);
-          showInstantResultSheet(context);
-        }
+      listener: (BuildContext context, TodayState state) {
+        state.saveStatus.whenOrNull(
+          data: (_) {
+            Navigator.pop(context);
+            showInstantResultSheet(
+              context,
+              title: "Sleep update recorded",
+              reason:
+                  "Today's sleep timing has been logged to keep tonight's settling window accurate.",
+              action: "Check updated sleep plan",
+              actionSubtitle: "Wind-down timing reflects latest rest data.",
+            );
+            showSnackBar(
+              message: LocaleKeys.sleepLogSaved.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
       },
       builder: (context, state) {
         String? napTimeStr;
@@ -203,7 +222,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                       state.wokeUpTime == null) {
                     context.read<TodayCubit>().triggerSleepUpdateErrors();
                   } else {
-                    context.read<TodayCubit>().saveUpdate();
+                    context.read<TodayCubit>().saveSleepLog();
                   }
                 },
                 backgroundColor: primaryColor,

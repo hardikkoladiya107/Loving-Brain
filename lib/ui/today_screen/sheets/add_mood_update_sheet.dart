@@ -5,9 +5,12 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
-import 'instant_result_sheet.dart';
 
 void showAddMoodUpdateSheet(BuildContext context) {
   final cubit = context.read<TodayCubit>();
@@ -35,11 +38,22 @@ class AddMoodUpdateSheet extends StatelessWidget {
     ];
 
     return BlocConsumer<TodayCubit, TodayState>(
-      listener: (context, state) {
-        if (state.isSuccess) {
-          Navigator.pop(context);
-          showInstantResultSheet(context);
-        }
+      listener: (BuildContext context, TodayState state) {
+        state.saveStatus.whenOrNull(
+          data: (_) {
+            Navigator.pop(context);
+            showSnackBar(
+              message: LocaleKeys.moodLogSaved.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
       },
       builder: (context, state) {
         final isError =
@@ -70,11 +84,12 @@ class AddMoodUpdateSheet extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  "How is Ira feeling?".appText(
-                    fontSize: 28.sp,
-                    fraunces: true,
-                    textAlign: TextAlign.start,
-                  ),
+                  "How is ${state.childName.isNotEmpty ? state.childName : 'your child'} feeling?"
+                      .appText(
+                        fontSize: 28.sp,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
+                      ),
                   if (isError)
                     Icon(Icons.error, color: Colors.red, size: 24.sp),
                 ],
@@ -164,7 +179,7 @@ class AddMoodUpdateSheet extends StatelessWidget {
                   if (state.selectedChildMoodIndex == -1) {
                     context.read<TodayCubit>().triggerMoodUpdateErrors();
                   } else {
-                    context.read<TodayCubit>().saveUpdate();
+                    context.read<TodayCubit>().saveMoodLog();
                   }
                 },
                 backgroundColor: primaryColor,

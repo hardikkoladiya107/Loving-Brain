@@ -4,7 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class HealthLogModel {
   final String? id;
   final DocumentReference? ref;
-  final List<String> issues; // e.g. ["Fever", "Teething", "Medication", "Low appetite", "Illness", "Rash"]
+  final List<String>
+  issues; // e.g. ["Fever", "Teething", "Medication", "Low appetite", "Illness", "Rash"]
   final String notes; // Freeform notes
   final DateTime timestamp;
   final String? userId;

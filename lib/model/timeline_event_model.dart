@@ -21,11 +21,17 @@ class TimelineEventModel {
   static TimelineEventModel fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
   ) {
-    final Map<String, dynamic> data = doc.data() ?? <String, dynamic>{};
+    return fromMap(doc.data() ?? <String, dynamic>{}, id: doc.id);
+  }
+
+  static TimelineEventModel fromMap(
+    Map<String, dynamic> data, {
+    String id = '',
+  }) {
     final String type = (data['type'] as String?) ?? 'unknown';
     final DateTime timestamp = _readTimestamp(data['timestamp']);
     return TimelineEventModel(
-      id: doc.id,
+      id: id,
       type: type,
       timestamp: timestamp,
       title: _titleFor(type, data),

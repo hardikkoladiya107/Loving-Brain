@@ -4,9 +4,12 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
-import 'instant_result_sheet.dart';
 
 void showAddNotesUpdateSheet(BuildContext context) {
   final cubit = context.read<TodayCubit>();
@@ -25,11 +28,22 @@ class AddNotesUpdateSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TodayCubit, TodayState>(
-      listener: (context, state) {
-        if (state.isSuccess) {
-          Navigator.pop(context);
-          showInstantResultSheet(context);
-        }
+      listener: (BuildContext context, TodayState state) {
+        state.saveStatus.whenOrNull(
+          data: (_) {
+            Navigator.pop(context);
+            showSnackBar(
+              message: LocaleKeys.noteSaved.tr(),
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
       },
       builder: (context, state) {
         final isError =
@@ -123,7 +137,7 @@ class AddNotesUpdateSheet extends StatelessWidget {
                   if (state.quickNoteText.trim().isEmpty) {
                     context.read<TodayCubit>().triggerNotesUpdateErrors();
                   } else {
-                    context.read<TodayCubit>().saveUpdate();
+                    context.read<TodayCubit>().saveQuickNote();
                   }
                 },
                 backgroundColor: primaryColor,
