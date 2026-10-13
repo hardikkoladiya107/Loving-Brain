@@ -12,12 +12,12 @@ import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 
 void showAddHealthUpdateSheet(BuildContext context) {
-  final cubit = context.read<TodayCubit>();
+  final TodayCubit cubit = context.read<TodayCubit>();
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
-    builder: (context) =>
+    builder: (BuildContext context) =>
         BlocProvider.value(value: cubit, child: const AddHealthUpdateSheet()),
   );
 }
@@ -27,7 +27,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> issues = [
+    final List<String> issues = <String>[
       "Fever",
       "Teething",
       "Medication",
@@ -54,8 +54,8 @@ class AddHealthUpdateSheet extends StatelessWidget {
           },
         );
       },
-      builder: (context, state) {
-        final isError =
+      builder: (BuildContext context, TodayState state) {
+        final bool isError =
             state.showHealthUpdateErrors && state.selectedHealthIssues.isEmpty;
 
         return Padding(
@@ -70,10 +70,10 @@ class AddHealthUpdateSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 2,
+                    height: 2.h,
                     width: 60.w,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                       color: greyColor7,
                     ),
                   ),
@@ -102,9 +102,11 @@ class AddHealthUpdateSheet extends StatelessWidget {
               Wrap(
                 spacing: 8.w,
                 runSpacing: 8.h,
-                children: List.generate(issues.length, (index) {
-                  final issue = issues[index];
-                  final isSelected = state.selectedHealthIssues.contains(issue);
+                children: List.generate(issues.length, (int index) {
+                  final String issue = issues[index];
+                  final bool isSelected = state.selectedHealthIssues.contains(
+                    issue,
+                  );
                   return GestureDetector(
                     onTap: () =>
                         context.read<TodayCubit>().toggleHealthIssue(issue),
@@ -119,7 +121,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
                             : (isSelected ? secondaryColor : greyColor12),
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(50.r),
                       ),
                     ),
                   );
@@ -129,7 +131,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(color: greyColor12),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -148,9 +150,9 @@ class AddHealthUpdateSheet extends StatelessWidget {
                       children: [
                         Expanded(
                           child: TextField(
-                            onChanged: (val) =>
+                            onChanged: (String val) =>
                                 context.read<TodayCubit>().setHealthNotes(val),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: "Warm cheeks since this afternoon",
                               border: InputBorder.none,
                               isDense: true,
@@ -205,7 +207,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
               ),
               24.spaceH,
             ],
-          ).appPadding(all: 16),
+          ).appPadding(all: 16.r),
         );
       },
     );

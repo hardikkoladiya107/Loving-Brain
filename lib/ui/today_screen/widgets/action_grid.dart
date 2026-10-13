@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_mood_update_sheet.dart';
@@ -60,7 +62,7 @@ class ActionGrid extends StatelessWidget {
           iconPath: Assets.v2.images.imgAskBrainy.path,
           title: "Ask Brainy",
           onTap: () {
-            // showAskBrainySheet(context);
+            context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
           },
         ),
       ],

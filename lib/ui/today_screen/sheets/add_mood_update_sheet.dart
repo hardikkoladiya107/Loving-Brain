@@ -13,12 +13,12 @@ import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 
 void showAddMoodUpdateSheet(BuildContext context) {
-  final cubit = context.read<TodayCubit>();
+  final TodayCubit cubit = context.read<TodayCubit>();
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
-    builder: (context) =>
+    builder: (BuildContext context) =>
         BlocProvider.value(value: cubit, child: const AddMoodUpdateSheet()),
   );
 }
@@ -28,8 +28,13 @@ class AddMoodUpdateSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> parentMoods = ["Calm", "Tired", "Overwhelmed", "Okay"];
-    List<String> images = [
+    final List<String> parentMoods = <String>[
+      "Calm",
+      "Tired",
+      "Overwhelmed",
+      "Okay",
+    ];
+    final List<String> images = <String>[
       Assets.v2.images.imgMoodHappy.path,
       Assets.v2.images.imgMoodGood.path,
       Assets.v2.images.imgMoodStable.path,
@@ -55,8 +60,8 @@ class AddMoodUpdateSheet extends StatelessWidget {
           },
         );
       },
-      builder: (context, state) {
-        final isError =
+      builder: (BuildContext context, TodayState state) {
+        final bool isError =
             state.showMoodUpdateErrors && state.selectedChildMoodIndex == -1;
 
         return Padding(
@@ -71,10 +76,10 @@ class AddMoodUpdateSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 2,
+                    height: 2.h,
                     width: 60.w,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                       color: greyColor7,
                     ),
                   ),
@@ -97,8 +102,8 @@ class AddMoodUpdateSheet extends StatelessWidget {
               12.spaceH,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(images.length, (index) {
-                  final isSelected = state.selectedChildMoodIndex == index;
+                children: List.generate(images.length, (int index) {
+                  final bool isSelected = state.selectedChildMoodIndex == index;
                   return GestureDetector(
                     onTap: () => context.read<TodayCubit>().setChildMood(index),
                     child: Container(
@@ -124,11 +129,11 @@ class AddMoodUpdateSheet extends StatelessWidget {
                                     : Colors.transparent),
                         ),
                       ),
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(12.r),
                       child: Container(
-                        height: 30,
-                        width: 30,
-                        padding: const EdgeInsets.all(8),
+                        height: 30.w,
+                        width: 30.w,
+                        padding: EdgeInsets.all(8.r),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: DecorationImage(
@@ -151,9 +156,9 @@ class AddMoodUpdateSheet extends StatelessWidget {
               Wrap(
                 spacing: 8.w,
                 runSpacing: 8.h,
-                children: List.generate(parentMoods.length, (index) {
-                  final mood = parentMoods[index];
-                  final isSelected = state.selectedParentMood == mood;
+                children: List.generate(parentMoods.length, (int index) {
+                  final String mood = parentMoods[index];
+                  final bool isSelected = state.selectedParentMood == mood;
                   return GestureDetector(
                     onTap: () => context.read<TodayCubit>().setParentMood(mood),
                     child: Chip(
@@ -165,7 +170,7 @@ class AddMoodUpdateSheet extends StatelessWidget {
                         color: isSelected ? secondaryColor : greyColor12,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                        borderRadius: BorderRadius.circular(50.r),
                       ),
                     ),
                   );
@@ -187,7 +192,7 @@ class AddMoodUpdateSheet extends StatelessWidget {
               ),
               24.spaceH,
             ],
-          ).appPadding(all: 16),
+          ).appPadding(all: 16.r),
         );
       },
     );

@@ -13,7 +13,7 @@ import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
 
 void showAddTantrumsUpdateSheet(BuildContext context) {
-  final cubit = context.read<TodayCubit>();
+  final TodayCubit cubit = context.read<TodayCubit>();
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
@@ -21,7 +21,7 @@ void showAddTantrumsUpdateSheet(BuildContext context) {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.85,
     ),
-    builder: (context) =>
+    builder: (BuildContext context) =>
         BlocProvider.value(value: cubit, child: const AddTantrumsUpdateSheet()),
   );
 }
@@ -33,7 +33,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-      builder: (context, child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
@@ -49,22 +49,27 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     );
 
     if (picked != null && context.mounted) {
-      final now = DateTime.now();
-      final dt = DateTime(
+      final DateTime now = DateTime.now();
+      final DateTime dt = DateTime(
         now.year,
         now.month,
         now.day,
         picked.hour,
         picked.minute,
       );
-      final formatted = DateFormat('hh:mm a').format(dt);
+      final String formatted = DateFormat('hh:mm a').format(dt);
       context.read<TodayCubit>().setTantrumTime(formatted);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<String> triggers = ["Hunger", "Tiredness", "Transition", "Unknown"];
+    final List<String> triggers = <String>[
+      "Hunger",
+      "Tiredness",
+      "Transition",
+      "Unknown",
+    ];
 
     return BlocConsumer<TodayCubit, TodayState>(
       listener: (BuildContext context, TodayState state) {
@@ -93,7 +98,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
           },
         );
       },
-      builder: (context, state) {
+      builder: (BuildContext context, TodayState state) {
         final bool isWhatHappenedError =
             state.showTantrumUpdateErrors &&
             state.tantrumWhatHappened.trim().isEmpty;
@@ -119,10 +124,10 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: 2,
+                      height: 2.h,
                       width: 60.w,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                         color: greyColor7,
                       ),
                     ),
@@ -197,11 +202,10 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
-                  children: List.generate(triggers.length, (index) {
-                    final trigger = triggers[index];
-                    final isSelected = state.selectedTantrumTriggers.contains(
-                      trigger,
-                    );
+                  children: List.generate(triggers.length, (int index) {
+                    final String trigger = triggers[index];
+                    final bool isSelected = state.selectedTantrumTriggers
+                        .contains(trigger);
                     return GestureDetector(
                       onTap: () => context
                           .read<TodayCubit>()
@@ -219,7 +223,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                               : (isSelected ? secondaryColor : greyColor12),
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                          borderRadius: BorderRadius.circular(50.r),
                         ),
                       ),
                     );
@@ -231,7 +235,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                   hint: "Holding her close",
                   isError: isWhatHelpedError,
                   icon: Icons.description_outlined,
-                  onChanged: (val) =>
+                  onChanged: (String val) =>
                       context.read<TodayCubit>().setTantrumWhatHelped(val),
                 ),
                 24.spaceH,
@@ -253,7 +257,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 ),
                 24.spaceH,
               ],
-            ).appPadding(all: 16),
+            ).appPadding(all: 16.r),
           ),
         );
       },
@@ -275,7 +279,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: isError ? Colors.red : greyColor12),
       ),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),

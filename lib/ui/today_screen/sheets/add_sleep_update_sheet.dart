@@ -16,7 +16,7 @@ import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
 
 void showAddSleepUpdateSheet(BuildContext context) {
-  final cubit = context.read<TodayCubit>();
+  final TodayCubit cubit = context.read<TodayCubit>();
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
@@ -24,7 +24,7 @@ void showAddSleepUpdateSheet(BuildContext context) {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.75,
     ),
-    builder: (context) =>
+    builder: (BuildContext context) =>
         BlocProvider.value(value: cubit, child: const AddSleepUpdateSheet()),
   );
 }
@@ -36,7 +36,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-      builder: (context, child) {
+      builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
@@ -52,15 +52,15 @@ class AddSleepUpdateSheet extends StatelessWidget {
     );
 
     if (picked != null && context.mounted) {
-      final now = DateTime.now();
-      final dt = DateTime(
+      final DateTime now = DateTime.now();
+      final DateTime dt = DateTime(
         now.year,
         now.month,
         now.day,
         picked.hour,
         picked.minute,
       );
-      final formatted = DateFormat('hh:mm a').format(dt);
+      final String formatted = DateFormat('hh:mm a').format(dt);
       if (isWakeUp) {
         context.read<TodayCubit>().setWokeUpTime(formatted);
       } else {
@@ -97,7 +97,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
           },
         );
       },
-      builder: (context, state) {
+      builder: (BuildContext context, TodayState state) {
         String? napTimeStr;
         if (state.fellAsleepTime != null && state.wokeUpTime != null) {
           napTimeStr = "${state.fellAsleepTime} \u2013 ${state.wokeUpTime}";
@@ -114,10 +114,10 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 2,
+                    height: 2.h,
                     width: 60.w,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10.r),
                       color: greyColor7,
                     ),
                   ),
@@ -230,7 +230,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
               ),
               24.spaceH,
             ],
-          ).appPadding(all: 16),
+          ).appPadding(all: 16.r),
         );
       },
     );
@@ -249,7 +249,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: isError ? Colors.red : greyColor12),
         ),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),

@@ -57,10 +57,10 @@ class InstantResultSheet extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 2,
+              height: 2.h,
               width: 60.w,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
                 color: greyColor7,
               ),
             ),
@@ -149,6 +149,6 @@ class InstantResultSheet extends StatelessWidget {
         ),
         12.spaceH,
       ],
-    ).appPadding(left: 16, right: 16, top: 16);
+    ).appPadding(left: 16.r, right: 16.r, top: 16.r);
   }
 }

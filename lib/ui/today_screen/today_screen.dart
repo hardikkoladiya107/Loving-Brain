@@ -18,16 +18,37 @@ import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
-class TodayScreen extends StatelessWidget {
+class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
 
   @override
+  State<TodayScreen> createState() => _TodayScreenState();
+}
+
+class _TodayScreenState extends State<TodayScreen> {
+  late final TodayCubit _todayCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _todayCubit = TodayCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _todayCubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _todayCubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TodayCubit()..init(),
-      child: Builder(
-        builder: (context) {
-          final state = context.watch<TodayCubit>().state;
+    return BlocProvider<TodayCubit>.value(
+      value: _todayCubit,
+      child: BlocBuilder<TodayCubit, TodayState>(
+        builder: (BuildContext context, TodayState state) {
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.dark.copyWith(
               statusBarColor: Colors.transparent,
