@@ -1,343 +1,185 @@
-# Flutter Project - Codex Rules
-
-**Codex agent rules (preferred):** structured, scoped rules live in **`.cursor/rules/*.mdc`** (see that folder first). This file is the extended reference for the same conventions.
-
-## Project Overview
-
-This Flutter project uses BLoC pattern with Cubit for state management, Freezed for immutable state classes, and follows a clean architecture approach with repository pattern. The backend is powered by Firebase Functions (Node.js).
-
-## Architecture & Patterns
-
-### State Management
-
-- **Use BLoC pattern with Cubit** (not Bloc with events)
-- All state classes must use **Freezed** for immutability
-- State files should be named: `{feature}_state.dart` and `{feature}_state.freezed.dart`
-- Cubit files should be named: `{feature}_cubit.dart`
-- **When creating a Cubit, always create an `init()` method** that emits the initial state
-- **Always create a `changeProps()` method** for state updates - never use `emit()` directly
-- Pass values to `changeProps()` method which will handle the state update internally
-
-### Folder Structure
-
-- `lib/ui/` - All UI screens and widgets organized by feature
-- `lib/ui/{feature}/` - Each feature has its own folder with:
-  - `{feature}_screen.dart` - Main screen widget
-  - `bloc/` - Contains cubit and state files
-  - `widgets/` - Feature-specific widgets (if needed)
-- `lib/core/` or `lib/other/` - Utility files, extensions, themes, preferences
-- `lib/model/` - Data models
-- `lib/generated/` - Auto-generated files (locale_keys, assets)
-- `lib/provider.dart` or `lib/bloc_providers.dart` - Centralized BLoC providers list
-- `lib/repo/` - Repository classes for data access
-- `functions/` - Firebase Cloud Functions (Node.js)
-
-### Code Style & Conventions
-
-#### Naming
-
-- Files: `snake_case.dart` (e.g., `add_item_screen.dart`)
-- Classes: `PascalCase` (e.g., `AddItemScreen`)
-- Variables/Functions: `camelCase` (e.g., `onButtonTap`)
-- Constants: `camelCase` (e.g., `appName`)
-- Private members: `_camelCase` (e.g., `_privateMethod`)
-
-#### Type Annotations
-
-- **Always use explicit data types** - never omit type annotations
-- Always specify return types for methods (e.g., `void`, `String`, `Widget`, `Future<void>`)
-- Always specify types for variables (e.g., `String name`, not `var name`)
-- Always specify types for parameters (e.g., `void method(String param)`, not `void method(param)`)
-- Never use `var` or omit type annotations - always be explicit
-
-#### Widgets
-
-- Always use `const` constructors when possible
-- Use `super.key` in widget constructors
-- **Always use StatefulWidget for screens (full screens)** - screens should extend `StatefulWidget`
-- For other widgets (not full screens), decide between `StatelessWidget` or `StatefulWidget` based on whether local state is needed
-- Extract reusable widgets to shared widgets folder
-- Use custom widgets consistently across the app
-
-#### Localization
-
-- **Always use EasyLocalization** (or your localization solution) for all user-facing text
-- Never hardcode strings - always use translation keys
-- Translation files should be in `assets/translations/`
-- **Always add new strings at the end of language JSON files** - never insert in the middle
-
-#### Responsive Design
-
-- **Always use ScreenUtil** (or your responsive solution) for sizing: `.w`, `.h`, `.sp`, `.r`
-- Design size: Define your design size (e.g., `Size(389, 780)`)
-- Use `ScreenUtilInit` wrapper in main app
-- Example: `width: 100.w, height: 50.h, fontSize: 16.sp`
-- Never use fixed pixel values - always use responsive units
-
-#### Styling
-
-- Use extension methods for text styling (e.g., `.appText()`)
-- Support both light and dark themes
-- Use theme colors consistently
-- Use theme switching mechanism
-
-#### State Management Best Practices
-
-- Register all Cubits in centralized provider file as `BlocProvider`
-- Use `BlocProvider.of<Cubit>(context)` or `context.read<Cubit>()` to access
-- Use `context.watch<Cubit>()` for listening to state changes
-- Always handle loading, error, and success states
-- **CRITICAL: Always use BlocConsumer (NOT BlocBuilder) outside Scaffold when creating screens**
-- The BlocConsumer should wrap the Scaffold, not be inside it
-
-#### Error/Loading/Success Handling with ApiResultStatus
-
-- **CRITICAL: `ApiResultStatus<T>` is ONLY for tracking operation status in LISTENERS, NEVER use it in BUILDERS**
-- **ALWAYS store data directly in state** (e.g., `List<Item> items`, `List<Category> categories`)
-- `ApiResultStatus` is a sealed class with four states:
-  - `ApiResultStatus.initial()` - Initial state before any operation
-  - `ApiResultStatus.loading()` - Loading state during async operation
-  - `ApiResultStatus.data({required T data})` - Success state with data (data is ignored, only status matters)
-  - `ApiResultStatus.error({required Exception error})` - Error state with exception
-- Store `ApiResultStatus` in state for each async operation to track status (e.g., `itemsStatus`, `addItemStatus`)
-- **CRITICAL: Always declare ApiResultStatus WITHOUT generic type parameter in state** - use `ApiResultStatus` not `ApiResultStatus<T>`
-- **CRITICAL: Always use `@Default(ApiResultStatus.initial())` not `@Default(ApiResultStatus<T>.initial())`**
-- Example in state:
-  @Default(ApiResultStatus.initial())
-  ApiResultStatus itemsStatus,
-  - Store actual data separately in state (e.g., `List<Item> items`)
-- In Cubit methods, update both data and status through `changeProps()`:
-  - Set status to `ApiResultStatus.loading()` before starting async operation
-  - Set data directly: `items: dataList`
-  - Set status to `ApiResultStatus.data(data: dataList)` on success (data parameter can be ignored, only status matters)
-  - Set status to `ApiResultStatus.error(error: exception)` on failure
-- **CRITICAL: ApiResultStatus MUST ONLY be used in BlocConsumer/BlocListener listeners** - handle loading/error states with EasyLoading (or your loading solution)
-- **CRITICAL: NEVER use ApiResultStatus in builders** - always use data directly from state
-- **CRITICAL: Builders should only check if data list is empty** - no status checking, no loading indicators in builder
-- **CRITICAL: In every Cubit `changeProps()`, all `ApiResultStatus` fields MUST default to `ApiResultStatus.initial()` when null** - use `fieldStatus: fieldStatus ?? ApiResultStatus.initial()` and NEVER use `fieldStatus ?? state.fieldStatus`
-- In BlocConsumer/BlocListener listeners, use `whenOrNull()` and handle loading with EasyLoading:
-
-  listener: (context, state) {
-  state.addItemStatus.whenOrNull(
-  loading: () {
-  EasyLoading.show();
-  },
-  data: (itemId) {
-  EasyLoading.dismiss();
-  // Handle success (navigation, etc.)
-  showSnackBar(
-  message: LocaleKeys.successMessage.tr(),
-  type: SnackBarType.SUCCESS,
-  );
-  },
-  error: (error) {
-  EasyLoading.dismiss();
-  // Handle error (show snackbar, etc.)
-  showSnackBar(
-  message: error.toString().replaceAll('Exception: ', ''),
-  type: SnackBarType.ERROR,
-  );
-  },
-  );
-  },
-  - In BlocConsumer builders, use data directly from state - NO ApiResultStatus checks:
-
-  builder: (context, state) {
-  return Scaffold(
-  body: state.items.isEmpty
-  ? EmptyState()
-  : ListView.builder(
-  itemCount: state.items.length,
-  itemBuilder: (context, index) {
-  final Item item = state.items[index];
-  return ItemWidget(item: item);
-  },
-  ),
-  );
-  },
-
-  #### Stream Subscriptions
-
-- When using stream listeners in Cubits:
-  - Store subscriptions as class fields (e.g., `StreamSubscription<T>? _subscription`)
-  - Cancel previous subscription before creating new one: `_subscription?.cancel()`
-  - Always cancel subscriptions in the `close()` method: `@override Future<void> close() { _subscription?.cancel(); return super.close(); }`
-  - Update state through `changeProps()` when stream emits data
-
-#### Backend Integration
-
-- Use repository pattern for all data access
-- Repository classes should be singletons (use factory pattern with private constructor)
-- Repositories should return `ApiResultStatus` for async operations
-- Use `Repo.instance` pattern for accessing repositories
-- Keep business logic in repositories, not in Cubits
-- Handle all exceptions in repositories consistently
-
-#### Authentication
-
-- Support multiple auth methods as needed (Email/Password, OAuth, etc.)
-- Store user data securely after successful authentication
-- Always check authentication state before accessing protected features
-- Handle authentication errors gracefully with localized error messages
-
-#### Permissions
-
-- Use **permission_handler** package (or your permission solution) for runtime permissions
-- Always request permissions before accessing device features (camera, storage, etc.)
-- Check permission status: `await Permission.camera.request().isGranted`
-- Handle permission denial gracefully - show user-friendly messages
-- Update state to reflect permission status
-
-#### Error Handling
-
-- Always wrap async operations in try-catch blocks
-- Convert exceptions to `ApiResultStatus.error()` in repositories
-- Show localized error messages to users
-- Log errors appropriately for debugging
-
-#### User Feedback
-
-- **ALWAYS use centralized snackbar function** - never use `ScaffoldMessenger.of(context).showSnackBar()` directly
-- Use consistent snackbar types: `SnackBarType.SUCCESS`, `SnackBarType.ERROR`, etc.
-- Always use localization keys for messages when possible
-- Clean error messages by removing unnecessary prefixes when displaying errors
-
-#### Local Storage
-
-- Use **SharedPreferences** (or your storage solution) for simple key-value storage
-- Use singleton pattern for storage access
-- Store user models securely
-- Retrieve user data consistently
-
-#### File & Media Handling
-
-- Use appropriate packages for selecting images from gallery
-- Use camera package for taking photos
-- Always dispose camera controllers properly
-- Handle file permissions before accessing files
-
-#### Network & Connectivity
-
-- Check network connectivity before network operations
-- Handle offline scenarios gracefully
-- Show appropriate messages when network is unavailable
-- Consider caching data for offline access
-
-## Firebase Functions Guidelines
-
-### Architecture
-
-- **Use Helper Functions**: Do not duplicate logic. Use `functions/notification.js` for all notification logic.
-- **Service/Repository Pattern**: If logic becomes complex, separate into service files, do not write everything in `index.js`.
-- **Validation**: Strict input validation for all `onRequest` / HTTP functions. Return 400 immediately if validation fails.
-
-### Logging & Error Handling
-
-- **Use `firebase-functions/logger`**: Prefer `logger.info`, `logger.warn`, `logger.error` over `console.log`.
-- **Structure Errors**: Return JSON error responses: `{ success: false, error: "message" }`.
-
-### Specific Logic
-
-- **Notifications**:
-  - **ALWAYS** use the `sendNotification` helper from `functions/notification.js`.
-  - Do not manually construct the FCM payload in `index.js` unless doing a bulk multicast that the helper doesn't support (implied: update helper if needed).
-- **Timezones**:
-  - Project currently uses **fixed IST offset** (+5.5h) in some functions.
-  - Be consistent with this if modifying existing time-based features, OR refactor to a proper timezone library (e.g. `moment-timezone`) if doing a major update.
-  - Current pattern: `const istOffset = 5.5 * 60 * 60 * 1000;`
-
-## Development Guidelines
-
-### When Creating New Features
-
-1. Create feature folder in `lib/ui/{feature_name}/`
-2. Create screen file: `{feature_name}_screen.dart` (must be StatefulWidget)
-3. Create bloc folder with:
-   - `{feature_name}_cubit.dart` (must include `init()` and `changeProps()` methods)
-   - `{feature_name}_state.dart` (with Freezed)
-4. Register Cubit in centralized provider file
-5. Add translation keys if needed (always at the end of JSON files)
-6. Follow existing patterns from similar features
-7. **CRITICAL: Always add new files to git immediately after creating them** - use `git add <file_path>` for each new file (this is mandatory)
-
-### When Writing Code
-
-- **Always format code** before committing (dart format)
-- **Always use explicit data types** - never omit type annotations for methods, variables, parameters, or return types
-- Use meaningful variable and function names
-- Add comments for complex logic
-- Keep functions small and focused
-- Extract repeated code into reusable widgets/methods
-- Handle edge cases and null safety properly
-
-### Git & Version Control
-
-- **ALWAYS add new files to git** immediately after creating them - this is mandatory, not optional
-- Use `git add <file_path>` for individual files or `git add .` for multiple files
-- Stage new files before committing changes
-- Write clear, descriptive commit messages
-- Keep commits focused and atomic
-- Don't commit generated files unless necessary (e.g., `*.freezed.dart`, `*.g.dart` are usually committed)
-- Keep `pubspec.lock` in version control
-
-### Code Generation
-
-- Run `flutter pub run build_runner build --delete-conflicting-outputs` after modifying Freezed classes
-- Generated files should not be manually edited
-
-## AI Assistant Guidelines
-
-When helping with this project:
-
-1. **Always follow the BLoC + Cubit pattern** - don't suggest other state management solutions
-2. **Always use Freezed for state classes** - generate the necessary code
-3. **Always use responsive sizing** - never use fixed pixel values
-4. **Always use localization** - never hardcode strings
-5. **Follow the existing folder structure** - don't create new organizational patterns
-6. **Use existing custom widgets** - check shared widgets folder first before creating new ones
-7. **Maintain consistency** - match the coding style of existing files
-8. **Suggest running build_runner** when Freezed classes are modified
-9. **Consider theme support** - ensure code works in both light and dark modes
-10. **Register new Cubits** - remind to add to provider file
-11. **ALWAYS use BlocConsumer outside Scaffold** - never use BlocBuilder inside Scaffold body
-12. **ALWAYS use StatefulWidget for screens** - screens must be StatefulWidget, not StatelessWidget
-13. **ALWAYS add new files to git immediately after creating them** - this is mandatory, use `git add <file_path>` for each new file, never skip this step
-14. **ALWAYS add new translation strings at the end of JSON files** - never insert in the middle
-15. **ALWAYS create `init()` method in Cubits** - this method should emit the initial state and initialize listeners if needed
-16. **ALWAYS create `changeProps()` method in Cubits** - never use `emit()` directly, always update state through `changeProps()`
-17. **ALWAYS use explicit data types** - never omit type annotations for methods, variables, parameters, or return types (no `var`, always specify types)
-18. **ALWAYS use `ApiResultStatus<T>` ONLY in listeners, NEVER in builders** - ApiResultStatus is only for tracking operation status in BlocConsumer/BlocListener listeners
-19. **ALWAYS declare ApiResultStatus WITHOUT generic type in state** - use `ApiResultStatus` not `ApiResultStatus<T>`, use `@Default(ApiResultStatus.initial())` not `@Default(ApiResultStatus<T>.initial())`
-20. **ALWAYS store data directly in state** - use `List<Data> dataList` not `ApiResultStatus<List<Data>>` for data
-21. **ALWAYS use `whenOrNull()` in BlocConsumer/BlocListener listeners for ApiResultStatus** - handle loading/error states appropriately
-22. **NEVER use ApiResultStatus in builders** - builders should only use data directly from state (e.g., `state.items.isEmpty ? EmptyState() : ListView(...)`)
-23. **NEVER check ApiResultStatus in builders** - no status checking, no loading indicators in builder, only check if data list is empty
-24. **ALWAYS handle loading states in listeners** - show/dismiss loading indicators appropriately
-25. **ALWAYS wrap cubit method calls in initState with `WidgetsBinding.instance.addPostFrameCallback`** - ensures context is available and widget tree is built before cubit initialization
-26. **ALWAYS cancel stream subscriptions in Cubit `close()` method** - prevent memory leaks by cancelling all subscriptions when cubit is disposed
-27. **ALWAYS cancel previous subscription before creating new one** - when reinitializing listeners, cancel existing subscription first
-28. **ALWAYS use repository pattern for data access** - keep all backend/data operations in repository classes, not in Cubits
-29. **ALWAYS handle exceptions consistently** - use consistent error handling patterns across repositories
-30. **ALWAYS request permissions before device access** - check permissions before accessing camera, storage, etc.
-31. **ALWAYS dispose resources properly** - dispose controllers, streams, and file handlers in widget dispose methods
-32. **ALWAYS trim user inputs** - trim user inputs before processing when appropriate
-33. **ALWAYS check authentication state** - verify authentication before accessing protected features
-34. **ALWAYS add new files to git immediately** - after creating any new file, immediately run `git add <file_path>` - this is mandatory and must never be skipped
-35. **ALWAYS use centralized snackbar function for user feedback** - never use `ScaffoldMessenger.of(context).showSnackBar()` directly
-36. **ALWAYS reply in a concise style** - avoid unnecessary repetition or filler, be direct and to the point
-37. **NEVER introduce breaking changes unless explicitly requested** - when in doubt about whether a change might break existing functionality, ask the user first before proceeding
-38. **FIREBASE FUNCTIONS**: use `functions/notification.js` helper `sendNotification`. Do not duplicate payload logic.
-39. **FIREBASE FUNCTIONS**: use `firebase-functions/logger` not `console.log`.
-
-## Common Patterns to Follow
-
-### Screen Structure
+# Loving Brain — Master Engineering & Coding Standards
+
+This document establishes the definitive coding, architecture, and workflow rules for **Loving Brain (V2)**. Any code written for this project must look, feel, and function exactly as if written by the primary author. Consistency, precision, and adherence to established patterns are mandatory.
+
+---
+
+## 1. Environment & Tooling Prerequisites
+
+- **Flutter SDK Path:** Always invoke Flutter and Dart commands using the project-configured Flutter 3.47 SDK:
+  ```bash
+  /Users/imac/Documents/flutter_versions/flutter_3_47/bin/flutter <command>
+  ```
+  *(Never use the global system `flutter` if it points to an older Dart SDK).*
+- **Code Generation:** When Freezed states or models are modified:
+  ```bash
+  /Users/imac/Documents/flutter_versions/flutter_3_47/bin/flutter pub run build_runner build --delete-conflicting-outputs
+  ```
+- **Asset Generation:** Managed via `flutter_gen`:
+  ```bash
+  /Users/imac/Documents/flutter_versions/flutter_3_47/bin/flutter packages pub run build_runner build
+  ```
+- **Formatting:** Always run `dart format lib/` before committing code.
+- **Git Staging:** **MANDATORY:** Immediately stage any newly created file with `git add <file_path>` upon creation.
+
+---
+
+## 2. Architecture & Directory Structure
+
+Follow feature-driven Clean Architecture with BLoC/Cubit and Repository pattern:
+
+```text
+lib/
+├── ui/                         # Feature modules
+│   └── {feature_name}/
+│       ├── {feature_name}_screen.dart   # Main screen (MUST be StatefulWidget)
+│       ├── bloc/
+│       │   ├── {feature_name}_cubit.dart
+│       │   ├── {feature_name}_state.dart
+│       │   └── {feature_name}_state.freezed.dart
+│       ├── widgets/            # Feature-specific private widgets
+│       └── sheets/             # Feature-specific bottom sheets / modals
+├── ui/widget/                  # Centralized shared reusable UI components
+│   ├── app_button.dart         # Standard primary/secondary buttons
+│   ├── base_button.dart        # Circular icon/back buttons
+│   ├── app_text_field.dart     # Standard styled text inputs
+│   ├── app_dialogs.dart        # Popups and alerts
+│   └── status_pill.dart        # Status indicators & badges
+├── repo/                       # Singleton data repositories (Firestore / APIs)
+├── model/                      # Freezed / JSON serializable data models
+├── router/                     # Navigation
+│   ├── route_paths.dart        # Central route path constants
+│   └── app_router.dart         # GoRouter setup with auth redirects
+├── other/                      # App theme, colors, extensions, prefs
+│   ├── app_color.dart          # Canonical color palette tokens
+│   ├── app_extentions.dart     # String, Widget, num, and Context extensions
+│   ├── preferances.dart        # SharedPreferences singleton helper
+│   ├── snack_bar.dart          # Centralized notification / snackbar utility
+│   └── app_theme.dart          # Light/Dark ThemeData
+├── provider.dart               # Centralized global MultiBlocProvider list
+└── gen/                        # Generated assets (assets.gen.dart)
+```
+
+---
+
+## 3. Strict Coding Style & TypeScript/Dart Conventions
+
+### 3.1 Explicit Typing (Zero `var`)
+- **NEVER use `var`** or omit types.
+- Always specify explicit return types (`void`, `Widget`, `Future<void>`, `String`).
+- Always specify explicit parameter types (`void submit(String email)` not `void submit(email)`).
+- Always specify variable types (`final String token = ...`, `final int count = 0`).
+
+### 3.2 Naming Conventions
+- **Files:** `snake_case.dart` (e.g., `calm_plan_screen.dart`, `sleep_forecast_cubit.dart`).
+- **Classes:** `PascalCase` (e.g., `CalmPlanScreen`, `TodayCubit`).
+- **Variables & Functions:** `camelCase` (e.g., `isSubmitting`, `onPlanTap()`).
+- **Constants:** `camelCase` (e.g., `primaryColor`, `defaultTimeout`).
+- **Private Members:** `_camelCase` (e.g., `_subscription`, `_buildHeader()`).
+
+---
+
+## 4. State Management (BLoC + Cubit + Freezed)
+
+### 4.1 State Definitions
+- States must use `@freezed` with immutable properties.
+- State class files: `{feature}_state.dart` and generated `{feature}_state.freezed.dart`.
+- **ApiResultStatus in State (CRITICAL):**
+  - **Declare WITHOUT generic type parameter**: Use plain `ApiResultStatus`, never `ApiResultStatus<T>`.
+  - **Always default to initial:** `@Default(ApiResultStatus.initial()) ApiResultStatus someStatus`.
+  - **Store real data directly in separate fields:** e.g., `List<Item> items`, `ChildModel? childModel`. Never nest UI lists inside `ApiResultStatus`.
 
 ```dart
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:app/core/snack_bar.dart';
-// ... other imports
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/child_model.dart';
 
+part 'feature_state.freezed.dart';
+
+@freezed
+class FeatureState with _$FeatureState {
+  const factory FeatureState({
+    @Default(false) bool isLoading,
+    @Default([]) List<ChildModel> children,
+    @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
+  }) = _FeatureState;
+}
+```
+
+### 4.2 Cubit Architecture
+- Every Cubit must implement:
+  1. **`init()`**: Emits initial state, initializes data, starts listeners.
+  2. **`changeProps()`**: Central state emitter. Never call `emit()` directly in other methods.
+- **CRITICAL Rule for `changeProps()`:**
+  - All `ApiResultStatus` parameters **MUST** default to `ApiResultStatus.initial()` when null.
+  - Required syntax: `saveStatus: saveStatus ?? ApiResultStatus.initial()`
+  - **NEVER** write `saveStatus: saveStatus ?? state.saveStatus` (avoids stale listener triggers).
+- **Stream Subscriptions:**
+  - Save subscriptions in private fields: `StreamSubscription<T>? _subscription;`
+  - Cancel prior subscription before re-subscribing: `_subscription?.cancel();`
+  - Cancel subscriptions in `close()`:
+    ```dart
+    @override
+    Future<void> close() {
+      _subscription?.cancel();
+      return super.close();
+    }
+    ```
+
+```dart
+class FeatureCubit extends Cubit<FeatureState> {
+  FeatureCubit() : super(const FeatureState());
+
+  StreamSubscription<List<ChildModel>>? _childSubscription;
+
+  void init() {
+    emit(const FeatureState());
+    _loadData();
+  }
+
+  void changeProps({
+    bool? isLoading,
+    List<ChildModel>? children,
+    ApiResultStatus? fetchStatus,
+    ApiResultStatus? saveStatus,
+  }) {
+    emit(state.copyWith(
+      isLoading: isLoading ?? state.isLoading,
+      children: children ?? state.children,
+      fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
+      saveStatus: saveStatus ?? ApiResultStatus.initial(),
+    ));
+  }
+
+  Future<void> _loadData() async {
+    changeProps(fetchStatus: const ApiResultStatus.loading());
+    final ApiResultStatus<List<ChildModel>> result = await ChildRepo.instance.getChildren();
+    if (result is Data<List<ChildModel>>) {
+      changeProps(
+        children: result.data,
+        fetchStatus: result,
+      );
+    } else if (result is Error<List<ChildModel>>) {
+      changeProps(fetchStatus: result);
+    }
+  }
+}
+```
+
+---
+
+## 5. UI & Screen Construction Patterns
+
+### 5.1 Full Screen Structure
+- **Screens MUST be `StatefulWidget`** (never `StatelessWidget` for full routes).
+- **BlocConsumer wraps Scaffold directly:** The consumer is outside `Scaffold`, never inside its body.
+- **`initState` Setup:** Always initialize Cubits inside `WidgetsBinding.instance.addPostFrameCallback`.
+- **ApiResultStatus is ONLY for listeners:**
+  - In `listener`: Use `whenOrNull(loading: ..., data: ..., error: ...)` for `EasyLoading` and `showSnackBar()`.
+  - In `builder`: **NEVER check ApiResultStatus**. Render data directly from state (`state.children.isEmpty ? EmptyView() : ListView(...)`).
+
+```dart
 class FeatureScreen extends StatefulWidget {
   const FeatureScreen({super.key});
 
@@ -349,7 +191,7 @@ class _FeatureScreenState extends State<FeatureScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FeatureCubit>().init();
     });
   }
@@ -357,24 +199,18 @@ class _FeatureScreenState extends State<FeatureScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<FeatureCubit, FeatureState>(
-      listener: (context, state) {
-        // Handle side effects (navigation, dialogs, etc.)
-        // Use whenOrNull() for ApiResultStatus handling
-        state.addDataStatus.whenOrNull(
-          loading: () {
-            EasyLoading.show();
-          },
-          data: (data) {
+      listener: (BuildContext context, FeatureState state) {
+        state.saveStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) {
             EasyLoading.dismiss();
-            // Handle success
             showSnackBar(
-              message: LocaleKeys.successMessage.tr(),
+              message: LocaleKeys.profileUpdatedSuccessfully.tr(),
               type: SnackBarType.SUCCESS,
             );
           },
-          error: (error) {
+          error: (Exception error) {
             EasyLoading.dismiss();
-            // Handle error
             showSnackBar(
               message: error.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,
@@ -382,15 +218,18 @@ class _FeatureScreenState extends State<FeatureScreen> {
           },
         );
       },
-      builder: (context, state) {
+      builder: (BuildContext context, FeatureState state) {
         return Scaffold(
-          appBar: AppBar(title: Text(LocaleKeys.featureTitle.tr())),
+          backgroundColor: const Color(0xFFFEF8F4),
           body: SafeArea(
-            child: Column(
-              children: [
-                // Build UI based on state
-              ],
-            ),
+            child: state.children.isEmpty
+                ? const EmptyStateWidget()
+                : ListView.builder(
+                    itemCount: state.children.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ChildCard(child: state.children[index]);
+                    },
+                  ),
           ),
         );
       },
@@ -399,101 +238,125 @@ class _FeatureScreenState extends State<FeatureScreen> {
 }
 ```
 
-### Cubit Pattern
+---
 
-```dart
-import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
+## 6. Layout, Styling & UI Extensions
 
-class FeatureCubit extends Cubit<FeatureState> {
-  FeatureCubit() : super(const FeatureState.initial());
+Always use project extension methods from `lib/other/app_extentions.dart` and tokens from `lib/other/app_color.dart`.
 
-  StreamSubscription<List<Data>>? _dataSubscription;
+### 6.1 Responsive Units (ScreenUtil)
+- Always use `.w`, `.h`, `.sp`, `.r` for dimensions and font sizes.
+- **NEVER use raw unscaled double literals** for dimensions:
+  - Correct: `24.w`, `16.h`, `14.sp`, `12.r`
+  - Incorrect: `width: 24`, `fontSize: 14`
 
-  void init() {
-    emit(const FeatureState.initial());
-    _initDataListener();
-  }
+### 6.2 Spacing & Padding Extensions
+- **Vertical spacing:** `16.spaceH` (translates to `SizedBox(height: 16.h)`).
+- **Horizontal spacing:** `12.spaceW` (translates to `SizedBox(width: 12.w)`).
+- **Widget padding:** `myWidget.appPadding(left: 20.r, right: 20.r, top: 10.h)` or `EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h)`.
 
-  void _initDataListener() {
-    _dataSubscription?.cancel();
-    // Example: Backend stream or other data stream
-    _dataSubscription = someDataStream.listen(
-      (List<Data> dataList) {
-        changeProps(
-          dataList: dataList, // Store data directly
-          dataStatus: ApiResultStatus<List<Data>>.data(data: dataList), // Update status
-        );
-      },
-    );
-  }
+### 6.3 Typography Extensions
+- Use string extension `.appText()`:
+  - Standard body text (Quicksand):
+    ```dart
+    "My heading".appText(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: darkBlue,
+    )
+    ```
+  - Editorial / Title text (Fraunces):
+    ```dart
+    "Understand patterns.".appText(
+      fraunces: true,
+      fontSize: 28,
+      fontWeight: FontWeight.bold,
+      color: primaryColor,
+    )
+    ```
 
-  void changeProps({
-    bool? isLoading,
-    String? errorMessage,
-    List<Data>? data,
-    ApiResultStatus? dataStatus,
-    // other optional parameters with explicit types
-  }) {
-    emit(state.copyWith(
-      isLoading: isLoading ?? state.isLoading,
-      errorMessage: errorMessage ?? state.errorMessage,
-      data: data ?? state.data,
-      dataStatus: dataStatus ?? state.dataStatus,
-      // other fields
-    ));
-  }
+### 6.4 Color Palette & Opacity
+- Primary brand: `primaryColor` (`0xFFF06D4D`)
+- Secondary brand: `secondaryColor` (`0xFF665FCE`)
+- Text & Neutrals: `darkBlue`, `greyColor`, `greyColor9`
+- Backgrounds: `const Color(0xFFFEF8F4)` (warm paper tint)
+- **Opacity standard:** Always use `.withValues(alpha: 0.1)` instead of deprecated `.withOpacity()`.
 
-  Future<void> someAction() async {
-    changeProps(isLoading: true);
-    // perform action
-    changeProps(isLoading: false);
-  }
+### 6.5 Assets (FlutterGen & V2 Assets)
+- All V2 icons live under `assets/v2/icons/` as SVGs:
+  ```dart
+  Assets.v2.icons.icBack.svg(width: 24.w, height: 24.w)
+  ```
+- All V2 background images live under `assets/v2/images/`:
+  ```dart
+  AssetImage(Assets.v2.images.imgBg.path)
+  ```
 
-  @override
-  Future<void> close() {
-    _dataSubscription?.cancel();
-    return super.close();
-  }
-}
-```
+---
 
-### State with Freezed
+## 7. Repositories & Data Layer
 
-```dart
-@freezed
-class FeatureState with _$FeatureState {
-  const factory FeatureState({
-    @Default([]) List<Data> dataList, // Store data directly
-    @Default(ApiResultStatus.initial())
-        ApiResultStatus dataStatus, // Only for status tracking (NO generic type)
-    @Default(ApiResultStatus.initial())
-        ApiResultStatus addDataStatus, // Status for add operation (NO generic type)
-    // other fields
-  }) = _FeatureState;
-}
-```
+- **Singleton Pattern:** Always create repositories as singletons:
+  ```dart
+  class ChildRepo {
+    ChildRepo._();
+    static final ChildRepo _instance = ChildRepo._();
+    factory ChildRepo() => _instance;
+    static ChildRepo get instance => _instance;
 
-### Repository Pattern Example
-
-```dart
-// In Repository (lib/repo/data_repo.dart)
-class DataRepo {
-  DataRepo._();
-  static final DataRepo _instance = DataRepo._();
-  factory DataRepo() => _instance;
-  static DataRepo get instance => _instance;
-
-  Future<ApiResultStatus<List<Data>>> getData() async {
-    try {
-      // Your data fetching logic
-      final List<Data> dataList = await fetchData();
-      return ApiResultStatus<List<Data>>.data(data: dataList);
-    } catch (e) {
-      return ApiResultStatus<List<Data>>.error(
-        error: Exception(e.toString()),
-      );
+    Future<ApiResultStatus<List<ChildModel>>> getChildren() async {
+      try {
+        final QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('children').get();
+        final List<ChildModel> list = snapshot.docs
+            .map((doc) => ChildModel.fromJson(doc.data() as Map<String, dynamic>, doc.reference))
+            .toList();
+        return ApiResultStatus.data(data: list);
+      } catch (e) {
+        return ApiResultStatus.error(error: Exception(e.toString()));
+      }
     }
   }
-}
-```
+  ```
+- All async database / API operations belong in repositories, **never directly inside Cubits or UI widgets**.
+- Always wrap repository calls in `try/catch` and return `ApiResultStatus<T>`.
+
+---
+
+## 8. Localization & User Copy
+
+- **EasyLocalization** is mandatory for all user-facing strings:
+  ```dart
+  LocaleKeys.saveChanges.tr()
+  ```
+- **Translation File (`assets/translations/en.json`):**
+  - **MANDATORY:** Always append new translation keys at the **VERY END** of `en.json`. Never insert them in the middle of existing keys.
+  - After modifying `en.json`, regenerate `locale_keys.g.dart`:
+    ```bash
+    /Users/imac/Documents/flutter_versions/flutter_3_47/bin/flutter pub run easy_localization:generate -S assets/translations -O lib/generated -o locale_keys.g.dart -f keys
+    ```
+
+---
+
+## 9. User Feedback & Dialogs
+
+- **Snackbar Feedback:** Always use the centralized `showSnackBar()` helper:
+  ```dart
+  showSnackBar(
+    message: LocaleKeys.itemSaved.tr(),
+    type: SnackBarType.SUCCESS, // or SnackBarType.ERROR, SnackBarType.None
+  );
+  ```
+  *(Never call `ScaffoldMessenger.of(context).showSnackBar()` directly).*
+- **Loading Overlay:** Always use `EasyLoading.show()` and `EasyLoading.dismiss()`.
+
+---
+
+## 10. Verification & Quality Assurance Checklist
+
+Before declaring any feature, refactor, or fix complete:
+
+1. [ ] **Analyze:** Run `/Users/imac/Documents/flutter_versions/flutter_3_47/bin/flutter analyze --no-fatal-infos` — **0 errors**.
+2. [ ] **Tests:** Run `/Users/imac/Documents/flutter_versions/flutter_3_47/bin/flutter test` — all tests must pass.
+3. [ ] **Format:** Run `dart format lib/` across all touched files.
+4. [ ] **Git Stage:** Ensure all new files are staged immediately (`git add`).
+5. [ ] **Style Check:** Verify no `var`, explicit typing present, responsive units used (`.w`, `.h`, `.sp`), and `appText()` utilized.
