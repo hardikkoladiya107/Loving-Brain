@@ -139,10 +139,9 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       if (data is Map && data['results'] is List) {
         for (final dynamic item in data['results'] as List<dynamic>) {
           if (item is Map) {
-            final LocationDataModel loc =
-                LocationDataModel.fromOpenMeteoJson(
-                  Map<String, dynamic>.from(item),
-                );
+            final LocationDataModel loc = LocationDataModel.fromOpenMeteoJson(
+              Map<String, dynamic>.from(item),
+            );
             final String dedupeKey =
                 '${loc.city.toLowerCase()}_${loc.state?.toLowerCase() ?? ''}_${loc.country.toLowerCase()}';
             if (loc.city.isNotEmpty && seenKeys.add(dedupeKey)) {

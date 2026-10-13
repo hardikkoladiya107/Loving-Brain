@@ -83,6 +83,8 @@ as ApiResultStatus<String>,deleteAccountStatus: null == deleteAccountStatus ? _s
 as ApiResultStatus<String>,
   ));
 }
+/// Create a copy of ParentProfileV2State
+/// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<String, $Res> get saveStatus {
@@ -90,7 +92,8 @@ $ApiResultStatusCopyWith<String, $Res> get saveStatus {
   return $ApiResultStatusCopyWith<String, $Res>(_self.saveStatus, (value) {
     return _then(_self.copyWith(saveStatus: value));
   });
-}
+}/// Create a copy of ParentProfileV2State
+/// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<String, $Res> get logoutStatus {
@@ -98,7 +101,8 @@ $ApiResultStatusCopyWith<String, $Res> get logoutStatus {
   return $ApiResultStatusCopyWith<String, $Res>(_self.logoutStatus, (value) {
     return _then(_self.copyWith(logoutStatus: value));
   });
-}
+}/// Create a copy of ParentProfileV2State
+/// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus {
@@ -112,6 +116,18 @@ $ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus {
 
 /// Adds pattern-matching-related methods to [ParentProfileV2State].
 extension ParentProfileV2StatePatterns on ParentProfileV2State {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
 @optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ParentProfileV2State value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
@@ -121,6 +137,19 @@ return $default(_that);case _:
 
 }
 }
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
 @optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ParentProfileV2State value)  $default,){
 final _that = this;
 switch (_that) {
@@ -130,6 +159,18 @@ return $default(_that);case _:
 
 }
 }
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
 @optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ParentProfileV2State value)?  $default,){
 final _that = this;
 switch (_that) {
@@ -139,6 +180,18 @@ return $default(_that);case _:
 
 }
 }
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<String> saveStatus,  ApiResultStatus<String> logoutStatus,  ApiResultStatus<String> deleteAccountStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State() when $default != null:
@@ -147,6 +200,19 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 
 }
 }
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<String> saveStatus,  ApiResultStatus<String> logoutStatus,  ApiResultStatus<String> deleteAccountStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State():
@@ -155,6 +221,18 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 
 }
 }
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<String> saveStatus,  ApiResultStatus<String> logoutStatus,  ApiResultStatus<String> deleteAccountStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State() when $default != null:
@@ -249,6 +327,8 @@ as ApiResultStatus<String>,
   ));
 }
 
+/// Create a copy of ParentProfileV2State
+/// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<String, $Res> get saveStatus {
@@ -256,7 +336,8 @@ $ApiResultStatusCopyWith<String, $Res> get saveStatus {
   return $ApiResultStatusCopyWith<String, $Res>(_self.saveStatus, (value) {
     return _then(_self.copyWith(saveStatus: value));
   });
-}
+}/// Create a copy of ParentProfileV2State
+/// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<String, $Res> get logoutStatus {
@@ -264,7 +345,8 @@ $ApiResultStatusCopyWith<String, $Res> get logoutStatus {
   return $ApiResultStatusCopyWith<String, $Res>(_self.logoutStatus, (value) {
     return _then(_self.copyWith(logoutStatus: value));
   });
-}
+}/// Create a copy of ParentProfileV2State
+/// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
 $ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus {

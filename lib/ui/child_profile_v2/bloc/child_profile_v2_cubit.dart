@@ -123,8 +123,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       try {
         final DocumentSnapshot<Object?> doc = await childRef.get();
         if (doc.exists && doc.data() is Map<String, dynamic>) {
-          final Map<String, dynamic> data =
-              doc.data()! as Map<String, dynamic>;
+          final Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
           final ChildModel childModel = ChildModel.fromJson(
             data,
             doc.reference,

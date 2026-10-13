@@ -257,11 +257,7 @@ class BrainyHistoryScreen extends StatelessWidget {
                 ),
                 10.spaceH,
                 "Are you sure you want to delete this conversation? This action cannot be undone."
-                    .appText(
-                      fontSize: 14.sp,
-                      color: greyColor,
-                      height: 1.4,
-                    ),
+                    .appText(fontSize: 14.sp, color: greyColor, height: 1.4),
                 24.spaceH,
                 Row(
                   children: [

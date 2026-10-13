@@ -124,6 +124,18 @@ $ApiResultStatusCopyWith<dynamic, $Res> get completeStatus {
 
 /// Adds pattern-matching-related methods to [OnboardingState].
 extension OnboardingStatePatterns on OnboardingState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
 @optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _OnboardingState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
@@ -133,6 +145,19 @@ return $default(_that);case _:
 
 }
 }
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
 @optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _OnboardingState value)  $default,){
 final _that = this;
 switch (_that) {
@@ -142,6 +167,18 @@ return $default(_that);case _:
 
 }
 }
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
 @optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _OnboardingState value)?  $default,){
 final _that = this;
 switch (_that) {
@@ -151,6 +188,18 @@ return $default(_that);case _:
 
 }
 }
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int currentPage,  int totalPages,  String parentName,  String parentNameError,  String parentRole,  String parentRoleError,  String preferredLanguage,  String preferredLanguageError,  String location,  String locationError,  String primaryConcern,  List<String> concerns,  String concernsError,  bool isMoreThanOneSelected,  String successGoal,  String successGoalError,  String childName,  String childNameError,  String dateOfBirth,  String dateOfBirthError,  DateTime? childDob,  String childGender,  String childGenderError,  String usualWakeTime,  String usualWakeTimeError,  String usualBedtime,  String usualBedtimeError,  int usualNaps,  String nightWakings,  String nightWakingsError,  List<String> difficultTimes,  String difficultTimesError,  List<String> possibleTriggers,  String possibleTriggersError,  String activeTimeField,  ApiResultStatus<dynamic> completeStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingState() when $default != null:
@@ -159,6 +208,19 @@ return $default(_that.currentPage,_that.totalPages,_that.parentName,_that.parent
 
 }
 }
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int currentPage,  int totalPages,  String parentName,  String parentNameError,  String parentRole,  String parentRoleError,  String preferredLanguage,  String preferredLanguageError,  String location,  String locationError,  String primaryConcern,  List<String> concerns,  String concernsError,  bool isMoreThanOneSelected,  String successGoal,  String successGoalError,  String childName,  String childNameError,  String dateOfBirth,  String dateOfBirthError,  DateTime? childDob,  String childGender,  String childGenderError,  String usualWakeTime,  String usualWakeTimeError,  String usualBedtime,  String usualBedtimeError,  int usualNaps,  String nightWakings,  String nightWakingsError,  List<String> difficultTimes,  String difficultTimesError,  List<String> possibleTriggers,  String possibleTriggersError,  String activeTimeField,  ApiResultStatus<dynamic> completeStatus)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingState():
@@ -167,6 +229,18 @@ return $default(_that.currentPage,_that.totalPages,_that.parentName,_that.parent
 
 }
 }
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int currentPage,  int totalPages,  String parentName,  String parentNameError,  String parentRole,  String parentRoleError,  String preferredLanguage,  String preferredLanguageError,  String location,  String locationError,  String primaryConcern,  List<String> concerns,  String concernsError,  bool isMoreThanOneSelected,  String successGoal,  String successGoalError,  String childName,  String childNameError,  String dateOfBirth,  String dateOfBirthError,  DateTime? childDob,  String childGender,  String childGenderError,  String usualWakeTime,  String usualWakeTimeError,  String usualBedtime,  String usualBedtimeError,  int usualNaps,  String nightWakings,  String nightWakingsError,  List<String> difficultTimes,  String difficultTimesError,  List<String> possibleTriggers,  String possibleTriggersError,  String activeTimeField,  ApiResultStatus<dynamic> completeStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingState() when $default != null:

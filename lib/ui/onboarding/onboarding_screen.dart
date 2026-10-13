@@ -618,8 +618,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   color: state.usualWakeTimeError.isNotEmpty
                       ? Colors.red
                       : (isWakeSelected ? _accentPurple : Colors.transparent),
-                  width:
-                      (state.usualWakeTimeError.isNotEmpty || isWakeSelected)
+                  width: (state.usualWakeTimeError.isNotEmpty || isWakeSelected)
                       ? 1.2
                       : 0,
                 ),
@@ -1011,10 +1010,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                   10.spaceW,
-                  const SizedBox(
-                    width: 26,
-                    height: 26,
-                  ),
+                  const SizedBox(width: 26, height: 26),
                 ],
               ),
             ),

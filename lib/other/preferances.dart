@@ -112,7 +112,8 @@ class SharedPreference {
     }
   }
 
-  Future<bool?> saveDefaultChildModel(ChildModel value) => saveChildModel(value);
+  Future<bool?> saveDefaultChildModel(ChildModel value) =>
+      saveChildModel(value);
 
   ChildModel? getChildModel() {
     try {

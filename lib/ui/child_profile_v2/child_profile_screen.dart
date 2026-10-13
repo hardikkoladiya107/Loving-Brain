@@ -196,16 +196,10 @@ class _ChildProfileView extends StatelessWidget {
                             value: state.dob,
                             hintText: "Select date of birth",
                             readOnly: true,
-                            onTap: () => _pickDob(
-                              context,
-                              cubit,
-                              state.childDob,
-                            ),
-                            onEdit: () => _pickDob(
-                              context,
-                              cubit,
-                              state.childDob,
-                            ),
+                            onTap: () =>
+                                _pickDob(context, cubit, state.childDob),
+                            onEdit: () =>
+                                _pickDob(context, cubit, state.childDob),
                           ),
                           12.spaceH,
                           EditableFieldCard(

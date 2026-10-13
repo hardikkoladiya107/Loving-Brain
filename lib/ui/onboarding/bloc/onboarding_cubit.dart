@@ -290,7 +290,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void updateChildDob({required String formattedDate, required DateTime dob}) {
-    changeProps(dateOfBirth: formattedDate, childDob: dob, dateOfBirthError: "");
+    changeProps(
+      dateOfBirth: formattedDate,
+      childDob: dob,
+      dateOfBirthError: "",
+    );
   }
 
   void selectChildGender(String gender) {
@@ -364,8 +368,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
           _locationData ?? LocationDataModel.tryParse(state.location);
 
       // 1. Create Child Document with full onboarding details
-      final DocumentReference<Map<String, dynamic>> childDoc =
-          firestore.collection('children').doc();
+      final DocumentReference<Map<String, dynamic>> childDoc = firestore
+          .collection('children')
+          .doc();
       final ChildModel childModel = ChildModel(
         childName: state.childName.trim().isNotEmpty
             ? state.childName.trim()
@@ -386,13 +391,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         usualWakeTime: state.usualWakeTime.isNotEmpty
             ? state.usualWakeTime
             : null,
-        usualBedtime: state.usualBedtime.isNotEmpty
-            ? state.usualBedtime
-            : null,
+        usualBedtime: state.usualBedtime.isNotEmpty ? state.usualBedtime : null,
         usualNaps: state.usualNaps.toString(),
-        nightWakings: state.nightWakings.isNotEmpty
-            ? state.nightWakings
-            : null,
+        nightWakings: state.nightWakings.isNotEmpty ? state.nightWakings : null,
         difficultTimes: state.difficultTimes,
         possibleTriggers: state.possibleTriggers,
         location: state.location.isNotEmpty ? state.location : null,

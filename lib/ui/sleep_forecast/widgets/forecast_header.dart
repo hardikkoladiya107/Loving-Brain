@@ -33,13 +33,14 @@ class ForecastHeader extends StatelessWidget {
                 color: Colors.white,
                 textAlign: TextAlign.start,
               ),
-              "${(preferences.getUserModel()?.parentName ?? 'Parent').toUpperCase()}!".appText(
-                fontWeight: FontWeight.w600,
-                fontSize: 16.sp,
-                color: Colors.white,
-                letterSpacing: 1.2,
-                textAlign: TextAlign.start,
-              ),
+              "${(preferences.getUserModel()?.parentName ?? 'Parent').toUpperCase()}!"
+                  .appText(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                    color: Colors.white,
+                    letterSpacing: 1.2,
+                    textAlign: TextAlign.start,
+                  ),
             ],
           ),
         ],

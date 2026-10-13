@@ -78,8 +78,7 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
 
           for (final doc in snapshot.docs) {
             final data = doc.data();
-            final String topic =
-                data['topic']?.toString().trim() ?? 'Sleep';
+            final String topic = data['topic']?.toString().trim() ?? 'Sleep';
             final String title =
                 data['title']?.toString().trim() ?? 'Saved guidance';
             final String? convId = data['conversation_id']?.toString();
@@ -133,19 +132,23 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
           emit(
             state.copyWith(
               sleepItems: sleep.isNotEmpty ? sleep : defaultSleep,
-              behaviourItems:
-                  behaviour.isNotEmpty ? behaviour : defaultBehaviour,
-              parentWellbeingItems:
-                  wellbeing.isNotEmpty ? wellbeing : defaultWellbeing,
+              behaviourItems: behaviour.isNotEmpty
+                  ? behaviour
+                  : defaultBehaviour,
+              parentWellbeingItems: wellbeing.isNotEmpty
+                  ? wellbeing
+                  : defaultWellbeing,
             ),
           );
         });
   }
 
   String _formatSavedSubtitle(DateTime savedAt, DateTime now) {
-    final int days = DateTime(now.year, now.month, now.day)
-        .difference(DateTime(savedAt.year, savedAt.month, savedAt.day))
-        .inDays;
+    final int days = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).difference(DateTime(savedAt.year, savedAt.month, savedAt.day)).inDays;
     if (days <= 0) return 'Saved today';
     if (days == 1) return 'Saved yesterday';
     if (days < 7) return 'Saved $days days ago';

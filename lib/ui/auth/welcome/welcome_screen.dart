@@ -34,7 +34,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Assets.v2.icons.icAppIcon.svg(height: 80.h, width: 80.w),
+                  Assets.v2.icons.icAppIconSvg.svg(height: 80.h, width: 80.w),
                   15.spaceW,
                   Assets.v2.icons.icLovingBrainText2.svg(),
                 ],

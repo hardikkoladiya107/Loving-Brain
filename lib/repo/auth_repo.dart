@@ -245,7 +245,9 @@ class AuthRepo {
         try {
           await currentUser.delete();
         } on FirebaseAuthException catch (e) {
-          debugPrint('FirebaseAuth user.delete warning (${e.code}): ${e.message}');
+          debugPrint(
+            'FirebaseAuth user.delete warning (${e.code}): ${e.message}',
+          );
         } catch (e) {
           debugPrint('FirebaseAuth user.delete error: $e');
         }
@@ -591,8 +593,7 @@ class AuthRepo {
         final String resolvedName = appleFullName.isNotEmpty
             ? appleFullName
             : (signInUser.user!.displayName ?? '');
-        final String resolvedEmail =
-            signInUser.user!.email ?? appleEmail;
+        final String resolvedEmail = signInUser.user!.email ?? appleEmail;
 
         UserModel? userModel = await getUserFromUid(uId: signInUser.user!.uid);
         if (userModel == null) {
@@ -646,7 +647,9 @@ class AuthRepo {
           e.code == 'web-context-canceled' ||
           e.code == 'user-cancelled') {
         return ApiResultStatus.error(
-          error: Exception('Apple Sign-In cancelled by the user (code=canceled)'),
+          error: Exception(
+            'Apple Sign-In cancelled by the user (code=canceled)',
+          ),
         );
       }
       final String message =
@@ -976,9 +979,7 @@ class AuthRepo {
           .signInWithCustomToken(token);
 
       if (credential.user != null) {
-        UserModel? userModel = await getUserFromUid(
-          uId: credential.user!.uid,
-        );
+        UserModel? userModel = await getUserFromUid(uId: credential.user!.uid);
 
         if (userModel == null) {
           // If the user doesn't exist in Firestore, this is a new registration.

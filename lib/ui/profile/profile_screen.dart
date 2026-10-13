@@ -13,6 +13,7 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
 import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
 import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
@@ -185,7 +186,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.baby,
                                 iconBgColor: primaryColor,
                                 onTap: () {
-                                  context.push(RoutePaths.manageChildren);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const ChildProfileScreen(),
+                                    ),
+                                  );
                                 },
                                 isLast: true,
                               ),

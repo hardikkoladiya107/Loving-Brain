@@ -31,7 +31,8 @@ class NotificationsPermissionScreen extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
                 title: "Would you like to turn on notifications?",
-                subtitle: "Get timely nudges for bedtime routines and insights.",
+                subtitle:
+                    "Get timely nudges for bedtime routines and insights.",
                 checklist: [
                   "Receive gentle bedtime reminders",
                   "Get notified when a new mentorship summary is ready",

@@ -55,7 +55,10 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
-              child: Assets.v2.icons.icAppIcon.svg(height: 110.h, width: 110.w),
+              child: Assets.v2.icons.icAppIconSvg.svg(
+                height: 110.h,
+                width: 110.w,
+              ),
             ),
             14.spaceH,
             Assets.v2.icons.icLovingBrainText.svg(),

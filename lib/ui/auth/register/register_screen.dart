@@ -34,8 +34,9 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
       builder: (context, state) {
-        final String submittingMethod =
-            context.read<RegisterCubit>().submittingMethod;
+        final String submittingMethod = context
+            .read<RegisterCubit>()
+            .submittingMethod;
         final bool isAppleLoading =
             state.isAuthSubmitting && submittingMethod == 'apple';
         final bool isGoogleLoading =
@@ -84,7 +85,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 )
                                 .appPadding(left: 20.r, right: 20.r),
                             "We only ask for what we need to make your first suggestion useful."
-                                .appText(textAlign: TextAlign.start, fontSize: 14)
+                                .appText(
+                                  textAlign: TextAlign.start,
+                                  fontSize: 14,
+                                )
                                 .appPadding(left: 20.r, right: 20.r),
                             21.spaceH,
                             AppTextField(

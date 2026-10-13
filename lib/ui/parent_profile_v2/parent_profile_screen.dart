@@ -447,11 +447,7 @@ class _ParentProfileView extends StatelessWidget {
                   fraunces: true,
                 ),
                 10.spaceH,
-                message.appText(
-                  fontSize: 14.sp,
-                  color: greyColor,
-                  height: 1.4,
-                ),
+                message.appText(fontSize: 14.sp, color: greyColor, height: 1.4),
                 24.spaceH,
                 Row(
                   children: [

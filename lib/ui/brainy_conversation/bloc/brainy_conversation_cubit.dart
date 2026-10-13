@@ -523,7 +523,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           subtext:
               'Shifts in daytime naps or evening stimulation$bedtimeNote can trigger a second wind of cortisol right when sleep pressure should peak.',
         ),
-        BrainyMessage( 
+        BrainyMessage(
           type: MessageType.aiInfo,
           chipTitle: 'What to try now',
 

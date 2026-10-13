@@ -58,11 +58,7 @@ class PrivacyDataScreen extends StatelessWidget {
               ),
               10.spaceH,
               "Are you sure you want to permanently delete your account and all associated data? This action cannot be undone."
-                  .appText(
-                    fontSize: 14.sp,
-                    color: greyColor,
-                    height: 1.4,
-                  ),
+                  .appText(fontSize: 14.sp, color: greyColor, height: 1.4),
               24.spaceH,
               Row(
                 children: [
@@ -112,10 +108,7 @@ class PrivacyDataScreen extends StatelessWidget {
             return;
           }
           if (state.errorMessage.isNotEmpty) {
-            showSnackBar(
-              message: state.errorMessage,
-              type: SnackBarType.ERROR,
-            );
+            showSnackBar(message: state.errorMessage, type: SnackBarType.ERROR);
           }
         },
         builder: (context, state) {

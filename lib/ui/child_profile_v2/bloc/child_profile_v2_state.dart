@@ -15,6 +15,7 @@ abstract class ChildProfileV2State with _$ChildProfileV2State {
     DateTime? childDob,
     @Default('') String concerns,
     @Default('') String location,
-    @Default(ApiResultStatus<String>.initial()) ApiResultStatus<String> saveStatus,
+    @Default(ApiResultStatus<String>.initial())
+    ApiResultStatus<String> saveStatus,
   }) = _ChildProfileV2State;
 }

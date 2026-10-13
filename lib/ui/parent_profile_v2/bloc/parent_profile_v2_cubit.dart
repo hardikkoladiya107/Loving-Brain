@@ -179,9 +179,7 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
     emit(state.copyWith(deleteAccountStatus: const ApiResultStatus.loading()));
     await AuthRepo.instance.deleteAccount();
     emit(
-      state.copyWith(
-        deleteAccountStatus: const ApiResultStatus.data(data: ''),
-      ),
+      state.copyWith(deleteAccountStatus: const ApiResultStatus.data(data: '')),
     );
   }
 }

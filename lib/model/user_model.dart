@@ -358,8 +358,7 @@ class UserModel {
       preferredLanguage: preferredLanguage ?? _preferredLanguage,
       location: location ?? _location,
       locationData: locationData ?? _locationData,
-      isOnboardingCompleted:
-          isOnboardingCompleted ?? _isOnboardingCompleted,
+      isOnboardingCompleted: isOnboardingCompleted ?? _isOnboardingCompleted,
     );
   }
 

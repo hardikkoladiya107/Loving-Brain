@@ -11,7 +11,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   BrainyHistoryCubit() : super(const BrainyHistoryState());
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
-      _conversationSubscription;
+  _conversationSubscription;
 
   void init() {
     _emitDefaultItems();
@@ -36,8 +36,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
 
           for (final doc in snapshot.docs) {
             final data = doc.data();
-            final String convId =
-                data['conversation_id']?.toString() ?? doc.id;
+            final String convId = data['conversation_id']?.toString() ?? doc.id;
             final String title =
                 (data['first_message']?.toString() ?? '').trim().isNotEmpty
                 ? data['first_message'].toString().trim()
@@ -81,10 +80,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
           }
 
           emit(
-            state.copyWith(
-              thisWeekHistory: thisWeek,
-              earlierHistory: earlier,
-            ),
+            state.copyWith(thisWeekHistory: thisWeek, earlierHistory: earlier),
           );
         });
   }
@@ -116,9 +112,11 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   }
 
   String _formatRelativeDate(DateTime date, DateTime now) {
-    final int days = DateTime(now.year, now.month, now.day)
-        .difference(DateTime(date.year, date.month, date.day))
-        .inDays;
+    final int days = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).difference(DateTime(date.year, date.month, date.day)).inDays;
     if (days <= 0) return 'Today';
     if (days == 1) return 'Yesterday';
     if (days < 7) return '$days days ago';

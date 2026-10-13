@@ -475,7 +475,9 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                       size: 22.sp,
                     ),
                     8.spaceW,
-                    (isPlayingThis ? "Playing voice note..." : "Play voice note")
+                    (isPlayingThis
+                            ? "Playing voice note..."
+                            : "Play voice note")
                         .appText(
                           fontSize: 12.sp,
                           color: primaryColor,
@@ -547,8 +549,11 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
         margin: EdgeInsets.symmetric(horizontal: 2.5.w),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Color.lerp(secondaryColor, primaryColor, index / 2)!
-              .withValues(alpha: opacity),
+          color: Color.lerp(
+            secondaryColor,
+            primaryColor,
+            index / 2,
+          )!.withValues(alpha: opacity),
         ),
       ),
     );
@@ -562,10 +567,7 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: const Color(0xFFF3ECE7),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFFF3ECE7), width: 1),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: primaryColor.withValues(alpha: 0.06),
@@ -591,10 +593,7 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
                     gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: <Color>[
-                        Color(0xFFFFEDE6),
-                        Color(0xFFECEAFF),
-                      ],
+                      colors: <Color>[Color(0xFFFFEDE6), Color(0xFFECEAFF)],
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(

@@ -57,9 +57,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
           if (_textController.text != state.chatText) {
             _textController.value = _textController.value.copyWith(
               text: state.chatText,
-              selection: TextSelection.collapsed(
-                offset: state.chatText.length,
-              ),
+              selection: TextSelection.collapsed(offset: state.chatText.length),
             );
           }
 
@@ -167,11 +165,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                             ...state.suggestedQuestions.map(
                               (q) => Padding(
                                 padding: EdgeInsets.only(bottom: 12.h),
-                                child: _buildSuggestedCard(
-                                  context,
-                                  state,
-                                  q,
-                                ),
+                                child: _buildSuggestedCard(context, state, q),
                               ),
                             ),
                             120.spaceH,

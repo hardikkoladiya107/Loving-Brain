@@ -103,4 +103,3 @@ class BaseCubit extends Cubit<BaseState> {
     return super.close();
   }
 }
-

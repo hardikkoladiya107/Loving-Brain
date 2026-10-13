@@ -9,10 +9,7 @@ abstract class BrainyHomeState with _$BrainyHomeState {
     @Default('Parent') String parentName,
     @Default('your child') String childName,
     @Default('') String chatText,
-    @Default([
-      'Why is bedtime harder lately?',
-      'What can I try tonight?',
-    ])
+    @Default(['Why is bedtime harder lately?', 'What can I try tonight?'])
     List<String> suggestedQuestions,
   }) = _BrainyHomeState;
 }

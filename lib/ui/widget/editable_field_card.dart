@@ -104,7 +104,8 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                               ),
                             ]
                           : null),
-                  onTap: widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
+                  onTap:
+                      widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
                   onChanged: widget.onChanged,
                   style: TextStyle(
                     fontSize: 16.sp,
