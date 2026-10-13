@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
+import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_state.dart';
 import 'package:loving_brain/ui/widget/sleep_header.dart';
 
 class ForecastHeader extends StatelessWidget {
@@ -10,13 +12,15 @@ class ForecastHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SleepForecastState state = context.watch<SleepForecastCubit>().state;
+
     return SleepHeader(
       titleWidget: Row(
         children: [
           Container(
-            height: 30,
-            width: 30,
-            padding: const EdgeInsets.all(8),
+            height: 30.w,
+            width: 30.w,
+            padding: EdgeInsets.all(8.r),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
@@ -24,30 +28,30 @@ class ForecastHeader extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: 8.w),
+          8.spaceW,
           Row(
             children: [
-              "GOOD EVENING ".appText(
+              "${state.timeOfDayGreeting} ".appText(
                 fontWeight: FontWeight.w400,
                 fontSize: 16.sp,
                 color: Colors.white,
                 textAlign: TextAlign.start,
               ),
-              "${(preferences.getUserModel()?.parentName ?? 'Parent').toUpperCase()}!"
-                  .appText(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                    letterSpacing: 1.2,
-                    textAlign: TextAlign.start,
-                  ),
+              "${state.parentName}!".appText(
+                fontWeight: FontWeight.w600,
+                fontSize: 16.sp,
+                color: Colors.white,
+                letterSpacing: 1.2,
+                textAlign: TextAlign.start,
+              ),
             ],
           ),
         ],
       ),
       chipText: "Next window",
-      timeText: "07:45 - 8:15 PM",
-      estimateText: "Bedtime estimate 8:10 PM. High\nconfidence.",
+      timeText: "${state.windowStart} - ${state.windowEnd}",
+      estimateText:
+          "Bedtime estimate ${state.bedtimeEstimate}. ${state.confidenceLevel}\nconfidence.",
       cloudImagePath: Assets.v2.images.imgNoriSleepForecaste.path,
     );
   }

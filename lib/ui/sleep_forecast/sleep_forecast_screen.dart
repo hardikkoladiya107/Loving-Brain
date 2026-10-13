@@ -7,22 +7,45 @@ import 'package:loving_brain/ui/sleep_details/sleep_details_screen.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_details_card.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_header.dart';
-import 'package:loving_brain/ui/widget/app_button.dart';
-
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/sleep_forecast_cubit.dart';
 import 'bloc/sleep_forecast_state.dart';
 
-class SleepForecastScreen extends StatelessWidget {
+/// Screen 23 — Sleep Forecast detail view.
+class SleepForecastScreen extends StatefulWidget {
   const SleepForecastScreen({super.key});
 
   @override
+  State<SleepForecastScreen> createState() => _SleepForecastScreenState();
+}
+
+class _SleepForecastScreenState extends State<SleepForecastScreen> {
+  late final SleepForecastCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = SleepForecastCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SleepForecastCubit()..init(),
-      child: BlocBuilder<SleepForecastCubit, SleepForecastState>(
-        builder: (context, state) {
+    return BlocProvider<SleepForecastCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<SleepForecastCubit, SleepForecastState>(
+        listener: (BuildContext context, SleepForecastState state) {},
+        builder: (BuildContext context, SleepForecastState state) {
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.light.copyWith(
               statusBarColor: darkBlue,
@@ -31,7 +54,9 @@ class SleepForecastScreen extends StatelessWidget {
               extendBodyBehindAppBar: true,
               backgroundColor: const Color(0xFFFEF8F4),
               body: state.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(
+                      child: CircularProgressIndicator(color: primaryColor),
+                    )
                   : ListView(
                       padding: EdgeInsets.zero,
                       children: [
@@ -46,18 +71,20 @@ class SleepForecastScreen extends StatelessWidget {
                           child: AppButton(
                             title: "View details",
                             onTap: () {
-                              final todayCubit = context.read<TodayCubit>();
+                              final TodayCubit todayCubit = context
+                                  .read<TodayCubit>();
                               // Pop the Forecast bottom sheet
                               Navigator.pop(context);
                               // Open Details as a new bottom sheet
-                              showModalBottomSheet(
+                              showModalBottomSheet<void>(
                                 context: context,
                                 isScrollControlled: true,
                                 useSafeArea: true,
-                                builder: (context) => BlocProvider.value(
-                                  value: todayCubit,
-                                  child: const SleepDetailsScreen(),
-                                ),
+                                builder: (BuildContext sheetCtx) =>
+                                    BlocProvider<TodayCubit>.value(
+                                      value: todayCubit,
+                                      child: const SleepDetailsScreen(),
+                                    ),
                               );
                             },
                             backgroundColor: primaryColor,

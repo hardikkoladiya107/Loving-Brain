@@ -21,6 +21,9 @@ abstract class TodayState with _$TodayState {
     @Default('8:10 PM') String bedtimeEstimate,
     @Default("Today's nap ran about 25 minutes short.") String forecastSubtitle,
     @Default('moderate') String confidenceLevel,
+    @Default(2) int confidenceDots,
+    @Default('') String sleepForecastReason,
+    @Default(false) bool hasSleepLogs,
 
     // Check-in fields
     @Default(null) String? fellAsleepTime,

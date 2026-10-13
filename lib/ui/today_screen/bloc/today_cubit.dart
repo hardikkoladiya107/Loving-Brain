@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/energy_bridge_sleep_calculator.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
@@ -33,6 +34,9 @@ class TodayCubit extends Cubit<TodayState> {
     String? bedtimeEstimate,
     String? forecastSubtitle,
     String? confidenceLevel,
+    int? confidenceDots,
+    String? sleepForecastReason,
+    bool? hasSleepLogs,
     String? fellAsleepTime,
     String? wokeUpTime,
     bool? showSleepUpdateErrors,
@@ -68,6 +72,9 @@ class TodayCubit extends Cubit<TodayState> {
         bedtimeEstimate: bedtimeEstimate ?? state.bedtimeEstimate,
         forecastSubtitle: forecastSubtitle ?? state.forecastSubtitle,
         confidenceLevel: confidenceLevel ?? state.confidenceLevel,
+        confidenceDots: confidenceDots ?? state.confidenceDots,
+        sleepForecastReason: sleepForecastReason ?? state.sleepForecastReason,
+        hasSleepLogs: hasSleepLogs ?? state.hasSleepLogs,
         fellAsleepTime: fellAsleepTime ?? state.fellAsleepTime,
         wokeUpTime: wokeUpTime ?? state.wokeUpTime,
         showSleepUpdateErrors:
@@ -183,6 +190,56 @@ class TodayCubit extends Cubit<TodayState> {
       childName: cName,
       activeChildId: finalChildId,
     );
+
+    await recalculateForecast(childOverride: child);
+  }
+
+  /// Dynamically computes Energy Bridge sleep forecast using child profile and recent logs.
+  Future<void> recalculateForecast({ChildModel? childOverride}) async {
+    final ChildModel? child = childOverride ?? preferences.getChildModel();
+    final String childId = child?.reference?.id ?? _resolveTargetChildId();
+    List<SleepLogModel> sleepLogs = <SleepLogModel>[];
+    HealthLogModel? todayHealthLog;
+
+    if (childId.isNotEmpty) {
+      final ApiResultStatus<List<SleepLogModel>> sleepResult =
+          await TodayLogRepo.instance.getRecentSleepLogs(childId, limit: 14);
+      if (sleepResult is Data<List<SleepLogModel>>) {
+        sleepLogs = sleepResult.data;
+      }
+
+      final ApiResultStatus<List<HealthLogModel>> healthResult =
+          await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 5);
+      if (healthResult is Data<List<HealthLogModel>>) {
+        final DateTime now = DateTime.now();
+        final List<HealthLogModel> recentHealth = healthResult.data;
+        for (final HealthLogModel h in recentHealth) {
+          if (h.timestamp.year == now.year &&
+              h.timestamp.month == now.month &&
+              h.timestamp.day == now.day) {
+            todayHealthLog = h;
+            break;
+          }
+        }
+      }
+    }
+
+    final SleepForecastResult forecast = EnergyBridgeSleepCalculator.calculate(
+      child: child,
+      sleepLogs: sleepLogs,
+      todayHealthLog: todayHealthLog,
+    );
+
+    changeProps(
+      sleepForecastStart: forecast.windowStart,
+      sleepForecastEnd: forecast.windowEnd,
+      bedtimeEstimate: forecast.bedtimeEstimate,
+      forecastSubtitle: forecast.subtitle,
+      confidenceLevel: forecast.confidenceLabel.toLowerCase(),
+      confidenceDots: forecast.confidenceDots,
+      sleepForecastReason: forecast.reason,
+      hasSleepLogs: forecast.hasPersonalLogs,
+    );
   }
 
   // Helper to obtain the active child ID safely
@@ -275,6 +332,7 @@ class TodayCubit extends Cubit<TodayState> {
         sleepQualityIndex: 3,
         showSleepUpdateErrors: false,
       );
+      await recalculateForecast();
       // Reset isSuccess flag shortly after
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
@@ -487,6 +545,7 @@ class TodayCubit extends Cubit<TodayState> {
         healthNotes: '',
         showHealthUpdateErrors: false,
       );
+      await recalculateForecast();
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {

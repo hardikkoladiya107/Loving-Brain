@@ -1,24 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/core/energy_bridge_sleep_calculator.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/tonights_plan_cubit.dart';
 import 'bloc/tonights_plan_state.dart';
 
-class TonightsPlanScreen extends StatelessWidget {
+/// Screen 25 — Tonight's Plan view.
+class TonightsPlanScreen extends StatefulWidget {
   const TonightsPlanScreen({super.key});
 
   @override
+  State<TonightsPlanScreen> createState() => _TonightsPlanScreenState();
+}
+
+class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
+  late final TonightsPlanCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = TonightsPlanCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TonightsPlanCubit()..init(),
-      child: BlocBuilder<TonightsPlanCubit, TonightsPlanState>(
-        builder: (context, state) {
+    return BlocProvider<TonightsPlanCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<TonightsPlanCubit, TonightsPlanState>(
+        listener: (BuildContext context, TonightsPlanState state) {},
+        builder: (BuildContext context, TonightsPlanState state) {
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.light.copyWith(
               statusBarColor: darkBlue,
@@ -26,51 +52,53 @@ class TonightsPlanScreen extends StatelessWidget {
             child: Scaffold(
               extendBodyBehindAppBar: true,
               backgroundColor: const Color(0xFFFEF8F4),
-              body: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
+              body: state.isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: primaryColor),
+                    )
+                  : Column(
                       children: [
-                        _buildHeader(context),
-                        16.spaceH,
-                        _buildTimelineCard(),
-                        16.spaceH,
-                        _buildInfoCard(state),
-                        16.spaceH,
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              _buildHeader(context),
+                              16.spaceH,
+                              _buildTimelineCard(state),
+                              16.spaceH,
+                              _buildInfoCard(state),
+                              16.spaceH,
+                            ],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AppButton(
+                                title: state.isPlanStarted
+                                    ? "Stop plan"
+                                    : "Start plan",
+                                onTap: () => _cubit.startPlan(),
+                                backgroundColor: primaryColor,
+                                textColor: Colors.white,
+                                padding: EdgeInsetsGeometry.zero,
+                              ),
+                            ),
+                            12.spaceW,
+                            Expanded(
+                              child: AppButton(
+                                title: state.isAudioPlaying
+                                    ? "Pause audio"
+                                    : "Play audio",
+                                onTap: () => _cubit.toggleAudio(),
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                padding: EdgeInsetsGeometry.zero,
+                              ),
+                            ),
+                          ],
+                        ).appPadding(all: 16.w),
                       ],
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppButton(
-                          title: state.isPlanStarted
-                              ? "Stop plan"
-                              : "Start plan",
-                          onTap: () =>
-                              context.read<TonightsPlanCubit>().startPlan(),
-                          backgroundColor: primaryColor,
-                          textColor: Colors.white,
-                          padding: EdgeInsetsGeometry.zero,
-                        ),
-                      ),
-                      12.spaceW,
-                      Expanded(
-                        child: AppButton(
-                          title: state.isAudioPlaying
-                              ? "Pause audio"
-                              : "Play audio",
-                          onTap: () =>
-                              context.read<TonightsPlanCubit>().toggleAudio(),
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                          padding: EdgeInsetsGeometry.zero,
-                        ),
-                      ),
-                    ],
-                  ).appPadding(all: 16.w),
-                ],
-              ),
             ),
           );
         },
@@ -86,7 +114,7 @@ class TonightsPlanScreen extends StatelessWidget {
           left: 0,
           right: 0,
           child: Container(
-            height: 350,
+            height: 350.h,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -97,10 +125,10 @@ class TonightsPlanScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 16,
-          right: 16,
+          bottom: 16.h,
+          right: 16.w,
           child: Container(
-            height: 150,
+            height: 150.h,
             width: MediaQuery.of(context).size.width / 3,
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -111,12 +139,12 @@ class TonightsPlanScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 20,
-          left: 20,
+          top: 20.h,
+          left: 20.w,
           child: InkWell(
             onTap: () => Navigator.pop(context),
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.r),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -126,8 +154,8 @@ class TonightsPlanScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 20,
-          left: 20,
+          bottom: 20.h,
+          left: 20.w,
           child: "Tonight's plan".appText(
             fontSize: 28.sp,
             color: Colors.white,
@@ -140,14 +168,16 @@ class TonightsPlanScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTimelineCard() {
+  Widget _buildTimelineCard(TonightsPlanState state) {
+    final List<TonightPlanStep> steps = state.planSteps;
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       margin: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,28 +188,39 @@ class TonightsPlanScreen extends StatelessWidget {
             bgColor: orangeLightColor,
           ),
           24.spaceH,
-          _buildTimelineItem(
-            time: "7:20",
-            title: "Wind-down starts",
-            subtitle: "Lights lower, no screens",
-            isFirst: true,
-          ),
-          _buildTimelineItem(
-            time: "7:30",
-            title: "Bath",
-            subtitle: "Keep it short tonight",
-          ),
-          _buildTimelineItem(
-            time: "7:50",
-            title: "Book in the bedroom",
-            subtitle: "The same two books is fine",
-          ),
-          _buildTimelineItem(
-            time: "7:45 - 8:15",
-            title: "Sleep window",
-            subtitle: "Lights out inside this range",
-            isLast: true,
-          ),
+          if (steps.isNotEmpty)
+            for (int i = 0; i < steps.length; i++)
+              _buildTimelineItem(
+                time: steps[i].timeLabel,
+                title: steps[i].title,
+                subtitle: steps[i].subtitle,
+                isFirst: i == 0,
+                isLast: i == steps.length - 1,
+              )
+          else ...[
+            _buildTimelineItem(
+              time: "07:20 PM",
+              title: "Wind-down starts",
+              subtitle: "Lights lower, no screens",
+              isFirst: true,
+            ),
+            _buildTimelineItem(
+              time: "07:30 PM",
+              title: "Bath",
+              subtitle: "Keep it short tonight",
+            ),
+            _buildTimelineItem(
+              time: "07:50 PM",
+              title: "Book in the bedroom",
+              subtitle: "The same two books is fine",
+            ),
+            _buildTimelineItem(
+              time: "${state.windowStart} - ${state.windowEnd}",
+              title: "Sleep window",
+              subtitle: "Lights out inside this range",
+              isLast: true,
+            ),
+          ],
         ],
       ),
     );
@@ -208,7 +249,7 @@ class TonightsPlanScreen extends StatelessWidget {
               ),
               if (!isLast)
                 Expanded(
-                  child: Container(width: 2, color: const Color(0xFFFFF0E5)),
+                  child: Container(width: 2.w, color: const Color(0xFFFFF0E5)),
                 ),
             ],
           ),
@@ -261,7 +302,7 @@ class TonightsPlanScreen extends StatelessWidget {
       margin: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

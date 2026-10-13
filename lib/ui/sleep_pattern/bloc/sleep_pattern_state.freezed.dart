@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SleepPatternState {
 
- bool get isLoading; int get selectedToggleIndex;
+ bool get isLoading; int get selectedToggleIndex; String get childName; double get averageSleepHours; int get consistencyScore; String get patternInsight; String get patternDetail; List<double> get dailySleepHours; bool get hasData;
 /// Create a copy of SleepPatternState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $SleepPatternStateCopyWith<SleepPatternState> get copyWith => _$SleepPatternStat
 @override
 bool operator ==(Object other) {
   final _this = this as SleepPatternState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SleepPatternState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.selectedToggleIndex, _this.selectedToggleIndex) || other.selectedToggleIndex == _this.selectedToggleIndex));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SleepPatternState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.selectedToggleIndex, _this.selectedToggleIndex) || other.selectedToggleIndex == _this.selectedToggleIndex)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.averageSleepHours, _this.averageSleepHours) || other.averageSleepHours == _this.averageSleepHours)&&(identical(other.consistencyScore, _this.consistencyScore) || other.consistencyScore == _this.consistencyScore)&&(identical(other.patternInsight, _this.patternInsight) || other.patternInsight == _this.patternInsight)&&(identical(other.patternDetail, _this.patternDetail) || other.patternDetail == _this.patternDetail)&&const DeepCollectionEquality().equals(other.dailySleepHours, _this.dailySleepHours)&&(identical(other.hasData, _this.hasData) || other.hasData == _this.hasData));
 }
 
 
 @override
 int get hashCode {
   final _this = this as SleepPatternState;
-  return Object.hash(runtimeType,_this.isLoading,_this.selectedToggleIndex);
+  return Object.hash(runtimeType,_this.isLoading,_this.selectedToggleIndex,_this.childName,_this.averageSleepHours,_this.consistencyScore,_this.patternInsight,_this.patternDetail,const DeepCollectionEquality().hash(_this.dailySleepHours),_this.hasData);
 }
 
 @override
 String toString() {
   final _this = this as SleepPatternState;
-  return 'SleepPatternState(isLoading: ${_this.isLoading}, selectedToggleIndex: ${_this.selectedToggleIndex})';
+  return 'SleepPatternState(isLoading: ${_this.isLoading}, selectedToggleIndex: ${_this.selectedToggleIndex}, childName: ${_this.childName}, averageSleepHours: ${_this.averageSleepHours}, consistencyScore: ${_this.consistencyScore}, patternInsight: ${_this.patternInsight}, patternDetail: ${_this.patternDetail}, dailySleepHours: ${_this.dailySleepHours}, hasData: ${_this.hasData})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $SleepPatternStateCopyWith<$Res>  {
   factory $SleepPatternStateCopyWith(SleepPatternState value, $Res Function(SleepPatternState) _then) = _$SleepPatternStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, int selectedToggleIndex
+ bool isLoading, int selectedToggleIndex, String childName, double averageSleepHours, int consistencyScore, String patternInsight, String patternDetail, List<double> dailySleepHours, bool hasData
 });
 
 
@@ -68,11 +68,18 @@ class _$SleepPatternStateCopyWithImpl<$Res>
 
 /// Create a copy of SleepPatternState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? selectedToggleIndex = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? selectedToggleIndex = null,Object? childName = null,Object? averageSleepHours = null,Object? consistencyScore = null,Object? patternInsight = null,Object? patternDetail = null,Object? dailySleepHours = null,Object? hasData = null,}) {
   return _then(SleepPatternState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,selectedToggleIndex: null == selectedToggleIndex ? _self.selectedToggleIndex : selectedToggleIndex // ignore: cast_nullable_to_non_nullable
-as int,
+as int,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,averageSleepHours: null == averageSleepHours ? _self.averageSleepHours : averageSleepHours // ignore: cast_nullable_to_non_nullable
+as double,consistencyScore: null == consistencyScore ? _self.consistencyScore : consistencyScore // ignore: cast_nullable_to_non_nullable
+as int,patternInsight: null == patternInsight ? _self.patternInsight : patternInsight // ignore: cast_nullable_to_non_nullable
+as String,patternDetail: null == patternDetail ? _self.patternDetail : patternDetail // ignore: cast_nullable_to_non_nullable
+as String,dailySleepHours: null == dailySleepHours ? _self.dailySleepHours : dailySleepHours // ignore: cast_nullable_to_non_nullable
+as List<double>,hasData: null == hasData ? _self.hasData : hasData // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -157,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  int selectedToggleIndex)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  int selectedToggleIndex,  String childName,  double averageSleepHours,  int consistencyScore,  String patternInsight,  String patternDetail,  List<double> dailySleepHours,  bool hasData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SleepPatternState() when $default != null:
-return $default(_that.isLoading,_that.selectedToggleIndex);case _:
+return $default(_that.isLoading,_that.selectedToggleIndex,_that.childName,_that.averageSleepHours,_that.consistencyScore,_that.patternInsight,_that.patternDetail,_that.dailySleepHours,_that.hasData);case _:
   return orElse();
 
 }
@@ -178,10 +185,10 @@ return $default(_that.isLoading,_that.selectedToggleIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  int selectedToggleIndex)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  int selectedToggleIndex,  String childName,  double averageSleepHours,  int consistencyScore,  String patternInsight,  String patternDetail,  List<double> dailySleepHours,  bool hasData)  $default,) {final _that = this;
 switch (_that) {
 case _SleepPatternState():
-return $default(_that.isLoading,_that.selectedToggleIndex);case _:
+return $default(_that.isLoading,_that.selectedToggleIndex,_that.childName,_that.averageSleepHours,_that.consistencyScore,_that.patternInsight,_that.patternDetail,_that.dailySleepHours,_that.hasData);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +205,10 @@ return $default(_that.isLoading,_that.selectedToggleIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  int selectedToggleIndex)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  int selectedToggleIndex,  String childName,  double averageSleepHours,  int consistencyScore,  String patternInsight,  String patternDetail,  List<double> dailySleepHours,  bool hasData)?  $default,) {final _that = this;
 switch (_that) {
 case _SleepPatternState() when $default != null:
-return $default(_that.isLoading,_that.selectedToggleIndex);case _:
+return $default(_that.isLoading,_that.selectedToggleIndex,_that.childName,_that.averageSleepHours,_that.consistencyScore,_that.patternInsight,_that.patternDetail,_that.dailySleepHours,_that.hasData);case _:
   return null;
 
 }
@@ -213,11 +220,24 @@ return $default(_that.isLoading,_that.selectedToggleIndex);case _:
 
 
 class _SleepPatternState implements SleepPatternState {
-  const _SleepPatternState({this.isLoading = false, this.selectedToggleIndex = 1});
+  const _SleepPatternState({this.isLoading = false, this.selectedToggleIndex = 1, this.childName = 'your child', this.averageSleepHours = 10.5, this.consistencyScore = 85, this.patternInsight = "Naps have been shorter this week.", this.patternDetail = "Four of the last five ended early, which tends to show up as harder evenings.",  List<double> dailySleepHours = const [10.0, 11.0, 9.5, 10.5, 11.2, 10.0, 10.5], this.hasData = false}): _dailySleepHours = dailySleepHours;
   
 
 @override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  int selectedToggleIndex;
+@override@JsonKey() final  String childName;
+@override@JsonKey() final  double averageSleepHours;
+@override@JsonKey() final  int consistencyScore;
+@override@JsonKey() final  String patternInsight;
+@override@JsonKey() final  String patternDetail;
+ final  List<double> _dailySleepHours;
+@override@JsonKey() List<double> get dailySleepHours {
+  if (_dailySleepHours is EqualUnmodifiableListView) return _dailySleepHours;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_dailySleepHours);
+}
+
+@override@JsonKey() final  bool hasData;
 
 /// Create a copy of SleepPatternState
 /// with the given fields replaced by the non-null parameter values.
@@ -229,18 +249,18 @@ _$SleepPatternStateCopyWith<_SleepPatternState> get copyWith => __$SleepPatternS
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SleepPatternState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedToggleIndex, selectedToggleIndex) || other.selectedToggleIndex == selectedToggleIndex));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SleepPatternState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.selectedToggleIndex, selectedToggleIndex) || other.selectedToggleIndex == selectedToggleIndex)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.averageSleepHours, averageSleepHours) || other.averageSleepHours == averageSleepHours)&&(identical(other.consistencyScore, consistencyScore) || other.consistencyScore == consistencyScore)&&(identical(other.patternInsight, patternInsight) || other.patternInsight == patternInsight)&&(identical(other.patternDetail, patternDetail) || other.patternDetail == patternDetail)&&const DeepCollectionEquality().equals(other.dailySleepHours, _dailySleepHours)&&(identical(other.hasData, hasData) || other.hasData == hasData));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoading,selectedToggleIndex);
+    return Object.hash(runtimeType,isLoading,selectedToggleIndex,childName,averageSleepHours,consistencyScore,patternInsight,patternDetail,const DeepCollectionEquality().hash(_dailySleepHours),hasData);
 }
 
 @override
 String toString() {
-    return 'SleepPatternState(isLoading: $isLoading, selectedToggleIndex: $selectedToggleIndex)';
+    return 'SleepPatternState(isLoading: $isLoading, selectedToggleIndex: $selectedToggleIndex, childName: $childName, averageSleepHours: $averageSleepHours, consistencyScore: $consistencyScore, patternInsight: $patternInsight, patternDetail: $patternDetail, dailySleepHours: $dailySleepHours, hasData: $hasData)';
 }
 
 
@@ -251,7 +271,7 @@ abstract mixin class _$SleepPatternStateCopyWith<$Res> implements $SleepPatternS
   factory _$SleepPatternStateCopyWith(_SleepPatternState value, $Res Function(_SleepPatternState) _then) = __$SleepPatternStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, int selectedToggleIndex
+ bool isLoading, int selectedToggleIndex, String childName, double averageSleepHours, int consistencyScore, String patternInsight, String patternDetail, List<double> dailySleepHours, bool hasData
 });
 
 
@@ -268,11 +288,18 @@ class __$SleepPatternStateCopyWithImpl<$Res>
 
 /// Create a copy of SleepPatternState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? selectedToggleIndex = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? selectedToggleIndex = null,Object? childName = null,Object? averageSleepHours = null,Object? consistencyScore = null,Object? patternInsight = null,Object? patternDetail = null,Object? dailySleepHours = null,Object? hasData = null,}) {
   return _then(_SleepPatternState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,selectedToggleIndex: null == selectedToggleIndex ? _self.selectedToggleIndex : selectedToggleIndex // ignore: cast_nullable_to_non_nullable
-as int,
+as int,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,averageSleepHours: null == averageSleepHours ? _self.averageSleepHours : averageSleepHours // ignore: cast_nullable_to_non_nullable
+as double,consistencyScore: null == consistencyScore ? _self.consistencyScore : consistencyScore // ignore: cast_nullable_to_non_nullable
+as int,patternInsight: null == patternInsight ? _self.patternInsight : patternInsight // ignore: cast_nullable_to_non_nullable
+as String,patternDetail: null == patternDetail ? _self.patternDetail : patternDetail // ignore: cast_nullable_to_non_nullable
+as String,dailySleepHours: null == dailySleepHours ? _self._dailySleepHours : dailySleepHours // ignore: cast_nullable_to_non_nullable
+as List<double>,hasData: null == hasData ? _self.hasData : hasData // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

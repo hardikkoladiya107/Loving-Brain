@@ -15,17 +15,19 @@ import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
 
-void showAddSleepUpdateSheet(BuildContext context) {
+Future<void> showAddSleepUpdateSheet(BuildContext context) {
   final TodayCubit cubit = context.read<TodayCubit>();
-  showModalBottomSheet(
+  return showModalBottomSheet<void>(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.75,
     ),
-    builder: (BuildContext context) =>
-        BlocProvider.value(value: cubit, child: const AddSleepUpdateSheet()),
+    builder: (BuildContext context) => BlocProvider<TodayCubit>.value(
+      value: cubit,
+      child: const AddSleepUpdateSheet(),
+    ),
   );
 }
 

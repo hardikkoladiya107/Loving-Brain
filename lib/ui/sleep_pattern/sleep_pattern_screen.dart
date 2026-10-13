@@ -1,54 +1,94 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
-class SleepPatternScreen extends StatelessWidget {
+import 'bloc/sleep_pattern_cubit.dart';
+import 'bloc/sleep_pattern_state.dart';
+
+/// Screen 26 — Sleep Pattern view.
+class SleepPatternScreen extends StatefulWidget {
   const SleepPatternScreen({super.key});
 
   @override
+  State<SleepPatternScreen> createState() => _SleepPatternScreenState();
+}
+
+class _SleepPatternScreenState extends State<SleepPatternScreen> {
+  late final SleepPatternCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = SleepPatternCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: [
-          ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              _buildHeader(context),
-              16.spaceH,
-              _buildCircularProgressCard(),
-              16.spaceH,
-              _buildWeeklySleepChart(),
-              16.spaceH,
-              _buildNoticeCard(),
-              100.spaceH,
-            ],
-          ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            right: 20,
-            child: AppButton(
-              title: "Try this change",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProgramRecommendationScreen(),
+    return BlocProvider<SleepPatternCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<SleepPatternCubit, SleepPatternState>(
+        listener: (BuildContext context, SleepPatternState state) {},
+        builder: (BuildContext context, SleepPatternState state) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: state.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: primaryColor),
+                  )
+                : Stack(
+                    children: [
+                      ListView(
+                        padding: EdgeInsets.zero,
+                        children: [
+                          _buildHeader(context),
+                          16.spaceH,
+                          _buildCircularProgressCard(state),
+                          16.spaceH,
+                          _buildWeeklySleepChart(state),
+                          16.spaceH,
+                          _buildNoticeCard(state),
+                          100.spaceH,
+                        ],
+                      ),
+                      Positioned(
+                        bottom: 20.h,
+                        left: 20.w,
+                        right: 20.w,
+                        child: AppButton(
+                          title: "Try this change",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext routeCtx) =>
+                                    const ProgramRecommendationScreen(),
+                              ),
+                            );
+                          },
+                          backgroundColor: primaryColor,
+                          textColor: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              backgroundColor: primaryColor,
-              textColor: Colors.white,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -61,7 +101,7 @@ class SleepPatternScreen extends StatelessWidget {
           left: 0,
           right: 0,
           child: Container(
-            height: 350,
+            height: 350.h,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -72,10 +112,10 @@ class SleepPatternScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 16,
-          right: 16,
+          bottom: 16.h,
+          right: 16.w,
           child: Container(
-            height: 150,
+            height: 150.h,
             width: MediaQuery.of(context).size.width / 3,
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -86,12 +126,12 @@ class SleepPatternScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 20,
-          left: 20,
+          top: 20.h,
+          left: 20.w,
           child: InkWell(
             onTap: () => Navigator.pop(context),
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.r),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -101,8 +141,8 @@ class SleepPatternScreen extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 20,
-          left: 20,
+          bottom: 20.h,
+          left: 20.w,
           child: "Sleep pattern".appText(
             fontSize: 28.sp,
             color: Colors.white,
@@ -110,30 +150,32 @@ class SleepPatternScreen extends StatelessWidget {
             textAlign: TextAlign.start,
           ),
         ),
-
         SafeArea(bottom: false, child: 160.spaceH),
       ],
     );
   }
 
-  Widget _buildCircularProgressCard() {
+  Widget _buildCircularProgressCard(SleepPatternState state) {
+    final List<String> days = <String>["Wd", "Th", "Sn", "Mn", "Tu", "Wd"];
+    final List<double> values = state.dailySleepHours;
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         color: orangeLightColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildProgressCircle("Wd", "5h", 5 / 8),
-          _buildProgressCircle("Th", "5h", 5 / 8),
-          _buildProgressCircle("Sn", "3h", 3 / 8),
-          _buildProgressCircle("Mn", "5h", 5 / 8),
-          _buildProgressCircle("Tu", "2h", 2 / 8),
-          _buildProgressCircle("Wd", "6h", 6 / 8),
+          for (int i = 0; i < 6; i++)
+            _buildProgressCircle(
+              days[i],
+              "${(i < values.length ? values[i] : 5.0).toInt()}h",
+              (i < values.length ? values[i] : 5.0) / 8.0,
+            ),
         ],
       ),
     );
@@ -152,10 +194,10 @@ class SleepPatternScreen extends StatelessWidget {
                 width: 44.w,
                 height: 44.w,
                 child: CircularProgressIndicator(
-                  value: value,
+                  value: value.clamp(0.0, 1.0),
                   backgroundColor: Colors.grey.withValues(alpha: 0.2),
                   color: primaryColor,
-                  strokeWidth: 10,
+                  strokeWidth: 10.w,
                 ),
               ),
               label.appText(
@@ -176,15 +218,22 @@ class SleepPatternScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildWeeklySleepChart() {
+  Widget _buildWeeklySleepChart(SleepPatternState state) {
+    final List<double> values = state.dailySleepHours;
+    final List<FlSpot> spots = <FlSpot>[];
+    for (int i = 0; i < 6; i++) {
+      final double y = i < values.length ? values[i].clamp(0.0, 12.0) : 4.0;
+      spots.add(FlSpot(i.toDouble(), y));
+    }
+
     return Container(
       width: double.infinity,
       height: 250.h,
       padding: EdgeInsets.all(24.w),
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF16152A), // Dark blue like screenshot
-        borderRadius: BorderRadius.circular(24),
+        color: const Color(0xFF16152A),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +251,7 @@ class SleepPatternScreen extends StatelessWidget {
                   show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 2,
-                  getDrawingHorizontalLine: (value) {
+                  getDrawingHorizontalLine: (double value) {
                     return FlLine(
                       color: Colors.white.withValues(alpha: 0.1),
                       strokeWidth: 1,
@@ -211,10 +260,10 @@ class SleepPatternScreen extends StatelessWidget {
                 ),
                 titlesData: FlTitlesData(
                   show: true,
-                  rightTitles: AxisTitles(
+                  rightTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
                   ),
-                  topTitles: AxisTitles(
+                  topTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
                   ),
                   bottomTitles: AxisTitles(
@@ -222,8 +271,8 @@ class SleepPatternScreen extends StatelessWidget {
                       showTitles: true,
                       reservedSize: 30,
                       interval: 1,
-                      getTitlesWidget: (value, meta) {
-                        const style = TextStyle(
+                      getTitlesWidget: (double value, TitleMeta meta) {
+                        const TextStyle style = TextStyle(
                           color: Colors.white54,
                           fontWeight: FontWeight.w400,
                           fontSize: 10,
@@ -261,7 +310,7 @@ class SleepPatternScreen extends StatelessWidget {
                       showTitles: true,
                       interval: 2,
                       reservedSize: 20,
-                      getTitlesWidget: (value, meta) {
+                      getTitlesWidget: (double value, TitleMeta meta) {
                         return Text(
                           value.toInt().toString(),
                           style: const TextStyle(
@@ -278,17 +327,10 @@ class SleepPatternScreen extends StatelessWidget {
                 minX: 0,
                 maxX: 5,
                 minY: 0,
-                maxY: 6,
+                maxY: 8,
                 lineBarsData: [
                   LineChartBarData(
-                    spots: const [
-                      FlSpot(0, 4),
-                      FlSpot(1, 5),
-                      FlSpot(2, 3),
-                      FlSpot(3, 5),
-                      FlSpot(4, 2),
-                      FlSpot(5, 6),
-                    ],
+                    spots: spots,
                     isCurved: true,
                     gradient: const LinearGradient(
                       colors: [Color(0xFFE081F0), Color(0xFF4FA0F6)],
@@ -297,7 +339,7 @@ class SleepPatternScreen extends StatelessWidget {
                     ),
                     barWidth: 4,
                     isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
+                    dotData: const FlDotData(show: false),
                     belowBarData: BarAreaData(show: false),
                   ),
                 ],
@@ -309,14 +351,14 @@ class SleepPatternScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNoticeCard() {
+  Widget _buildNoticeCard(SleepPatternState state) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,19 +370,18 @@ class SleepPatternScreen extends StatelessWidget {
             bgColor: orangeLightColor,
           ),
           16.spaceH,
-          "Naps have been shorter this week".appText(
+          state.patternInsight.appText(
             fontSize: 20.sp,
             fraunces: true,
             textAlign: TextAlign.start,
           ),
           12.spaceH,
-          "Four of the last five ended early, which tends to show up as harder evenings."
-              .appText(
-                fontSize: 14.sp,
-                color: greyColor,
-                height: 1.5,
-                textAlign: TextAlign.start,
-              ),
+          state.patternDetail.appText(
+            fontSize: 14.sp,
+            color: greyColor,
+            height: 1.5,
+            textAlign: TextAlign.start,
+          ),
         ],
       ),
     );

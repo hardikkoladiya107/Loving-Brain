@@ -14,15 +14,39 @@ import 'package:loving_brain/ui/widget/sleep_header.dart';
 import 'bloc/sleep_details_cubit.dart';
 import 'bloc/sleep_details_state.dart';
 
-class SleepDetailsScreen extends StatelessWidget {
+/// Screen 24 — Sleep Details screen.
+class SleepDetailsScreen extends StatefulWidget {
   const SleepDetailsScreen({super.key});
 
   @override
+  State<SleepDetailsScreen> createState() => _SleepDetailsScreenState();
+}
+
+class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
+  late final SleepDetailsCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = SleepDetailsCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => SleepDetailsCubit()..init(),
-      child: BlocBuilder<SleepDetailsCubit, SleepDetailsState>(
-        builder: (context, state) {
+    return BlocProvider<SleepDetailsCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<SleepDetailsCubit, SleepDetailsState>(
+        listener: (BuildContext context, SleepDetailsState state) {},
+        builder: (BuildContext context, SleepDetailsState state) {
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.light.copyWith(
               statusBarColor: darkBlue,
@@ -45,8 +69,9 @@ class SleepDetailsScreen extends StatelessWidget {
                             textAlign: TextAlign.start,
                           ),
                           chipText: "Tonight",
-                          timeText: "07:45 - 8:15 PM",
-                          estimateText: "Bedtime estimate 8:10 PM",
+                          timeText: "${state.windowStart} - ${state.windowEnd}",
+                          estimateText:
+                              "Bedtime estimate ${state.bedtimeEstimate}",
                           cloudImagePath:
                               Assets.v2.images.imgNoriSleepDetails.path,
                         ),
@@ -56,16 +81,19 @@ class SleepDetailsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               16.spaceH,
-                              _buildConfidenceRow(),
+                              _buildConfidenceRow(state),
                               24.spaceH,
-                              _buildInfoCardsRow(),
+                              _buildInfoCardsRow(state),
                               24.spaceH,
                               _buildLastSleepInfoCard(state),
                               32.spaceH,
                               AppButton(
                                 title: "Update sleep",
-                                onTap: () {
-                                  showAddSleepUpdateSheet(context);
+                                onTap: () async {
+                                  await showAddSleepUpdateSheet(context);
+                                  if (mounted) {
+                                    _cubit.init();
+                                  }
                                 },
                                 backgroundColor: Colors.white,
                                 textColor: Colors.black,
@@ -74,13 +102,11 @@ class SleepDetailsScreen extends StatelessWidget {
                               AppButton(
                                 title: "View tonight's plan",
                                 onTap: () {
-                                  Navigator.pop(
-                                    context,
-                                  ); // close the bottom sheet
+                                  Navigator.pop(context);
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext routeCtx) =>
                                           const TonightsPlanScreen(),
                                     ),
                                   );
@@ -101,12 +127,21 @@ class SleepDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildConfidenceRow() {
+  Widget _buildConfidenceRow(SleepDetailsState state) {
     return Row(
       children: [
-        Icon(Icons.more_horiz, color: secondaryColor, size: 24.sp),
+        for (int i = 0; i < 3; i++) ...[
+          Icon(
+            Icons.circle,
+            color: i < state.confidenceDots
+                ? secondaryColor
+                : secondaryColor.withValues(alpha: 0.2),
+            size: 8.sp,
+          ),
+          if (i < 2) 4.spaceW,
+        ],
         8.spaceW,
-        "High confidence".appText(
+        "${state.confidenceLabel} confidence".appText(
           fontSize: 14.sp,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
@@ -115,13 +150,28 @@ class SleepDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCardsRow() {
+  Widget _buildInfoCardsRow(SleepDetailsState state) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildSmallInfoCard("WOKE", "06:45 AM", "15 min early", false),
-        _buildSmallInfoCard("NAP", "11:40 AM", "15 min early", true),
-        _buildSmallInfoCard("LAST NIGHT", "10:34 PM", "15 min early", false),
+        _buildSmallInfoCard(
+          "WOKE",
+          state.wakeUpTime,
+          state.hasRealLogs ? "Logged wake" : "Expected",
+          false,
+        ),
+        _buildSmallInfoCard(
+          "BEDTIME",
+          state.wentToBed,
+          state.hasRealLogs ? "Last logged" : "Target",
+          true,
+        ),
+        _buildSmallInfoCard(
+          "QUALITY",
+          state.sleepQuality,
+          state.hasRealLogs ? "Rest rating" : "Baseline",
+          false,
+        ),
       ],
     );
   }
@@ -137,9 +187,9 @@ class SleepDetailsScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: isHighlighted
-            ? Border.all(color: secondaryColor, width: 1)
+            ? Border.all(color: secondaryColor, width: 1.w)
             : null,
       ),
       child: Column(
@@ -153,12 +203,12 @@ class SleepDetailsScreen extends StatelessWidget {
           ),
           8.spaceH,
           time.appText(
-            fontSize: 16.sp,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w700,
             color: Colors.black,
           ),
           4.spaceH,
-          subtitle.appText(fontSize: 12.sp, color: greyColor4),
+          subtitle.appText(fontSize: 11.sp, color: greyColor4),
         ],
       ),
     );
@@ -170,7 +220,7 @@ class SleepDetailsScreen extends StatelessWidget {
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: const Color(0xFF6A5AE0),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,20 +279,22 @@ class SleepDetailsScreen extends StatelessWidget {
       children: [
         SvgPicture.asset(svgAsset, width: 24.sp, height: 24.sp),
         8.spaceW,
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            value.appText(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-            4.spaceH,
-            label.appText(
-              fontSize: 12.sp,
-              color: Colors.white.withOpacity(0.8),
-            ),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              value.appText(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+              4.spaceH,
+              label.appText(
+                fontSize: 12.sp,
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
+            ],
+          ),
         ),
       ],
     );
