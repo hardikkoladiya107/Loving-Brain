@@ -3,20 +3,19 @@
  * Generates responsive, branded HTML email templates for Loving Brain.
  */
 
+const DEFAULT_LOGO_URL =
+  "https://storage.googleapis.com/hugsand-heart-u86wap.firebasestorage.app/app_assets/loving_brain_logo.png";
+
 /**
  * Returns a fully styled HTML email for OTP verification.
  * @param {string} otpCode 4-digit verification code.
  * @param {string} [logoUrl] Optional hosted image URL for the logo.
  * @returns {string} Fully formatted HTML string.
  */
-function getOtpEmailHtml(otpCode, logoUrl = null) {
-  const brandLogoHtml = logoUrl
-    ? `<img src="${logoUrl}" alt="Loving Brain" width="64" height="64" style="display: block; margin: 0 auto 12px auto; border-radius: 16px; border: 0;" />`
-    : `
-      <div style="display: inline-block; width: 56px; height: 56px; line-height: 56px; border-radius: 18px; background: linear-gradient(135deg, #F06D4D 0%, #FFA07A 100%); margin-bottom: 12px; box-shadow: 0 4px 12px rgba(240, 109, 77, 0.25);">
-        <span style="font-size: 28px; line-height: 56px; vertical-align: middle;">☁️</span>
-      </div>
-    `;
+function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL) {
+  const brandLogoHtml = `
+    <img src="${logoUrl}" alt="Loving Brain" width="76" height="76" style="display: block; margin: 0 auto 14px auto; border: 0; outline: none; text-decoration: none; max-width: 76px; height: auto;" />
+  `;
 
   return `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
