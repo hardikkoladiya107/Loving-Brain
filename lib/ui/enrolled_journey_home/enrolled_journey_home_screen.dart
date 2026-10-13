@@ -115,7 +115,7 @@ class EnrolledJourneyHomeScreen extends StatelessWidget {
                         iconBgColor: const Color(0xFFFCE4EC), // light pink
                         iconColor: const Color(0xFFE91E63), // pink/red
                         title: "Understanding over tiredness",
-                        subtitle: "Recorded module Ãƒâ€šÃ‚Â· 12 min",
+                        subtitle: "Recorded module · 12 min",
                         onTap: () {},
                       ),
                       16.spaceH,
@@ -277,7 +277,7 @@ class EnrolledJourneyHomeScreen extends StatelessWidget {
                 ),
               ),
               8.spaceW,
-              "Priya S. Ãƒâ€šÃ‚Â· 2 days ago".appText(
+              "Priya S. · 2 days ago".appText(
                 fontSize: 14.sp,
                 color: greyColor,
               ),
