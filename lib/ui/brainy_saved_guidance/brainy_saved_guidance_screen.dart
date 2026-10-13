@@ -8,109 +8,139 @@ import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.d
 import 'bloc/brainy_saved_guidance_cubit.dart';
 import 'bloc/brainy_saved_guidance_state.dart';
 
-class BrainySavedGuidanceScreen extends StatelessWidget {
+class BrainySavedGuidanceScreen extends StatefulWidget {
   const BrainySavedGuidanceScreen({super.key});
 
   @override
+  State<BrainySavedGuidanceScreen> createState() =>
+      _BrainySavedGuidanceScreenState();
+}
+
+class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => BrainySavedGuidanceCubit()..init(),
-      child: BlocBuilder<BrainySavedGuidanceCubit, BrainySavedGuidanceState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocProvider<BrainySavedGuidanceCubit>(
+      create: (BuildContext context) => BrainySavedGuidanceCubit()..init(),
+      child: const _BrainySavedGuidanceView(),
+    );
+  }
+}
+
+class _BrainySavedGuidanceView extends StatefulWidget {
+  const _BrainySavedGuidanceView();
+
+  @override
+  State<_BrainySavedGuidanceView> createState() =>
+      _BrainySavedGuidanceViewState();
+}
+
+class _BrainySavedGuidanceViewState extends State<_BrainySavedGuidanceView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BrainySavedGuidanceCubit>().init();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<BrainySavedGuidanceCubit, BrainySavedGuidanceState>(
+      listener: (BuildContext context, BrainySavedGuidanceState state) {},
+      builder: (BuildContext context, BrainySavedGuidanceState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      16.spaceH,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(24),
-                              onTap: () => Navigator.pop(context),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: darkBlue,
-                                  size: 24.sp,
-                                ),
+              ),
+              SafeArea(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  children: [
+                    16.spaceH,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Ink(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(24.r),
+                            onTap: () => Navigator.pop(context),
+                            child: Padding(
+                              padding: EdgeInsets.all(8.r),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      32.spaceH,
-                      "Saved Guidance".appText(
-                        fontSize: 28.sp,
-                        color: darkBlue,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
-                      32.spaceH,
-                      _buildSectionTitle("SLEEP"),
-                      12.spaceH,
-                      ...state.sleepItems.map((item) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(context, item: item),
-                        );
-                      }),
-                      32.spaceH,
-                      _buildSectionTitle("BEHAVIOUR", color: greyColor11),
-                      12.spaceH,
-                      ...state.behaviourItems.map((item) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(context, item: item),
-                        );
-                      }),
-                      32.spaceH,
-                      _buildSectionTitle("PARENT WELLBEING"),
-                      12.spaceH,
-                      ...state.parentWellbeingItems.map((item) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(context, item: item),
-                        );
-                      }),
-                      32.spaceH,
-                    ],
-                  ),
+                    ),
+                    32.spaceH,
+                    "Saved Guidance".appText(
+                      fontSize: 28.sp,
+                      color: darkBlue,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    32.spaceH,
+                    _buildSectionTitle("SLEEP"),
+                    12.spaceH,
+                    ...state.sleepItems.map((BrainySavedItem item) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: _buildGuidanceItem(context, item: item),
+                      );
+                    }),
+                    32.spaceH,
+                    _buildSectionTitle("BEHAVIOUR", color: greyColor11),
+                    12.spaceH,
+                    ...state.behaviourItems.map((BrainySavedItem item) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: _buildGuidanceItem(context, item: item),
+                      );
+                    }),
+                    32.spaceH,
+                    _buildSectionTitle("PARENT WELLBEING"),
+                    12.spaceH,
+                    ...state.parentWellbeingItems.map((BrainySavedItem item) {
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: _buildGuidanceItem(context, item: item),
+                      );
+                    }),
+                    32.spaceH,
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -132,10 +162,10 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
       child: Ink(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           onTap: () {
             Navigator.push(
               context,
@@ -157,7 +187,7 @@ class BrainySavedGuidanceScreen extends StatelessWidget {
                   height: 56.w,
                   decoration: BoxDecoration(
                     color: Color(item.imageBgColorValue),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16.r),
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image: AssetImage(item.imagePath),

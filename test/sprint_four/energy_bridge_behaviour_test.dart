@@ -9,41 +9,47 @@ import 'package:loving_brain/model/tantrum_log_model.dart';
 
 void main() {
   group('Sprint 4 — Energy Bridge Behaviour Calculator Tests', () {
-    test('Zero tantrum logs yields ConfidenceTier.none, 0 dots, and general guide copy', () {
-      final BehaviourForecastResult result = EnergyBridgeBehaviourCalculator.calculate(
-        childModel: ChildModel(childName: 'Ira', childAge: '2 years'),
-        tantrumLogs: <TantrumLogModel>[],
-        sleepLogs: <SleepLogModel>[],
-        moodLogs: <MoodLogModel>[],
-        healthLogs: <HealthLogModel>[],
-      );
+    test(
+      'Zero tantrum logs yields ConfidenceTier.none, 0 dots, and general guide copy',
+      () {
+        final BehaviourForecastResult result =
+            EnergyBridgeBehaviourCalculator.calculate(
+              childModel: ChildModel(childName: 'Ira', childAge: '2 years'),
+              tantrumLogs: <TantrumLogModel>[],
+              sleepLogs: <SleepLogModel>[],
+              moodLogs: <MoodLogModel>[],
+              healthLogs: <HealthLogModel>[],
+            );
 
-      expect(result.confidenceTier, ConfidenceTier.none);
-      expect(result.confidenceDots, 0);
-      expect(result.confidenceLabel, 'General guide');
-      expect(result.childName, 'Ira');
-      expect(result.headline, 'A harder window may be more likely');
-      expect(result.actions.length, 3);
-      expect(result.hasPersonalLogs, isFalse);
-    });
+        expect(result.confidenceTier, ConfidenceTier.none);
+        expect(result.confidenceDots, 0);
+        expect(result.confidenceLabel, 'General guide');
+        expect(result.childName, 'Ira');
+        expect(result.headline, 'A harder window may be more likely');
+        expect(result.actions.length, 3);
+        expect(result.hasPersonalLogs, isFalse);
+      },
+    );
 
     test('1-2 tantrum logs yields ConfidenceTier.low with 1 dot', () {
       final List<TantrumLogModel> logs = <TantrumLogModel>[
         TantrumLogModel(
+          whatHappened: 'Meltdown during transition',
           timestamp: DateTime.now().subtract(const Duration(days: 1)),
-          durationMinutes: 10,
           intensity: 0.6,
           triggers: <String>['Tiredness'],
+          whatHelped: 'Holding close',
         ),
       ];
 
-      final BehaviourForecastResult result = EnergyBridgeBehaviourCalculator.calculate(
-        childModel: ChildModel(childName: 'Ira'),
-        tantrumLogs: logs,
-        sleepLogs: <SleepLogModel>[],
-        moodLogs: <MoodLogModel>[],
-        healthLogs: <HealthLogModel>[],
-      );
+      final BehaviourForecastResult result =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: ChildModel(childName: 'Ira'),
+            tantrumLogs: logs,
+            sleepLogs: <SleepLogModel>[],
+            moodLogs: <MoodLogModel>[],
+            healthLogs: <HealthLogModel>[],
+          );
 
       expect(result.confidenceTier, ConfidenceTier.low);
       expect(result.confidenceDots, 1);
@@ -55,18 +61,22 @@ void main() {
       final List<TantrumLogModel> logs = List<TantrumLogModel>.generate(
         5,
         (int i) => TantrumLogModel(
+          whatHappened: 'Tantrum $i',
           timestamp: DateTime.now().subtract(Duration(days: i)),
+          intensity: 0.5,
           triggers: <String>['Hunger'],
+          whatHelped: 'Snack',
         ),
       );
 
-      final BehaviourForecastResult result = EnergyBridgeBehaviourCalculator.calculate(
-        childModel: ChildModel(childName: 'Ira'),
-        tantrumLogs: logs,
-        sleepLogs: <SleepLogModel>[],
-        moodLogs: <MoodLogModel>[],
-        healthLogs: <HealthLogModel>[],
-      );
+      final BehaviourForecastResult result =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: ChildModel(childName: 'Ira'),
+            tantrumLogs: logs,
+            sleepLogs: <SleepLogModel>[],
+            moodLogs: <MoodLogModel>[],
+            healthLogs: <HealthLogModel>[],
+          );
 
       expect(result.confidenceTier, ConfidenceTier.moderate);
       expect(result.confidenceDots, 2);
@@ -76,112 +86,155 @@ void main() {
       final List<TantrumLogModel> logs = List<TantrumLogModel>.generate(
         11,
         (int i) => TantrumLogModel(
+          whatHappened: 'Tantrum $i',
           timestamp: DateTime.now().subtract(Duration(days: i)),
+          intensity: 0.7,
           triggers: <String>['Transitions'],
+          whatHelped: 'Quiet hugs',
         ),
       );
 
-      final BehaviourForecastResult result = EnergyBridgeBehaviourCalculator.calculate(
-        childModel: ChildModel(childName: 'Ira'),
-        tantrumLogs: logs,
-        sleepLogs: <SleepLogModel>[],
-        moodLogs: <MoodLogModel>[],
-        healthLogs: <HealthLogModel>[],
-      );
+      final BehaviourForecastResult result =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: ChildModel(childName: 'Ira'),
+            tantrumLogs: logs,
+            sleepLogs: <SleepLogModel>[],
+            moodLogs: <MoodLogModel>[],
+            healthLogs: <HealthLogModel>[],
+          );
 
       expect(result.confidenceTier, ConfidenceTier.high);
       expect(result.confidenceDots, 3);
     });
 
-    test('Short nap and fussy mood escalate contributing signals and risk level', () {
-      final List<SleepLogModel> sleepLogs = <SleepLogModel>[
-        SleepLogModel(
-          durationMinutes: 30, // short nap (<45 min)
-          timestamp: DateTime.now(),
-        ),
-      ];
-      final List<MoodLogModel> moodLogs = <MoodLogModel>[
-        MoodLogModel(
-          childMoodIndex: 1, // very fussy
-          timestamp: DateTime.now(),
-        ),
-      ];
+    test(
+      'Short nap and fussy mood escalate contributing signals and risk level',
+      () {
+        final List<SleepLogModel> sleepLogs = <SleepLogModel>[
+          SleepLogModel(
+            id: 'sleep_1',
+            date: DateTime.now(),
+            bedTime: DateTime.now().subtract(const Duration(minutes: 30)),
+            wakeTime: DateTime.now(),
+            durationMinutes: 30, // short nap (<45 min)
+          ),
+        ];
+        final List<MoodLogModel> moodLogs = <MoodLogModel>[
+          MoodLogModel(
+            childMood: 'Fussy',
+            childMoodIndex: 1, // very fussy
+            parentMood: 'Tired',
+            logTime: DateTime.now(),
+          ),
+        ];
 
-      final BehaviourForecastResult result = EnergyBridgeBehaviourCalculator.calculate(
-        childModel: ChildModel(
-          childName: 'Leo',
-          difficultTimes: <String>['Evening', 'Late afternoon'],
-        ),
-        tantrumLogs: <TantrumLogModel>[
-          TantrumLogModel(timestamp: DateTime.now(), triggers: <String>['Tiredness']),
-        ],
-        sleepLogs: sleepLogs,
-        moodLogs: moodLogs,
-        healthLogs: <HealthLogModel>[],
-      );
+        final BehaviourForecastResult result =
+            EnergyBridgeBehaviourCalculator.calculate(
+              childModel: ChildModel(
+                childName: 'Leo',
+                difficultTimes: <String>['Evening', 'Late afternoon'],
+              ),
+              tantrumLogs: <TantrumLogModel>[
+                TantrumLogModel(
+                  whatHappened: 'Crying',
+                  timestamp: DateTime.now(),
+                  intensity: 0.5,
+                  triggers: <String>['Tiredness'],
+                  whatHelped: 'Deep breath',
+                ),
+              ],
+              sleepLogs: sleepLogs,
+              moodLogs: moodLogs,
+              healthLogs: <HealthLogModel>[],
+            );
 
-      expect(result.contributingSignals.contains('a short nap'), isTrue);
-      expect(result.contributingSignals.contains('fussy emotional state'), isTrue);
-      expect(result.riskLevel, isNot(BehaviourRiskLevel.none));
-      expect(result.reason, contains('Between'));
-    });
+        expect(result.contributingSignals.contains('a short nap'), isTrue);
+        expect(
+          result.contributingSignals.contains('fussy emotional state'),
+          isTrue,
+        );
+        expect(result.riskLevel, isNot(BehaviourRiskLevel.none));
+        expect(result.reason, contains('Between'));
+      },
+    );
 
-    test('Recent health disruption downgrades confidence and attaches caveat', () {
-      final List<TantrumLogModel> logs = List<TantrumLogModel>.generate(
-        10,
-        (int i) => TantrumLogModel(triggers: <String>['Tiredness']),
-      );
-      final List<HealthLogModel> healthLogs = <HealthLogModel>[
-        HealthLogModel(
-          timestamp: DateTime.now(),
-          issues: <String>['Teething', 'Mild fever'],
-        ),
-      ];
+    test(
+      'Recent health disruption downgrades confidence and attaches caveat',
+      () {
+        final List<TantrumLogModel> logs = List<TantrumLogModel>.generate(
+          10,
+          (int i) => TantrumLogModel(
+            whatHappened: 'Tantrum $i',
+            timestamp: DateTime.now().subtract(Duration(days: i)),
+            intensity: 0.5,
+            triggers: <String>['Tiredness'],
+            whatHelped: 'Rest',
+          ),
+        );
+        final List<HealthLogModel> healthLogs = <HealthLogModel>[
+          HealthLogModel(
+            timestamp: DateTime.now(),
+            issues: <String>['Teething', 'Mild fever'],
+            notes: 'Poor appetite',
+          ),
+        ];
 
-      final BehaviourForecastResult result = EnergyBridgeBehaviourCalculator.calculate(
-        childModel: ChildModel(childName: 'Ira'),
-        tantrumLogs: logs,
-        sleepLogs: <SleepLogModel>[],
-        moodLogs: <MoodLogModel>[],
-        healthLogs: healthLogs,
-      );
+        final BehaviourForecastResult result =
+            EnergyBridgeBehaviourCalculator.calculate(
+              childModel: ChildModel(childName: 'Ira'),
+              tantrumLogs: logs,
+              sleepLogs: <SleepLogModel>[],
+              moodLogs: <MoodLogModel>[],
+              healthLogs: healthLogs,
+            );
 
-      // Originally high (10 logs), downgraded to moderate by recent health disruption
-      expect(result.confidenceTier, ConfidenceTier.moderate);
-      expect(result.confidenceDots, 2);
-      expect(result.healthCaveat, isNotNull);
-      expect(result.healthCaveat, contains('Teething'));
-    });
+        // Originally high (10 logs), downgraded to moderate by recent health disruption
+        expect(result.confidenceTier, ConfidenceTier.moderate);
+        expect(result.confidenceDots, 2);
+        expect(result.healthCaveat, isNotNull);
+        expect(result.healthCaveat, contains('Teething'));
+      },
+    );
 
-    test('BehaviourPatternSummary aggregates top triggers and strategies correctly', () {
-      final List<TantrumLogModel> logs = <TantrumLogModel>[
-        TantrumLogModel(
-          triggers: <String>['Tiredness', 'Hunger'],
-          whatHelped: 'Lowering stimulation',
-          intensity: 0.8,
-        ),
-        TantrumLogModel(
-          triggers: <String>['Tiredness'],
-          whatHelped: 'Lowering stimulation',
-          intensity: 0.6,
-        ),
-        TantrumLogModel(
-          triggers: <String>['Transitions'],
-          whatHelped: 'Quiet hug',
-          intensity: 0.4,
-        ),
-      ];
+    test(
+      'BehaviourPatternSummary aggregates top triggers and strategies correctly',
+      () {
+        final List<TantrumLogModel> logs = <TantrumLogModel>[
+          TantrumLogModel(
+            whatHappened: 'Tantrum 1',
+            timestamp: DateTime.now(),
+            triggers: <String>['Tiredness', 'Hunger'],
+            whatHelped: 'Lowering stimulation',
+            intensity: 0.8,
+          ),
+          TantrumLogModel(
+            whatHappened: 'Tantrum 2',
+            timestamp: DateTime.now(),
+            triggers: <String>['Tiredness'],
+            whatHelped: 'Lowering stimulation',
+            intensity: 0.6,
+          ),
+          TantrumLogModel(
+            whatHappened: 'Tantrum 3',
+            timestamp: DateTime.now(),
+            triggers: <String>['Transitions'],
+            whatHelped: 'Quiet hug',
+            intensity: 0.4,
+          ),
+        ];
 
-      final BehaviourPatternSummary summary = EnergyBridgeBehaviourCalculator.aggregatePattern(
-        logs: logs,
-        childName: 'Ira',
-      );
+        final BehaviourPatternSummary summary =
+            EnergyBridgeBehaviourCalculator.aggregatePattern(
+              logs: logs,
+              childName: 'Ira',
+            );
 
-      expect(summary.totalTantrums, 3);
-      expect(summary.topTriggers.first, 'Tiredness');
-      expect(summary.topHelpedStrategies.first, 'Lowering stimulation');
-      expect(summary.averageIntensity, closeTo(0.6, 0.01));
-      expect(summary.insightText, contains('Ira'));
-    });
+        expect(summary.totalTantrums, 3);
+        expect(summary.topTriggers.first, 'Tiredness');
+        expect(summary.topHelpedStrategies.first, 'Lowering stimulation');
+        expect(summary.averageIntensity, closeTo(0.6, 0.01));
+        expect(summary.insightText, contains('Ira'));
+      },
+    );
   });
 }

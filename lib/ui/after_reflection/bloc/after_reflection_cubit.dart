@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
-import 'package:loving_brain/repo/child_repo.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 
 import 'after_reflection_state.dart';
@@ -24,15 +24,17 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
     String? selectedHelped,
     String? selectedFeeling,
   }) {
-    emit(state.copyWith(
-      isLoading: isLoading ?? state.isLoading,
-      saveStatus: saveStatus ?? ApiResultStatus.initial(),
-      beforeEvent: beforeEvent ?? state.beforeEvent,
-      durationText: durationText ?? state.durationText,
-      intensityValue: intensityValue ?? state.intensityValue,
-      selectedHelped: selectedHelped ?? state.selectedHelped,
-      selectedFeeling: selectedFeeling ?? state.selectedFeeling,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: isLoading ?? state.isLoading,
+        saveStatus: saveStatus ?? ApiResultStatus.initial(),
+        beforeEvent: beforeEvent ?? state.beforeEvent,
+        durationText: durationText ?? state.durationText,
+        intensityValue: intensityValue ?? state.intensityValue,
+        selectedHelped: selectedHelped ?? state.selectedHelped,
+        selectedFeeling: selectedFeeling ?? state.selectedFeeling,
+      ),
+    );
   }
 
   void setBeforeEvent(String value) => changeProps(beforeEvent: value);
@@ -42,15 +44,14 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
   void setFeeling(String value) => changeProps(selectedFeeling: value);
 
   Future<bool> saveReflection() async {
-    changeProps(
-      isLoading: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     try {
-      final ChildModel? child = ChildRepo.instance.selectedChildModel;
+      final ChildModel? child = preferences.getChildModel();
       final String childId =
-          child?.reference?.id ?? TodayLogRepo.instance.resolveActiveChildId() ?? '';
+          child?.reference?.id ??
+          TodayLogRepo.instance.resolveActiveChildId() ??
+          '';
 
       final String eventDesc = state.beforeEvent.trim().isNotEmpty
           ? state.beforeEvent.trim()
@@ -70,12 +71,9 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
       );
 
       if (childId.isNotEmpty) {
-        final ApiResultStatus<String> result =
-            await TodayLogRepo.instance.addTantrumLog(childId: childId, log: log);
-        changeProps(
-          isLoading: false,
-          saveStatus: result,
-        );
+        final ApiResultStatus<String> result = await TodayLogRepo.instance
+            .addTantrumLog(childId: childId, log: log);
+        changeProps(isLoading: false, saveStatus: result);
       } else {
         changeProps(
           isLoading: false,

@@ -6,7 +6,7 @@ import 'package:loving_brain/model/health_log_model.dart';
 import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
-import 'package:loving_brain/repo/child_repo.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 
 import 'calm_heads_up_state.dart';
@@ -33,31 +33,32 @@ class CalmHeadsUpCubit extends Cubit<CalmHeadsUpState> {
     List<String>? contributingSignals,
     String? healthCaveat,
   }) {
-    emit(state.copyWith(
-      isLoading: isLoading ?? state.isLoading,
-      fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
-      forecast: forecast ?? state.forecast,
-      childName: childName ?? state.childName,
-      headline: headline ?? state.headline,
-      reason: reason ?? state.reason,
-      windowStart: windowStart ?? state.windowStart,
-      windowEnd: windowEnd ?? state.windowEnd,
-      confidenceDots: confidenceDots ?? state.confidenceDots,
-      confidenceLabel: confidenceLabel ?? state.confidenceLabel,
-      contributingSignals: contributingSignals ?? state.contributingSignals,
-      healthCaveat: healthCaveat ?? state.healthCaveat,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: isLoading ?? state.isLoading,
+        fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
+        forecast: forecast ?? state.forecast,
+        childName: childName ?? state.childName,
+        headline: headline ?? state.headline,
+        reason: reason ?? state.reason,
+        windowStart: windowStart ?? state.windowStart,
+        windowEnd: windowEnd ?? state.windowEnd,
+        confidenceDots: confidenceDots ?? state.confidenceDots,
+        confidenceLabel: confidenceLabel ?? state.confidenceLabel,
+        contributingSignals: contributingSignals ?? state.contributingSignals,
+        healthCaveat: healthCaveat ?? state.healthCaveat,
+      ),
+    );
   }
 
   Future<void> _loadBehaviourForecast(ChildModel? explicitChild) async {
-    changeProps(
-      isLoading: true,
-      fetchStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
-    ChildModel? child = explicitChild ?? ChildRepo.instance.selectedChildModel;
+    ChildModel? child = explicitChild ?? preferences.getChildModel();
     final String childId =
-        child?.reference?.id ?? TodayLogRepo.instance.resolveActiveChildId() ?? '';
+        child?.reference?.id ??
+        TodayLogRepo.instance.resolveActiveChildId() ??
+        '';
 
     List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
     List<SleepLogModel> sleepLogs = <SleepLogModel>[];
@@ -72,14 +73,16 @@ class CalmHeadsUpCubit extends Cubit<CalmHeadsUpState> {
           tantrumLogs = tantrumRes.data;
         }
 
-        final ApiResultStatus<List<SleepLogModel>> sleepRes =
-            await TodayLogRepo.instance.getRecentSleepLogs(childId);
+        final ApiResultStatus<List<SleepLogModel>> sleepRes = await TodayLogRepo
+            .instance
+            .getRecentSleepLogs(childId);
         if (sleepRes is Data<List<SleepLogModel>>) {
           sleepLogs = sleepRes.data;
         }
 
-        final ApiResultStatus<List<MoodLogModel>> moodRes =
-            await TodayLogRepo.instance.getRecentMoodLogs(childId);
+        final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+            .instance
+            .getRecentMoodLogs(childId);
         if (moodRes is Data<List<MoodLogModel>>) {
           moodLogs = moodRes.data;
         }
@@ -94,12 +97,12 @@ class CalmHeadsUpCubit extends Cubit<CalmHeadsUpState> {
 
     final BehaviourForecastResult forecast =
         EnergyBridgeBehaviourCalculator.calculate(
-      childModel: child,
-      tantrumLogs: tantrumLogs,
-      sleepLogs: sleepLogs,
-      moodLogs: moodLogs,
-      healthLogs: healthLogs,
-    );
+          childModel: child,
+          tantrumLogs: tantrumLogs,
+          sleepLogs: sleepLogs,
+          moodLogs: moodLogs,
+          healthLogs: healthLogs,
+        );
 
     changeProps(
       isLoading: false,

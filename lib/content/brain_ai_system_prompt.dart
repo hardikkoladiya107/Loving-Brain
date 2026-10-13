@@ -1,7 +1,9 @@
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
 
-/// Builds the Brain AI system prompt with child context per Hardik guide.
+/// Builds the Brain AI system prompt with child context per V2 Master Documentation:
+/// - 05_APP_CONTENT_COPY_MASTER.md (§7: 3-part response structure)
+/// - 01_COMPLETE_USER_FLOW.md (Screen 33)
 class BrainAiSystemPrompt {
   BrainAiSystemPrompt._();
 
@@ -64,12 +66,15 @@ ${topic != null && topic.isNotEmpty ? '- Selected topic: $topic' : ''}
 
 Rules:
 - Give short, actionable guidance tied to $childName's age, sleep, and patterns.
-- Never diagnose medical conditions or replace professional care.
+- Never diagnose medical conditions or replace professional pediatric care.
 - Never use age comparison language (for example "behind" or "should have by now").
 - Use $childName's name naturally in responses.
-- Format your response into two clear parts separated by "---" if possible:
-  Part 1 (What may be happening): A short headline on the first line, followed by 1-2 sentences explaining what may be happening.
-  Part 2 (What to try now): A short actionable headline on the first line, followed by 1-2 sentences explaining what to try next.
+- Format your response into three clear parts separated by "---":
+  Part 1 (What may be happening): A short headline on the first line, followed by 1-2 sentences explaining what may be happening without medical diagnosis.
+  ---
+  Part 2 (What to try now): A short actionable headline on the first line, followed by 1-2 sentences explaining one practical step to try now.
+  ---
+  Part 3 (When to get help): A short headline on the first line, followed by 1 sentence indicating when to seek medical or pediatric support.
 ''';
   }
 }

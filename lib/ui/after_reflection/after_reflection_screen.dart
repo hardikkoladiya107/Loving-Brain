@@ -68,9 +68,8 @@ class _AfterReflectionViewState extends State<_AfterReflectionView> {
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) => const SucessScreen(
-                  successText: "Check-in Complete!",
-                ),
+                builder: (BuildContext context) =>
+                    const SucessScreen(successText: "Check-in Complete!"),
               ),
               (Route<dynamic> route) => route.isFirst,
             );
@@ -150,8 +149,9 @@ class _AfterReflectionViewState extends State<_AfterReflectionView> {
                       controller: _beforeController,
                       label: "WHAT HAPPENED BEFORE",
                       hint: "E.g. She was asked to put her shoes on",
-                      onChanged: (String v) =>
-                          context.read<AfterReflectionCubit>().setBeforeEvent(v),
+                      onChanged: (String v) => context
+                          .read<AfterReflectionCubit>()
+                          .setBeforeEvent(v),
                     ),
                     12.spaceH,
                     _buildInputField(
@@ -166,8 +166,9 @@ class _AfterReflectionViewState extends State<_AfterReflectionView> {
                     16.spaceH,
                     Slider(
                       value: state.intensityValue,
-                      onChanged: (double value) =>
-                          context.read<AfterReflectionCubit>().setIntensity(value),
+                      onChanged: (double value) => context
+                          .read<AfterReflectionCubit>()
+                          .setIntensity(value),
                       activeColor: secondaryColor,
                       inactiveColor: const Color(0xFFE5E7EB),
                     ),
@@ -226,29 +227,33 @@ class _AfterReflectionViewState extends State<_AfterReflectionView> {
                           context,
                           "Calm",
                           state.selectedFeeling,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setFeeling(v),
+                          (String v) => context
+                              .read<AfterReflectionCubit>()
+                              .setFeeling(v),
                         ),
                         _buildChip(
                           context,
                           "Tired",
                           state.selectedFeeling,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setFeeling(v),
+                          (String v) => context
+                              .read<AfterReflectionCubit>()
+                              .setFeeling(v),
                         ),
                         _buildChip(
                           context,
                           "Frustrated",
                           state.selectedFeeling,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setFeeling(v),
+                          (String v) => context
+                              .read<AfterReflectionCubit>()
+                              .setFeeling(v),
                         ),
                         _buildChip(
                           context,
                           "Okay",
                           state.selectedFeeling,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setFeeling(v),
+                          (String v) => context
+                              .read<AfterReflectionCubit>()
+                              .setFeeling(v),
                         ),
                       ],
                     ),

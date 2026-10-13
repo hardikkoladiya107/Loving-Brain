@@ -15,7 +15,8 @@ abstract class CalmPlanState with _$CalmPlanState {
       CalmPlanAction(
         stepNumber: '1',
         title: 'Lower stimulation now',
-        description: 'Dim the room, turn off background noise, and pause high-energy play.',
+        description:
+            'Dim the room, turn off background noise, and pause high-energy play.',
       ),
       CalmPlanAction(
         stepNumber: '2',
@@ -25,13 +26,16 @@ abstract class CalmPlanState with _$CalmPlanState {
       CalmPlanAction(
         stepNumber: '3',
         title: 'Stay close and steady',
-        description: 'Your calm physical presence is the clearest safety signal.',
+        description:
+            'Your calm physical presence is the clearest safety signal.',
       ),
     ])
     List<CalmPlanAction> actions,
     @Default("Don't introduce a new demand right now")
     String avoidInstructionTitle,
-    @Default('Requests, transitions, and boundary debates can wait until your child has settled.')
+    @Default(
+      'Requests, transitions, and boundary debates can wait until your child has settled.',
+    )
     String avoidInstructionSubtitle,
     @Default('your child') String childName,
   }) = _CalmPlanState;

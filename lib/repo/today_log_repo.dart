@@ -21,10 +21,10 @@ class TodayLogRepo {
   factory TodayLogRepo() => _instance;
   static TodayLogRepo get instance => _instance;
 
-  final CollectionReference<Map<String, dynamic>> _childrenCollection =
+  CollectionReference<Map<String, dynamic>> get _childrenCollection =>
       FirebaseFirestore.instance.collection('children');
 
-  final CollectionReference<Map<String, dynamic>> _usersCollection =
+  CollectionReference<Map<String, dynamic>> get _usersCollection =>
       FirebaseFirestore.instance.collection('users');
 
   /// Resolves the currently active child ID from SharedPreferences or Firebase user.

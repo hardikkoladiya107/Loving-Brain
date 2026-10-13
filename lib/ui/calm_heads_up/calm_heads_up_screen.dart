@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -170,17 +169,23 @@ class _CalmHeadsUpViewState extends State<_CalmHeadsUpView> {
         children: [
           Row(
             children: [
-              _buildDot(state.confidenceDots >= 1
-                  ? const Color(0xFF6A5AE0)
-                  : const Color(0xFF6A5AE0).withValues(alpha: 0.2)),
+              _buildDot(
+                state.confidenceDots >= 1
+                    ? const Color(0xFF6A5AE0)
+                    : const Color(0xFF6A5AE0).withValues(alpha: 0.2),
+              ),
               4.spaceW,
-              _buildDot(state.confidenceDots >= 2
-                  ? const Color(0xFF6A5AE0)
-                  : const Color(0xFF6A5AE0).withValues(alpha: 0.2)),
+              _buildDot(
+                state.confidenceDots >= 2
+                    ? const Color(0xFF6A5AE0)
+                    : const Color(0xFF6A5AE0).withValues(alpha: 0.2),
+              ),
               4.spaceW,
-              _buildDot(state.confidenceDots >= 3
-                  ? const Color(0xFF6A5AE0)
-                  : const Color(0xFF6A5AE0).withValues(alpha: 0.2)),
+              _buildDot(
+                state.confidenceDots >= 3
+                    ? const Color(0xFF6A5AE0)
+                    : const Color(0xFF6A5AE0).withValues(alpha: 0.2),
+              ),
             ],
           ),
           8.spaceW,
@@ -260,9 +265,7 @@ class _CalmHeadsUpViewState extends State<_CalmHeadsUpView> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => CalmPlanScreen(
-                    forecast: state.forecast,
-                  ),
+                  builder: (_) => CalmPlanScreen(forecast: state.forecast),
                 ),
               );
             },
@@ -303,7 +306,11 @@ class _CalmHeadsUpViewState extends State<_CalmHeadsUpView> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.warning_amber_rounded, color: const Color(0xFF856404), size: 16.sp),
+          Icon(
+            Icons.warning_amber_rounded,
+            color: const Color(0xFF856404),
+            size: 16.sp,
+          ),
           8.spaceW,
           Expanded(
             child: caveat.appText(

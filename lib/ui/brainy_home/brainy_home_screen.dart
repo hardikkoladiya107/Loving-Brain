@@ -67,11 +67,11 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
               children: [
                 // Top Left Glow
                 Positioned(
-                  left: -150,
-                  top: -150,
+                  left: -150.w,
+                  top: -150.h,
                   child: Container(
-                    width: 400,
-                    height: 400,
+                    width: 400.w,
+                    height: 400.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
@@ -268,13 +268,13 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
     BrainyHomeState state,
     String title,
   ) {
-    bool isSelected = title == state.selectedTopic;
+    final bool isSelected = title == state.selectedTopic;
     return Material(
       color: Colors.transparent,
       child: Ink(
         decoration: BoxDecoration(
           color: isSelected ? indigoLight : Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(
             color: isSelected ? secondaryColor : Colors.transparent,
             width: 1,

@@ -246,11 +246,11 @@ class _BehaviourPatternViewState extends State<_BehaviourPatternView> {
                 12.spaceH,
                 "${state.totalTantrums} logged moments analyzed for ${state.childName}."
                     .appText(
-                  fontSize: 12.sp,
-                  color: greyColor6,
-                  textAlign: TextAlign.start,
-                  height: 1.4,
-                ),
+                      fontSize: 12.sp,
+                      color: greyColor6,
+                      textAlign: TextAlign.start,
+                      height: 1.4,
+                    ),
               ],
             ),
           ),

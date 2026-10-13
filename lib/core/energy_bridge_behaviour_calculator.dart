@@ -8,12 +8,7 @@ import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 
 /// Tantrum / Behaviour risk level (internal engine score).
-enum BehaviourRiskLevel {
-  none,
-  low,
-  moderate,
-  high,
-}
+enum BehaviourRiskLevel { none, low, moderate, high }
 
 /// A structured action step in a Calm Plan (Screen 29).
 class CalmPlanAction {
@@ -28,10 +23,10 @@ class CalmPlanAction {
   });
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'stepNumber': stepNumber,
-        'title': title,
-        'description': description,
-      };
+    'stepNumber': stepNumber,
+    'title': title,
+    'description': description,
+  };
 }
 
 /// The complete calculated output from Energy Bridge for Calm Heads-Up & Behaviour (Screens 28–30).
@@ -43,7 +38,8 @@ class BehaviourForecastResult {
   final String windowStart; // e.g. "5:30 PM"
   final String windowEnd; // e.g. "7:00 PM"
   final String headline; // "A harder window may be more likely"
-  final String reason; // "Between 5:30 and 7:00 PM — a skipped nap and late afternoon fatigue today."
+  final String
+  reason; // "Between 5:30 and 7:00 PM — a skipped nap and late afternoon fatigue today."
   final List<String> contributingSignals;
   final List<CalmPlanAction> actions;
   final String avoidInstructionTitle;
@@ -114,14 +110,15 @@ class EnergyBridgeBehaviourCalculator {
     DateTime? referenceTime,
   }) {
     final DateTime now = referenceTime ?? DateTime.now();
-    final String childName = (childModel?.childName != null &&
+    final String childName =
+        (childModel?.childName != null &&
             childModel!.childName!.trim().isNotEmpty)
         ? childModel.childName!.trim()
         : 'your child';
 
     final int childAgeMonths = AgeUtils.resolvedAgeInMonths(
-      childModel?.childAge,
-      dob: childModel?.dob,
+      dob: childModel?.childDob,
+      legacyAgeText: childModel?.childAge ?? '',
     );
 
     final bool hasPersonalLogs = tantrumLogs.isNotEmpty;
@@ -132,10 +129,11 @@ class EnergyBridgeBehaviourCalculator {
     // Signal A: Sleep pressure (short nap or long wake window)
     if (sleepLogs.isNotEmpty) {
       final SleepLogModel latestSleep = sleepLogs.first;
-      if (latestSleep.durationMinutes > 0 && latestSleep.durationMinutes < 45) {
+      final int? dur = latestSleep.durationMinutes;
+      if (dur != null && dur > 0 && dur < 45) {
         signals.add('a short nap');
-      } else if (latestSleep.wakeTime != null) {
-        final DateTime wakeDate = latestSleep.wakeTime!;
+      } else {
+        final DateTime wakeDate = latestSleep.wakeTime;
         final int hoursAwake = now.difference(wakeDate).inHours;
         if (hoursAwake >= 4) {
           signals.add('extended wake window');
@@ -168,14 +166,13 @@ class EnergyBridgeBehaviourCalculator {
     if (tantrumLogs.isNotEmpty) {
       int eveningTantrumCount = 0;
       for (final TantrumLogModel log in tantrumLogs) {
-        if (log.timestamp != null) {
-          final int h = log.timestamp!.hour;
-          if (h >= 16 && h <= 20) {
-            eveningTantrumCount++;
-          }
+        final int h = log.timestamp.hour;
+        if (h >= 16 && h <= 20) {
+          eveningTantrumCount++;
         }
       }
-      if (eveningTantrumCount >= 2 && !signals.contains('late afternoon transition rhythm')) {
+      if (eveningTantrumCount >= 2 &&
+          !signals.contains('late afternoon transition rhythm')) {
         signals.add('recurring afternoon pattern');
       }
     }
@@ -225,8 +222,8 @@ class EnergyBridgeBehaviourCalculator {
     String? healthCaveat;
     if (healthLogs.isNotEmpty) {
       final HealthLogModel latestHealth = healthLogs.first;
-      final bool isRecentHealth = latestHealth.timestamp != null &&
-          now.difference(latestHealth.timestamp!).inHours < 48;
+      final bool isRecentHealth =
+          now.difference(latestHealth.timestamp).inHours < 48;
       if (isRecentHealth) {
         healthCaveat =
             'Recent health symptoms noted (${latestHealth.issues.join(", ")}). Behaviour predictions are less predictable during illness.';
@@ -251,7 +248,9 @@ class EnergyBridgeBehaviourCalculator {
 
     // 6. Dynamic Probabilistic Reason String (V2 master copy)
     final String signal1 = signals.isNotEmpty ? signals.first : 'tiredness';
-    final String signal2 = signals.length > 1 ? signals[1] : 'transition rhythm';
+    final String signal2 = signals.length > 1
+        ? signals[1]
+        : 'transition rhythm';
     final String reason =
         'Between $windowStart and $windowEnd — $signal1 and $signal2 today.';
 
@@ -260,7 +259,8 @@ class EnergyBridgeBehaviourCalculator {
       const CalmPlanAction(
         stepNumber: '1',
         title: 'Lower stimulation now',
-        description: 'Dim the room, turn off background noise, and pause high-energy play.',
+        description:
+            'Dim the room, turn off background noise, and pause high-energy play.',
       ),
       CalmPlanAction(
         stepNumber: '2',
@@ -277,7 +277,7 @@ class EnergyBridgeBehaviourCalculator {
     ];
 
     const String avoidTitle = "Don't introduce a new demand right now";
-    const String avoidSubtitle =
+    final String avoidSubtitle =
         'Requests, transitions, and boundary debates can wait until $childName has completely settled.';
 
     return BehaviourForecastResult(
@@ -292,7 +292,7 @@ class EnergyBridgeBehaviourCalculator {
       contributingSignals: signals,
       actions: actions,
       avoidInstructionTitle: avoidTitle,
-      avoidInstructionSubtitle: avoidSubtitle.replaceAll('\$childName', childName),
+      avoidInstructionSubtitle: avoidSubtitle,
       childName: childName,
       childAgeMonths: childAgeMonths,
       healthCaveat: healthCaveat,
@@ -310,7 +310,10 @@ class EnergyBridgeBehaviourCalculator {
         totalTantrums: 0,
         mostCommonTimeWindow: 'Late afternoon (5:00–7:00 PM)',
         topTriggers: const <String>['Tiredness', 'Transitions'],
-        topHelpedStrategies: const <String>['Lowering stimulation', 'Quiet proximity'],
+        topHelpedStrategies: const <String>[
+          'Lowering stimulation',
+          'Quiet proximity',
+        ],
         averageIntensity: 0.5,
         insightText:
             'Start logging difficult moments to unlock $childName\'s personal pattern and effective strategies.',
@@ -327,29 +330,35 @@ class EnergyBridgeBehaviourCalculator {
       for (final String t in log.triggers) {
         triggerCounts[t] = (triggerCounts[t] ?? 0) + 1;
       }
-      if (log.whatHelped != null && log.whatHelped!.isNotEmpty) {
-        helpedCounts[log.whatHelped!] = (helpedCounts[log.whatHelped!] ?? 0) + 1;
+      if (log.whatHelped.isNotEmpty) {
+        helpedCounts[log.whatHelped] = (helpedCounts[log.whatHelped] ?? 0) + 1;
       }
-      if (log.intensity != null) {
-        totalIntensity += log.intensity!;
-        countWithIntensity++;
-      }
+      totalIntensity += log.intensity;
+      countWithIntensity++;
     }
 
     final List<String> sortedTriggers = triggerCounts.keys.toList()
-      ..sort((String a, String b) => (triggerCounts[b] ?? 0).compareTo(triggerCounts[a] ?? 0));
+      ..sort(
+        (String a, String b) =>
+            (triggerCounts[b] ?? 0).compareTo(triggerCounts[a] ?? 0),
+      );
 
     final List<String> sortedHelped = helpedCounts.keys.toList()
-      ..sort((String a, String b) => (helpedCounts[b] ?? 0).compareTo(helpedCounts[a] ?? 0));
+      ..sort(
+        (String a, String b) =>
+            (helpedCounts[b] ?? 0).compareTo(helpedCounts[a] ?? 0),
+      );
 
     final double avgIntensity = countWithIntensity > 0
         ? (totalIntensity / countWithIntensity)
         : 0.5;
 
-    final String primaryTrigger =
-        sortedTriggers.isNotEmpty ? sortedTriggers.first.toLowerCase() : 'tiredness';
-    final String primaryHelped =
-        sortedHelped.isNotEmpty ? sortedHelped.first.toLowerCase() : 'quiet connection';
+    final String primaryTrigger = sortedTriggers.isNotEmpty
+        ? sortedTriggers.first.toLowerCase()
+        : 'tiredness';
+    final String primaryHelped = sortedHelped.isNotEmpty
+        ? sortedHelped.first.toLowerCase()
+        : 'quiet connection';
 
     return BehaviourPatternSummary(
       totalTantrums: logs.length,

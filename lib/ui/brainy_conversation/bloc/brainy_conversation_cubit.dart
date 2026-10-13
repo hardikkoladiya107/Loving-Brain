@@ -435,15 +435,17 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }) {
     final String cleaned = rawText.trim();
     if (cleaned.contains('---')) {
-      final parts = cleaned.split('---');
-      final part1 = _extractHeadlineAndSubtext(parts[0].trim());
-      final part2 = parts.length > 1
+      final List<String> parts = cleaned.split('---');
+      final (String, String?) part1 = _extractHeadlineAndSubtext(
+        parts[0].trim(),
+      );
+      final (String, String?) part2 = parts.length > 1
           ? _extractHeadlineAndSubtext(parts[1].trim())
           : (
               'Try one gentle step tonight',
               'Keep your voice low and predictable to help your child settle.',
             );
-      return [
+      final List<BrainyMessage> messages = <BrainyMessage>[
         BrainyMessage(
           id: baseId != null ? '${baseId}_info' : null,
           type: MessageType.aiInfo,
@@ -461,10 +463,30 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           isSaved: isSaved,
         ),
       ];
+
+      if (parts.length > 2) {
+        final (String, String?) part3 = _extractHeadlineAndSubtext(
+          parts[2].trim(),
+        );
+        if (part3.$1.trim().isNotEmpty) {
+          messages.add(
+            BrainyMessage(
+              id: baseId != null ? '${baseId}_help' : null,
+              type: MessageType.aiInfo,
+              chipTitle: 'When to get help',
+              headline: part3.$1,
+              subtext: part3.$2,
+              isSaved: isSaved,
+            ),
+          );
+        }
+      }
+
+      return messages;
     }
 
-    final parsed = _extractHeadlineAndSubtext(cleaned);
-    return [
+    final (String, String?) parsed = _extractHeadlineAndSubtext(cleaned);
+    return <BrainyMessage>[
       BrainyMessage(
         id: baseId,
         type: MessageType.aiInfo,

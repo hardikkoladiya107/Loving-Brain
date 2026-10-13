@@ -9,132 +9,160 @@ import 'package:loving_brain/ui/widget/app_button.dart';
 import 'bloc/brainy_history_cubit.dart';
 import 'bloc/brainy_history_state.dart';
 
-class BrainyHistoryScreen extends StatelessWidget {
+class BrainyHistoryScreen extends StatefulWidget {
   const BrainyHistoryScreen({super.key});
 
   @override
+  State<BrainyHistoryScreen> createState() => _BrainyHistoryScreenState();
+}
+
+class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => BrainyHistoryCubit()..init(),
-      child: BlocBuilder<BrainyHistoryCubit, BrainyHistoryState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocProvider<BrainyHistoryCubit>(
+      create: (BuildContext context) => BrainyHistoryCubit()..init(),
+      child: const _BrainyHistoryView(),
+    );
+  }
+}
+
+class _BrainyHistoryView extends StatefulWidget {
+  const _BrainyHistoryView();
+
+  @override
+  State<_BrainyHistoryView> createState() => _BrainyHistoryViewState();
+}
+
+class _BrainyHistoryViewState extends State<_BrainyHistoryView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BrainyHistoryCubit>().init();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<BrainyHistoryCubit, BrainyHistoryState>(
+      listener: (BuildContext context, BrainyHistoryState state) {},
+      builder: (BuildContext context, BrainyHistoryState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      16.spaceH,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(24),
-                              onTap: () => Navigator.pop(context),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: darkBlue,
-                                  size: 24.sp,
-                                ),
+              ),
+              SafeArea(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  children: [
+                    16.spaceH,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Ink(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(24.r),
+                            onTap: () => Navigator.pop(context),
+                            child: Padding(
+                              padding: EdgeInsets.all(8.r),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
                               ),
                             ),
                           ),
                         ),
                       ),
+                    ),
+                    32.spaceH,
+                    "History".appText(
+                      fontSize: 28.sp,
+                      color: darkBlue,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    if (state.thisWeekHistory.isNotEmpty) ...[
                       32.spaceH,
-                      "History".appText(
-                        fontSize: 28.sp,
-                        color: darkBlue,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
-                      if (state.thisWeekHistory.isNotEmpty) ...[
-                        32.spaceH,
-                        _buildSectionTitle("THIS WEEK"),
-                        12.spaceH,
-                        ...state.thisWeekHistory.map((item) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 8.h),
-                            child: _buildHistoryItem(context, item: item),
-                          );
-                        }),
-                      ],
-                      if (state.earlierHistory.isNotEmpty) ...[
-                        32.spaceH,
-                        _buildSectionTitle("EARLIER", color: greyColor11),
-                        12.spaceH,
-                        ...state.earlierHistory.map((item) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 8.h),
-                            child: _buildHistoryItem(context, item: item),
-                          );
-                        }),
-                      ],
-                      32.spaceH,
-                      Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF9F9F9),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: greyColor,
-                              size: 20.sp,
-                            ),
-                            12.spaceW,
-                            Expanded(
-                              child:
-                                  "History is kept for 30 days to help provide better insights."
-                                      .appText(
-                                        fontSize: 12.sp,
-                                        color: greyColor,
-                                        textAlign: TextAlign.start,
-                                        height: 1.4,
-                                      ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildSectionTitle("THIS WEEK"),
+                      12.spaceH,
+                      ...state.thisWeekHistory.map((BrainyHistoryItem item) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: _buildHistoryItem(context, item: item),
+                        );
+                      }),
                     ],
-                  ),
+                    if (state.earlierHistory.isNotEmpty) ...[
+                      32.spaceH,
+                      _buildSectionTitle("EARLIER", color: greyColor11),
+                      12.spaceH,
+                      ...state.earlierHistory.map((BrainyHistoryItem item) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: _buildHistoryItem(context, item: item),
+                        );
+                      }),
+                    ],
+                    32.spaceH,
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF9F9F9),
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: greyColor,
+                            size: 20.sp,
+                          ),
+                          12.spaceW,
+                          Expanded(
+                            child:
+                                "History is kept for 30 days to help provide better insights."
+                                    .appText(
+                                      fontSize: 12.sp,
+                                      color: greyColor,
+                                      textAlign: TextAlign.start,
+                                      height: 1.4,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -156,10 +184,10 @@ class BrainyHistoryScreen extends StatelessWidget {
       child: Ink(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(24.r),
           onTap: () {
             Navigator.push(
               context,
@@ -219,7 +247,7 @@ class BrainyHistoryScreen extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context, String conversationId) {
-    final cubit = context.read<BrainyHistoryCubit>();
+    final BrainyHistoryCubit cubit = context.read<BrainyHistoryCubit>();
     showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.4),

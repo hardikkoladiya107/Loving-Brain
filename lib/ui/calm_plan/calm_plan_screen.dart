@@ -15,10 +15,7 @@ import 'bloc/calm_plan_state.dart';
 class CalmPlanScreen extends StatefulWidget {
   final BehaviourForecastResult? forecast;
 
-  const CalmPlanScreen({
-    super.key,
-    this.forecast,
-  });
+  const CalmPlanScreen({super.key, this.forecast});
 
   @override
   State<CalmPlanScreen> createState() => _CalmPlanScreenState();
@@ -28,7 +25,8 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CalmPlanCubit>(
-      create: (BuildContext context) => CalmPlanCubit()..init(forecast: widget.forecast),
+      create: (BuildContext context) =>
+          CalmPlanCubit()..init(forecast: widget.forecast),
       child: _CalmPlanView(forecast: widget.forecast),
     );
   }
