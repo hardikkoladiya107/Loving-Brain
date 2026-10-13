@@ -70,13 +70,10 @@ class _BaseScreenState extends State<BaseScreen> {
         ],
       ),
       padding: EdgeInsets.only(
-        left: 20.w,
-        right: 20.w,
-        top: 12.h,
-        bottom: MediaQuery.of(context).padding.bottom + 12.h,
+        top: 8.h,
+        bottom: MediaQuery.of(context).padding.bottom + 8.h,
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _animatedNavItem(
             index: 0,
@@ -118,46 +115,52 @@ class _BaseScreenState extends State<BaseScreen> {
     final Color activeColor = primaryColor;
     final Color inactiveColor = greyColor1.withValues(alpha: 0.5);
 
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutQuint,
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? activeColor.withValues(alpha: 0.1)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(100.r),
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, anim) =>
-                  ScaleTransition(scale: anim, child: child),
-              child: SvgPicture.asset(
-                iconPath,
-                key: ValueKey(isSelected),
-                colorFilter: ColorFilter.mode(
-                  isSelected ? activeColor : inactiveColor,
-                  BlendMode.srcIn,
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          color: Colors.transparent,
+          padding: EdgeInsets.symmetric(vertical: 6.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutQuint,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? activeColor.withValues(alpha: 0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(100.r),
                 ),
-                width: 24.w,
-                height: 24.w,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, anim) =>
+                      ScaleTransition(scale: anim, child: child),
+                  child: SvgPicture.asset(
+                    iconPath,
+                    key: ValueKey(isSelected),
+                    colorFilter: ColorFilter.mode(
+                      isSelected ? activeColor : inactiveColor,
+                      BlendMode.srcIn,
+                    ),
+                    width: 24.w,
+                    height: 24.w,
+                  ),
+                ),
               ),
-            ),
+              4.spaceH,
+              title.appText(
+                color: isSelected ? activeColor : inactiveColor,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                fontSize: 12,
+              ),
+            ],
           ),
-          SizedBox(height: 4.h),
-          title.appText(
-            color: isSelected ? activeColor : inactiveColor,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 12.sp,
-          ),
-        ],
+        ),
       ),
     );
   }
