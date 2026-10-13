@@ -2,30 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/permissions/permissions_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/person_card.dart';
 import 'package:loving_brain/ui/widget/status_pill.dart';
 
-import 'package:loving_brain/ui/permissions/permissions_screen.dart';
+/// Screen 57: Invite Accepted.
+/// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
+class InviteAcceptedScreen extends StatefulWidget {
+  final String? caregiverName;
+  final String? caregiverRole;
 
-class InviteAcceptedScreen extends StatelessWidget {
-  const InviteAcceptedScreen({super.key});
+  const InviteAcceptedScreen({
+    super.key,
+    this.caregiverName,
+    this.caregiverRole,
+  });
 
   @override
+  State<InviteAcceptedScreen> createState() => _InviteAcceptedScreenState();
+}
+
+class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
+  @override
   Widget build(BuildContext context) {
+    final String name = widget.caregiverName ?? "Grandma";
+    final String role = widget.caregiverRole ?? "Grandparent";
+
     return Scaffold(
       backgroundColor: const Color(0xFFFEF8F4),
       body: Stack(
         children: [
           // Top Left Glow
           Positioned(
-            left: -150,
-            top: -150,
+            left: -150.w,
+            top: -150.h,
             child: Container(
-              width: 400,
-              height: 400,
+              width: 400.w,
+              height: 400.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -40,11 +56,11 @@ class InviteAcceptedScreen extends StatelessWidget {
           ),
           // Bottom Right Glow
           Positioned(
-            right: -150,
+            right: -150.w,
             bottom: 0,
             child: Container(
-              width: 400,
-              height: 400,
+              width: 400.w,
+              height: 400.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -70,7 +86,7 @@ class InviteAcceptedScreen extends StatelessWidget {
                   child: InkWell(
                     onTap: () => Navigator.pop(context),
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: EdgeInsets.all(8.r),
                       decoration: const BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
@@ -97,23 +113,23 @@ class InviteAcceptedScreen extends StatelessWidget {
                       24.spaceH,
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(20.w),
+                        padding: EdgeInsets.all(20.r),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             StatusPill.accepted(),
                             16.spaceH,
-                            "Grandma has joined".appText(
+                            "$name has joined".appText(
                               fontSize: 20.sp,
                               color: greyColor9,
                               fraunces: true,
                             ),
                             8.spaceH,
-                            "She can now see what you've shared sleep updates and today's plan."
+                            "They can now see what you've shared sleep updates and today's plan."
                                 .appText(
                                   fontSize: 14.sp,
                                   color: greyColor,
@@ -135,8 +151,8 @@ class InviteAcceptedScreen extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-                        name: "Grandma",
-                        subtitle: "Grandparent Â· joined today",
+                        name: name,
+                        subtitle: "$role · joined today",
                         statusPill: StatusPill.linked(),
                         showChevron: false,
                       ),
@@ -144,30 +160,34 @@ class InviteAcceptedScreen extends StatelessWidget {
                       InfoBox.white(
                         title: "Worth checking",
                         body:
-                            "Have a look at what she can see. You can adjust it now or any time later.",
+                            "Have a look at what they can see. You can adjust it now or any time later.",
                       ),
-                      160.spaceH,
+                      180.spaceH,
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          _buildBottomActions(context),
+          _buildBottomActions(context, name, role),
         ],
       ),
     );
   }
 
-  Widget _buildBottomActions(BuildContext context) {
+  Widget _buildBottomActions(
+    BuildContext context,
+    String name,
+    String role,
+  ) {
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
       child: Container(
         padding: EdgeInsets.only(
-          top: 40.h,
-          bottom: 40.h,
+          top: 32.h,
+          bottom: 32.h,
           left: 20.w,
           right: 20.w,
         ),
@@ -190,15 +210,19 @@ class InviteAcceptedScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const PermissionsScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => PermissionsScreen(
+                      caregiverName: name,
+                      caregiverRole: role,
+                    ),
+                  ),
                 );
               },
             ),
             16.spaceH,
             BaseButton(
               onTap: () {
-                // Return to family menu (simulate by popping multiple times)
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
               },
               child: "Back to Family".appText(
                 fontSize: 16.sp,

@@ -1,153 +1,173 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
+import 'package:loving_brain/ui/guide_profile/guide_profile_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/choose_support_area_cubit.dart';
 import 'bloc/choose_support_area_state.dart';
 
-class ChooseSupportAreaScreen extends StatelessWidget {
-  ChooseSupportAreaScreen({super.key});
+/// Screen 45: Choose a Support Area.
+/// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
+class ChooseSupportAreaScreen extends StatefulWidget {
+  final String? initialArea;
 
-  final List<Map<String, dynamic>> _options = [
-    {
+  const ChooseSupportAreaScreen({super.key, this.initialArea});
+
+  @override
+  State<ChooseSupportAreaScreen> createState() =>
+      _ChooseSupportAreaScreenState();
+}
+
+class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
+  final List<Map<String, dynamic>> _options = <Map<String, dynamic>>[
+    <String, dynamic>{
       "icon": Assets.v2.images.imgSleep.path,
-      "bg": const Color(0xFFFEF0E8), // soft peach
+      "bg": const Color(0xFFFEF0E8),
       "title": "Sleep guidance",
       "subtitle": "Bedtime, naps, night waking",
     },
-    {
+    <String, dynamic>{
       "icon": Assets.v2.icons.icTantrums.path,
-      "bg": const Color(0xFFF1EEFF), // soft purple
+      "bg": const Color(0xFFF1EEFF),
       "title": "Tantrum & behaviour",
       "subtitle": "Big feelings, hitting, refusing",
     },
-    {
+    <String, dynamic>{
       "icon": Assets.v2.images.imgHealth.path,
-      "bg": const Color(0xFFE8F7EC), // soft green
+      "bg": const Color(0xFFE8F7EC),
       "title": "Eating & nutrition",
       "subtitle": "Picky eating, mealtime stress",
     },
-    {
+    <String, dynamic>{
       "icon": Assets.v2.icons.icMoreConfident.path,
-      "bg": const Color(0xFFFFF2D9), // soft yellow
+      "bg": const Color(0xFFFFF2D9),
       "title": "Parental confidence",
       "subtitle": "Anxiety, feeling overwhelmed",
     },
-    {
+    <String, dynamic>{
       "icon": Assets.v2.icons.icTeamwork.path,
-      "bg": const Color(0xFFFDECEF), // soft pink
+      "bg": const Color(0xFFFDECEF),
       "title": "Co-parenting",
       "subtitle": "Getting on the same page",
     },
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<ChooseSupportAreaCubit>()
+          .init(initialArea: widget.initialArea);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ChooseSupportAreaCubit(),
-      child: BlocBuilder<ChooseSupportAreaCubit, ChooseSupportAreaState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocConsumer<ChooseSupportAreaCubit, ChooseSupportAreaState>(
+      listener: (BuildContext context, ChooseSupportAreaState state) {},
+      builder: (BuildContext context, ChooseSupportAreaState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "What kind of support?".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            "Pick the one closest to what you need right now."
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                ),
-                            24.spaceH,
-                            ...List.generate(_options.length, (index) {
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 12.h),
-                                child: _buildOptionCard(
-                                  context: context,
-                                  index: index,
-                                  iconPath: _options[index]["icon"],
-                                  bgColor: _options[index]["bg"],
-                                  title: _options[index]["title"],
-                                  subtitle: _options[index]["subtitle"],
-                                  isSelected: index == state.selectedIndex,
-                                ),
-                              );
-                            }),
-                            120.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "What kind of support?".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          "Pick the one closest to what you need right now."
+                              .appText(
+                                fontSize: 14.sp,
+                                color: greyColor9,
+                                textAlign: TextAlign.start,
+                              ),
+                          24.spaceH,
+                          ...List.generate(_options.length, (int index) {
+                            final Map<String, dynamic> item = _options[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: _buildOptionCard(
+                                context: context,
+                                index: index,
+                                iconPath: item["icon"] as String,
+                                bgColor: item["bg"] as Color,
+                                title: item["title"] as String,
+                                subtitle: item["subtitle"] as String,
+                                isSelected: index == state.selectedIndex,
+                              ),
+                            );
+                          }),
+                          140.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, state),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -165,13 +185,13 @@ class ChooseSupportAreaScreen extends StatelessWidget {
         context.read<ChooseSupportAreaCubit>().selectArea(index);
       },
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: isSelected ? primaryColor : Colors.transparent,
-            width: 2,
+            width: 2.w,
           ),
         ),
         child: Row(
@@ -181,7 +201,7 @@ class ChooseSupportAreaScreen extends StatelessWidget {
               height: 56.w,
               decoration: BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.r),
               ),
               child: Center(
                 child: Image.asset(
@@ -220,7 +240,7 @@ class ChooseSupportAreaScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected ? primaryColor : const Color(0xFFE5E7EB),
-                  width: isSelected ? 7 : 2,
+                  width: isSelected ? 7.w : 2.w,
                 ),
               ),
             ),
@@ -230,7 +250,10 @@ class ChooseSupportAreaScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomActions(BuildContext context) {
+  Widget _buildBottomActions(
+    BuildContext context,
+    ChooseSupportAreaState state,
+  ) {
     return Positioned(
       bottom: 0,
       left: 0,
@@ -257,9 +280,16 @@ class ChooseSupportAreaScreen extends StatelessWidget {
         child: AppButton(
           title: "Continue",
           onTap: () {
+            final String selectedTitle =
+                (state.selectedIndex < _options.length)
+                ? _options[state.selectedIndex]["title"] as String
+                : "Sleep guidance";
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const ProgrammeDetailScreen()),
+              MaterialPageRoute(
+                builder: (_) =>
+                    GuideProfileScreen(supportArea: selectedTitle),
+              ),
             );
           },
         ),

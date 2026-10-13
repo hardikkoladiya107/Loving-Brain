@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChooseSupportAreaState {
 
- int get selectedIndex;
+ int get selectedIndex; List<String> get areas;
 /// Create a copy of ChooseSupportAreaState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ChooseSupportAreaStateCopyWith<ChooseSupportAreaState> get copyWith => _$Choose
 @override
 bool operator ==(Object other) {
   final _this = this as ChooseSupportAreaState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChooseSupportAreaState&&(identical(other.selectedIndex, _this.selectedIndex) || other.selectedIndex == _this.selectedIndex));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChooseSupportAreaState&&(identical(other.selectedIndex, _this.selectedIndex) || other.selectedIndex == _this.selectedIndex)&&const DeepCollectionEquality().equals(other.areas, _this.areas));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ChooseSupportAreaState;
-  return Object.hash(runtimeType,_this.selectedIndex);
+  return Object.hash(runtimeType,_this.selectedIndex,const DeepCollectionEquality().hash(_this.areas));
 }
 
 @override
 String toString() {
   final _this = this as ChooseSupportAreaState;
-  return 'ChooseSupportAreaState(selectedIndex: ${_this.selectedIndex})';
+  return 'ChooseSupportAreaState(selectedIndex: ${_this.selectedIndex}, areas: ${_this.areas})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ChooseSupportAreaStateCopyWith<$Res>  {
   factory $ChooseSupportAreaStateCopyWith(ChooseSupportAreaState value, $Res Function(ChooseSupportAreaState) _then) = _$ChooseSupportAreaStateCopyWithImpl;
 @useResult
 $Res call({
- int selectedIndex
+ int selectedIndex, List<String> areas
 });
 
 
@@ -68,10 +68,11 @@ class _$ChooseSupportAreaStateCopyWithImpl<$Res>
 
 /// Create a copy of ChooseSupportAreaState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedIndex = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedIndex = null,Object? areas = null,}) {
   return _then(ChooseSupportAreaState(
 selectedIndex: null == selectedIndex ? _self.selectedIndex : selectedIndex // ignore: cast_nullable_to_non_nullable
-as int,
+as int,areas: null == areas ? _self.areas : areas // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 
@@ -156,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int selectedIndex)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int selectedIndex,  List<String> areas)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChooseSupportAreaState() when $default != null:
-return $default(_that.selectedIndex);case _:
+return $default(_that.selectedIndex,_that.areas);case _:
   return orElse();
 
 }
@@ -177,10 +178,10 @@ return $default(_that.selectedIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int selectedIndex)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int selectedIndex,  List<String> areas)  $default,) {final _that = this;
 switch (_that) {
 case _ChooseSupportAreaState():
-return $default(_that.selectedIndex);case _:
+return $default(_that.selectedIndex,_that.areas);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +198,10 @@ return $default(_that.selectedIndex);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int selectedIndex)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int selectedIndex,  List<String> areas)?  $default,) {final _that = this;
 switch (_that) {
 case _ChooseSupportAreaState() when $default != null:
-return $default(_that.selectedIndex);case _:
+return $default(_that.selectedIndex,_that.areas);case _:
   return null;
 
 }
@@ -212,10 +213,17 @@ return $default(_that.selectedIndex);case _:
 
 
 class _ChooseSupportAreaState implements ChooseSupportAreaState {
-  const _ChooseSupportAreaState({this.selectedIndex = 0});
+  const _ChooseSupportAreaState({this.selectedIndex = 0,  List<String> areas = const <String>['Sleep', 'Behaviour', 'Parent Wellbeing', 'Co-parenting', 'General Parenting']}): _areas = areas;
   
 
 @override@JsonKey() final  int selectedIndex;
+ final  List<String> _areas;
+@override@JsonKey() List<String> get areas {
+  if (_areas is EqualUnmodifiableListView) return _areas;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_areas);
+}
+
 
 /// Create a copy of ChooseSupportAreaState
 /// with the given fields replaced by the non-null parameter values.
@@ -227,18 +235,18 @@ _$ChooseSupportAreaStateCopyWith<_ChooseSupportAreaState> get copyWith => __$Cho
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChooseSupportAreaState&&(identical(other.selectedIndex, selectedIndex) || other.selectedIndex == selectedIndex));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChooseSupportAreaState&&(identical(other.selectedIndex, selectedIndex) || other.selectedIndex == selectedIndex)&&const DeepCollectionEquality().equals(other.areas, _areas));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,selectedIndex);
+    return Object.hash(runtimeType,selectedIndex,const DeepCollectionEquality().hash(_areas));
 }
 
 @override
 String toString() {
-    return 'ChooseSupportAreaState(selectedIndex: $selectedIndex)';
+    return 'ChooseSupportAreaState(selectedIndex: $selectedIndex, areas: $areas)';
 }
 
 
@@ -249,7 +257,7 @@ abstract mixin class _$ChooseSupportAreaStateCopyWith<$Res> implements $ChooseSu
   factory _$ChooseSupportAreaStateCopyWith(_ChooseSupportAreaState value, $Res Function(_ChooseSupportAreaState) _then) = __$ChooseSupportAreaStateCopyWithImpl;
 @override @useResult
 $Res call({
- int selectedIndex
+ int selectedIndex, List<String> areas
 });
 
 
@@ -266,10 +274,11 @@ class __$ChooseSupportAreaStateCopyWithImpl<$Res>
 
 /// Create a copy of ChooseSupportAreaState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedIndex = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedIndex = null,Object? areas = null,}) {
   return _then(_ChooseSupportAreaState(
 selectedIndex: null == selectedIndex ? _self.selectedIndex : selectedIndex // ignore: cast_nullable_to_non_nullable
-as int,
+as int,areas: null == areas ? _self._areas : areas // ignore: cast_nullable_to_non_nullable
+as List<String>,
   ));
 }
 

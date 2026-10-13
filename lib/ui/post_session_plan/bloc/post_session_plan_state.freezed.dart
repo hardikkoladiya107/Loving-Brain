@@ -15,30 +15,77 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PostSessionPlanState {
 
-
+ bool get isLoading; PostSessionPlanModel? get plan; ApiResultStatus<dynamic> get fetchStatus;
+/// Create a copy of PostSessionPlanState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PostSessionPlanStateCopyWith<PostSessionPlanState> get copyWith => _$PostSessionPlanStateCopyWithImpl<PostSessionPlanState>(this as PostSessionPlanState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is PostSessionPlanState);
+  final _this = this as PostSessionPlanState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PostSessionPlanState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.plan, _this.plan) || other.plan == _this.plan)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as PostSessionPlanState;
+  return Object.hash(runtimeType,_this.isLoading,_this.plan,_this.fetchStatus);
+}
 
 @override
 String toString() {
-    return 'PostSessionPlanState()';
+  final _this = this as PostSessionPlanState;
+  return 'PostSessionPlanState(isLoading: ${_this.isLoading}, plan: ${_this.plan}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
 }
 
 /// @nodoc
-class $PostSessionPlanStateCopyWith<$Res>  {
-$PostSessionPlanStateCopyWith(PostSessionPlanState _, $Res Function(PostSessionPlanState) __);
+abstract mixin class $PostSessionPlanStateCopyWith<$Res>  {
+  factory $PostSessionPlanStateCopyWith(PostSessionPlanState value, $Res Function(PostSessionPlanState) _then) = _$PostSessionPlanStateCopyWithImpl;
+@useResult
+$Res call({
+ bool isLoading, PostSessionPlanModel? plan, ApiResultStatus<dynamic> fetchStatus
+});
+
+
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class _$PostSessionPlanStateCopyWithImpl<$Res>
+    implements $PostSessionPlanStateCopyWith<$Res> {
+  _$PostSessionPlanStateCopyWithImpl(this._self, this._then);
+
+  final PostSessionPlanState _self;
+  final $Res Function(PostSessionPlanState) _then;
+
+/// Create a copy of PostSessionPlanState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? plan = freezed,Object? fetchStatus = null,}) {
+  return _then(PostSessionPlanState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,plan: freezed == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
+as PostSessionPlanModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+/// Create a copy of PostSessionPlanState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -120,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  PostSessionPlanModel? plan,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PostSessionPlanState() when $default != null:
-return $default();case _:
+return $default(_that.isLoading,_that.plan,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -141,10 +188,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  PostSessionPlanModel? plan,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _PostSessionPlanState():
-return $default();case _:
+return $default(_that.isLoading,_that.plan,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +208,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  PostSessionPlanModel? plan,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _PostSessionPlanState() when $default != null:
-return $default();case _:
+return $default(_that.isLoading,_that.plan,_that.fetchStatus);case _:
   return null;
 
 }
@@ -176,32 +223,81 @@ return $default();case _:
 
 
 class _PostSessionPlanState implements PostSessionPlanState {
-  const _PostSessionPlanState();
+  const _PostSessionPlanState({this.isLoading = false, this.plan, this.fetchStatus = const ApiResultStatus.initial()});
   
 
+@override@JsonKey() final  bool isLoading;
+@override final  PostSessionPlanModel? plan;
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
-
+/// Create a copy of PostSessionPlanState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PostSessionPlanStateCopyWith<_PostSessionPlanState> get copyWith => __$PostSessionPlanStateCopyWithImpl<_PostSessionPlanState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PostSessionPlanState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PostSessionPlanState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.plan, plan) || other.plan == plan)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,isLoading,plan,fetchStatus);
+}
 
 @override
 String toString() {
-    return 'PostSessionPlanState()';
+    return 'PostSessionPlanState(isLoading: $isLoading, plan: $plan, fetchStatus: $fetchStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$PostSessionPlanStateCopyWith<$Res> implements $PostSessionPlanStateCopyWith<$Res> {
+  factory _$PostSessionPlanStateCopyWith(_PostSessionPlanState value, $Res Function(_PostSessionPlanState) _then) = __$PostSessionPlanStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool isLoading, PostSessionPlanModel? plan, ApiResultStatus<dynamic> fetchStatus
+});
 
 
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class __$PostSessionPlanStateCopyWithImpl<$Res>
+    implements _$PostSessionPlanStateCopyWith<$Res> {
+  __$PostSessionPlanStateCopyWithImpl(this._self, this._then);
+
+  final _PostSessionPlanState _self;
+  final $Res Function(_PostSessionPlanState) _then;
+
+/// Create a copy of PostSessionPlanState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? plan = freezed,Object? fetchStatus = null,}) {
+  return _then(_PostSessionPlanState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,plan: freezed == plan ? _self.plan : plan // ignore: cast_nullable_to_non_nullable
+as PostSessionPlanModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+
+/// Create a copy of PostSessionPlanState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
+}
 
 // dart format on

@@ -15,30 +15,77 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EnrolledJourneyHomeState {
 
-
+ bool get isLoading; EnrolledProgramModel? get program; ApiResultStatus<dynamic> get fetchStatus;
+/// Create a copy of EnrolledJourneyHomeState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$EnrolledJourneyHomeStateCopyWith<EnrolledJourneyHomeState> get copyWith => _$EnrolledJourneyHomeStateCopyWithImpl<EnrolledJourneyHomeState>(this as EnrolledJourneyHomeState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is EnrolledJourneyHomeState);
+  final _this = this as EnrolledJourneyHomeState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnrolledJourneyHomeState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.program, _this.program) || other.program == _this.program)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as EnrolledJourneyHomeState;
+  return Object.hash(runtimeType,_this.isLoading,_this.program,_this.fetchStatus);
+}
 
 @override
 String toString() {
-    return 'EnrolledJourneyHomeState()';
+  final _this = this as EnrolledJourneyHomeState;
+  return 'EnrolledJourneyHomeState(isLoading: ${_this.isLoading}, program: ${_this.program}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
 }
 
 /// @nodoc
-class $EnrolledJourneyHomeStateCopyWith<$Res>  {
-$EnrolledJourneyHomeStateCopyWith(EnrolledJourneyHomeState _, $Res Function(EnrolledJourneyHomeState) __);
+abstract mixin class $EnrolledJourneyHomeStateCopyWith<$Res>  {
+  factory $EnrolledJourneyHomeStateCopyWith(EnrolledJourneyHomeState value, $Res Function(EnrolledJourneyHomeState) _then) = _$EnrolledJourneyHomeStateCopyWithImpl;
+@useResult
+$Res call({
+ bool isLoading, EnrolledProgramModel? program, ApiResultStatus<dynamic> fetchStatus
+});
+
+
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class _$EnrolledJourneyHomeStateCopyWithImpl<$Res>
+    implements $EnrolledJourneyHomeStateCopyWith<$Res> {
+  _$EnrolledJourneyHomeStateCopyWithImpl(this._self, this._then);
+
+  final EnrolledJourneyHomeState _self;
+  final $Res Function(EnrolledJourneyHomeState) _then;
+
+/// Create a copy of EnrolledJourneyHomeState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? program = freezed,Object? fetchStatus = null,}) {
+  return _then(EnrolledJourneyHomeState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,program: freezed == program ? _self.program : program // ignore: cast_nullable_to_non_nullable
+as EnrolledProgramModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+/// Create a copy of EnrolledJourneyHomeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -120,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  EnrolledProgramModel? program,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EnrolledJourneyHomeState() when $default != null:
-return $default();case _:
+return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -141,10 +188,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  EnrolledProgramModel? program,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _EnrolledJourneyHomeState():
-return $default();case _:
+return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +208,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  EnrolledProgramModel? program,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _EnrolledJourneyHomeState() when $default != null:
-return $default();case _:
+return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
   return null;
 
 }
@@ -176,32 +223,81 @@ return $default();case _:
 
 
 class _EnrolledJourneyHomeState implements EnrolledJourneyHomeState {
-  const _EnrolledJourneyHomeState();
+  const _EnrolledJourneyHomeState({this.isLoading = false, this.program, this.fetchStatus = const ApiResultStatus.initial()});
   
 
+@override@JsonKey() final  bool isLoading;
+@override final  EnrolledProgramModel? program;
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
-
+/// Create a copy of EnrolledJourneyHomeState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$EnrolledJourneyHomeStateCopyWith<_EnrolledJourneyHomeState> get copyWith => __$EnrolledJourneyHomeStateCopyWithImpl<_EnrolledJourneyHomeState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnrolledJourneyHomeState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnrolledJourneyHomeState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.program, program) || other.program == program)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,isLoading,program,fetchStatus);
+}
 
 @override
 String toString() {
-    return 'EnrolledJourneyHomeState()';
+    return 'EnrolledJourneyHomeState(isLoading: $isLoading, program: $program, fetchStatus: $fetchStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$EnrolledJourneyHomeStateCopyWith<$Res> implements $EnrolledJourneyHomeStateCopyWith<$Res> {
+  factory _$EnrolledJourneyHomeStateCopyWith(_EnrolledJourneyHomeState value, $Res Function(_EnrolledJourneyHomeState) _then) = __$EnrolledJourneyHomeStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool isLoading, EnrolledProgramModel? program, ApiResultStatus<dynamic> fetchStatus
+});
 
 
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class __$EnrolledJourneyHomeStateCopyWithImpl<$Res>
+    implements _$EnrolledJourneyHomeStateCopyWith<$Res> {
+  __$EnrolledJourneyHomeStateCopyWithImpl(this._self, this._then);
+
+  final _EnrolledJourneyHomeState _self;
+  final $Res Function(_EnrolledJourneyHomeState) _then;
+
+/// Create a copy of EnrolledJourneyHomeState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? program = freezed,Object? fetchStatus = null,}) {
+  return _then(_EnrolledJourneyHomeState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,program: freezed == program ? _self.program : program // ignore: cast_nullable_to_non_nullable
+as EnrolledProgramModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+
+/// Create a copy of EnrolledJourneyHomeState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
+}
 
 // dart format on

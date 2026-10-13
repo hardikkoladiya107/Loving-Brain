@@ -15,30 +15,77 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$GuideProfileState {
 
-
+ bool get isLoading; GuideProfileModel? get guide; ApiResultStatus<dynamic> get fetchStatus;
+/// Create a copy of GuideProfileState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GuideProfileStateCopyWith<GuideProfileState> get copyWith => _$GuideProfileStateCopyWithImpl<GuideProfileState>(this as GuideProfileState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is GuideProfileState);
+  final _this = this as GuideProfileState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GuideProfileState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.guide, _this.guide) || other.guide == _this.guide)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as GuideProfileState;
+  return Object.hash(runtimeType,_this.isLoading,_this.guide,_this.fetchStatus);
+}
 
 @override
 String toString() {
-    return 'GuideProfileState()';
+  final _this = this as GuideProfileState;
+  return 'GuideProfileState(isLoading: ${_this.isLoading}, guide: ${_this.guide}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
 }
 
 /// @nodoc
-class $GuideProfileStateCopyWith<$Res>  {
-$GuideProfileStateCopyWith(GuideProfileState _, $Res Function(GuideProfileState) __);
+abstract mixin class $GuideProfileStateCopyWith<$Res>  {
+  factory $GuideProfileStateCopyWith(GuideProfileState value, $Res Function(GuideProfileState) _then) = _$GuideProfileStateCopyWithImpl;
+@useResult
+$Res call({
+ bool isLoading, GuideProfileModel? guide, ApiResultStatus<dynamic> fetchStatus
+});
+
+
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class _$GuideProfileStateCopyWithImpl<$Res>
+    implements $GuideProfileStateCopyWith<$Res> {
+  _$GuideProfileStateCopyWithImpl(this._self, this._then);
+
+  final GuideProfileState _self;
+  final $Res Function(GuideProfileState) _then;
+
+/// Create a copy of GuideProfileState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? guide = freezed,Object? fetchStatus = null,}) {
+  return _then(GuideProfileState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,guide: freezed == guide ? _self.guide : guide // ignore: cast_nullable_to_non_nullable
+as GuideProfileModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+/// Create a copy of GuideProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -120,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  GuideProfileModel? guide,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GuideProfileState() when $default != null:
-return $default();case _:
+return $default(_that.isLoading,_that.guide,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -141,10 +188,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  GuideProfileModel? guide,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _GuideProfileState():
-return $default();case _:
+return $default(_that.isLoading,_that.guide,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +208,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  GuideProfileModel? guide,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _GuideProfileState() when $default != null:
-return $default();case _:
+return $default(_that.isLoading,_that.guide,_that.fetchStatus);case _:
   return null;
 
 }
@@ -176,32 +223,81 @@ return $default();case _:
 
 
 class _GuideProfileState implements GuideProfileState {
-  const _GuideProfileState();
+  const _GuideProfileState({this.isLoading = false, this.guide, this.fetchStatus = const ApiResultStatus.initial()});
   
 
+@override@JsonKey() final  bool isLoading;
+@override final  GuideProfileModel? guide;
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
-
+/// Create a copy of GuideProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GuideProfileStateCopyWith<_GuideProfileState> get copyWith => __$GuideProfileStateCopyWithImpl<_GuideProfileState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GuideProfileState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _GuideProfileState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.guide, guide) || other.guide == guide)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,isLoading,guide,fetchStatus);
+}
 
 @override
 String toString() {
-    return 'GuideProfileState()';
+    return 'GuideProfileState(isLoading: $isLoading, guide: $guide, fetchStatus: $fetchStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$GuideProfileStateCopyWith<$Res> implements $GuideProfileStateCopyWith<$Res> {
+  factory _$GuideProfileStateCopyWith(_GuideProfileState value, $Res Function(_GuideProfileState) _then) = __$GuideProfileStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool isLoading, GuideProfileModel? guide, ApiResultStatus<dynamic> fetchStatus
+});
 
 
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+
+}
+/// @nodoc
+class __$GuideProfileStateCopyWithImpl<$Res>
+    implements _$GuideProfileStateCopyWith<$Res> {
+  __$GuideProfileStateCopyWithImpl(this._self, this._then);
+
+  final _GuideProfileState _self;
+  final $Res Function(_GuideProfileState) _then;
+
+/// Create a copy of GuideProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? guide = freezed,Object? fetchStatus = null,}) {
+  return _then(_GuideProfileState(
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,guide: freezed == guide ? _self.guide : guide // ignore: cast_nullable_to_non_nullable
+as GuideProfileModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+
+/// Create a copy of GuideProfileState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
+}
 
 // dart format on

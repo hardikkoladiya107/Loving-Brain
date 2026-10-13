@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MentorshipLandingState {
 
- bool get isAvailable;
+ bool get isLoading; bool get isAvailable; List<String> get supportAreas; ApiResultStatus<dynamic> get fetchStatus;
 /// Create a copy of MentorshipLandingState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $MentorshipLandingStateCopyWith<MentorshipLandingState> get copyWith => _$Mentor
 @override
 bool operator ==(Object other) {
   final _this = this as MentorshipLandingState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MentorshipLandingState&&(identical(other.isAvailable, _this.isAvailable) || other.isAvailable == _this.isAvailable));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MentorshipLandingState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.isAvailable, _this.isAvailable) || other.isAvailable == _this.isAvailable)&&const DeepCollectionEquality().equals(other.supportAreas, _this.supportAreas)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as MentorshipLandingState;
-  return Object.hash(runtimeType,_this.isAvailable);
+  return Object.hash(runtimeType,_this.isLoading,_this.isAvailable,const DeepCollectionEquality().hash(_this.supportAreas),_this.fetchStatus);
 }
 
 @override
 String toString() {
   final _this = this as MentorshipLandingState;
-  return 'MentorshipLandingState(isAvailable: ${_this.isAvailable})';
+  return 'MentorshipLandingState(isLoading: ${_this.isLoading}, isAvailable: ${_this.isAvailable}, supportAreas: ${_this.supportAreas}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $MentorshipLandingStateCopyWith<$Res>  {
   factory $MentorshipLandingStateCopyWith(MentorshipLandingState value, $Res Function(MentorshipLandingState) _then) = _$MentorshipLandingStateCopyWithImpl;
 @useResult
 $Res call({
- bool isAvailable
+ bool isLoading, bool isAvailable, List<String> supportAreas, ApiResultStatus<dynamic> fetchStatus
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
 
 }
 /// @nodoc
@@ -68,13 +68,25 @@ class _$MentorshipLandingStateCopyWithImpl<$Res>
 
 /// Create a copy of MentorshipLandingState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isAvailable = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isAvailable = null,Object? supportAreas = null,Object? fetchStatus = null,}) {
   return _then(MentorshipLandingState(
-isAvailable: null == isAvailable ? _self.isAvailable : isAvailable // ignore: cast_nullable_to_non_nullable
-as bool,
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,isAvailable: null == isAvailable ? _self.isAvailable : isAvailable // ignore: cast_nullable_to_non_nullable
+as bool,supportAreas: null == supportAreas ? _self.supportAreas : supportAreas // ignore: cast_nullable_to_non_nullable
+as List<String>,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
-
+/// Create a copy of MentorshipLandingState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 
@@ -156,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isAvailable)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isAvailable,  List<String> supportAreas,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MentorshipLandingState() when $default != null:
-return $default(_that.isAvailable);case _:
+return $default(_that.isLoading,_that.isAvailable,_that.supportAreas,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -177,10 +189,10 @@ return $default(_that.isAvailable);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isAvailable)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isAvailable,  List<String> supportAreas,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _MentorshipLandingState():
-return $default(_that.isAvailable);case _:
+return $default(_that.isLoading,_that.isAvailable,_that.supportAreas,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +209,10 @@ return $default(_that.isAvailable);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isAvailable)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isAvailable,  List<String> supportAreas,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _MentorshipLandingState() when $default != null:
-return $default(_that.isAvailable);case _:
+return $default(_that.isLoading,_that.isAvailable,_that.supportAreas,_that.fetchStatus);case _:
   return null;
 
 }
@@ -212,10 +224,19 @@ return $default(_that.isAvailable);case _:
 
 
 class _MentorshipLandingState implements MentorshipLandingState {
-  const _MentorshipLandingState({this.isAvailable = true});
+  const _MentorshipLandingState({this.isLoading = false, this.isAvailable = true,  List<String> supportAreas = const <String>['Sleep', 'Behaviour', 'Parent Calm & Confidence', 'Co-parenting Support'], this.fetchStatus = const ApiResultStatus.initial()}): _supportAreas = supportAreas;
   
 
+@override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  bool isAvailable;
+ final  List<String> _supportAreas;
+@override@JsonKey() List<String> get supportAreas {
+  if (_supportAreas is EqualUnmodifiableListView) return _supportAreas;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_supportAreas);
+}
+
+@override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
 /// Create a copy of MentorshipLandingState
 /// with the given fields replaced by the non-null parameter values.
@@ -227,18 +248,18 @@ _$MentorshipLandingStateCopyWith<_MentorshipLandingState> get copyWith => __$Men
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MentorshipLandingState&&(identical(other.isAvailable, isAvailable) || other.isAvailable == isAvailable));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MentorshipLandingState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isAvailable, isAvailable) || other.isAvailable == isAvailable)&&const DeepCollectionEquality().equals(other.supportAreas, _supportAreas)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isAvailable);
+    return Object.hash(runtimeType,isLoading,isAvailable,const DeepCollectionEquality().hash(_supportAreas),fetchStatus);
 }
 
 @override
 String toString() {
-    return 'MentorshipLandingState(isAvailable: $isAvailable)';
+    return 'MentorshipLandingState(isLoading: $isLoading, isAvailable: $isAvailable, supportAreas: $supportAreas, fetchStatus: $fetchStatus)';
 }
 
 
@@ -249,11 +270,11 @@ abstract mixin class _$MentorshipLandingStateCopyWith<$Res> implements $Mentorsh
   factory _$MentorshipLandingStateCopyWith(_MentorshipLandingState value, $Res Function(_MentorshipLandingState) _then) = __$MentorshipLandingStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isAvailable
+ bool isLoading, bool isAvailable, List<String> supportAreas, ApiResultStatus<dynamic> fetchStatus
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
 
 }
 /// @nodoc
@@ -266,14 +287,26 @@ class __$MentorshipLandingStateCopyWithImpl<$Res>
 
 /// Create a copy of MentorshipLandingState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isAvailable = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isAvailable = null,Object? supportAreas = null,Object? fetchStatus = null,}) {
   return _then(_MentorshipLandingState(
-isAvailable: null == isAvailable ? _self.isAvailable : isAvailable // ignore: cast_nullable_to_non_nullable
-as bool,
+isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,isAvailable: null == isAvailable ? _self.isAvailable : isAvailable // ignore: cast_nullable_to_non_nullable
+as bool,supportAreas: null == supportAreas ? _self._supportAreas : supportAreas // ignore: cast_nullable_to_non_nullable
+as List<String>,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 
-
+/// Create a copy of MentorshipLandingState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
+    return _then(_self.copyWith(fetchStatus: value));
+  });
+}
 }
 
 // dart format on

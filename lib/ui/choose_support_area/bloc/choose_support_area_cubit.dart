@@ -1,9 +1,36 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'choose_support_area_state.dart';
 
+/// Cubit managing Choose a Support Area (Screen 45).
+/// Conforms to AGENTS.md Rule 4.2.
 class ChooseSupportAreaCubit extends Cubit<ChooseSupportAreaState> {
   ChooseSupportAreaCubit() : super(const ChooseSupportAreaState());
+
+  void init({String? initialArea}) {
+    int index = 0;
+    if (initialArea != null && initialArea.trim().isNotEmpty) {
+      final int found = state.areas.indexWhere(
+        (String a) => a.toLowerCase() == initialArea.toLowerCase().trim(),
+      );
+      if (found != -1) index = found;
+    }
+    changeProps(selectedIndex: index);
+  }
+
+  void changeProps({
+    int? selectedIndex,
+    List<String>? areas,
+  }) {
+    emit(
+      state.copyWith(
+        selectedIndex: selectedIndex ?? state.selectedIndex,
+        areas: areas ?? state.areas,
+      ),
+    );
+  }
+
   void selectArea(int index) {
-    emit(state.copyWith(selectedIndex: index));
+    changeProps(selectedIndex: index);
   }
 }

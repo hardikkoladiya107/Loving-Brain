@@ -5,6 +5,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/invite_caregiver/invite_caregiver_screen.dart';
 import 'package:loving_brain/ui/invite_pending/invite_pending_screen.dart';
+import 'package:loving_brain/ui/permissions/permissions_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/person_card.dart';
@@ -13,166 +14,198 @@ import 'package:loving_brain/ui/widget/status_pill.dart';
 import 'bloc/family_menu_cubit.dart';
 import 'bloc/family_menu_state.dart';
 
-class FamilyMenuScreen extends StatelessWidget {
+/// Screen 54: Family Menu.
+/// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
+class FamilyMenuScreen extends StatefulWidget {
   const FamilyMenuScreen({super.key});
 
   @override
+  State<FamilyMenuScreen> createState() => _FamilyMenuScreenState();
+}
+
+class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<FamilyMenuCubit>().init();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => FamilyMenuCubit()..init(),
-      child: BlocBuilder<FamilyMenuCubit, FamilyMenuState>(
-        builder: (context, state) {
-          final childName = context.read<FamilyMenuCubit>().childName;
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocConsumer<FamilyMenuCubit, FamilyMenuState>(
+      listener: (BuildContext context, FamilyMenuState state) {},
+      builder: (BuildContext context, FamilyMenuState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150,
-                  bottom: 0,
-                  child: Container(
-                    width: 400,
-                    height: 400,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "Family".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            "Everyone here sees the same picture of $childName."
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor,
-                                  textAlign: TextAlign.start,
-                                ),
-                            24.spaceH,
-                            PersonCard(
-                              avatar: Container(
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFDC21A),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.face,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "Family".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          "Everyone here sees the same picture of ${state.childName}."
+                              .appText(
+                                fontSize: 14.sp,
+                                color: greyColor,
+                                textAlign: TextAlign.start,
                               ),
-                              name: "Ravi",
-                              subtitle: "Partner · sleep, behaviour, plans",
-                              statusPill: StatusPill.linked(),
-                              showChevron: true,
-                              onTap: () {},
-                            ),
-                            12.spaceH,
-                            PersonCard(
-                              avatar: Container(
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFDC21A),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.face,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              name: "Grandma",
-                              subtitle: "Invite sent 2 days ago",
-                              statusPill: StatusPill.awaitingResponse(),
-                              showChevron: true,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const InvitePendingScreen(),
+                          24.spaceH,
+                          ...state.linkedCaregivers.map((CaregiverItem c) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: PersonCard(
+                                avatar: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFDC21A),
+                                    shape: BoxShape.circle,
                                   ),
-                                );
-                              },
-                            ),
-                            24.spaceH,
-                            InfoBox.orange(
-                              title: "How sharing works",
-                              body:
-                                  "You choose what each person sees, and can change it or remove access at any time.",
-                            ),
-                            120.spaceH,
-                          ],
-                        ),
+                                  child: Icon(
+                                    Icons.face,
+                                    size: 30.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                name: c.name,
+                                subtitle: "${c.role} · sleep, behaviour, plans",
+                                statusPill: StatusPill.linked(),
+                                showChevron: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PermissionsScreen(
+                                        caregiverName: c.name,
+                                        caregiverRole: c.role,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }),
+                          ...state.pendingInvites.map((CaregiverItem c) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: PersonCard(
+                                avatar: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFDC21A),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.face,
+                                    size: 30.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                name: c.name,
+                                subtitle: "Invite sent 2 days ago",
+                                statusPill: StatusPill.awaitingResponse(),
+                                showChevron: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const InvitePendingScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }),
+                          24.spaceH,
+                          InfoBox.orange(
+                            title: "How sharing works",
+                            body:
+                                "You choose what each person sees, and can change it or remove access at any time.",
+                          ),
+                          140.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -183,8 +216,8 @@ class FamilyMenuScreen extends StatelessWidget {
       right: 0,
       child: Container(
         padding: EdgeInsets.only(
-          top: 40.h,
-          bottom: 40.h,
+          top: 32.h,
+          bottom: 32.h,
           left: 20.w,
           right: 20.w,
         ),

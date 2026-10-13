@@ -1,160 +1,223 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/session_request_confirmation/session_request_confirmation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/request_session_cubit.dart';
 import 'bloc/request_session_state.dart';
 
-class RequestSessionScreen extends StatelessWidget {
-  const RequestSessionScreen({super.key});
+/// Screen 47: Request a Session.
+/// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
+class RequestSessionScreen extends StatefulWidget {
+  final GuideProfileModel? guide;
+
+  const RequestSessionScreen({super.key, this.guide});
+
+  @override
+  State<RequestSessionScreen> createState() => _RequestSessionScreenState();
+}
+
+class _RequestSessionScreenState extends State<RequestSessionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<RequestSessionCubit>().init(guide: widget.guide);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => RequestSessionCubit(),
-      child: BlocBuilder<RequestSessionCubit, RequestSessionState>(
-        builder: (context, state) {
-          final cubit = context.read<RequestSessionCubit>();
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.dark.copyWith(
-              statusBarColor: Colors.transparent,
-            ),
-            child: Scaffold(
-              backgroundColor: const Color(0xFFFEF8F4),
-              body: Stack(
-                children: [
-                  Positioned(
-                    left: -150,
-                    top: -150,
-                    child: Container(
-                      width: 450,
-                      height: 450,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                            const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                          ],
-                          stops: const [0.0, 1.0],
-                        ),
+    return BlocConsumer<RequestSessionCubit, RequestSessionState>(
+      listener: (BuildContext context, RequestSessionState state) {
+        state.saveStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (_) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: "Session request submitted successfully",
+              type: SnackBarType.SUCCESS,
+            );
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SessionRequestConfirmationScreen(
+                  guideName: state.guide?.name ?? "your guide",
+                ),
+              ),
+            );
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
+      builder: (BuildContext context, RequestSessionState state) {
+        final RequestSessionCubit cubit = context.read<RequestSessionCubit>();
+        final String guideName = state.guide?.name ?? "Priya";
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 450.w,
+                    height: 450.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
-                  SafeArea(
-                    bottom: false,
-                    child: ListView(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 16.h,
-                      ),
-                      children: [
-                        Row(
-                          children: [
-                            InkWell(
-                              onTap: () => Navigator.pop(context),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: darkBlue,
-                                  size: 24.sp,
-                                ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 16.h,
+                    ),
+                    children: [
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: EdgeInsets.all(12.r),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
                               ),
                             ),
-                          ],
-                        ),
-                        24.spaceH,
-                        "Request a session".appText(
-                          fontSize: 28.sp,
-                          color: darkBlue,
-                          fraunces: true,
-                          textAlign: TextAlign.start,
-                        ),
-                        8.spaceH,
-                        "Priya will confirm availability and come back to you."
-                            .appText(
-                              fontSize: 14.sp,
-                              color: greyColor9,
-                              textAlign: TextAlign.start,
-                              height: 1.4,
-                            ),
-                        24.spaceH,
-                        SessionField(
-                          label: "MAIN CONCERN",
-                          initialValue: state.mainConcern,
-                          onChanged: cubit.updateMainConcern,
-                          autoFocus: true,
-                        ),
-                        12.spaceH,
-                        SessionField(
-                          label: "CHILD AGE",
-                          initialValue: state.childAge,
-                          onChanged: cubit.updateChildAge,
-                        ),
-                        12.spaceH,
-                        SessionField(
-                          label: "PREFERRED DAYS / TIMES",
-                          initialValue: state.preferredDays,
-                          onChanged: cubit.updatePreferredDays,
-                        ),
-                        12.spaceH,
-                        SessionField(
-                          label: "PREFERRED LANGUAGE",
-                          initialValue: state.preferredLanguage,
-                          onChanged: cubit.updatePreferredLanguage,
-                        ),
-                        24.spaceH,
-                        GestureDetector(
-                          onTap: () =>
-                              cubit.toggleShareSummary(!state.shareSummary),
-                          child: Container(
-                            padding: EdgeInsets.all(16.w),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFBEADB),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child:
-                                "We'll share your recent LovingBrain summary with Priya so you don't have to explain from scratch. You can turn this off."
-                                    .appText(
-                                      fontSize: 14.sp,
-                                      color: greyColor9,
-                                      textAlign: TextAlign.start,
-                                      height: 1.4,
-                                    ),
+                          ),
+                        ],
+                      ),
+                      24.spaceH,
+                      "Request a session".appText(
+                        fontSize: 28.sp,
+                        color: darkBlue,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
+                      ),
+                      8.spaceH,
+                      "$guideName will confirm availability and come back to you."
+                          .appText(
+                            fontSize: 14.sp,
+                            color: greyColor9,
+                            textAlign: TextAlign.start,
+                            height: 1.4,
+                          ),
+                      24.spaceH,
+                      SessionField(
+                        label: "MAIN CONCERN",
+                        initialValue: state.mainConcern,
+                        onChanged: cubit.updateMainConcern,
+                        autoFocus: true,
+                      ),
+                      12.spaceH,
+                      SessionField(
+                        label: "CHILD AGE",
+                        initialValue: state.childAge,
+                        onChanged: cubit.updateChildAge,
+                      ),
+                      12.spaceH,
+                      SessionField(
+                        label: "PREFERRED DAYS / TIMES",
+                        initialValue: state.preferredDays,
+                        onChanged: cubit.updatePreferredDays,
+                      ),
+                      12.spaceH,
+                      SessionField(
+                        label: "PREFERRED LANGUAGE",
+                        initialValue: state.preferredLanguage,
+                        onChanged: cubit.updatePreferredLanguage,
+                      ),
+                      24.spaceH,
+                      GestureDetector(
+                        onTap: () =>
+                            cubit.toggleShareSummary(!state.shareSummary),
+                        child: Container(
+                          padding: EdgeInsets.all(16.r),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFBEADB),
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child:
+                                    "We'll share your recent LovingBrain summary with $guideName so you don't have to explain from scratch. You can turn this off."
+                                        .appText(
+                                          fontSize: 14.sp,
+                                          color: greyColor9,
+                                          textAlign: TextAlign.start,
+                                          height: 1.4,
+                                        ),
+                              ),
+                              12.spaceW,
+                              Switch(
+                                value: state.shareSummary,
+                                onChanged: cubit.toggleShareSummary,
+                                activeColor: Colors.white,
+                                activeTrackColor: primaryColor,
+                              ),
+                            ],
                           ),
                         ),
-                        180.spaceH,
-                      ],
-                    ),
+                      ),
+                      180.spaceH,
+                    ],
                   ),
-                  _buildBottomActions(context, state),
-                ],
-              ),
+                ),
+                _buildBottomActions(context, state, cubit),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildBottomActions(BuildContext context, RequestSessionState state) {
+  Widget _buildBottomActions(
+    BuildContext context,
+    RequestSessionState state,
+    RequestSessionCubit cubit,
+  ) {
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
       child: Container(
         padding: EdgeInsets.only(
-          top: 40.h,
+          top: 32.h,
           bottom: 32.h,
           left: 20.w,
           right: 20.w,
@@ -178,22 +241,12 @@ class RequestSessionScreen extends StatelessWidget {
               title: state.isSubmitting ? "Sending..." : "Send request",
               onTap: state.isSubmitting
                   ? () {}
-                  : () async {
-                      final cubit = context.read<RequestSessionCubit>();
-                      await cubit.submitRequest();
-                      if (context.mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const SessionRequestConfirmationScreen(),
-                          ),
-                        );
-                      }
+                  : () {
+                      cubit.submitRequest();
                     },
             ),
             16.spaceH,
-            "Or schedule directly via Priya's calendar link".appText(
+            "Or schedule directly via your guide's calendar link".appText(
               fontSize: 14.sp,
               color: greyColor,
               fontWeight: FontWeight.w500,
@@ -245,6 +298,15 @@ class _SessionFieldState extends State<SessionField> {
   }
 
   @override
+  void didUpdateWidget(SessionField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialValue != widget.initialValue &&
+        _controller.text != widget.initialValue) {
+      _controller.text = widget.initialValue;
+    }
+  }
+
+  @override
   void dispose() {
     _focusNode.dispose();
     _controller.dispose();
@@ -253,7 +315,7 @@ class _SessionFieldState extends State<SessionField> {
 
   @override
   Widget build(BuildContext context) {
-    bool isValid = _controller.text.trim().isNotEmpty;
+    final bool isValid = _controller.text.trim().isNotEmpty;
     return GestureDetector(
       onTap: () => _focusNode.requestFocus(),
       child: Container(
@@ -266,10 +328,10 @@ class _SessionFieldState extends State<SessionField> {
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: _isFocused ? primaryColor : Colors.transparent,
-            width: 1.5,
+            width: 1.5.w,
           ),
         ),
         child: Row(
@@ -288,7 +350,7 @@ class _SessionFieldState extends State<SessionField> {
                   TextField(
                     controller: _controller,
                     focusNode: _focusNode,
-                    onChanged: (val) {
+                    onChanged: (String val) {
                       setState(() {});
                       widget.onChanged(val);
                     },
