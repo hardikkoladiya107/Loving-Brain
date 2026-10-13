@@ -1,12 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Request status enumeration per V2 specification.
-enum MentorshipRequestStatus {
-  pending,
-  confirmed,
-  completed,
-  cancelled,
-}
+enum MentorshipRequestStatus { pending, confirmed, completed, cancelled }
 
 /// Model representing a parent's request for a human mentor session (Screens 47, 48, 51).
 class MentorshipRequestModel {
@@ -58,7 +53,10 @@ class MentorshipRequestModel {
     };
   }
 
-  factory MentorshipRequestModel.fromMap(Map<String, dynamic> map, {String? id}) {
+  factory MentorshipRequestModel.fromMap(
+    Map<String, dynamic> map, {
+    String? id,
+  }) {
     DateTime parsedDate = DateTime.now();
     final dynamic rawCreated = map['createdAt'];
     if (rawCreated is Timestamp) {
@@ -178,11 +176,13 @@ class GuideProfileModel {
       name: map['name']?.toString() ?? '',
       title: map['title']?.toString() ?? 'Parenting Guide',
       experienceYears: (map['experienceYears'] as num?)?.toInt() ?? 5,
-      languages: (map['languages'] as List<dynamic>?)
+      languages:
+          (map['languages'] as List<dynamic>?)
               ?.map((dynamic e) => e.toString())
               .toList() ??
           <String>['English'],
-      supportAreas: (map['supportAreas'] as List<dynamic>?)
+      supportAreas:
+          (map['supportAreas'] as List<dynamic>?)
               ?.map((dynamic e) => e.toString())
               .toList() ??
           <String>['Sleep'],
@@ -210,17 +210,44 @@ class EnrolledProgramModel {
   final bool isModuleCompleted;
 
   const EnrolledProgramModel({
-    required this.programId,
+    String? id,
+    String? programId,
     required this.title,
     required this.currentWeek,
     this.totalWeeks = 6,
-    required this.thisWeekFocus,
-    required this.focusDescription,
-    required this.nextSessionDate,
-    required this.mentorNote,
-    required this.recordedModuleTitle,
+    String? thisWeekFocus,
+    String? currentFocus,
+    String? focusDescription,
+    String? nextSessionDate,
+    String? mentorNote,
+    String? guideName,
+    String? recentQuote,
+    String? quoteAuthorAndTime,
+    String? recordedModuleTitle,
+    String? recordedModuleDuration,
     this.isModuleCompleted = false,
-  });
+  }) : programId = programId ?? id ?? 'sleep_reset_6w',
+       thisWeekFocus =
+           thisWeekFocus ?? currentFocus ?? 'Anchor bedtime 15m earlier',
+       focusDescription =
+           focusDescription ??
+           'Start quiet bedtime cues at 7:15 PM and hold consistent for 4 nights.',
+       nextSessionDate = nextSessionDate ?? 'Thursday, 10:00 AM',
+       mentorNote =
+           mentorNote ??
+           recentQuote ??
+           'Priya S.: "Great first week keep the nap timing steady."',
+       recordedModuleTitle =
+           recordedModuleTitle ?? 'Module 2: Managing Evening Cortisol Surges';
+
+  String get id => programId;
+  String get currentFocus => thisWeekFocus;
+  String get guideName => mentorNote.contains(':')
+      ? mentorNote.split(':').first.replaceAll('"', '').trim()
+      : 'Priya S.';
+  String get recentQuote => mentorNote;
+  String get quoteAuthorAndTime => '$guideName · 2 days ago';
+  String get recordedModuleDuration => '12 min';
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -243,13 +270,18 @@ class EnrolledProgramModel {
       title: map['title']?.toString() ?? '6-Week Sleep Reset Journey',
       currentWeek: (map['currentWeek'] as num?)?.toInt() ?? 2,
       totalWeeks: (map['totalWeeks'] as num?)?.toInt() ?? 6,
-      thisWeekFocus: map['thisWeekFocus']?.toString() ?? 'Shifting bedtime by 15m',
-      focusDescription: map['focusDescription']?.toString() ??
+      thisWeekFocus:
+          map['thisWeekFocus']?.toString() ?? 'Shifting bedtime by 15m',
+      focusDescription:
+          map['focusDescription']?.toString() ??
           'Anchor evening wind-down at 7:15 PM and hold consistent for 4 nights.',
-      nextSessionDate: map['nextSessionDate']?.toString() ?? 'Thursday, 10:00 AM',
-      mentorNote: map['mentorNote']?.toString() ??
+      nextSessionDate:
+          map['nextSessionDate']?.toString() ?? 'Thursday, 10:00 AM',
+      mentorNote:
+          map['mentorNote']?.toString() ??
           'Great consistency on bedtime cues this week! Keep holding the 15m shift steady.',
-      recordedModuleTitle: map['recordedModuleTitle']?.toString() ??
+      recordedModuleTitle:
+          map['recordedModuleTitle']?.toString() ??
           'Module 2: Managing Evening Cortisol Surges',
       isModuleCompleted: map['isModuleCompleted'] == true,
     );
@@ -333,25 +365,34 @@ class PlanTaskItem {
 class PostSessionPlanModel {
   final String id;
   final String mentorName;
-  final DateTime sessionDate;
+  final DateTime? sessionDate;
   final String summary;
   final List<PlanTaskItem> tasks;
   final List<String> activeGoals;
 
   const PostSessionPlanModel({
     required this.id,
-    required this.mentorName,
-    required this.sessionDate,
-    required this.summary,
+    String? mentorName,
+    String? guideName,
+    this.sessionDate,
+    this.summary = 'Focus on shifting bedtime 15 minutes earlier.',
     required this.tasks,
-    required this.activeGoals,
-  });
+    this.activeGoals = const <String>[],
+    String? negativeGuidanceTitle,
+    String? negativeGuidanceSubtitle,
+  }) : mentorName = mentorName ?? guideName ?? 'Priya';
+
+  String get guideName => mentorName;
+  String get negativeGuidanceTitle => 'No screen time before bed';
+  String get negativeGuidanceSubtitle => 'Just while the nap change settles.';
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'mentorName': mentorName,
-      'sessionDate': Timestamp.fromDate(sessionDate),
+      'sessionDate': sessionDate != null
+          ? Timestamp.fromDate(sessionDate!)
+          : null,
       'summary': summary,
       'tasks': tasks.map((PlanTaskItem t) => t.toMap()).toList(),
       'activeGoals': activeGoals,
@@ -370,9 +411,9 @@ class PostSessionPlanModel {
     final List<dynamic>? rawTasks = map['tasks'] as List<dynamic>?;
     final List<PlanTaskItem> taskList = rawTasks != null
         ? rawTasks
-            .whereType<Map<String, dynamic>>()
-            .map((Map<String, dynamic> m) => PlanTaskItem.fromMap(m))
-            .toList()
+              .whereType<Map<String, dynamic>>()
+              .map((Map<String, dynamic> m) => PlanTaskItem.fromMap(m))
+              .toList()
         : <PlanTaskItem>[];
 
     final List<dynamic>? rawGoals = map['activeGoals'] as List<dynamic>?;
@@ -384,7 +425,8 @@ class PostSessionPlanModel {
       id: map['id']?.toString() ?? 'plan_default',
       mentorName: map['mentorName']?.toString() ?? 'Elena Rostova',
       sessionDate: parsedDate,
-      summary: map['summary']?.toString() ??
+      summary:
+          map['summary']?.toString() ??
           'Focus on moving bedtime 15 minutes earlier and protecting quiet wind-down routines.',
       tasks: taskList,
       activeGoals: goalList,

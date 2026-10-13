@@ -359,9 +359,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const ChildEssentialsScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const ChildEssentialsScreen()),
             );
           },
         ),

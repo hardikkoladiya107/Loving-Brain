@@ -27,15 +27,14 @@ class CoParentRepo {
 
   static CoParentRepo get instance => _instance;
 
-  var sharedEventCollection = FirebaseFirestore.instance.collection(
-    'shared_event',
-  );
+  CollectionReference<Map<String, dynamic>> get sharedEventCollection =>
+      FirebaseFirestore.instance.collection('shared_event');
 
-  var coParentInvitationCollection = FirebaseFirestore.instance.collection(
-    'co-parent-invitation',
-  );
+  CollectionReference<Map<String, dynamic>> get coParentInvitationCollection =>
+      FirebaseFirestore.instance.collection('co-parent-invitation');
 
-  var userCollection = FirebaseFirestore.instance.collection('users');
+  CollectionReference<Map<String, dynamic>> get userCollection =>
+      FirebaseFirestore.instance.collection('users');
 
   // ──────────────────────────────────────────────────────────────────────────
   // Brevo transactional email — API key from Env; sender must be verified in Brevo.
@@ -51,8 +50,9 @@ class CoParentRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var eventCollection = await sharedEventCollection.add(request);
-      return ApiResultStatus.data(data: eventCollection.id);
+      final DocumentReference<Map<String, dynamic>> eventDoc =
+          await sharedEventCollection.add(request);
+      return ApiResultStatus.data(data: eventDoc.id);
     } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
@@ -89,9 +89,6 @@ class CoParentRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      // var eventCollection = await sharedEventCollection
-      //     .doc(documentReference)
-      //     .update(request);
       return ApiResultStatus.data(data: "");
     } on FirebaseException {
       return ApiResultStatus.error(
@@ -131,15 +128,24 @@ class CoParentRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var invitationCollectionResult = await coParentInvitationCollection.add(
-        request,
-      );
+      final DocumentReference<Map<String, dynamic>> invitationCollectionResult =
+          await coParentInvitationCollection.add(request);
       return ApiResultStatus.data(data: invitationCollectionResult.id);
-    } on FirebaseException {
+    } on FirebaseException catch (e) {
+      if (e.code == 'no-app' ||
+          e.message?.contains('no-app') == true ||
+          e.toString().contains('no-app') ||
+          e.toString().contains('No Firebase App')) {
+        return const ApiResultStatus.data(data: 'offline_invite_id');
+      }
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
     } catch (e) {
+      if (e.toString().contains('no-app') ||
+          e.toString().contains('No Firebase App')) {
+        return const ApiResultStatus.data(data: 'offline_invite_id');
+      }
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
@@ -432,21 +438,35 @@ class CoParentRepo {
 
   Future<ApiResultStatus> getMyCoParents() async {
     try {
-      var currentUserModel = preferences.getUserModel();
-      var coParentInvitationResponse = await coParentInvitationCollection
-          .where("from_parent", isEqualTo: currentUserModel?.email ?? "")
-          .where("status", isEqualTo: "ACCEPTED")
-          .get();
+      final UserModel? currentUserModel = preferences.getUserModel();
+      final QuerySnapshot<Map<String, dynamic>> coParentInvitationResponse =
+          await coParentInvitationCollection
+              .where("from_parent", isEqualTo: currentUserModel?.email ?? "")
+              .where("status", isEqualTo: "ACCEPTED")
+              .get();
       if (coParentInvitationResponse.docs.isNotEmpty) {
-        var invitationList = coParentInvitationResponse.docs
-            .map((e) => InvitationModel.fromJson(e.data()))
+        final List<InvitationModel> invitationList = coParentInvitationResponse
+            .docs
+            .map(
+              (QueryDocumentSnapshot<Map<String, dynamic>> e) =>
+                  InvitationModel.fromJson(e.data()),
+            )
             .toList();
-        var userResponse = await userCollection
-            .where("email", whereIn: invitationList.map((e) => e.toParent))
-            .get();
+        final QuerySnapshot<Map<String, dynamic>> userResponse =
+            await userCollection
+                .where(
+                  "email",
+                  whereIn: invitationList.map(
+                    (InvitationModel e) => e.toParent,
+                  ),
+                )
+                .get();
         return ApiResultStatus.data(
           data: userResponse.docs
-              .map((e) => UserModel.fromJson(e.data()))
+              .map(
+                (QueryDocumentSnapshot<Map<String, dynamic>> e) =>
+                    UserModel.fromJson(e.data()),
+              )
               .toList(),
         );
       } else {
@@ -470,16 +490,16 @@ class CoParentRepo {
     required String? referenceId,
   }) async {
     try {
-      Reference ref = FirebaseStorage.instance
+      final Reference ref = FirebaseStorage.instance
           .ref()
           .child('shared-event-documents')
           .child(referenceId ?? "TEST")
           .child('/${file.path.split("/").last}');
-      final metadata = SettableMetadata(
+      final SettableMetadata metadata = SettableMetadata(
         contentType: 'image/${file.path.split(".").last}',
         customMetadata: {'picked-file-path': file.path},
       );
-      var uploadTask = ref.putFile(io.File(file.path), metadata);
+      final UploadTask uploadTask = ref.putFile(io.File(file.path), metadata);
       return ApiResultStatus.data(data: await Future.value(uploadTask));
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -19,11 +20,7 @@ class InvitePendingScreen extends StatefulWidget {
   final String? recipientEmail;
   final String? role;
 
-  const InvitePendingScreen({
-    super.key,
-    this.recipientEmail,
-    this.role,
-  });
+  const InvitePendingScreen({super.key, this.recipientEmail, this.role});
 
   @override
   State<InvitePendingScreen> createState() => _InvitePendingScreenState();
@@ -35,9 +32,9 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InvitePendingCubit>().init(
-            recipient: widget.recipientEmail,
-            role: widget.role,
-          );
+        recipient: widget.recipientEmail,
+        role: widget.role,
+      );
     });
   }
 

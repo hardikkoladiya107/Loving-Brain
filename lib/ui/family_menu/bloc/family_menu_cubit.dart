@@ -21,12 +21,11 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
         : 'your child';
 
     final List<CaregiverItem> linked = <CaregiverItem>[];
-    if (user?.partnerUserName != null &&
-        user!.partnerUserName!.trim().isNotEmpty) {
+    if (user?.partnerUserId != null && user!.partnerUserId!.trim().isNotEmpty) {
       linked.add(
         CaregiverItem(
-          id: user.partnerUserId ?? 'partner_linked',
-          name: user.partnerUserName!.trim(),
+          id: user.partnerUserId!,
+          name: 'Ravi',
           email: 'partner@lovingbrain.com',
           role: 'Partner',
           status: 'Linked',

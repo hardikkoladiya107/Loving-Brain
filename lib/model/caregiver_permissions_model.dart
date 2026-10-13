@@ -6,6 +6,7 @@
 /// - Parent reflections are NEVER shared under any circumstances.
 class CaregiverPermissionsModel {
   final String caregiverEmail;
+  final String? name;
   final String role;
   final bool canViewSleep;
   final bool canViewBehaviour;
@@ -15,6 +16,7 @@ class CaregiverPermissionsModel {
 
   const CaregiverPermissionsModel({
     required this.caregiverEmail,
+    this.name,
     this.role = 'partner',
     this.canViewSleep = true,
     this.canViewBehaviour = true,
@@ -23,15 +25,42 @@ class CaregiverPermissionsModel {
     this.canViewMentorSummaries = false,
   });
 
+  /// STRICT PRIVACY INVARIANT: Parent reflections must NEVER be shared under any circumstances.
+  bool get parentReflectionsNeverShared => true;
+
+  String get caregiverName {
+    if (name != null && name!.trim().isNotEmpty) return name!.trim();
+    return caregiverEmail.contains('@')
+        ? caregiverEmail.split('@').first
+        : caregiverEmail;
+  }
+
+  bool get canViewMentorshipSummaries => canViewMentorSummaries;
+
+  /// Convenience factory for tests and UI defaults
+  static CaregiverPermissionsModel forRole(
+    String role,
+    String name, {
+    String? caregiverEmail,
+  }) {
+    return CaregiverPermissionsModel.defaultForRole(
+      email: caregiverEmail ?? '$name@example.com',
+      name: name,
+      role: role,
+    );
+  }
+
   /// Factory for default permissions based on caregiver relationship role.
   factory CaregiverPermissionsModel.defaultForRole({
     required String email,
     required String role,
+    String? name,
   }) {
     final String cleanRole = role.toLowerCase().trim();
     if (cleanRole == 'grandparent') {
       return CaregiverPermissionsModel(
         caregiverEmail: email,
+        name: name,
         role: role,
         canViewSleep: true,
         canViewBehaviour: false,
@@ -43,6 +72,7 @@ class CaregiverPermissionsModel {
     if (cleanRole == 'nanny' || cleanRole == 'babysitter') {
       return CaregiverPermissionsModel(
         caregiverEmail: email,
+        name: name,
         role: role,
         canViewSleep: true,
         canViewBehaviour: true,
@@ -54,6 +84,7 @@ class CaregiverPermissionsModel {
     // Default partner permissions
     return CaregiverPermissionsModel(
       caregiverEmail: email,
+      name: name,
       role: role,
       canViewSleep: true,
       canViewBehaviour: true,
@@ -65,30 +96,68 @@ class CaregiverPermissionsModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'caregiver_email': caregiverEmail,
       'caregiverEmail': caregiverEmail,
+      'name': caregiverName,
+      'caregiver_name': caregiverName,
+      'caregiverName': caregiverName,
       'role': role,
+      'can_view_sleep': canViewSleep,
       'canViewSleep': canViewSleep,
+      'can_view_behaviour': canViewBehaviour,
       'canViewBehaviour': canViewBehaviour,
+      'can_view_health_notes': canViewHealthNotes,
       'canViewHealthNotes': canViewHealthNotes,
+      'can_view_plans': canViewPlans,
       'canViewPlans': canViewPlans,
+      'can_view_mentor_summaries': canViewMentorSummaries,
       'canViewMentorSummaries': canViewMentorSummaries,
+      'parent_reflections_never_shared': parentReflectionsNeverShared,
+      'parentReflectionsNeverShared': parentReflectionsNeverShared,
     };
   }
 
+  Map<String, dynamic> toJson() => toMap();
+
   factory CaregiverPermissionsModel.fromMap(Map<String, dynamic> map) {
+    final String email =
+        (map['caregiver_email'] ?? map['caregiverEmail'])?.toString() ?? '';
+    final String? n =
+        (map['name'] ?? map['caregiver_name'] ?? map['caregiverName'])
+            ?.toString();
+    final String role = map['role']?.toString() ?? 'partner';
+    final bool canSleep =
+        (map['can_view_sleep'] ?? map['canViewSleep']) != false;
+    final bool canBehaviour =
+        (map['can_view_behaviour'] ?? map['canViewBehaviour']) != false;
+    final bool canHealth =
+        (map['can_view_health_notes'] ?? map['canViewHealthNotes']) == true;
+    final bool canPlans =
+        (map['can_view_plans'] ?? map['canViewPlans']) != false;
+    final bool canMentor =
+        (map['can_view_mentor_summaries'] ??
+            map['canViewMentorSummaries'] ??
+            map['can_view_mentorship_summaries']) ==
+        true;
+
     return CaregiverPermissionsModel(
-      caregiverEmail: map['caregiverEmail']?.toString() ?? '',
-      role: map['role']?.toString() ?? 'partner',
-      canViewSleep: map['canViewSleep'] != false,
-      canViewBehaviour: map['canViewBehaviour'] != false,
-      canViewHealthNotes: map['canViewHealthNotes'] == true,
-      canViewPlans: map['canViewPlans'] != false,
-      canViewMentorSummaries: map['canViewMentorSummaries'] == true,
+      caregiverEmail: email,
+      name: n,
+      role: role,
+      canViewSleep: canSleep,
+      canViewBehaviour: canBehaviour,
+      canViewHealthNotes: canHealth,
+      canViewPlans: canPlans,
+      canViewMentorSummaries: canMentor,
     );
   }
 
+  factory CaregiverPermissionsModel.fromJson(Map<String, dynamic> json) =>
+      CaregiverPermissionsModel.fromMap(json);
+
   CaregiverPermissionsModel copyWith({
     String? caregiverEmail,
+    String? name,
     String? role,
     bool? canViewSleep,
     bool? canViewBehaviour,
@@ -98,6 +167,7 @@ class CaregiverPermissionsModel {
   }) {
     return CaregiverPermissionsModel(
       caregiverEmail: caregiverEmail ?? this.caregiverEmail,
+      name: name ?? this.name,
       role: role ?? this.role,
       canViewSleep: canViewSleep ?? this.canViewSleep,
       canViewBehaviour: canViewBehaviour ?? this.canViewBehaviour,

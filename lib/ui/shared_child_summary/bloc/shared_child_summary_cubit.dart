@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
-import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 
@@ -14,12 +13,8 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
   SharedChildSummaryCubit() : super(const SharedChildSummaryState());
 
   Future<void> init() async {
-    changeProps(
-      isLoading: true,
-      fetchStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
-    final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();
 
     final String cName =
@@ -27,11 +22,7 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
         ? child.childName!.trim()
         : 'your child';
 
-    final String pName =
-        (user?.partnerUserName != null &&
-            user!.partnerUserName!.trim().isNotEmpty)
-        ? user.partnerUserName!.trim()
-        : 'Ravi';
+    final String pName = 'Ravi';
 
     final String childId =
         child?.reference?.id ??
@@ -52,7 +43,7 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
             HandoverLogItem(
               authorName: isPartner ? pName : 'You',
               isPartner: isPartner,
-              actionDescription: log.durationMinutes > 0
+              actionDescription: (log.durationMinutes ?? 0) > 0
                   ? 'logged sleep (${log.durationMinutes}m)'
                   : 'logged bedtime',
               timeAgo: i == 0 ? 'today' : 'yesterday',

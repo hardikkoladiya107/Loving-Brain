@@ -98,16 +98,10 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
         .createMentorshipRequest(request);
 
     if (res is Data<MentorshipRequestModel>) {
-      changeProps(
-        isSubmitting: false,
-        saveStatus: res,
-      );
+      changeProps(isSubmitting: false, saveStatus: res);
       return true;
     } else {
-      changeProps(
-        isSubmitting: false,
-        saveStatus: res,
-      );
+      changeProps(isSubmitting: false, saveStatus: res);
       return false;
     }
   }

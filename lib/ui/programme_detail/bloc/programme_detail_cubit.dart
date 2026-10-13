@@ -11,6 +11,6 @@ class ProgrammeDetailCubit extends Cubit<ProgrammeDetailState> {
   }
 
   void changeProps() {
-    emit(state.copyWith());
+    emit(const ProgrammeDetailState());
   }
 }

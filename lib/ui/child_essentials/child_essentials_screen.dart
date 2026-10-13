@@ -50,10 +50,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  "Select category:".appText(
-                    fontSize: 14.sp,
-                    color: greyColor,
-                  ),
+                  "Select category:".appText(fontSize: 14.sp, color: greyColor),
                   8.spaceH,
                   Row(
                     children: [
@@ -102,7 +99,9 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                       fillColor: Colors.white,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(color: greyColor.withValues(alpha: 0.3)),
+                        borderSide: BorderSide(
+                          color: greyColor.withValues(alpha: 0.3),
+                        ),
                       ),
                     ),
                   ),
@@ -111,10 +110,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(dialogContext),
-                  child: "Cancel".appText(
-                    fontSize: 14.sp,
-                    color: greyColor,
-                  ),
+                  child: "Cancel".appText(fontSize: 14.sp, color: greyColor),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -271,7 +267,11 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                             widget: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.add, color: greyColor14, size: 20.sp),
+                                Icon(
+                                  Icons.add,
+                                  color: greyColor14,
+                                  size: 20.sp,
+                                ),
                                 8.spaceW,
                                 "Add another item".appText(
                                   fontSize: 18.sp,

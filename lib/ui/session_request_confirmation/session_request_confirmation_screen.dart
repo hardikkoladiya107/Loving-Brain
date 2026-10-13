@@ -116,7 +116,8 @@ class _SessionRequestConfirmationScreenState
       chipBgColor: const Color(0xFFE7F2ED),
       title: 'We’ll be in touch soon',
       titleFontSize: 24.sp,
-      subtitle: "We’ll confirm $guideName’s availability and contact you shortly.",
+      subtitle:
+          "We’ll confirm $guideName’s availability and contact you shortly.",
     );
   }
 

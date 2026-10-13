@@ -47,13 +47,15 @@ class ChildEssentialsCubit extends Cubit<ChildEssentialsState> {
 
   void addAllergy(String item) {
     if (item.trim().isEmpty) return;
-    final List<String> list = List<String>.from(state.allergies)..add(item.trim());
+    final List<String> list = List<String>.from(state.allergies)
+      ..add(item.trim());
     changeProps(allergies: list);
   }
 
   void addMedication(String item) {
     if (item.trim().isEmpty) return;
-    final List<String> list = List<String>.from(state.medications)..add(item.trim());
+    final List<String> list = List<String>.from(state.medications)
+      ..add(item.trim());
     changeProps(medications: list);
   }
 }

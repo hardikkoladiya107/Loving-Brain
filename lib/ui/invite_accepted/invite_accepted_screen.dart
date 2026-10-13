@@ -175,11 +175,7 @@ class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
     );
   }
 
-  Widget _buildBottomActions(
-    BuildContext context,
-    String name,
-    String role,
-  ) {
+  Widget _buildBottomActions(BuildContext context, String name, String role) {
     return Positioned(
       bottom: 0,
       left: 0,

@@ -59,13 +59,12 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
       return false;
     }
 
-    changeProps(
-      isSending: true,
-      sendStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isSending: true, sendStatus: const ApiResultStatus.loading());
 
-    final String fromEmail = preferences.getUserModel()?.email ?? 'parent@lovingbrain.com';
-    final String childId = preferences.getChildModel()?.reference?.id ?? 'child_local';
+    final String fromEmail =
+        preferences.getUserModel()?.email ?? 'parent@lovingbrain.com';
+    final String childId =
+        preferences.getChildModel()?.reference?.id ?? 'child_local';
 
     final Map<String, dynamic> request = <String, dynamic>{
       'from_parent': fromEmail,
@@ -74,10 +73,14 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
       'children': childId,
       'status': 'PENDING',
       'created_at': DateTime.now().toIso8601String(),
-      'expires_at': DateTime.now().add(const Duration(days: 14)).toIso8601String(),
+      'expires_at': DateTime.now()
+          .add(const Duration(days: 14))
+          .toIso8601String(),
     };
 
-    final ApiResultStatus res = await CoParentRepo.instance.createInvitation(request: request);
+    final ApiResultStatus res = await CoParentRepo.instance.createInvitation(
+      request: request,
+    );
 
     bool isSuccess = false;
     res.whenOrNull(
@@ -85,10 +88,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
       error: (_) => isSuccess = false,
     );
 
-    changeProps(
-      isSending: false,
-      sendStatus: res,
-    );
+    changeProps(isSending: false, sendStatus: res);
 
     return isSuccess;
   }

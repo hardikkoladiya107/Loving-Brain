@@ -10,18 +10,19 @@ class ChooseSupportAreaCubit extends Cubit<ChooseSupportAreaState> {
   void init({String? initialArea}) {
     int index = 0;
     if (initialArea != null && initialArea.trim().isNotEmpty) {
+      final String clean = initialArea.toLowerCase().trim();
       final int found = state.areas.indexWhere(
-        (String a) => a.toLowerCase() == initialArea.toLowerCase().trim(),
+        (String a) =>
+            a.toLowerCase() == clean ||
+            clean.contains(a.toLowerCase()) ||
+            a.toLowerCase().contains(clean),
       );
       if (found != -1) index = found;
     }
     changeProps(selectedIndex: index);
   }
 
-  void changeProps({
-    int? selectedIndex,
-    List<String>? areas,
-  }) {
+  void changeProps({int? selectedIndex, List<String>? areas}) {
     emit(
       state.copyWith(
         selectedIndex: selectedIndex ?? state.selectedIndex,

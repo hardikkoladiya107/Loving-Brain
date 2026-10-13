@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
-import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/mentorship_repo.dart';
@@ -15,29 +14,21 @@ class PostSessionPlanCubit extends Cubit<PostSessionPlanState> {
   String _resolvedChildId = 'default_child';
 
   Future<void> init({String? childId}) async {
-    changeProps(
-      isLoading: true,
-      fetchStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
-    _resolvedChildId = childId ??
+    _resolvedChildId =
+        childId ??
         preferences.getChildModel()?.reference?.id ??
         'default_child';
 
-    final ApiResultStatus<PostSessionPlanModel> res =
-        await MentorshipRepo.instance.getPostSessionPlan(_resolvedChildId);
+    final ApiResultStatus<PostSessionPlanModel> res = await MentorshipRepo
+        .instance
+        .getPostSessionPlan(_resolvedChildId);
 
     if (res is Data<PostSessionPlanModel>) {
-      changeProps(
-        isLoading: false,
-        plan: res.data,
-        fetchStatus: res,
-      );
+      changeProps(isLoading: false, plan: res.data, fetchStatus: res);
     } else {
-      changeProps(
-        isLoading: false,
-        fetchStatus: res,
-      );
+      changeProps(isLoading: false, fetchStatus: res);
     }
   }
 

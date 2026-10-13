@@ -12,10 +12,7 @@ class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
   ParentSuccessGuideCubit() : super(const ParentSuccessGuideState());
 
   Future<void> init({String? guideId}) async {
-    changeProps(
-      isLoading: true,
-      fetchStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
     final GuideProfileModel matched = guideId != null && guideId.isNotEmpty
         ? MentorshipRepo.instance.getGuideById(guideId)
@@ -58,14 +55,14 @@ class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
 
   Future<void> cancelRequest(String requestId) async {
     await MentorshipRepo.instance.cancelMentorshipRequest(requestId);
-    final List<MentorshipRequestModel> updated = state.pendingRequests
-        .map((MentorshipRequestModel r) {
-          if (r.id == requestId) {
-            return r.copyWith(status: MentorshipRequestStatus.cancelled);
-          }
-          return r;
-        })
-        .toList();
+    final List<MentorshipRequestModel> updated = state.pendingRequests.map((
+      MentorshipRequestModel r,
+    ) {
+      if (r.id == requestId) {
+        return r.copyWith(status: MentorshipRequestStatus.cancelled);
+      }
+      return r;
+    }).toList();
     changeProps(pendingRequests: updated);
   }
 }

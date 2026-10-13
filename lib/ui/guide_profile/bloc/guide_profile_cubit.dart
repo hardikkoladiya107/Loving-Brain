@@ -11,10 +11,7 @@ class GuideProfileCubit extends Cubit<GuideProfileState> {
   GuideProfileCubit() : super(const GuideProfileState());
 
   void init({String? guideId, String? supportArea}) {
-    changeProps(
-      isLoading: true,
-      fetchStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
     GuideProfileModel matched;
     if (guideId != null && guideId.isNotEmpty) {

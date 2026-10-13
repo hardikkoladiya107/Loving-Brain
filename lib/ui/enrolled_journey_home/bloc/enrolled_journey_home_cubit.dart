@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
-import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/mentorship_repo.dart';
@@ -13,29 +12,21 @@ class EnrolledJourneyHomeCubit extends Cubit<EnrolledJourneyHomeState> {
   EnrolledJourneyHomeCubit() : super(const EnrolledJourneyHomeState());
 
   Future<void> init({String? childId}) async {
-    changeProps(
-      isLoading: true,
-      fetchStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
-    final String resolvedId = childId ??
+    final String resolvedId =
+        childId ??
         preferences.getChildModel()?.reference?.id ??
         'default_child';
 
-    final ApiResultStatus<EnrolledProgramModel> res =
-        await MentorshipRepo.instance.getEnrolledProgram(resolvedId);
+    final ApiResultStatus<EnrolledProgramModel> res = await MentorshipRepo
+        .instance
+        .getEnrolledProgram(resolvedId);
 
     if (res is Data<EnrolledProgramModel>) {
-      changeProps(
-        isLoading: false,
-        program: res.data,
-        fetchStatus: res,
-      );
+      changeProps(isLoading: false, program: res.data, fetchStatus: res);
     } else {
-      changeProps(
-        isLoading: false,
-        fetchStatus: res,
-      );
+      changeProps(isLoading: false, fetchStatus: res);
     }
   }
 

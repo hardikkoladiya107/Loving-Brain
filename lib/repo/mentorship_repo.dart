@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
-import 'package:loving_brain/other/preferances.dart';
 
 /// Singleton repository managing Guided Mentorship, Programs, and Session Requests.
 /// Conforms to AGENTS.md §7 (Repository Pattern & ApiResultStatus).
@@ -15,16 +14,19 @@ class MentorshipRepo {
   CollectionReference<Map<String, dynamic>> get _requestsCollection =>
       FirebaseFirestore.instance.collection('mentorship_requests');
 
-  CollectionReference<Map<String, dynamic>> get _programsCollection =>
+  CollectionReference<Map<String, dynamic>> get programsCollection =>
       FirebaseFirestore.instance.collection('enrolled_programs');
 
-  CollectionReference<Map<String, dynamic>> get _plansCollection =>
+  CollectionReference<Map<String, dynamic>> get plansCollection =>
       FirebaseFirestore.instance.collection('post_session_plans');
 
   // In-memory fallback / cache for resilience & unit tests without live Firestore
-  final List<MentorshipRequestModel> _localRequests = <MentorshipRequestModel>[];
-  final Map<String, PostSessionPlanModel> _localPlans = <String, PostSessionPlanModel>{};
-  final Map<String, EnrolledProgramModel> _localPrograms = <String, EnrolledProgramModel>{};
+  final List<MentorshipRequestModel> _localRequests =
+      <MentorshipRequestModel>[];
+  final Map<String, PostSessionPlanModel> _localPlans =
+      <String, PostSessionPlanModel>{};
+  final Map<String, EnrolledProgramModel> _localPrograms =
+      <String, EnrolledProgramModel>{};
 
   /// Vetted guide profiles catalogue per V2 specs (Screen 46).
   static const List<GuideProfileModel> defaultGuides = <GuideProfileModel>[
@@ -62,7 +64,11 @@ class MentorshipRepo {
       title: 'Family Rhythms & Co-Parenting Mentor',
       experienceYears: 7,
       languages: <String>['English', 'Hindi'],
-      supportAreas: <String>['Co-parenting', 'Parent Wellbeing', 'General Parenting'],
+      supportAreas: <String>[
+        'Co-parenting',
+        'Parent Wellbeing',
+        'General Parenting',
+      ],
       sessionDurationMinutes: 45,
       rating: 4.98,
       isVerified: true,
@@ -87,13 +93,17 @@ class MentorshipRepo {
     String? language,
   }) async {
     try {
-      List<GuideProfileModel> guides = List<GuideProfileModel>.from(defaultGuides);
+      List<GuideProfileModel> guides = List<GuideProfileModel>.from(
+        defaultGuides,
+      );
 
       if (supportArea != null && supportArea.trim().isNotEmpty) {
         final String cleanArea = supportArea.toLowerCase().trim();
         guides = guides.where((GuideProfileModel g) {
           return g.supportAreas.any(
-            (String a) => a.toLowerCase().contains(cleanArea) || cleanArea.contains(a.toLowerCase()),
+            (String a) =>
+                a.toLowerCase().contains(cleanArea) ||
+                cleanArea.contains(a.toLowerCase()),
           );
         }).toList();
       }
@@ -105,7 +115,9 @@ class MentorshipRepo {
         }).toList();
       }
 
-      return ApiResultStatus.data(data: guides.isNotEmpty ? guides : defaultGuides);
+      return ApiResultStatus.data(
+        data: guides.isNotEmpty ? guides : defaultGuides,
+      );
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
@@ -152,12 +164,17 @@ class MentorshipRepo {
       try {
         final QuerySnapshot<Map<String, dynamic>> snap =
             await _requestsCollection.where('userId', isEqualTo: userId).get();
-        for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snap.docs) {
+        for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+            in snap.docs) {
           list.add(MentorshipRequestModel.fromMap(doc.data(), id: doc.id));
         }
       } catch (_) {
         // Fallback to local
-        list.addAll(_localRequests.where((MentorshipRequestModel r) => r.userId == userId));
+        list.addAll(
+          _localRequests.where(
+            (MentorshipRequestModel r) => r.userId == userId,
+          ),
+        );
       }
 
       if (list.isEmpty && _localRequests.isNotEmpty) {
@@ -171,7 +188,9 @@ class MentorshipRepo {
   }
 
   /// Cancels an outstanding request (Screen 51).
-  Future<ApiResultStatus<bool>> cancelMentorshipRequest(String requestId) async {
+  Future<ApiResultStatus<bool>> cancelMentorshipRequest(
+    String requestId,
+  ) async {
     try {
       for (int i = 0; i < _localRequests.length; i++) {
         if (_localRequests[i].id == requestId) {
@@ -195,7 +214,9 @@ class MentorshipRepo {
   }
 
   /// Retrieves active enrolled program details (Screens 44, 49).
-  Future<ApiResultStatus<EnrolledProgramModel>> getEnrolledProgram(String childId) async {
+  Future<ApiResultStatus<EnrolledProgramModel>> getEnrolledProgram(
+    String childId,
+  ) async {
     try {
       if (_localPrograms.containsKey(childId)) {
         return ApiResultStatus.data(data: _localPrograms[childId]!);
@@ -224,7 +245,9 @@ class MentorshipRepo {
   }
 
   /// Retrieves post-session plan agreed with mentor (Screen 50).
-  Future<ApiResultStatus<PostSessionPlanModel>> getPostSessionPlan(String childId) async {
+  Future<ApiResultStatus<PostSessionPlanModel>> getPostSessionPlan(
+    String childId,
+  ) async {
     try {
       if (_localPlans.containsKey(childId)) {
         return ApiResultStatus.data(data: _localPlans[childId]!);
@@ -276,7 +299,8 @@ class MentorshipRepo {
     required bool isCompleted,
   }) async {
     try {
-      final ApiResultStatus<PostSessionPlanModel> current = await getPostSessionPlan(childId);
+      final ApiResultStatus<PostSessionPlanModel> current =
+          await getPostSessionPlan(childId);
       PostSessionPlanModel plan = (current as Data<PostSessionPlanModel>).data;
 
       final List<PlanTaskItem> updatedTasks = plan.tasks.map((PlanTaskItem t) {

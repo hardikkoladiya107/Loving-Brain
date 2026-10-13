@@ -20,11 +20,7 @@ class GuideProfileScreen extends StatefulWidget {
   final String? guideId;
   final String? supportArea;
 
-  const GuideProfileScreen({
-    super.key,
-    this.guideId,
-    this.supportArea,
-  });
+  const GuideProfileScreen({super.key, this.guideId, this.supportArea});
 
   @override
   State<GuideProfileScreen> createState() => _GuideProfileScreenState();
@@ -36,9 +32,9 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<GuideProfileCubit>().init(
-            guideId: widget.guideId,
-            supportArea: widget.supportArea,
-          );
+        guideId: widget.guideId,
+        supportArea: widget.supportArea,
+      );
     });
   }
 
@@ -146,7 +142,6 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                                   Icons.person,
                                   size: 80.sp,
                                   color: Colors.white,
-                                Perp: null,
                                 ),
                               ),
                             ),
@@ -193,8 +188,12 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                             runSpacing: 8.h,
                             alignment: WrapAlignment.center,
                             children: [
-                              ...guide.languages.map((String lang) => _buildTag(lang)),
-                              ...guide.supportAreas.map((String area) => _buildTag(area)),
+                              ...guide.languages.map(
+                                (String lang) => _buildTag(lang),
+                              ),
+                              ...guide.supportAreas.map(
+                                (String area) => _buildTag(area),
+                              ),
                             ],
                           ),
                           32.spaceH,

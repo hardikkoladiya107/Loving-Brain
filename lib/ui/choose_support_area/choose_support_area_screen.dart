@@ -60,9 +60,9 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context
-          .read<ChooseSupportAreaCubit>()
-          .init(initialArea: widget.initialArea);
+      context.read<ChooseSupportAreaCubit>().init(
+        initialArea: widget.initialArea,
+      );
     });
   }
 
@@ -280,15 +280,13 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
         child: AppButton(
           title: "Continue",
           onTap: () {
-            final String selectedTitle =
-                (state.selectedIndex < _options.length)
+            final String selectedTitle = (state.selectedIndex < _options.length)
                 ? _options[state.selectedIndex]["title"] as String
                 : "Sleep guidance";
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) =>
-                    GuideProfileScreen(supportArea: selectedTitle),
+                builder: (_) => GuideProfileScreen(supportArea: selectedTitle),
               ),
             );
           },

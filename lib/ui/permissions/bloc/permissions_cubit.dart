@@ -60,10 +60,7 @@ class PermissionsCubit extends Cubit<PermissionsState> {
       changeProps(mentorshipEnabled: !state.mentorshipEnabled);
 
   Future<bool> savePermissions() async {
-    changeProps(
-      isSaving: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
     await Future.delayed(const Duration(milliseconds: 300));
 
@@ -75,10 +72,7 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   }
 
   Future<bool> revokeAccess() async {
-    changeProps(
-      isSaving: true,
-      saveStatus: const ApiResultStatus.loading(),
-    );
+    changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
     await Future.delayed(const Duration(milliseconds: 300));
 
