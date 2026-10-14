@@ -20,17 +20,17 @@ import 'brainy_conversation_state.dart';
 
 class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   BrainyConversationCubit() : super(const BrainyConversationState()) {
-    _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen((s) {
+    _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen((
+      PlayerState s,
+    ) {
       if (isClosed) return;
       final bool playing = s == PlayerState.playing;
-      emit(
-        state.copyWith(
-          isAudioPlaying: playing,
-          playingMessageId:
-              (s == PlayerState.completed || s == PlayerState.stopped)
-              ? null
-              : state.playingMessageId,
-        ),
+      final bool stopOrComplete =
+          s == PlayerState.completed || s == PlayerState.stopped;
+      changeProps(
+        isAudioPlaying: playing,
+        playingMessageId: stopOrComplete ? null : state.playingMessageId,
+        clearPlayingMessageId: stopOrComplete,
       );
     });
   }
@@ -38,6 +38,34 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _chatsSubscription;
   StreamSubscription<PlayerState>? _playerStateSubscription;
   final AudioPlayer _audioPlayer = AudioPlayer();
+
+  void changeProps({
+    List<BrainyMessage>? messages,
+    bool? isTyping,
+    String? conversationId,
+    String? topic,
+    String? selectedImagePath,
+    bool clearSelectedImage = false,
+    String? playingMessageId,
+    bool clearPlayingMessageId = false,
+    bool? isAudioPlaying,
+  }) {
+    emit(
+      state.copyWith(
+        messages: messages ?? state.messages,
+        isTyping: isTyping ?? state.isTyping,
+        conversationId: conversationId ?? state.conversationId,
+        topic: topic ?? state.topic,
+        selectedImagePath: clearSelectedImage
+            ? null
+            : (selectedImagePath ?? state.selectedImagePath),
+        playingMessageId: clearPlayingMessageId
+            ? null
+            : (playingMessageId ?? state.playingMessageId),
+        isAudioPlaying: isAudioPlaying ?? state.isAudioPlaying,
+      ),
+    );
+  }
 
   Future<void> init({
     String? conversationId,
@@ -49,7 +77,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         ? topic!.trim()
         : 'Sleep';
 
-    emit(state.copyWith(conversationId: conversationId, topic: effectiveTopic));
+    changeProps(conversationId: conversationId, topic: effectiveTopic);
 
     if (conversationId != null && conversationId.isNotEmpty) {
       _listenToConversation(
@@ -106,11 +134,11 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
   void selectImage(String path) {
     if (path.trim().isEmpty) return;
-    emit(state.copyWith(selectedImagePath: path));
+    changeProps(selectedImagePath: path);
   }
 
   void removeSelectedImage() {
-    emit(state.copyWith(selectedImagePath: null));
+    changeProps(clearSelectedImage: true);
   }
 
   void _listenToConversation(
@@ -128,39 +156,38 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         .collection('chats')
         .orderBy('time_stamp', descending: false)
         .snapshots()
-        .listen((snapshot) {
+        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
           if (isClosed) return;
           if (snapshot.docs.isEmpty) {
             if (fallbackInitialQuestion != null &&
                 fallbackInitialQuestion.trim().isNotEmpty &&
                 state.messages.isEmpty &&
                 !state.isTyping) {
-              final pair = _buildFallbackAiCards(
+              final List<BrainyMessage> pair = _buildFallbackAiCards(
                 fallbackInitialQuestion,
                 preferences.getChildModel(),
               );
-              emit(
-                state.copyWith(
-                  messages: [
-                    BrainyMessage(
-                      id: 'fallback_q',
-                      type: MessageType.user,
-                      chipTitle: 'You asked',
-                      headline: fallbackInitialQuestion,
-                    ),
-                    ...pair,
-                  ],
-                ),
+              changeProps(
+                messages: <BrainyMessage>[
+                  BrainyMessage(
+                    id: 'fallback_q',
+                    type: MessageType.user,
+                    chipTitle: 'You asked',
+                    headline: fallbackInitialQuestion,
+                  ),
+                  ...pair,
+                ],
               );
             }
             return;
           }
 
-          final List<BrainyMessage> mapped = [];
-          for (final doc in snapshot.docs) {
+          final List<BrainyMessage> mapped = <BrainyMessage>[];
+          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+              in snapshot.docs) {
             mapped.addAll(_mapDocToBrainyMessages(doc.id, doc.data()));
           }
-          emit(state.copyWith(messages: mapped));
+          changeProps(messages: mapped);
         });
   }
 
@@ -239,9 +266,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     final ApiResultStatus convResult = await AiRepo.instance
         .createConversation();
     convResult.whenOrNull(
-      data: (data) {
+      data: (dynamic data) {
         if (data is Map<String, dynamic>) {
-          final model = CreateConversationModel.fromJson(data);
+          final CreateConversationModel model =
+              CreateConversationModel.fromJson(data);
           if (model.id != null && model.id!.isNotEmpty) {
             convId = model.id!;
           }
@@ -249,7 +277,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       },
     );
 
-    emit(state.copyWith(conversationId: convId));
+    changeProps(conversationId: convId);
 
     await AuthRepo.instance.addConversationToUser(
       conversationId: convId,
@@ -417,14 +445,12 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     if (isClosed) return;
     final String uid = userModel?.uid ?? '';
     if (uid.isEmpty) {
-      emit(
-        state.copyWith(
-          messages: [...state.messages, ...aiCards],
-          isTyping: false,
-        ),
+      changeProps(
+        messages: <BrainyMessage>[...state.messages, ...aiCards],
+        isTyping: false,
       );
     } else {
-      emit(state.copyWith(isTyping: false));
+      changeProps(isTyping: false);
     }
   }
 
@@ -622,9 +648,11 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   Future<void> toggleSaveGuidance(BrainyMessage message, int index) async {
     if (index < 0 || index >= state.messages.length) return;
     final bool newSaved = !message.isSaved;
-    final updatedMessages = [...state.messages];
+    final List<BrainyMessage> updatedMessages = <BrainyMessage>[
+      ...state.messages,
+    ];
     updatedMessages[index] = message.copyWith(isSaved: newSaved);
-    emit(state.copyWith(messages: updatedMessages));
+    changeProps(messages: updatedMessages);
 
     final String uid = preferences.getUserModel()?.uid ?? '';
     if (uid.isEmpty) return;
@@ -639,19 +667,21 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       await AuthRepo.instance.updateChatToConversation(
         conversationId: state.conversationId!,
         chatReferenceId: rawDocId,
-        request: {'is_saved': newSaved},
+        request: <String, dynamic>{'is_saved': newSaved},
       );
     }
 
     final String savedDocId =
         message.id ?? 'saved_${message.headline.hashCode.abs()}';
-    final savedRef = AuthRepo.instance.userCollection
+    final DocumentReference<Map<String, dynamic>> savedRef = AuthRepo
+        .instance
+        .userCollection
         .doc(uid)
         .collection('saved_guidance')
         .doc(savedDocId);
 
     if (newSaved) {
-      await savedRef.set({
+      await savedRef.set(<String, dynamic>{
         'id': savedDocId,
         'conversation_id': state.conversationId,
         'title': message.headline,
@@ -670,7 +700,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     final String msgKey = message.id ?? message.headline;
     if (state.playingMessageId == msgKey && state.isAudioPlaying) {
       await _audioPlayer.pause();
-      emit(state.copyWith(isAudioPlaying: false));
+      changeProps(isAudioPlaying: false);
       return;
     }
 
@@ -679,7 +709,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     try {
       await _audioPlayer.stop();
-      emit(state.copyWith(playingMessageId: msgKey, isAudioPlaying: true));
+      changeProps(playingMessageId: msgKey, isAudioPlaying: true);
       if (localPath != null &&
           localPath.isNotEmpty &&
           File(localPath).existsSync()) {
@@ -687,11 +717,11 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       } else if (networkPath != null && networkPath.isNotEmpty) {
         await _audioPlayer.play(UrlSource(networkPath));
       } else {
-        emit(state.copyWith(playingMessageId: null, isAudioPlaying: false));
+        changeProps(clearPlayingMessageId: true, isAudioPlaying: false);
       }
     } catch (_) {
       if (!isClosed) {
-        emit(state.copyWith(playingMessageId: null, isAudioPlaying: false));
+        changeProps(clearPlayingMessageId: true, isAudioPlaying: false);
       }
     }
   }
@@ -704,19 +734,19 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }) async {
     final String? uid = preferences.getUserModel()?.uid;
     if (imageLocalPath != null && imageLocalPath.isNotEmpty) {
-      final uploadedFilePath = await AiRepo.instance
+      final ApiResultStatus uploadedFilePath = await AiRepo.instance
           .uploadFileToFirebaseStorage(
             file: File(imageLocalPath),
             referenceId: uid,
           );
       uploadedFilePath.whenOrNull(
-        data: (data) async {
+        data: (dynamic data) async {
           if (data is TaskSnapshot) {
-            final imageNetworkUrl = await data.ref.getDownloadURL();
+            final String imageNetworkUrl = await data.ref.getDownloadURL();
             await AuthRepo.instance.updateChatToConversation(
               conversationId: convId,
               chatReferenceId: documentReference.id,
-              request: {'image_network_path': imageNetworkUrl},
+              request: <String, dynamic>{'image_network_path': imageNetworkUrl},
             );
           }
         },
@@ -724,19 +754,19 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     }
 
     if (audioLocalPath != null && audioLocalPath.isNotEmpty) {
-      final uploadedFilePath = await AiRepo.instance
+      final ApiResultStatus uploadedFilePath = await AiRepo.instance
           .uploadAudioFileToFirebaseStorage(
             file: File(audioLocalPath),
             referenceId: uid,
           );
       uploadedFilePath.whenOrNull(
-        data: (data) async {
+        data: (dynamic data) async {
           if (data is TaskSnapshot) {
-            final audioNetworkUrl = await data.ref.getDownloadURL();
+            final String audioNetworkUrl = await data.ref.getDownloadURL();
             await AuthRepo.instance.updateChatToConversation(
               conversationId: convId,
               chatReferenceId: documentReference.id,
-              request: {'audio_network_path': audioNetworkUrl},
+              request: <String, dynamic>{'audio_network_path': audioNetworkUrl},
             );
           }
         },

@@ -13,8 +13,23 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _savedSubscription;
 
+  void changeProps({
+    List<BrainySavedItem>? sleepItems,
+    List<BrainySavedItem>? behaviourItems,
+    List<BrainySavedItem>? parentWellbeingItems,
+  }) {
+    emit(
+      state.copyWith(
+        sleepItems: sleepItems ?? state.sleepItems,
+        behaviourItems: behaviourItems ?? state.behaviourItems,
+        parentWellbeingItems:
+            parentWellbeingItems ?? state.parentWellbeingItems,
+      ),
+    );
+  }
+
   void init() {
-    final defaultSleep = [
+    final List<BrainySavedItem> defaultSleep = <BrainySavedItem>[
       BrainySavedItem(
         title: 'Why bedtime got harder',
         subtitle: 'Saved 2 days ago',
@@ -23,7 +38,7 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
         topic: 'Sleep',
       ),
     ];
-    final defaultBehaviour = [
+    final List<BrainySavedItem> defaultBehaviour = <BrainySavedItem>[
       BrainySavedItem(
         title: 'Tantrum triggers explained',
         subtitle: 'Saved 5 days ago',
@@ -32,7 +47,7 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
         topic: 'Behaviour',
       ),
     ];
-    final defaultWellbeing = [
+    final List<BrainySavedItem> defaultWellbeing = <BrainySavedItem>[
       BrainySavedItem(
         title: '5 min breathing reset',
         subtitle: 'Saved 1 week ago',
@@ -42,12 +57,10 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
       ),
     ];
 
-    emit(
-      state.copyWith(
-        sleepItems: defaultSleep,
-        behaviourItems: defaultBehaviour,
-        parentWellbeingItems: defaultWellbeing,
-      ),
+    changeProps(
+      sleepItems: defaultSleep,
+      behaviourItems: defaultBehaviour,
+      parentWellbeingItems: defaultWellbeing,
     );
 
     final String uid = preferences.getUserModel()?.uid ?? '';
@@ -58,15 +71,13 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
         .doc(uid)
         .collection('saved_guidance')
         .snapshots()
-        .listen((snapshot) {
+        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
           if (isClosed) return;
           if (snapshot.docs.isEmpty) {
-            emit(
-              state.copyWith(
-                sleepItems: defaultSleep,
-                behaviourItems: defaultBehaviour,
-                parentWellbeingItems: defaultWellbeing,
-              ),
+            changeProps(
+              sleepItems: defaultSleep,
+              behaviourItems: defaultBehaviour,
+              parentWellbeingItems: defaultWellbeing,
             );
             return;
           }
@@ -129,16 +140,12 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
             }
           }
 
-          emit(
-            state.copyWith(
-              sleepItems: sleep.isNotEmpty ? sleep : defaultSleep,
-              behaviourItems: behaviour.isNotEmpty
-                  ? behaviour
-                  : defaultBehaviour,
-              parentWellbeingItems: wellbeing.isNotEmpty
-                  ? wellbeing
-                  : defaultWellbeing,
-            ),
+          changeProps(
+            sleepItems: sleep.isNotEmpty ? sleep : defaultSleep,
+            behaviourItems: behaviour.isNotEmpty ? behaviour : defaultBehaviour,
+            parentWellbeingItems: wellbeing.isNotEmpty
+                ? wellbeing
+                : defaultWellbeing,
           );
         });
   }

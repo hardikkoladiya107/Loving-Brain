@@ -18,10 +18,12 @@ class SleepLogRepo {
 
   static SleepLogRepo get instance => _instance;
 
-  var childrenCollection = FirebaseFirestore.instance.collection('children');
+  final CollectionReference<Map<String, dynamic>> childrenCollection =
+      FirebaseFirestore.instance.collection('children');
 
-  CollectionReference _childSleepCollection(String childId) =>
-      childrenCollection.doc(childId).collection('sleep_logs');
+  CollectionReference<Map<String, dynamic>> _childSleepCollection(
+    String childId,
+  ) => childrenCollection.doc(childId).collection('sleep_logs');
 
   Future<ApiResultStatus> addSleepLog(
     String childReferenceId,
@@ -195,23 +197,23 @@ class SleepLogRepo {
 
   /// Optional: ApiResultStatus wrappers for compatibility with your service pattern.
   /// These simply call the offline functions and wrap the result. Remove if you don't use ApiResultStatus.
-  Future<ApiResultStatus<List<WeekRange>>> getWeeksWithLogsOffline_Result(
+  Future<ApiResultStatus<List<WeekRange>>> getWeeksWithLogsOfflineResult(
     List<SleepLogModel> logs,
   ) async {
     try {
-      final weeks = getWeeksWithLogsOffline(logs);
+      final List<WeekRange> weeks = getWeeksWithLogsOffline(logs);
       return ApiResultStatus.data(data: weeks);
     } catch (e) {
       return ApiResultStatus.error(error: Exception('Something went wrong'));
     }
   }
 
-  Future<ApiResultStatus<List<double>>> getWeeklySleepHoursOffline_Result(
+  Future<ApiResultStatus<List<double>>> getWeeklySleepHoursOfflineResult(
     List<SleepLogModel> logs,
     WeekRange week,
   ) async {
     try {
-      final hours = getWeeklySleepHoursOffline(logs, week);
+      final List<double> hours = getWeeklySleepHoursOffline(logs, week);
       return ApiResultStatus.data(data: hours);
     } catch (e) {
       return ApiResultStatus.error(error: Exception('Something went wrong'));
