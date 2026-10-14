@@ -43,8 +43,8 @@ class _StatesGalleryScreenState extends State<StatesGalleryScreen> {
                 SwitchListTile(
                   title: const Text("Toggle Global Offline Banner"),
                   value: _isOffline,
-                  onChanged: (val) => setState(() => _isOffline = val),
-                  activeColor: const Color(0xFF5C6BC0),
+                  onChanged: (bool val) => setState(() => _isOffline = val),
+                  activeThumbColor: const Color(0xFF5C6BC0),
                 ),
                 const Divider(),
                 _buildSection("Alert Bottom Sheets"),

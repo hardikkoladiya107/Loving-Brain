@@ -15,8 +15,9 @@ class BaseCubit extends Cubit<BaseState> {
   BaseCubit() : super(BaseState());
 
   StreamSubscription<String>? _tokenRefreshSubscription;
-  StreamSubscription? _profileSubscription;
-  StreamSubscription? _childSubscription;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+  _profileSubscription;
+  StreamSubscription<DocumentSnapshot<Object?>>? _childSubscription;
 
   void changeProps({int? bottomNavigationIndex}) {
     emit(
@@ -35,15 +36,15 @@ class BaseCubit extends Cubit<BaseState> {
   }
 
   void _listenToUser() {
-    final currentUser = preferences.getUserModel();
+    final UserModel? currentUser = preferences.getUserModel();
     if ((currentUser?.uid ?? "").isNotEmpty) {
       _profileSubscription?.cancel();
       _profileSubscription = AuthRepo.instance.userCollection
           .doc(currentUser!.uid)
           .snapshots()
-          .listen((event) async {
+          .listen((DocumentSnapshot<Map<String, dynamic>> event) async {
             if (event.data() != null) {
-              var userModel = UserModel.fromJson(event.data()!);
+              final UserModel userModel = UserModel.fromJson(event.data()!);
               await preferences.saveUserModel(userModel);
               _listenToChild(userModel.defaultChild);
             }
@@ -53,9 +54,11 @@ class BaseCubit extends Cubit<BaseState> {
 
   void _listenToChild(DocumentReference<Object?>? defaultChild) {
     _childSubscription?.cancel();
-    _childSubscription = defaultChild?.snapshots().listen((event) async {
+    _childSubscription = defaultChild?.snapshots().listen((
+      DocumentSnapshot<Object?> event,
+    ) async {
       if (event.data() != null) {
-        final childModel = ChildModel.fromJson(
+        final ChildModel childModel = ChildModel.fromJson(
           event.data() as Map<String, dynamic>,
           event.reference,
         );
