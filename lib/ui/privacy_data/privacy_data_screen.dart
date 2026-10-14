@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -17,15 +19,38 @@ import 'package:loving_brain/ui/widget/warning_box.dart';
 import 'bloc/privacy_data_cubit.dart';
 import 'bloc/privacy_data_state.dart';
 
-class PrivacyDataScreen extends StatelessWidget {
+/// Screen 62: Privacy & Data.
+/// Conforms to AGENTS.md §5.1 and v2-doc/04_DATABASE_SCHEMA_AND_OFFLINE_RULES.md.
+class PrivacyDataScreen extends StatefulWidget {
   const PrivacyDataScreen({super.key});
 
+  @override
+  State<PrivacyDataScreen> createState() => _PrivacyDataScreenState();
+}
+
+class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
+  late final PrivacyDataCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = PrivacyDataCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
   void _confirmDeleteAccount(BuildContext context) {
-    final cubit = context.read<PrivacyDataCubit>();
     showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.4),
-      builder: (dialogContext) => Dialog(
+      builder: (BuildContext dialogContext) => Dialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
@@ -84,7 +109,7 @@ class PrivacyDataScreen extends StatelessWidget {
                       textColor: Colors.white,
                       onTap: () {
                         Navigator.pop(dialogContext);
-                        cubit.deleteAccount();
+                        _cubit.deleteAccount();
                       },
                     ),
                   ),
@@ -99,29 +124,59 @@ class PrivacyDataScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => PrivacyDataCubit()..init(),
+    return BlocProvider.value(
+      value: _cubit,
       child: BlocConsumer<PrivacyDataCubit, PrivacyDataState>(
-        listener: (context, state) {
-          if (state.isAccountDeleted) {
-            context.go(RoutePaths.welcome);
-            return;
-          }
-          if (state.errorMessage.isNotEmpty) {
-            showSnackBar(message: state.errorMessage, type: SnackBarType.ERROR);
-          }
+        bloc: _cubit,
+        listener: (BuildContext context, PrivacyDataState state) {
+          state.exportStatus.whenOrNull(
+            loading: () => EasyLoading.show(status: 'Exporting data...'),
+            data: (_) {
+              EasyLoading.dismiss();
+              showSnackBar(
+                message: "Your data has been exported successfully.",
+                type: SnackBarType.SUCCESS,
+              );
+            },
+            error: (Exception error) {
+              EasyLoading.dismiss();
+              showSnackBar(
+                message: error.toString().replaceAll('Exception: ', ''),
+                type: SnackBarType.ERROR,
+              );
+            },
+          );
+
+          state.deleteStatus.whenOrNull(
+            loading: () => EasyLoading.show(status: 'Deleting account...'),
+            data: (_) {
+              EasyLoading.dismiss();
+              showSnackBar(
+                message: "Account deleted successfully.",
+                type: SnackBarType.SUCCESS,
+              );
+              context.go(RoutePaths.welcome);
+            },
+            error: (Exception error) {
+              EasyLoading.dismiss();
+              showSnackBar(
+                message: error.toString().replaceAll('Exception: ', ''),
+                type: SnackBarType.ERROR,
+              );
+            },
+          );
         },
-        builder: (context, state) {
+        builder: (BuildContext context, PrivacyDataState state) {
           return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
                 Positioned(
-                  left: -150,
-                  top: -150,
+                  left: -150.w,
+                  top: -150.h,
                   child: Container(
-                    width: 400,
-                    height: 400,
+                    width: 400.w,
+                    height: 400.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
@@ -135,11 +190,11 @@ class PrivacyDataScreen extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  right: -150,
+                  right: -150.w,
                   bottom: 0,
                   child: Container(
-                    width: 400,
-                    height: 400,
+                    width: 400.w,
+                    height: 400.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
@@ -165,7 +220,7 @@ class PrivacyDataScreen extends StatelessWidget {
                         child: InkWell(
                           onTap: () => Navigator.pop(context),
                           child: Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: EdgeInsets.all(8.r),
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               shape: BoxShape.circle,
@@ -195,7 +250,7 @@ class PrivacyDataScreen extends StatelessWidget {
                               padding: EdgeInsets.all(20.w),
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(16.r),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +295,7 @@ class PrivacyDataScreen extends StatelessWidget {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (_) => const FamilyMenuScreen(),
                                   ),
                                 );
@@ -259,7 +314,7 @@ class PrivacyDataScreen extends StatelessWidget {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(
+                                  MaterialPageRoute<void>(
                                     builder: (_) => const PrivacyPolicyScreen(),
                                   ),
                                 );
@@ -271,7 +326,7 @@ class PrivacyDataScreen extends StatelessWidget {
                               backgroundColor: Colors.white,
                               textColor: greyColor9,
                               borderColor: greyColor.withValues(alpha: 0.2),
-                              onTap: () {},
+                              onTap: () => _cubit.exportData(),
                             ),
                             24.spaceH,
                             WarningBox(

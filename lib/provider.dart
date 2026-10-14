@@ -9,8 +9,10 @@ import 'package:loving_brain/ui/help_flow/bloc/help_flow_cubit.dart';
 import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
+// ignore: depend_on_referenced_packages
+import 'package:nested/nested.dart';
 
-var blocProvider = [
+final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
   BlocProvider<LoginCubit>(create: (BuildContext context) => LoginCubit()),
   BlocProvider<BaseCubit>(create: (BuildContext context) => BaseCubit()),
   BlocProvider<HelpFlowCubit>(

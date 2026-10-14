@@ -15,30 +15,68 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SleepNoDataState {
 
-
+ String get childName; String get childAge; bool get isLoading;
+/// Create a copy of SleepNoDataState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SleepNoDataStateCopyWith<SleepNoDataState> get copyWith => _$SleepNoDataStateCopyWithImpl<SleepNoDataState>(this as SleepNoDataState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is SleepNoDataState);
+  final _this = this as SleepNoDataState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SleepNoDataState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.childAge, _this.childAge) || other.childAge == _this.childAge)&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as SleepNoDataState;
+  return Object.hash(runtimeType,_this.childName,_this.childAge,_this.isLoading);
+}
 
 @override
 String toString() {
-    return 'SleepNoDataState()';
+  final _this = this as SleepNoDataState;
+  return 'SleepNoDataState(childName: ${_this.childName}, childAge: ${_this.childAge}, isLoading: ${_this.isLoading})';
 }
 
 
 }
 
 /// @nodoc
-class $SleepNoDataStateCopyWith<$Res>  {
-$SleepNoDataStateCopyWith(SleepNoDataState _, $Res Function(SleepNoDataState) __);
+abstract mixin class $SleepNoDataStateCopyWith<$Res>  {
+  factory $SleepNoDataStateCopyWith(SleepNoDataState value, $Res Function(SleepNoDataState) _then) = _$SleepNoDataStateCopyWithImpl;
+@useResult
+$Res call({
+ String childName, String childAge, bool isLoading
+});
+
+
+
+
+}
+/// @nodoc
+class _$SleepNoDataStateCopyWithImpl<$Res>
+    implements $SleepNoDataStateCopyWith<$Res> {
+  _$SleepNoDataStateCopyWithImpl(this._self, this._then);
+
+  final SleepNoDataState _self;
+  final $Res Function(SleepNoDataState) _then;
+
+/// Create a copy of SleepNoDataState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? childAge = null,Object? isLoading = null,}) {
+  return _then(SleepNoDataState(
+childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,childAge: null == childAge ? _self.childAge : childAge // ignore: cast_nullable_to_non_nullable
+as String,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
 }
 
 
@@ -120,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  String childAge,  bool isLoading)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SleepNoDataState() when $default != null:
-return $default();case _:
+return $default(_that.childName,_that.childAge,_that.isLoading);case _:
   return orElse();
 
 }
@@ -141,10 +179,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  String childAge,  bool isLoading)  $default,) {final _that = this;
 switch (_that) {
 case _SleepNoDataState():
-return $default();case _:
+return $default(_that.childName,_that.childAge,_that.isLoading);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +199,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  String childAge,  bool isLoading)?  $default,) {final _that = this;
 switch (_that) {
 case _SleepNoDataState() when $default != null:
-return $default();case _:
+return $default(_that.childName,_that.childAge,_that.isLoading);case _:
   return null;
 
 }
@@ -176,32 +214,72 @@ return $default();case _:
 
 
 class _SleepNoDataState implements SleepNoDataState {
-  const _SleepNoDataState();
+  const _SleepNoDataState({this.childName = 'your child', this.childAge = '17 months', this.isLoading = false});
   
 
+@override@JsonKey() final  String childName;
+@override@JsonKey() final  String childAge;
+@override@JsonKey() final  bool isLoading;
 
-
+/// Create a copy of SleepNoDataState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SleepNoDataStateCopyWith<_SleepNoDataState> get copyWith => __$SleepNoDataStateCopyWithImpl<_SleepNoDataState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SleepNoDataState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SleepNoDataState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.childAge, childAge) || other.childAge == childAge)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,childName,childAge,isLoading);
+}
 
 @override
 String toString() {
-    return 'SleepNoDataState()';
+    return 'SleepNoDataState(childName: $childName, childAge: $childAge, isLoading: $isLoading)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$SleepNoDataStateCopyWith<$Res> implements $SleepNoDataStateCopyWith<$Res> {
+  factory _$SleepNoDataStateCopyWith(_SleepNoDataState value, $Res Function(_SleepNoDataState) _then) = __$SleepNoDataStateCopyWithImpl;
+@override @useResult
+$Res call({
+ String childName, String childAge, bool isLoading
+});
 
 
+
+
+}
+/// @nodoc
+class __$SleepNoDataStateCopyWithImpl<$Res>
+    implements _$SleepNoDataStateCopyWith<$Res> {
+  __$SleepNoDataStateCopyWithImpl(this._self, this._then);
+
+  final _SleepNoDataState _self;
+  final $Res Function(_SleepNoDataState) _then;
+
+/// Create a copy of SleepNoDataState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? childAge = null,Object? isLoading = null,}) {
+  return _then(_SleepNoDataState(
+childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,childAge: null == childAge ? _self.childAge : childAge // ignore: cast_nullable_to_non_nullable
+as String,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 // dart format on

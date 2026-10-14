@@ -14,11 +14,8 @@ abstract class ParentProfileV2State with _$ParentProfileV2State {
     @Default('') String gender,
     @Default('') String language,
     @Default('') String location,
-    @Default(ApiResultStatus<String>.initial())
-    ApiResultStatus<String> saveStatus,
-    @Default(ApiResultStatus<String>.initial())
-    ApiResultStatus<String> logoutStatus,
-    @Default(ApiResultStatus<String>.initial())
-    ApiResultStatus<String> deleteAccountStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus logoutStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus deleteAccountStatus,
   }) = _ParentProfileV2State;
 }

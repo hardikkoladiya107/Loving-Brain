@@ -15,30 +15,66 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MicrophonePermissionState {
 
-
+ bool get isGranted;
+/// Create a copy of MicrophonePermissionState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MicrophonePermissionStateCopyWith<MicrophonePermissionState> get copyWith => _$MicrophonePermissionStateCopyWithImpl<MicrophonePermissionState>(this as MicrophonePermissionState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is MicrophonePermissionState);
+  final _this = this as MicrophonePermissionState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MicrophonePermissionState&&(identical(other.isGranted, _this.isGranted) || other.isGranted == _this.isGranted));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as MicrophonePermissionState;
+  return Object.hash(runtimeType,_this.isGranted);
+}
 
 @override
 String toString() {
-    return 'MicrophonePermissionState()';
+  final _this = this as MicrophonePermissionState;
+  return 'MicrophonePermissionState(isGranted: ${_this.isGranted})';
 }
 
 
 }
 
 /// @nodoc
-class $MicrophonePermissionStateCopyWith<$Res>  {
-$MicrophonePermissionStateCopyWith(MicrophonePermissionState _, $Res Function(MicrophonePermissionState) __);
+abstract mixin class $MicrophonePermissionStateCopyWith<$Res>  {
+  factory $MicrophonePermissionStateCopyWith(MicrophonePermissionState value, $Res Function(MicrophonePermissionState) _then) = _$MicrophonePermissionStateCopyWithImpl;
+@useResult
+$Res call({
+ bool isGranted
+});
+
+
+
+
+}
+/// @nodoc
+class _$MicrophonePermissionStateCopyWithImpl<$Res>
+    implements $MicrophonePermissionStateCopyWith<$Res> {
+  _$MicrophonePermissionStateCopyWithImpl(this._self, this._then);
+
+  final MicrophonePermissionState _self;
+  final $Res Function(MicrophonePermissionState) _then;
+
+/// Create a copy of MicrophonePermissionState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? isGranted = null,}) {
+  return _then(MicrophonePermissionState(
+isGranted: null == isGranted ? _self.isGranted : isGranted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
 }
 
 
@@ -120,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isGranted)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MicrophonePermissionState() when $default != null:
-return $default();case _:
+return $default(_that.isGranted);case _:
   return orElse();
 
 }
@@ -141,10 +177,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isGranted)  $default,) {final _that = this;
 switch (_that) {
 case _MicrophonePermissionState():
-return $default();case _:
+return $default(_that.isGranted);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +197,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isGranted)?  $default,) {final _that = this;
 switch (_that) {
 case _MicrophonePermissionState() when $default != null:
-return $default();case _:
+return $default(_that.isGranted);case _:
   return null;
 
 }
@@ -176,32 +212,68 @@ return $default();case _:
 
 
 class _MicrophonePermissionState implements MicrophonePermissionState {
-  const _MicrophonePermissionState();
+  const _MicrophonePermissionState({this.isGranted = false});
   
 
+@override@JsonKey() final  bool isGranted;
 
-
+/// Create a copy of MicrophonePermissionState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MicrophonePermissionStateCopyWith<_MicrophonePermissionState> get copyWith => __$MicrophonePermissionStateCopyWithImpl<_MicrophonePermissionState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MicrophonePermissionState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MicrophonePermissionState&&(identical(other.isGranted, isGranted) || other.isGranted == isGranted));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,isGranted);
+}
 
 @override
 String toString() {
-    return 'MicrophonePermissionState()';
+    return 'MicrophonePermissionState(isGranted: $isGranted)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$MicrophonePermissionStateCopyWith<$Res> implements $MicrophonePermissionStateCopyWith<$Res> {
+  factory _$MicrophonePermissionStateCopyWith(_MicrophonePermissionState value, $Res Function(_MicrophonePermissionState) _then) = __$MicrophonePermissionStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool isGranted
+});
 
 
+
+
+}
+/// @nodoc
+class __$MicrophonePermissionStateCopyWithImpl<$Res>
+    implements _$MicrophonePermissionStateCopyWith<$Res> {
+  __$MicrophonePermissionStateCopyWithImpl(this._self, this._then);
+
+  final _MicrophonePermissionState _self;
+  final $Res Function(_MicrophonePermissionState) _then;
+
+/// Create a copy of MicrophonePermissionState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? isGranted = null,}) {
+  return _then(_MicrophonePermissionState(
+isGranted: null == isGranted ? _self.isGranted : isGranted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 // dart format on

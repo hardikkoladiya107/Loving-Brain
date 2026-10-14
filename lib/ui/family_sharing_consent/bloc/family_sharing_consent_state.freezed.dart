@@ -15,30 +15,67 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FamilySharingConsentState {
 
-
+ String get childName; bool get isConsentGiven;
+/// Create a copy of FamilySharingConsentState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$FamilySharingConsentStateCopyWith<FamilySharingConsentState> get copyWith => _$FamilySharingConsentStateCopyWithImpl<FamilySharingConsentState>(this as FamilySharingConsentState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilySharingConsentState);
+  final _this = this as FamilySharingConsentState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilySharingConsentState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isConsentGiven, _this.isConsentGiven) || other.isConsentGiven == _this.isConsentGiven));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as FamilySharingConsentState;
+  return Object.hash(runtimeType,_this.childName,_this.isConsentGiven);
+}
 
 @override
 String toString() {
-    return 'FamilySharingConsentState()';
+  final _this = this as FamilySharingConsentState;
+  return 'FamilySharingConsentState(childName: ${_this.childName}, isConsentGiven: ${_this.isConsentGiven})';
 }
 
 
 }
 
 /// @nodoc
-class $FamilySharingConsentStateCopyWith<$Res>  {
-$FamilySharingConsentStateCopyWith(FamilySharingConsentState _, $Res Function(FamilySharingConsentState) __);
+abstract mixin class $FamilySharingConsentStateCopyWith<$Res>  {
+  factory $FamilySharingConsentStateCopyWith(FamilySharingConsentState value, $Res Function(FamilySharingConsentState) _then) = _$FamilySharingConsentStateCopyWithImpl;
+@useResult
+$Res call({
+ String childName, bool isConsentGiven
+});
+
+
+
+
+}
+/// @nodoc
+class _$FamilySharingConsentStateCopyWithImpl<$Res>
+    implements $FamilySharingConsentStateCopyWith<$Res> {
+  _$FamilySharingConsentStateCopyWithImpl(this._self, this._then);
+
+  final FamilySharingConsentState _self;
+  final $Res Function(FamilySharingConsentState) _then;
+
+/// Create a copy of FamilySharingConsentState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? isConsentGiven = null,}) {
+  return _then(FamilySharingConsentState(
+childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,isConsentGiven: null == isConsentGiven ? _self.isConsentGiven : isConsentGiven // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
 }
 
 
@@ -120,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  bool isConsentGiven)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FamilySharingConsentState() when $default != null:
-return $default();case _:
+return $default(_that.childName,_that.isConsentGiven);case _:
   return orElse();
 
 }
@@ -141,10 +178,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  bool isConsentGiven)  $default,) {final _that = this;
 switch (_that) {
 case _FamilySharingConsentState():
-return $default();case _:
+return $default(_that.childName,_that.isConsentGiven);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +198,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  bool isConsentGiven)?  $default,) {final _that = this;
 switch (_that) {
 case _FamilySharingConsentState() when $default != null:
-return $default();case _:
+return $default(_that.childName,_that.isConsentGiven);case _:
   return null;
 
 }
@@ -176,32 +213,70 @@ return $default();case _:
 
 
 class _FamilySharingConsentState implements FamilySharingConsentState {
-  const _FamilySharingConsentState();
+  const _FamilySharingConsentState({this.childName = 'your child', this.isConsentGiven = false});
   
 
+@override@JsonKey() final  String childName;
+@override@JsonKey() final  bool isConsentGiven;
 
-
+/// Create a copy of FamilySharingConsentState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FamilySharingConsentStateCopyWith<_FamilySharingConsentState> get copyWith => __$FamilySharingConsentStateCopyWithImpl<_FamilySharingConsentState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilySharingConsentState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilySharingConsentState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isConsentGiven, isConsentGiven) || other.isConsentGiven == isConsentGiven));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,childName,isConsentGiven);
+}
 
 @override
 String toString() {
-    return 'FamilySharingConsentState()';
+    return 'FamilySharingConsentState(childName: $childName, isConsentGiven: $isConsentGiven)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$FamilySharingConsentStateCopyWith<$Res> implements $FamilySharingConsentStateCopyWith<$Res> {
+  factory _$FamilySharingConsentStateCopyWith(_FamilySharingConsentState value, $Res Function(_FamilySharingConsentState) _then) = __$FamilySharingConsentStateCopyWithImpl;
+@override @useResult
+$Res call({
+ String childName, bool isConsentGiven
+});
 
 
+
+
+}
+/// @nodoc
+class __$FamilySharingConsentStateCopyWithImpl<$Res>
+    implements _$FamilySharingConsentStateCopyWith<$Res> {
+  __$FamilySharingConsentStateCopyWithImpl(this._self, this._then);
+
+  final _FamilySharingConsentState _self;
+  final $Res Function(_FamilySharingConsentState) _then;
+
+/// Create a copy of FamilySharingConsentState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? isConsentGiven = null,}) {
+  return _then(_FamilySharingConsentState(
+childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,isConsentGiven: null == isConsentGiven ? _self.isConsentGiven : isConsentGiven // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 // dart format on

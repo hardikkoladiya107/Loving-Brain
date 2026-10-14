@@ -1,24 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:loving_brain/other/app_color.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'bloc/sleep_low_confidence_cubit.dart';
 import 'bloc/sleep_low_confidence_state.dart';
 
-class SleepLowConfidenceScreen extends StatelessWidget {
+/// Screen 69: Low Confidence Sleep Window.
+/// Conforms to AGENTS.md §5.1, §6.1, and §6.3.
+class SleepLowConfidenceScreen extends StatefulWidget {
   const SleepLowConfidenceScreen({super.key});
 
   @override
+  State<SleepLowConfidenceScreen> createState() =>
+      _SleepLowConfidenceScreenState();
+}
+
+class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
+  late final SleepLowConfidenceCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = SleepLowConfidenceCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => SleepLowConfidenceCubit()..init(),
-      child: BlocBuilder<SleepLowConfidenceCubit, SleepLowConfidenceState>(
-        builder: (context, state) {
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocConsumer<SleepLowConfidenceCubit, SleepLowConfidenceState>(
+        bloc: _cubit,
+        listener: (BuildContext context, SleepLowConfidenceState state) {},
+        builder: (BuildContext context, SleepLowConfidenceState state) {
           return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle.light.copyWith(
               statusBarColor: darkBlue,
@@ -29,13 +57,10 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 leading: const BackButton(color: Color(0xFF1E293B)),
-                title: Text(
-                  "Sleep",
-                  style: TextStyle(
-                    color: const Color(0xFF1E293B),
-                    fontSize: 28.sp,
-                    fontFamily: 'Fraunces',
-                  ),
+                title: "Sleep".appText(
+                  color: const Color(0xFF1E293B),
+                  fontSize: 28.sp,
+                  fraunces: true,
                 ),
               ),
               body: Stack(
@@ -53,7 +78,7 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20.r),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -80,13 +105,10 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                                 ],
                               ),
                               8.spaceW,
-                              Text(
-                                "Confidence: low",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: const Color(0xFF64748B),
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              "Confidence: ${state.confidence}".appText(
+                                fontSize: 14.sp,
+                                color: const Color(0xFF64748B),
+                                fontWeight: FontWeight.w500,
                               ),
                             ],
                           ),
@@ -96,7 +118,7 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                           padding: EdgeInsets.all(24.w),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(24.r),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,23 +146,17 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          "7:15 – 8:30 PM",
-                                          style: TextStyle(
-                                            fontSize: 24.sp,
-                                            color: const Color(0xFF1E293B),
-                                            fontFamily: 'Fraunces',
-                                            height: 1.2,
-                                          ),
+                                        state.windowTimeRange.appText(
+                                          fontSize: 24.sp,
+                                          color: const Color(0xFF1E293B),
+                                          fraunces: true,
+                                          height: 1.2,
                                         ),
                                         8.spaceH,
-                                        Text(
-                                          "A wider window than usual the last few days have been unsettled, so we're less sure tonight.",
-                                          style: TextStyle(
-                                            fontSize: 14.sp,
-                                            color: const Color(0xFF64748B),
-                                            height: 1.4,
-                                          ),
+                                        state.explanation.appText(
+                                          fontSize: 14.sp,
+                                          color: const Color(0xFF64748B),
+                                          height: 1.4,
                                         ),
                                       ],
                                     ),
@@ -155,7 +171,7 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                           padding: EdgeInsets.all(24.w),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(24.r),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,23 +185,19 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                                 iconColor: Color(0xFF64748B),
                               ),
                               24.spaceH,
-                              Text(
-                                "Based on 4 nights so far",
-                                style: TextStyle(
-                                  fontSize: 20.sp,
-                                  color: const Color(0xFF1E293B),
-                                  fontFamily: 'Fraunces',
-                                ),
-                              ),
+                              "Based on ${state.nightsCount} nights so far"
+                                  .appText(
+                                    fontSize: 20.sp,
+                                    color: const Color(0xFF1E293B),
+                                    fraunces: true,
+                                  ),
                               8.spaceH,
-                              Text(
-                                "A few more updates will sharpen this estimate. Around ten nights is usually enough.",
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  color: const Color(0xFF64748B),
-                                  height: 1.4,
-                                ),
-                              ),
+                              "A few more updates will sharpen this estimate. Around ten nights is usually enough."
+                                  .appText(
+                                    fontSize: 16.sp,
+                                    color: const Color(0xFF64748B),
+                                    height: 1.4,
+                                  ),
                             ],
                           ),
                         ),
@@ -194,16 +206,15 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                           padding: EdgeInsets.all(24.w),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF5F3FF),
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(24.r),
                           ),
-                          child: Text(
-                            "We'd rather show a wide window honestly than a precise time we can't stand behind.",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: const Color(0xFF1E293B),
-                              height: 1.4,
-                            ),
-                          ),
+                          child:
+                              "We'd rather show a wide window honestly than a precise time we can't stand behind."
+                                  .appText(
+                                    fontSize: 16.sp,
+                                    color: const Color(0xFF1E293B),
+                                    height: 1.4,
+                                  ),
                         ),
                         120.spaceH,
                       ],
@@ -230,7 +241,7 @@ class SleepLowConfidenceScreen extends StatelessWidget {
                       ),
                       child: AppButton(
                         title: "Add tonight's update",
-                        onTap: () {},
+                        onTap: () => Navigator.pop(context),
                       ),
                     ),
                   ),

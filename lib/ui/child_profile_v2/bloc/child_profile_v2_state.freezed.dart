@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChildProfileV2State {
 
- ChildModel? get childModel; String get name; String get age; String get conditions; String get dob; DateTime? get childDob; String get concerns; String get location; ApiResultStatus<String> get saveStatus;
+ ChildModel? get childModel; String get name; String get age; String get conditions; String get dob; DateTime? get childDob; String get concerns; String get location; ApiResultStatus<dynamic> get saveStatus;
 /// Create a copy of ChildProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,11 +51,11 @@ abstract mixin class $ChildProfileV2StateCopyWith<$Res>  {
   factory $ChildProfileV2StateCopyWith(ChildProfileV2State value, $Res Function(ChildProfileV2State) _then) = _$ChildProfileV2StateCopyWithImpl;
 @useResult
 $Res call({
- ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, ApiResultStatus<String> saveStatus
+ ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, ApiResultStatus<dynamic> saveStatus
 });
 
 
-$ApiResultStatusCopyWith<String, $Res> get saveStatus;
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus;
 
 }
 /// @nodoc
@@ -79,16 +79,16 @@ as String,childDob: freezed == childDob ? _self.childDob : childDob // ignore: c
 as DateTime?,concerns: null == concerns ? _self.concerns : concerns // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of ChildProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get saveStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.saveStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveStatus, (value) {
     return _then(_self.copyWith(saveStatus: value));
   });
 }
@@ -173,7 +173,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<String> saveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<dynamic> saveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChildProfileV2State() when $default != null:
 return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.saveStatus);case _:
@@ -194,7 +194,7 @@ return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<String> saveStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<dynamic> saveStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ChildProfileV2State():
 return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.saveStatus);case _:
@@ -214,7 +214,7 @@ return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<String> saveStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<dynamic> saveStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ChildProfileV2State() when $default != null:
 return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.saveStatus);case _:
@@ -229,7 +229,7 @@ return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob
 
 
 class _ChildProfileV2State implements ChildProfileV2State {
-  const _ChildProfileV2State({this.childModel, this.name = '', this.age = '', this.conditions = '', this.dob = '', this.childDob, this.concerns = '', this.location = '', this.saveStatus = const ApiResultStatus<String>.initial()});
+  const _ChildProfileV2State({this.childModel, this.name = '', this.age = '', this.conditions = '', this.dob = '', this.childDob, this.concerns = '', this.location = '', this.saveStatus = const ApiResultStatus.initial()});
   
 
 @override final  ChildModel? childModel;
@@ -240,7 +240,7 @@ class _ChildProfileV2State implements ChildProfileV2State {
 @override final  DateTime? childDob;
 @override@JsonKey() final  String concerns;
 @override@JsonKey() final  String location;
-@override@JsonKey() final  ApiResultStatus<String> saveStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> saveStatus;
 
 /// Create a copy of ChildProfileV2State
 /// with the given fields replaced by the non-null parameter values.
@@ -274,11 +274,11 @@ abstract mixin class _$ChildProfileV2StateCopyWith<$Res> implements $ChildProfil
   factory _$ChildProfileV2StateCopyWith(_ChildProfileV2State value, $Res Function(_ChildProfileV2State) _then) = __$ChildProfileV2StateCopyWithImpl;
 @override @useResult
 $Res call({
- ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, ApiResultStatus<String> saveStatus
+ ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, ApiResultStatus<dynamic> saveStatus
 });
 
 
-@override $ApiResultStatusCopyWith<String, $Res> get saveStatus;
+@override $ApiResultStatusCopyWith<dynamic, $Res> get saveStatus;
 
 }
 /// @nodoc
@@ -302,7 +302,7 @@ as String,childDob: freezed == childDob ? _self.childDob : childDob // ignore: c
 as DateTime?,concerns: null == concerns ? _self.concerns : concerns // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,
+as ApiResultStatus<dynamic>,
   ));
 }
 
@@ -310,9 +310,9 @@ as ApiResultStatus<String>,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get saveStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.saveStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveStatus, (value) {
     return _then(_self.copyWith(saveStatus: value));
   });
 }

@@ -15,30 +15,77 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MentorshipUnavailableState {
 
-
+ bool get isWaitlistJoined; bool get isLoading; ApiResultStatus<dynamic> get waitlistStatus;
+/// Create a copy of MentorshipUnavailableState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$MentorshipUnavailableStateCopyWith<MentorshipUnavailableState> get copyWith => _$MentorshipUnavailableStateCopyWithImpl<MentorshipUnavailableState>(this as MentorshipUnavailableState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is MentorshipUnavailableState);
+  final _this = this as MentorshipUnavailableState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MentorshipUnavailableState&&(identical(other.isWaitlistJoined, _this.isWaitlistJoined) || other.isWaitlistJoined == _this.isWaitlistJoined)&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.waitlistStatus, _this.waitlistStatus) || other.waitlistStatus == _this.waitlistStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as MentorshipUnavailableState;
+  return Object.hash(runtimeType,_this.isWaitlistJoined,_this.isLoading,_this.waitlistStatus);
+}
 
 @override
 String toString() {
-    return 'MentorshipUnavailableState()';
+  final _this = this as MentorshipUnavailableState;
+  return 'MentorshipUnavailableState(isWaitlistJoined: ${_this.isWaitlistJoined}, isLoading: ${_this.isLoading}, waitlistStatus: ${_this.waitlistStatus})';
 }
 
 
 }
 
 /// @nodoc
-class $MentorshipUnavailableStateCopyWith<$Res>  {
-$MentorshipUnavailableStateCopyWith(MentorshipUnavailableState _, $Res Function(MentorshipUnavailableState) __);
+abstract mixin class $MentorshipUnavailableStateCopyWith<$Res>  {
+  factory $MentorshipUnavailableStateCopyWith(MentorshipUnavailableState value, $Res Function(MentorshipUnavailableState) _then) = _$MentorshipUnavailableStateCopyWithImpl;
+@useResult
+$Res call({
+ bool isWaitlistJoined, bool isLoading, ApiResultStatus<dynamic> waitlistStatus
+});
+
+
+$ApiResultStatusCopyWith<dynamic, $Res> get waitlistStatus;
+
+}
+/// @nodoc
+class _$MentorshipUnavailableStateCopyWithImpl<$Res>
+    implements $MentorshipUnavailableStateCopyWith<$Res> {
+  _$MentorshipUnavailableStateCopyWithImpl(this._self, this._then);
+
+  final MentorshipUnavailableState _self;
+  final $Res Function(MentorshipUnavailableState) _then;
+
+/// Create a copy of MentorshipUnavailableState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? isWaitlistJoined = null,Object? isLoading = null,Object? waitlistStatus = null,}) {
+  return _then(MentorshipUnavailableState(
+isWaitlistJoined: null == isWaitlistJoined ? _self.isWaitlistJoined : isWaitlistJoined // ignore: cast_nullable_to_non_nullable
+as bool,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,waitlistStatus: null == waitlistStatus ? _self.waitlistStatus : waitlistStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+/// Create a copy of MentorshipUnavailableState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get waitlistStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.waitlistStatus, (value) {
+    return _then(_self.copyWith(waitlistStatus: value));
+  });
+}
 }
 
 
@@ -120,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isWaitlistJoined,  bool isLoading,  ApiResultStatus<dynamic> waitlistStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MentorshipUnavailableState() when $default != null:
-return $default();case _:
+return $default(_that.isWaitlistJoined,_that.isLoading,_that.waitlistStatus);case _:
   return orElse();
 
 }
@@ -141,10 +188,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isWaitlistJoined,  bool isLoading,  ApiResultStatus<dynamic> waitlistStatus)  $default,) {final _that = this;
 switch (_that) {
 case _MentorshipUnavailableState():
-return $default();case _:
+return $default(_that.isWaitlistJoined,_that.isLoading,_that.waitlistStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +208,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isWaitlistJoined,  bool isLoading,  ApiResultStatus<dynamic> waitlistStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _MentorshipUnavailableState() when $default != null:
-return $default();case _:
+return $default(_that.isWaitlistJoined,_that.isLoading,_that.waitlistStatus);case _:
   return null;
 
 }
@@ -176,32 +223,81 @@ return $default();case _:
 
 
 class _MentorshipUnavailableState implements MentorshipUnavailableState {
-  const _MentorshipUnavailableState();
+  const _MentorshipUnavailableState({this.isWaitlistJoined = false, this.isLoading = false, this.waitlistStatus = const ApiResultStatus.initial()});
   
 
+@override@JsonKey() final  bool isWaitlistJoined;
+@override@JsonKey() final  bool isLoading;
+@override@JsonKey() final  ApiResultStatus<dynamic> waitlistStatus;
 
-
+/// Create a copy of MentorshipUnavailableState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$MentorshipUnavailableStateCopyWith<_MentorshipUnavailableState> get copyWith => __$MentorshipUnavailableStateCopyWithImpl<_MentorshipUnavailableState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MentorshipUnavailableState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MentorshipUnavailableState&&(identical(other.isWaitlistJoined, isWaitlistJoined) || other.isWaitlistJoined == isWaitlistJoined)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.waitlistStatus, waitlistStatus) || other.waitlistStatus == waitlistStatus));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,isWaitlistJoined,isLoading,waitlistStatus);
+}
 
 @override
 String toString() {
-    return 'MentorshipUnavailableState()';
+    return 'MentorshipUnavailableState(isWaitlistJoined: $isWaitlistJoined, isLoading: $isLoading, waitlistStatus: $waitlistStatus)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$MentorshipUnavailableStateCopyWith<$Res> implements $MentorshipUnavailableStateCopyWith<$Res> {
+  factory _$MentorshipUnavailableStateCopyWith(_MentorshipUnavailableState value, $Res Function(_MentorshipUnavailableState) _then) = __$MentorshipUnavailableStateCopyWithImpl;
+@override @useResult
+$Res call({
+ bool isWaitlistJoined, bool isLoading, ApiResultStatus<dynamic> waitlistStatus
+});
 
 
+@override $ApiResultStatusCopyWith<dynamic, $Res> get waitlistStatus;
+
+}
+/// @nodoc
+class __$MentorshipUnavailableStateCopyWithImpl<$Res>
+    implements _$MentorshipUnavailableStateCopyWith<$Res> {
+  __$MentorshipUnavailableStateCopyWithImpl(this._self, this._then);
+
+  final _MentorshipUnavailableState _self;
+  final $Res Function(_MentorshipUnavailableState) _then;
+
+/// Create a copy of MentorshipUnavailableState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? isWaitlistJoined = null,Object? isLoading = null,Object? waitlistStatus = null,}) {
+  return _then(_MentorshipUnavailableState(
+isWaitlistJoined: null == isWaitlistJoined ? _self.isWaitlistJoined : isWaitlistJoined // ignore: cast_nullable_to_non_nullable
+as bool,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,waitlistStatus: null == waitlistStatus ? _self.waitlistStatus : waitlistStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
+  ));
+}
+
+/// Create a copy of MentorshipUnavailableState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get waitlistStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.waitlistStatus, (value) {
+    return _then(_self.copyWith(waitlistStatus: value));
+  });
+}
+}
 
 // dart format on

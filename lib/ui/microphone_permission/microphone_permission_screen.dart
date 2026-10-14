@@ -1,33 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/ui/widget/action_consent_screen.dart';
 
-class MicrophonePermissionScreen extends StatelessWidget {
+import 'bloc/microphone_permission_cubit.dart';
+import 'bloc/microphone_permission_state.dart';
+
+/// Screen 73: Microphone Permission Explainer.
+/// Conforms to AGENTS.md §5.1.
+class MicrophonePermissionScreen extends StatefulWidget {
   const MicrophonePermissionScreen({super.key});
 
   @override
+  State<MicrophonePermissionScreen> createState() =>
+      _MicrophonePermissionScreenState();
+}
+
+class _MicrophonePermissionScreenState
+    extends State<MicrophonePermissionScreen> {
+  late final MicrophonePermissionCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = MicrophonePermissionCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ActionConsentScreen(
-      headerImage: Image.asset(
-        Assets.v2.images.imgCuteCloud.path,
-        width: 200.w,
-        height: 200.w,
-        fit: BoxFit.contain,
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocConsumer<MicrophonePermissionCubit, MicrophonePermissionState>(
+        bloc: _cubit,
+        listener: (BuildContext context, MicrophonePermissionState state) {},
+        builder: (BuildContext context, MicrophonePermissionState state) {
+          return ActionConsentScreen(
+            headerImage: Image.asset(
+              Assets.v2.images.imgCuteCloud.path,
+              width: 200.w,
+              height: 200.w,
+              fit: BoxFit.contain,
+            ),
+            title: "Can we use the microphone?",
+            subtitle:
+                "So you can talk to Brainy and record notes with one hand free.",
+            checklist: const <String>[
+              "Record a quick note without typing",
+              "Ask Brainy a question out loud",
+              "Recordings are only made while you're holding the button",
+            ],
+            footerNote: "You can change this any time in Settings.",
+            primaryButtonText: "Allow microphone",
+            onPrimaryAction: () {
+              _cubit.grantPermission();
+              Navigator.pop(context);
+            },
+            secondaryButtonText: "Not now",
+            onSecondaryAction: () => Navigator.pop(context),
+          );
+        },
       ),
-      title: "Can we use the microphone?",
-      subtitle:
-          "So you can talk to Brainy and record notes with one hand free.",
-      checklist: const [
-        "Record a quick note without typing",
-        "Ask Brainy a question out loud",
-        "Recordings are only made while you're holding the button",
-      ],
-      footerNote: "You can change this any time in Settings.",
-      primaryButtonText: "Allow microphone",
-      onPrimaryAction: () => Navigator.pop(context),
-      secondaryButtonText: "Not now",
-      onSecondaryAction: () => Navigator.pop(context),
     );
   }
 }

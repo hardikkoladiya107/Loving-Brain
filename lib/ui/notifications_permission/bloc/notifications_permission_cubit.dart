@@ -1,21 +1,38 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+
 import 'notifications_permission_state.dart';
 
+/// Cubit for Screen 72 (Notification Permission Explainer).
+/// Conforms to AGENTS.md §4.2.
 class NotificationsPermissionCubit extends Cubit<NotificationsPermissionState> {
   NotificationsPermissionCubit() : super(const NotificationsPermissionState());
 
-  String childName = 'your child';
-
   void init() {
-    final user = preferences.getUserModel();
-    final child = preferences.getChildModel();
-    childName =
+    final UserModel? user = preferences.getUserModel();
+    final ChildModel? child = preferences.getChildModel();
+    final String cName =
         (child?.childName != null && child!.childName!.trim().isNotEmpty)
         ? child.childName!.trim()
         : (user?.childName != null && user!.childName!.trim().isNotEmpty)
         ? user.childName!.trim()
         : 'your child';
-    emit(const NotificationsPermissionState());
+
+    changeProps(childName: cName);
+  }
+
+  void changeProps({String? childName, bool? isGranted}) {
+    emit(
+      state.copyWith(
+        childName: childName ?? state.childName,
+        isGranted: isGranted ?? state.isGranted,
+      ),
+    );
+  }
+
+  void grantPermission() {
+    changeProps(isGranted: true);
   }
 }

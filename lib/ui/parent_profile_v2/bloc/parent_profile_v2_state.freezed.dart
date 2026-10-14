@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ParentProfileV2State {
 
- UserModel? get user; String get name; String get relationship; String get dob; String get gender; String get language; String get location; ApiResultStatus<String> get saveStatus; ApiResultStatus<String> get logoutStatus; ApiResultStatus<String> get deleteAccountStatus;
+ UserModel? get user; String get name; String get relationship; String get dob; String get gender; String get language; String get location; ApiResultStatus<dynamic> get saveStatus; ApiResultStatus<dynamic> get logoutStatus; ApiResultStatus<dynamic> get deleteAccountStatus;
 /// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -51,11 +51,11 @@ abstract mixin class $ParentProfileV2StateCopyWith<$Res>  {
   factory $ParentProfileV2StateCopyWith(ParentProfileV2State value, $Res Function(ParentProfileV2State) _then) = _$ParentProfileV2StateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? user, String name, String relationship, String dob, String gender, String language, String location, ApiResultStatus<String> saveStatus, ApiResultStatus<String> logoutStatus, ApiResultStatus<String> deleteAccountStatus
+ UserModel? user, String name, String relationship, String dob, String gender, String language, String location, ApiResultStatus<dynamic> saveStatus, ApiResultStatus<dynamic> logoutStatus, ApiResultStatus<dynamic> deleteAccountStatus
 });
 
 
-$ApiResultStatusCopyWith<String, $Res> get saveStatus;$ApiResultStatusCopyWith<String, $Res> get logoutStatus;$ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus;
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus;$ApiResultStatusCopyWith<dynamic, $Res> get logoutStatus;$ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountStatus;
 
 }
 /// @nodoc
@@ -78,36 +78,36 @@ as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullabl
 as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,logoutStatus: null == logoutStatus ? _self.logoutStatus : logoutStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,deleteAccountStatus: null == deleteAccountStatus ? _self.deleteAccountStatus : deleteAccountStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,
+as ApiResultStatus<dynamic>,logoutStatus: null == logoutStatus ? _self.logoutStatus : logoutStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteAccountStatus: null == deleteAccountStatus ? _self.deleteAccountStatus : deleteAccountStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 /// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get saveStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.saveStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveStatus, (value) {
     return _then(_self.copyWith(saveStatus: value));
   });
 }/// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get logoutStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get logoutStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.logoutStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.logoutStatus, (value) {
     return _then(_self.copyWith(logoutStatus: value));
   });
 }/// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.deleteAccountStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.deleteAccountStatus, (value) {
     return _then(_self.copyWith(deleteAccountStatus: value));
   });
 }
@@ -192,7 +192,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<String> saveStatus,  ApiResultStatus<String> logoutStatus,  ApiResultStatus<String> deleteAccountStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State() when $default != null:
 return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
@@ -213,7 +213,7 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<String> saveStatus,  ApiResultStatus<String> logoutStatus,  ApiResultStatus<String> deleteAccountStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State():
 return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
@@ -233,7 +233,7 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<String> saveStatus,  ApiResultStatus<String> logoutStatus,  ApiResultStatus<String> deleteAccountStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State() when $default != null:
 return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
@@ -248,7 +248,7 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 
 
 class _ParentProfileV2State implements ParentProfileV2State {
-  const _ParentProfileV2State({this.user, this.name = '', this.relationship = '', this.dob = '', this.gender = '', this.language = '', this.location = '', this.saveStatus = const ApiResultStatus<String>.initial(), this.logoutStatus = const ApiResultStatus<String>.initial(), this.deleteAccountStatus = const ApiResultStatus<String>.initial()});
+  const _ParentProfileV2State({this.user, this.name = '', this.relationship = '', this.dob = '', this.gender = '', this.language = '', this.location = '', this.saveStatus = const ApiResultStatus.initial(), this.logoutStatus = const ApiResultStatus.initial(), this.deleteAccountStatus = const ApiResultStatus.initial()});
   
 
 @override final  UserModel? user;
@@ -258,9 +258,9 @@ class _ParentProfileV2State implements ParentProfileV2State {
 @override@JsonKey() final  String gender;
 @override@JsonKey() final  String language;
 @override@JsonKey() final  String location;
-@override@JsonKey() final  ApiResultStatus<String> saveStatus;
-@override@JsonKey() final  ApiResultStatus<String> logoutStatus;
-@override@JsonKey() final  ApiResultStatus<String> deleteAccountStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> saveStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> logoutStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> deleteAccountStatus;
 
 /// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
@@ -294,11 +294,11 @@ abstract mixin class _$ParentProfileV2StateCopyWith<$Res> implements $ParentProf
   factory _$ParentProfileV2StateCopyWith(_ParentProfileV2State value, $Res Function(_ParentProfileV2State) _then) = __$ParentProfileV2StateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? user, String name, String relationship, String dob, String gender, String language, String location, ApiResultStatus<String> saveStatus, ApiResultStatus<String> logoutStatus, ApiResultStatus<String> deleteAccountStatus
+ UserModel? user, String name, String relationship, String dob, String gender, String language, String location, ApiResultStatus<dynamic> saveStatus, ApiResultStatus<dynamic> logoutStatus, ApiResultStatus<dynamic> deleteAccountStatus
 });
 
 
-@override $ApiResultStatusCopyWith<String, $Res> get saveStatus;@override $ApiResultStatusCopyWith<String, $Res> get logoutStatus;@override $ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus;
+@override $ApiResultStatusCopyWith<dynamic, $Res> get saveStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get logoutStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountStatus;
 
 }
 /// @nodoc
@@ -321,9 +321,9 @@ as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullabl
 as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,logoutStatus: null == logoutStatus ? _self.logoutStatus : logoutStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,deleteAccountStatus: null == deleteAccountStatus ? _self.deleteAccountStatus : deleteAccountStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<String>,
+as ApiResultStatus<dynamic>,logoutStatus: null == logoutStatus ? _self.logoutStatus : logoutStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteAccountStatus: null == deleteAccountStatus ? _self.deleteAccountStatus : deleteAccountStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,
   ));
 }
 
@@ -331,27 +331,27 @@ as ApiResultStatus<String>,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get saveStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get saveStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.saveStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.saveStatus, (value) {
     return _then(_self.copyWith(saveStatus: value));
   });
 }/// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get logoutStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get logoutStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.logoutStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.logoutStatus, (value) {
     return _then(_self.copyWith(logoutStatus: value));
   });
 }/// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ApiResultStatusCopyWith<String, $Res> get deleteAccountStatus {
+$ApiResultStatusCopyWith<dynamic, $Res> get deleteAccountStatus {
   
-  return $ApiResultStatusCopyWith<String, $Res>(_self.deleteAccountStatus, (value) {
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.deleteAccountStatus, (value) {
     return _then(_self.copyWith(deleteAccountStatus: value));
   });
 }

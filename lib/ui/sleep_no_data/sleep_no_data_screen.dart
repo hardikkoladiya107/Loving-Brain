@@ -9,31 +9,54 @@ import 'package:loving_brain/ui/widget/person_card.dart';
 import 'bloc/sleep_no_data_cubit.dart';
 import 'bloc/sleep_no_data_state.dart';
 
-class SleepNoDataScreen extends StatelessWidget {
+/// Screen 64: No Sleep Data Yet.
+/// Conforms to AGENTS.md §5.1, §6.1, and §6.3.
+class SleepNoDataScreen extends StatefulWidget {
   const SleepNoDataScreen({super.key});
 
   @override
+  State<SleepNoDataScreen> createState() => _SleepNoDataScreenState();
+}
+
+class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
+  late final SleepNoDataCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = SleepNoDataCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => SleepNoDataCubit()..init(),
-      child: BlocBuilder<SleepNoDataCubit, SleepNoDataState>(
-        builder: (context, state) {
-          final cubit = context.read<SleepNoDataCubit>();
-          final cName = cubit.childName;
-          final cAge = cubit.childAge;
+    return BlocProvider.value(
+      value: _cubit,
+      child: BlocConsumer<SleepNoDataCubit, SleepNoDataState>(
+        bloc: _cubit,
+        listener: (BuildContext context, SleepNoDataState state) {},
+        builder: (BuildContext context, SleepNoDataState state) {
+          final String cName = state.childName;
+          final String cAge = state.childAge;
+
           return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: const BackButton(color: Color(0xFF1E293B)),
-              title: Text(
-                "Sleep",
-                style: TextStyle(
-                  color: const Color(0xFF1E293B),
-                  fontSize: 28.sp,
-                  fontFamily: 'Fraunces',
-                ),
+              title: "Sleep".appText(
+                color: const Color(0xFF1E293B),
+                fontSize: 28.sp,
+                fraunces: true,
               ),
             ),
             body: SingleChildScrollView(
@@ -46,7 +69,7 @@ class SleepNoDataScreen extends StatelessWidget {
                     padding: EdgeInsets.all(24.w),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(24.r),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +81,7 @@ class SleepNoDataScreen extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFEF3C7),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(16.r),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -69,36 +92,28 @@ class SleepNoDataScreen extends StatelessWidget {
                                 size: 16.sp,
                               ),
                               6.spaceW,
-                              Text(
-                                "No sleep data yet",
-                                style: TextStyle(
-                                  color: const Color(0xFFD97706),
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                              "No sleep data yet".appText(
+                                color: const Color(0xFFD97706),
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ],
                           ),
                         ),
                         24.spaceH,
-                        Text(
-                          "Typical for $cAge: bedtime around 8 PM",
-                          style: TextStyle(
-                            fontSize: 24.sp,
-                            color: const Color(0xFF1E293B),
-                            fontFamily: 'Fraunces',
-                            height: 1.2,
-                          ),
+                        "Typical for $cAge: bedtime around 8 PM".appText(
+                          fontSize: 24.sp,
+                          color: const Color(0xFF1E293B),
+                          fraunces: true,
+                          height: 1.2,
                         ),
                         12.spaceH,
-                        Text(
-                          "This is a general guide, not $cName's own pattern. One update starts personalising it.",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: const Color(0xFF64748B),
-                            height: 1.4,
-                          ),
-                        ),
+                        "This is a general guide, not $cName's own pattern. One update starts personalising it."
+                            .appText(
+                              fontSize: 16.sp,
+                              color: const Color(0xFF64748B),
+                              height: 1.4,
+                            ),
                         16.spaceH,
                         PersonCard(
                           avatar: Image.asset(Assets.v2.images.imgHealth.path),
@@ -107,7 +122,10 @@ class SleepNoDataScreen extends StatelessWidget {
                           onTap: () {},
                         ),
                         24.spaceH,
-                        AppButton(title: "Add a sleep update", onTap: () {}),
+                        AppButton(
+                          title: "Add a sleep update",
+                          onTap: () => Navigator.pop(context),
+                        ),
                       ],
                     ),
                   ),
@@ -115,17 +133,16 @@ class SleepNoDataScreen extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(24.w),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFEBEE), // Light red/pink
-                      borderRadius: BorderRadius.circular(24),
+                      color: const Color(0xFFFFEBEE),
+                      borderRadius: BorderRadius.circular(24.r),
                     ),
-                    child: Text(
-                      "Two or three updates is usually enough for us to show $cName's own window.",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: const Color(0xFF1E293B),
-                        height: 1.4,
-                      ),
-                    ),
+                    child:
+                        "Two or three updates is usually enough for us to show $cName's own window."
+                            .appText(
+                              fontSize: 16.sp,
+                              color: const Color(0xFF1E293B),
+                              height: 1.4,
+                            ),
                   ),
                 ],
               ),

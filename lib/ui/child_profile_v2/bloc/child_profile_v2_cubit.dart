@@ -17,6 +17,32 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
   LocationDataModel? _locationData;
   LocationDataModel? get locationData => _locationData;
 
+  void changeProps({
+    ChildModel? childModel,
+    String? name,
+    String? age,
+    String? conditions,
+    String? dob,
+    DateTime? childDob,
+    String? concerns,
+    String? location,
+    ApiResultStatus? saveStatus,
+  }) {
+    emit(
+      state.copyWith(
+        childModel: childModel ?? state.childModel,
+        name: name ?? state.name,
+        age: age ?? state.age,
+        conditions: conditions ?? state.conditions,
+        dob: dob ?? state.dob,
+        childDob: childDob ?? state.childDob,
+        concerns: concerns ?? state.concerns,
+        location: location ?? state.location,
+        saveStatus: saveStatus ?? ApiResultStatus.initial(),
+      ),
+    );
+  }
+
   static String formatDobWithAge(DateTime? dob, String fallbackAge) {
     if (dob == null) {
       return fallbackAge;
@@ -62,12 +88,10 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       final UserModel? user = preferences.getUserModel();
       _locationData =
           user?.locationData ?? LocationDataModel.tryParse(user?.location);
-      emit(
-        ChildProfileV2State(
-          childDob: today,
-          dob: formatDobWithAge(today, ''),
-          location: user?.location ?? _locationData?.formatted ?? '',
-        ),
+      changeProps(
+        childDob: today,
+        dob: formatDobWithAge(today, ''),
+        location: user?.location ?? _locationData?.formatted ?? '',
       );
       return;
     }
@@ -82,33 +106,29 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
           localChild.locationData ??
           user?.locationData ??
           LocationDataModel.tryParse(localChild.location ?? user?.location);
-      emit(
-        state.copyWith(
-          childModel: localChild,
-          name: localChild.childName ?? user?.childName ?? '',
-          age: initialAge,
-          childDob: initialDob,
-          dob: formatDobWithAge(initialDob, initialAge),
-          conditions: (localChild.conditions ?? const <String>[]).join(', '),
-          concerns: _extractConcernsText(localChild, null),
-          location:
-              localChild.location ??
-              user?.location ??
-              _locationData?.formatted ??
-              '',
-        ),
+      changeProps(
+        childModel: localChild,
+        name: localChild.childName ?? user?.childName ?? '',
+        age: initialAge,
+        childDob: initialDob,
+        dob: formatDobWithAge(initialDob, initialAge),
+        conditions: (localChild.conditions ?? const <String>[]).join(', '),
+        concerns: _extractConcernsText(localChild, null),
+        location:
+            localChild.location ??
+            user?.location ??
+            _locationData?.formatted ??
+            '',
       );
     } else if (user != null) {
       _locationData =
           user.locationData ?? LocationDataModel.tryParse(user.location);
-      emit(
-        state.copyWith(
-          name: user.childName ?? '',
-          age: user.childAge ?? '',
-          childDob: today,
-          dob: formatDobWithAge(today, user.childAge ?? ''),
-          location: user.location ?? _locationData?.formatted ?? '',
-        ),
+      changeProps(
+        name: user.childName ?? '',
+        age: user.childAge ?? '',
+        childDob: today,
+        dob: formatDobWithAge(today, user.childAge ?? ''),
+        location: user.location ?? _locationData?.formatted ?? '',
       );
     }
 
@@ -144,21 +164,19 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
               user?.locationData ??
               LocationDataModel.tryParse(childModel.location ?? user?.location);
 
-          emit(
-            state.copyWith(
-              childModel: childModel,
-              name: childModel.childName ?? user?.childName ?? '',
-              age: resolvedAge,
-              conditions: conditionsStr,
-              childDob: resolvedDob,
-              dob: formatDobWithAge(resolvedDob, resolvedAge),
-              concerns: _extractConcernsText(childModel, data),
-              location:
-                  (childModel.location != null &&
-                      childModel.location!.trim().isNotEmpty)
-                  ? childModel.location!
-                  : (user?.location ?? _locationData?.formatted ?? ''),
-            ),
+          changeProps(
+            childModel: childModel,
+            name: childModel.childName ?? user?.childName ?? '',
+            age: resolvedAge,
+            conditions: conditionsStr,
+            childDob: resolvedDob,
+            dob: formatDobWithAge(resolvedDob, resolvedAge),
+            concerns: _extractConcernsText(childModel, data),
+            location:
+                (childModel.location != null &&
+                    childModel.location!.trim().isNotEmpty)
+                ? childModel.location!
+                : (user?.location ?? _locationData?.formatted ?? ''),
           );
         }
       } catch (_) {}
@@ -182,17 +200,15 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     if (location != null && _locationData?.formatted != location) {
       _locationData = LocationDataModel.tryParse(location);
     }
-    emit(
-      state.copyWith(
-        name: name ?? state.name,
-        age: age ?? state.age,
-        conditions: conditions ?? state.conditions,
-        dob: dob ?? state.dob,
-        childDob: childDob ?? state.childDob,
-        concerns: concerns ?? state.concerns,
-        location: location ?? state.location,
-        saveStatus: const ApiResultStatus.initial(),
-      ),
+    changeProps(
+      name: name ?? state.name,
+      age: age ?? state.age,
+      conditions: conditions ?? state.conditions,
+      dob: dob ?? state.dob,
+      childDob: childDob ?? state.childDob,
+      concerns: concerns ?? state.concerns,
+      location: location ?? state.location,
+      saveStatus: const ApiResultStatus.initial(),
     );
   }
 
@@ -203,30 +219,26 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     );
     final String ageLabel = AgeUtils.ageLabelFromMonths(months);
     final String formatted = formatDobWithAge(picked, ageLabel);
-    emit(
-      state.copyWith(
-        childDob: picked,
-        age: ageLabel,
-        dob: formatted,
-        saveStatus: const ApiResultStatus.initial(),
-      ),
+    changeProps(
+      childDob: picked,
+      age: ageLabel,
+      dob: formatted,
+      saveStatus: const ApiResultStatus.initial(),
     );
   }
 
   Future<void> saveProfile() async {
     final String trimmedName = state.name.trim();
     if (trimmedName.isEmpty) {
-      emit(
-        state.copyWith(
-          saveStatus: ApiResultStatus.error(
-            error: Exception("Please enter child's name"),
-          ),
+      changeProps(
+        saveStatus: ApiResultStatus.error(
+          error: Exception("Please enter child's name"),
         ),
       );
       return;
     }
 
-    emit(state.copyWith(saveStatus: const ApiResultStatus.loading()));
+    changeProps(saveStatus: const ApiResultStatus.loading());
 
     try {
       final UserModel? user = preferences.getUserModel();
@@ -244,8 +256,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
 
       final List<String> concernsList = state.concerns
           .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
+          .map((String e) => e.trim())
+          .where((String e) => e.isNotEmpty)
           .toList();
 
       final DocumentReference<Object?>? childRef =
@@ -268,8 +280,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
         if (state.conditions.trim().isNotEmpty) {
           updatePayload['conditions'] = state.conditions
               .split(',')
-              .map((e) => e.trim())
-              .where((e) => e.isNotEmpty)
+              .map((String e) => e.trim())
+              .where((String e) => e.isNotEmpty)
               .toList();
         }
 
@@ -301,22 +313,19 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
             doc.reference,
           );
           await preferences.saveDefaultChildModel(newChild);
-          emit(
-            state.copyWith(
-              childModel: newChild,
-              name: trimmedName,
-              age: computedAge,
-              childDob: selectedDob,
-              dob: formatDobWithAge(selectedDob, computedAge),
-              saveStatus: const ApiResultStatus.data(
-                data: 'Profile saved successfully',
-              ),
+          changeProps(
+            childModel: newChild,
+            name: trimmedName,
+            age: computedAge,
+            childDob: selectedDob,
+            dob: formatDobWithAge(selectedDob, computedAge),
+            saveStatus: const ApiResultStatus.data(
+              data: 'Profile saved successfully',
             ),
           );
           return;
         }
       } else {
-        // Create a new child and link it to the user (as in old ChildProfileCubit)
         final Map<String, dynamic> createRequest = <String, dynamic>{
           'child_name': trimmedName,
           'child_age': computedAge,
@@ -335,34 +344,28 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
             .addChild(request: createRequest);
         if (result is Data<UserModel>) {
           final ChildModel? newChild = preferences.getChildModel();
-          emit(
-            state.copyWith(
-              childModel: newChild,
-              name: trimmedName,
-              age: computedAge,
-              childDob: selectedDob,
-              dob: formatDobWithAge(selectedDob, computedAge),
-              saveStatus: const ApiResultStatus.data(
-                data: 'Profile saved successfully',
-              ),
+          changeProps(
+            childModel: newChild,
+            name: trimmedName,
+            age: computedAge,
+            childDob: selectedDob,
+            dob: formatDobWithAge(selectedDob, computedAge),
+            saveStatus: const ApiResultStatus.data(
+              data: 'Profile saved successfully',
             ),
           );
           return;
         }
       }
 
-      emit(
-        state.copyWith(
-          saveStatus: const ApiResultStatus.data(
-            data: 'Profile saved successfully',
-          ),
+      changeProps(
+        saveStatus: const ApiResultStatus.data(
+          data: 'Profile saved successfully',
         ),
       );
     } catch (e) {
-      emit(
-        state.copyWith(
-          saveStatus: ApiResultStatus.error(error: Exception(e.toString())),
-        ),
+      changeProps(
+        saveStatus: ApiResultStatus.error(error: Exception(e.toString())),
       );
     }
   }

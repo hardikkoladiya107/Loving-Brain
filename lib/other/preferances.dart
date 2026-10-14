@@ -143,4 +143,32 @@ class SharedPreference {
     await _preferences?.remove(child);
     return await _preferences?.remove(user) ?? false;
   }
+
+  static const String notificationPreferencesKey =
+      "notification_preferences_v2";
+
+  Future<bool?> saveNotificationPreferences(
+    Map<String, dynamic> jsonMap,
+  ) async {
+    try {
+      if (_preferences == null) return null;
+      return await _preferences!.setString(
+        notificationPreferencesKey,
+        json.encode(jsonMap),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Map<String, dynamic>? getNotificationPreferences() {
+    try {
+      if (_preferences == null) return null;
+      final String? str = _preferences!.getString(notificationPreferencesKey);
+      if (str == null || str.isEmpty) return null;
+      return json.decode(str) as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
+  }
 }

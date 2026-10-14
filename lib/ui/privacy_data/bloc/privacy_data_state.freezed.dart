@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PrivacyDataState {
 
- String get childName; bool get isDeletingAccount; bool get isAccountDeleted; String get errorMessage;
+ String get childName; bool get isDeletingAccount; bool get isAccountDeleted; ApiResultStatus<dynamic> get exportStatus; ApiResultStatus<dynamic> get deleteStatus; Map<String, dynamic>? get exportedData;
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $PrivacyDataStateCopyWith<PrivacyDataState> get copyWith => _$PrivacyDataStateCo
 @override
 bool operator ==(Object other) {
   final _this = this as PrivacyDataState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PrivacyDataState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isDeletingAccount, _this.isDeletingAccount) || other.isDeletingAccount == _this.isDeletingAccount)&&(identical(other.isAccountDeleted, _this.isAccountDeleted) || other.isAccountDeleted == _this.isAccountDeleted)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PrivacyDataState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isDeletingAccount, _this.isDeletingAccount) || other.isDeletingAccount == _this.isDeletingAccount)&&(identical(other.isAccountDeleted, _this.isAccountDeleted) || other.isAccountDeleted == _this.isAccountDeleted)&&(identical(other.exportStatus, _this.exportStatus) || other.exportStatus == _this.exportStatus)&&(identical(other.deleteStatus, _this.deleteStatus) || other.deleteStatus == _this.deleteStatus)&&const DeepCollectionEquality().equals(other.exportedData, _this.exportedData));
 }
 
 
 @override
 int get hashCode {
   final _this = this as PrivacyDataState;
-  return Object.hash(runtimeType,_this.childName,_this.isDeletingAccount,_this.isAccountDeleted,_this.errorMessage);
+  return Object.hash(runtimeType,_this.childName,_this.isDeletingAccount,_this.isAccountDeleted,_this.exportStatus,_this.deleteStatus,const DeepCollectionEquality().hash(_this.exportedData));
 }
 
 @override
 String toString() {
   final _this = this as PrivacyDataState;
-  return 'PrivacyDataState(childName: ${_this.childName}, isDeletingAccount: ${_this.isDeletingAccount}, isAccountDeleted: ${_this.isAccountDeleted}, errorMessage: ${_this.errorMessage})';
+  return 'PrivacyDataState(childName: ${_this.childName}, isDeletingAccount: ${_this.isDeletingAccount}, isAccountDeleted: ${_this.isAccountDeleted}, exportStatus: ${_this.exportStatus}, deleteStatus: ${_this.deleteStatus}, exportedData: ${_this.exportedData})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $PrivacyDataStateCopyWith<$Res>  {
   factory $PrivacyDataStateCopyWith(PrivacyDataState value, $Res Function(PrivacyDataState) _then) = _$PrivacyDataStateCopyWithImpl;
 @useResult
 $Res call({
- String childName, bool isDeletingAccount, bool isAccountDeleted, String errorMessage
+ String childName, bool isDeletingAccount, bool isAccountDeleted, ApiResultStatus<dynamic> exportStatus, ApiResultStatus<dynamic> deleteStatus, Map<String, dynamic>? exportedData
 });
 
 
-
+$ApiResultStatusCopyWith<dynamic, $Res> get exportStatus;$ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus;
 
 }
 /// @nodoc
@@ -68,16 +68,36 @@ class _$PrivacyDataStateCopyWithImpl<$Res>
 
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? errorMessage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? exportStatus = null,Object? deleteStatus = null,Object? exportedData = freezed,}) {
   return _then(PrivacyDataState(
 childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,isDeletingAccount: null == isDeletingAccount ? _self.isDeletingAccount : isDeletingAccount // ignore: cast_nullable_to_non_nullable
 as bool,isAccountDeleted: null == isAccountDeleted ? _self.isAccountDeleted : isAccountDeleted // ignore: cast_nullable_to_non_nullable
-as bool,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String,
+as bool,exportStatus: null == exportStatus ? _self.exportStatus : exportStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteStatus: null == deleteStatus ? _self.deleteStatus : deleteStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,exportedData: freezed == exportedData ? _self.exportedData : exportedData // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
-
+/// Create a copy of PrivacyDataState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get exportStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.exportStatus, (value) {
+    return _then(_self.copyWith(exportStatus: value));
+  });
+}/// Create a copy of PrivacyDataState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.deleteStatus, (value) {
+    return _then(_self.copyWith(deleteStatus: value));
+  });
+}
 }
 
 
@@ -159,10 +179,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  String errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> deleteStatus,  Map<String, dynamic>? exportedData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PrivacyDataState() when $default != null:
-return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.errorMessage);case _:
+return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.exportStatus,_that.deleteStatus,_that.exportedData);case _:
   return orElse();
 
 }
@@ -180,10 +200,10 @@ return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  String errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> deleteStatus,  Map<String, dynamic>? exportedData)  $default,) {final _that = this;
 switch (_that) {
 case _PrivacyDataState():
-return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.errorMessage);case _:
+return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.exportStatus,_that.deleteStatus,_that.exportedData);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +220,10 @@ return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  String errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> deleteStatus,  Map<String, dynamic>? exportedData)?  $default,) {final _that = this;
 switch (_that) {
 case _PrivacyDataState() when $default != null:
-return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.errorMessage);case _:
+return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.exportStatus,_that.deleteStatus,_that.exportedData);case _:
   return null;
 
 }
@@ -215,13 +235,23 @@ return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_
 
 
 class _PrivacyDataState implements PrivacyDataState {
-  const _PrivacyDataState({this.childName = 'your child', this.isDeletingAccount = false, this.isAccountDeleted = false, this.errorMessage = ''});
+  const _PrivacyDataState({this.childName = 'your child', this.isDeletingAccount = false, this.isAccountDeleted = false, this.exportStatus = const ApiResultStatus.initial(), this.deleteStatus = const ApiResultStatus.initial(),  Map<String, dynamic>? exportedData}): _exportedData = exportedData;
   
 
 @override@JsonKey() final  String childName;
 @override@JsonKey() final  bool isDeletingAccount;
 @override@JsonKey() final  bool isAccountDeleted;
-@override@JsonKey() final  String errorMessage;
+@override@JsonKey() final  ApiResultStatus<dynamic> exportStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> deleteStatus;
+ final  Map<String, dynamic>? _exportedData;
+@override Map<String, dynamic>? get exportedData {
+  final value = _exportedData;
+  if (value == null) return null;
+  if (_exportedData is EqualUnmodifiableMapView) return _exportedData;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
+}
+
 
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
@@ -233,18 +263,18 @@ _$PrivacyDataStateCopyWith<_PrivacyDataState> get copyWith => __$PrivacyDataStat
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PrivacyDataState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isDeletingAccount, isDeletingAccount) || other.isDeletingAccount == isDeletingAccount)&&(identical(other.isAccountDeleted, isAccountDeleted) || other.isAccountDeleted == isAccountDeleted)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PrivacyDataState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isDeletingAccount, isDeletingAccount) || other.isDeletingAccount == isDeletingAccount)&&(identical(other.isAccountDeleted, isAccountDeleted) || other.isAccountDeleted == isAccountDeleted)&&(identical(other.exportStatus, exportStatus) || other.exportStatus == exportStatus)&&(identical(other.deleteStatus, deleteStatus) || other.deleteStatus == deleteStatus)&&const DeepCollectionEquality().equals(other.exportedData, _exportedData));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,childName,isDeletingAccount,isAccountDeleted,errorMessage);
+    return Object.hash(runtimeType,childName,isDeletingAccount,isAccountDeleted,exportStatus,deleteStatus,const DeepCollectionEquality().hash(_exportedData));
 }
 
 @override
 String toString() {
-    return 'PrivacyDataState(childName: $childName, isDeletingAccount: $isDeletingAccount, isAccountDeleted: $isAccountDeleted, errorMessage: $errorMessage)';
+    return 'PrivacyDataState(childName: $childName, isDeletingAccount: $isDeletingAccount, isAccountDeleted: $isAccountDeleted, exportStatus: $exportStatus, deleteStatus: $deleteStatus, exportedData: $exportedData)';
 }
 
 
@@ -255,11 +285,11 @@ abstract mixin class _$PrivacyDataStateCopyWith<$Res> implements $PrivacyDataSta
   factory _$PrivacyDataStateCopyWith(_PrivacyDataState value, $Res Function(_PrivacyDataState) _then) = __$PrivacyDataStateCopyWithImpl;
 @override @useResult
 $Res call({
- String childName, bool isDeletingAccount, bool isAccountDeleted, String errorMessage
+ String childName, bool isDeletingAccount, bool isAccountDeleted, ApiResultStatus<dynamic> exportStatus, ApiResultStatus<dynamic> deleteStatus, Map<String, dynamic>? exportedData
 });
 
 
-
+@override $ApiResultStatusCopyWith<dynamic, $Res> get exportStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus;
 
 }
 /// @nodoc
@@ -272,17 +302,37 @@ class __$PrivacyDataStateCopyWithImpl<$Res>
 
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? errorMessage = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? exportStatus = null,Object? deleteStatus = null,Object? exportedData = freezed,}) {
   return _then(_PrivacyDataState(
 childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,isDeletingAccount: null == isDeletingAccount ? _self.isDeletingAccount : isDeletingAccount // ignore: cast_nullable_to_non_nullable
 as bool,isAccountDeleted: null == isAccountDeleted ? _self.isAccountDeleted : isAccountDeleted // ignore: cast_nullable_to_non_nullable
-as bool,errorMessage: null == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String,
+as bool,exportStatus: null == exportStatus ? _self.exportStatus : exportStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,deleteStatus: null == deleteStatus ? _self.deleteStatus : deleteStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,exportedData: freezed == exportedData ? _self._exportedData : exportedData // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 
-
+/// Create a copy of PrivacyDataState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get exportStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.exportStatus, (value) {
+    return _then(_self.copyWith(exportStatus: value));
+  });
+}/// Create a copy of PrivacyDataState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.deleteStatus, (value) {
+    return _then(_self.copyWith(deleteStatus: value));
+  });
+}
 }
 
 // dart format on

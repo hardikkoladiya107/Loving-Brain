@@ -15,30 +15,67 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NotificationsPermissionState {
 
-
+ String get childName; bool get isGranted;
+/// Create a copy of NotificationsPermissionState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$NotificationsPermissionStateCopyWith<NotificationsPermissionState> get copyWith => _$NotificationsPermissionStateCopyWithImpl<NotificationsPermissionState>(this as NotificationsPermissionState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationsPermissionState);
+  final _this = this as NotificationsPermissionState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationsPermissionState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isGranted, _this.isGranted) || other.isGranted == _this.isGranted));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as NotificationsPermissionState;
+  return Object.hash(runtimeType,_this.childName,_this.isGranted);
+}
 
 @override
 String toString() {
-    return 'NotificationsPermissionState()';
+  final _this = this as NotificationsPermissionState;
+  return 'NotificationsPermissionState(childName: ${_this.childName}, isGranted: ${_this.isGranted})';
 }
 
 
 }
 
 /// @nodoc
-class $NotificationsPermissionStateCopyWith<$Res>  {
-$NotificationsPermissionStateCopyWith(NotificationsPermissionState _, $Res Function(NotificationsPermissionState) __);
+abstract mixin class $NotificationsPermissionStateCopyWith<$Res>  {
+  factory $NotificationsPermissionStateCopyWith(NotificationsPermissionState value, $Res Function(NotificationsPermissionState) _then) = _$NotificationsPermissionStateCopyWithImpl;
+@useResult
+$Res call({
+ String childName, bool isGranted
+});
+
+
+
+
+}
+/// @nodoc
+class _$NotificationsPermissionStateCopyWithImpl<$Res>
+    implements $NotificationsPermissionStateCopyWith<$Res> {
+  _$NotificationsPermissionStateCopyWithImpl(this._self, this._then);
+
+  final NotificationsPermissionState _self;
+  final $Res Function(NotificationsPermissionState) _then;
+
+/// Create a copy of NotificationsPermissionState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? isGranted = null,}) {
+  return _then(NotificationsPermissionState(
+childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,isGranted: null == isGranted ? _self.isGranted : isGranted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
 }
 
 
@@ -120,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function()?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  bool isGranted)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationsPermissionState() when $default != null:
-return $default();case _:
+return $default(_that.childName,_that.isGranted);case _:
   return orElse();
 
 }
@@ -141,10 +178,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function()  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  bool isGranted)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationsPermissionState():
-return $default();case _:
+return $default(_that.childName,_that.isGranted);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -161,10 +198,10 @@ return $default();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function()?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  bool isGranted)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationsPermissionState() when $default != null:
-return $default();case _:
+return $default(_that.childName,_that.isGranted);case _:
   return null;
 
 }
@@ -176,32 +213,70 @@ return $default();case _:
 
 
 class _NotificationsPermissionState implements NotificationsPermissionState {
-  const _NotificationsPermissionState();
+  const _NotificationsPermissionState({this.childName = 'your child', this.isGranted = false});
   
 
+@override@JsonKey() final  String childName;
+@override@JsonKey() final  bool isGranted;
 
-
+/// Create a copy of NotificationsPermissionState
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$NotificationsPermissionStateCopyWith<_NotificationsPermissionState> get copyWith => __$NotificationsPermissionStateCopyWithImpl<_NotificationsPermissionState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationsPermissionState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationsPermissionState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isGranted, isGranted) || other.isGranted == isGranted));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+    return Object.hash(runtimeType,childName,isGranted);
+}
 
 @override
 String toString() {
-    return 'NotificationsPermissionState()';
+    return 'NotificationsPermissionState(childName: $childName, isGranted: $isGranted)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$NotificationsPermissionStateCopyWith<$Res> implements $NotificationsPermissionStateCopyWith<$Res> {
+  factory _$NotificationsPermissionStateCopyWith(_NotificationsPermissionState value, $Res Function(_NotificationsPermissionState) _then) = __$NotificationsPermissionStateCopyWithImpl;
+@override @useResult
+$Res call({
+ String childName, bool isGranted
+});
 
 
+
+
+}
+/// @nodoc
+class __$NotificationsPermissionStateCopyWithImpl<$Res>
+    implements _$NotificationsPermissionStateCopyWith<$Res> {
+  __$NotificationsPermissionStateCopyWithImpl(this._self, this._then);
+
+  final _NotificationsPermissionState _self;
+  final $Res Function(_NotificationsPermissionState) _then;
+
+/// Create a copy of NotificationsPermissionState
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? isGranted = null,}) {
+  return _then(_NotificationsPermissionState(
+childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
+as String,isGranted: null == isGranted ? _self.isGranted : isGranted // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
 
 // dart format on
