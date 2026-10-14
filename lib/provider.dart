@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:loving_brain/ui/auth/forgot_password/bloc/forgot_password_cubit.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/auth/otp/bloc/otp_cubit.dart';
 import 'package:loving_brain/ui/auth/register/bloc/register_cubit.dart';
@@ -27,9 +26,6 @@ final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
   BlocProvider<OtpCubit>(create: (BuildContext context) => OtpCubit()),
   BlocProvider<OnboardingCubit>(
     create: (BuildContext context) => OnboardingCubit(),
-  ),
-  BlocProvider<ForgotPasswordCubit>(
-    create: (BuildContext context) => ForgotPasswordCubit(),
   ),
   BlocProvider<ProfileCubit>(create: (BuildContext context) => ProfileCubit()),
 ];

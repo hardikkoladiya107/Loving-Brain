@@ -9,7 +9,6 @@ class RoutePaths {
   static const String login = '/login';
   static const String register = '/register';
   static const String otp = '/otp';
-  static const String forgotPassword = '/forgot-password';
   static const String terms = '/terms';
   static const String privacy = '/privacy';
   static const String parentProfile = '/parent-profile';

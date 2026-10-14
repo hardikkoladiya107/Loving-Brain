@@ -207,19 +207,6 @@ class AuthRepo {
     }
   }
 
-  Future<ApiResultStatus> sendPasswordResetEmail({
-    required String email,
-  }) async {
-    try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(email: email.trim());
-      return ApiResultStatus.data(data: "");
-    } on FirebaseException catch (e) {
-      return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
-    }
-  }
-
   /// Deletes all Firestore data for the user, then deletes the Auth account
   /// (or signs out if re-authentication would be required) and clears local session.
   Future<ApiResultStatus> deleteAccount() async {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/auth/co_parent_register/co_parent_register_screen.dart';
-import 'package:loving_brain/ui/auth/forgot_password/forgot_password_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
 import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
@@ -48,7 +47,6 @@ class AppRouter {
           RoutePaths.login,
           RoutePaths.register,
           RoutePaths.otp,
-          RoutePaths.forgotPassword,
         };
 
         if (isLoggedIn) {
@@ -141,11 +139,6 @@ class AppRouter {
             final String? destination = state.extra as String?;
             return OtpScreen(destination: destination);
           },
-        ),
-        GoRoute(
-          path: RoutePaths.forgotPassword,
-          builder: (BuildContext context, GoRouterState state) =>
-              const ForgotPasswordScreen(),
         ),
         GoRoute(
           path: RoutePaths.terms,

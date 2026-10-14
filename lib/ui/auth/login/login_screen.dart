@@ -142,9 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _email(state),
                                 16.spaceH,
                                 _password(state),
-                                8.spaceH,
-                                _forgotPassword(),
-                                24.spaceH,
+                                20.spaceH,
                                 _loginButton(state),
                                 20.spaceH,
                                 _dontHaveAccount(),
@@ -459,26 +457,6 @@ class _LoginScreenState extends State<LoginScreen> {
         context.read<LoginCubit>().changeProps(password: value);
       },
     ).appPadding(left: 24, right: 24);
-  }
-
-  Widget _forgotPassword() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        BaseButton(
-          child: LocaleKeys.forgotPassword.tr().appText(
-            fontWeight: FontWeight.w700,
-            color: Colors.grey.shade700,
-            fontSize: 12,
-          ),
-          onTap: () {
-            context.read<LoginCubit>().clearFields();
-            context.push(RoutePaths.forgotPassword);
-          },
-        ),
-        30.spaceW,
-      ],
-    );
   }
 
   Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
