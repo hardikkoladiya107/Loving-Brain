@@ -5,7 +5,6 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/invite_accepted/invite_accepted_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
@@ -237,20 +236,6 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
                   : () {
                       cubit.resendInvite();
                     },
-            ),
-            12.spaceH,
-            AppButton(
-              title: "Test: View Accepted",
-              backgroundColor: Colors.transparent,
-              textColor: primaryColor,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const InviteAcceptedScreen(),
-                  ),
-                );
-              },
             ),
             16.spaceH,
             BaseButton(

@@ -75,7 +75,7 @@ Uw5v+T5U
       log("JWT TOKEN : $token");
       return token;
     } catch (e) {
-      print("JWT TOKEN ERROR : $e");
+      log("JWT TOKEN ERROR : $e");
       return "";
     }
   }

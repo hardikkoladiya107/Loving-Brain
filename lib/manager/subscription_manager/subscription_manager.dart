@@ -60,7 +60,7 @@ class SubscriptionManager {
         } on Exception catch (e) {
           onError(e);
           if (kDebugMode) {
-            print("IOS Error is -----> $e");
+            debugPrint("IOS Error is -----> $e");
           }
         }
       }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:loving_brain/model/location_data_model.dart';
 
 class UserModel {
@@ -173,7 +174,7 @@ class UserModel {
         }
       }
     } catch (e) {
-      print(e);
+      debugPrint('Error parsing children refs in UserModel: $e');
     }
 
     try {

@@ -102,33 +102,31 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     final String childName = (child?.childName ?? '').trim().isNotEmpty
         ? child!.childName!.trim()
         : 'your child';
-    emit(
-      state.copyWith(
-        messages: [
-          BrainyMessage(
-            id: 'default_user',
-            type: MessageType.user,
-            chipTitle: 'You asked',
-            headline: 'Why is bedtime harder lately?',
-          ),
-          BrainyMessage(
-            id: 'default_info',
-            type: MessageType.aiInfo,
-            chipTitle: 'What may be happening',
-            headline: "$childName's nap or evening rhythm may be shifting",
-            subtext:
-                'Shortened naps or late afternoon stimulation can raise overtiredness by the evening.',
-          ),
-          BrainyMessage(
-            id: 'default_action',
-            type: MessageType.aiAction,
-            chipTitle: 'What to try now',
-            headline: 'Offer a quieter environment 30m earlier',
-            subtext:
-                'Dimming the lights and turning off background noise can help signal that it is time to wind down.',
-          ),
-        ],
-      ),
+    changeProps(
+      messages: [
+        BrainyMessage(
+          id: 'default_user',
+          type: MessageType.user,
+          chipTitle: 'You asked',
+          headline: 'Why is bedtime harder lately?',
+        ),
+        BrainyMessage(
+          id: 'default_info',
+          type: MessageType.aiInfo,
+          chipTitle: 'What may be happening',
+          headline: "$childName's nap or evening rhythm may be shifting",
+          subtext:
+              'Shortened naps or late afternoon stimulation can raise overtiredness by the evening.',
+        ),
+        BrainyMessage(
+          id: 'default_action',
+          type: MessageType.aiAction,
+          chipTitle: 'What to try now',
+          headline: 'Offer a quieter environment 30m earlier',
+          subtext:
+              'Dimming the lights and turning off background noise can help signal that it is time to wind down.',
+        ),
+      ],
     );
   }
 
@@ -315,12 +313,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       audioLocalPath: audioFile?.path,
     );
 
-    emit(
-      state.copyWith(
-        messages: [...state.messages, optimisticUserMsg],
-        isTyping: true,
-        selectedImagePath: null,
-      ),
+    changeProps(
+      messages: [...state.messages, optimisticUserMsg],
+      isTyping: true,
+      clearSelectedImage: true,
     );
 
     final String convId = await _ensureConversationCreated(displayHeadline);

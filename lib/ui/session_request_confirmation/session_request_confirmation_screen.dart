@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -7,6 +8,9 @@ import 'package:loving_brain/ui/parent_success_guide/parent_success_guide_screen
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
+
+import 'bloc/session_request_confirmation_cubit.dart';
+import 'bloc/session_request_confirmation_state.dart';
 
 /// Screen 48: Session Request Confirmation.
 /// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
@@ -22,89 +26,123 @@ class SessionRequestConfirmationScreen extends StatefulWidget {
 
 class _SessionRequestConfirmationScreenState
     extends State<SessionRequestConfirmationScreen> {
+  late final SessionRequestConfirmationCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = SessionRequestConfirmationCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String gName = widget.guideName ?? "Priya";
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: [
-          // Top Left Glow
-          Positioned(
-            left: -150.w,
-            top: -150.h,
-            child: Container(
-              width: 400.w,
-              height: 400.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          // Bottom Right Glow
-          Positioned(
-            right: -150.w,
-            bottom: 0,
-            child: Container(
-              width: 400.w,
-              height: 400.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      60.spaceH,
-                      _buildConfirmationCard(gName),
-                      16.spaceH,
-                      _buildInTheMeantimeCard(gName),
-                      24.spaceH,
-                      Container(
-                        padding: EdgeInsets.all(16.r),
+    return BlocProvider<SessionRequestConfirmationCubit>.value(
+      value: _cubit,
+      child:
+          BlocConsumer<
+            SessionRequestConfirmationCubit,
+            SessionRequestConfirmationState
+          >(
+            bloc: _cubit,
+            listener:
+                (
+                  BuildContext context,
+                  SessionRequestConfirmationState state,
+                ) {},
+            builder: (BuildContext context, SessionRequestConfirmationState state) {
+              return Scaffold(
+                backgroundColor: const Color(0xFFFEF8F4),
+                body: Stack(
+                  children: [
+                    // Top Left Glow
+                    Positioned(
+                      left: -150.w,
+                      top: -150.h,
+                      child: Container(
+                        width: 400.w,
+                        height: 400.h,
                         decoration: BoxDecoration(
-                          color: softPeachOrange,
-                          borderRadius: BorderRadius.circular(16.r),
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                              const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                            ],
+                            stops: const [0.0, 1.0],
+                          ),
                         ),
-                        child:
-                            "Nothing has been charged. Any fee is agreed with you before a session is confirmed."
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                ),
                       ),
-                      140.spaceH,
-                    ],
-                  ),
+                    ),
+                    // Bottom Right Glow
+                    Positioned(
+                      right: -150.w,
+                      bottom: 0,
+                      child: Container(
+                        width: 400.w,
+                        height: 400.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                              const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                            ],
+                            stops: const [0.0, 1.0],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SafeArea(
+                      bottom: false,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              children: [
+                                60.spaceH,
+                                _buildConfirmationCard(gName),
+                                16.spaceH,
+                                _buildInTheMeantimeCard(gName),
+                                24.spaceH,
+                                Container(
+                                  padding: EdgeInsets.all(16.r),
+                                  decoration: BoxDecoration(
+                                    color: softPeachOrange,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  child:
+                                      "Nothing has been charged. Any fee is agreed with you before a session is confirmed."
+                                          .appText(
+                                            fontSize: 14.sp,
+                                            color: greyColor9,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                ),
+                                140.spaceH,
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _buildBottomActions(context),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
-          _buildBottomActions(context),
-        ],
-      ),
     );
   }
 

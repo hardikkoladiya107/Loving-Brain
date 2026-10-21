@@ -14,6 +14,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   _conversationSubscription;
 
   void init() {
+    emit(const BrainyHistoryState());
     _emitDefaultItems();
 
     final String uid = preferences.getUserModel()?.uid ?? '';
@@ -24,18 +25,19 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
         .doc(uid)
         .collection('conversations')
         .snapshots()
-        .listen((snapshot) {
+        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
           if (isClosed) return;
           if (snapshot.docs.isEmpty) {
             _emitDefaultItems();
             return;
           }
 
-          final now = DateTime.now();
+          final DateTime now = DateTime.now();
           final List<(DateTime, BrainyHistoryItem)> parsed = [];
 
-          for (final doc in snapshot.docs) {
-            final data = doc.data();
+          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+              in snapshot.docs) {
+            final Map<String, dynamic> data = doc.data();
             final String convId = data['conversation_id']?.toString() ?? doc.id;
             final String title =
                 (data['first_message']?.toString() ?? '').trim().isNotEmpty
@@ -44,7 +46,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
             final String? topic = data['topic']?.toString();
 
             DateTime createdAt = now;
-            final rawCreatedAt = data['created_at'];
+            final Object? rawCreatedAt = data['created_at'];
             if (rawCreatedAt is Timestamp) {
               createdAt = rawCreatedAt.toDate();
             } else {
@@ -65,13 +67,18 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
             ));
           }
 
-          parsed.sort((a, b) => b.$1.compareTo(a.$1));
+          parsed.sort(
+            (
+              (DateTime, BrainyHistoryItem) a,
+              (DateTime, BrainyHistoryItem) b,
+            ) => b.$1.compareTo(a.$1),
+          );
 
           final List<BrainyHistoryItem> thisWeek = [];
           final List<BrainyHistoryItem> earlier = [];
 
-          for (final entry in parsed) {
-            final diffDays = now.difference(entry.$1).inDays;
+          for (final (DateTime, BrainyHistoryItem) entry in parsed) {
+            final int diffDays = now.difference(entry.$1).inDays;
             if (diffDays <= 7) {
               thisWeek.add(entry.$2);
             } else {
@@ -79,35 +86,43 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
             }
           }
 
-          emit(
-            state.copyWith(thisWeekHistory: thisWeek, earlierHistory: earlier),
-          );
+          changeProps(thisWeekHistory: thisWeek, earlierHistory: earlier);
         });
   }
 
-  void _emitDefaultItems() {
+  void changeProps({
+    List<BrainyHistoryItem>? thisWeekHistory,
+    List<BrainyHistoryItem>? earlierHistory,
+  }) {
     emit(
       state.copyWith(
-        thisWeekHistory: [
-          BrainyHistoryItem(
-            title: 'Why is bedtime harder lately?',
-            subtitle: 'Today',
-            topic: 'Sleep',
-          ),
-          BrainyHistoryItem(
-            title: 'Is this normal for her age?',
-            subtitle: '2 days ago',
-            topic: 'Behaviour',
-          ),
-        ],
-        earlierHistory: [
-          BrainyHistoryItem(
-            title: 'What can I try for naps?',
-            subtitle: 'Last week',
-            topic: 'Sleep',
-          ),
-        ],
+        thisWeekHistory: thisWeekHistory ?? state.thisWeekHistory,
+        earlierHistory: earlierHistory ?? state.earlierHistory,
       ),
+    );
+  }
+
+  void _emitDefaultItems() {
+    changeProps(
+      thisWeekHistory: [
+        BrainyHistoryItem(
+          title: 'Why is bedtime harder lately?',
+          subtitle: 'Today',
+          topic: 'Sleep',
+        ),
+        BrainyHistoryItem(
+          title: 'Is this normal for her age?',
+          subtitle: '2 days ago',
+          topic: 'Behaviour',
+        ),
+      ],
+      earlierHistory: [
+        BrainyHistoryItem(
+          title: 'What can I try for naps?',
+          subtitle: 'Last week',
+          topic: 'Sleep',
+        ),
+      ],
     );
   }
 

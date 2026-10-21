@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -8,6 +9,9 @@ import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/person_card.dart';
 import 'package:loving_brain/ui/widget/status_pill.dart';
+
+import 'bloc/invite_accepted_cubit.dart';
+import 'bloc/invite_accepted_state.dart';
 
 /// Screen 57: Invite Accepted.
 /// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
@@ -26,151 +30,177 @@ class InviteAcceptedScreen extends StatefulWidget {
 }
 
 class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
+  late final InviteAcceptedCubit _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = InviteAcceptedCubit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit.init();
+    });
+  }
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String name = widget.caregiverName ?? "Grandma";
     final String role = widget.caregiverRole ?? "Grandparent";
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: [
-          // Top Left Glow
-          Positioned(
-            left: -150.w,
-            top: -150.h,
-            child: Container(
-              width: 400.w,
-              height: 400.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          // Bottom Right Glow
-          Positioned(
-            right: -150.w,
-            bottom: 0,
-            child: Container(
-              width: 400.w,
-              height: 400.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                    const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                  ],
-                  stops: const [0.0, 1.0],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocProvider<InviteAcceptedCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<InviteAcceptedCubit, InviteAcceptedState>(
+        bloc: _cubit,
+        listener: (BuildContext context, InviteAcceptedState state) {},
+        builder: (BuildContext context, InviteAcceptedState state) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
               children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 8.h,
-                  ),
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: EdgeInsets.all(8.r),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: darkBlue,
-                        size: 24.sp,
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      16.spaceH,
-                      "Invite status".appText(
-                        fontSize: 32.sp,
-                        color: greyColor9,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
-                      24.spaceH,
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(20.r),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
                           children: [
-                            StatusPill.accepted(),
                             16.spaceH,
-                            "$name has joined".appText(
-                              fontSize: 20.sp,
+                            "Invite status".appText(
+                              fontSize: 32.sp,
                               color: greyColor9,
                               fraunces: true,
+                              textAlign: TextAlign.start,
                             ),
-                            8.spaceH,
-                            "They can now see what you've shared sleep updates and today's plan."
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor,
-                                  textAlign: TextAlign.start,
+                            24.spaceH,
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(20.r),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  StatusPill.accepted(),
+                                  16.spaceH,
+                                  "$name has joined".appText(
+                                    fontSize: 20.sp,
+                                    color: greyColor9,
+                                    fraunces: true,
+                                  ),
+                                  8.spaceH,
+                                  "They can now see what you've shared sleep updates and today's plan."
+                                      .appText(
+                                        fontSize: 14.sp,
+                                        color: greyColor,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                ],
+                              ),
+                            ),
+                            12.spaceH,
+                            PersonCard(
+                              avatar: Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFDC21A),
+                                  shape: BoxShape.circle,
                                 ),
+                                child: Icon(
+                                  Icons.face,
+                                  size: 30.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              name: name,
+                              subtitle: "$role · joined today",
+                              statusPill: StatusPill.linked(),
+                              showChevron: false,
+                            ),
+                            12.spaceH,
+                            InfoBox.white(
+                              title: "Worth checking",
+                              body:
+                                  "Have a look at what they can see. You can adjust it now or any time later.",
+                            ),
+                            180.spaceH,
                           ],
                         ),
                       ),
-                      12.spaceH,
-                      PersonCard(
-                        avatar: Container(
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFDC21A),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.face,
-                            size: 30.sp,
-                            color: Colors.white,
-                          ),
-                        ),
-                        name: name,
-                        subtitle: "$role · joined today",
-                        statusPill: StatusPill.linked(),
-                        showChevron: false,
-                      ),
-                      12.spaceH,
-                      InfoBox.white(
-                        title: "Worth checking",
-                        body:
-                            "Have a look at what they can see. You can adjust it now or any time later.",
-                      ),
-                      180.spaceH,
                     ],
                   ),
                 ),
+                _buildBottomActions(context, name, role),
               ],
             ),
-          ),
-          _buildBottomActions(context, name, role),
-        ],
+          );
+        },
       ),
     );
   }

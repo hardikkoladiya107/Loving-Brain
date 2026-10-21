@@ -221,9 +221,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             AppButton(
                               onTap: () {
                                 FocusScope.of(context).unfocus();
-                                context.read<OtpCubit>().verifyOtp(
-                                  onSuccess: () {},
-                                );
+                                context.read<OtpCubit>().verifyOtp();
                               },
                               title: "Continue",
                               isLoading: state.isSubmitting,
