@@ -538,6 +538,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     required bool isWakeTime,
   }) async {
     final OnboardingCubit cubit = context.read<OnboardingCubit>();
+    final MaterialLocalizations localizations = MaterialLocalizations.of(
+      context,
+    );
     cubit.setActiveTimeField(isWakeTime ? 'wake' : 'bed');
 
     final TimeOfDay initial = isWakeTime
@@ -562,9 +565,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
 
     if (picked != null && mounted) {
-      final MaterialLocalizations localizations = MaterialLocalizations.of(
-        context,
-      );
       final String formatted = localizations.formatTimeOfDay(
         picked,
         alwaysUse24HourFormat: false,

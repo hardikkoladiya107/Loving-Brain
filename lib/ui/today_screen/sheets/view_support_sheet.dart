@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_screen.dart';
+import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 void showViewSupportSheet(BuildContext context) {
@@ -76,17 +78,36 @@ class ViewSupportSheet extends StatelessWidget {
                 ).appPadding(all: 16),
               ).appPadding(all: 16),
               12.spaceH,
-              AppButton(title: "View support", onTap: () {}),
+              AppButton(
+                title: "View support",
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ProgramRecommendationScreen(),
+                    ),
+                  );
+                },
+              ),
               12.spaceH,
               AppButton(
                 title: "Join waitlist",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MentorshipUnavailableScreen(),
+                    ),
+                  );
+                },
                 backgroundColor: Colors.white,
                 textColor: greyColor9,
               ),
               AppButton(
                 title: "Not now",
-                onTap: () {},
+                onTap: () => Navigator.pop(context),
                 backgroundColor: Colors.transparent,
                 textColor: greyColor8,
               ),

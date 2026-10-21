@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
+import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 class ProgramRecommendationScreen extends StatefulWidget {
@@ -22,42 +24,44 @@ class _ProgramRecommendationScreenState
       'image': Assets.v2.images.imgSleepRestore01.path,
       'title': "Sleep Restore",
       'subtitle': "6-week guided sleep programme",
-      'price': "From ?2,400",
+      'price': "From \$2,400",
       'category': "Sleep",
     },
     {
       'image': Assets.v2.images.imgSleepRestore02.path,
       'title': "Gentle Awakening",
       'subtitle': "4-week guided sleep programme",
-      'price': "From ?1,800",
+      'price': "From \$1,800",
       'category': "Sleep",
     },
     {
       'image': Assets.v2.images.imgSleepRestore03.path,
       'title': "Calm Moments",
       'subtitle': "Manage anxiety in toddlers",
-      'price': "From ?3,200",
+      'price': "From \$3,200",
       'category': "Anxiety",
     },
     {
       'image': Assets.v2.images.imgSleepRestore04.path,
       'title': "Positive Discipline",
       'subtitle': "Effective parenting strategies",
-      'price': "From ?2,800",
+      'price': "From \$2,800",
       'category': "Parenting",
     },
     {
       'image': Assets.v2.images.imgSleepRestore01.path,
       'title': "Tantrum Tamer",
       'subtitle': "Understanding big emotions",
-      'price': "From ?2,000",
+      'price': "From \$2,000",
       'category': "Behaviour",
     },
   ];
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> filteredPrograms = _allPrograms.where((prog) {
+    final List<Map<String, String>> filteredPrograms = _allPrograms.where((
+      Map<String, String> prog,
+    ) {
       if (selectedCategory == 'All') return true;
       return prog['category'] == selectedCategory;
     }).toList();
@@ -108,13 +112,20 @@ class _ProgramRecommendationScreenState
                 32.spaceH,
                 AppButton(
                   title: "View All programs",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const MentorshipLandingScreen(),
+                      ),
+                    );
+                  },
                   backgroundColor: primaryColor,
                   textColor: Colors.white,
                 ),
                 16.spaceH,
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pop(context),
                   child: "Not now".appText(
                     fontSize: 16.sp,
                     color: greyColor,
@@ -210,13 +221,19 @@ class _ProgramRecommendationScreenState
   }
 
   Widget _buildCategoryChips() {
-    final categories = ['All', 'Sleep', 'Behaviour', 'Parenting', 'Anxiety'];
+    final List<String> categories = <String>[
+      'All',
+      'Sleep',
+      'Behaviour',
+      'Parenting',
+      'Anxiety',
+    ];
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
-        children: categories.map((cat) {
-          final isSelected = cat == selectedCategory;
+        children: categories.map((String cat) {
+          final bool isSelected = cat == selectedCategory;
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -251,72 +268,80 @@ class _ProgramRecommendationScreenState
     String subtitle,
     String price,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: EdgeInsets.all(12.w),
-      child: Row(
-        children: [
-          Container(
-            width: 80.w,
-            height: 80.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(imagePath),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProgrammeDetailScreen()),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: EdgeInsets.all(12.w),
+        child: Row(
+          children: [
+            Container(
+              width: 80.w,
+              height: 80.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(imagePath),
+                ),
               ),
             ),
-          ),
-          12.spaceW,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title.appText(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                  textAlign: TextAlign.start,
-                ),
-                4.spaceH,
-                subtitle.appText(
-                  fontSize: 12.sp,
-                  color: greyColor,
-                  textAlign: TextAlign.start,
-                ),
-                8.spaceH,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    price.appText(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: primaryColor,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: "View program".appText(
-                        color: Colors.white,
-                        fontSize: 10.sp,
+            12.spaceW,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  title.appText(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                    textAlign: TextAlign.start,
+                  ),
+                  4.spaceH,
+                  subtitle.appText(
+                    fontSize: 12.sp,
+                    color: greyColor,
+                    textAlign: TextAlign.start,
+                  ),
+                  8.spaceH,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      price.appText(
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
+                        color: primaryColor,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: "View program".appText(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

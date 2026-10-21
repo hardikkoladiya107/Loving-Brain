@@ -110,7 +110,7 @@ class OfflineSyncRepo {
             case 'behaviour':
               await childrenCollection
                   .doc(childId)
-                  .collection('tantrums')
+                  .collection('tantrum_logs')
                   .add(item.payload);
               break;
             case 'mood':

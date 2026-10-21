@@ -16,15 +16,16 @@ class BehavioursRepo {
 
   static BehavioursRepo get instance => _instance;
 
-  var behavioursCollection = FirebaseFirestore.instance.collection(
-    'behaviours',
-  );
+  final CollectionReference<Map<String, dynamic>> behavioursCollection =
+      FirebaseFirestore.instance.collection('behaviours');
 
-  var childrenCollection = FirebaseFirestore.instance.collection('children');
+  final CollectionReference<Map<String, dynamic>> childrenCollection =
+      FirebaseFirestore.instance.collection('children');
 
   Future<ApiResultStatus> getAllBehaviourCategories() async {
     try {
-      var behaviours = await behavioursCollection.get();
+      final QuerySnapshot<Map<String, dynamic>> behaviours =
+          await behavioursCollection.get();
       if (behaviours.docs.isNotEmpty) {
         return ApiResultStatus.data(
           data: behaviours.docs
@@ -52,10 +53,11 @@ class BehavioursRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var behaviours = await childrenCollection
-          .doc(id)
-          .collection("behaviours")
-          .add(request);
+      final DocumentReference<Map<String, dynamic>> behaviours =
+          await childrenCollection
+              .doc(id)
+              .collection("behaviours")
+              .add(request);
       return ApiResultStatus.data(data: behaviours.id);
     } on FirebaseException {
       return ApiResultStatus.error(

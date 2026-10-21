@@ -11,6 +11,7 @@ import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
+import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 
 import 'today_state.dart';
@@ -191,6 +192,9 @@ class TodayCubit extends Cubit<TodayState> {
       activeChildId: finalChildId,
     );
 
+    // Sync any pending offline quick updates in the background
+    OfflineSyncRepo.instance.syncPendingUpdates();
+
     await recalculateForecast(childOverride: child);
   }
 
@@ -230,7 +234,15 @@ class TodayCubit extends Cubit<TodayState> {
       todayHealthLog: todayHealthLog,
     );
 
+    final TodayMode updatedMode =
+        (!forecast.hasPersonalLogs && state.mode == TodayMode.normal)
+        ? TodayMode.newParent
+        : (forecast.hasPersonalLogs && state.mode == TodayMode.newParent)
+        ? TodayMode.normal
+        : state.mode;
+
     changeProps(
+      mode: updatedMode,
       sleepForecastStart: forecast.windowStart,
       sleepForecastEnd: forecast.windowEnd,
       bedtimeEstimate: forecast.bedtimeEstimate,

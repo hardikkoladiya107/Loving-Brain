@@ -5,7 +5,9 @@ import 'bloc/today_cubit.dart';
 import 'bloc/today_state.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_behaviour_sheet.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
 // Import sheets
 import 'package:loving_brain/ui/today_screen/sheets/view_support_sheet.dart';
 import 'package:loving_brain/ui/today_screen/widgets/action_grid.dart';
@@ -101,23 +103,42 @@ class _TodayScreenState extends State<TodayScreen> {
                             AppButton(
                               title: "Add behaviour update",
                               onTap: () {
-                                showAddBehaviourSheet(context);
+                                showAddTantrumsUpdateSheet(context);
                               },
                               backgroundColor: Colors.white,
                               textColor: greyColor9,
                             ),
                             SizedBox(height: 16.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: AppButton(
-                                    title: "Daily quick log",
-                                    onTap: () {},
-                                  ),
-                                ),
-                              ],
+                            AppButton(
+                              title: "Daily quick log",
+                              onTap: () {
+                                showAddBehaviourSheet(context);
+                              },
+                              backgroundColor: Colors.white,
+                              textColor: greyColor9,
                             ),
+                            SizedBox(height: 24.h),
+                            const ActionGrid(),
                             SizedBox(height: 16.h),
+                            AppButton(
+                              title: "Ask Brainy",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const BrainyConversationScreen(
+                                      initialChat:
+                                          "I'm new here and want to understand how Loving-Brain works for my child.",
+                                      topic: "Getting Started",
+                                    ),
+                                  ),
+                                );
+                              },
+                              backgroundColor: Colors.transparent,
+                              textColor: greyColor9,
+                            ),
+                          ] else if (state.mode ==
+                              TodayMode.importantHeadsUp) ...[
                             const HeadsUpCard(),
                             SizedBox(height: 16.h),
                             AppButton(
@@ -131,10 +152,25 @@ class _TodayScreenState extends State<TodayScreen> {
                             SizedBox(height: 16.h),
                             AppButton(
                               title: "Ask Brainy",
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const BrainyConversationScreen(
+                                      initialChat:
+                                          "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
+                                      topic: "Calm Heads-Up",
+                                    ),
+                                  ),
+                                );
+                              },
                               backgroundColor: Colors.transparent,
                               textColor: greyColor9,
                             ),
+                            SizedBox(height: 24.h),
+                            const NoticedRow(),
+                            SizedBox(height: 24.h),
+                            const ActionGrid(),
                           ],
                           SizedBox(height: 100.h),
                         ],

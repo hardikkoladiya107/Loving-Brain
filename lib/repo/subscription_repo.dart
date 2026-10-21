@@ -25,7 +25,7 @@ class SubscriptionRepo {
 
   Future<AccessTokenModel?> getAccessToken() async {
     try {
-      var response = await Dio().post(
+      final Response<dynamic> response = await Dio().post(
         options: Options(),
         SubscriptionRepo.accessToken,
         queryParameters: {
@@ -36,7 +36,9 @@ class SubscriptionRepo {
         },
       );
       if (response.statusCode == 200) {
-        var accessTokenModel = AccessTokenModel.fromJson(response.data);
+        final AccessTokenModel accessTokenModel = AccessTokenModel.fromJson(
+          response.data,
+        );
         return accessTokenModel;
       } else {
         return null;
@@ -54,7 +56,7 @@ class SubscriptionRepo {
     required String purchaseToken,
   }) async {
     try {
-      var response = await Dio().get(
+      final Response<dynamic> response = await Dio().get(
         options: Options(),
         "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/$packageName/purchases/subscriptions/$subscriptionId/tokens/$purchaseToken",
         queryParameters: {"access_token": token},

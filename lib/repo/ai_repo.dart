@@ -30,19 +30,19 @@ class AiRepo {
 
   static AiRepo get instance => _instance;
 
-  var dio = Dio();
+  final Dio dio = Dio();
 
   Future<ApiResultStatus> uploadFile({required File file}) async {
     try {
-      final multipartFile = await MultipartFile.fromFile(
+      final MultipartFile multipartFile = await MultipartFile.fromFile(
         file.path,
         filename: file.path.split("/").last,
       );
-      final formData = FormData.fromMap({
+      final FormData formData = FormData.fromMap({
         'file': multipartFile,
         'purpose': 'vision', // Correct purpose for vision/chat
       });
-      var response = await dio.post(
+      final Response<dynamic> response = await dio.post(
         "https://api.openai.com/v1/files",
         data: formData,
         options: Options(headers: headers),
@@ -55,15 +55,15 @@ class AiRepo {
 
   Future<ApiResultStatus> transcribeAudio({required File file}) async {
     try {
-      final multipartFile = await MultipartFile.fromFile(
+      final MultipartFile multipartFile = await MultipartFile.fromFile(
         file.path,
         filename: file.path.split("/").last,
       );
-      final formData = FormData.fromMap({
+      final FormData formData = FormData.fromMap({
         'file': multipartFile,
         'model': 'whisper-1',
       });
-      var response = await dio.post(
+      final Response<dynamic> response = await dio.post(
         "https://api.openai.com/v1/audio/transcriptions",
         data: formData,
         options: Options(headers: headers),
@@ -118,15 +118,19 @@ class AiRepo {
       }
 
       if (audioFile != null) {
-        var audioFileResponse = await transcribeAudio(file: audioFile);
+        final ApiResultStatus audioFileResponse = await transcribeAudio(
+          file: audioFile,
+        );
         audioFileResponse.whenOrNull(
-          data: (data) {
-            transcribeModel = TranscribeModel.fromJson(data);
+          data: (dynamic data) {
+            transcribeModel = TranscribeModel.fromJson(
+              data as Map<String, dynamic>,
+            );
             if (transcribeModel?.text != null) {
               finalText += "\n[Audio Transcription]: ${transcribeModel!.text!}";
             }
           },
-          error: (error) {
+          error: (Exception error) {
             // Handle error or ignore
           },
         );
@@ -142,7 +146,7 @@ class AiRepo {
         <String, String>{"role": "user", "content": finalText},
       ];
 
-      var response = await dio.post(
+      final Response<dynamic> response = await dio.post(
         chatUrl,
         data: {
           "model": "gpt-4o", // Updated to a valid model
@@ -154,7 +158,10 @@ class AiRepo {
       // Transform OpenAI response to match what the app expects (AiResponseModel)
       // The app expects `output` list in the response data.
       if (response.statusCode == 200) {
-        var content = response.data['choices'][0]['message']['content'];
+        final String content =
+            (response.data
+                    as Map<String, dynamic>)['choices'][0]['message']['content']
+                as String;
         // Mocking the structure expected by AiResponseModel/Cubit
         // The cubit expects `output` which is a list of items.
         return ApiResultStatus.data(
@@ -182,16 +189,16 @@ class AiRepo {
     required String? referenceId,
   }) async {
     try {
-      Reference ref = FirebaseStorage.instance
+      final Reference ref = FirebaseStorage.instance
           .ref()
           .child('ai-chat-images')
           .child(referenceId ?? "TEST")
           .child('/${file.path.split("/").last}');
-      final metadata = SettableMetadata(
+      final SettableMetadata metadata = SettableMetadata(
         contentType: 'image/${file.path.split(".").last}',
         customMetadata: {'picked-file-path': file.path},
       );
-      var uploadTask = ref.putFile(io.File(file.path), metadata);
+      final UploadTask uploadTask = ref.putFile(io.File(file.path), metadata);
       return ApiResultStatus.data(data: await Future.value(uploadTask));
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);
@@ -205,16 +212,16 @@ class AiRepo {
     required String? referenceId,
   }) async {
     try {
-      Reference ref = FirebaseStorage.instance
+      final Reference ref = FirebaseStorage.instance
           .ref()
           .child('ai-chat-audio')
           .child(referenceId ?? "TEST")
           .child('/${file.path.split("/").last}');
-      final metadata = SettableMetadata(
+      final SettableMetadata metadata = SettableMetadata(
         contentType: 'audio/${file.path.split(".").last}',
         customMetadata: {'picked-file-path': file.path},
       );
-      var uploadTask = ref.putFile(io.File(file.path), metadata);
+      final UploadTask uploadTask = ref.putFile(io.File(file.path), metadata);
       return ApiResultStatus.data(data: await Future.value(uploadTask));
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);

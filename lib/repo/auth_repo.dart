@@ -52,9 +52,11 @@ class AuthRepo {
 
   Future<UserModel?> getUserFromUid({required String uId}) async {
     try {
-      var user = await userCollection.doc(uId).get();
+      final DocumentSnapshot<Map<String, dynamic>> user = await userCollection
+          .doc(uId)
+          .get();
       if (user.data() != null) {
-        var data = user.data()!;
+        final Map<String, dynamic> data = user.data()!;
         data['uid'] = uId;
         return UserModel.fromJson(data);
       } else {
@@ -436,7 +438,7 @@ class AuthRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var tUid = uId ?? preferences.getUserModel()?.uid ?? "";
+      final String tUid = uId ?? preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
         await userCollection.doc(tUid).update(request);
         return ApiResultStatus.data(data: tUid);
@@ -656,7 +658,7 @@ class AuthRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
         await userCollection
             .doc(tUid)
@@ -681,14 +683,15 @@ class AuthRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
-        var charReferenceId = await userCollection
-            .doc(tUid)
-            .collection("conversations")
-            .doc(conversationId)
-            .collection("chats")
-            .add(request);
+        final DocumentReference<Map<String, dynamic>> charReferenceId =
+            await userCollection
+                .doc(tUid)
+                .collection("conversations")
+                .doc(conversationId)
+                .collection("chats")
+                .add(request);
         return ApiResultStatus.data(data: charReferenceId);
       } else {
         return ApiResultStatus.error(
@@ -708,7 +711,7 @@ class AuthRepo {
     required Map<String, dynamic> request,
   }) async {
     try {
-      var tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
         await userCollection
             .doc(tUid)
@@ -734,7 +737,7 @@ class AuthRepo {
     required String conversationId,
   }) async {
     try {
-      var tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
         await AuthRepo.instance.userCollection
             .doc(tUid)
@@ -877,7 +880,9 @@ class AuthRepo {
 
   Future<ApiResultStatus> getUsersFromList(List<String> users) async {
     try {
-      var response = await userCollection.where("uid", whereIn: users).get();
+      final QuerySnapshot<Map<String, dynamic>> response = await userCollection
+          .where("uid", whereIn: users)
+          .get();
       return ApiResultStatus.data(
         data: response.docs.map((e) => UserModel.fromJson(e.data())).toList(),
       );

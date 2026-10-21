@@ -27,15 +27,16 @@ class ChildRepo {
 
   static ChildRepo get instance => _instance;
 
-  var routineTypeCollection = FirebaseFirestore.instance.collection(
-    'routine_type',
-  );
+  final CollectionReference<Map<String, dynamic>> routineTypeCollection =
+      FirebaseFirestore.instance.collection('routine_type');
 
-  var childrenCollection = FirebaseFirestore.instance.collection('children');
+  final CollectionReference<Map<String, dynamic>> childrenCollection =
+      FirebaseFirestore.instance.collection('children');
 
   Future<ApiResultStatus> getAllRoutineCategories() async {
     try {
-      var behaviours = await routineTypeCollection.get();
+      final QuerySnapshot<Map<String, dynamic>> behaviours =
+          await routineTypeCollection.get();
       if (behaviours.docs.isNotEmpty) {
         return ApiResultStatus.data(
           data: behaviours.docs
@@ -177,9 +178,10 @@ class ChildRepo {
       if (childrenIds.isEmpty) {
         return ApiResultStatus.data(data: <ChildModel>[]);
       }
-      var childrenResponse = await childrenCollection
-          .where(FieldPath.documentId, whereIn: childrenIds)
-          .get();
+      final QuerySnapshot<Map<String, dynamic>> childrenResponse =
+          await childrenCollection
+              .where(FieldPath.documentId, whereIn: childrenIds)
+              .get();
       if (childrenResponse.docs.isNotEmpty) {
         return ApiResultStatus.data(
           data: childrenResponse.docs
@@ -367,13 +369,12 @@ class ChildRepo {
     UserModel user,
   ) async {
     try {
-      var childrenResponse = await CoParentRepo
-          .instance
-          .coParentInvitationCollection
-          .where('to_parent', isEqualTo: user.email)
-          .where('childs_essentials', isEqualTo: true)
-          .where('status', isEqualTo: 'ACCEPTED')
-          .get();
+      final QuerySnapshot<Map<String, dynamic>> childrenResponse =
+          await CoParentRepo.instance.coParentInvitationCollection
+              .where('to_parent', isEqualTo: user.email)
+              .where('childs_essentials', isEqualTo: true)
+              .where('status', isEqualTo: 'ACCEPTED')
+              .get();
 
       if (childrenResponse.docs.isEmpty) {
         return ApiResultStatus.data(data: <ChildModel>[]);

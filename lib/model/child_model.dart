@@ -275,12 +275,8 @@ class ChildModel {
     map['child_age'] = _childAge;
 
     if (forConvert) {
-      map['child_dob'] = _childDob != null
-          ? _childDob!.toIso8601String()
-          : null;
-      map['state_updated_at'] = _stateUpdatedAt != null
-          ? _stateUpdatedAt!.toIso8601String()
-          : null;
+      map['child_dob'] = _childDob?.toIso8601String();
+      map['state_updated_at'] = _stateUpdatedAt?.toIso8601String();
       map['reference_path'] = _reference?.path;
     } else {
       map['child_dob'] = _childDob != null

@@ -8,12 +8,17 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
+import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
+import 'package:loving_brain/ui/notifications/notifications_screen.dart';
 import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_state.dart';
+import 'package:loving_brain/ui/privacy_data/privacy_data_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/editable_field_card.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/location_picker_sheet.dart';
+import 'package:loving_brain/ui/widget/setting_tile.dart';
 
 class ParentProfileScreen extends StatefulWidget {
   const ParentProfileScreen({super.key});
@@ -337,7 +342,91 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                               body:
                                   "Your time zone is used to work out sleep windows, so it's worth updating if you travel for a while.",
                             ),
-                            120.spaceH,
+                            32.spaceH,
+                            "SETTINGS & FAMILY".appText(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w700,
+                              color: greyColor,
+                              letterSpacing: 1.2,
+                              textAlign: TextAlign.start,
+                            ),
+                            12.spaceH,
+                            SettingTile(
+                              icon: const Icon(
+                                Icons.group_outlined,
+                                color: secondaryColor,
+                              ),
+                              iconBackgroundColor: const Color(0xFFF1EEFF),
+                              title: "Family & Caregivers",
+                              subtitle:
+                                  "Manage co-parents, permissions and invites",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const FamilyMenuScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            12.spaceH,
+                            SettingTile(
+                              icon: const Icon(
+                                Icons.notifications_outlined,
+                                color: Color(0xFFF59E0B),
+                              ),
+                              iconBackgroundColor: const Color(0xFFFFF3E0),
+                              title: "Notifications",
+                              subtitle:
+                                  "Quiet hours and predictive alert preferences",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const NotificationsScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            12.spaceH,
+                            SettingTile(
+                              icon: const Icon(
+                                Icons.lock_outline_rounded,
+                                color: Color(0xFF10B981),
+                              ),
+                              iconBackgroundColor: const Color(0xFFE8F5E9),
+                              title: "Privacy & Data",
+                              subtitle:
+                                  "Offline sync, export and data controls",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const PrivacyDataScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            12.spaceH,
+                            SettingTile(
+                              icon: const Icon(
+                                Icons.shield_outlined,
+                                color: primaryColor,
+                              ),
+                              iconBackgroundColor: const Color(0xFFFFEBEE),
+                              title: "Help & Safety",
+                              subtitle:
+                                  "Medical disclaimers and crisis support",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const HelpSafetyScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            140.spaceH,
                           ],
                         ),
                       ),

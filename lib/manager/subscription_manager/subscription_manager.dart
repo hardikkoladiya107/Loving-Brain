@@ -88,8 +88,10 @@ class SubscriptionManager {
         await inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
       } else {
         purchaseParam = PurchaseParam(productDetails: product);
-        var transactions = await SKPaymentQueueWrapper().transactions();
-        for (var skPaymentTransactionWrapper in transactions) {
+        final List<SKPaymentTransactionWrapper> transactions =
+            await SKPaymentQueueWrapper().transactions();
+        for (final SKPaymentTransactionWrapper skPaymentTransactionWrapper
+            in transactions) {
           SKPaymentQueueWrapper().finishTransaction(
             skPaymentTransactionWrapper,
           );
@@ -113,12 +115,12 @@ class SubscriptionManager {
   }) async {
     try {
       String jwtToken = TokenGenerator.generateJwtToken();
-      var json = {
+      final Map<String, String> json = <String, String>{
         "Authorization": "Bearer $jwtToken",
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       };
-      var response = await Dio().get(
+      final Response<dynamic> response = await Dio().get(
         iosSubscriptionStatusUrl(transactionID),
         options: Options(headers: json),
       );
@@ -144,7 +146,7 @@ class SubscriptionManager {
                   ?.first
                   .originalTransactionId ??
               "";
-          var signedTransactionInfo =
+          final String signedTransactionInfo =
               appleSubscriptionModel
                   .resData
                   ?.first
@@ -152,8 +154,8 @@ class SubscriptionManager {
                   ?.first
                   .signedTransactionInfo ??
               "";
-          var decodeData = JWT.decode(signedTransactionInfo);
-          var payload = decodeData.payload;
+          final JWT decodeData = JWT.decode(signedTransactionInfo);
+          final dynamic payload = decodeData.payload;
           DateTime expiresDate = DateTime.fromMillisecondsSinceEpoch(
             payload['expiresDate'],
           );

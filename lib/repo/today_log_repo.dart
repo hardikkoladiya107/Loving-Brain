@@ -11,7 +11,9 @@ import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/model/pending_local_update_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/offline_sync_repo.dart';
 
 /// Singleton repository managing the 5 Quick Update event writes and history queries
 /// for TodayScreen according to V2 architecture rules.
@@ -112,11 +114,15 @@ class TodayLogRepo {
       });
 
       return ApiResultStatus.data(data: docRef.id);
-    } on FirebaseException catch (e) {
-      return ApiResultStatus.error(
-        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
-      );
     } catch (e) {
+      await OfflineSyncRepo.instance.queuePendingUpdate(
+        PendingLocalUpdateModel.create(
+          clientUpdateId: 'sleep_${DateTime.now().millisecondsSinceEpoch}',
+          updateType: 'sleep',
+          timestamp: DateTime.now().toIso8601String(),
+          payload: log.toMap(),
+        ),
+      );
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
@@ -176,11 +182,15 @@ class TodayLogRepo {
       });
 
       return ApiResultStatus.data(data: docRef.id);
-    } on FirebaseException catch (e) {
-      return ApiResultStatus.error(
-        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
-      );
     } catch (e) {
+      await OfflineSyncRepo.instance.queuePendingUpdate(
+        PendingLocalUpdateModel.create(
+          clientUpdateId: 'tantrum_${DateTime.now().millisecondsSinceEpoch}',
+          updateType: 'tantrum',
+          timestamp: DateTime.now().toIso8601String(),
+          payload: log.toMap(),
+        ),
+      );
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
@@ -240,11 +250,15 @@ class TodayLogRepo {
       });
 
       return ApiResultStatus.data(data: docRef.id);
-    } on FirebaseException catch (e) {
-      return ApiResultStatus.error(
-        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
-      );
     } catch (e) {
+      await OfflineSyncRepo.instance.queuePendingUpdate(
+        PendingLocalUpdateModel.create(
+          clientUpdateId: 'mood_${DateTime.now().millisecondsSinceEpoch}',
+          updateType: 'mood',
+          timestamp: DateTime.now().toIso8601String(),
+          payload: log.toMap(),
+        ),
+      );
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
@@ -286,11 +300,15 @@ class TodayLogRepo {
       });
 
       return ApiResultStatus.data(data: docRef.id);
-    } on FirebaseException catch (e) {
-      return ApiResultStatus.error(
-        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
-      );
     } catch (e) {
+      await OfflineSyncRepo.instance.queuePendingUpdate(
+        PendingLocalUpdateModel.create(
+          clientUpdateId: 'health_${DateTime.now().millisecondsSinceEpoch}',
+          updateType: 'health',
+          timestamp: DateTime.now().toIso8601String(),
+          payload: log.toMap(),
+        ),
+      );
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
@@ -329,11 +347,15 @@ class TodayLogRepo {
       });
 
       return ApiResultStatus.data(data: docRef.id);
-    } on FirebaseException catch (e) {
-      return ApiResultStatus.error(
-        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
-      );
     } catch (e) {
+      await OfflineSyncRepo.instance.queuePendingUpdate(
+        PendingLocalUpdateModel.create(
+          clientUpdateId: 'note_${DateTime.now().millisecondsSinceEpoch}',
+          updateType: 'note',
+          timestamp: DateTime.now().toIso8601String(),
+          payload: log.toMap(),
+        ),
+      );
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }

@@ -35,13 +35,12 @@ class HeadsUpCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     SizedBox(height: 8.h),
-                    "Overtiredness and a skipped nap Â· window 6â€“8 PM."
-                        .appText(
-                          fontSize: 12.sp,
-                          color: greyColor6,
-                          height: 1.4,
-                          textAlign: TextAlign.start,
-                        ),
+                    "Overtiredness and a skipped nap · window 6–8 PM.".appText(
+                      fontSize: 12.sp,
+                      color: greyColor6,
+                      height: 1.4,
+                      textAlign: TextAlign.start,
+                    ),
                   ],
                 ),
               ),

@@ -19,14 +19,15 @@ class MoodRepo {
 
   static MoodRepo get instance => _instance;
 
-  var userCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference<Map<String, dynamic>> userCollection =
+      FirebaseFirestore.instance.collection('users');
 
   Future<ApiResultStatus> addMood({
     required String date,
     required Map<String, dynamic> request,
   }) async {
     try {
-      var tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isNotEmpty) {
         await userCollection
             .doc(tUid)
@@ -51,7 +52,7 @@ class MoodRepo {
     String? tUid,
   }) async {
     try {
-      var uid =
+      final String uid =
           tUid ??
           preferences.getUserModel()?.uid ??
           FirebaseAuth.instance.currentUser?.uid ??
@@ -82,7 +83,7 @@ class MoodRepo {
     String? tUid,
   }) async {
     try {
-      var uid =
+      final String uid =
           tUid ??
           preferences.getUserModel()?.uid ??
           FirebaseAuth.instance.currentUser?.uid ??
@@ -111,7 +112,7 @@ class MoodRepo {
     String? tUid,
   }) async {
     try {
-      var uid =
+      final String uid =
           tUid ??
           preferences.getUserModel()?.uid ??
           FirebaseAuth.instance.currentUser?.uid ??
@@ -137,21 +138,24 @@ class MoodRepo {
 
   Future<ApiResultStatus> fetchAllMoodLogs() async {
     try {
-      final tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isEmpty) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
 
-      final snap = await userCollection
+      final QuerySnapshot<Map<String, dynamic>> snap = await userCollection
           .doc(tUid)
           .collection("mood")
           .orderBy("log_time", descending: true)
           .get();
 
-      final list = snap.docs
-          .map((d) => MoodLogModel.fromMap(d.data()))
+      final List<MoodLogModel> list = snap.docs
+          .map(
+            (QueryDocumentSnapshot<Map<String, dynamic>> d) =>
+                MoodLogModel.fromMap(d.data()),
+          )
           .toList();
 
       return ApiResultStatus.data(data: list);
