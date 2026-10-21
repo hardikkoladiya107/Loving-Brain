@@ -247,6 +247,16 @@ class TodayCubit extends Cubit<TodayState> {
     if (state.activeChildId.isNotEmpty) {
       return state.activeChildId;
     }
+    final String? prefChildId = preferences.getChildModel()?.reference?.id;
+    if (prefChildId != null && prefChildId.isNotEmpty) {
+      changeProps(activeChildId: prefChildId);
+      return prefChildId;
+    }
+    final String? userChildId = preferences.getUserModel()?.defaultChild?.id;
+    if (userChildId != null && userChildId.isNotEmpty) {
+      changeProps(activeChildId: userChildId);
+      return userChildId;
+    }
     final String? resolved = TodayLogRepo.instance.resolveActiveChildId();
     if (resolved != null && resolved.isNotEmpty) {
       changeProps(activeChildId: resolved);

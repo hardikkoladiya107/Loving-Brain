@@ -8,6 +8,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
 
 import 'bloc/sleep_pattern_cubit.dart';
 import 'bloc/sleep_pattern_state.dart';
@@ -94,6 +95,8 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
+
     return Stack(
       children: [
         Positioned(
@@ -125,18 +128,27 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
             ),
           ),
         ),
+        // Positioned safely beneath the status bar
         Positioned(
-          top: 20.h,
+          top: statusBarHeight > 0 ? statusBarHeight + 6.h : 20.h,
           left: 20.w,
-          child: InkWell(
-            onTap: () => Navigator.pop(context),
+          child: BaseButton(
+            onTap: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
             child: Container(
               padding: EdgeInsets.all(8.r),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.arrow_back, color: darkBlue, size: 24.sp),
+              child: Assets.v2.icons.icBack.svg(
+                width: 24.w,
+                height: 24.w,
+                colorFilter: const ColorFilter.mode(darkBlue, BlendMode.srcIn),
+              ),
             ),
           ),
         ),
@@ -150,7 +162,7 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
             textAlign: TextAlign.start,
           ),
         ),
-        SafeArea(bottom: false, child: 160.spaceH),
+        SafeArea(bottom: false, child: 180.spaceH),
       ],
     );
   }

@@ -1,29 +1,176 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loving_brain/other/app_color.dart';
-import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/transcribe_model.dart';
+import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/repo/ai_repo.dart';
+import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
+
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 
 void showAddNotesUpdateSheet(BuildContext context) {
   final TodayCubit cubit = context.read<TodayCubit>();
-  showModalBottomSheet(
+  cubit.changeProps(quickNoteText: '', showNotesUpdateErrors: false);
+  showModalBottomSheet<void>(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
-    builder: (BuildContext context) =>
-        BlocProvider.value(value: cubit, child: const AddNotesUpdateSheet()),
+    builder: (BuildContext context) => BlocProvider<TodayCubit>.value(
+      value: cubit,
+      child: const AddNotesUpdateSheet(),
+    ),
   );
 }
 
-class AddNotesUpdateSheet extends StatelessWidget {
+class AddNotesUpdateSheet extends StatefulWidget {
   const AddNotesUpdateSheet({super.key});
+
+  @override
+  State<AddNotesUpdateSheet> createState() => _AddNotesUpdateSheetState();
+}
+
+class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
+  late final TextEditingController _textController;
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  bool _isRecording = false;
+  bool _isTranscribing = false;
+  String? _recordingPath;
+  DateTime? _recordingStartTime;
+
+  @override
+  void initState() {
+    super.initState();
+    final String initialText = context.read<TodayCubit>().state.quickNoteText;
+    _textController = TextEditingController(text: initialText);
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _audioRecorder.dispose();
+    super.dispose();
+  }
+
+  Future<void> _startRecording() async {
+    if (_isRecording || _isTranscribing) return;
+    try {
+      final bool hasPermission = await _audioRecorder.hasPermission();
+      if (!hasPermission) {
+        if (mounted) {
+          await Navigator.push<void>(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext _) => const MicrophonePermissionScreen(),
+            ),
+          );
+        }
+        return;
+      }
+
+      final Directory dir = await getTemporaryDirectory();
+      final String path =
+          '${dir.path}/quick_note_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      _recordingPath = path;
+      _recordingStartTime = DateTime.now();
+
+      await _audioRecorder.start(const RecordConfig(), path: path);
+      if (mounted) {
+        setState(() {
+          _isRecording = true;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        showSnackBar(
+          message: "Microphone unavailable. Please try typing your note.",
+          type: SnackBarType.ERROR,
+        );
+      }
+    }
+  }
+
+  Future<void> _stopRecordingAndTranscribe() async {
+    if (!_isRecording) return;
+    try {
+      final DateTime? startTime = _recordingStartTime;
+      final int elapsedMs = startTime != null
+          ? DateTime.now().difference(startTime).inMilliseconds
+          : 0;
+
+      final String? path = await _audioRecorder.stop();
+      if (mounted) {
+        setState(() {
+          _isRecording = false;
+          _isTranscribing = true;
+        });
+      }
+
+      // Ignore accidental micro-taps (< 500ms)
+      if (elapsedMs < 500) {
+        if (mounted) {
+          setState(() {
+            _isTranscribing = false;
+          });
+        }
+        return;
+      }
+
+      final String targetPath = path ?? _recordingPath ?? '';
+      if (targetPath.isNotEmpty) {
+        final File file = File(targetPath);
+        if (await file.exists()) {
+          final ApiResultStatus result = await AiRepo.instance
+              .transcribeAudio(file: file)
+              .timeout(const Duration(seconds: 15));
+          result.whenOrNull(
+            data: (dynamic data) {
+              final TranscribeModel model = TranscribeModel.fromJson(data);
+              if (model.text != null && model.text!.trim().isNotEmpty) {
+                final String recognized = model.text!.trim();
+                final String current = _textController.text.trim();
+                final String combined = current.isEmpty
+                    ? recognized
+                    : '$current $recognized';
+                _textController.text = combined;
+                _textController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: combined.length),
+                );
+                if (mounted) {
+                  context.read<TodayCubit>().setQuickNoteText(combined);
+                }
+              }
+            },
+            error: (Exception _) {
+              if (mounted) {
+                showSnackBar(
+                  message: "Could not transcribe audio. Please type your note.",
+                  type: SnackBarType.ERROR,
+                );
+              }
+            },
+          );
+        }
+      }
+    } catch (_) {
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isTranscribing = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +194,7 @@ class AddNotesUpdateSheet extends StatelessWidget {
       },
       builder: (BuildContext context, TodayState state) {
         final bool isError =
-            state.showNotesUpdateErrors && state.quickNoteText.trim().isEmpty;
+            state.showNotesUpdateErrors && _textController.text.trim().isEmpty;
 
         return Padding(
           padding: EdgeInsets.only(
@@ -93,6 +240,7 @@ class AddNotesUpdateSheet extends StatelessWidget {
                 ),
                 padding: EdgeInsets.all(16.w),
                 child: TextField(
+                  controller: _textController,
                   maxLines: null,
                   onChanged: (String val) =>
                       context.read<TodayCubit>().setQuickNoteText(val),
@@ -112,20 +260,63 @@ class AddNotesUpdateSheet extends StatelessWidget {
               Center(
                 child: Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(16.w),
-                      decoration: const BoxDecoration(
-                        color: indigoLight,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.mic,
-                        color: secondaryColor,
-                        size: 32.sp,
+                    GestureDetector(
+                      onLongPressStart: (_) => _startRecording(),
+                      onLongPressEnd: (_) => _stopRecordingAndTranscribe(),
+                      onTap: () {
+                        if (_isRecording) {
+                          _stopRecordingAndTranscribe();
+                        } else {
+                          _startRecording();
+                        }
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: EdgeInsets.all(16.w),
+                        decoration: BoxDecoration(
+                          color: _isRecording ? primaryColor : indigoLight,
+                          shape: BoxShape.circle,
+                          boxShadow: _isRecording
+                              ? [
+                                  BoxShadow(
+                                    color: primaryColor.withValues(alpha: 0.4),
+                                    blurRadius: 12.r,
+                                    spreadRadius: 2.r,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: _isTranscribing
+                            ? SizedBox(
+                                width: 32.sp,
+                                height: 32.sp,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: secondaryColor,
+                                ),
+                              )
+                            : Icon(
+                                Icons.mic,
+                                color: _isRecording
+                                    ? Colors.white
+                                    : secondaryColor,
+                                size: 32.sp,
+                              ),
                       ),
                     ),
                     8.spaceH,
-                    "Hold to record".appText(color: greyColor, fontSize: 12.sp),
+                    (_isTranscribing
+                            ? "Transcribing audio..."
+                            : _isRecording
+                            ? "Recording... (Release to finish)"
+                            : "Hold to record")
+                        .appText(
+                          color: _isRecording ? primaryColor : greyColor,
+                          fontSize: 12.sp,
+                          fontWeight: _isRecording
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
                   ],
                 ),
               ),
@@ -134,9 +325,15 @@ class AddNotesUpdateSheet extends StatelessWidget {
                 isLoading: state.isLoading,
                 title: "Save note",
                 onTap: () {
-                  if (state.quickNoteText.trim().isEmpty) {
+                  final String text = _textController.text.trim();
+                  if (text.isEmpty) {
                     context.read<TodayCubit>().triggerNotesUpdateErrors();
+                    showSnackBar(
+                      message: "Please type or record a note first.",
+                      type: SnackBarType.None,
+                    );
                   } else {
+                    context.read<TodayCubit>().setQuickNoteText(text);
                     context.read<TodayCubit>().saveQuickNote();
                   }
                 },

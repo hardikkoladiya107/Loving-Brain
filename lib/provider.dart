@@ -4,6 +4,7 @@ import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/auth/otp/bloc/otp_cubit.dart';
 import 'package:loving_brain/ui/auth/register/bloc/register_cubit.dart';
 import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
+import 'package:loving_brain/ui/child_essentials/bloc/child_essentials_cubit.dart';
 import 'package:loving_brain/ui/help_flow/bloc/help_flow_cubit.dart';
 import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
@@ -14,6 +15,9 @@ import 'package:nested/nested.dart';
 final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
   BlocProvider<LoginCubit>(create: (BuildContext context) => LoginCubit()),
   BlocProvider<BaseCubit>(create: (BuildContext context) => BaseCubit()),
+  BlocProvider<ChildEssentialsCubit>(
+    create: (BuildContext context) => ChildEssentialsCubit(),
+  ),
   BlocProvider<HelpFlowCubit>(
     create: (BuildContext context) => HelpFlowCubit(),
   ),

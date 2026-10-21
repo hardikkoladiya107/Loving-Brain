@@ -122,12 +122,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
                       _buildSavedGuidanceCard(context, state),
                       12.spaceH,
                       _buildConsistencyCard(context, state),
-                      24.spaceH,
-                      _buildMentorshipTestLink(
-                        context,
-                        'Guided Mentorship (Test)',
-                        const MentorshipLandingScreen(),
-                      ),
+                      12.spaceH,
+                      _buildGuidedMentorshipCard(context),
                       128.spaceH,
                     ],
                   ),
@@ -495,30 +491,59 @@ class _JourneyScreenState extends State<JourneyScreen> {
     );
   }
 
-  Widget _buildMentorshipTestLink(
-    BuildContext context,
-    String title,
-    Widget screen,
-  ) {
+  Widget _buildGuidedMentorshipCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+        Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext routeCtx) => const MentorshipLandingScreen(),
+          ),
+        );
       },
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: primaryColor.withValues(alpha: 0.6)),
+          borderRadius: BorderRadius.circular(16.r),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            title.appText(
-              fontSize: 16.sp,
-              color: greyColor9,
-              fontWeight: FontWeight.w600,
+            Container(
+              width: 48.w,
+              height: 48.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1EEFF),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.support_agent_rounded,
+                  color: secondaryColor,
+                  size: 24.sp,
+                ),
+              ),
+            ),
+            16.spaceW,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  'Guided mentorship'.appText(
+                    fontSize: 14.sp,
+                    color: greyColor9,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.start,
+                  ),
+                  4.spaceH,
+                  '1:1 guidance for sleep & routines'.appText(
+                    fontSize: 12.sp,
+                    color: greyColor,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
             ),
             Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
           ],

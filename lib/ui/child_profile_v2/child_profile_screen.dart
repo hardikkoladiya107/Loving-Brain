@@ -6,6 +6,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/child_essentials/bloc/child_essentials_cubit.dart';
 import 'package:loving_brain/ui/child_essentials/child_essentials_screen.dart';
 import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_state.dart';
@@ -242,24 +243,78 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                               ),
                             ),
                             24.spaceH,
-                            Center(
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const ChildEssentialsScreen(),
-                                    ),
-                                  );
-                                },
-                                child:
-                                    "View / edit Child essentials allergies, medication"
-                                        .appText(
-                                          fontSize: 14.sp,
-                                          color: const Color(0xFFE64A19),
-                                          fontWeight: FontWeight.w500,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext routeCtx) =>
+                                        BlocProvider<ChildEssentialsCubit>(
+                                          create: (BuildContext ctx) =>
+                                              ChildEssentialsCubit(),
+                                          child: const ChildEssentialsScreen(),
                                         ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 14.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(color: greyColor12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 36.w,
+                                      height: 36.w,
+                                      decoration: BoxDecoration(
+                                        color: orangeLightColor.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.medical_services_outlined,
+                                          color: primaryColor,
+                                          size: 20.sp,
+                                        ),
+                                      ),
+                                    ),
+                                    12.spaceW,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          "CHILD ESSENTIALS".appText(
+                                            fontSize: 11.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: greyColor,
+                                          ),
+                                          2.spaceH,
+                                          "Allergies, medications & care notes"
+                                              .appText(
+                                                fontSize: 14.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: darkBlue,
+                                              ),
+                                        ],
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: greyColor,
+                                      size: 22.sp,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             24.spaceH,
