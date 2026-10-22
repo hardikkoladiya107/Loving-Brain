@@ -12,7 +12,7 @@ class BehaviourCategoryModel {
   String? get behaviour => _behaviour;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['behaviour'] = _behaviour;
     return map;
   }

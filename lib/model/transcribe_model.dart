@@ -26,7 +26,7 @@ class TranscribeModel {
   Usage? get usage => _usage;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['text'] = _text;
     if (_usage != null) {
       map['usage'] = _usage?.toJson();
@@ -59,7 +59,7 @@ class Usage {
   num? get seconds => _seconds;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['type'] = _type;
     map['seconds'] = _seconds;
     return map;

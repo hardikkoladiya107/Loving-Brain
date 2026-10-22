@@ -29,13 +29,14 @@ class AppleSignInManager {
     final String nonce = _sha256ofString(rawNonce);
 
     try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: nonce,
-      );
+      final AuthorizationCredentialAppleID credential =
+          await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            nonce: nonce,
+          );
       return AppleSignInResult(credential: credential, rawNonce: rawNonce);
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled ||
@@ -49,7 +50,7 @@ class AppleSignInManager {
   }
 
   Future<AuthorizationCredentialAppleID?> authenticate() async {
-    final result = await authenticateWithNonce();
+    final AppleSignInResult? result = await authenticateWithNonce();
     return result?.credential;
   }
 

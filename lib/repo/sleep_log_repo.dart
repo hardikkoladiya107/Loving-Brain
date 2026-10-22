@@ -30,8 +30,11 @@ class SleepLogRepo {
     SleepLogModel log,
   ) async {
     try {
-      final col = _childSleepCollection(childReferenceId);
-      final docRef = await col.add(log.toMap());
+      final CollectionReference<Map<String, dynamic>> col =
+          _childSleepCollection(childReferenceId);
+      final DocumentReference<Map<String, dynamic>> docRef = await col.add(
+        log.toMap(),
+      );
       return ApiResultStatus.data(data: docRef.id);
     } on FirebaseException catch (_) {
       return ApiResultStatus.error(
@@ -100,13 +103,13 @@ class SleepLogRepo {
       ).orderBy('date', descending: false);
 
       if (fromInclusive != null) {
-        final fromTs = Timestamp.fromDate(
+        final Timestamp fromTs = Timestamp.fromDate(
           DateTime(fromInclusive.year, fromInclusive.month, fromInclusive.day),
         );
         colQuery = colQuery.where('date', isGreaterThanOrEqualTo: fromTs);
       }
       if (toInclusive != null) {
-        final toTs = Timestamp.fromDate(
+        final Timestamp toTs = Timestamp.fromDate(
           DateTime(
             toInclusive.year,
             toInclusive.month,
@@ -119,12 +122,14 @@ class SleepLogRepo {
         colQuery = colQuery.where('date', isLessThanOrEqualTo: toTs);
       }
 
-      final snap = await colQuery.get();
+      final QuerySnapshot snap = await colQuery.get();
       if (snap.docs.isEmpty) {
         return ApiResultStatus.data(data: <SleepLogModel>[]);
       }
 
-      final logs = snap.docs.map((d) => SleepLogModel.fromDoc(d)).toList();
+      final List<SleepLogModel> logs = snap.docs
+          .map((QueryDocumentSnapshot d) => SleepLogModel.fromDoc(d))
+          .toList();
       return ApiResultStatus.data(data: logs);
     } on FirebaseException catch (_) {
       return ApiResultStatus.error(
@@ -140,16 +145,24 @@ class SleepLogRepo {
   List<WeekRange> getWeeksWithLogsOffline(List<SleepLogModel> logs) {
     final Set<DateTime> weekStarts = {};
 
-    for (final log in logs) {
+    for (final SleepLogModel log in logs) {
       // normalize to date-only
-      final dateOnly = DateTime(log.date.year, log.date.month, log.date.day);
-      final sunday = _weekStartSunday(dateOnly);
+      final DateTime dateOnly = DateTime(
+        log.date.year,
+        log.date.month,
+        log.date.day,
+      );
+      final DateTime sunday = _weekStartSunday(dateOnly);
       weekStarts.add(DateTime(sunday.year, sunday.month, sunday.day));
     }
 
-    final weeks = weekStarts.toList()..sort((a, b) => a.compareTo(b));
+    final List<DateTime> weeks = weekStarts.toList()
+      ..sort((DateTime a, DateTime b) => a.compareTo(b));
     return weeks
-        .map((sunday) => WeekRange(sunday, sunday.add(const Duration(days: 6))))
+        .map(
+          (DateTime sunday) =>
+              WeekRange(sunday, sunday.add(const Duration(days: 6))),
+        )
         .toList();
   }
 
@@ -160,22 +173,30 @@ class SleepLogRepo {
     WeekRange week,
   ) {
     // Normalized week start date-only
-    final weekStart = DateTime(
+    final DateTime weekStart = DateTime(
       week.start.year,
       week.start.month,
       week.start.day,
     );
-    final weekEnd = DateTime(week.end.year, week.end.month, week.end.day);
+    final DateTime weekEnd = DateTime(
+      week.end.year,
+      week.end.month,
+      week.end.day,
+    );
 
     final List<double> hours = List<double>.filled(7, 0.0);
 
-    for (final log in logs) {
+    for (final SleepLogModel log in logs) {
       // normalize log date to date-only
-      final logDate = DateTime(log.date.year, log.date.month, log.date.day);
+      final DateTime logDate = DateTime(
+        log.date.year,
+        log.date.month,
+        log.date.day,
+      );
 
       if (logDate.isBefore(weekStart) || logDate.isAfter(weekEnd)) continue;
 
-      final dayIndex = logDate.difference(weekStart).inDays;
+      final int dayIndex = logDate.difference(weekStart).inDays;
       if (dayIndex < 0 || dayIndex > 6) continue;
 
       DateTime bt = log.bedTime;
@@ -186,13 +207,13 @@ class SleepLogRepo {
         wt = wt.add(const Duration(days: 1));
       }
 
-      final duration = wt.difference(bt);
-      final hoursValue = duration.inMinutes / 60.0;
+      final Duration duration = wt.difference(bt);
+      final double hoursValue = duration.inMinutes / 60.0;
       hours[dayIndex] += hoursValue;
     }
 
     // Round to 2 decimals
-    return hours.map((h) => double.parse(h.toStringAsFixed(2))).toList();
+    return hours.map((double h) => double.parse(h.toStringAsFixed(2))).toList();
   }
 
   /// Optional: ApiResultStatus wrappers for compatibility with your service pattern.
@@ -223,11 +244,11 @@ class SleepLogRepo {
   /// Helper: returns the Sunday (date-only) for a given date.
   DateTime _weekStartSunday(DateTime anyDate) {
     // ensure date-only
-    final dt = DateTime(anyDate.year, anyDate.month, anyDate.day);
+    final DateTime dt = DateTime(anyDate.year, anyDate.month, anyDate.day);
     // Dart weekday: Mon=1 ... Sun=7
-    final weekday = dt.weekday;
-    final daysToSubtract = (weekday % 7); // Sunday -> 0, Monday -> 1, ...
-    final sunday = dt.subtract(Duration(days: daysToSubtract));
+    final int weekday = dt.weekday;
+    final int daysToSubtract = (weekday % 7); // Sunday -> 0, Monday -> 1, ...
+    final DateTime sunday = dt.subtract(Duration(days: daysToSubtract));
     return DateTime(sunday.year, sunday.month, sunday.day);
   }
 }

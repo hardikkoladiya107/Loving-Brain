@@ -209,7 +209,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _planCard({required int index, required SubscriptionState state}) {
-    final plan = state.subsProductDetails[index];
+    final SubsProductDetails plan = state.subsProductDetails[index];
     final bool isSelected = state.selectedPlan == index;
     final bool isYearly = plan.id == yearly;
     final String title = isYearly

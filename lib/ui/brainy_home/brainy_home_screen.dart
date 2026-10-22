@@ -34,7 +34,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
     required String initialChat,
     required String topic,
   }) {
-    final trimmed = initialChat.trim();
+    final String trimmed = initialChat.trim();
     if (trimmed.isEmpty) return;
     context.read<BrainyHomeCubit>().clearChatText();
     _textController.clear();

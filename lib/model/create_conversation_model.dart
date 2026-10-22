@@ -46,7 +46,7 @@ class CreateConversationModel {
   Metadata? get metadata => _metadata;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['id'] = _id;
     map['object'] = _object;
     map['created_at'] = _createdAt;
@@ -73,7 +73,7 @@ class Metadata {
   String? get topic => _topic;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['topic'] = _topic;
     return map;
   }

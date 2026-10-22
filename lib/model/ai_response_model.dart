@@ -279,7 +279,7 @@ class AiResponseModel {
   dynamic get metadata => _metadata;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['id'] = _id;
     map['object'] = _object;
     map['created_at'] = _createdAt;
@@ -389,7 +389,7 @@ class Usage {
   num? get totalTokens => _totalTokens;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['input_tokens'] = _inputTokens;
     if (_inputTokensDetails != null) {
       map['input_tokens_details'] = _inputTokensDetails?.toJson();
@@ -420,7 +420,7 @@ class OutputTokensDetails {
   num? get reasoningTokens => _reasoningTokens;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['reasoning_tokens'] = _reasoningTokens;
     return map;
   }
@@ -443,7 +443,7 @@ class InputTokensDetails {
   num? get cachedTokens => _cachedTokens;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['cached_tokens'] = _cachedTokens;
     return map;
   }
@@ -471,7 +471,7 @@ class Text {
   String? get verbosity => _verbosity;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     if (_format != null) {
       map['format'] = _format?.toJson();
     }
@@ -496,7 +496,7 @@ class Format {
   String? get type => _type;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['type'] = _type;
     return map;
   }
@@ -524,7 +524,7 @@ class Reasoning {
   dynamic get summary => _summary;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['effort'] = _effort;
     map['summary'] = _summary;
     return map;
@@ -561,7 +561,7 @@ class Prompt {
   String? get version => _version;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['id'] = _id;
     map['variables'] = _variables;
     map['version'] = _version;
@@ -605,7 +605,7 @@ class Instructions {
   String? get role => _role;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['type'] = _type;
     if (_content != null) {
       map['content'] = _content?.map((v) => v.toJson()).toList();
@@ -637,7 +637,7 @@ class Content {
   String? get text => _text;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['type'] = _type;
     map['text'] = _text;
     return map;
@@ -660,7 +660,7 @@ class Conversation {
   String? get id => _id;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['id'] = _id;
     return map;
   }
@@ -682,7 +682,7 @@ class Billing {
   String? get payer => _payer;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['payer'] = _payer;
     return map;
   }

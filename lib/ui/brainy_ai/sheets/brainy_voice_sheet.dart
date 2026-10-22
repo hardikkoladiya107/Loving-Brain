@@ -170,9 +170,9 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                           onTap: state.isProcessing
                               ? null
                               : () async {
-                                  final cubit = context
+                                  final BrainyVoiceCubit cubit = context
                                       .read<BrainyVoiceCubit>();
-                                  final (file, text) = await cubit
+                                  final (File? file, String text) = await cubit
                                       .stopAndFinishRecording();
                                   if (!context.mounted) return;
                                   Navigator.pop(context);

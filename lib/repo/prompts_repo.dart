@@ -21,10 +21,11 @@ class PromptsRepo {
 
   Future<ApiResultStatus<List<PromptModel>>> getAllPrompts() async {
     try {
-      final snap = await _promptsCollection.get();
-      final list = snap.docs
+      final QuerySnapshot snap = await _promptsCollection.get();
+      final List<PromptModel> list = snap.docs
           .map(
-            (d) => PromptModel.fromMap(d.data() as Map<String, dynamic>, d.id),
+            (QueryDocumentSnapshot d) =>
+                PromptModel.fromMap(d.data() as Map<String, dynamic>, d.id),
           )
           .toList();
       return ApiResultStatus.data(data: list);
@@ -37,18 +38,18 @@ class PromptsRepo {
 
   Future<List<String>> getRecentPromptIds(int days) async {
     try {
-      final tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isEmpty) return [];
 
-      final cutoffDate = DateTime.now().subtract(Duration(days: days));
+      final DateTime cutoffDate = DateTime.now().subtract(Duration(days: days));
 
-      final snap = await _userCollection
+      final QuerySnapshot snap = await _userCollection
           .doc(tUid)
           .collection('connect_prompt_history')
           .where('last_seen', isGreaterThan: Timestamp.fromDate(cutoffDate))
           .get();
 
-      return snap.docs.map((d) => d.id).toList();
+      return snap.docs.map((QueryDocumentSnapshot d) => d.id).toList();
     } catch (e) {
       return [];
     }
@@ -56,14 +57,14 @@ class PromptsRepo {
 
   Future<String?> getLastSeenPromptIdSinceToday() async {
     try {
-      final tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isEmpty) return null;
 
-      final now = DateTime.now();
+      final DateTime now = DateTime.now();
       // Start of "today" at 00:00:00
-      final todayStart = DateTime(now.year, now.month, now.day);
+      final DateTime todayStart = DateTime(now.year, now.month, now.day);
 
-      final snap = await _userCollection
+      final QuerySnapshot snap = await _userCollection
           .doc(tUid)
           .collection('connect_prompt_history')
           .where(
@@ -85,7 +86,7 @@ class PromptsRepo {
 
   Future<void> markPromptAsSeen(String promptId) async {
     try {
-      final tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? "";
       if (tUid.isEmpty) return;
 
       await _userCollection

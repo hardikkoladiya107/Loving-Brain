@@ -57,7 +57,7 @@ class ConversationModel {
   String? get lastId => _lastId;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['object'] = _object;
     if (_data != null) {
       map['data'] = _data?.map((v) => v.toJson()).toList();
@@ -128,7 +128,7 @@ class ConversationItem {
   String? get role => _role;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['id'] = _id;
     map['type'] = _type;
     map['status'] = _status;
@@ -161,7 +161,7 @@ class AIContent {
   String? get text => _text;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['type'] = _type;
     map['text'] = _text;
     return map;

@@ -38,7 +38,7 @@ class AccessTokenModel {
   String? get tokenType => _tokenType;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['access_token'] = _accessToken;
     map['expires_in'] = _expiresIn;
     map['scope'] = _scope;

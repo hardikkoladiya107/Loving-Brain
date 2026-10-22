@@ -5,19 +5,20 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/sleep_pattern/sleep_pattern_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/sleep_forecast_cubit.dart';
+import '../bloc/sleep_forecast_state.dart';
 
 class ForecastDaysRow extends StatelessWidget {
   const ForecastDaysRow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    final state = context.watch<SleepForecastCubit>().state;
+    final List<String> days = <String>['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final SleepForecastState state = context.watch<SleepForecastCubit>().state;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: List.generate(days.length, (index) {
-        final isSelected = state.selectedDayIndex == index;
+      children: List.generate(days.length, (int index) {
+        final bool isSelected = state.selectedDayIndex == index;
         return GestureDetector(
           onTap: () {
             context.read<SleepForecastCubit>().selectDay(index);

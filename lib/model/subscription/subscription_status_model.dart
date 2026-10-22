@@ -94,7 +94,7 @@ class SubscriptionStatusModel {
   String? get kind => _kind;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['startTimeMillis'] = _startTimeMillis;
     map['expiryTimeMillis'] = _expiryTimeMillis;
     map['autoRenewing'] = _autoRenewing;

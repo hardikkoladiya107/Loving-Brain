@@ -34,7 +34,7 @@ class EssentialModel {
 
   // Convert to JSON
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
 
     if (_notes != null) {
       map['notes'] = _notes!.map((e) => e.toJson()).toList();

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../../main.dart';
 import 'connectivity_screen.dart';
 
-final connectivityManager = ConnectivityManager();
+final ConnectivityManager connectivityManager = ConnectivityManager();
 
 class ConnectivityManager {
   static final ConnectivityManager _instance = ConnectivityManager._internal();

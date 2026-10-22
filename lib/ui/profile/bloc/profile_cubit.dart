@@ -80,7 +80,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   void updateNotification() {
     // Optimistic update: flip the value in UI immediately
     if (state.userModel != null) {
-      final newVal = !(state.userModel!.isNotification ?? false);
+      final bool newVal = !(state.userModel!.isNotification ?? false);
       changeProps(userModel: state.userModel!.copyWith(isNotification: newVal));
     }
     // Persist to SharedPrefs + Firestore in the background

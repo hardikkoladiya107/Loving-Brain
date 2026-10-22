@@ -11,10 +11,10 @@ Future<String> getUniqueDeviceId() async {
   final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
   if (Platform.isAndroid) {
-    final androidInfo = await deviceInfo.androidInfo;
+    final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     return androidInfo.id;
   } else if (Platform.isIOS) {
-    final iosInfo = await deviceInfo.iosInfo;
+    final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
     return iosInfo.identifierForVendor ?? "unknown-ios";
   } else {
     return "unsupported-platform";

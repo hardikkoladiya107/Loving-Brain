@@ -127,49 +127,56 @@ class UserRepo {
   }
 
   Future<String> getTipOfTheDay() async {
-    final today = DateTime(
+    final DateTime today = DateTime(
       DateTime.now().year,
       DateTime.now().month,
       DateTime.now().day,
     );
 
     // Step 1: check if today's tip already exists
-    final todayQuery = await dailyParentingTipsCollection
-        .where('is_tip_of_the_day', isEqualTo: true)
-        .get();
+    final QuerySnapshot<Map<String, dynamic>> todayQuery =
+        await dailyParentingTipsCollection
+            .where('is_tip_of_the_day', isEqualTo: true)
+            .get();
 
     if (todayQuery.docs.isNotEmpty) {
-      final doc = todayQuery.docs.first;
-      final tipDate = (doc['tip_date'] as Timestamp).toDate();
+      final QueryDocumentSnapshot<Map<String, dynamic>> doc =
+          todayQuery.docs.first;
+      final DateTime tipDate = (doc['tip_date'] as Timestamp).toDate();
 
-      final isSameDay =
+      final bool isSameDay =
           tipDate.year == today.year &&
           tipDate.month == today.month &&
           tipDate.day == today.day;
 
       if (isSameDay) {
-        return doc['tip'];
+        return doc['tip'] as String? ?? '';
       }
     }
 
     // Step 2: expired → clear old flag
-    final allDocs = await dailyParentingTipsCollection.get();
+    final QuerySnapshot<Map<String, dynamic>> allDocs =
+        await dailyParentingTipsCollection.get();
 
-    for (final doc in allDocs.docs) {
+    for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+        in allDocs.docs) {
       if ((doc.data()['is_tip_of_the_day'] ?? false) == true) {
         await doc.reference.update({'is_tip_of_the_day': false});
       }
     }
 
+    if (allDocs.docs.isEmpty) return '';
+
     // Step 3: choose a new random tip
-    final randomDoc = allDocs.docs[Random().nextInt(allDocs.docs.length)];
+    final QueryDocumentSnapshot<Map<String, dynamic>> randomDoc =
+        allDocs.docs[Random().nextInt(allDocs.docs.length)];
 
     await randomDoc.reference.update({
       'is_tip_of_the_day': true,
       'tip_date': Timestamp.fromDate(today),
     });
 
-    return randomDoc['tip'];
+    return randomDoc['tip'] as String? ?? '';
   }
 
   Future<ApiResultStatus> uploadFileToFirebaseStorage({

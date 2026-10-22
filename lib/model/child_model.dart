@@ -271,7 +271,7 @@ class ChildModel {
 
   // Convert to JSON (for Firestore / local storage)
   Map<String, dynamic> toJson({bool forConvert = false}) {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['child_age'] = _childAge;
 
     if (forConvert) {

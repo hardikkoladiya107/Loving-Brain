@@ -78,7 +78,7 @@ extension extOnString on String {
   }
 
   bool get isValidEmail {
-    final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final RegExp regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     return regex.hasMatch(this);
   }
 }
@@ -90,19 +90,19 @@ extension DateTimeAgo on DateTime {
     if (diff.inSeconds < 60) {
       return "just now";
     } else if (diff.inMinutes < 60) {
-      final m = diff.inMinutes;
+      final int m = diff.inMinutes;
       return "$m minute${m == 1 ? '' : 's'} ago";
     } else if (diff.inHours < 24) {
-      final h = diff.inHours;
+      final int h = diff.inHours;
       return "$h hour${h == 1 ? '' : 's'} ago";
     } else if (diff.inDays < 30) {
-      final d = diff.inDays;
+      final int d = diff.inDays;
       return "$d day${d == 1 ? '' : 's'} ago";
     } else if (diff.inDays < 365) {
-      final m = (diff.inDays / 30).floor();
+      final int m = (diff.inDays / 30).floor();
       return "$m month${m == 1 ? '' : 's'} ago";
     } else {
-      final y = (diff.inDays / 365).floor();
+      final int y = (diff.inDays / 365).floor();
       return "$y year${y == 1 ? '' : 's'} ago";
     }
   }
@@ -113,9 +113,9 @@ extension FirebaseUrlUtils on String {
   String get firebaseFileName {
     try {
       // Decode URL to handle %2F etc.
-      final decoded = Uri.decodeFull(this);
+      final String decoded = Uri.decodeFull(this);
       // Split by '/' and get the last part (file name with extension)
-      final parts = decoded.split('/');
+      final List<String> parts = decoded.split('/');
       if (parts.isNotEmpty) {
         // Remove query parameters if present
         return parts.last.split('?').first;

@@ -87,7 +87,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
-      final cubit = context.read<OnboardingCubit>();
+      final OnboardingCubit cubit = context.read<OnboardingCubit>();
       cubit.init();
       if (_nameController.text != cubit.state.parentName) {
         _nameController.text = cubit.state.parentName;

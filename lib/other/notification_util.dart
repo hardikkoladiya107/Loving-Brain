@@ -146,11 +146,12 @@ class NotificationUtil {
     required String body,
     required String payload,
   }) async {
-    final platformChannelSpecifics = await _notificationDetails(
-      channelId: channelId,
-      channelName: channelName,
-      channelDesc: channelDesc,
-    );
+    final NotificationDetails platformChannelSpecifics =
+        await _notificationDetails(
+          channelId: channelId,
+          channelName: channelName,
+          channelDesc: channelDesc,
+        );
     await _localNotifications.show(
       id: id,
       title: title,
@@ -167,11 +168,12 @@ class NotificationUtil {
     required String payload,
     required DateTime scheduledDate,
   }) async {
-    final platformChannelSpecifics = await _notificationDetails(
-      channelId: channelId,
-      channelName: channelName,
-      channelDesc: channelDesc,
-    );
+    final NotificationDetails platformChannelSpecifics =
+        await _notificationDetails(
+          channelId: channelId,
+          channelName: channelName,
+          channelDesc: channelDesc,
+        );
     await _localNotifications.zonedSchedule(
       id: id,
       title: title,

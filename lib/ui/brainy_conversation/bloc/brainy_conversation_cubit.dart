@@ -390,7 +390,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     aiResult.whenOrNull(
       data: (data) {
         if (data is Map<String, dynamic>) {
-          final aiResponseModel = AiResponseModel.fromJson(data);
+          final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
+            data,
+          );
           final List<ConversationItem> outputs = (aiResponseModel.output ?? [])
               .where((e) => e.type == 'message')
               .toList();
@@ -411,7 +413,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     // Persist AI cards to Firestore so history and conversation stream stay in sync
     for (int i = 0; i < aiCards.length; i++) {
-      final card = aiCards[i];
+      final BrainyMessage card = aiCards[i];
       await AuthRepo.instance.addChatToConversation(
         conversationId: convId,
         request: {
@@ -521,7 +523,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }
 
   (String, String?) _extractHeadlineAndSubtext(String section) {
-    final lines = section
+    final List<String> lines = section
         .split('\n')
         .map((l) => l.trim().replaceAll(RegExp(r'^[#*-\s]+'), ''))
         .where(

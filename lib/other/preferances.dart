@@ -4,7 +4,7 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final preferences = SharedPreference();
+final SharedPreference preferences = SharedPreference();
 
 class SharedPreference {
   static SharedPreferences? _preferences;
@@ -120,7 +120,7 @@ class SharedPreference {
       if (_preferences == null) {
         return null;
       } else {
-        final str = _preferences!.getString(child);
+        final String? str = _preferences?.getString(child);
         if (str == null) return null;
         return ChildModel.fromJson(json.decode(str));
       }

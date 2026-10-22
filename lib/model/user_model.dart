@@ -410,15 +410,15 @@ class UserModel {
     if (_streak == null || _streak == 0) return 0;
     if (_lastStreakUpdate == null) return _streak!; // Should sync eventually
 
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final last = DateTime(
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime last = DateTime(
       _lastStreakUpdate!.year,
       _lastStreakUpdate!.month,
       _lastStreakUpdate!.day,
     );
 
-    final difference = today.difference(last).inDays;
+    final int difference = today.difference(last).inDays;
 
     if (difference > 1) {
       return 0; // Missed a day, streak is effectively broken
@@ -462,7 +462,7 @@ class UserModel {
     bool forConvert = false,
     bool updateFreeTaskTime = true,
   }) {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['uid'] = _uid;
 
     map['platform'] = _platform;

@@ -230,7 +230,7 @@ class CoParentRepo {
 </html>''';
 
       final Dio dio = Dio();
-      final response = await dio.post(
+      final Response<dynamic> response = await dio.post(
         _brevoSendUrl,
         options: Options(
           headers: {

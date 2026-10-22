@@ -25,7 +25,7 @@ class ConversationListItem {
   String? get firstMessage => _firstMessage;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['conversation_id'] = _conversationId;
     map['first_message'] = _firstMessage;
     return map;

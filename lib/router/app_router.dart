@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/auth/co_parent_register/co_parent_register_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
@@ -30,7 +31,7 @@ class AppRouter {
       navigatorKey: navigatorKey,
       initialLocation: RoutePaths.splash,
       redirect: (BuildContext context, GoRouterState state) {
-        final userModel = preferences.getUserModel();
+        final UserModel? userModel = preferences.getUserModel();
         final bool isLoggedIn =
             (preferences.getBool(SharedPreference.isLogin) ?? false) &&
             (userModel?.uid?.trim().isNotEmpty ?? false);
@@ -101,7 +102,8 @@ class AppRouter {
         GoRoute(
           path: RoutePaths.coParentRegister,
           builder: (BuildContext context, GoRouterState state) {
-            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final Map<String, dynamic> extra =
+                state.extra as Map<String, dynamic>? ?? {};
             return CoParentRegisterScreen(
               email: (extra['email'] as String?) ?? '',
               invitationId: (extra['invitationId'] as String?) ?? '',

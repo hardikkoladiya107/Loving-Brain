@@ -146,7 +146,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                             if (index == state.messages.length) {
                               return _buildTypingIndicator();
                             }
-                            final msg = state.messages[index];
+                            final BrainyMessage msg = state.messages[index];
                             return _buildMessageCardFromData(
                               context,
                               state,
@@ -234,7 +234,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                     IconButton(
                                       visualDensity: VisualDensity.compact,
                                       onPressed: () {
-                                        final cubit = context
+                                        final BrainyConversationCubit
+                                        cubit = context
                                             .read<BrainyConversationCubit>();
                                         showModalBottomSheet(
                                           context: context,

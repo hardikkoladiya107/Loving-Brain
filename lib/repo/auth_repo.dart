@@ -5,9 +5,11 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../generated/locale_keys.g.dart';
 import '../manager/apple_sign_in/apple_signin_manager.dart';
@@ -31,10 +33,10 @@ class AuthRepo {
       .collection('users');
   CollectionReference<Map<String, dynamic>> childrenCollection =
       FirebaseFirestore.instance.collection('children');
-  final _sharedEventCollection = FirebaseFirestore.instance.collection(
-    'shared_event',
-  );
-  final _coParentInvitationCollection = FirebaseFirestore.instance.collection(
+  final CollectionReference<Map<String, dynamic>> _sharedEventCollection =
+      FirebaseFirestore.instance.collection('shared_event');
+  final CollectionReference<Map<String, dynamic>>
+  _coParentInvitationCollection = FirebaseFirestore.instance.collection(
     'co-parent-invitation',
   );
 
@@ -137,7 +139,7 @@ class AuthRepo {
     required String password,
   }) async {
     try {
-      final credential = await FirebaseAuth.instance
+      final UserCredential credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
             email: email.trim(),
             password: password.trim(),
@@ -182,10 +184,11 @@ class AuthRepo {
     required String password,
   }) async {
     try {
-      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
+      final UserCredential credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
       if (credential.user != null) {
         final UserModel? userModel = await syncUserAndDefaultChild(
           uId: credential.user!.uid,
@@ -456,7 +459,8 @@ class AuthRepo {
 
   Future<ApiResultStatus> signInWithGoogle() async {
     try {
-      final googleSignInAccount = await GoogleSignInManager.instance
+      final GoogleSignInAccount? googleSignInAccount = await GoogleSignInManager
+          .instance
           .authenticate();
       if (googleSignInAccount == null) {
         return ApiResultStatus.error(
@@ -464,7 +468,8 @@ class AuthRepo {
         );
       }
 
-      final googleAuthentication = googleSignInAccount.authentication;
+      final GoogleSignInAuthentication googleAuthentication =
+          googleSignInAccount.authentication;
       final String? idToken = googleAuthentication.idToken;
       if (idToken == null) {
         debugPrint(
@@ -477,10 +482,11 @@ class AuthRepo {
         );
       }
 
-      final credential = GoogleAuthProvider.credential(idToken: idToken);
-      final signInUser = await FirebaseAuth.instance.signInWithCredential(
-        credential,
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        idToken: idToken,
       );
+      final UserCredential signInUser = await FirebaseAuth.instance
+          .signInWithCredential(credential);
       if (signInUser.user != null) {
         UserModel? userModel = await getUserFromUid(uId: signInUser.user!.uid);
         if (userModel == null) {
@@ -534,9 +540,9 @@ class AuthRepo {
       String appleEmail = '';
 
       if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
-        final appleSignInResult = await AppleSignInManager.instance
+        final AppleSignInResult? result = await AppleSignInManager.instance
             .authenticateWithNonce();
-        if (appleSignInResult == null) {
+        if (result == null) {
           return ApiResultStatus.error(
             error: Exception(
               'Apple Sign-In cancelled by the user (code=canceled)',
@@ -544,18 +550,23 @@ class AuthRepo {
           );
         }
 
-        final appleSignInAccount = appleSignInResult.credential;
-        appleFullName = [
+        final AuthorizationCredentialAppleID appleSignInAccount =
+            result.credential;
+        final List<String> nameParts = <String>[
           appleSignInAccount.givenName?.trim() ?? '',
           appleSignInAccount.familyName?.trim() ?? '',
-        ].where((part) => part.isNotEmpty).join(' ');
+        ];
+        appleFullName = nameParts
+            .where((String part) => part.isNotEmpty)
+            .join(' ');
         appleEmail = appleSignInAccount.email ?? '';
 
-        final oauthCredential = OAuthProvider("apple.com").credential(
-          idToken: appleSignInAccount.identityToken,
-          accessToken: appleSignInAccount.authorizationCode,
-          rawNonce: appleSignInResult.rawNonce,
-        );
+        final OAuthCredential oauthCredential = OAuthProvider("apple.com")
+            .credential(
+              idToken: appleSignInAccount.identityToken,
+              accessToken: appleSignInAccount.authorizationCode,
+              rawNonce: result.rawNonce,
+            );
 
         signInUser = await FirebaseAuth.instance.signInWithCredential(
           oauthCredential,
@@ -563,7 +574,7 @@ class AuthRepo {
       } else {
         // On Android (or Web), Firebase Auth automatically opens the Apple OAuth
         // web flow (Chrome Custom Tab / WebView) and redirects back via Firebase Auth handler.
-        final appleProvider = AppleAuthProvider()
+        final AppleAuthProvider appleProvider = AppleAuthProvider()
           ..addScope('email')
           ..addScope('name');
         signInUser = await FirebaseAuth.instance.signInWithProvider(
@@ -899,12 +910,16 @@ class AuthRepo {
 
   Future<ApiResultStatus> getChildrenFromList(List<String> users) async {
     try {
-      final response = await childrenCollection
-          .where(FieldPath.documentId, whereIn: users)
-          .get();
+      final QuerySnapshot<Map<String, dynamic>> response =
+          await childrenCollection
+              .where(FieldPath.documentId, whereIn: users)
+              .get();
       return ApiResultStatus.data(
         data: response.docs
-            .map((e) => ChildModel.fromJson(e.data(), e.reference))
+            .map(
+              (QueryDocumentSnapshot<Map<String, dynamic>> e) =>
+                  ChildModel.fromJson(e.data(), e.reference),
+            )
             .toList(),
       );
     } on FirebaseException catch (_) {
@@ -926,9 +941,9 @@ class AuthRepo {
       final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'sendEmailOtp',
       );
-      final response = await callable.call(<String, dynamic>{
-        'email': email.trim(),
-      });
+      final HttpsCallableResult response = await callable.call(
+        <String, dynamic>{'email': email.trim()},
+      );
       final dynamic responseData = response.data;
       if (responseData is Map && responseData['success'] == false) {
         return ApiResultStatus.error(
@@ -955,10 +970,9 @@ class AuthRepo {
       final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
         'verifyEmailOtp',
       );
-      final response = await callable.call(<String, dynamic>{
-        'email': email.trim(),
-        'otp': otpCode.trim(),
-      });
+      final HttpsCallableResult response = await callable.call(
+        <String, dynamic>{'email': email.trim(), 'otp': otpCode.trim()},
+      );
 
       final String? token = response.data['token'];
       if (token == null) {

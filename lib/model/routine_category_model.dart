@@ -15,7 +15,7 @@ class RoutineCategoryModel {
   String? get routineType => _routineType;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['routine_type'] = _routineType;
     return map;
   }

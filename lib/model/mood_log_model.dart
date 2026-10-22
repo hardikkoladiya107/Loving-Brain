@@ -99,7 +99,7 @@ class WeekRange {
   }
 
   String get getFormattedRange {
-    final fmt = DateFormat('MMM d'); // Example: May 6
+    final DateFormat fmt = DateFormat('MMM d'); // Example: May 6
     return "${fmt.format(start)} - ${fmt.format(end)}";
   }
 }

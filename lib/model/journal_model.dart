@@ -104,7 +104,7 @@ class JournalModel {
     bool forConvert = false,
     bool updateFreeTaskTime = true,
   }) {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['thought_text'] = _thoughtText;
     map['image_url'] = _imageUrl;
     map['prompt'] = _prompt;

@@ -49,7 +49,7 @@ class RoutineModel {
   String? get type => _type;
 
   Map<String, dynamic> toJson({bool forConvert = false}) {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['description'] = _description;
     map['type'] = _type;
     try {

@@ -73,7 +73,7 @@ class AiFileUploadModel {
   dynamic get statusDetails => _statusDetails;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['object'] = _object;
     map['id'] = _id;
     map['purpose'] = _purpose;

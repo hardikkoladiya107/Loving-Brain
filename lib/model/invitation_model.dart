@@ -64,7 +64,7 @@ class InvitationModel {
   String? get status => _status;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['calender_events'] = _calenderEvents;
     map['childs_essentials'] = _childsEssentials;
     map['from_parent'] = _fromParent;

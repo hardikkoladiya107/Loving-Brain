@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
@@ -20,13 +21,13 @@ class _SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future<void>.delayed(const Duration(seconds: 2), () {
         if (!mounted) return;
-        final userModel = preferences.getUserModel();
+        final UserModel? userModel = preferences.getUserModel();
         final bool isLogin =
             (preferences.getBool(SharedPreference.isLogin) ?? false) &&
             (userModel?.uid?.trim().isNotEmpty ?? false);
 
         if (isLogin) {
-          if (!userModel!.isOnboardingCompleted) {
+          if (userModel?.isOnboardingCompleted != true) {
             context.go(RoutePaths.onboarding);
             return;
           }

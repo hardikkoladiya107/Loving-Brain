@@ -27,7 +27,7 @@ class AppBarGraph extends StatelessWidget {
   final Widget Function(double, TitleMeta) hrTitlesWidget;
   @override
   Widget build(BuildContext context) {
-    final colors = [
+    final List<Color> colors = <Color>[
       const Color(0xFFB3D9FF), // Sun
       const Color(0xFFC8B4E2), // Mon
       const Color(0xFFF4B965), // Tues
@@ -37,8 +37,10 @@ class AppBarGraph extends StatelessWidget {
       const Color(0xFFE1CCFF), // Sat
     ];
 
-    final maxValue = values.reduce((a, b) => a > b ? a : b);
-    final maxIndex = values.indexOf(maxValue);
+    final double maxValue = values.reduce(
+      (double a, double b) => a > b ? a : b,
+    );
+    final int maxIndex = values.indexOf(maxValue);
     // final chartHeight = height - maxValue; //
     // because you used .padding(top: 50)
 
@@ -84,7 +86,7 @@ class AppBarGraph extends StatelessWidget {
                     showTitles: true,
                     reservedSize: 36,
                     getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
+                      final int index = value.toInt();
                       if (index < 0 || index >= titles.length) {
                         return const SizedBox.shrink();
                       }

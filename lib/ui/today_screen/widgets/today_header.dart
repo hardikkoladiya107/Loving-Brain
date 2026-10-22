@@ -7,13 +7,14 @@ import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
 
 import '../bloc/today_cubit.dart';
+import '../bloc/today_state.dart';
 
 class TodayHeader extends StatelessWidget {
   const TodayHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<TodayCubit>().state;
+    final TodayState state = context.watch<TodayCubit>().state;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -23,7 +24,7 @@ class TodayHeader extends StatelessWidget {
             Flexible(
               child: GestureDetector(
                 onTap: () async {
-                  final todayCubit = context.read<TodayCubit>();
+                  final TodayCubit todayCubit = context.read<TodayCubit>();
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -68,7 +69,7 @@ class TodayHeader extends StatelessWidget {
             SizedBox(width: 12.w),
             GestureDetector(
               onTap: () async {
-                final todayCubit = context.read<TodayCubit>();
+                final TodayCubit todayCubit = context.read<TodayCubit>();
                 await Navigator.push(
                   context,
                   MaterialPageRoute(

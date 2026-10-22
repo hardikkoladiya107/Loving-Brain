@@ -207,29 +207,24 @@ class ChildRepo {
     required String? referenceId,
   }) async {
     try {
-      final fileName = file.path.split("/").last;
-      final mimeType = lookupMimeType(file.path) ?? 'application/octet-stream';
-      final ref = FirebaseStorage.instance
+      final String fileName = file.path.split("/").last;
+      final String mimeType =
+          lookupMimeType(file.path) ?? 'application/octet-stream';
+      final Reference ref = FirebaseStorage.instance
           .ref()
           .child('essential-documents')
           .child(referenceId ?? "TEST")
           .child(fileName);
 
-      final metadata = SettableMetadata(
+      final SettableMetadata metadata = SettableMetadata(
         contentType: mimeType,
-        customMetadata: {
-          'picked-file-path': file.path,
-          // 'reference-id': referenceId ?? 'TEST',
-          // 'file-name': fileName,
-          // 'upload-timestamp': DateTime.now().toIso8601String(),
-          // 'mime-type': mimeType,
-        },
+        customMetadata: {'picked-file-path': file.path},
       );
 
-      final uploadTask = ref.putFile(file, metadata);
-      final snapshot = await uploadTask;
+      final UploadTask uploadTask = ref.putFile(file, metadata);
+      final TaskSnapshot snapshot = await uploadTask;
 
-      final downloadUrl = await snapshot.ref.getDownloadURL();
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
 
       return ApiResultStatus.data(data: downloadUrl);
     } on FirebaseException catch (e) {
@@ -244,7 +239,7 @@ class ChildRepo {
   }) async {
     try {
       // Create a reference from the full URL
-      final ref = FirebaseStorage.instance.refFromURL(fileUrl);
+      final Reference ref = FirebaseStorage.instance.refFromURL(fileUrl);
 
       // Delete the file
       await ref.delete();

@@ -82,20 +82,21 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
             return;
           }
 
-          final now = DateTime.now();
+          final DateTime now = DateTime.now();
           final List<BrainySavedItem> sleep = [];
           final List<BrainySavedItem> behaviour = [];
           final List<BrainySavedItem> wellbeing = [];
 
-          for (final doc in snapshot.docs) {
-            final data = doc.data();
+          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+              in snapshot.docs) {
+            final Map<String, dynamic> data = doc.data();
             final String topic = data['topic']?.toString().trim() ?? 'Sleep';
             final String title =
                 data['title']?.toString().trim() ?? 'Saved guidance';
             final String? convId = data['conversation_id']?.toString();
 
             DateTime savedAt = now;
-            final rawSavedAt = data['saved_at'];
+            final Object? rawSavedAt = data['saved_at'];
             if (rawSavedAt is Timestamp) {
               savedAt = rawSavedAt.toDate();
             }

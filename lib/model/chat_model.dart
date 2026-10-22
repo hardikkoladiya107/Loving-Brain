@@ -95,7 +95,7 @@ class ChatModel {
   DocumentReference<Map<String, dynamic>>? get reference => _reference;
 
   Map<String, dynamic> toJson({bool forConvert = false}) {
-    final map = <String, dynamic>{};
+    final Map<String, dynamic> map = <String, dynamic>{};
     map['text'] = _text;
     map['role'] = _role;
     map['image_network_path'] = _imageNetworkPath;
