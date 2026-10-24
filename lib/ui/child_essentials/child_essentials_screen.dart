@@ -27,11 +27,11 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
     });
   }
 
-  void _showAddItemDialog(BuildContext context) {
+  Future<void> _showAddItemDialog(BuildContext context) async {
     final TextEditingController textController = TextEditingController();
     String selectedCategory = "Allergies";
 
-    showDialog<void>(
+    await showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
         return StatefulBuilder(
@@ -142,6 +142,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
         );
       },
     );
+    textController.dispose();
   }
 
   @override

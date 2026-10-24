@@ -200,7 +200,7 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
 
   Future<void> deleteAccount() async {
     changeProps(deleteAccountStatus: const ApiResultStatus.loading());
-    await AuthRepo.instance.deleteAccount();
-    changeProps(deleteAccountStatus: const ApiResultStatus.data(data: ''));
+    final ApiResultStatus status = await AuthRepo.instance.deleteAccount();
+    changeProps(deleteAccountStatus: status);
   }
 }

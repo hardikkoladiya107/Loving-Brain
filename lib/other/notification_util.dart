@@ -110,7 +110,7 @@ class NotificationUtil {
 
   static void _handleMessageClick(BuildContext context, RemoteMessage message) {
     final String type = message.data['type']?.toString() ?? '';
-    if (type == 'energy_bridge') {
+    if (type == 'energy_bridge' || type.startsWith('energy_bridge:')) {
       context.push(RoutePaths.base);
       return;
     }
@@ -133,7 +133,9 @@ class NotificationUtil {
 
   static void onDidReceiveLocalNotification(dynamic payload) {
     final String? dataPayload = payload?.payload?.toString();
-    if (dataPayload == 'energy_bridge') {
+    if (dataPayload != null &&
+        (dataPayload == 'energy_bridge' ||
+            dataPayload.startsWith('energy_bridge:'))) {
       if (navigatorKey.currentContext != null) {
         navigatorKey.currentContext!.push(RoutePaths.base);
       }

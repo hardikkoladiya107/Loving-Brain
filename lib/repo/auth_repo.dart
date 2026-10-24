@@ -240,8 +240,19 @@ class AuthRepo {
           debugPrint(
             'FirebaseAuth user.delete warning (${e.code}): ${e.message}',
           );
+          if (e.code == 'requires-recent-login') {
+            return ApiResultStatus.error(
+              error: Exception(
+                'For security, please sign out and sign in again before deleting your account.',
+              ),
+            );
+          }
+          return ApiResultStatus.error(
+            error: Exception(e.message ?? 'Failed to delete account.'),
+          );
         } catch (e) {
           debugPrint('FirebaseAuth user.delete error: $e');
+          return ApiResultStatus.error(error: Exception(e.toString()));
         }
       }
 

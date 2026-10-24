@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 const String productIdKey = "product_id";
@@ -45,39 +42,9 @@ class SubsProductDetails {
 
 class TokenGenerator {
   static String generateJwtToken() {
-    try {
-      DateTime currentUtc = DateTime.now().toUtc();
-      double iat = currentUtc.millisecondsSinceEpoch / 1000;
-      double exp =
-          currentUtc.add(const Duration(minutes: 30)).millisecondsSinceEpoch /
-          1000;
-      Map<String, dynamic> header = {
-        "alg": "ES256",
-        "kid": "Z78L47CS46",
-        "typ": "JWT",
-      };
-      Map<String, dynamic> payload = {
-        "iss": "34d972c6-8242-4403-a237-6464de9f7243",
-        "iat": iat,
-        "exp": exp,
-        "aud": "appstoreconnect-v1",
-        "bid": "com.app.lovingbrain",
-      };
-      JWTKey jwtKey = ECPrivateKey('''
-      -----BEGIN PRIVATE KEY-----
-MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgVoNL4OiCJYXplkIX
-dpfSij/wHGeZnqNPUN5Ok3yYwROgCgYIKoZIzj0DAQehRANCAAQ0XMfZXhYK89kf
-ac4dIQo9yKSw5nYXtQ7/Ej8ktDN5Ih5TkjnS9stqeSYYNn1y2HjG0xLASdKLsaN+
-Uw5v+T5U
------END PRIVATE KEY-----''');
-      JWT jwt = JWT(payload, header: header);
-      String token = jwt.sign(jwtKey, algorithm: JWTAlgorithm.ES256);
-      log("JWT TOKEN : $token");
-      return token;
-    } catch (e) {
-      log("JWT TOKEN ERROR : $e");
-      return "";
-    }
+    // App Store Connect API JWT tokens require private keys that must only be held server-side.
+    // Client-side receipt validation should query your secure backend.
+    return "";
   }
 }
 

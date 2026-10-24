@@ -76,8 +76,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             ),
                             14.spaceH,
                             _comingSoonButton(),
-                            12.spaceH,
-                            _stripeInfoTag(),
                             24.spaceH,
                             _termsAndConditions(),
                             30.spaceH,
@@ -324,24 +322,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         fontSize: 16.sp,
         fontWeight: FontWeight.w900,
       ),
-    );
-  }
-
-  Widget _stripeInfoTag() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.78),
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: "Static plans for now. Stripe checkout will be integrated soon."
-          .appText(
-            textAlign: TextAlign.center,
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-          ),
     );
   }
 

@@ -90,7 +90,10 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
             },
             error: (Exception exception) {
               EasyLoading.dismiss();
-              context.go(RoutePaths.welcome);
+              showSnackBar(
+                message: exception.toString().replaceAll('Exception: ', ''),
+                type: SnackBarType.ERROR,
+              );
             },
           );
         },

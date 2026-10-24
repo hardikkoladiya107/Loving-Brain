@@ -54,48 +54,6 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
       }
     }
 
-    // If no events recorded yet, provide meaningful default milestone history
-    if (events.isEmpty) {
-      final DateTime now = DateTime.now();
-      events = <TimelineEventModel>[
-        TimelineEventModel(
-          id: 'def_1',
-          type: 'mentorship',
-          title: 'Started the 6-Week Sleep Journey',
-          subtitle: '18 May - with Priya',
-          timestamp: now.subtract(const Duration(days: 2)),
-        ),
-        TimelineEventModel(
-          id: 'def_2',
-          type: 'sleep_log',
-          title: 'Bedtime moved 10 minutes earlier',
-          subtitle: '14 May - held for six nights',
-          timestamp: now.subtract(const Duration(days: 6)),
-        ),
-        TimelineEventModel(
-          id: 'def_3',
-          type: 'state_update',
-          title: 'Completed week 1 check-in',
-          subtitle: '11 May',
-          timestamp: now.subtract(const Duration(days: 9)),
-        ),
-        TimelineEventModel(
-          id: 'def_4',
-          type: 'health_log',
-          title: 'A harder week travel disrupted the routine',
-          subtitle: '4 May',
-          timestamp: now.subtract(const Duration(days: 16)),
-        ),
-        TimelineEventModel(
-          id: 'def_5',
-          type: 'sleep_start',
-          title: 'First sleep pattern recognised',
-          subtitle: '28 April',
-          timestamp: now.subtract(const Duration(days: 22)),
-        ),
-      ];
-    }
-
     final List<TimelineEventModel> filtered = _applyFilter(
       events,
       state.selectedFilter,

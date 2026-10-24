@@ -53,6 +53,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GoogleSignInManager.instance.initialise();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  configLoading();
   runApp(
     EasyLocalization(
       supportedLocales: [Locale('en'), Locale('gu'), Locale('hi')],
@@ -61,7 +62,6 @@ Future<void> main() async {
       child: MyApp(),
     ),
   );
-  configLoading();
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
