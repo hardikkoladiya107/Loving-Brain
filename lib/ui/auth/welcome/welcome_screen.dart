@@ -48,7 +48,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
               10.spaceH,
-              "Know what to try next.".appText(color: greyColor),
+              "Know what to try next".appText(color: greyColor),
               24.spaceH,
               AppButton(
                 onTap: () {

@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/preferances.dart';
 
 import 'help_safety_state.dart';
 
@@ -9,7 +11,13 @@ class HelpSafetyCubit extends Cubit<HelpSafetyState> {
   HelpSafetyCubit() : super(const HelpSafetyState());
 
   void init() {
-    emit(const HelpSafetyState());
+    final UserModel? user = preferences.getUserModel();
+    final String location = (user?.location ?? '').toLowerCase();
+    final String emergency = (location.contains('india') || location == 'in')
+        ? 'tel:112'
+        : 'tel:911';
+
+    emit(HelpSafetyState(emergencyPhone: emergency));
   }
 
   void changeProps({

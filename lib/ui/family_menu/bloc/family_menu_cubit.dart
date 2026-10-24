@@ -3,6 +3,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 
 import 'family_menu_state.dart';
 
@@ -12,7 +13,6 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
   FamilyMenuCubit() : super(const FamilyMenuState());
 
   void init() {
-    final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();
 
     final String cName =
@@ -20,14 +20,35 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
         ? child.childName!.trim()
         : 'your child';
 
+    changeProps(childName: cName, fetchStatus: const ApiResultStatus.loading());
+    _loadCaregivers();
+  }
+
+  Future<void> _loadCaregivers() async {
+    final UserModel? user = preferences.getUserModel();
     final List<CaregiverItem> linked = <CaregiverItem>[];
+
     if (user?.partnerUserId != null && user!.partnerUserId!.trim().isNotEmpty) {
+      UserModel? partnerUser;
+      try {
+        partnerUser = await UserRepo.instance.getUserById(
+          uid: user.partnerUserId!.trim(),
+        );
+      } catch (_) {}
+
+      final String name =
+          (partnerUser?.parentName != null &&
+              partnerUser!.parentName!.trim().isNotEmpty)
+          ? partnerUser.parentName!.trim()
+          : (partnerUser?.email?.split('@').first ?? 'Co-Parent');
+      final String email = partnerUser?.email ?? partnerUser?.parentEmail ?? '';
+
       linked.add(
         CaregiverItem(
           id: user.partnerUserId!,
-          name: 'Ravi',
-          email: 'partner@lovingbrain.com',
-          role: 'Partner',
+          name: name,
+          email: email,
+          role: partnerUser?.relationshipToChild ?? 'Co-Parent',
           status: 'Linked',
         ),
       );
@@ -36,7 +57,6 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     }
 
     changeProps(
-      childName: cName,
       linkedCaregivers: linked,
       fetchStatus: const ApiResultStatus.data(data: null),
     );

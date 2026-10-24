@@ -10,6 +10,7 @@ service cloud.firestore {
         request.auth.uid in get(/databases/$(database)/documents/children/$(childId)).data.parent_reference_ids;
     }
 
+    // Energy Bridge: only linked parents can read and update
     match /energy_bridge/{childId} {
       allow read: if isLinkedParent(childId);
       allow create, update: if isLinkedParent(childId) &&
@@ -17,11 +18,72 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // OTP codes: permanently locked from all client SDKs (Cloud Functions use Admin SDK)
     match /otps/{email} {
       allow read, write: if false;
     }
 
-    match /{document=**} {
+    // Co-parent invitations: allow single get for invite links without login; list/write requires auth
+    match /co-parent-invitation/{invitationId} {
+      allow get: if true;
+      allow list, write: if isSignedIn();
+    }
+
+    // User profiles & user subcollections
+    match /users/{userId} {
+      allow read, write: if isSignedIn();
+      match /{allChildren=**} {
+        allow read, write: if isSignedIn();
+      }
+    }
+
+    // Children & child subcollections (sleep_logs, behaviours, experiments, events)
+    match /children/{childId} {
+      allow read, write: if isSignedIn();
+      match /{allChildren=**} {
+        allow read, write: if isSignedIn();
+      }
+    }
+
+    // Shared family events
+    match /shared_event/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Behaviour category definitions
+    match /behaviours/{id} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // Static parenting content (read-only)
+    match /dailyParentingTips/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /learn_and_play_prompts/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Mentorship & milestones
+    match /milestones/{id} {
+      allow read, write: if isSignedIn();
+      match /{allChildren=**} {
+        allow read, write: if isSignedIn();
+      }
+    }
+
+    match /mentorship_requests/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /enrolled_programs/{id} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /post_session_plans/{id} {
       allow read, write: if isSignedIn();
     }
   }

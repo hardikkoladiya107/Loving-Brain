@@ -48,6 +48,21 @@ class UserRepo {
     }
   }
 
+  Future<UserModel?> getUserById({required String uid}) async {
+    try {
+      final DocumentSnapshot<Map<String, dynamic>> doc = await userCollection
+          .doc(uid)
+          .get();
+      if (doc.exists && doc.data() != null) {
+        return UserModel.fromJson(doc.data()!);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error getting user by id: $e');
+      return null;
+    }
+  }
+
   Future<void> updateUserStreak() async {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
