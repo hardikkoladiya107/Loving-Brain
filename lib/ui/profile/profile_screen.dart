@@ -113,9 +113,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            20.h.spaceH,
+                            20.spaceH,
                             _buildHeader(state.userModel),
-                            8.h.spaceH,
+                            8.spaceH,
 
                             _buildSectionTitle("Support & Mentorship"),
                             _buildGroup([
@@ -293,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 isLast: true,
                               ),
                             ]),
-                            120.h.spaceH,
+                            120.spaceH,
                           ],
                         ),
                       ),
@@ -361,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Transform.scale(scale: 0.75, child: _profileImageWidget(userModel)),
-          12.h.spaceH,
+          12.spaceH,
           (userModel?.parentName ?? "Loving Brain Parent").appText(
             color: Colors.black87,
             fontWeight: FontWeight.w900,
@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             letterSpacing: 0.5,
             textAlign: TextAlign.center,
           ),
-          2.h.spaceH,
+          2.spaceH,
           (userModel?.email ?? "").appText(
             color: Colors.grey.shade600,
             fontWeight: FontWeight.w600,
@@ -417,7 +417,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-          12.h.spaceH,
+          12.spaceH,
         ],
       ),
     );
@@ -592,7 +592,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       child: Icon(icon, color: iconTint, size: 36.sp),
                     ),
-                    20.h.spaceH,
+                    20.spaceH,
                     Text(
                       title,
                       style: getTextStyle(
@@ -601,7 +601,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.black87,
                       ),
                     ),
-                    12.h.spaceH,
+                    12.spaceH,
                     Text(
                       message,
                       textAlign: TextAlign.center,
@@ -612,7 +612,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         height: 1.5,
                       ),
                     ),
-                    28.h.spaceH,
+                    28.spaceH,
                     Row(
                       children: [
                         Expanded(
@@ -640,7 +640,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        12.w.spaceW,
+                        12.spaceW,
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
@@ -838,7 +838,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           _chooseImage(ImageSource.camera);
                         },
                       ),
-                      24.w.spaceW,
+                      24.spaceW,
                       _buildPickerOption(
                         title: LocaleKeys.pickGallery.tr(),
                         icon: LucideIcons.image,

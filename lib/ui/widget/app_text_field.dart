@@ -212,7 +212,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     ),
                     child: widget.prefixIcon!,
                   ),
-                  12.w.spaceW,
+                  12.spaceW,
                 ],
                 Expanded(
                   child: Column(
@@ -235,7 +235,7 @@ class _AppTextFieldState extends State<AppTextField> {
                               ),
                           textAlign: TextAlign.start,
                         ),
-                        4.h.spaceH,
+                        4.spaceH,
                       ],
                       Theme(
                         data: Theme.of(context).copyWith(
@@ -296,10 +296,7 @@ class _AppTextFieldState extends State<AppTextField> {
                     ],
                   ),
                 ),
-                if (trailingIcon != null) ...<Widget>[
-                  10.w.spaceW,
-                  trailingIcon,
-                ],
+                if (trailingIcon != null) ...<Widget>[10.spaceW, trailingIcon],
               ],
             ),
           ),
@@ -307,7 +304,7 @@ class _AppTextFieldState extends State<AppTextField> {
         if (widget.showError &&
             widget.error != null &&
             widget.error!.trim().isNotEmpty) ...<Widget>[
-          6.h.spaceH,
+          6.spaceH,
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Row(

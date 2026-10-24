@@ -66,7 +66,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             _heroCard(),
-                            18.h.spaceH,
+                            18.spaceH,
                             ...List<Widget>.generate(
                               state.subsProductDetails.length,
                               (int index) => _planCard(
@@ -74,13 +74,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 state: state,
                               ).appPadding(bottom: 12.h),
                             ),
-                            14.h.spaceH,
+                            14.spaceH,
                             _comingSoonButton(),
-                            12.h.spaceH,
+                            12.spaceH,
                             _stripeInfoTag(),
-                            24.h.spaceH,
+                            24.spaceH,
                             _termsAndConditions(),
-                            30.h.spaceH,
+                            30.spaceH,
                           ],
                         ),
                       ),
@@ -154,7 +154,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
           ),
         ),
-        12.w.spaceW,
+        12.spaceW,
         Expanded(
           child: LocaleKeys.subscription.tr().appText(
             fontWeight: FontWeight.w900,
@@ -194,7 +194,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             fontWeight: FontWeight.w900,
             fontSize: 20.sp,
           ),
-          8.h.spaceH,
+          8.spaceH,
           LocaleKeys.unlockAllChallengesToolsAndInsightsForAMoreConfident
               .tr()
               .appText(
@@ -268,7 +268,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                   ],
                 ),
-                8.h.spaceH,
+                8.spaceH,
                 subtitle.appText(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
@@ -276,7 +276,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   textAlign: TextAlign.start,
                 ),
                 if (isYearly) ...<Widget>[
-                  10.h.spaceH,
+                  10.spaceH,
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 10.w,

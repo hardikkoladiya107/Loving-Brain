@@ -57,15 +57,17 @@ class AppButton extends StatelessWidget {
                   ),
                 )
               : widget ??
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        (title ?? "").appText(
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: (title ?? "").appText(
                           color: textColor ?? Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ],
+                      ),
                     ),
         ),
       ),

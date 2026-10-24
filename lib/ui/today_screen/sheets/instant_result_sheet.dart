@@ -90,7 +90,7 @@ class InstantResultSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const InfoChip(iconData: Icons.info, chipTitle: "Reason"),
-              10.h.spaceH,
+              10.spaceH,
               SizedBox(width: 12.h),
               resolvedReason.appText(
                 fontSize: 14.sp,
@@ -98,7 +98,7 @@ class InstantResultSheet extends StatelessWidget {
                 textAlign: TextAlign.start,
                 color: greyColor6,
               ),
-              6.h.spaceH,
+              6.spaceH,
             ],
           ),
         ),
@@ -123,7 +123,7 @@ class InstantResultSheet extends StatelessWidget {
                 iconData: Icons.stars_rounded,
                 chipTitle: "Action",
               ),
-              10.h.spaceH,
+              10.spaceH,
               SizedBox(width: 12.h),
               resolvedAction.appText(
                 fontSize: 22.sp,
@@ -136,7 +136,7 @@ class InstantResultSheet extends StatelessWidget {
                 textAlign: TextAlign.start,
                 color: greyColor6,
               ),
-              6.h.spaceH,
+              6.spaceH,
             ],
           ),
         ),

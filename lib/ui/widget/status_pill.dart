@@ -84,10 +84,12 @@ class StatusPill extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (leading != null) ...[leading!, 6.spaceW],
-          text.appText(
-            fontSize: 12.sp,
-            color: textColor,
-            fontWeight: FontWeight.w500,
+          Flexible(
+            child: text.appText(
+              fontSize: 12,
+              color: textColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

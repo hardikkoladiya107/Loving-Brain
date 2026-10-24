@@ -52,12 +52,12 @@ class _HelpProblemSelectionScreenState
             foregroundColor: const Color(0xFF2F2A44),
             title: LocaleKeys.help.tr().appText(
               fontWeight: FontWeight.w900,
-              fontSize: 18.sp,
+              fontSize: 18,
               color: const Color(0xFF2F2A44),
             ),
           ),
           body: SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,33 +65,33 @@ class _HelpProblemSelectionScreenState
                   LocaleKeys.whatIsHappeningWithChild
                       .tr(namedArgs: {'childName': childName})
                       .appText(
-                        fontSize: 20.sp,
+                        fontSize: 20,
                         fontWeight: FontWeight.w900,
                         color: const Color(0xFF2F2A44),
                         textAlign: TextAlign.start,
                       ),
-                  14.h.spaceH,
+                  14.spaceH,
                   _problemCard(
                     icon: Icons.child_care_rounded,
                     title: 'Crying',
                     subtitle: 'Crying continuously and hard to settle.',
                     onTap: () => _goToGuidance('crying'),
                   ),
-                  10.h.spaceH,
+                  10.spaceH,
                   _problemCard(
                     icon: Icons.bedtime_rounded,
                     title: "Won't sleep",
                     subtitle: 'Tired but resisting sleep right now.',
                     onTap: () => _goToGuidance('wont_sleep'),
                   ),
-                  10.h.spaceH,
+                  10.spaceH,
                   _problemCard(
                     icon: Icons.restaurant_rounded,
                     title: 'Feeding issue',
                     subtitle: 'Difficulty feeding or refusing feed.',
                     onTap: () => _goToGuidance('feeding_issue'),
                   ),
-                  10.h.spaceH,
+                  10.spaceH,
                   _problemCard(
                     icon: Icons.sentiment_dissatisfied_rounded,
                     title: 'Too fussy',
@@ -133,20 +133,20 @@ class _HelpProblemSelectionScreenState
               ),
               child: Icon(icon, color: const Color(0xFF6A24B8), size: 22.sp),
             ),
-            10.w.spaceW,
+            10.spaceW,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   title.appText(
-                    fontSize: 15.sp,
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
                     color: const Color(0xFF2F2A44),
                     textAlign: TextAlign.start,
                   ),
-                  4.h.spaceH,
+                  4.spaceH,
                   subtitle.appText(
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF5B5571),
                     textAlign: TextAlign.start,

@@ -25,7 +25,7 @@ extension extOnString on String {
       style:
           textStyle ??
           getTextStyle(
-            fontSize: (fontSize ?? 16).sp,
+            fontSize: fontSize ?? 16.sp,
             color: color,
             fontStyle: fontStyle,
             textDecoration: textDecoration,
@@ -59,7 +59,7 @@ extension extOnString on String {
           textStyle ??
           getTextStyle(
             fraunces: true,
-            fontSize: (fontSize ?? 16).sp,
+            fontSize: fontSize ?? 16.sp,
             color: color,
             fontStyle: fontStyle,
             textDecoration: textDecoration,

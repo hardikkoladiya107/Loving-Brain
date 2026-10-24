@@ -57,7 +57,7 @@ class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
               leading: const BackButton(color: Color(0xFF1E293B)),
               title: "Sleep".appText(
                 color: const Color(0xFF1E293B),
-                fontSize: 28.sp,
+                fontSize: 28,
                 fraunces: true,
               ),
             ),
@@ -96,7 +96,7 @@ class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
                               6.spaceW,
                               "No sleep data yet".appText(
                                 color: const Color(0xFFD97706),
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
                             ],
@@ -104,7 +104,7 @@ class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
                         ),
                         24.spaceH,
                         "Typical for $cAge: bedtime around 8 PM".appText(
-                          fontSize: 24.sp,
+                          fontSize: 24,
                           color: const Color(0xFF1E293B),
                           fraunces: true,
                           height: 1.2,
@@ -112,7 +112,7 @@ class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
                         12.spaceH,
                         "This is a general guide, not $cName's own pattern. One update starts personalising it."
                             .appText(
-                              fontSize: 16.sp,
+                              fontSize: 16,
                               color: const Color(0xFF64748B),
                               height: 1.4,
                             ),
@@ -150,7 +150,7 @@ class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
                     child:
                         "Two or three updates is usually enough for us to show $cName's own window."
                             .appText(
-                              fontSize: 16.sp,
+                              fontSize: 16,
                               color: const Color(0xFF1E293B),
                               height: 1.4,
                             ),

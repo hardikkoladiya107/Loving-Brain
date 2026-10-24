@@ -90,14 +90,14 @@ class NoticedRow extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const InfoChip(chipTitle: "Noticed"),
-                        10.h.spaceH,
+                        10.spaceH,
                         SizedBox(width: 12.h),
                         "Naps have been 20 minutes shorter this week".appText(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                           textAlign: TextAlign.start,
                         ),
-                        6.h.spaceH,
+                        6.spaceH,
                         Container(
                           height: 150.w,
                           width: 150.w,

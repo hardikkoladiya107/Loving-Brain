@@ -126,14 +126,14 @@ class _SucessScreenState extends State<SucessScreen> {
             width: 180.w,
             fit: BoxFit.contain,
           ),
-          10.h.spaceH,
+          10.spaceH,
           LocaleKeys.successMessage.tr().appText(
             fontSize: 28,
             fontWeight: FontWeight.w900,
             color: primaryColor,
             letterSpacing: 0.4,
           ),
-          10.h.spaceH,
+          10.spaceH,
           widget.successText.appText(
             fontSize: 16,
             color: const Color(0xFF3A3A3A),

@@ -55,7 +55,7 @@ class TodayHeader extends StatelessWidget {
                       Flexible(
                         child: state.childName.appText(
                           fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
+                          fontSize: 16,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,

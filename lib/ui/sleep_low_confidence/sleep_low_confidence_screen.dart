@@ -59,7 +59,7 @@ class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
                 leading: const BackButton(color: Color(0xFF1E293B)),
                 title: "Sleep".appText(
                   color: const Color(0xFF1E293B),
-                  fontSize: 28.sp,
+                  fontSize: 28,
                   fraunces: true,
                 ),
               ),
@@ -71,46 +71,49 @@ class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         16.spaceH,
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 8.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.circle,
-                                    size: 8.sp,
-                                    color: const Color(0xFF5C6BC0),
-                                  ),
-                                  4.spaceW,
-                                  Icon(
-                                    Icons.circle,
-                                    size: 8.sp,
-                                    color: const Color(0xFF5C6BC0),
-                                  ),
-                                  4.spaceW,
-                                  Icon(
-                                    Icons.circle,
-                                    size: 8.sp,
-                                    color: const Color(0xFFE2E8F0),
-                                  ),
-                                ],
-                              ),
-                              8.spaceW,
-                              "Confidence: ${state.confidence}".appText(
-                                fontSize: 14.sp,
-                                color: const Color(0xFF64748B),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      size: 8.sp,
+                                      color: const Color(0xFF5C6BC0),
+                                    ),
+                                    4.spaceW,
+                                    Icon(
+                                      Icons.circle,
+                                      size: 8.sp,
+                                      color: const Color(0xFF5C6BC0),
+                                    ),
+                                    4.spaceW,
+                                    Icon(
+                                      Icons.circle,
+                                      size: 8.sp,
+                                      color: const Color(0xFFE2E8F0),
+                                    ),
+                                  ],
+                                ),
+                                8.spaceW,
+                                "Confidence: ${state.confidence}".appText(
+                                  fontSize: 14,
+                                  color: const Color(0xFF64748B),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         24.spaceH,
@@ -147,14 +150,14 @@ class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         state.windowTimeRange.appText(
-                                          fontSize: 24.sp,
+                                          fontSize: 24,
                                           color: const Color(0xFF1E293B),
                                           fraunces: true,
                                           height: 1.2,
                                         ),
                                         8.spaceH,
                                         state.explanation.appText(
-                                          fontSize: 14.sp,
+                                          fontSize: 14,
                                           color: const Color(0xFF64748B),
                                           height: 1.4,
                                         ),
@@ -187,14 +190,14 @@ class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
                               24.spaceH,
                               "Based on ${state.nightsCount} nights so far"
                                   .appText(
-                                    fontSize: 20.sp,
+                                    fontSize: 20,
                                     color: const Color(0xFF1E293B),
                                     fraunces: true,
                                   ),
                               8.spaceH,
                               "A few more updates will sharpen this estimate. Around ten nights is usually enough."
                                   .appText(
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                     color: const Color(0xFF64748B),
                                     height: 1.4,
                                   ),
@@ -211,7 +214,7 @@ class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
                           child:
                               "We'd rather show a wide window honestly than a precise time we can't stand behind."
                                   .appText(
-                                    fontSize: 16.sp,
+                                    fontSize: 16,
                                     color: const Color(0xFF1E293B),
                                     height: 1.4,
                                   ),

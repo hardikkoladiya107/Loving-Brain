@@ -19,13 +19,13 @@ class NiceWorkCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const InfoChip(iconData: Icons.stars_rounded, chipTitle: "Nice work"),
-          10.h.spaceH,
+          10.spaceH,
           "Three nights of easier bedtime in a row".appText(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
             textAlign: TextAlign.start,
           ),
-          6.h.spaceH,
+          6.spaceH,
           "Nice work — this is a pattern worth noticing.".appText(
             fontSize: 12.sp,
             color: greyColor6,

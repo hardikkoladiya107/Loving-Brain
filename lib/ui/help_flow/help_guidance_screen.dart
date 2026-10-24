@@ -62,7 +62,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
             foregroundColor: const Color(0xFF2F2A44),
             title: LocaleKeys.guidance.tr().appText(
               fontWeight: FontWeight.w900,
-              fontSize: 18.sp,
+              fontSize: 18,
               color: const Color(0xFF2F2A44),
             ),
           ),
@@ -89,19 +89,19 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             state.contextLine.appText(
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF57506E),
                               textAlign: TextAlign.start,
                             ),
-                            12.h.spaceH,
+                            12.spaceH,
                             state.primaryAction.appText(
-                              fontSize: 20.sp,
+                              fontSize: 20,
                               fontWeight: FontWeight.w900,
                               color: const Color(0xFF2F2A44),
                               textAlign: TextAlign.start,
                             ),
-                            14.h.spaceH,
+                            14.spaceH,
                             ...state.steps.asMap().entries.map((entry) {
                               final int index = entry.key;
                               final String step = entry.value;
@@ -119,15 +119,15 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                                         shape: BoxShape.circle,
                                       ),
                                       child: '${index + 1}'.appText(
-                                        fontSize: 11.sp,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.w900,
                                         color: const Color(0xFF6A24B8),
                                       ),
                                     ),
-                                    8.w.spaceW,
+                                    8.spaceW,
                                     Expanded(
                                       child: step.appText(
-                                        fontSize: 13.sp,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0xFF504A67),
                                         textAlign: TextAlign.start,
@@ -137,17 +137,17 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                                 ),
                               );
                             }),
-                            10.h.spaceH,
+                            10.spaceH,
                             state.fallbackText.appText(
-                              fontSize: 12.sp,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF6A5A9A),
                               textAlign: TextAlign.start,
                             ),
                             if (state.showEscalationHint) ...<Widget>[
-                              12.h.spaceH,
+                              12.spaceH,
                               LocaleKeys.helpFlowEscalationHint.tr().appText(
-                                fontSize: 13.sp,
+                                fontSize: 13,
                                 fontWeight: FontWeight.w800,
                                 color: const Color(0xFFAB2D55),
                                 textAlign: TextAlign.start,
@@ -158,7 +158,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                       ),
                     ),
                   ),
-                  16.h.spaceH,
+                  16.spaceH,
                   BaseButton(
                     onTap: () => context.read<HelpFlowCubit>().markHelped(),
                     child: Container(
@@ -171,12 +171,12 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                       ),
                       child: LocaleKeys.thisHelped.tr().appText(
                         fontWeight: FontWeight.w900,
-                        fontSize: 15.sp,
+                        fontSize: 15,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  10.h.spaceH,
+                  10.spaceH,
                   BaseButton(
                     onTap: () =>
                         context.read<HelpFlowCubit>().stillNotWorking(),
@@ -190,12 +190,12 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
                       ),
                       child: LocaleKeys.stillNotWorking.tr().appText(
                         fontWeight: FontWeight.w900,
-                        fontSize: 15.sp,
+                        fontSize: 15,
                         color: const Color(0xFF50505D),
                       ),
                     ),
                   ),
-                  14.h.spaceH,
+                  14.spaceH,
                 ],
               ),
             ),
