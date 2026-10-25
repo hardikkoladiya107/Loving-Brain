@@ -59,7 +59,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<BrainyConversationCubit>(
       create: (context) => BrainyConversationCubit()
         ..init(
           conversationId: widget.conversationId,

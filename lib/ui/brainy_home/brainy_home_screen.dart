@@ -50,8 +50,8 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => BrainyHomeCubit()..init(),
+    return BlocProvider<BrainyHomeCubit>(
+      create: (BuildContext context) => BrainyHomeCubit()..init(),
       child: BlocBuilder<BrainyHomeCubit, BrainyHomeState>(
         builder: (context, state) {
           if (_textController.text != state.chatText) {

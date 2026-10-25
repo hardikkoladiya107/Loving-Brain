@@ -24,250 +24,255 @@ class InviteCaregiverScreen extends StatefulWidget {
 
 class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
   late TextEditingController _emailController;
+  late final InviteCaregiverCubit _cubit;
 
   @override
   void initState() {
     super.initState();
+    _cubit = InviteCaregiverCubit();
     _emailController = TextEditingController(text: "grandma@example.com");
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<InviteCaregiverCubit>().init();
-      context.read<InviteCaregiverCubit>().updateEmailOrPhone(
-        _emailController.text,
-      );
+      _cubit.init();
+      _cubit.updateEmailOrPhone(_emailController.text);
     });
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _cubit.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<InviteCaregiverCubit, InviteCaregiverState>(
-      listener: (BuildContext context, InviteCaregiverState state) {
-        state.sendStatus.whenOrNull(
-          loading: () => EasyLoading.show(),
-          data: (_) {
-            EasyLoading.dismiss();
-            showSnackBar(
-              message: "Invitation sent successfully",
-              type: SnackBarType.SUCCESS,
-            );
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const InvitePendingScreen()),
-            );
-          },
-          error: (Exception error) {
-            EasyLoading.dismiss();
-            showSnackBar(
-              message: error.toString().replaceAll('Exception: ', ''),
-              type: SnackBarType.ERROR,
-            );
-          },
-        );
-      },
-      builder: (BuildContext context, InviteCaregiverState state) {
-        final InviteCaregiverCubit cubit = context.read<InviteCaregiverCubit>();
+    return BlocProvider<InviteCaregiverCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<InviteCaregiverCubit, InviteCaregiverState>(
+        listener: (BuildContext context, InviteCaregiverState state) {
+          state.sendStatus.whenOrNull(
+            loading: () => EasyLoading.show(),
+            data: (_) {
+              EasyLoading.dismiss();
+              showSnackBar(
+                message: "Invitation sent successfully",
+                type: SnackBarType.SUCCESS,
+              );
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const InvitePendingScreen()),
+              );
+            },
+            error: (Exception error) {
+              EasyLoading.dismiss();
+              showSnackBar(
+                message: error.toString().replaceAll('Exception: ', ''),
+                type: SnackBarType.ERROR,
+              );
+            },
+          );
+        },
+        builder: (BuildContext context, InviteCaregiverState state) {
+          final InviteCaregiverCubit cubit = context
+              .read<InviteCaregiverCubit>();
 
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom Right Glow
-              Positioned(
-                right: -150.w,
-                bottom: 0,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: darkBlue,
-                            size: 24.sp,
+                    ),
+                  ),
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Invite a caregiver".appText(
-                            fontSize: 28.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          8.spaceH,
-                          "They'll get a link to join no account needed first."
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor6,
-                                textAlign: TextAlign.start,
-                              ),
-                          24.spaceH,
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 12.h,
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "Invite a caregiver".appText(
+                              fontSize: 28.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(
-                                color: secondaryColor,
-                                width: 1.w,
+                            8.spaceH,
+                            "They'll get a link to join no account needed first."
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor6,
+                                  textAlign: TextAlign.start,
+                                ),
+                            24.spaceH,
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 12.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
+                                border: Border.all(
+                                  color: secondaryColor,
+                                  width: 1.w,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        "EMAIL OR PHONE".appText(
+                                          fontSize: 12.sp,
+                                          color: greyColor11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        4.spaceH,
+                                        TextField(
+                                          controller: _emailController,
+                                          onChanged: (String val) {
+                                            cubit.updateEmailOrPhone(val);
+                                          },
+                                          style: TextStyle(
+                                            fontFamily: 'Nunito',
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: greyColor9,
+                                          ),
+                                          decoration: const InputDecoration(
+                                            isDense: true,
+                                            contentPadding: EdgeInsets.zero,
+                                            border: InputBorder.none,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(3.r),
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor,
+                                    ),
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 16.sp,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Row(
+                            24.spaceH,
+                            "THEIR RELATIONSHIP TO ${state.childName.toUpperCase()}"
+                                .appText(
+                                  fontSize: 16.sp,
+                                  color: secondaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  textAlign: TextAlign.start,
+                                ),
+                            12.spaceH,
+                            Wrap(
+                              spacing: 8.w,
+                              runSpacing: 8.h,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      "EMAIL OR PHONE".appText(
-                                        fontSize: 12.sp,
-                                        color: greyColor11,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      4.spaceH,
-                                      TextField(
-                                        controller: _emailController,
-                                        onChanged: (String val) {
-                                          cubit.updateEmailOrPhone(val);
-                                        },
-                                        style: TextStyle(
-                                          fontFamily: 'Nunito',
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: greyColor9,
-                                        ),
-                                        decoration: const InputDecoration(
-                                          isDense: true,
-                                          contentPadding: EdgeInsets.zero,
-                                          border: InputBorder.none,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.all(3.r),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: primaryColor,
-                                  ),
-                                  child: Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 16.sp,
-                                  ),
-                                ),
+                                _buildRoleChip(context, state, "Partner"),
+                                _buildRoleChip(context, state, "Grandparent"),
+                                _buildRoleChip(context, state, "Nanny"),
+                                _buildRoleChip(context, state, "Other"),
                               ],
                             ),
-                          ),
-                          24.spaceH,
-                          "THEIR RELATIONSHIP TO ${state.childName.toUpperCase()}"
-                              .appText(
-                                fontSize: 16.sp,
-                                color: secondaryColor,
-                                fontWeight: FontWeight.bold,
-                                textAlign: TextAlign.start,
-                              ),
-                          12.spaceH,
-                          Wrap(
-                            spacing: 8.w,
-                            runSpacing: 8.h,
-                            children: [
-                              _buildRoleChip(context, state, "Partner"),
-                              _buildRoleChip(context, state, "Grandparent"),
-                              _buildRoleChip(context, state, "Nanny"),
-                              _buildRoleChip(context, state, "Other"),
-                            ],
-                          ),
-                          24.spaceH,
-                          InfoBox(
-                            backgroundColor: softPeachOrange,
-                            textColor: primaryColor,
-                            iconColor: primaryColor,
-                            iconData: Icons.info,
-                            body: "",
-                            title: state.selectedRole == "Grandparent"
-                                ? "Grandparents start with sleep and plans only. You can change exactly what they see in Permissions before or after they join."
-                                : "Selected role starts with tailored permissions. You can change exactly what they see in Permissions before or after they join.",
-                          ),
-                          12.spaceH,
-                          InfoBox.white(
-                            title: "What they won't see",
-                            body:
-                                "Health notes, mentorship summaries and your own reflections stay private unless you choose to share them.",
-                          ),
-                          140.spaceH,
-                        ],
+                            24.spaceH,
+                            InfoBox(
+                              backgroundColor: softPeachOrange,
+                              textColor: primaryColor,
+                              iconColor: primaryColor,
+                              iconData: Icons.info,
+                              body: "",
+                              title: state.selectedRole == "Grandparent"
+                                  ? "Grandparents start with sleep and plans only. You can change exactly what they see in Permissions before or after they join."
+                                  : "Selected role starts with tailored permissions. You can change exactly what they see in Permissions before or after they join.",
+                            ),
+                            12.spaceH,
+                            InfoBox.white(
+                              title: "What they won't see",
+                              body:
+                                  "Health notes, mentorship summaries and your own reflections stay private unless you choose to share them.",
+                            ),
+                            140.spaceH,
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              _buildBottomActions(context, state, cubit),
-            ],
-          ),
-        );
-      },
+                _buildBottomActions(context, state, cubit),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

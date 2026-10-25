@@ -43,7 +43,7 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<BrainyVoiceCubit>(
       create: (_) => BrainyVoiceCubit()..init(topic: widget.topic),
       child: BlocBuilder<BrainyVoiceCubit, BrainyVoiceState>(
         builder: (context, state) {

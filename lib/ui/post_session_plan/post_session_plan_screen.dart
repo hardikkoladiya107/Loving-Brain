@@ -23,143 +23,155 @@ class PostSessionPlanScreen extends StatefulWidget {
 }
 
 class _PostSessionPlanScreenState extends State<PostSessionPlanScreen> {
+  late final PostSessionPlanCubit _cubit;
+
   @override
   void initState() {
     super.initState();
+    _cubit = PostSessionPlanCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PostSessionPlanCubit>().init();
+      _cubit.init();
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<PostSessionPlanCubit, PostSessionPlanState>(
-      listener: (BuildContext context, PostSessionPlanState state) {},
-      builder: (BuildContext context, PostSessionPlanState state) {
-        final PostSessionPlanModel plan =
-            state.plan ??
-            const PostSessionPlanModel(
-              id: 'plan_default',
-              guideName: 'Priya',
-              tasks: <PlanTaskItem>[
-                PlanTaskItem(
-                  id: 'task_1',
-                  title: 'Move the nap 15 minutes earlier',
-                  subtitle: 'Done Tuesday',
-                  isCompleted: true,
-                ),
-                PlanTaskItem(
-                  id: 'task_2',
-                  title: 'Keep the bedtime routine to 20 minutes',
-                  subtitle: 'Ongoing this week',
-                  isCompleted: false,
-                ),
-                PlanTaskItem(
-                  id: 'task_3',
-                  title: 'Log three nights this week',
-                  subtitle: 'One logged so far',
-                  isCompleted: false,
-                ),
-              ],
-              negativeGuidanceTitle: 'No screen time before bed',
-              negativeGuidanceSubtitle: 'Just while the nap change settles.',
-            );
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
 
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<PostSessionPlanCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<PostSessionPlanCubit, PostSessionPlanState>(
+        listener: (BuildContext context, PostSessionPlanState state) {},
+        builder: (BuildContext context, PostSessionPlanState state) {
+          final PostSessionPlanModel plan =
+              state.plan ??
+              const PostSessionPlanModel(
+                id: 'plan_default',
+                guideName: 'Priya',
+                tasks: <PlanTaskItem>[
+                  PlanTaskItem(
+                    id: 'task_1',
+                    title: 'Move the nap 15 minutes earlier',
+                    subtitle: 'Done Tuesday',
+                    isCompleted: true,
                   ),
-                ),
-              ),
-              // Bottom Right Glow
-              Positioned(
-                right: -150.w,
-                bottom: 0,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
+                  PlanTaskItem(
+                    id: 'task_2',
+                    title: 'Keep the bedtime routine to 20 minutes',
+                    subtitle: 'Ongoing this week',
+                    isCompleted: false,
                   ),
-                ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
+                  PlanTaskItem(
+                    id: 'task_3',
+                    title: 'Log three nights this week',
+                    subtitle: 'One logged so far',
+                    isCompleted: false,
+                  ),
+                ],
+                negativeGuidanceTitle: 'No screen time before bed',
+                negativeGuidanceSubtitle: 'Just while the nap change settles.',
+              );
+
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: darkBlue,
-                            size: 24.sp,
+                    ),
+                  ),
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Your plan".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          24.spaceH,
-                          _buildPlanCard(plan),
-                          16.spaceH,
-                          _buildNegativeGuidanceCard(plan),
-                          160.spaceH,
-                        ],
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "Your plan".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            24.spaceH,
+                            _buildPlanCard(plan),
+                            16.spaceH,
+                            _buildNegativeGuidanceCard(plan),
+                            160.spaceH,
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              _buildBottomActions(context),
-            ],
-          ),
-        );
-      },
+                _buildBottomActions(context),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

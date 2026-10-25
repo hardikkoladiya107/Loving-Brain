@@ -23,181 +23,195 @@ class EnrolledJourneyHomeScreen extends StatefulWidget {
 }
 
 class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
+  late final EnrolledJourneyHomeCubit _cubit;
+
   @override
   void initState() {
     super.initState();
+    _cubit = EnrolledJourneyHomeCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<EnrolledJourneyHomeCubit>().init();
+      _cubit.init();
     });
   }
 
   @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EnrolledJourneyHomeCubit, EnrolledJourneyHomeState>(
-      listener: (BuildContext context, EnrolledJourneyHomeState state) {},
-      builder: (BuildContext context, EnrolledJourneyHomeState state) {
-        final EnrolledProgramModel program =
-            state.program ??
-            const EnrolledProgramModel(
-              id: 'prog_default',
-              title: 'Sleep Reset journey',
-              guideName: 'Priya S.',
-              currentWeek: 2,
-              totalWeeks: 6,
-              currentFocus: 'Try the earlier nap, and log three nights',
-              recentQuote:
-                  "Great first week keep the nap timing steady and don't worry about the odd late night.",
-              quoteAuthorAndTime: 'Priya S. · 2 days ago',
-              recordedModuleTitle: 'Understanding over tiredness',
-              recordedModuleDuration: '12 min',
-            );
+    return BlocProvider<EnrolledJourneyHomeCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<EnrolledJourneyHomeCubit, EnrolledJourneyHomeState>(
+        listener: (BuildContext context, EnrolledJourneyHomeState state) {},
+        builder: (BuildContext context, EnrolledJourneyHomeState state) {
+          final EnrolledProgramModel program =
+              state.program ??
+              const EnrolledProgramModel(
+                id: 'prog_default',
+                title: 'Sleep Reset journey',
+                guideName: 'Priya S.',
+                currentWeek: 2,
+                totalWeeks: 6,
+                currentFocus: 'Try the earlier nap, and log three nights',
+                recentQuote:
+                    "Great first week keep the nap timing steady and don't worry about the odd late night.",
+                quoteAuthorAndTime: 'Priya S. · 2 days ago',
+                recordedModuleTitle: 'Understanding over tiredness',
+                recordedModuleDuration: '12 min',
+              );
 
-        final double progress = (program.totalWeeks > 0)
-            ? (program.currentWeek / program.totalWeeks).clamp(0.0, 1.0)
-            : 0.33;
+          final double progress = (program.totalWeeks > 0)
+              ? (program.currentWeek / program.totalWeeks).clamp(0.0, 1.0)
+              : 0.33;
 
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom Right Glow
-              Positioned(
-                right: -150.w,
-                bottom: 0,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: darkBlue,
-                            size: 24.sp,
+                    ),
+                  ),
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          program.title.appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          24.spaceH,
-                          _buildProgressCard(program, progress),
-                          16.spaceH,
-                          _buildActionRow(
-                            iconPath: Assets.v2.icons.icNextSession.path,
-                            iconBgColor: orangeLightColor,
-                            iconColor: primaryColor,
-                            title: "Next session",
-                            subtitle:
-                                "Confirmed with ${program.guideName}. Details sent by email.",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const RequestSessionScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          16.spaceH,
-                          _buildActionRow(
-                            iconData: Icons.check_circle_outline,
-                            iconBgColor: const Color(0xFFF1EEFF),
-                            iconColor: secondaryColor,
-                            title: "Post-session plan",
-                            subtitle:
-                                "Action items agreed with ${program.guideName}",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const PostSessionPlanScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          16.spaceH,
-                          _buildActionRow(
-                            iconData: Icons.play_arrow_rounded,
-                            iconBgColor: const Color(0xFFFCE4EC),
-                            iconColor: const Color(0xFFE91E63),
-                            title: program.recordedModuleTitle,
-                            subtitle:
-                                "Recorded module · ${program.recordedModuleDuration}",
-                            onTap: () {
-                              context
-                                  .read<EnrolledJourneyHomeCubit>()
-                                  .toggleModuleCompleted();
-                            },
-                          ),
-                          16.spaceH,
-                          _buildQuoteCard(program),
-                          140.spaceH,
-                        ],
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            program.title.appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            24.spaceH,
+                            _buildProgressCard(program, progress),
+                            16.spaceH,
+                            _buildActionRow(
+                              iconPath: Assets.v2.icons.icNextSession.path,
+                              iconBgColor: orangeLightColor,
+                              iconColor: primaryColor,
+                              title: "Next session",
+                              subtitle:
+                                  "Confirmed with ${program.guideName}. Details sent by email.",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const RequestSessionScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            16.spaceH,
+                            _buildActionRow(
+                              iconData: Icons.check_circle_outline,
+                              iconBgColor: const Color(0xFFF1EEFF),
+                              iconColor: secondaryColor,
+                              title: "Post-session plan",
+                              subtitle:
+                                  "Action items agreed with ${program.guideName}",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const PostSessionPlanScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            16.spaceH,
+                            _buildActionRow(
+                              iconData: Icons.play_arrow_rounded,
+                              iconBgColor: const Color(0xFFFCE4EC),
+                              iconColor: const Color(0xFFE91E63),
+                              title: program.recordedModuleTitle,
+                              subtitle:
+                                  "Recorded module · ${program.recordedModuleDuration}",
+                              onTap: () {
+                                context
+                                    .read<EnrolledJourneyHomeCubit>()
+                                    .toggleModuleCompleted();
+                              },
+                            ),
+                            16.spaceH,
+                            _buildQuoteCard(program),
+                            140.spaceH,
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

@@ -29,144 +29,156 @@ class ParentSuccessGuideScreen extends StatefulWidget {
 }
 
 class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
+  late final ParentSuccessGuideCubit _cubit;
+
   @override
   void initState() {
     super.initState();
+    _cubit = ParentSuccessGuideCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ParentSuccessGuideCubit>().init(guideId: widget.guideId);
+      _cubit.init(guideId: widget.guideId);
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<ParentSuccessGuideCubit, ParentSuccessGuideState>(
-      listener: (BuildContext context, ParentSuccessGuideState state) {},
-      builder: (BuildContext context, ParentSuccessGuideState state) {
-        final GuideProfileModel guide =
-            state.guide ?? MentorshipRepo.defaultGuides.first;
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
 
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom Right Glow
-              Positioned(
-                right: -150.w,
-                bottom: 0,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<ParentSuccessGuideCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<ParentSuccessGuideCubit, ParentSuccessGuideState>(
+        listener: (BuildContext context, ParentSuccessGuideState state) {},
+        builder: (BuildContext context, ParentSuccessGuideState state) {
+          final GuideProfileModel guide =
+              state.guide ?? MentorshipRepo.defaultGuides.first;
+
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
+                    ),
+                  ),
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: EdgeInsets.all(8.r),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Your Parent Success Guide".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          24.spaceH,
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Image.asset(
-                                  Assets.v2.images.imgSuccessGuide.path,
-                                  fit: BoxFit.contain,
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "Your Parent Success Guide".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            24.spaceH,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: Image.asset(
+                                    Assets.v2.images.imgSuccessGuide.path,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
-                              16.spaceW,
-                              Expanded(
-                                flex: 6,
-                                child:
-                                    "${guide.name} is your dedicated guide who stays with you across everything here so you never have to explain your family from scratch."
-                                        .appText(
-                                          fontSize: 14.sp,
-                                          color: greyColor,
-                                          textAlign: TextAlign.start,
-                                          height: 1.4,
-                                        ),
-                              ),
-                            ],
-                          ),
-                          32.spaceH,
-                          _buildActiveGoalsCard(state.activeGoals),
-                          16.spaceH,
-                          _buildRecommendedNextStepCard(),
-                          160.spaceH,
-                        ],
+                                16.spaceW,
+                                Expanded(
+                                  flex: 6,
+                                  child:
+                                      "${guide.name} is your dedicated guide who stays with you across everything here so you never have to explain your family from scratch."
+                                          .appText(
+                                            fontSize: 14.sp,
+                                            color: greyColor,
+                                            textAlign: TextAlign.start,
+                                            height: 1.4,
+                                          ),
+                                ),
+                              ],
+                            ),
+                            32.spaceH,
+                            _buildActiveGoalsCard(state.activeGoals),
+                            16.spaceH,
+                            _buildRecommendedNextStepCard(),
+                            160.spaceH,
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              _buildBottomActions(context, state, guide),
-            ],
-          ),
-        );
-      },
+                _buildBottomActions(context, state, guide),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

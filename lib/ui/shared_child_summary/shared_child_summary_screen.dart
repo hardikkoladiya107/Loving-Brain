@@ -23,162 +23,174 @@ class SharedChildSummaryScreen extends StatefulWidget {
 }
 
 class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
+  late final SharedChildSummaryCubit _cubit;
+
   @override
   void initState() {
     super.initState();
+    _cubit = SharedChildSummaryCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SharedChildSummaryCubit>().init();
+      _cubit.init();
     });
   }
 
   @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<SharedChildSummaryCubit, SharedChildSummaryState>(
-      listener: (BuildContext context, SharedChildSummaryState state) {},
-      builder: (BuildContext context, SharedChildSummaryState state) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom Right Glow
-              Positioned(
-                right: -150.w,
-                bottom: 0,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
+    return BlocProvider<SharedChildSummaryCubit>.value(
+      value: _cubit,
+      child: BlocConsumer<SharedChildSummaryCubit, SharedChildSummaryState>(
+        listener: (BuildContext context, SharedChildSummaryState state) {},
+        builder: (BuildContext context, SharedChildSummaryState state) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: EdgeInsets.all(8.r),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const FamilyMenuScreen(),
+                    ),
+                  ),
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                padding: EdgeInsets.all(8.r),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
                                 ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: "Manage access".appText(
-                                fontSize: 14.sp,
-                                color: greyColor9,
-                                fontWeight: FontWeight.w600,
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: darkBlue,
+                                  size: 24.sp,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Shared with ${state.partnerName}".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          8.spaceH,
-                          "You're both seeing the same picture of ${state.childName}'s week."
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor,
-                                textAlign: TextAlign.start,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const FamilyMenuScreen(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 8.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: "Manage access".appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor9,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                          24.spaceH,
-                          _buildTodaysPlanCard(state),
-                          24.spaceH,
-                          "RECENT UPDATES".appText(
-                            fontSize: 16.sp,
-                            color: greyColor11,
-                            fontWeight: FontWeight.w700,
-                            textAlign: TextAlign.start,
-                          ),
-                          12.spaceH,
-                          _buildUpdatesCard(state),
-                          16.spaceH,
-                          _buildWhatWereTryingCard(state),
-                          16.spaceH,
-                          _buildInfoCard(state),
-                          140.spaceH,
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "Shared with ${state.partnerName}".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            8.spaceH,
+                            "You're both seeing the same picture of ${state.childName}'s week."
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor,
+                                  textAlign: TextAlign.start,
+                                ),
+                            24.spaceH,
+                            _buildTodaysPlanCard(state),
+                            24.spaceH,
+                            "RECENT UPDATES".appText(
+                              fontSize: 16.sp,
+                              color: greyColor11,
+                              fontWeight: FontWeight.w700,
+                              textAlign: TextAlign.start,
+                            ),
+                            12.spaceH,
+                            _buildUpdatesCard(state),
+                            16.spaceH,
+                            _buildWhatWereTryingCard(state),
+                            16.spaceH,
+                            _buildInfoCard(state),
+                            140.spaceH,
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              _buildBottomActions(context),
-            ],
-          ),
-        );
-      },
+                _buildBottomActions(context),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
