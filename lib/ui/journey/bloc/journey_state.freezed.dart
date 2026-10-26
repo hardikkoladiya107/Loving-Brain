@@ -230,7 +230,7 @@ return $default(_that.mode,_that.child,_that.weeklyInsights,_that.activeExperime
 
 
 class _JourneyState implements JourneyState {
-  const _JourneyState({this.mode = JourneyMode.normal, this.child, this.weeklyInsights, this.activeExperiment, this.savedGuidanceCount = 3, this.timelineEventCount = 0, this.isSleepJourneyEnrolled = true, this.sleepJourneyWeek = 2, this.sleepJourneyTotalWeeks = 6, this.fetchStatus = const ApiResultStatus.initial()});
+  const _JourneyState({this.mode = JourneyMode.normal, this.child, this.weeklyInsights, this.activeExperiment, this.savedGuidanceCount = 0, this.timelineEventCount = 0, this.isSleepJourneyEnrolled = false, this.sleepJourneyWeek = 1, this.sleepJourneyTotalWeeks = 6, this.fetchStatus = const ApiResultStatus.initial()});
   
 
 @override@JsonKey() final  JourneyMode mode;

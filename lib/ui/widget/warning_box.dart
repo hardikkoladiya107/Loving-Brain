@@ -7,12 +7,14 @@ class WarningBox extends StatelessWidget {
   final String label;
   final String body;
   final String? title;
+  final Widget? action;
 
   const WarningBox({
     super.key,
     required this.label,
     required this.body,
     this.title,
+    this.action,
   });
 
   @override
@@ -61,10 +63,11 @@ class WarningBox extends StatelessWidget {
           12.spaceH,
           body.appText(
             fontSize: 14.sp,
-            color: Color(0xFFD54B36),
+            color: const Color(0xFFD54B36),
             fontWeight: FontWeight.w500,
             textAlign: TextAlign.start,
           ),
+          if (action != null) ...[16.spaceH, action!],
         ],
       ),
     );

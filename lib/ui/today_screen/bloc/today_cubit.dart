@@ -38,8 +38,13 @@ class TodayCubit extends Cubit<TodayState> {
     int? confidenceDots,
     String? sleepForecastReason,
     bool? hasSleepLogs,
+    bool? hasMultiDayPatterns,
     String? fellAsleepTime,
     String? wokeUpTime,
+    String? napStartTime,
+    String? napEndTime,
+    bool clearSleepInputs = false,
+    bool clearNapInputs = false,
     bool? showSleepUpdateErrors,
     int? selectedChildMoodIndex,
     String? selectedParentMood,
@@ -76,8 +81,17 @@ class TodayCubit extends Cubit<TodayState> {
         confidenceDots: confidenceDots ?? state.confidenceDots,
         sleepForecastReason: sleepForecastReason ?? state.sleepForecastReason,
         hasSleepLogs: hasSleepLogs ?? state.hasSleepLogs,
-        fellAsleepTime: fellAsleepTime ?? state.fellAsleepTime,
-        wokeUpTime: wokeUpTime ?? state.wokeUpTime,
+        hasMultiDayPatterns: hasMultiDayPatterns ?? state.hasMultiDayPatterns,
+        fellAsleepTime: clearSleepInputs
+            ? null
+            : (fellAsleepTime ?? state.fellAsleepTime),
+        wokeUpTime: clearSleepInputs ? null : (wokeUpTime ?? state.wokeUpTime),
+        napStartTime: (clearSleepInputs || clearNapInputs)
+            ? null
+            : (napStartTime ?? state.napStartTime),
+        napEndTime: (clearSleepInputs || clearNapInputs)
+            ? null
+            : (napEndTime ?? state.napEndTime),
         showSleepUpdateErrors:
             showSleepUpdateErrors ?? state.showSleepUpdateErrors,
         selectedChildMoodIndex:
@@ -242,6 +256,8 @@ class TodayCubit extends Cubit<TodayState> {
         ? TodayMode.normal
         : state.mode;
 
+    final bool hasMultiDayPatterns = sleepLogs.length >= 3;
+
     changeProps(
       mode: updatedMode,
       sleepForecastStart: forecast.windowStart,
@@ -252,6 +268,7 @@ class TodayCubit extends Cubit<TodayState> {
       confidenceDots: forecast.confidenceDots,
       sleepForecastReason: forecast.reason,
       hasSleepLogs: forecast.hasPersonalLogs,
+      hasMultiDayPatterns: hasMultiDayPatterns,
     );
   }
 
@@ -295,12 +312,24 @@ class TodayCubit extends Cubit<TodayState> {
   void setWokeUpTime(String time) =>
       changeProps(wokeUpTime: time, showSleepUpdateErrors: false);
 
+  void setNapTimes(String? start, String? end) => changeProps(
+    napStartTime: start,
+    napEndTime: end,
+    showSleepUpdateErrors: false,
+  );
+
+  void clearNapTimes() => changeProps(clearNapInputs: true);
+
   void triggerSleepUpdateErrors() => changeProps(showSleepUpdateErrors: true);
 
   void toggleNightWaking(bool val) => changeProps(isNightWaking: val);
 
   Future<void> saveSleepLog() async {
-    if (state.fellAsleepTime == null || state.wokeUpTime == null) {
+    final bool hasNight =
+        state.fellAsleepTime != null && state.wokeUpTime != null;
+    final bool hasNap = state.napStartTime != null && state.napEndTime != null;
+
+    if (!hasNight && !hasNap) {
       triggerSleepUpdateErrors();
       return;
     }
@@ -311,46 +340,86 @@ class TodayCubit extends Cubit<TodayState> {
     changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final DateTime now = DateTime.now();
-    final DateTime bedTime = TodayLogRepo.parseTimeString(
-      state.fellAsleepTime!,
-      referenceDate: now,
-    );
-    DateTime wakeTime = TodayLogRepo.parseTimeString(
-      state.wokeUpTime!,
-      referenceDate: now,
-    );
+    ApiResultStatus<String> result = const ApiResultStatus.initial();
 
-    // If wake is earlier or same as bed (e.g. overnight 11:00 PM to 07:00 AM), add 1 day
-    if (!wakeTime.isAfter(bedTime)) {
-      wakeTime = wakeTime.add(const Duration(days: 1));
+    if (hasNight) {
+      final DateTime bedTime = TodayLogRepo.parseTimeString(
+        state.fellAsleepTime!,
+        referenceDate: now,
+      );
+      DateTime wakeTime = TodayLogRepo.parseTimeString(
+        state.wokeUpTime!,
+        referenceDate: now,
+      );
+
+      // If wake is earlier or same as bed (e.g. overnight 11:00 PM to 07:00 AM), add 1 day
+      if (!wakeTime.isAfter(bedTime)) {
+        wakeTime = wakeTime.add(const Duration(days: 1));
+      }
+      final int durationMins = wakeTime.difference(bedTime).inMinutes;
+
+      final SleepLogModel nightLog = SleepLogModel(
+        id: null,
+        date: DateTime(now.year, now.month, now.day),
+        bedTime: bedTime,
+        wakeTime: wakeTime,
+        fellAsleepTime: state.fellAsleepTime,
+        wokeUpTime: state.wokeUpTime,
+        isNightWaking: state.isNightWaking,
+        sleepQualityIndex: state.sleepQualityIndex,
+        durationMinutes: durationMins,
+        userId: userUid,
+        childId: childId,
+        createdAt: now,
+      );
+
+      result = await TodayLogRepo.instance.addSleepLog(
+        childId: childId,
+        log: nightLog,
+      );
     }
-    final int durationMins = wakeTime.difference(bedTime).inMinutes;
 
-    final SleepLogModel log = SleepLogModel(
-      id: null,
-      date: DateTime(now.year, now.month, now.day),
-      bedTime: bedTime,
-      wakeTime: wakeTime,
-      fellAsleepTime: state.fellAsleepTime,
-      wokeUpTime: state.wokeUpTime,
-      isNightWaking: state.isNightWaking,
-      sleepQualityIndex: state.sleepQualityIndex,
-      durationMinutes: durationMins,
-      userId: userUid,
-      childId: childId,
-      createdAt: now,
-    );
+    if (hasNap) {
+      final DateTime napBed = TodayLogRepo.parseTimeString(
+        state.napStartTime!,
+        referenceDate: now,
+      );
+      DateTime napWake = TodayLogRepo.parseTimeString(
+        state.napEndTime!,
+        referenceDate: now,
+      );
+      if (!napWake.isAfter(napBed)) {
+        napWake = napWake.add(const Duration(days: 1));
+      }
+      final int napDurationMins = napWake.difference(napBed).inMinutes;
 
-    final ApiResultStatus<String> result = await TodayLogRepo.instance
-        .addSleepLog(childId: childId, log: log);
+      final SleepLogModel napLog = SleepLogModel(
+        id: null,
+        date: DateTime(now.year, now.month, now.day),
+        bedTime: napBed,
+        wakeTime: napWake,
+        fellAsleepTime: state.napStartTime,
+        wokeUpTime: state.napEndTime,
+        isNightWaking: false,
+        sleepQualityIndex: state.sleepQualityIndex,
+        durationMinutes: napDurationMins,
+        userId: userUid,
+        childId: childId,
+        createdAt: now,
+      );
+
+      result = await TodayLogRepo.instance.addSleepLog(
+        childId: childId,
+        log: napLog,
+      );
+    }
 
     if (result is Data<String>) {
       changeProps(
         isLoading: false,
         isSuccess: true,
         saveStatus: result,
-        fellAsleepTime: null,
-        wokeUpTime: null,
+        clearSleepInputs: true,
         isNightWaking: false,
         sleepQualityIndex: 3,
         showSleepUpdateErrors: false,

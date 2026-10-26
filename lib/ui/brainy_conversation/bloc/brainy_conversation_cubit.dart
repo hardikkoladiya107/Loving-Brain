@@ -616,6 +616,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         }
       }
 
+      if (messages.length == 2) {
+        messages.add(
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_help' : null,
+            type: MessageType.aiInfo,
+            chipTitle: 'When to get help',
+            headline: 'Reach out if challenges persist over 2–3 weeks',
+            subtext:
+                'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
+            isSaved: isSaved,
+          ),
+        );
+      }
+
       return messages;
     }
 
@@ -629,6 +643,24 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         subtext: parsed.$2,
         isSaved: isSaved,
       ),
+      BrainyMessage(
+        id: baseId != null ? '${baseId}_action' : null,
+        type: MessageType.aiAction,
+        chipTitle: 'What to try now',
+        headline: 'Focus on one calm, predictable step today',
+        subtext:
+            'Small, steady interactions help reassure your child and bring rhythm back into balance.',
+        isSaved: isSaved,
+      ),
+      BrainyMessage(
+        id: baseId != null ? '${baseId}_help' : null,
+        type: MessageType.aiInfo,
+        chipTitle: 'When to get help',
+        headline: 'Reach out if challenges persist over 2–3 weeks',
+        subtext:
+            'If difficulties continue despite consistency, consult your pediatrician or care provider for personalized guidance.',
+        isSaved: isSaved,
+      ),
     ];
   }
 
@@ -640,7 +672,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           (l) =>
               l.isNotEmpty &&
               !l.toLowerCase().startsWith('what may be happening') &&
-              !l.toLowerCase().startsWith('what to try now'),
+              !l.toLowerCase().startsWith('what to try now') &&
+              !l.toLowerCase().startsWith('when to get help'),
         )
         .toList();
 
@@ -677,11 +710,66 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     final String lower = question.toLowerCase();
     final String topic = (state.topic ?? '').toLowerCase();
 
-    if (lower.contains('nap') ||
+    final bool isFoodQuery =
+        lower.contains('vegetable') ||
+        lower.contains('food') ||
+        lower.contains('eat') ||
+        lower.contains('eating') ||
+        lower.contains('dinner') ||
+        lower.contains('lunch') ||
+        lower.contains('breakfast') ||
+        lower.contains('snack') ||
+        lower.contains('meal') ||
+        lower.contains('picky') ||
+        lower.contains('feeding');
+
+    if (isFoodQuery) {
+      return [
+        BrainyMessage(
+          type: MessageType.aiInfo,
+          chipTitle: 'What may be happening',
+          headline: "$childName's taste buds and autonomy are developing",
+          subtext:
+              'Bitter taste receptors are naturally heightened at this age, and selective eating is one of the most common ways toddlers assert control over their bodies.',
+        ),
+        BrainyMessage(
+          type: MessageType.aiAction,
+          chipTitle: 'What to try now',
+          headline: 'Keep mealtimes pressure-free with small portions',
+          subtext:
+              'Serve a tiny, non-intimidating portion of vegetables alongside trusted safe foods. Let $childName decide whether to touch or taste without cajoling or pressure.',
+        ),
+        BrainyMessage(
+          type: MessageType.aiInfo,
+          chipTitle: 'When to get help',
+          headline: 'Consult a professional if growth or sensory issues stall',
+          subtext:
+              'If $childName gags frequently on solids, drops growth percentiles, or completely eliminates whole food groups for more than a month, consult your pediatrician.',
+        ),
+      ];
+    }
+
+    final bool isSleepQuery =
+        lower.contains('nap') ||
         lower.contains('bedtime') ||
         lower.contains('sleep') ||
         lower.contains('wake') ||
-        topic == 'sleep') {
+        lower.contains('night');
+
+    final bool isTantrumQuery =
+        lower.contains('tantrum') ||
+        lower.contains('meltdown') ||
+        lower.contains('hitting') ||
+        lower.contains('crying') ||
+        lower.contains('transition');
+
+    final bool isMoodQuery =
+        lower.contains('clingy') ||
+        lower.contains('mood') ||
+        lower.contains('whining') ||
+        lower.contains('cry');
+
+    if (isSleepQuery || (!isTantrumQuery && !isMoodQuery && topic == 'sleep')) {
       final String bedtimeNote = (child?.usualBedtime ?? '').isNotEmpty
           ? ' around ${child!.usualBedtime}'
           : '';
@@ -694,21 +782,23 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
               'Shifts in daytime naps or evening stimulation$bedtimeNote can trigger a second wind of cortisol right when sleep pressure should peak.',
         ),
         BrainyMessage(
-          type: MessageType.aiInfo,
+          type: MessageType.aiAction,
           chipTitle: 'What to try now',
-
           headline: 'Start a quiet wind-down 20–30 minutes earlier',
           subtext:
               'Dim the lights, lower voice volume, and repeat the same 2–3 calm bedtime cues so $childName feels safe and ready to rest.',
         ),
+        BrainyMessage(
+          type: MessageType.aiInfo,
+          chipTitle: 'When to get help',
+          headline: 'Reach out if sleep struggles persist past 2–3 weeks',
+          subtext:
+              'If bedtime resistance lasts over two weeks, or is accompanied by loud snoring, pauses in breathing, or severe daytime exhaustion, discuss it with your pediatrician.',
+        ),
       ];
     }
 
-    if (lower.contains('tantrum') ||
-        lower.contains('meltdown') ||
-        lower.contains('hitting') ||
-        lower.contains('transition') ||
-        topic == 'behaviour') {
+    if (isTantrumQuery || (!isMoodQuery && topic == 'behaviour')) {
       return [
         BrainyMessage(
           type: MessageType.aiInfo,
@@ -724,13 +814,17 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           subtext:
               'Get down to eye level, validate the feeling in one short sentence ("It is hard to stop playing"), and offer a simple two-choice transition.',
         ),
+        BrainyMessage(
+          type: MessageType.aiInfo,
+          chipTitle: 'When to get help',
+          headline: 'Seek evaluation if meltdowns become unsafe or extreme',
+          subtext:
+              'If tantrums regularly exceed 45 minutes, involve self-injury, or do not respond to soothing presence over several weeks, seek advice from your pediatrician.',
+        ),
       ];
     }
 
-    if (lower.contains('clingy') ||
-        lower.contains('mood') ||
-        lower.contains('cry') ||
-        topic == 'mood') {
+    if (isMoodQuery || topic == 'mood') {
       return [
         BrainyMessage(
           type: MessageType.aiInfo,
@@ -745,6 +839,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           headline: 'Offer 5 minutes of undivided "fill-the-cup" connection',
           subtext:
               'Follow $childName\'s lead in quiet play without questions or corrections before stepping away for routine tasks.',
+        ),
+        BrainyMessage(
+          type: MessageType.aiInfo,
+          chipTitle: 'When to get help',
+          headline: 'Check in if distress becomes persistent or pervasive',
+          subtext:
+              'If heightened clinginess, sadness, or anxiety interferes with basic routines for more than two weeks, consult your child\'s healthcare provider.',
         ),
       ];
     }
@@ -763,6 +864,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         headline: 'Focus on one predictable anchor today',
         subtext:
             'Keep the next meal or bedtime transition calm and unhurried, and notice how $childName responds.',
+      ),
+      BrainyMessage(
+        type: MessageType.aiInfo,
+        chipTitle: 'When to get help',
+        headline: 'Reach out if concerns persist or feel overwhelming',
+        subtext:
+            'If you have ongoing concerns regarding developmental milestones or persistent family distress, connect with your pediatrician or family specialist.',
       ),
     ];
   }

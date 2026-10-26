@@ -14,5 +14,8 @@ abstract class OtpState with _$OtpState {
     @Default(30) int resendCountdown,
     @Default(false) bool canResend,
     @Default('') String destination,
+    @Default(0) int failedAttempts,
+    @Default(false) bool isLocked,
+    @Default(0) int lockoutSeconds,
   }) = _OtpState;
 }

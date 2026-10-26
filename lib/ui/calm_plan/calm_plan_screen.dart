@@ -272,55 +272,96 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
   }
 
   Widget _buildAudioCard(BuildContext context, CalmPlanState state) {
+    final int minutes = state.audioPositionSeconds ~/ 60;
+    final int seconds = state.audioPositionSeconds % 60;
+    final String timeStr = '$minutes:${seconds.toString().padLeft(2, '0')}';
+
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
+        border: state.isAudioPlaying
+            ? Border.all(
+                color: secondaryColor.withValues(alpha: 0.5),
+                width: 1.5.w,
+              )
+            : null,
       ),
-      child: Row(
-        children: [
-          Material(
-            color: Colors.transparent,
-            child: Ink(
-              decoration: const BoxDecoration(
-                color: secondaryColor,
-                shape: BoxShape.circle,
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(24.r),
-                onTap: () => context.read<CalmPlanCubit>().toggleAudio(),
-                child: SizedBox(
-                  width: 48.w,
-                  height: 48.w,
-                  child: Icon(
-                    state.isAudioPlaying ? Icons.pause : Icons.play_arrow,
-                    color: Colors.white,
-                    size: 28.sp,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          16.spaceW,
-          Expanded(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: () => context.read<CalmPlanCubit>().toggleAudio(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                "Calm audio guide".appText(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
+                Row(
+                  children: [
+                    Container(
+                      width: 48.w,
+                      height: 48.w,
+                      decoration: const BoxDecoration(
+                        color: secondaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        state.isAudioPlaying ? Icons.pause : Icons.play_arrow,
+                        color: Colors.white,
+                        size: 28.sp,
+                      ),
+                    ),
+                    16.spaceW,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          "Calm audio guide".appText(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          4.spaceH,
+                          (state.isAudioPlaying
+                                  ? "Playing · $timeStr / 3:00"
+                                  : "3 min · a voice to follow along with")
+                              .appText(
+                                fontSize: 13.sp,
+                                color: state.isAudioPlaying
+                                    ? secondaryColor
+                                    : greyColor4,
+                                fontWeight: state.isAudioPlaying
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                              ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                4.spaceH,
-                "3 min · a voice to follow along with".appText(
-                  fontSize: 13.sp,
-                  color: greyColor4,
-                ),
+                if (state.isAudioPlaying) ...[
+                  12.spaceH,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4.r),
+                    child: LinearProgressIndicator(
+                      value:
+                          (state.audioPositionSeconds /
+                                  (state.audioDurationSeconds > 0
+                                      ? state.audioDurationSeconds
+                                      : 180))
+                              .clamp(0.0, 1.0),
+                      backgroundColor: secondaryColor.withValues(alpha: 0.15),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        secondaryColor,
+                      ),
+                      minHeight: 4.h,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

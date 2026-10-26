@@ -227,7 +227,7 @@ return $default(_that.isLoading,_that.childName,_that.allergies,_that.medication
 
 
 class _ChildEssentialsState implements ChildEssentialsState {
-  const _ChildEssentialsState({this.isLoading = false, this.childName = 'your child',  List<String> allergies = const <String>['Peanuts (mild)', 'Dairy sensitivity'],  List<String> medications = const <String>['Vitamin D drops (daily, 400 IU)'],  List<String> emergencyContacts = const <String>['Mom: (555) 234-5678', 'Dad: (555) 876-5432', 'Poison Control: (800) 222-1222'], this.pediatrician = 'Dr. Sarah Lin, Willow Pediatrics', this.fetchStatus = const ApiResultStatus.initial()}): _allergies = allergies,_medications = medications,_emergencyContacts = emergencyContacts;
+  const _ChildEssentialsState({this.isLoading = false, this.childName = 'your child',  List<String> allergies = const <String>[],  List<String> medications = const <String>[],  List<String> emergencyContacts = const <String>[], this.pediatrician = '', this.fetchStatus = const ApiResultStatus.initial()}): _allergies = allergies,_medications = medications,_emergencyContacts = emergencyContacts;
   
 
 @override@JsonKey() final  bool isLoading;

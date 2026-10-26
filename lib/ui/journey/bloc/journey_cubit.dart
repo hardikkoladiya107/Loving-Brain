@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/core/journey_insights_engine.dart';
 import 'package:loving_brain/model/active_experiment_model.dart';
@@ -9,7 +10,9 @@ import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/experiment_repo.dart';
+import 'package:loving_brain/repo/mentorship_repo.dart';
 import 'package:loving_brain/repo/sleep_log_repo.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 import 'journey_state.dart';
@@ -106,6 +109,35 @@ class JourneyCubit extends Cubit<JourneyState> {
       } catch (_) {}
     }
 
+    int savedCount = 0;
+    final String uid = preferences.getUserModel()?.uid ?? '';
+    if (uid.isNotEmpty) {
+      try {
+        final QuerySnapshot<Map<String, dynamic>> snap = await AuthRepo
+            .instance
+            .userCollection
+            .doc(uid)
+            .collection('saved_guidance')
+            .get();
+        savedCount = snap.docs.length;
+      } catch (_) {}
+    }
+
+    bool isEnrolled = false;
+    int currentWeek = 1;
+    int totalWeeks = 6;
+    if (childId.isNotEmpty) {
+      try {
+        final DocumentSnapshot<Map<String, dynamic>> progDoc =
+            await MentorshipRepo.instance.programsCollection.doc(childId).get();
+        if (progDoc.exists && progDoc.data() != null) {
+          isEnrolled = true;
+          currentWeek = (progDoc.data()!['current_week'] as int?) ?? 1;
+          totalWeeks = (progDoc.data()!['total_weeks'] as int?) ?? 6;
+        }
+      } catch (_) {}
+    }
+
     final WeeklyInsightsResult insights = JourneyInsightsEngine.calculate(
       child: child,
       sleepLogs: sleepLogs,
@@ -128,6 +160,10 @@ class JourneyCubit extends Cubit<JourneyState> {
       weeklyInsights: insights,
       activeExperiment: activeExperiment,
       mode: calculatedMode,
+      savedGuidanceCount: savedCount,
+      isSleepJourneyEnrolled: isEnrolled,
+      sleepJourneyWeek: currentWeek,
+      sleepJourneyTotalWeeks: totalWeeks,
       timelineEventCount: timelineEvents.length,
       fetchStatus: const ApiResultStatus.data(data: null),
     );

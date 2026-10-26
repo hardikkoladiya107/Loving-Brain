@@ -360,12 +360,61 @@ Contact emergency medical services or proceed to the nearest emergency departmen
       childId: childModel?.reference?.id,
     );
 
-    // Sleep queries
-    if (lower.contains('sleep') ||
+    // Food, eating, and vegetable queries (prioritize over topic chip)
+    final bool isFoodQuery =
+        lower.contains('vegetable') ||
+        lower.contains('food') ||
+        lower.contains('eat') ||
+        lower.contains('eating') ||
+        lower.contains('dinner') ||
+        lower.contains('lunch') ||
+        lower.contains('breakfast') ||
+        lower.contains('snack') ||
+        lower.contains('meal') ||
+        lower.contains('picky') ||
+        lower.contains('feeding');
+
+    if (isFoodQuery) {
+      return '''
+Food refusal and selective eating around vegetables are common expressions of developing autonomy and taste bud sensitivity.
+At $age, bitter taste receptors are naturally heightened, and toddlers frequently use mealtime boundaries to exercise control over their bodies.
+---
+Apply the 'division of responsibility': you decide what to serve and when, while $childName decides whether and how much to eat.
+Keep mealtimes pressure-free. Serve tiny, bite-sized portions of vegetables alongside familiar safe foods without cajoling, praising, or bargaining.
+---
+If you observe persistent gagging on textures, significant weight loss, or refusal of entire food groups for more than a month, seek guidance from your pediatrician or a feeding specialist.
+''';
+    }
+
+    // Tantrum / Meltdown queries (prioritize question keywords)
+    final bool isTantrumQuery =
+        lower.contains('tantrum') ||
+        lower.contains('meltdown') ||
+        lower.contains('crying') ||
+        lower.contains('angry') ||
+        lower.contains('hitting') ||
+        lower.contains('trigger') ||
+        lower.contains('screaming');
+
+    // Sleep queries (prioritize question keywords)
+    final bool isSleepQuery =
+        lower.contains('sleep') ||
         lower.contains('bedtime') ||
         lower.contains('nap') ||
         lower.contains('wake') ||
-        lowerTopic == 'sleep') {
+        lower.contains('night');
+
+    // Health / Sickness queries
+    final bool isHealthQuery =
+        lower.contains('fever') ||
+        lower.contains('health') ||
+        lower.contains('sick') ||
+        lower.contains('cough') ||
+        lower.contains('teeth') ||
+        lower.contains('teething');
+
+    if (isSleepQuery ||
+        (!isTantrumQuery && !isHealthQuery && lowerTopic == 'sleep')) {
       final Map<String, dynamic>? sleep =
           todayData['sleep'] as Map<String, dynamic>?;
       final String bedtime = childModel?.usualBedtime ?? 'their usual bedtime';
@@ -389,14 +438,7 @@ If bedtime pushback persists for over 2 weeks alongside intense night terrors or
 ''';
     }
 
-    // Tantrum / Meltdown queries
-    if (lower.contains('tantrum') ||
-        lower.contains('meltdown') ||
-        lower.contains('crying') ||
-        lower.contains('angry') ||
-        lower.contains('hitting') ||
-        lower.contains('trigger') ||
-        lowerTopic == 'behaviour') {
+    if (isTantrumQuery || (!isHealthQuery && lowerTopic == 'behaviour')) {
       final List<dynamic>? tantrums = todayData['tantrums'] as List<dynamic>?;
       String tantrumContext = '';
       String whatHelpedAdvice =

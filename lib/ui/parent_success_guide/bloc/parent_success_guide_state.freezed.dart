@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ParentSuccessGuideState {
 
- bool get isLoading; GuideProfileModel? get guide; List<String> get activeGoals; List<MentorshipRequestModel> get pendingRequests; ApiResultStatus<dynamic> get fetchStatus;
+ bool get isLoading; GuideProfileModel? get guide; List<String> get activeGoals; List<MentorshipRequestModel> get pendingRequests; String? get recommendedNextStep; String? get recommendedNextStepSubtitle; ApiResultStatus<dynamic> get fetchStatus;
 /// Create a copy of ParentSuccessGuideState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ParentSuccessGuideStateCopyWith<ParentSuccessGuideState> get copyWith => _$Pare
 @override
 bool operator ==(Object other) {
   final _this = this as ParentSuccessGuideState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParentSuccessGuideState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.guide, _this.guide) || other.guide == _this.guide)&&const DeepCollectionEquality().equals(other.activeGoals, _this.activeGoals)&&const DeepCollectionEquality().equals(other.pendingRequests, _this.pendingRequests)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParentSuccessGuideState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.guide, _this.guide) || other.guide == _this.guide)&&const DeepCollectionEquality().equals(other.activeGoals, _this.activeGoals)&&const DeepCollectionEquality().equals(other.pendingRequests, _this.pendingRequests)&&(identical(other.recommendedNextStep, _this.recommendedNextStep) || other.recommendedNextStep == _this.recommendedNextStep)&&(identical(other.recommendedNextStepSubtitle, _this.recommendedNextStepSubtitle) || other.recommendedNextStepSubtitle == _this.recommendedNextStepSubtitle)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ParentSuccessGuideState;
-  return Object.hash(runtimeType,_this.isLoading,_this.guide,const DeepCollectionEquality().hash(_this.activeGoals),const DeepCollectionEquality().hash(_this.pendingRequests),_this.fetchStatus);
+  return Object.hash(runtimeType,_this.isLoading,_this.guide,const DeepCollectionEquality().hash(_this.activeGoals),const DeepCollectionEquality().hash(_this.pendingRequests),_this.recommendedNextStep,_this.recommendedNextStepSubtitle,_this.fetchStatus);
 }
 
 @override
 String toString() {
   final _this = this as ParentSuccessGuideState;
-  return 'ParentSuccessGuideState(isLoading: ${_this.isLoading}, guide: ${_this.guide}, activeGoals: ${_this.activeGoals}, pendingRequests: ${_this.pendingRequests}, fetchStatus: ${_this.fetchStatus})';
+  return 'ParentSuccessGuideState(isLoading: ${_this.isLoading}, guide: ${_this.guide}, activeGoals: ${_this.activeGoals}, pendingRequests: ${_this.pendingRequests}, recommendedNextStep: ${_this.recommendedNextStep}, recommendedNextStepSubtitle: ${_this.recommendedNextStepSubtitle}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ParentSuccessGuideStateCopyWith<$Res>  {
   factory $ParentSuccessGuideStateCopyWith(ParentSuccessGuideState value, $Res Function(ParentSuccessGuideState) _then) = _$ParentSuccessGuideStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, GuideProfileModel? guide, List<String> activeGoals, List<MentorshipRequestModel> pendingRequests, ApiResultStatus<dynamic> fetchStatus
+ bool isLoading, GuideProfileModel? guide, List<String> activeGoals, List<MentorshipRequestModel> pendingRequests, String? recommendedNextStep, String? recommendedNextStepSubtitle, ApiResultStatus<dynamic> fetchStatus
 });
 
 
@@ -68,13 +68,15 @@ class _$ParentSuccessGuideStateCopyWithImpl<$Res>
 
 /// Create a copy of ParentSuccessGuideState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? guide = freezed,Object? activeGoals = null,Object? pendingRequests = null,Object? fetchStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? guide = freezed,Object? activeGoals = null,Object? pendingRequests = null,Object? recommendedNextStep = freezed,Object? recommendedNextStepSubtitle = freezed,Object? fetchStatus = null,}) {
   return _then(ParentSuccessGuideState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,guide: freezed == guide ? _self.guide : guide // ignore: cast_nullable_to_non_nullable
 as GuideProfileModel?,activeGoals: null == activeGoals ? _self.activeGoals : activeGoals // ignore: cast_nullable_to_non_nullable
 as List<String>,pendingRequests: null == pendingRequests ? _self.pendingRequests : pendingRequests // ignore: cast_nullable_to_non_nullable
-as List<MentorshipRequestModel>,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as List<MentorshipRequestModel>,recommendedNextStep: freezed == recommendedNextStep ? _self.recommendedNextStep : recommendedNextStep // ignore: cast_nullable_to_non_nullable
+as String?,recommendedNextStepSubtitle: freezed == recommendedNextStepSubtitle ? _self.recommendedNextStepSubtitle : recommendedNextStepSubtitle // ignore: cast_nullable_to_non_nullable
+as String?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }
@@ -169,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  GuideProfileModel? guide,  List<String> activeGoals,  List<MentorshipRequestModel> pendingRequests,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  GuideProfileModel? guide,  List<String> activeGoals,  List<MentorshipRequestModel> pendingRequests,  String? recommendedNextStep,  String? recommendedNextStepSubtitle,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ParentSuccessGuideState() when $default != null:
-return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingRequests,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingRequests,_that.recommendedNextStep,_that.recommendedNextStepSubtitle,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -190,10 +192,10 @@ return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingReque
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  GuideProfileModel? guide,  List<String> activeGoals,  List<MentorshipRequestModel> pendingRequests,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  GuideProfileModel? guide,  List<String> activeGoals,  List<MentorshipRequestModel> pendingRequests,  String? recommendedNextStep,  String? recommendedNextStepSubtitle,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ParentSuccessGuideState():
-return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingRequests,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingRequests,_that.recommendedNextStep,_that.recommendedNextStepSubtitle,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -210,10 +212,10 @@ return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingReque
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  GuideProfileModel? guide,  List<String> activeGoals,  List<MentorshipRequestModel> pendingRequests,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  GuideProfileModel? guide,  List<String> activeGoals,  List<MentorshipRequestModel> pendingRequests,  String? recommendedNextStep,  String? recommendedNextStepSubtitle,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ParentSuccessGuideState() when $default != null:
-return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingRequests,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingRequests,_that.recommendedNextStep,_that.recommendedNextStepSubtitle,_that.fetchStatus);case _:
   return null;
 
 }
@@ -225,7 +227,7 @@ return $default(_that.isLoading,_that.guide,_that.activeGoals,_that.pendingReque
 
 
 class _ParentSuccessGuideState implements ParentSuccessGuideState {
-  const _ParentSuccessGuideState({this.isLoading = false, this.guide,  List<String> activeGoals = const <String>['Shift bedtime by 15 minutes', 'Consistent evening wind-down routine'],  List<MentorshipRequestModel> pendingRequests = const <MentorshipRequestModel>[], this.fetchStatus = const ApiResultStatus.initial()}): _activeGoals = activeGoals,_pendingRequests = pendingRequests;
+  const _ParentSuccessGuideState({this.isLoading = false, this.guide,  List<String> activeGoals = const <String>[],  List<MentorshipRequestModel> pendingRequests = const <MentorshipRequestModel>[], this.recommendedNextStep = null, this.recommendedNextStepSubtitle = null, this.fetchStatus = const ApiResultStatus.initial()}): _activeGoals = activeGoals,_pendingRequests = pendingRequests;
   
 
 @override@JsonKey() final  bool isLoading;
@@ -244,6 +246,8 @@ class _ParentSuccessGuideState implements ParentSuccessGuideState {
   return EqualUnmodifiableListView(_pendingRequests);
 }
 
+@override@JsonKey() final  String? recommendedNextStep;
+@override@JsonKey() final  String? recommendedNextStepSubtitle;
 @override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
 /// Create a copy of ParentSuccessGuideState
@@ -256,18 +260,18 @@ _$ParentSuccessGuideStateCopyWith<_ParentSuccessGuideState> get copyWith => __$P
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ParentSuccessGuideState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.guide, guide) || other.guide == guide)&&const DeepCollectionEquality().equals(other.activeGoals, _activeGoals)&&const DeepCollectionEquality().equals(other.pendingRequests, _pendingRequests)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ParentSuccessGuideState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.guide, guide) || other.guide == guide)&&const DeepCollectionEquality().equals(other.activeGoals, _activeGoals)&&const DeepCollectionEquality().equals(other.pendingRequests, _pendingRequests)&&(identical(other.recommendedNextStep, recommendedNextStep) || other.recommendedNextStep == recommendedNextStep)&&(identical(other.recommendedNextStepSubtitle, recommendedNextStepSubtitle) || other.recommendedNextStepSubtitle == recommendedNextStepSubtitle)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoading,guide,const DeepCollectionEquality().hash(_activeGoals),const DeepCollectionEquality().hash(_pendingRequests),fetchStatus);
+    return Object.hash(runtimeType,isLoading,guide,const DeepCollectionEquality().hash(_activeGoals),const DeepCollectionEquality().hash(_pendingRequests),recommendedNextStep,recommendedNextStepSubtitle,fetchStatus);
 }
 
 @override
 String toString() {
-    return 'ParentSuccessGuideState(isLoading: $isLoading, guide: $guide, activeGoals: $activeGoals, pendingRequests: $pendingRequests, fetchStatus: $fetchStatus)';
+    return 'ParentSuccessGuideState(isLoading: $isLoading, guide: $guide, activeGoals: $activeGoals, pendingRequests: $pendingRequests, recommendedNextStep: $recommendedNextStep, recommendedNextStepSubtitle: $recommendedNextStepSubtitle, fetchStatus: $fetchStatus)';
 }
 
 
@@ -278,7 +282,7 @@ abstract mixin class _$ParentSuccessGuideStateCopyWith<$Res> implements $ParentS
   factory _$ParentSuccessGuideStateCopyWith(_ParentSuccessGuideState value, $Res Function(_ParentSuccessGuideState) _then) = __$ParentSuccessGuideStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, GuideProfileModel? guide, List<String> activeGoals, List<MentorshipRequestModel> pendingRequests, ApiResultStatus<dynamic> fetchStatus
+ bool isLoading, GuideProfileModel? guide, List<String> activeGoals, List<MentorshipRequestModel> pendingRequests, String? recommendedNextStep, String? recommendedNextStepSubtitle, ApiResultStatus<dynamic> fetchStatus
 });
 
 
@@ -295,13 +299,15 @@ class __$ParentSuccessGuideStateCopyWithImpl<$Res>
 
 /// Create a copy of ParentSuccessGuideState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? guide = freezed,Object? activeGoals = null,Object? pendingRequests = null,Object? fetchStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? guide = freezed,Object? activeGoals = null,Object? pendingRequests = null,Object? recommendedNextStep = freezed,Object? recommendedNextStepSubtitle = freezed,Object? fetchStatus = null,}) {
   return _then(_ParentSuccessGuideState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,guide: freezed == guide ? _self.guide : guide // ignore: cast_nullable_to_non_nullable
 as GuideProfileModel?,activeGoals: null == activeGoals ? _self._activeGoals : activeGoals // ignore: cast_nullable_to_non_nullable
 as List<String>,pendingRequests: null == pendingRequests ? _self._pendingRequests : pendingRequests // ignore: cast_nullable_to_non_nullable
-as List<MentorshipRequestModel>,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as List<MentorshipRequestModel>,recommendedNextStep: freezed == recommendedNextStep ? _self.recommendedNextStep : recommendedNextStep // ignore: cast_nullable_to_non_nullable
+as String?,recommendedNextStepSubtitle: freezed == recommendedNextStepSubtitle ? _self.recommendedNextStepSubtitle : recommendedNextStepSubtitle // ignore: cast_nullable_to_non_nullable
+as String?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }

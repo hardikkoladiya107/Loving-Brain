@@ -12,7 +12,7 @@ class BrainyVoiceState {
     this.isRecording = false,
     this.isProcessing = false,
     this.elapsedSeconds = 0,
-    this.previewText = 'She keeps waking around four in the morning...',
+    this.previewText = '',
     this.recordedFile,
     this.topic = 'Behaviour',
   });

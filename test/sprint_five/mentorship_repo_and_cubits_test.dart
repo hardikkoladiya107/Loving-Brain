@@ -251,7 +251,7 @@ void main() {
       await cubit.init();
 
       expect(cubit.state.guide?.name, isNotNull);
-      expect(cubit.state.activeGoals.length, 2);
+      expect(cubit.state.activeGoals, isEmpty);
 
       // Create a temporary request in repo
       final MentorshipRequestModel req = MentorshipRequestModel(

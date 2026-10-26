@@ -191,7 +191,7 @@ void main() {
       );
       expect(
         TimelineEventModel.fromMap(sleepData, id: 'event_1').subtitle,
-        equals('90 min sleep • Quality: 4/5'),
+        equals('1h 30m sleep • Quality: 4/5'),
       );
     });
   });
@@ -238,6 +238,14 @@ void main() {
 
       cubit.setSleepQuality(4);
       expect(cubit.state.sleepQualityIndex, equals(4));
+
+      cubit.setNapTimes('01:00 PM', '02:30 PM');
+      expect(cubit.state.napStartTime, equals('01:00 PM'));
+      expect(cubit.state.napEndTime, equals('02:30 PM'));
+
+      cubit.clearNapTimes();
+      expect(cubit.state.napStartTime, isNull);
+      expect(cubit.state.napEndTime, isNull);
     });
 
     test('tantrum trigger toggle adds and removes triggers correctly', () {

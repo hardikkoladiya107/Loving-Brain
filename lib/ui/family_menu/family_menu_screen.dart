@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/ui/family_sharing_consent/family_sharing_consent_screen.dart';
 import 'package:loving_brain/ui/invite_caregiver/invite_caregiver_screen.dart';
 import 'package:loving_brain/ui/invite_pending/invite_pending_screen.dart';
 import 'package:loving_brain/ui/permissions/permissions_screen.dart';
@@ -173,7 +175,8 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                   ),
                                 ),
                                 name: c.name,
-                                subtitle: "Invite sent 2 days ago",
+                                subtitle:
+                                    "${c.role} · ${c.daysRemaining} days left",
                                 statusPill: StatusPill.awaitingResponse(),
                                 showChevron: true,
                                 onTap: () {
@@ -189,16 +192,31 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                         childName: state.childName,
                                       ),
                                     ),
-                                  );
+                                  ).then((_) {
+                                    if (context.mounted) {
+                                      context.read<FamilyMenuCubit>().init();
+                                    }
+                                  });
                                 },
                               ),
                             );
                           }),
                           24.spaceH,
-                          InfoBox.orange(
-                            title: "How sharing works",
-                            body:
-                                "You choose what each person sees, and can change it or remove access at any time.",
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      const FamilySharingConsentScreen(),
+                                ),
+                              );
+                            },
+                            child: InfoBox.orange(
+                              title: "How sharing works",
+                              body:
+                                  "You choose what each person sees, and can change it or remove access at any time.",
+                            ),
                           ),
                           140.spaceH,
                         ],
@@ -242,10 +260,20 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
         child: AppButton(
           title: "Invite a caregiver",
           onTap: () {
+            final bool hasConsented =
+                preferences.getBool(SharedPreference.isFamilyConsentGranted) ??
+                false;
+            final Widget destination = hasConsented
+                ? const InviteCaregiverScreen()
+                : const FamilySharingConsentScreen();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const InviteCaregiverScreen()),
-            );
+              MaterialPageRoute(builder: (_) => destination),
+            ).then((_) {
+              if (context.mounted) {
+                context.read<FamilyMenuCubit>().init();
+              }
+            });
           },
         ),
       ),

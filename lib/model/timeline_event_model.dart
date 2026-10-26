@@ -50,26 +50,41 @@ class TimelineEventModel {
     return DateTime.now();
   }
 
+  static String formatSleepDuration(int minutes) {
+    if (minutes < 60) return '$minutes min sleep';
+    final int h = minutes ~/ 60;
+    final int m = minutes % 60;
+    if (m == 0) return '${h}h sleep';
+    return '${h}h ${m}m sleep';
+  }
+
+  static String _cleanSubtitle(String sub) {
+    return sub.replaceAllMapped(RegExp(r'(\d+)\s*min sleep'), (Match m) {
+      final int mins = int.tryParse(m.group(1) ?? '') ?? 0;
+      return formatSleepDuration(mins);
+    });
+  }
+
   static String _titleFor(String type, Map<String, dynamic> data) {
     switch (type) {
       case 'smart_moment':
         return 'Smart Moment';
       case 'help_flow':
-        return 'Help guidance';
+        return 'Calm guidance';
       case 'feed':
-        return 'Feed logged';
+        return 'Nutrition & feeding';
       case 'sleep_start':
-        return 'Sleep started';
+        return 'Bedtime started';
       case 'sleep_end':
-        return 'Sleep ended';
+        return 'Morning wake-up';
       case 'state_update':
-        return 'State updated';
+        return 'State check-in';
       case 'milestone':
         return (data['title'] as String?) ?? 'Milestone saved';
       case 'sleep_log':
-        return (data['title'] as String?) ?? 'Sleep logged';
+        return (data['title'] as String?) ?? 'Sleep check-in';
       case 'tantrum_log':
-        return (data['title'] as String?) ?? 'Tantrum logged';
+        return (data['title'] as String?) ?? 'Tantrum note';
       case 'mood_log':
         return (data['title'] as String?) ?? 'Mood check-in';
       case 'health_log':
@@ -87,7 +102,7 @@ class TimelineEventModel {
         final String state = (data['state_at_time'] as String?) ?? '';
         return state.isEmpty ? 'Connection activity completed' : state;
       case 'help_flow':
-        return (data['problem_type'] as String?) ?? 'Help used';
+        return (data['problem_type'] as String?) ?? 'Guidance used';
       case 'feed':
         return 'Feed recorded';
       case 'sleep_start':
@@ -95,7 +110,7 @@ class TimelineEventModel {
       case 'sleep_end':
         final int? minutes = data['duration_minutes'] as int?;
         if (minutes != null) {
-          return '$minutes min sleep';
+          return formatSleepDuration(minutes);
         }
         return 'Sleep session ended';
       case 'state_update':
@@ -111,9 +126,11 @@ class TimelineEventModel {
       case 'mood_log':
       case 'health_log':
       case 'quick_note':
-        return (data['subtitle'] as String?) ?? '';
+        final String sub = (data['subtitle'] as String?) ?? '';
+        return _cleanSubtitle(sub);
       default:
-        return (data['subtitle'] as String?) ?? '';
+        final String sub = (data['subtitle'] as String?) ?? '';
+        return _cleanSubtitle(sub);
     }
   }
 }

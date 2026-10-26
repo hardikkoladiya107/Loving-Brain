@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -5,6 +8,8 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'privacy_data_state.dart';
 
@@ -55,17 +60,35 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         .instance
         .exportUserData(userId: uid);
 
-    result.whenOrNull(
-      data: (Map<String, dynamic> data) {
-        changeProps(
-          exportStatus: ApiResultStatus.data(data: data),
-          exportedData: data,
+    if (result is Data<Map<String, dynamic>>) {
+      changeProps(
+        exportStatus: ApiResultStatus.data(data: result.data),
+        exportedData: result.data,
+      );
+
+      try {
+        final Directory tempDir = await getTemporaryDirectory();
+        final String jsonStr = const JsonEncoder.withIndent(
+          '  ',
+        ).convert(result.data);
+        final String fileName =
+            'loving_brain_data_export_${DateTime.now().millisecondsSinceEpoch}.json';
+        final File file = File('${tempDir.path}/$fileName');
+        await file.writeAsString(jsonStr);
+
+        await SharePlus.instance.share(
+          ShareParams(
+            files: <XFile>[XFile(file.path, mimeType: 'application/json')],
+            subject: 'LovingBrain Data Export',
+            text: 'Here is your exported data from LovingBrain.',
+          ),
         );
-      },
-      error: (Exception error) {
-        changeProps(exportStatus: ApiResultStatus.error(error: error));
-      },
-    );
+      } catch (e) {
+        // Native share / path_provider fallback in headless/test environments
+      }
+    } else if (result is Error<Map<String, dynamic>>) {
+      changeProps(exportStatus: result);
+    }
   }
 
   Future<void> deleteAccount() async {

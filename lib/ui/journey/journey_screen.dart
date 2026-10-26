@@ -6,6 +6,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/brainy_saved_guidance/brainy_saved_guidance_screen.dart';
 import 'package:loving_brain/ui/consistency_recognition/consistency_recognition_screen.dart';
+import 'package:loving_brain/ui/enrolled_journey_home/enrolled_journey_home_screen.dart';
 import 'package:loving_brain/ui/family_timeline/family_timeline_screen.dart';
 import 'package:loving_brain/ui/harder_week/harder_week_screen.dart';
 import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
@@ -61,62 +62,65 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   ),
                 ),
               ),
-              SafeArea(
-                bottom: false,
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  children: [
-                    16.spaceH,
-                    GestureDetector(
-                      onTap: () {
-                        // Tap header to cycle modes for testing
-                        final JourneyCubit jCubit = context
-                            .read<JourneyCubit>();
-                        jCubit.cycleMode();
-                        if (jCubit.state.mode == JourneyMode.normal) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  const ConsistencyRecognitionScreen(),
-                            ),
-                          );
-                        }
-                      },
-                      child: 'Journey'.appText(
-                        fontSize: 28.sp,
+              Positioned.fill(
+                child: SafeArea(
+                  bottom: false,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 140.h),
+                    children: [
+                      16.spaceH,
+                      GestureDetector(
+                        onTap: () {
+                          // Tap header to cycle modes for testing
+                          final JourneyCubit jCubit = context
+                              .read<JourneyCubit>();
+                          jCubit.cycleMode();
+                          if (jCubit.state.mode == JourneyMode.normal) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const ConsistencyRecognitionScreen(),
+                              ),
+                            );
+                          }
+                        },
+                        child: 'Journey'.appText(
+                          fontSize: 28.sp,
+                          color: greyColor9,
+                          fraunces: true,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      8.spaceH,
+                      'How things have been changing for your family.'.appText(
+                        fontSize: 16.sp,
                         color: greyColor9,
-                        fraunces: true,
                         textAlign: TextAlign.start,
                       ),
-                    ),
-                    8.spaceH,
-                    'How things have been changing for your family.'.appText(
-                      fontSize: 16.sp,
-                      color: greyColor9,
-                      textAlign: TextAlign.start,
-                    ),
-                    12.spaceH,
-                    _buildWeeklyReviewCard(context, state),
-                    32.spaceH,
-                    'ALSO HERE'.appText(
-                      fontSize: 12.sp,
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w700,
-                      textAlign: TextAlign.start,
-                    ),
-                    16.spaceH,
-                    _buildSleepJourneyCard(context, state),
-                    12.spaceH,
-                    _buildFamilyTimelineCard(context),
-                    12.spaceH,
-                    _buildSavedGuidanceCard(context, state),
-                    12.spaceH,
-                    _buildConsistencyCard(context, state),
-                    12.spaceH,
-                    _buildGuidedMentorshipCard(context),
-                    128.spaceH,
-                  ],
+                      12.spaceH,
+                      _buildWeeklyReviewCard(context, state),
+                      32.spaceH,
+                      'ALSO HERE'.appText(
+                        fontSize: 12.sp,
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w700,
+                        textAlign: TextAlign.start,
+                      ),
+                      16.spaceH,
+                      _buildSleepJourneyCard(context, state),
+                      12.spaceH,
+                      _buildFamilyTimelineCard(context),
+                      12.spaceH,
+                      _buildSavedGuidanceCard(context, state),
+                      12.spaceH,
+                      _buildConsistencyCard(context, state),
+                      12.spaceH,
+                      _buildGuidedMentorshipCard(context),
+                      40.spaceH,
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -225,16 +229,30 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Widget _buildSleepJourneyCard(BuildContext context, JourneyState state) {
+    final bool isEnrolled = state.isSleepJourneyEnrolled;
     final int currentWeek = state.sleepJourneyWeek;
     final int totalWeeks = state.sleepJourneyTotalWeeks;
     final double fraction = (currentWeek / totalWeeks).clamp(0.0, 1.0);
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const MentorshipLandingScreen()),
-        );
+        if (isEnrolled) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const EnrolledJourneyHomeScreen(),
+            ),
+          ).then((_) {
+            if (context.mounted) {
+              context.read<JourneyCubit>().init();
+            }
+          });
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const MentorshipLandingScreen()),
+          );
+        }
       },
       child: Container(
         width: double.infinity,
@@ -273,23 +291,38 @@ class _JourneyScreenState extends State<JourneyScreen> {
                     textAlign: TextAlign.start,
                   ),
                   4.spaceH,
-                  'Week $currentWeek of $totalWeeks'.appText(
-                    fontSize: 14.sp,
-                    color: greyColor11,
-                    textAlign: TextAlign.start,
-                  ),
-                  8.spaceH,
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4.r),
-                    child: LinearProgressIndicator(
-                      value: fraction,
-                      backgroundColor: const Color(0xFFF1EEFF),
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                        secondaryColor,
-                      ),
-                      minHeight: 4.h,
+                  if (isEnrolled) ...[
+                    'Week $currentWeek of $totalWeeks'.appText(
+                      fontSize: 14.sp,
+                      color: greyColor11,
+                      textAlign: TextAlign.start,
                     ),
-                  ),
+                    8.spaceH,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4.r),
+                      child: LinearProgressIndicator(
+                        value: fraction,
+                        backgroundColor: const Color(0xFFF1EEFF),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          secondaryColor,
+                        ),
+                        minHeight: 4.h,
+                      ),
+                    ),
+                  ] else ...[
+                    'Reset bedtime and nighttime wakings'.appText(
+                      fontSize: 13.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                    ),
+                    4.spaceH,
+                    'Learn more'.appText(
+                      fontSize: 12.sp,
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w600,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -301,12 +334,20 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Widget _buildSavedGuidanceCard(BuildContext context, JourneyState state) {
+    final String countLabel = state.savedGuidanceCount == 1
+        ? '1 saved answer'
+        : '${state.savedGuidanceCount} saved answers';
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const BrainySavedGuidanceScreen()),
-        );
+        ).then((_) {
+          if (context.mounted) {
+            context.read<JourneyCubit>().init();
+          }
+        });
       },
       child: Container(
         width: double.infinity,
@@ -345,7 +386,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                     textAlign: TextAlign.start,
                   ),
                   4.spaceH,
-                  '${state.savedGuidanceCount} saved answers'.appText(
+                  countLabel.appText(
                     fontSize: 12.sp,
                     color: greyColor,
                     textAlign: TextAlign.start,

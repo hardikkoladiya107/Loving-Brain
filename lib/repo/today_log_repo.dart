@@ -108,7 +108,7 @@ class TodayLogRepo {
         'timestamp': Timestamp.fromDate(log.wakeTime.toUtc()),
         'title': LocaleKeys.sleepLogSaved.tr(),
         'subtitle':
-            '$durationMins min sleep • Quality: $qualityText${log.isNightWaking ? " • Night waking" : ""}',
+            '${TimelineEventModel.formatSleepDuration(durationMins)} • Quality: $qualityText${log.isNightWaking ? " • Night waking" : ""}',
         'createdAt': FieldValue.serverTimestamp(),
         'userId': log.userId,
         'childId': childId,

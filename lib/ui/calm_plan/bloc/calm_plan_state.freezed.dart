@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CalmPlanState {
 
- bool get isLoading; bool get isAudioPlaying; ApiResultStatus<dynamic> get fetchStatus; BehaviourForecastResult? get forecast; List<CalmPlanAction> get actions; String get avoidInstructionTitle; String get avoidInstructionSubtitle; String get childName;
+ bool get isLoading; bool get isAudioPlaying; ApiResultStatus<dynamic> get fetchStatus; BehaviourForecastResult? get forecast; List<CalmPlanAction> get actions; String get avoidInstructionTitle; String get avoidInstructionSubtitle; String get childName; int get audioPositionSeconds; int get audioDurationSeconds;
 /// Create a copy of CalmPlanState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $CalmPlanStateCopyWith<CalmPlanState> get copyWith => _$CalmPlanStateCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as CalmPlanState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CalmPlanState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.isAudioPlaying, _this.isAudioPlaying) || other.isAudioPlaying == _this.isAudioPlaying)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus)&&(identical(other.forecast, _this.forecast) || other.forecast == _this.forecast)&&const DeepCollectionEquality().equals(other.actions, _this.actions)&&(identical(other.avoidInstructionTitle, _this.avoidInstructionTitle) || other.avoidInstructionTitle == _this.avoidInstructionTitle)&&(identical(other.avoidInstructionSubtitle, _this.avoidInstructionSubtitle) || other.avoidInstructionSubtitle == _this.avoidInstructionSubtitle)&&(identical(other.childName, _this.childName) || other.childName == _this.childName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CalmPlanState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.isAudioPlaying, _this.isAudioPlaying) || other.isAudioPlaying == _this.isAudioPlaying)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus)&&(identical(other.forecast, _this.forecast) || other.forecast == _this.forecast)&&const DeepCollectionEquality().equals(other.actions, _this.actions)&&(identical(other.avoidInstructionTitle, _this.avoidInstructionTitle) || other.avoidInstructionTitle == _this.avoidInstructionTitle)&&(identical(other.avoidInstructionSubtitle, _this.avoidInstructionSubtitle) || other.avoidInstructionSubtitle == _this.avoidInstructionSubtitle)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.audioPositionSeconds, _this.audioPositionSeconds) || other.audioPositionSeconds == _this.audioPositionSeconds)&&(identical(other.audioDurationSeconds, _this.audioDurationSeconds) || other.audioDurationSeconds == _this.audioDurationSeconds));
 }
 
 
 @override
 int get hashCode {
   final _this = this as CalmPlanState;
-  return Object.hash(runtimeType,_this.isLoading,_this.isAudioPlaying,_this.fetchStatus,_this.forecast,const DeepCollectionEquality().hash(_this.actions),_this.avoidInstructionTitle,_this.avoidInstructionSubtitle,_this.childName);
+  return Object.hash(runtimeType,_this.isLoading,_this.isAudioPlaying,_this.fetchStatus,_this.forecast,const DeepCollectionEquality().hash(_this.actions),_this.avoidInstructionTitle,_this.avoidInstructionSubtitle,_this.childName,_this.audioPositionSeconds,_this.audioDurationSeconds);
 }
 
 @override
 String toString() {
   final _this = this as CalmPlanState;
-  return 'CalmPlanState(isLoading: ${_this.isLoading}, isAudioPlaying: ${_this.isAudioPlaying}, fetchStatus: ${_this.fetchStatus}, forecast: ${_this.forecast}, actions: ${_this.actions}, avoidInstructionTitle: ${_this.avoidInstructionTitle}, avoidInstructionSubtitle: ${_this.avoidInstructionSubtitle}, childName: ${_this.childName})';
+  return 'CalmPlanState(isLoading: ${_this.isLoading}, isAudioPlaying: ${_this.isAudioPlaying}, fetchStatus: ${_this.fetchStatus}, forecast: ${_this.forecast}, actions: ${_this.actions}, avoidInstructionTitle: ${_this.avoidInstructionTitle}, avoidInstructionSubtitle: ${_this.avoidInstructionSubtitle}, childName: ${_this.childName}, audioPositionSeconds: ${_this.audioPositionSeconds}, audioDurationSeconds: ${_this.audioDurationSeconds})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $CalmPlanStateCopyWith<$Res>  {
   factory $CalmPlanStateCopyWith(CalmPlanState value, $Res Function(CalmPlanState) _then) = _$CalmPlanStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, bool isAudioPlaying, ApiResultStatus<dynamic> fetchStatus, BehaviourForecastResult? forecast, List<CalmPlanAction> actions, String avoidInstructionTitle, String avoidInstructionSubtitle, String childName
+ bool isLoading, bool isAudioPlaying, ApiResultStatus<dynamic> fetchStatus, BehaviourForecastResult? forecast, List<CalmPlanAction> actions, String avoidInstructionTitle, String avoidInstructionSubtitle, String childName, int audioPositionSeconds, int audioDurationSeconds
 });
 
 
@@ -68,7 +68,7 @@ class _$CalmPlanStateCopyWithImpl<$Res>
 
 /// Create a copy of CalmPlanState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isAudioPlaying = null,Object? fetchStatus = null,Object? forecast = freezed,Object? actions = null,Object? avoidInstructionTitle = null,Object? avoidInstructionSubtitle = null,Object? childName = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? isAudioPlaying = null,Object? fetchStatus = null,Object? forecast = freezed,Object? actions = null,Object? avoidInstructionTitle = null,Object? avoidInstructionSubtitle = null,Object? childName = null,Object? audioPositionSeconds = null,Object? audioDurationSeconds = null,}) {
   return _then(CalmPlanState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isAudioPlaying: null == isAudioPlaying ? _self.isAudioPlaying : isAudioPlaying // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,9 @@ as BehaviourForecastResult?,actions: null == actions ? _self.actions : actions /
 as List<CalmPlanAction>,avoidInstructionTitle: null == avoidInstructionTitle ? _self.avoidInstructionTitle : avoidInstructionTitle // ignore: cast_nullable_to_non_nullable
 as String,avoidInstructionSubtitle: null == avoidInstructionSubtitle ? _self.avoidInstructionSubtitle : avoidInstructionSubtitle // ignore: cast_nullable_to_non_nullable
 as String,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
-as String,
+as String,audioPositionSeconds: null == audioPositionSeconds ? _self.audioPositionSeconds : audioPositionSeconds // ignore: cast_nullable_to_non_nullable
+as int,audioDurationSeconds: null == audioDurationSeconds ? _self.audioDurationSeconds : audioDurationSeconds // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 /// Create a copy of CalmPlanState
@@ -172,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isAudioPlaying,  ApiResultStatus<dynamic> fetchStatus,  BehaviourForecastResult? forecast,  List<CalmPlanAction> actions,  String avoidInstructionTitle,  String avoidInstructionSubtitle,  String childName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool isAudioPlaying,  ApiResultStatus<dynamic> fetchStatus,  BehaviourForecastResult? forecast,  List<CalmPlanAction> actions,  String avoidInstructionTitle,  String avoidInstructionSubtitle,  String childName,  int audioPositionSeconds,  int audioDurationSeconds)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CalmPlanState() when $default != null:
-return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.forecast,_that.actions,_that.avoidInstructionTitle,_that.avoidInstructionSubtitle,_that.childName);case _:
+return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.forecast,_that.actions,_that.avoidInstructionTitle,_that.avoidInstructionSubtitle,_that.childName,_that.audioPositionSeconds,_that.audioDurationSeconds);case _:
   return orElse();
 
 }
@@ -193,10 +195,10 @@ return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.for
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isAudioPlaying,  ApiResultStatus<dynamic> fetchStatus,  BehaviourForecastResult? forecast,  List<CalmPlanAction> actions,  String avoidInstructionTitle,  String avoidInstructionSubtitle,  String childName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool isAudioPlaying,  ApiResultStatus<dynamic> fetchStatus,  BehaviourForecastResult? forecast,  List<CalmPlanAction> actions,  String avoidInstructionTitle,  String avoidInstructionSubtitle,  String childName,  int audioPositionSeconds,  int audioDurationSeconds)  $default,) {final _that = this;
 switch (_that) {
 case _CalmPlanState():
-return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.forecast,_that.actions,_that.avoidInstructionTitle,_that.avoidInstructionSubtitle,_that.childName);case _:
+return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.forecast,_that.actions,_that.avoidInstructionTitle,_that.avoidInstructionSubtitle,_that.childName,_that.audioPositionSeconds,_that.audioDurationSeconds);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -213,10 +215,10 @@ return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.for
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isAudioPlaying,  ApiResultStatus<dynamic> fetchStatus,  BehaviourForecastResult? forecast,  List<CalmPlanAction> actions,  String avoidInstructionTitle,  String avoidInstructionSubtitle,  String childName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool isAudioPlaying,  ApiResultStatus<dynamic> fetchStatus,  BehaviourForecastResult? forecast,  List<CalmPlanAction> actions,  String avoidInstructionTitle,  String avoidInstructionSubtitle,  String childName,  int audioPositionSeconds,  int audioDurationSeconds)?  $default,) {final _that = this;
 switch (_that) {
 case _CalmPlanState() when $default != null:
-return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.forecast,_that.actions,_that.avoidInstructionTitle,_that.avoidInstructionSubtitle,_that.childName);case _:
+return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.forecast,_that.actions,_that.avoidInstructionTitle,_that.avoidInstructionSubtitle,_that.childName,_that.audioPositionSeconds,_that.audioDurationSeconds);case _:
   return null;
 
 }
@@ -228,7 +230,7 @@ return $default(_that.isLoading,_that.isAudioPlaying,_that.fetchStatus,_that.for
 
 
 class _CalmPlanState implements CalmPlanState {
-  const _CalmPlanState({this.isLoading = false, this.isAudioPlaying = false, this.fetchStatus = const ApiResultStatus.initial(), this.forecast,  List<CalmPlanAction> actions = const <CalmPlanAction>[CalmPlanAction(stepNumber: '1', title: 'Lower stimulation now', description: 'Dim the room, turn off background noise, and pause high-energy play.'), CalmPlanAction(stepNumber: '2', title: 'Offer a quiet, familiar activity', description: 'Choose something familiar without demands.'), CalmPlanAction(stepNumber: '3', title: 'Stay close and steady', description: 'Your calm physical presence is the clearest safety signal.')], this.avoidInstructionTitle = "Don't introduce a new demand right now", this.avoidInstructionSubtitle = 'Requests, transitions, and boundary debates can wait until your child has settled.', this.childName = 'your child'}): _actions = actions;
+  const _CalmPlanState({this.isLoading = false, this.isAudioPlaying = false, this.fetchStatus = const ApiResultStatus.initial(), this.forecast,  List<CalmPlanAction> actions = const <CalmPlanAction>[CalmPlanAction(stepNumber: '1', title: 'Lower stimulation now', description: 'Dim the room, turn off background noise, and pause high-energy play.'), CalmPlanAction(stepNumber: '2', title: 'Offer a quiet, familiar activity', description: 'Choose something familiar without demands.'), CalmPlanAction(stepNumber: '3', title: 'Stay close and steady', description: 'Your calm physical presence is the clearest safety signal.')], this.avoidInstructionTitle = "Don't introduce a new demand right now", this.avoidInstructionSubtitle = 'Requests, transitions, and boundary debates can wait until your child has settled.', this.childName = 'your child', this.audioPositionSeconds = 0, this.audioDurationSeconds = 180}): _actions = actions;
   
 
 @override@JsonKey() final  bool isLoading;
@@ -245,6 +247,8 @@ class _CalmPlanState implements CalmPlanState {
 @override@JsonKey() final  String avoidInstructionTitle;
 @override@JsonKey() final  String avoidInstructionSubtitle;
 @override@JsonKey() final  String childName;
+@override@JsonKey() final  int audioPositionSeconds;
+@override@JsonKey() final  int audioDurationSeconds;
 
 /// Create a copy of CalmPlanState
 /// with the given fields replaced by the non-null parameter values.
@@ -256,18 +260,18 @@ _$CalmPlanStateCopyWith<_CalmPlanState> get copyWith => __$CalmPlanStateCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CalmPlanState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isAudioPlaying, isAudioPlaying) || other.isAudioPlaying == isAudioPlaying)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus)&&(identical(other.forecast, forecast) || other.forecast == forecast)&&const DeepCollectionEquality().equals(other.actions, _actions)&&(identical(other.avoidInstructionTitle, avoidInstructionTitle) || other.avoidInstructionTitle == avoidInstructionTitle)&&(identical(other.avoidInstructionSubtitle, avoidInstructionSubtitle) || other.avoidInstructionSubtitle == avoidInstructionSubtitle)&&(identical(other.childName, childName) || other.childName == childName));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CalmPlanState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isAudioPlaying, isAudioPlaying) || other.isAudioPlaying == isAudioPlaying)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus)&&(identical(other.forecast, forecast) || other.forecast == forecast)&&const DeepCollectionEquality().equals(other.actions, _actions)&&(identical(other.avoidInstructionTitle, avoidInstructionTitle) || other.avoidInstructionTitle == avoidInstructionTitle)&&(identical(other.avoidInstructionSubtitle, avoidInstructionSubtitle) || other.avoidInstructionSubtitle == avoidInstructionSubtitle)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.audioPositionSeconds, audioPositionSeconds) || other.audioPositionSeconds == audioPositionSeconds)&&(identical(other.audioDurationSeconds, audioDurationSeconds) || other.audioDurationSeconds == audioDurationSeconds));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoading,isAudioPlaying,fetchStatus,forecast,const DeepCollectionEquality().hash(_actions),avoidInstructionTitle,avoidInstructionSubtitle,childName);
+    return Object.hash(runtimeType,isLoading,isAudioPlaying,fetchStatus,forecast,const DeepCollectionEquality().hash(_actions),avoidInstructionTitle,avoidInstructionSubtitle,childName,audioPositionSeconds,audioDurationSeconds);
 }
 
 @override
 String toString() {
-    return 'CalmPlanState(isLoading: $isLoading, isAudioPlaying: $isAudioPlaying, fetchStatus: $fetchStatus, forecast: $forecast, actions: $actions, avoidInstructionTitle: $avoidInstructionTitle, avoidInstructionSubtitle: $avoidInstructionSubtitle, childName: $childName)';
+    return 'CalmPlanState(isLoading: $isLoading, isAudioPlaying: $isAudioPlaying, fetchStatus: $fetchStatus, forecast: $forecast, actions: $actions, avoidInstructionTitle: $avoidInstructionTitle, avoidInstructionSubtitle: $avoidInstructionSubtitle, childName: $childName, audioPositionSeconds: $audioPositionSeconds, audioDurationSeconds: $audioDurationSeconds)';
 }
 
 
@@ -278,7 +282,7 @@ abstract mixin class _$CalmPlanStateCopyWith<$Res> implements $CalmPlanStateCopy
   factory _$CalmPlanStateCopyWith(_CalmPlanState value, $Res Function(_CalmPlanState) _then) = __$CalmPlanStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, bool isAudioPlaying, ApiResultStatus<dynamic> fetchStatus, BehaviourForecastResult? forecast, List<CalmPlanAction> actions, String avoidInstructionTitle, String avoidInstructionSubtitle, String childName
+ bool isLoading, bool isAudioPlaying, ApiResultStatus<dynamic> fetchStatus, BehaviourForecastResult? forecast, List<CalmPlanAction> actions, String avoidInstructionTitle, String avoidInstructionSubtitle, String childName, int audioPositionSeconds, int audioDurationSeconds
 });
 
 
@@ -295,7 +299,7 @@ class __$CalmPlanStateCopyWithImpl<$Res>
 
 /// Create a copy of CalmPlanState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isAudioPlaying = null,Object? fetchStatus = null,Object? forecast = freezed,Object? actions = null,Object? avoidInstructionTitle = null,Object? avoidInstructionSubtitle = null,Object? childName = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? isAudioPlaying = null,Object? fetchStatus = null,Object? forecast = freezed,Object? actions = null,Object? avoidInstructionTitle = null,Object? avoidInstructionSubtitle = null,Object? childName = null,Object? audioPositionSeconds = null,Object? audioDurationSeconds = null,}) {
   return _then(_CalmPlanState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isAudioPlaying: null == isAudioPlaying ? _self.isAudioPlaying : isAudioPlaying // ignore: cast_nullable_to_non_nullable
@@ -305,7 +309,9 @@ as BehaviourForecastResult?,actions: null == actions ? _self._actions : actions 
 as List<CalmPlanAction>,avoidInstructionTitle: null == avoidInstructionTitle ? _self.avoidInstructionTitle : avoidInstructionTitle // ignore: cast_nullable_to_non_nullable
 as String,avoidInstructionSubtitle: null == avoidInstructionSubtitle ? _self.avoidInstructionSubtitle : avoidInstructionSubtitle // ignore: cast_nullable_to_non_nullable
 as String,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
-as String,
+as String,audioPositionSeconds: null == audioPositionSeconds ? _self.audioPositionSeconds : audioPositionSeconds // ignore: cast_nullable_to_non_nullable
+as int,audioDurationSeconds: null == audioDurationSeconds ? _self.audioDurationSeconds : audioDurationSeconds // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

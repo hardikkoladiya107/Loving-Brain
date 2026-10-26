@@ -108,40 +108,54 @@ class AddMoodUpdateSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(images.length, (int index) {
                   final bool isSelected = state.selectedChildMoodIndex == index;
-                  return GestureDetector(
-                    onTap: () => context.read<TodayCubit>().setChildMood(index),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFFEF8F5)
-                            : Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: isSelected
-                            ? const [
-                                BoxShadow(
-                                  color: Color(0x6B6B6B40),
-                                  spreadRadius: 1,
-                                  blurRadius: 80,
-                                ),
-                              ]
-                            : [],
-                        border: Border.all(
-                          color: isError && !isSelected
-                              ? Colors.red
-                              : (isSelected
-                                    ? secondaryColor
-                                    : Colors.transparent),
-                        ),
-                      ),
-                      padding: EdgeInsets.all(12.r),
+                  final List<String> moodLabels = <String>[
+                    "Very happy",
+                    "Content",
+                    "Neutral",
+                    "Unsettled",
+                    "Upset",
+                  ];
+                  final String moodLabel = moodLabels[index];
+                  return Semantics(
+                    label: moodLabel,
+                    selected: isSelected,
+                    button: true,
+                    child: GestureDetector(
+                      onTap: () =>
+                          context.read<TodayCubit>().setChildMood(index),
                       child: Container(
-                        height: 30.w,
-                        width: 30.w,
-                        padding: EdgeInsets.all(8.r),
                         decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFFEF8F5)
+                              : Colors.white,
                           shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage(images[index]),
+                          boxShadow: isSelected
+                              ? const [
+                                  BoxShadow(
+                                    color: Color(0x6B6B6B40),
+                                    spreadRadius: 1,
+                                    blurRadius: 80,
+                                  ),
+                                ]
+                              : [],
+                          border: Border.all(
+                            color: isError && !isSelected
+                                ? Colors.red
+                                : (isSelected
+                                      ? secondaryColor
+                                      : Colors.transparent),
+                          ),
+                        ),
+                        padding: EdgeInsets.all(12.r),
+                        child: Container(
+                          height: 30.w,
+                          width: 30.w,
+                          padding: EdgeInsets.all(8.r),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: AssetImage(images[index]),
+                            ),
                           ),
                         ),
                       ),

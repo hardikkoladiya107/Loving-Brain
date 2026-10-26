@@ -9,7 +9,7 @@ abstract class RequestSessionState with _$RequestSessionState {
   const factory RequestSessionState({
     GuideProfileModel? guide,
     @Default('your child') String childName,
-    @Default('Bedtime has been unsettled for two weeks') String mainConcern,
+    @Default('') String mainConcern,
     @Default('17 months') String childAge,
     @Default('Weekday evenings after 8 PM') String preferredDays,
     @Default('English') String preferredLanguage,

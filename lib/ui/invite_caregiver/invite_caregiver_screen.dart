@@ -156,7 +156,7 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                             textAlign: TextAlign.start,
                           ),
                           8.spaceH,
-                          "They'll get a link to join no account needed first."
+                          "They'll get a link to join — no account needed first."
                               .appText(
                                 fontSize: 14.sp,
                                 color: greyColor6,

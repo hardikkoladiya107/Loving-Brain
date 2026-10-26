@@ -15,10 +15,10 @@ abstract class JourneyState with _$JourneyState {
     ChildModel? child,
     WeeklyInsightsResult? weeklyInsights,
     ActiveExperimentModel? activeExperiment,
-    @Default(3) int savedGuidanceCount,
+    @Default(0) int savedGuidanceCount,
     @Default(0) int timelineEventCount,
-    @Default(true) bool isSleepJourneyEnrolled,
-    @Default(2) int sleepJourneyWeek,
+    @Default(false) bool isSleepJourneyEnrolled,
+    @Default(1) int sleepJourneyWeek,
     @Default(6) int sleepJourneyTotalWeeks,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _JourneyState;

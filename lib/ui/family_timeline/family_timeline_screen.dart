@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -137,6 +138,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                                   return _buildTimelineItem(
                                     title: event.title,
                                     subtitle: event.subtitle,
+                                    timestamp: event.timestamp,
                                     isFirst: idx == 0,
                                     isLast:
                                         idx == state.filteredEvents.length - 1,
@@ -157,13 +159,22 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child:
-                          '${state.weeksWithLovingBrain} weeks with LovingBrain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor9,
-                                textAlign: TextAlign.start,
-                                height: 1.4,
-                              ),
+                          (state.weeksWithLovingBrain >= 2 &&
+                              state.averageBedtimeShiftMinutes > 0)
+                          ? '${state.weeksWithLovingBrain} weeks with LovingBrain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor9,
+                                  textAlign: TextAlign.start,
+                                  height: 1.4,
+                                )
+                          : 'Keep logging check-ins to see long-term bedtime and rhythm patterns emerge.'
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor9,
+                                  textAlign: TextAlign.start,
+                                  height: 1.4,
+                                ),
                     ),
                     120.spaceH,
                   ],
@@ -202,6 +213,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
   Widget _buildTimelineItem({
     required String title,
     required String subtitle,
+    required DateTime timestamp,
     required bool isFirst,
     required bool isLast,
   }) {
@@ -245,11 +257,28 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 12.spaceH,
-                title.appText(
-                  fontSize: 16.sp,
-                  color: greyColor9,
-                  fontWeight: FontWeight.w600,
-                  textAlign: TextAlign.start,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Expanded(
+                      child: title.appText(
+                        fontSize: 16.sp,
+                        color: greyColor9,
+                        fontWeight: FontWeight.w600,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    8.spaceW,
+                    DateFormat('MMM d · h:mm a')
+                        .format(timestamp.toLocal())
+                        .appText(
+                          fontSize: 11.sp,
+                          color: greyColor6,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.end,
+                        ),
+                  ],
                 ),
                 4.spaceH,
                 subtitle.appText(
@@ -257,7 +286,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                   color: greyColor,
                   textAlign: TextAlign.start,
                 ),
-                32.spaceH,
+                28.spaceH,
               ],
             ),
           ),

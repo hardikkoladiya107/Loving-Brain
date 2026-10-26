@@ -306,9 +306,18 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                           12.spaceH,
                           EditableFieldCard(
                             label: "PREFERRED LANGUAGE",
-                            value: state.language,
-                            onChanged: (v) => cubit.updateField(language: v),
-                            onEdit: () {},
+                            value: state.language.isNotEmpty
+                                ? state.language
+                                : "Select language",
+                            readOnly: true,
+                            onTap: () => _showLanguagePickerSheet(
+                              context,
+                              state.language,
+                            ),
+                            onEdit: () => _showLanguagePickerSheet(
+                              context,
+                              state.language,
+                            ),
                           ),
                           12.spaceH,
                           EditableFieldCard(
@@ -417,7 +426,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                               );
                             },
                           ),
-                          140.spaceH,
+                          220.spaceH,
                         ],
                       ),
                     ),
@@ -464,6 +473,79 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           },
         ),
       ),
+    );
+  }
+
+  void _showLanguagePickerSheet(BuildContext context, String currentLanguage) {
+    const List<String> languages = <String>[
+      'English',
+      'Hindi',
+      'Gujarati',
+      'Spanish',
+      'French',
+      'German',
+      'Portuguese',
+      'Mandarin',
+      'Arabic',
+      'Other',
+    ];
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (BuildContext sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                "Select preferred language".appText(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: darkBlue,
+                ),
+                16.spaceH,
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 360.h),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: languages.length,
+                    separatorBuilder: (_, _) => const Divider(height: 1),
+                    itemBuilder: (BuildContext ctx, int index) {
+                      final String lang = languages[index];
+                      final bool isSelected = lang == currentLanguage;
+                      return ListTile(
+                        title: lang.appText(
+                          fontSize: 16.sp,
+                          color: isSelected ? secondaryColor : darkBlue,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          textAlign: TextAlign.start,
+                        ),
+                        trailing: isSelected
+                            ? const Icon(Icons.check, color: secondaryColor)
+                            : null,
+                        onTap: () {
+                          context.read<ParentProfileV2Cubit>().updateField(
+                            language: lang,
+                          );
+                          Navigator.pop(sheetContext);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

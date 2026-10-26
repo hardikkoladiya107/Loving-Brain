@@ -9,6 +9,7 @@ class OtpCubit extends Cubit<OtpState> {
   OtpCubit() : super(const OtpState());
 
   Timer? _resendTimer;
+  Timer? _lockoutTimer;
 
   void init({String? destination}) {
     emit(const OtpState());
@@ -34,6 +35,19 @@ class OtpCubit extends Cubit<OtpState> {
     });
   }
 
+  void _startLockoutTimer() {
+    _lockoutTimer?.cancel();
+    changeProps(lockoutSeconds: 120, isLocked: true);
+    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      if (state.lockoutSeconds <= 1) {
+        timer.cancel();
+        changeProps(isLocked: false, lockoutSeconds: 0, failedAttempts: 0);
+      } else {
+        changeProps(lockoutSeconds: state.lockoutSeconds - 1, isLocked: true);
+      }
+    });
+  }
+
   void changeProps({
     String? otpCode,
     String? otpError,
@@ -43,6 +57,9 @@ class OtpCubit extends Cubit<OtpState> {
     int? resendCountdown,
     bool? canResend,
     String? destination,
+    int? failedAttempts,
+    bool? isLocked,
+    int? lockoutSeconds,
   }) {
     emit(
       state.copyWith(
@@ -54,17 +71,28 @@ class OtpCubit extends Cubit<OtpState> {
         resendCountdown: resendCountdown ?? state.resendCountdown,
         canResend: canResend ?? state.canResend,
         destination: destination ?? state.destination,
+        failedAttempts: failedAttempts ?? state.failedAttempts,
+        isLocked: isLocked ?? state.isLocked,
+        lockoutSeconds: lockoutSeconds ?? state.lockoutSeconds,
       ),
     );
   }
 
   void onOtpChanged(String value) {
+    if (state.isLocked) return;
     changeProps(otpCode: value, otpError: '');
   }
 
   Future<void> resendOtp() async {
     if (!state.canResend) return;
-    changeProps(resendStatus: ApiResultStatus.loading());
+    _lockoutTimer?.cancel();
+    changeProps(
+      resendStatus: const ApiResultStatus.loading(),
+      isLocked: false,
+      lockoutSeconds: 0,
+      failedAttempts: 0,
+      otpError: '',
+    );
     try {
       final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
         email: state.destination,
@@ -81,6 +109,14 @@ class OtpCubit extends Cubit<OtpState> {
   }
 
   Future<void> verifyOtp({VoidCallback? onSuccess}) async {
+    if (state.isLocked) {
+      changeProps(
+        otpError:
+            'Too many failed attempts. Please wait ${state.lockoutSeconds}s or request a new code.',
+      );
+      return;
+    }
+
     final String code = state.otpCode.trim();
     if (code.isEmpty) {
       changeProps(otpError: 'Please enter verification code');
@@ -92,7 +128,7 @@ class OtpCubit extends Cubit<OtpState> {
     }
 
     changeProps(
-      verifyStatus: ApiResultStatus.loading(),
+      verifyStatus: const ApiResultStatus.loading(),
       isSubmitting: true,
       otpError: '',
     );
@@ -102,22 +138,65 @@ class OtpCubit extends Cubit<OtpState> {
         otpCode: code,
       );
 
-      changeProps(verifyStatus: apiResult, isSubmitting: false);
-
-      if (apiResult is Data && onSuccess != null) {
-        onSuccess();
+      if (apiResult is Data) {
+        changeProps(
+          verifyStatus: apiResult,
+          isSubmitting: false,
+          failedAttempts: 0,
+        );
+        if (onSuccess != null) {
+          onSuccess();
+        }
+      } else {
+        final int attempts = state.failedAttempts + 1;
+        if (attempts >= 5) {
+          _startLockoutTimer();
+          changeProps(
+            failedAttempts: attempts,
+            isLocked: true,
+            lockoutSeconds: 120,
+            otpError:
+                'Too many incorrect attempts (5/5). Locked for 2 minutes. Please request a new code.',
+            verifyStatus: apiResult,
+            isSubmitting: false,
+          );
+        } else {
+          changeProps(
+            failedAttempts: attempts,
+            otpError: 'Invalid verification code ($attempts/5 attempts)',
+            verifyStatus: apiResult,
+            isSubmitting: false,
+          );
+        }
       }
     } catch (e) {
-      changeProps(
-        verifyStatus: ApiResultStatus.error(error: Exception(e.toString())),
-        isSubmitting: false,
-      );
+      final int attempts = state.failedAttempts + 1;
+      if (attempts >= 5) {
+        _startLockoutTimer();
+        changeProps(
+          failedAttempts: attempts,
+          isLocked: true,
+          lockoutSeconds: 120,
+          otpError:
+              'Too many incorrect attempts (5/5). Locked for 2 minutes. Please request a new code.',
+          verifyStatus: ApiResultStatus.error(error: Exception(e.toString())),
+          isSubmitting: false,
+        );
+      } else {
+        changeProps(
+          failedAttempts: attempts,
+          otpError: 'Invalid verification code ($attempts/5 attempts)',
+          verifyStatus: ApiResultStatus.error(error: Exception(e.toString())),
+          isSubmitting: false,
+        );
+      }
     }
   }
 
   @override
   Future<void> close() {
     _resendTimer?.cancel();
+    _lockoutTimer?.cancel();
     return super.close();
   }
 }

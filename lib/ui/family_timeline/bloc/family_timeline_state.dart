@@ -12,8 +12,8 @@ abstract class FamilyTimelineState with _$FamilyTimelineState {
     @Default([]) List<TimelineEventModel> filteredEvents,
     @Default('All') String selectedFilter,
     ChildModel? child,
-    @Default(5) int weeksWithLovingBrain,
-    @Default(22) int averageBedtimeShiftMinutes,
+    @Default(0) int weeksWithLovingBrain,
+    @Default(0) int averageBedtimeShiftMinutes,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _FamilyTimelineState;
 }

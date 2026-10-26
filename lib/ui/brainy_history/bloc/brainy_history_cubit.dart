@@ -27,7 +27,6 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
 
   void init() {
     emit(const BrainyHistoryState());
-    _emitDefaultItems();
 
     final String uid = preferences.getUserModel()?.uid ?? '';
     if (uid.isEmpty) return;
@@ -41,15 +40,10 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
           (QuerySnapshot<Map<String, dynamic>> snapshot) {
             if (isClosed) return;
             if (snapshot.docs.isEmpty) {
-              final Set<String> deleted = _getDeletedSampleIds();
-              if (deleted.length < 3) {
-                _emitDefaultItems();
-              } else {
-                changeProps(
-                  thisWeekHistory: const <BrainyHistoryItem>[],
-                  earlierHistory: const <BrainyHistoryItem>[],
-                );
-              }
+              changeProps(
+                thisWeekHistory: const <BrainyHistoryItem>[],
+                earlierHistory: const <BrainyHistoryItem>[],
+              );
               return;
             }
 
@@ -128,38 +122,6 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
         earlierHistory: earlierHistory ?? state.earlierHistory,
       ),
     );
-  }
-
-  void _emitDefaultItems() {
-    final Set<String> deleted = _getDeletedSampleIds();
-    final List<BrainyHistoryItem> thisWeek = <BrainyHistoryItem>[
-      if (!deleted.contains('sample_bedtime'))
-        BrainyHistoryItem(
-          conversationId: 'sample_bedtime',
-          title: 'Why is bedtime harder lately?',
-          subtitle: 'Today',
-          topic: 'Sleep',
-        ),
-      if (!deleted.contains('sample_age'))
-        BrainyHistoryItem(
-          conversationId: 'sample_age',
-          title: 'Is this normal for her age?',
-          subtitle: '2 days ago',
-          topic: 'Behaviour',
-        ),
-    ];
-
-    final List<BrainyHistoryItem> earlier = <BrainyHistoryItem>[
-      if (!deleted.contains('sample_naps'))
-        BrainyHistoryItem(
-          conversationId: 'sample_naps',
-          title: 'What can I try for naps?',
-          subtitle: 'Last week',
-          topic: 'Sleep',
-        ),
-    ];
-
-    changeProps(thisWeekHistory: thisWeek, earlierHistory: earlier);
   }
 
   String _formatRelativeDate(DateTime date, DateTime now) {

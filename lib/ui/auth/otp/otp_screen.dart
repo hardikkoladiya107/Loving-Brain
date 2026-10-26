@@ -86,6 +86,28 @@ class _OtpScreenState extends State<OtpScreen> {
               } else {
                 await PendingInvitationManager.clear();
               }
+            } else {
+              final String loggedEmail = (userModel.email ?? '')
+                  .trim()
+                  .toLowerCase();
+              if (loggedEmail.isNotEmpty) {
+                final String? pendingInviteId = await CoParentRepo.instance
+                    .checkPendingInvitationForUser(loggedEmail);
+                if (pendingInviteId != null && pendingInviteId.isNotEmpty) {
+                  final ApiResultStatus result = await CoParentRepo.instance
+                      .addUserAsCoParent(pendingInviteId);
+                  bool invitationSuccess = false;
+                  result.whenOrNull(data: (_) => invitationSuccess = true);
+                  if (invitationSuccess) {
+                    await preferences.putBool(SharedPreference.isLogin, true);
+                    router.push(
+                      RoutePaths.successScreen,
+                      extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
+                    );
+                    return;
+                  }
+                }
+              }
             }
 
             if (!userModel.isOnboardingCompleted) {
@@ -223,7 +245,9 @@ class _OtpScreenState extends State<OtpScreen> {
                                 FocusScope.of(context).unfocus();
                                 context.read<OtpCubit>().verifyOtp();
                               },
-                              title: "Continue",
+                              title: state.isLocked
+                                  ? "Locked (${state.lockoutSeconds}s)"
+                                  : "Continue",
                               isLoading: state.isSubmitting,
                             ),
                             32.spaceH,

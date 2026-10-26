@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -251,11 +252,16 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                               filled: true,
                               fillColor: Colors.white,
                               borderRadius: BorderRadius.circular(30),
+                              maxLines: 4,
+                              minLines: 1,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(500),
+                              ],
                               contentPadding: EdgeInsets.only(
                                 left: 20.w,
                                 right: 8.w,
-                                top: 0.h,
-                                bottom: 6.h,
+                                top: 8.h,
+                                bottom: 8.h,
                               ),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,

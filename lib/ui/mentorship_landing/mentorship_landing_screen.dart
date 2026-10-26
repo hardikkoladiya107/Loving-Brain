@@ -147,10 +147,9 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                       textAlign: TextAlign.start,
                     ),
                     16.spaceH,
-                    SizedBox(
-                      height: 190.h,
+                    IntrinsicHeight(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Expanded(
                             child: _buildGridCard(
@@ -201,10 +200,9 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                       ),
                     ),
                     16.spaceH,
-                    SizedBox(
-                      height: 190.h,
+                    IntrinsicHeight(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Expanded(
                             child: _buildGridCard(
@@ -368,20 +366,18 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
             ),
             16.spaceH,
             title.appText(
-              fontSize: 16.sp,
+              fontSize: 15.sp,
               color: greyColor9,
               fontWeight: FontWeight.w600,
               textAlign: TextAlign.start,
+              maxLines: 2,
             ),
             8.spaceH,
-            Expanded(
-              child: subtitle.appText(
-                fontSize: 12.sp,
-                color: greyColor,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 3,
-              ),
+            subtitle.appText(
+              fontSize: 12.sp,
+              color: greyColor,
+              textAlign: TextAlign.start,
+              maxLines: 3,
             ),
           ],
         ),

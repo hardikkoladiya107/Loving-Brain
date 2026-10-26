@@ -204,11 +204,8 @@ void main() {
       cubit.init();
 
       expect(cubit.state.childName, isNotEmpty);
-      expect(cubit.state.allergies, contains('Peanuts (mild)'));
-      expect(
-        cubit.state.medications,
-        contains('Vitamin D drops (daily, 400 IU)'),
-      );
+      expect(cubit.state.allergies, isEmpty);
+      expect(cubit.state.medications, isEmpty);
 
       cubit.addAllergy('Dairy / Lactose');
       expect(cubit.state.allergies, contains('Dairy / Lactose'));

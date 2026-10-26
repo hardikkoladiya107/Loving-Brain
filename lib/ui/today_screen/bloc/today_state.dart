@@ -12,22 +12,26 @@ abstract class TodayState with _$TodayState {
     @Default(false) bool isSuccess,
     @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
     @Default('') String activeChildId,
-    @Default(TodayMode.normal) TodayMode mode,
+    @Default(TodayMode.newParent) TodayMode mode,
     @Default('') String childName,
     @Default('') String parentName,
     @Default('GOOD EVENING') String timeOfDayGreeting,
-    @Default('07:45') String sleepForecastStart,
-    @Default('8:15 PM') String sleepForecastEnd,
-    @Default('8:10 PM') String bedtimeEstimate,
-    @Default("Today's nap ran about 25 minutes short.") String forecastSubtitle,
-    @Default('moderate') String confidenceLevel,
-    @Default(2) int confidenceDots,
+    @Default('--:--') String sleepForecastStart,
+    @Default('--:--') String sleepForecastEnd,
+    @Default('--:--') String bedtimeEstimate,
+    @Default('Log sleep updates to view personalised forecasts.')
+    String forecastSubtitle,
+    @Default('none') String confidenceLevel,
+    @Default(0) int confidenceDots,
     @Default('') String sleepForecastReason,
     @Default(false) bool hasSleepLogs,
+    @Default(false) bool hasMultiDayPatterns,
 
     // Check-in fields
     @Default(null) String? fellAsleepTime,
     @Default(null) String? wokeUpTime,
+    @Default(null) String? napStartTime,
+    @Default(null) String? napEndTime,
     @Default(false) bool showSleepUpdateErrors,
 
     // Mood

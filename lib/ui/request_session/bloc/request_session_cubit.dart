@@ -29,7 +29,7 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
       childAge: cAge,
       mainConcern: (initialConcern != null && initialConcern.trim().isNotEmpty)
           ? initialConcern.trim()
-          : 'Bedtime has been unsettled for two weeks',
+          : '',
       saveStatus: const ApiResultStatus.initial(),
     );
   }
@@ -68,6 +68,17 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
   void toggleShareSummary(bool share) => changeProps(shareSummary: share);
 
   Future<bool> submitRequest() async {
+    final String concern = state.mainConcern.trim();
+    if (concern.isEmpty) {
+      changeProps(
+        isSubmitting: false,
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Please describe your main concern'),
+        ),
+      );
+      return false;
+    }
+
     changeProps(
       isSubmitting: true,
       saveStatus: const ApiResultStatus.loading(),

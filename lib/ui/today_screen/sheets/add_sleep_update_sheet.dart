@@ -67,6 +67,81 @@ class AddSleepUpdateSheet extends StatelessWidget {
     }
   }
 
+  Future<void> _pickNapTimes(BuildContext context) async {
+    final TimeOfDay? startPicked = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 13, minute: 0),
+      helpText: 'SELECT NAP START TIME',
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: primaryColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (startPicked == null || !context.mounted) return;
+
+    final TimeOfDay? endPicked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(
+        hour: (startPicked.hour + 1) % 24,
+        minute: startPicked.minute,
+      ),
+      helpText: 'SELECT NAP END TIME',
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: primaryColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (endPicked == null || !context.mounted) return;
+
+    final DateTime now = DateTime.now();
+    final DateTime startDt = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      startPicked.hour,
+      startPicked.minute,
+    );
+    final DateTime endDt = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      endPicked.hour,
+      endPicked.minute,
+    );
+
+    if (!endDt.isAfter(startDt)) {
+      showSnackBar(
+        message: 'Nap end time must be after nap start time',
+        type: SnackBarType.ERROR,
+      );
+      return;
+    }
+
+    final String formattedStart = DateFormat('hh:mm a').format(startDt);
+    final String formattedEnd = DateFormat('hh:mm a').format(endDt);
+    context.read<TodayCubit>().setNapTimes(formattedStart, formattedEnd);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TodayCubit, TodayState>(
@@ -97,8 +172,8 @@ class AddSleepUpdateSheet extends StatelessWidget {
       },
       builder: (BuildContext context, TodayState state) {
         String? napTimeStr;
-        if (state.fellAsleepTime != null && state.wokeUpTime != null) {
-          napTimeStr = "${state.fellAsleepTime} \u2013 ${state.wokeUpTime}";
+        if (state.napStartTime != null && state.napEndTime != null) {
+          napTimeStr = "${state.napStartTime} \u2013 ${state.napEndTime}";
         }
 
         return Padding(
@@ -165,8 +240,12 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 _buildTimeInput(
                   label: "NAP STARTED & ENDED",
                   time: napTimeStr,
-                  isError: state.showSleepUpdateErrors && napTimeStr == null,
-                  isEditable: false,
+                  isError:
+                      state.showSleepUpdateErrors &&
+                      state.fellAsleepTime == null &&
+                      state.napStartTime == null,
+                  isEditable: true,
+                  onTap: () => _pickNapTimes(context),
                   dummyText: "HH:MM AM - HH:MM PM",
                 ),
                 24.spaceH,
@@ -218,8 +297,12 @@ class AddSleepUpdateSheet extends StatelessWidget {
                   isLoading: state.isLoading,
                   title: "Save update",
                   onTap: () {
-                    if (state.fellAsleepTime == null ||
-                        state.wokeUpTime == null) {
+                    final bool hasNight =
+                        state.fellAsleepTime != null &&
+                        state.wokeUpTime != null;
+                    final bool hasNap =
+                        state.napStartTime != null && state.napEndTime != null;
+                    if (!hasNight && !hasNap) {
                       context.read<TodayCubit>().triggerSleepUpdateErrors();
                     } else {
                       context.read<TodayCubit>().saveSleepLog();

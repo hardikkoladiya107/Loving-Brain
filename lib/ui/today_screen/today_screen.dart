@@ -16,6 +16,7 @@ import 'package:loving_brain/ui/today_screen/widgets/heads_up_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/main_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/nice_work_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
+import 'package:loving_brain/ui/today_screen/widgets/still_learning_patterns_card.dart';
 // Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -81,10 +82,15 @@ class _TodayScreenState extends State<TodayScreen> {
                         if (state.mode == TodayMode.normal) ...[
                           const MainCard(),
                           SizedBox(height: 24.h),
-                          const NoticedRow(),
-                          SizedBox(height: 24.h),
-                          const NiceWorkCard(),
-                          SizedBox(height: 24.h),
+                          if (state.hasMultiDayPatterns) ...[
+                            const NoticedRow(),
+                            SizedBox(height: 24.h),
+                            const NiceWorkCard(),
+                            SizedBox(height: 24.h),
+                          ] else ...[
+                            const StillLearningPatternsCard(),
+                            SizedBox(height: 24.h),
+                          ],
                           const ActionGrid(),
                         ] else if (state.mode == TodayMode.newParent) ...[
                           const AddSleepCard(),
@@ -156,8 +162,10 @@ class _TodayScreenState extends State<TodayScreen> {
                             backgroundColor: Colors.transparent,
                             textColor: greyColor9,
                           ),
-                          SizedBox(height: 24.h),
-                          const NoticedRow(),
+                          if (state.hasMultiDayPatterns) ...[
+                            SizedBox(height: 24.h),
+                            const NoticedRow(),
+                          ],
                           SizedBox(height: 24.h),
                           const ActionGrid(),
                         ],

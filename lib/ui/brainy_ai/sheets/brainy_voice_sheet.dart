@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/brainy_ai/bloc/brainy_voice_cubit.dart';
 import 'package:loving_brain/ui/brainy_ai/bloc/brainy_voice_state.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
@@ -121,16 +122,20 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
               40.spaceH,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32.w),
-                child: '"${state.previewText}"'.appText(
-                  fontSize: 24.sp,
-                  fraunces: true,
-                  textAlign: TextAlign.center,
-                ),
+                child:
+                    (state.previewText.isNotEmpty
+                            ? '"${state.previewText}"'
+                            : "Listening...")
+                        .appText(
+                          fontSize: 24.sp,
+                          fraunces: true,
+                          textAlign: TextAlign.center,
+                        ),
               ),
               12.spaceH,
               (state.isProcessing
                       ? "Processing your voice note..."
-                      : "Listening take your time.")
+                      : "Listening... take your time.")
                   .appText(
                     fontSize: 14.sp,
                     color: greyColor6,
@@ -167,17 +172,31 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                         onTap: state.isProcessing
                             ? null
                             : () async {
+                                final NavigatorState navigator = Navigator.of(
+                                  context,
+                                );
                                 final BrainyVoiceCubit cubit = context
                                     .read<BrainyVoiceCubit>();
                                 final (File? file, String text) = await cubit
                                     .stopAndFinishRecording();
                                 if (!context.mounted) return;
-                                Navigator.pop(context);
+
+                                if ((file == null || !await file.exists()) &&
+                                    text.trim().isEmpty) {
+                                  showSnackBar(
+                                    message:
+                                        "No audio was recorded. Please speak and try again.",
+                                    type: SnackBarType.ERROR,
+                                  );
+                                  return;
+                                }
+
+                                if (!context.mounted) return;
+                                navigator.pop();
                                 if (widget.onSendAudio != null) {
                                   widget.onSendAudio!(file, text);
                                 } else {
-                                  Navigator.push(
-                                    context,
+                                  navigator.push(
                                     MaterialPageRoute(
                                       builder: (_) => BrainyConversationScreen(
                                         initialChat: text,

@@ -29,39 +29,7 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
   }
 
   void init() {
-    final List<BrainySavedItem> defaultSleep = <BrainySavedItem>[
-      BrainySavedItem(
-        title: 'Why bedtime got harder',
-        subtitle: 'Saved 2 days ago',
-        imagePath: Assets.v2.images.imgSleep.path,
-        imageBgColorValue: 0xFFF1EEFF,
-        topic: 'Sleep',
-      ),
-    ];
-    final List<BrainySavedItem> defaultBehaviour = <BrainySavedItem>[
-      BrainySavedItem(
-        title: 'Tantrum triggers explained',
-        subtitle: 'Saved 5 days ago',
-        imagePath: Assets.v2.images.imgTantrums.path,
-        imageBgColorValue: 0xFFFEF0E8,
-        topic: 'Behaviour',
-      ),
-    ];
-    final List<BrainySavedItem> defaultWellbeing = <BrainySavedItem>[
-      BrainySavedItem(
-        title: '5 min breathing reset',
-        subtitle: 'Saved 1 week ago',
-        imagePath: Assets.v2.images.imgHealth.path,
-        imageBgColorValue: 0xFFE2F0FF,
-        topic: 'Health',
-      ),
-    ];
-
-    changeProps(
-      sleepItems: defaultSleep,
-      behaviourItems: defaultBehaviour,
-      parentWellbeingItems: defaultWellbeing,
-    );
+    emit(const BrainySavedGuidanceState());
 
     final String uid = preferences.getUserModel()?.uid ?? '';
     if (uid.isEmpty) return;
@@ -76,9 +44,9 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
             if (isClosed) return;
             if (snapshot.docs.isEmpty) {
               changeProps(
-                sleepItems: defaultSleep,
-                behaviourItems: defaultBehaviour,
-                parentWellbeingItems: defaultWellbeing,
+                sleepItems: const <BrainySavedItem>[],
+                behaviourItems: const <BrainySavedItem>[],
+                parentWellbeingItems: const <BrainySavedItem>[],
               );
               return;
             }
@@ -143,13 +111,9 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
             }
 
             changeProps(
-              sleepItems: sleep.isNotEmpty ? sleep : defaultSleep,
-              behaviourItems: behaviour.isNotEmpty
-                  ? behaviour
-                  : defaultBehaviour,
-              parentWellbeingItems: wellbeing.isNotEmpty
-                  ? wellbeing
-                  : defaultWellbeing,
+              sleepItems: sleep,
+              behaviourItems: behaviour,
+              parentWellbeingItems: wellbeing,
             );
           },
           onError: (_) {

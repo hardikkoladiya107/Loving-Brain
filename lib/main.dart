@@ -49,6 +49,10 @@ Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

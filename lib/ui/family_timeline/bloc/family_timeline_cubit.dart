@@ -54,6 +54,22 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
       }
     }
 
+    int weeks = 0;
+    if (events.isNotEmpty) {
+      DateTime? earliest;
+      for (final TimelineEventModel e in events) {
+        if (earliest == null || e.timestamp.isBefore(earliest)) {
+          earliest = e.timestamp;
+        }
+      }
+      if (earliest != null) {
+        final int days = DateTime.now().difference(earliest).inDays;
+        if (days >= 7) {
+          weeks = (days / 7).floor();
+        }
+      }
+    }
+
     final List<TimelineEventModel> filtered = _applyFilter(
       events,
       state.selectedFilter,
@@ -63,6 +79,8 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
       allEvents: events,
       filteredEvents: filtered,
       child: child,
+      weeksWithLovingBrain: weeks,
+      averageBedtimeShiftMinutes: 0,
       fetchStatus: const ApiResultStatus.data(data: null),
     );
   }

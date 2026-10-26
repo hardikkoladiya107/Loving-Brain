@@ -9,13 +9,11 @@ abstract class ParentSuccessGuideState with _$ParentSuccessGuideState {
   const factory ParentSuccessGuideState({
     @Default(false) bool isLoading,
     GuideProfileModel? guide,
-    @Default(<String>[
-      'Shift bedtime by 15 minutes',
-      'Consistent evening wind-down routine',
-    ])
-    List<String> activeGoals,
+    @Default(<String>[]) List<String> activeGoals,
     @Default(<MentorshipRequestModel>[])
     List<MentorshipRequestModel> pendingRequests,
+    @Default(null) String? recommendedNextStep,
+    @Default(null) String? recommendedNextStepSubtitle,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _ParentSuccessGuideState;
 }

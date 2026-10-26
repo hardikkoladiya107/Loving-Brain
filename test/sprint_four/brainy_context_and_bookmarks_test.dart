@@ -6,7 +6,9 @@ import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/ui/brainy_conversation/bloc/brainy_conversation_cubit.dart';
 import 'package:loving_brain/ui/brainy_conversation/bloc/brainy_conversation_state.dart';
 import 'package:loving_brain/ui/brainy_history/bloc/brainy_history_cubit.dart';
+import 'package:loving_brain/ui/brainy_history/bloc/brainy_history_state.dart';
 import 'package:loving_brain/ui/brainy_saved_guidance/bloc/brainy_saved_guidance_cubit.dart';
+import 'package:loving_brain/ui/brainy_saved_guidance/bloc/brainy_saved_guidance_state.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -128,34 +130,49 @@ void main() {
     );
 
     test(
-      'BrainySavedGuidanceCubit initializes with default categorized guidance',
+      'BrainySavedGuidanceCubit initializes with clean empty state and accepts items',
       () {
         final BrainySavedGuidanceCubit cubit = BrainySavedGuidanceCubit();
         cubit.init();
 
-        expect(cubit.state.sleepItems, isNotEmpty);
-        expect(cubit.state.behaviourItems, isNotEmpty);
-        expect(cubit.state.parentWellbeingItems, isNotEmpty);
+        expect(cubit.state.sleepItems, isEmpty);
+        expect(cubit.state.behaviourItems, isEmpty);
+        expect(cubit.state.parentWellbeingItems, isEmpty);
 
+        final BrainySavedItem item = BrainySavedItem(
+          id: 'guide_1',
+          title: 'Bedtime routine',
+          subtitle: 'Tips for wind-down',
+          topic: 'Sleep',
+          imagePath: '',
+          imageBgColorValue: 0xFFFFFFFF,
+        );
+        cubit.changeProps(sleepItems: <BrainySavedItem>[item]);
+        expect(cubit.state.sleepItems, isNotEmpty);
         expect(cubit.state.sleepItems.first.topic, 'Sleep');
-        expect(cubit.state.behaviourItems.first.topic, 'Behaviour');
-        expect(cubit.state.parentWellbeingItems.first.topic, 'Health');
 
         cubit.close();
       },
     );
 
     test(
-      'BrainyHistoryCubit initializes with grouped conversation history',
+      'BrainyHistoryCubit initializes with clean empty state and accepts history',
       () {
         final BrainyHistoryCubit cubit = BrainyHistoryCubit();
         cubit.init();
 
-        expect(cubit.state.thisWeekHistory, isNotEmpty);
-        expect(cubit.state.earlierHistory, isNotEmpty);
+        expect(cubit.state.thisWeekHistory, isEmpty);
+        expect(cubit.state.earlierHistory, isEmpty);
 
-        expect(cubit.state.thisWeekHistory.first.title, contains('bedtime'));
-        expect(cubit.state.earlierHistory.first.title, contains('naps'));
+        final BrainyHistoryItem item = BrainyHistoryItem(
+          conversationId: 'hist_1',
+          title: 'Bedtime question',
+          subtitle: 'Yesterday',
+          topic: 'Sleep',
+        );
+        cubit.changeProps(thisWeekHistory: <BrainyHistoryItem>[item]);
+        expect(cubit.state.thisWeekHistory, isNotEmpty);
+        expect(cubit.state.thisWeekHistory.first.title, contains('Bedtime'));
 
         cubit.close();
       },

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loving_brain/other/app_color.dart';
-import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/core/emergency_detector.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
+import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 
@@ -32,6 +36,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
       "Low appetite",
       "Illness",
       "Rash",
+      "Breathing difficulty",
     ];
 
     return BlocConsumer<TodayCubit, TodayState>(
@@ -55,6 +60,11 @@ class AddHealthUpdateSheet extends StatelessWidget {
       builder: (BuildContext context, TodayState state) {
         final bool isError =
             state.showHealthUpdateErrors && state.selectedHealthIssues.isEmpty;
+        final bool isEmergency =
+            state.selectedHealthIssues.contains("Breathing difficulty") ||
+            EmergencyDetector.isEmergency(state.healthNotes) ||
+            state.healthNotes.toLowerCase().contains("breath") ||
+            state.healthNotes.toLowerCase().contains("chok");
 
         return Padding(
           padding: EdgeInsets.only(
@@ -189,34 +199,130 @@ class AddHealthUpdateSheet extends StatelessWidget {
                   ),
                 ),
                 16.spaceH,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.error, color: primaryColor, size: 16.sp),
-                    8.spaceW,
-                    Expanded(
-                      child:
-                          "This doesn't look like an emergency, but contact a health professional if you're worried."
-                              .appText(
-                                color: greyColor,
-                                fontSize: 12.sp,
-                                textAlign: TextAlign.start,
-                              ),
+                if (isEmergency)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFEBEE),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: const Color(0xFFD32F2F)),
                     ),
-                  ],
-                ),
+                    padding: EdgeInsets.all(12.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: const Color(0xFFD32F2F),
+                              size: 20.sp,
+                            ),
+                            8.spaceW,
+                            "Urgent safety concern".appText(
+                              color: const Color(0xFFD32F2F),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
+                          ],
+                        ),
+                        8.spaceH,
+                        "Breathing difficulties, chest retractions, or unresponsiveness require immediate medical evaluation. LovingBrain cannot assess clinical emergencies."
+                            .appText(
+                              color: const Color(0xFFB71C1C),
+                              fontSize: 12.sp,
+                              textAlign: TextAlign.start,
+                            ),
+                        12.spaceH,
+                        InkWell(
+                          onTap: () {
+                            launchUrl(
+                              Uri.parse(EmergencyDetector.getEmergencyPhone()),
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 8.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFD32F2F),
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.call,
+                                  color: Colors.white,
+                                  size: 16.sp,
+                                ),
+                                6.spaceW,
+                                "Call emergency services (${EmergencyDetector.getEmergencyDisplayNumber()})"
+                                    .appText(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.sp,
+                                    ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.error, color: primaryColor, size: 16.sp),
+                      8.spaceW,
+                      Expanded(
+                        child:
+                            "This doesn't look like an emergency, but contact a health professional if you're worried."
+                                .appText(
+                                  color: greyColor,
+                                  fontSize: 12.sp,
+                                  textAlign: TextAlign.start,
+                                ),
+                      ),
+                    ],
+                  ),
                 24.spaceH,
                 AppButton(
                   isLoading: state.isLoading,
-                  title: "Save update",
+                  title: isEmergency ? "Review safety guidance" : "Save update",
                   onTap: () {
+                    if (isEmergency) {
+                      AlertBottomSheet.showSafetyConcern(
+                        context,
+                        title: "Urgent medical attention recommended",
+                        message:
+                            "Breathing difficulty or severe symptoms require prompt clinical evaluation. LovingBrain cannot assess medical emergencies.",
+                        onCallEmergency: () {
+                          launchUrl(
+                            Uri.parse(EmergencyDetector.getEmergencyPhone()),
+                          );
+                        },
+                        onReadSafety: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HelpSafetyScreen(),
+                            ),
+                          );
+                        },
+                      );
+                      return;
+                    }
                     if (state.selectedHealthIssues.isEmpty) {
                       context.read<TodayCubit>().triggerHealthUpdateErrors();
                     } else {
                       context.read<TodayCubit>().saveHealthLog();
                     }
                   },
-                  backgroundColor: primaryColor,
+                  backgroundColor: isEmergency
+                      ? const Color(0xFFD32F2F)
+                      : primaryColor,
                   textColor: Colors.white,
                 ),
                 24.spaceH,

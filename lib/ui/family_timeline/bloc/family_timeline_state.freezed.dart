@@ -227,7 +227,7 @@ return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.
 
 
 class _FamilyTimelineState implements FamilyTimelineState {
-  const _FamilyTimelineState({ List<TimelineEventModel> allEvents = const [],  List<TimelineEventModel> filteredEvents = const [], this.selectedFilter = 'All', this.child, this.weeksWithLovingBrain = 5, this.averageBedtimeShiftMinutes = 22, this.fetchStatus = const ApiResultStatus.initial()}): _allEvents = allEvents,_filteredEvents = filteredEvents;
+  const _FamilyTimelineState({ List<TimelineEventModel> allEvents = const [],  List<TimelineEventModel> filteredEvents = const [], this.selectedFilter = 'All', this.child, this.weeksWithLovingBrain = 0, this.averageBedtimeShiftMinutes = 0, this.fetchStatus = const ApiResultStatus.initial()}): _allEvents = allEvents,_filteredEvents = filteredEvents;
   
 
  final  List<TimelineEventModel> _allEvents;

@@ -34,6 +34,7 @@ class FamilySharingConsentCubit extends Cubit<FamilySharingConsentState> {
   }
 
   void grantConsent() {
+    preferences.putBool(SharedPreference.isFamilyConsentGranted, true);
     changeProps(isConsentGiven: true);
   }
 }

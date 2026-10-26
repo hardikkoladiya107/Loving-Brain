@@ -3,10 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
-import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/transcribe_model.dart';
-import 'package:loving_brain/model/user_model.dart';
-import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/ai_repo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -40,29 +37,8 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
   }
 
   Future<void> init({String? topic}) async {
-    final ChildModel? child = preferences.getChildModel();
-    final UserModel? user = preferences.getUserModel();
-    final String cName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
-        : (user?.childName != null && user!.childName!.trim().isNotEmpty)
-        ? user.childName!.trim()
-        : 'She';
-
     final String selectedTopic = topic ?? 'Behaviour';
-    String promptPreview = '$cName keeps waking around four in the morning...';
-    if (selectedTopic == 'Behaviour') {
-      promptPreview =
-          '$cName has been having a harder time winding down in the evening...';
-    } else if (selectedTopic == 'Mood') {
-      promptPreview =
-          'How can I help $cName calm down after a big emotional meltdown?';
-    } else if (selectedTopic == 'Health') {
-      promptPreview =
-          '$cName seems uncomfortable tonight — what can we do to help?';
-    }
-
-    changeProps(topic: selectedTopic, previewText: promptPreview);
+    changeProps(topic: selectedTopic, previewText: '');
     await startRecording();
   }
 
@@ -92,7 +68,7 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
     changeProps(isRecording: false, isProcessing: true);
 
     File? recordedFile;
-    String finalText = state.previewText;
+    String finalText = '';
 
     try {
       if (await _recorder.isRecording()) {

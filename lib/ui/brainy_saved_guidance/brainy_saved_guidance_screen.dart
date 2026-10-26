@@ -88,33 +88,75 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
                       fraunces: true,
                       textAlign: TextAlign.start,
                     ),
-                    32.spaceH,
-                    _buildSectionTitle("SLEEP"),
-                    12.spaceH,
-                    ...state.sleepItems.map((BrainySavedItem item) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: _buildGuidanceItem(context, item: item),
-                      );
-                    }),
-                    32.spaceH,
-                    _buildSectionTitle("BEHAVIOUR", color: greyColor11),
-                    12.spaceH,
-                    ...state.behaviourItems.map((BrainySavedItem item) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: _buildGuidanceItem(context, item: item),
-                      );
-                    }),
-                    32.spaceH,
-                    _buildSectionTitle("PARENT WELLBEING"),
-                    12.spaceH,
-                    ...state.parentWellbeingItems.map((BrainySavedItem item) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
-                        child: _buildGuidanceItem(context, item: item),
-                      );
-                    }),
+                    if (state.sleepItems.isEmpty &&
+                        state.behaviourItems.isEmpty &&
+                        state.parentWellbeingItems.isEmpty) ...[
+                      32.spaceH,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(28.r),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.bookmark_border_rounded,
+                              size: 48.sp,
+                              color: primaryColor,
+                            ),
+                            16.spaceH,
+                            "No saved guidance yet".appText(
+                              fontSize: 18.sp,
+                              color: darkBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            8.spaceH,
+                            "Tap the bookmark icon on any Brainy answer to save it here for quick reference."
+                                .appText(
+                                  fontSize: 13.sp,
+                                  color: greyColor,
+                                  textAlign: TextAlign.center,
+                                  height: 1.4,
+                                ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    if (state.sleepItems.isNotEmpty) ...[
+                      32.spaceH,
+                      _buildSectionTitle("SLEEP"),
+                      12.spaceH,
+                      ...state.sleepItems.map((BrainySavedItem item) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: _buildGuidanceItem(context, item: item),
+                        );
+                      }),
+                    ],
+                    if (state.behaviourItems.isNotEmpty) ...[
+                      32.spaceH,
+                      _buildSectionTitle("BEHAVIOUR", color: greyColor11),
+                      12.spaceH,
+                      ...state.behaviourItems.map((BrainySavedItem item) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: _buildGuidanceItem(context, item: item),
+                        );
+                      }),
+                    ],
+                    if (state.parentWellbeingItems.isNotEmpty) ...[
+                      32.spaceH,
+                      _buildSectionTitle("PARENT WELLBEING"),
+                      12.spaceH,
+                      ...state.parentWellbeingItems.map((BrainySavedItem item) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: _buildGuidanceItem(context, item: item),
+                        );
+                      }),
+                    ],
                     32.spaceH,
                   ],
                 ),

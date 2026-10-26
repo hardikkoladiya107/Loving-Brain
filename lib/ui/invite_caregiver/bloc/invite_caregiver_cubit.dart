@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 
@@ -55,7 +56,16 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
     if (cleanRecipient.isEmpty) {
       changeProps(
         sendStatus: ApiResultStatus.error(
-          error: Exception('Please enter an email or phone number'),
+          error: Exception('Please enter an email address'),
+        ),
+      );
+      return false;
+    }
+
+    if (!cleanRecipient.isValidEmail) {
+      changeProps(
+        sendStatus: ApiResultStatus.error(
+          error: Exception('Please enter a valid email address'),
         ),
       );
       return false;

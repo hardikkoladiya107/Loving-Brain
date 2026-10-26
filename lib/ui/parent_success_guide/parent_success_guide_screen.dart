@@ -152,9 +152,38 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
                             ],
                           ),
                           32.spaceH,
-                          _buildActiveGoalsCard(state.activeGoals),
-                          16.spaceH,
-                          _buildRecommendedNextStepCard(),
+                          if (state.pendingRequests.any(
+                            (MentorshipRequestModel r) =>
+                                r.status == MentorshipRequestStatus.pending,
+                          )) ...[
+                            _buildPendingRequestCard(
+                              state.pendingRequests.firstWhere(
+                                (MentorshipRequestModel r) =>
+                                    r.status == MentorshipRequestStatus.pending,
+                              ),
+                              guide,
+                            ),
+                            16.spaceH,
+                          ],
+                          if (state.activeGoals.isNotEmpty) ...[
+                            _buildActiveGoalsCard(state.activeGoals, guide),
+                            16.spaceH,
+                          ] else if (!state.pendingRequests.any(
+                            (MentorshipRequestModel r) =>
+                                r.status == MentorshipRequestStatus.pending,
+                          )) ...[
+                            _buildNoGoalsCard(guide),
+                            16.spaceH,
+                          ],
+                          if (state.recommendedNextStep != null &&
+                              state.recommendedNextStep!.isNotEmpty) ...[
+                            CommonInfoCard(
+                              chipTitle: "Recommended next step",
+                              title: state.recommendedNextStep!,
+                              subtitle: state.recommendedNextStepSubtitle ?? "",
+                            ),
+                            16.spaceH,
+                          ],
                           160.spaceH,
                         ],
                       ),
@@ -170,7 +199,97 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
     );
   }
 
-  Widget _buildActiveGoalsCard(List<String> activeGoals) {
+  Widget _buildPendingRequestCard(
+    MentorshipRequestModel request,
+    GuideProfileModel guide,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: secondaryColor.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InfoChip(
+            chipTitle: "Request pending",
+            iconData: Icons.schedule,
+            color: secondaryColor,
+            bgColor: const Color(0xFFF1EEFF),
+            padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
+          ),
+          12.spaceH,
+          "Session with ${guide.name}".appText(
+            fontSize: 18.sp,
+            color: darkBlue,
+            fontWeight: FontWeight.bold,
+            textAlign: TextAlign.start,
+          ),
+          6.spaceH,
+          "Concern: ${request.mainConcern}\nPreferred: ${request.preferredDays}"
+              .appText(
+                fontSize: 13.sp,
+                color: greyColor,
+                textAlign: TextAlign.start,
+                height: 1.4,
+              ),
+          12.spaceH,
+          "We'll notify you as soon as ${guide.name} confirms your time."
+              .appText(
+                fontSize: 12.sp,
+                color: greyColor6,
+                textAlign: TextAlign.start,
+              ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoGoalsCard(GuideProfileModel guide) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InfoChip(
+            chipTitle: "Get started",
+            iconData: Icons.emoji_objects_outlined,
+            color: primaryColor,
+            bgColor: const Color(0xFFFEF0E8),
+            padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
+          ),
+          12.spaceH,
+          "Connect with ${guide.name}".appText(
+            fontSize: 18.sp,
+            color: darkBlue,
+            fontWeight: FontWeight.bold,
+            textAlign: TextAlign.start,
+          ),
+          6.spaceH,
+          "Once you schedule a 1-on-1 check-in, your personalized goals, agreed routine shifts, and recommended journey steps will appear here."
+              .appText(
+                fontSize: 13.sp,
+                color: greyColor,
+                textAlign: TextAlign.start,
+                height: 1.4,
+              ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActiveGoalsCard(
+    List<String> activeGoals,
+    GuideProfileModel guide,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.r),
@@ -196,12 +315,11 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
             );
           }),
           8.spaceH,
-          "Set with you three weeks ago. You can change these any time."
-              .appText(
-                fontSize: 14.sp,
-                color: greyColor6,
-                textAlign: TextAlign.start,
-              ),
+          "Agreed with ${guide.name}. You can change these any time.".appText(
+            fontSize: 14.sp,
+            color: greyColor6,
+            textAlign: TextAlign.start,
+          ),
         ],
       ),
     );
@@ -228,14 +346,6 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildRecommendedNextStepCard() {
-    return CommonInfoCard(
-      chipTitle: "Recommended next step",
-      title: "Finish week 2 of the Sleep Reset journey",
-      subtitle: "Two tasks left the earlier nap and logging three nights.",
     );
   }
 

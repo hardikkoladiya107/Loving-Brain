@@ -44,7 +44,7 @@ class CoParentRepo {
   static const String _brevoSendUrl = 'https://api.brevo.com/v3/smtp/email';
 
   /// Must match a verified sender domain in the Brevo dashboard.
-  static const String _senderEmail = 'noreply@lovingbrain.com';
+  static const String _senderEmail = 'hardikkoladiya107@gmail.com';
   static const String _senderName = 'Loving Brain';
 
   Future<ApiResultStatus> addSharedEvent({
@@ -496,6 +496,59 @@ class CoParentRepo {
       case 'thisInvitationIsNotForYou':
       default:
         return LocaleKeys.thisInvitationIsNotForYou.tr();
+    }
+  }
+
+  /// Fetches pending invitations sent by the current user.
+  Future<ApiResultStatus<List<Map<String, dynamic>>>> getPendingInvitations({
+    required String fromEmail,
+  }) async {
+    try {
+      final String cleanEmail = fromEmail.trim();
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await coParentInvitationCollection
+              .where("from_parent", isEqualTo: cleanEmail)
+              .get();
+
+      final List<Map<String, dynamic>> pending = <Map<String, dynamic>>[];
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in snapshot.docs) {
+        final Map<String, dynamic> data = doc.data();
+        final String status = (data['status'] ?? '').toString().toUpperCase();
+        if (status == 'REQUESTED' || status == 'PENDING') {
+          pending.add(<String, dynamic>{'id': doc.id, ...data});
+        }
+      }
+      return ApiResultStatus.data(data: pending);
+    } on FirebaseException {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  /// Checks if there is an active pending invitation sent to the given user's email.
+  Future<String?> checkPendingInvitationForUser(String email) async {
+    try {
+      final String cleanEmail = email.trim().toLowerCase();
+      if (cleanEmail.isEmpty) return null;
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await coParentInvitationCollection
+              .where("to_parent", isEqualTo: cleanEmail)
+              .get();
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in snapshot.docs) {
+        final Map<String, dynamic> data = doc.data();
+        final String status = (data['status'] ?? '').toString().toUpperCase();
+        if (status == 'REQUESTED' || status == 'PENDING') {
+          return doc.id;
+        }
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 

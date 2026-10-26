@@ -38,5 +38,7 @@ abstract class CalmPlanState with _$CalmPlanState {
     )
     String avoidInstructionSubtitle,
     @Default('your child') String childName,
+    @Default(0) int audioPositionSeconds,
+    @Default(180) int audioDurationSeconds,
   }) = _CalmPlanState;
 }
