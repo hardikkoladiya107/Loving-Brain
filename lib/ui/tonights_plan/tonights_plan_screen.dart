@@ -271,11 +271,13 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
                     ],
                   ),
                   4.spaceH,
-                  subtitle.replaceAll('$time - ', '').appText(
-                    fontSize: 12.sp,
-                    color: greyColor4,
-                    textAlign: TextAlign.start,
-                  ),
+                  subtitle
+                      .replaceAll('$time - ', '')
+                      .appText(
+                        fontSize: 12.sp,
+                        color: greyColor4,
+                        textAlign: TextAlign.start,
+                      ),
                 ],
               ),
             ),

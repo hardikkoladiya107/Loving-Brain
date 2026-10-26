@@ -17,13 +17,11 @@ class MicrophonePermissionCubit extends Cubit<MicrophonePermissionState> {
   }
 
   Future<void> grantPermission() async {
+    changeProps(isGranted: true);
     try {
       final AudioRecorder recorder = AudioRecorder();
-      final bool granted = await recorder.hasPermission();
+      await recorder.hasPermission();
       recorder.dispose();
-      changeProps(isGranted: granted);
-    } catch (_) {
-      changeProps(isGranted: true);
-    }
+    } catch (_) {}
   }
 }

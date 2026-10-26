@@ -981,9 +981,7 @@ class AuthRepo {
           msg =
               'Unable to send verification code to this email. Please check the address and try again.';
         }
-        return ApiResultStatus.error(
-          error: Exception(msg),
-        );
+        return ApiResultStatus.error(error: Exception(msg));
       }
       return const ApiResultStatus.data(data: true);
     } on FirebaseFunctionsException catch (e) {

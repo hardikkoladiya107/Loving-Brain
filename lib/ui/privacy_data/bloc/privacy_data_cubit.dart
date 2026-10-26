@@ -34,6 +34,7 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
 
   Future<void> _checkPendingUpdates() async {
     final pending = await OfflineSyncRepo.instance.getPendingUpdates();
+    if (isClosed) return;
     changeProps(pendingOfflineUpdatesCount: pending.length);
   }
 
@@ -66,8 +67,8 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
 
   Future<void> manualSyncOfflineUpdates() async {
     changeProps(isSyncing: true, syncStatus: const ApiResultStatus.loading());
-    final ApiResultStatus<int> res =
-        await OfflineSyncRepo.instance.syncPendingUpdates();
+    final ApiResultStatus<int> res = await OfflineSyncRepo.instance
+        .syncPendingUpdates();
     final pending = await OfflineSyncRepo.instance.getPendingUpdates();
     changeProps(
       isSyncing: false,

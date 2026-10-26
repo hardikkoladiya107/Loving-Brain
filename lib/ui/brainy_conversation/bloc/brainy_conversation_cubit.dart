@@ -394,9 +394,11 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       return;
     }
 
-    final List<ConnectivityResult> connectivity =
-        await Connectivity().checkConnectivity();
-    if (connectivity.any((ConnectivityResult c) => c == ConnectivityResult.none)) {
+    final List<ConnectivityResult> connectivity = await Connectivity()
+        .checkConnectivity();
+    if (connectivity.any(
+      (ConnectivityResult c) => c == ConnectivityResult.none,
+    )) {
       changeProps(
         messages: <BrainyMessage>[
           ...state.messages,

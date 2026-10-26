@@ -90,8 +90,8 @@ class NotificationUtil {
   static Future<bool> isPermissionGranted() async {
     try {
       if (Firebase.apps.isNotEmpty) {
-        final NotificationSettings settings =
-            await FirebaseMessaging.instance.getNotificationSettings();
+        final NotificationSettings settings = await FirebaseMessaging.instance
+            .getNotificationSettings();
         return settings.authorizationStatus == AuthorizationStatus.authorized ||
             settings.authorizationStatus == AuthorizationStatus.provisional;
       }
@@ -102,12 +102,8 @@ class NotificationUtil {
   static Future<bool> requestNotificationPermission() async {
     try {
       if (Firebase.apps.isNotEmpty) {
-        final NotificationSettings settings =
-            await FirebaseMessaging.instance.requestPermission(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+        final NotificationSettings settings = await FirebaseMessaging.instance
+            .requestPermission(alert: true, badge: true, sound: true);
         await preferences.putBool(
           SharedPreference.notificationPermissionRequested,
           true,

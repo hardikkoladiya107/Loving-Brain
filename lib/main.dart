@@ -127,10 +127,9 @@ class _MyAppState extends State<MyApp> {
             final Widget easyLoadingChild = EasyLoading.init()(context, child);
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(
-                textScaler: MediaQuery.textScalerOf(context).clamp(
-                  minScaleFactor: 0.85,
-                  maxScaleFactor: 1.35,
-                ),
+                textScaler: MediaQuery.textScalerOf(
+                  context,
+                ).clamp(minScaleFactor: 0.85, maxScaleFactor: 1.35),
               ),
               child: easyLoadingChild,
             );

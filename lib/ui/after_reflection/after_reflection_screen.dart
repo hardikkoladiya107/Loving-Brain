@@ -95,160 +95,165 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 80.h),
                     children: [
-                    16.spaceH,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        borderRadius: BorderRadius.circular(24.r),
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: darkBlue,
-                            size: 24.sp,
+                      16.spaceH,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          borderRadius: BorderRadius.circular(24.r),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    24.spaceH,
-                    "How did it go?".appText(
-                      fontSize: 28.sp,
-                      color: greyColor9,
-                      fraunces: true,
-                      textAlign: TextAlign.start,
-                    ),
-                    8.spaceH,
-                    "No wrong answers whatever you remember is enough.".appText(
-                      fontSize: 14.sp,
-                      color: greyColor,
-                      height: 1.5,
-                      textAlign: TextAlign.start,
-                    ),
-                    24.spaceH,
-                    _buildInputField(
-                      controller: _beforeController,
-                      label: "WHAT HAPPENED BEFORE",
-                      hint: "E.g. She was asked to put her shoes on",
-                      onChanged: (String v) => context
-                          .read<AfterReflectionCubit>()
-                          .setBeforeEvent(v),
-                    ),
-                    12.spaceH,
-                    _buildInputField(
-                      controller: _durationController,
-                      label: "HOW LONG IT LASTED",
-                      hint: "E.g. About 10 minutes",
-                      onChanged: (String v) =>
-                          context.read<AfterReflectionCubit>().setDuration(v),
-                    ),
-                    24.spaceH,
-                    _buildSectionTitle("INTENSITY"),
-                    16.spaceH,
-                    Slider(
-                      value: state.intensityValue,
-                      onChanged: (double value) => context
-                          .read<AfterReflectionCubit>()
-                          .setIntensity(value),
-                      activeColor: secondaryColor,
-                      inactiveColor: const Color(0xFFE5E7EB),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        "Mild".appText(fontSize: 12.sp, color: greyColor),
-                        "Intense".appText(fontSize: 12.sp, color: greyColor),
-                      ],
-                    ),
-                    24.spaceH,
-                    _buildSectionTitle("WHAT HELPED"),
-                    12.spaceH,
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 12.h,
-                      children: [
-                        _buildChip(
-                          context,
-                          "Distraction",
-                          state.selectedHelped,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setHelped(v),
-                        ),
-                        _buildChip(
-                          context,
-                          "Holding close",
-                          state.selectedHelped,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setHelped(v),
-                        ),
-                        _buildChip(
-                          context,
-                          "Quiet space",
-                          state.selectedHelped,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setHelped(v),
-                        ),
-                        _buildChip(
-                          context,
-                          "Waiting it out",
-                          state.selectedHelped,
-                          (String v) =>
-                              context.read<AfterReflectionCubit>().setHelped(v),
-                        ),
-                      ],
-                    ),
-                    24.spaceH,
-                    _buildSectionTitle("AND HOW ARE YOU FEELING?"),
-                    12.spaceH,
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 12.h,
-                      children: [
-                        _buildChip(
-                          context,
-                          "Calm",
-                          state.selectedFeeling,
-                          (String v) => context
-                              .read<AfterReflectionCubit>()
-                              .setFeeling(v),
-                        ),
-                        _buildChip(
-                          context,
-                          "Tired",
-                          state.selectedFeeling,
-                          (String v) => context
-                              .read<AfterReflectionCubit>()
-                              .setFeeling(v),
-                        ),
-                        _buildChip(
-                          context,
-                          "Frustrated",
-                          state.selectedFeeling,
-                          (String v) => context
-                              .read<AfterReflectionCubit>()
-                              .setFeeling(v),
-                        ),
-                        _buildChip(
-                          context,
-                          "Okay",
-                          state.selectedFeeling,
-                          (String v) => context
-                              .read<AfterReflectionCubit>()
-                              .setFeeling(v),
-                        ),
-                      ],
-                    ),
-                    32.spaceH,
-                  ],
+                      24.spaceH,
+                      "How did it go?".appText(
+                        fontSize: 28.sp,
+                        color: greyColor9,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
+                      ),
+                      8.spaceH,
+                      "No wrong answers whatever you remember is enough."
+                          .appText(
+                            fontSize: 14.sp,
+                            color: greyColor,
+                            height: 1.5,
+                            textAlign: TextAlign.start,
+                          ),
+                      24.spaceH,
+                      _buildInputField(
+                        controller: _beforeController,
+                        label: "WHAT HAPPENED BEFORE",
+                        hint: "E.g. She was asked to put her shoes on",
+                        onChanged: (String v) => context
+                            .read<AfterReflectionCubit>()
+                            .setBeforeEvent(v),
+                      ),
+                      12.spaceH,
+                      _buildInputField(
+                        controller: _durationController,
+                        label: "HOW LONG IT LASTED",
+                        hint: "E.g. About 10 minutes",
+                        onChanged: (String v) =>
+                            context.read<AfterReflectionCubit>().setDuration(v),
+                      ),
+                      24.spaceH,
+                      _buildSectionTitle("INTENSITY"),
+                      16.spaceH,
+                      Slider(
+                        value: state.intensityValue,
+                        onChanged: (double value) => context
+                            .read<AfterReflectionCubit>()
+                            .setIntensity(value),
+                        activeColor: secondaryColor,
+                        inactiveColor: const Color(0xFFE5E7EB),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          "Mild".appText(fontSize: 12.sp, color: greyColor),
+                          "Intense".appText(fontSize: 12.sp, color: greyColor),
+                        ],
+                      ),
+                      24.spaceH,
+                      _buildSectionTitle("WHAT HELPED"),
+                      12.spaceH,
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 12.h,
+                        children: [
+                          _buildChip(
+                            context,
+                            "Distraction",
+                            state.selectedHelped,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setHelped(v),
+                          ),
+                          _buildChip(
+                            context,
+                            "Holding close",
+                            state.selectedHelped,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setHelped(v),
+                          ),
+                          _buildChip(
+                            context,
+                            "Quiet space",
+                            state.selectedHelped,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setHelped(v),
+                          ),
+                          _buildChip(
+                            context,
+                            "Waiting it out",
+                            state.selectedHelped,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setHelped(v),
+                          ),
+                        ],
+                      ),
+                      24.spaceH,
+                      _buildSectionTitle("AND HOW ARE YOU FEELING?"),
+                      12.spaceH,
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 12.h,
+                        children: [
+                          _buildChip(
+                            context,
+                            "Calm",
+                            state.selectedFeeling,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setFeeling(v),
+                          ),
+                          _buildChip(
+                            context,
+                            "Tired",
+                            state.selectedFeeling,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setFeeling(v),
+                          ),
+                          _buildChip(
+                            context,
+                            "Frustrated",
+                            state.selectedFeeling,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setFeeling(v),
+                          ),
+                          _buildChip(
+                            context,
+                            "Okay",
+                            state.selectedFeeling,
+                            (String v) => context
+                                .read<AfterReflectionCubit>()
+                                .setFeeling(v),
+                          ),
+                        ],
+                      ),
+                      32.spaceH,
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
           bottomNavigationBar: Container(
             padding: EdgeInsets.only(
               top: 12.h,

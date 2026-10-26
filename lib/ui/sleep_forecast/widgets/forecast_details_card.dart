@@ -111,23 +111,11 @@ class ForecastDetailsCard extends StatelessWidget {
               if (i < steps.length - 1) 12.spaceH,
             ]
           else ...[
-            _buildPlanItem(
-              context,
-              "Wind-down starts",
-              "About 20 minutes",
-            ),
+            _buildPlanItem(context, "Wind-down starts", "About 20 minutes"),
             12.spaceH,
-            _buildPlanItem(
-              context,
-              "Book in the bedroom",
-              "About 20 minutes",
-            ),
+            _buildPlanItem(context, "Book in the bedroom", "About 20 minutes"),
             12.spaceH,
-            _buildPlanItem(
-              context,
-              "Lights out",
-              "Inside recommended window",
-            ),
+            _buildPlanItem(context, "Lights out", "Inside recommended window"),
           ],
         ],
       ),

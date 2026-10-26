@@ -120,7 +120,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             16.spaceH,
                             GestureDetector(
                               onTap: () async {
-                                final bool granted = await NotificationUtil.requestNotificationPermission();
+                                final bool granted =
+                                    await NotificationUtil.requestNotificationPermission();
                                 cubit.changeProps(isPermissionDenied: !granted);
                               },
                               child: Container(
@@ -141,12 +142,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                     ),
                                     10.spaceW,
                                     Expanded(
-                                      child: "Notifications are turned off in your system settings. Reminders will not be delivered until enabled."
-                                          .appText(
-                                            fontSize: 13.sp,
-                                            color: const Color(0xFF856404),
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                      child:
+                                          "Notifications are turned off in your system settings. Reminders will not be delivered until enabled."
+                                              .appText(
+                                                fontSize: 13.sp,
+                                                color: const Color(0xFF856404),
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                     ),
                                   ],
                                 ),

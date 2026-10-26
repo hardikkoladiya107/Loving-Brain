@@ -282,10 +282,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         concernsError: "",
       );
     } else {
-      changeProps(
-        isMoreThanOneSelected: true,
-        concernsError: "",
-      );
+      changeProps(isMoreThanOneSelected: true, concernsError: "");
     }
   }
 

@@ -1600,7 +1600,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       imageQuality: 80,
                     );
                     if (photo != null && context.mounted) {
-                      context.read<OnboardingCubit>().updateChildPhoto(photo.path);
+                      context.read<OnboardingCubit>().updateChildPhoto(
+                        photo.path,
+                      );
                     }
                   } catch (_) {}
                 },
@@ -1616,7 +1618,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       imageQuality: 80,
                     );
                     if (photo != null && context.mounted) {
-                      context.read<OnboardingCubit>().updateChildPhoto(photo.path);
+                      context.read<OnboardingCubit>().updateChildPhoto(
+                        photo.path,
+                      );
                     }
                   } catch (_) {}
                 },
