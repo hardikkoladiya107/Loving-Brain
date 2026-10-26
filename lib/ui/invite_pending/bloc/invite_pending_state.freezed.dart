@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InvitePendingState {
 
- String get recipientEmail; String get role; int get daysUntilExpiry; List<String> get sharedCategories; bool get isResending; bool get isCancelled; ApiResultStatus<dynamic> get actionStatus;
+ String get recipientEmail; String get role; String get invitationId; String get childName; int get daysUntilExpiry; List<String> get sharedCategories; bool get isResending; bool get isCancelled; ApiResultStatus<dynamic> get actionStatus;
 /// Create a copy of InvitePendingState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $InvitePendingStateCopyWith<InvitePendingState> get copyWith => _$InvitePendingS
 @override
 bool operator ==(Object other) {
   final _this = this as InvitePendingState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InvitePendingState&&(identical(other.recipientEmail, _this.recipientEmail) || other.recipientEmail == _this.recipientEmail)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.daysUntilExpiry, _this.daysUntilExpiry) || other.daysUntilExpiry == _this.daysUntilExpiry)&&const DeepCollectionEquality().equals(other.sharedCategories, _this.sharedCategories)&&(identical(other.isResending, _this.isResending) || other.isResending == _this.isResending)&&(identical(other.isCancelled, _this.isCancelled) || other.isCancelled == _this.isCancelled)&&(identical(other.actionStatus, _this.actionStatus) || other.actionStatus == _this.actionStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InvitePendingState&&(identical(other.recipientEmail, _this.recipientEmail) || other.recipientEmail == _this.recipientEmail)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.invitationId, _this.invitationId) || other.invitationId == _this.invitationId)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.daysUntilExpiry, _this.daysUntilExpiry) || other.daysUntilExpiry == _this.daysUntilExpiry)&&const DeepCollectionEquality().equals(other.sharedCategories, _this.sharedCategories)&&(identical(other.isResending, _this.isResending) || other.isResending == _this.isResending)&&(identical(other.isCancelled, _this.isCancelled) || other.isCancelled == _this.isCancelled)&&(identical(other.actionStatus, _this.actionStatus) || other.actionStatus == _this.actionStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as InvitePendingState;
-  return Object.hash(runtimeType,_this.recipientEmail,_this.role,_this.daysUntilExpiry,const DeepCollectionEquality().hash(_this.sharedCategories),_this.isResending,_this.isCancelled,_this.actionStatus);
+  return Object.hash(runtimeType,_this.recipientEmail,_this.role,_this.invitationId,_this.childName,_this.daysUntilExpiry,const DeepCollectionEquality().hash(_this.sharedCategories),_this.isResending,_this.isCancelled,_this.actionStatus);
 }
 
 @override
 String toString() {
   final _this = this as InvitePendingState;
-  return 'InvitePendingState(recipientEmail: ${_this.recipientEmail}, role: ${_this.role}, daysUntilExpiry: ${_this.daysUntilExpiry}, sharedCategories: ${_this.sharedCategories}, isResending: ${_this.isResending}, isCancelled: ${_this.isCancelled}, actionStatus: ${_this.actionStatus})';
+  return 'InvitePendingState(recipientEmail: ${_this.recipientEmail}, role: ${_this.role}, invitationId: ${_this.invitationId}, childName: ${_this.childName}, daysUntilExpiry: ${_this.daysUntilExpiry}, sharedCategories: ${_this.sharedCategories}, isResending: ${_this.isResending}, isCancelled: ${_this.isCancelled}, actionStatus: ${_this.actionStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $InvitePendingStateCopyWith<$Res>  {
   factory $InvitePendingStateCopyWith(InvitePendingState value, $Res Function(InvitePendingState) _then) = _$InvitePendingStateCopyWithImpl;
 @useResult
 $Res call({
- String recipientEmail, String role, int daysUntilExpiry, List<String> sharedCategories, bool isResending, bool isCancelled, ApiResultStatus<dynamic> actionStatus
+ String recipientEmail, String role, String invitationId, String childName, int daysUntilExpiry, List<String> sharedCategories, bool isResending, bool isCancelled, ApiResultStatus<dynamic> actionStatus
 });
 
 
@@ -68,10 +68,12 @@ class _$InvitePendingStateCopyWithImpl<$Res>
 
 /// Create a copy of InvitePendingState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? recipientEmail = null,Object? role = null,Object? daysUntilExpiry = null,Object? sharedCategories = null,Object? isResending = null,Object? isCancelled = null,Object? actionStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? recipientEmail = null,Object? role = null,Object? invitationId = null,Object? childName = null,Object? daysUntilExpiry = null,Object? sharedCategories = null,Object? isResending = null,Object? isCancelled = null,Object? actionStatus = null,}) {
   return _then(InvitePendingState(
 recipientEmail: null == recipientEmail ? _self.recipientEmail : recipientEmail // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as String,invitationId: null == invitationId ? _self.invitationId : invitationId // ignore: cast_nullable_to_non_nullable
+as String,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,daysUntilExpiry: null == daysUntilExpiry ? _self.daysUntilExpiry : daysUntilExpiry // ignore: cast_nullable_to_non_nullable
 as int,sharedCategories: null == sharedCategories ? _self.sharedCategories : sharedCategories // ignore: cast_nullable_to_non_nullable
 as List<String>,isResending: null == isResending ? _self.isResending : isResending // ignore: cast_nullable_to_non_nullable
@@ -171,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String recipientEmail,  String role,  int daysUntilExpiry,  List<String> sharedCategories,  bool isResending,  bool isCancelled,  ApiResultStatus<dynamic> actionStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String recipientEmail,  String role,  String invitationId,  String childName,  int daysUntilExpiry,  List<String> sharedCategories,  bool isResending,  bool isCancelled,  ApiResultStatus<dynamic> actionStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InvitePendingState() when $default != null:
-return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.sharedCategories,_that.isResending,_that.isCancelled,_that.actionStatus);case _:
+return $default(_that.recipientEmail,_that.role,_that.invitationId,_that.childName,_that.daysUntilExpiry,_that.sharedCategories,_that.isResending,_that.isCancelled,_that.actionStatus);case _:
   return orElse();
 
 }
@@ -192,10 +194,10 @@ return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.shar
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String recipientEmail,  String role,  int daysUntilExpiry,  List<String> sharedCategories,  bool isResending,  bool isCancelled,  ApiResultStatus<dynamic> actionStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String recipientEmail,  String role,  String invitationId,  String childName,  int daysUntilExpiry,  List<String> sharedCategories,  bool isResending,  bool isCancelled,  ApiResultStatus<dynamic> actionStatus)  $default,) {final _that = this;
 switch (_that) {
 case _InvitePendingState():
-return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.sharedCategories,_that.isResending,_that.isCancelled,_that.actionStatus);case _:
+return $default(_that.recipientEmail,_that.role,_that.invitationId,_that.childName,_that.daysUntilExpiry,_that.sharedCategories,_that.isResending,_that.isCancelled,_that.actionStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +214,10 @@ return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.shar
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String recipientEmail,  String role,  int daysUntilExpiry,  List<String> sharedCategories,  bool isResending,  bool isCancelled,  ApiResultStatus<dynamic> actionStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String recipientEmail,  String role,  String invitationId,  String childName,  int daysUntilExpiry,  List<String> sharedCategories,  bool isResending,  bool isCancelled,  ApiResultStatus<dynamic> actionStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _InvitePendingState() when $default != null:
-return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.sharedCategories,_that.isResending,_that.isCancelled,_that.actionStatus);case _:
+return $default(_that.recipientEmail,_that.role,_that.invitationId,_that.childName,_that.daysUntilExpiry,_that.sharedCategories,_that.isResending,_that.isCancelled,_that.actionStatus);case _:
   return null;
 
 }
@@ -227,11 +229,13 @@ return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.shar
 
 
 class _InvitePendingState implements InvitePendingState {
-  const _InvitePendingState({this.recipientEmail = '', this.role = 'Caregiver', this.daysUntilExpiry = 14,  List<String> sharedCategories = const <String>['Sleep patterns', "Tonight's plan"], this.isResending = false, this.isCancelled = false, this.actionStatus = const ApiResultStatus.initial()}): _sharedCategories = sharedCategories;
+  const _InvitePendingState({this.recipientEmail = '', this.role = 'Caregiver', this.invitationId = '', this.childName = 'your child', this.daysUntilExpiry = 14,  List<String> sharedCategories = const <String>['Sleep patterns', "Tonight's plan"], this.isResending = false, this.isCancelled = false, this.actionStatus = const ApiResultStatus.initial()}): _sharedCategories = sharedCategories;
   
 
 @override@JsonKey() final  String recipientEmail;
 @override@JsonKey() final  String role;
+@override@JsonKey() final  String invitationId;
+@override@JsonKey() final  String childName;
 @override@JsonKey() final  int daysUntilExpiry;
  final  List<String> _sharedCategories;
 @override@JsonKey() List<String> get sharedCategories {
@@ -254,18 +258,18 @@ _$InvitePendingStateCopyWith<_InvitePendingState> get copyWith => __$InvitePendi
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InvitePendingState&&(identical(other.recipientEmail, recipientEmail) || other.recipientEmail == recipientEmail)&&(identical(other.role, role) || other.role == role)&&(identical(other.daysUntilExpiry, daysUntilExpiry) || other.daysUntilExpiry == daysUntilExpiry)&&const DeepCollectionEquality().equals(other.sharedCategories, _sharedCategories)&&(identical(other.isResending, isResending) || other.isResending == isResending)&&(identical(other.isCancelled, isCancelled) || other.isCancelled == isCancelled)&&(identical(other.actionStatus, actionStatus) || other.actionStatus == actionStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InvitePendingState&&(identical(other.recipientEmail, recipientEmail) || other.recipientEmail == recipientEmail)&&(identical(other.role, role) || other.role == role)&&(identical(other.invitationId, invitationId) || other.invitationId == invitationId)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.daysUntilExpiry, daysUntilExpiry) || other.daysUntilExpiry == daysUntilExpiry)&&const DeepCollectionEquality().equals(other.sharedCategories, _sharedCategories)&&(identical(other.isResending, isResending) || other.isResending == isResending)&&(identical(other.isCancelled, isCancelled) || other.isCancelled == isCancelled)&&(identical(other.actionStatus, actionStatus) || other.actionStatus == actionStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,recipientEmail,role,daysUntilExpiry,const DeepCollectionEquality().hash(_sharedCategories),isResending,isCancelled,actionStatus);
+    return Object.hash(runtimeType,recipientEmail,role,invitationId,childName,daysUntilExpiry,const DeepCollectionEquality().hash(_sharedCategories),isResending,isCancelled,actionStatus);
 }
 
 @override
 String toString() {
-    return 'InvitePendingState(recipientEmail: $recipientEmail, role: $role, daysUntilExpiry: $daysUntilExpiry, sharedCategories: $sharedCategories, isResending: $isResending, isCancelled: $isCancelled, actionStatus: $actionStatus)';
+    return 'InvitePendingState(recipientEmail: $recipientEmail, role: $role, invitationId: $invitationId, childName: $childName, daysUntilExpiry: $daysUntilExpiry, sharedCategories: $sharedCategories, isResending: $isResending, isCancelled: $isCancelled, actionStatus: $actionStatus)';
 }
 
 
@@ -276,7 +280,7 @@ abstract mixin class _$InvitePendingStateCopyWith<$Res> implements $InvitePendin
   factory _$InvitePendingStateCopyWith(_InvitePendingState value, $Res Function(_InvitePendingState) _then) = __$InvitePendingStateCopyWithImpl;
 @override @useResult
 $Res call({
- String recipientEmail, String role, int daysUntilExpiry, List<String> sharedCategories, bool isResending, bool isCancelled, ApiResultStatus<dynamic> actionStatus
+ String recipientEmail, String role, String invitationId, String childName, int daysUntilExpiry, List<String> sharedCategories, bool isResending, bool isCancelled, ApiResultStatus<dynamic> actionStatus
 });
 
 
@@ -293,10 +297,12 @@ class __$InvitePendingStateCopyWithImpl<$Res>
 
 /// Create a copy of InvitePendingState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? recipientEmail = null,Object? role = null,Object? daysUntilExpiry = null,Object? sharedCategories = null,Object? isResending = null,Object? isCancelled = null,Object? actionStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? recipientEmail = null,Object? role = null,Object? invitationId = null,Object? childName = null,Object? daysUntilExpiry = null,Object? sharedCategories = null,Object? isResending = null,Object? isCancelled = null,Object? actionStatus = null,}) {
   return _then(_InvitePendingState(
 recipientEmail: null == recipientEmail ? _self.recipientEmail : recipientEmail // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as String,invitationId: null == invitationId ? _self.invitationId : invitationId // ignore: cast_nullable_to_non_nullable
+as String,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,daysUntilExpiry: null == daysUntilExpiry ? _self.daysUntilExpiry : daysUntilExpiry // ignore: cast_nullable_to_non_nullable
 as int,sharedCategories: null == sharedCategories ? _self._sharedCategories : sharedCategories // ignore: cast_nullable_to_non_nullable
 as List<String>,isResending: null == isResending ? _self.isResending : isResending // ignore: cast_nullable_to_non_nullable

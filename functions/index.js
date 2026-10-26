@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Firebase Cloud Functions â€“ entry point.
  *
  * Exports:
@@ -20,7 +20,11 @@ const {onEnergyBridgeSchedule} = require(
     "./triggers/energyBridgeSchedulerTriggers",
 );
 const {onUserDelete} = require("./triggers/userTriggers");
-const {sendEmailOtp, verifyEmailOtp} = require("./controllers/authController");
+const {
+  sendEmailOtp,
+  verifyEmailOtp,
+  sendInvitationEmail,
+} = require("./controllers/authController");
 
 exports.sendScheduledNotification = sendScheduledNotification;
 exports.sendNotificationToAll = sendNotificationToAll;
@@ -32,4 +36,5 @@ exports.onEnergyBridgeSchedule = onEnergyBridgeSchedule;
 exports.onUserDelete = onUserDelete;
 exports.sendEmailOtp = sendEmailOtp;
 exports.verifyEmailOtp = verifyEmailOtp;
+exports.sendInvitationEmail = sendInvitationEmail;
 

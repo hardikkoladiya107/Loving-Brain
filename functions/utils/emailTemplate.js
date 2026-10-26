@@ -111,6 +111,87 @@ function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL) {
   `.trim();
 }
 
+/**
+ * Returns a fully styled HTML email for Co-Parent / Caregiver invitation.
+ * @param {string} fromParentName Name of the inviter.
+ * @param {string} childrenNames Name of the child.
+ * @param {string} invitationLink Universal deep link.
+ * @param {string} [logoUrl] Optional hosted image URL.
+ * @return {string} Fully formatted HTML string.
+ */
+function getInvitationEmailHtml(
+  fromParentName,
+  childrenNames,
+  invitationLink,
+  logoUrl = DEFAULT_LOGO_URL
+) {
+  const brandLogoHtml = `
+    <img src="${logoUrl}" alt="Loving Brain" width="76" height="76" style="display: block; margin: 0 auto 14px auto; border: 0; outline: none; text-decoration: none; max-width: 76px; height: auto;" />
+  `;
+
+  return `
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You've Been Invited to Loving Brain</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #FEF8F4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FEF8F4; padding: 40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; background-color: #FFFFFF; border-radius: 28px; border: 1px solid #F5EAE4; box-shadow: 0 8px 30px rgba(240, 109, 77, 0.08); overflow: hidden;">
+          <tr>
+            <td align="center" style="padding: 40px 32px 18px 32px; background: linear-gradient(180deg, #FFF7F2 0%, #FFFFFF 100%);">
+              ${brandLogoHtml}
+              <h1 style="margin: 0; font-size: 26px; font-weight: 800; color: #212E5A;">Loving Brain</h1>
+              <p style="margin: 6px 0 0 0; font-size: 13px; color: #8A8A8A; font-weight: 500;">Parenting Together, Beautifully</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 36px 36px 36px; text-align: center;">
+              <h2 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 700; color: #212E5A;">You've been invited! 🎉</h2>
+              <p style="margin: 0 0 18px 0; font-size: 14px; line-height: 22px; color: #545454;">
+                <strong style="color: #665FCE;">${fromParentName}</strong> has invited you to collaborate and support <strong style="color: #F06D4D;">${childrenNames}</strong> on Loving Brain.
+              </p>
+              <p style="margin: 0 0 28px 0; font-size: 13px; line-height: 20px; color: #767676;">
+                Stay synchronized on sleep forecasts, routines, and daily plans—all in one calm, supportive space.
+              </p>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+                <tr>
+                  <td align="center">
+                    <a href="${invitationLink}" style="display: inline-block; background: linear-gradient(135deg, #F06D4D 0%, #FF8A65 100%); color: #FFFFFF; font-size: 16px; font-weight: 700; text-decoration: none; padding: 16px 36px; border-radius: 50px; box-shadow: 0 6px 20px rgba(240, 109, 77, 0.35);">
+                      Accept Invitation &amp; Open App
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin: 0 0 6px 0; font-size: 12px; color: #9E9E9E;">Or open this link directly:</p>
+              <p style="margin: 0 0 24px 0; font-size: 12px; color: #665FCE; word-break: break-all;">${invitationLink}</p>
+              <p style="margin: 0; font-size: 11px; line-height: 16px; color: #ADB5BD;">
+                If you did not expect this invitation, you can safely ignore this email. The link expires after 14 days.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 22px 32px; background-color: #FAF6F3; border-top: 1px solid #F1E9E3; text-align: center;">
+              <p style="margin: 0; font-size: 11px; line-height: 16px; color: #ADB5BD;">
+                © 2025 Loving Brain · All rights reserved
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
 module.exports = {
   getOtpEmailHtml,
+  getInvitationEmailHtml,
 };
+

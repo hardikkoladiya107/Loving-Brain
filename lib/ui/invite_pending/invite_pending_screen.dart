@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/status_pill.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'bloc/invite_pending_cubit.dart';
 import 'bloc/invite_pending_state.dart';
@@ -16,10 +20,18 @@ import 'bloc/invite_pending_state.dart';
 /// Screen 56: Invite Pending.
 /// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
 class InvitePendingScreen extends StatefulWidget {
+  final String? invitationId;
   final String? recipientEmail;
   final String? role;
+  final String? childName;
 
-  const InvitePendingScreen({super.key, this.recipientEmail, this.role});
+  const InvitePendingScreen({
+    super.key,
+    this.invitationId,
+    this.recipientEmail,
+    this.role,
+    this.childName,
+  });
 
   @override
   State<InvitePendingScreen> createState() => _InvitePendingScreenState();
@@ -31,8 +43,10 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InvitePendingCubit>().init(
+        invitationId: widget.invitationId,
         recipient: widget.recipientEmail,
         role: widget.role,
+        childName: widget.childName,
       );
     });
   }
@@ -42,7 +56,9 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
     return BlocConsumer<InvitePendingCubit, InvitePendingState>(
       listener: (BuildContext context, InvitePendingState state) {
         state.actionStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
           data: (dynamic data) {
+            EasyLoading.dismiss();
             if (data == 'invite_resent') {
               showSnackBar(
                 message: "Invite resent to ${state.recipientEmail}",
@@ -55,6 +71,13 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
               );
               Navigator.pop(context);
             }
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
           },
         );
       },
@@ -168,6 +191,41 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
                                       color: greyColor6,
                                       textAlign: TextAlign.start,
                                     ),
+                                if (state.invitationId.trim().isNotEmpty) ...[
+                                  12.spaceH,
+                                  InkWell(
+                                    onTap: () {
+                                      final String link =
+                                          CoParentInvitationHelpers.buildInvitationLink(
+                                            state.invitationId,
+                                          );
+                                      Clipboard.setData(
+                                        ClipboardData(text: link),
+                                      );
+                                      showSnackBar(
+                                        message:
+                                            "Invite link copied to clipboard",
+                                        type: SnackBarType.SUCCESS,
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.copy,
+                                          size: 16.sp,
+                                          color: primaryColor,
+                                        ),
+                                        6.spaceW,
+                                        "Copy invite link".appText(
+                                          fontSize: 13.sp,
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -230,8 +288,24 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
         ),
         child: Column(
           children: [
+            if (state.invitationId.trim().isNotEmpty) ...[
+              AppButton(
+                title: "Share invite link",
+                onTap: () {
+                  final String link =
+                      CoParentInvitationHelpers.buildInvitationLink(
+                        state.invitationId,
+                      );
+                  Share.share(
+                    "Join me on Loving Brain to care for ${state.childName}: $link",
+                    subject: "Join me on Loving Brain",
+                  );
+                },
+              ),
+              12.spaceH,
+            ],
             AppButton(
-              title: state.isResending ? "Resending..." : "Resend invite",
+              title: state.isResending ? "Resending..." : "Resend email invite",
               backgroundColor: Colors.white,
               textColor: greyColor9,
               onTap: state.isResending

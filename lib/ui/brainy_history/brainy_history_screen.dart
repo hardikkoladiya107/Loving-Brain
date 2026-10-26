@@ -88,6 +88,11 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
                       fraunces: true,
                       textAlign: TextAlign.start,
                     ),
+                    if (state.thisWeekHistory.isEmpty &&
+                        state.earlierHistory.isEmpty) ...[
+                      32.spaceH,
+                      _buildEmptyState(context),
+                    ],
                     if (state.thisWeekHistory.isNotEmpty) ...[
                       32.spaceH,
                       _buildSectionTitle("THIS WEEK"),
@@ -149,6 +154,125 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
     );
   }
 
+  Widget _buildEmptyState(BuildContext context) {
+    final List<Map<String, String>> starters = <Map<String, String>>[
+      <String, String>{
+        'title': 'Why is bedtime harder lately?',
+        'topic': 'Sleep',
+      },
+      <String, String>{
+        'title': 'Is this normal for her age?',
+        'topic': 'Behaviour',
+      },
+      <String, String>{'title': 'What can I try for naps?', 'topic': 'Sleep'},
+    ];
+
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10.r),
+                decoration: BoxDecoration(
+                  color: primaryColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  color: primaryColor,
+                  size: 22.sp,
+                ),
+              ),
+              12.spaceW,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    "No conversations yet".appText(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w700,
+                      color: darkBlue,
+                      textAlign: TextAlign.start,
+                    ),
+                    2.spaceH,
+                    "Start a chat with Brainy to see your history here".appText(
+                      fontSize: 12.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          20.spaceH,
+          "SUGGESTED QUESTIONS".appText(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w700,
+            color: secondaryColor,
+            letterSpacing: 1.2,
+            textAlign: TextAlign.start,
+          ),
+          10.spaceH,
+          ...starters.map((Map<String, String> s) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Material(
+                color: const Color(0xFFFEF8F4),
+                borderRadius: BorderRadius.circular(14.r),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14.r),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BrainyConversationScreen(
+                          initialChat: s['title'],
+                          topic: s['topic'],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 12.h,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: (s['title'] ?? '').appText(
+                            fontSize: 13.sp,
+                            color: greyColor9,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          color: primaryColor,
+                          size: 16.sp,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSectionTitle(String title, {Color color = secondaryColor}) {
     return title.appText(
       fontSize: 12.sp,
@@ -162,6 +286,7 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
     BuildContext context, {
     required BrainyHistoryItem item,
   }) {
+    final String convId = item.conversationId ?? item.title;
     return Material(
       color: Colors.transparent,
       child: Ink(
@@ -176,16 +301,14 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
               context,
               MaterialPageRoute(
                 builder: (_) => BrainyConversationScreen(
-                  conversationId: item.conversationId,
+                  conversationId: convId.startsWith('sample_') ? null : convId,
                   initialChat: item.title,
                   topic: item.topic,
                 ),
               ),
             );
           },
-          onLongPress: item.conversationId != null
-              ? () => _showDeleteDialog(context, item.conversationId!)
-              : null,
+          onLongPress: () => _showDeleteDialog(context, convId),
           child: Padding(
             padding: EdgeInsets.all(16.w),
             child: Row(
@@ -209,17 +332,15 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
                     ],
                   ),
                 ),
-                if (item.conversationId != null)
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    onPressed: () =>
-                        _showDeleteDialog(context, item.conversationId!),
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                      color: greyColor4,
-                      size: 18.sp,
-                    ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => _showDeleteDialog(context, convId),
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    color: greyColor4,
+                    size: 18.sp,
                   ),
+                ),
                 Icon(Icons.chevron_right, color: greyColor4, size: 20.sp),
               ],
             ),

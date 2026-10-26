@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/content/brain_ai_system_prompt.dart';
+import 'package:loving_brain/core/ai_data_tools.dart';
 import 'package:loving_brain/model/ai_response_model.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -376,29 +377,53 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       } catch (_) {}
     }
 
+    final String liveContext = await AiDataTools.buildLiveContextString(
+      childModel: childModel,
+    );
+
     final String systemPrompt = BrainAiSystemPrompt.build(
       childModel: childModel,
       parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
       topic: state.topic,
+      liveContextString: liveContext,
     );
 
-    List<BrainyMessage> aiCards = [];
+    // Build multi-turn conversational history
+    final List<Map<String, dynamic>> history = <Map<String, dynamic>>[];
+    for (final BrainyMessage msg in state.messages) {
+      if (msg.id == optimisticUserMsg.id) continue;
+      if (msg.type == MessageType.user) {
+        history.add(<String, dynamic>{'role': 'user', 'content': msg.headline});
+      } else {
+        final String combinedText =
+            msg.subtext != null && msg.subtext!.isNotEmpty
+            ? '${msg.headline}\n${msg.subtext}'
+            : msg.headline;
+        history.add(<String, dynamic>{
+          'role': 'assistant',
+          'content': combinedText,
+        });
+      }
+    }
+
+    List<BrainyMessage> aiCards = <BrainyMessage>[];
     final ApiResultStatus aiResult = await AiRepo.instance.createResponse(
       conversationId: convId,
       messageText: displayHeadline,
       imageFile: imageFile,
       audioFile: audioFile,
+      history: history,
       systemPrompt: systemPrompt,
     );
 
     aiResult.whenOrNull(
-      data: (data) {
+      data: (dynamic data) {
         if (data is Map<String, dynamic>) {
           final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
             data,
           );
           final List<ConversationItem> outputs = (aiResponseModel.output ?? [])
-              .where((e) => e.type == 'message')
+              .where((ConversationItem e) => e.type == 'message')
               .toList();
           if (outputs.isNotEmpty && (outputs.first.content ?? []).isNotEmpty) {
             final String rawAiText = outputs.first.content!.first.text ?? '';
@@ -412,7 +437,16 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     if (aiCards.isEmpty) {
       await Future.delayed(const Duration(milliseconds: 900));
-      aiCards = _buildFallbackAiCards(displayHeadline, childModel);
+      final String contextualResponse =
+          await AiDataTools.generateContextualResponse(
+            question: displayHeadline,
+            childModel: childModel,
+            topic: state.topic,
+          );
+      aiCards = _parseAiResponseText(contextualResponse);
+      if (aiCards.isEmpty) {
+        aiCards = _buildFallbackAiCards(displayHeadline, childModel);
+      }
     }
 
     // Persist AI cards to Firestore so history and conversation stream stay in sync

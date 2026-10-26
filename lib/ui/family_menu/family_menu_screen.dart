@@ -180,8 +180,14 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) =>
-                                          const InvitePendingScreen(),
+                                      builder: (_) => InvitePendingScreen(
+                                        invitationId: c.id,
+                                        recipientEmail: c.email.isNotEmpty
+                                            ? c.email
+                                            : c.name,
+                                        role: c.role,
+                                        childName: state.childName,
+                                      ),
                                     ),
                                   );
                                 },

@@ -32,6 +32,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
     String? childName,
     String? emailOrPhone,
     bool? isSending,
+    String? createdInvitationId,
     ApiResultStatus? sendStatus,
   }) {
     emit(
@@ -40,6 +41,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
         childName: childName ?? state.childName,
         emailOrPhone: emailOrPhone ?? state.emailOrPhone,
         isSending: isSending ?? state.isSending,
+        createdInvitationId: createdInvitationId ?? state.createdInvitationId,
         sendStatus: sendStatus ?? ApiResultStatus.initial(),
       ),
     );
@@ -71,7 +73,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
       'to_parent': cleanRecipient,
       'role': state.selectedRole,
       'children': childId,
-      'status': 'PENDING',
+      'status': 'REQUESTED',
       'created_at': DateTime.now().toIso8601String(),
       'expires_at': DateTime.now()
           .add(const Duration(days: 14))
@@ -83,12 +85,39 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
     );
 
     bool isSuccess = false;
+    String invitationId = '';
     res.whenOrNull(
-      data: (_) => isSuccess = true,
+      data: (dynamic data) {
+        isSuccess = true;
+        invitationId = data?.toString() ?? '';
+      },
       error: (_) => isSuccess = false,
     );
 
-    changeProps(isSending: false, sendStatus: res);
+    if (isSuccess && invitationId.isNotEmpty) {
+      final String fromParentName =
+          (preferences.getUserModel()?.parentName?.trim().isNotEmpty == true)
+          ? preferences.getUserModel()!.parentName!.trim()
+          : ((preferences.getUserModel()?.displayName?.trim().isNotEmpty ==
+                    true)
+                ? preferences.getUserModel()!.displayName!.trim()
+                : (preferences.getUserModel()?.email?.split('@').first ??
+                      'Your co-parent'));
+
+      // Dispatch invitation email via Cloud Function (Brevo)
+      await CoParentRepo.instance.sendInvitationEmail(
+        toEmail: cleanRecipient,
+        fromParentName: fromParentName,
+        childrenNames: state.childName,
+        invitationId: invitationId,
+      );
+    }
+
+    changeProps(
+      isSending: false,
+      createdInvitationId: invitationId,
+      sendStatus: res,
+    );
 
     return isSuccess;
   }

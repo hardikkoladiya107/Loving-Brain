@@ -266,6 +266,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     color: greyColor,
                     letterSpacing: 1.2,
+                    textAlign: TextAlign.start,
                   ),
                 ),
                 if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
@@ -275,7 +276,8 @@ class AddSleepUpdateSheet extends StatelessWidget {
             (time ?? dummyText).appText(
               fontSize: 16.sp,
               fontWeight: FontWeight.w700,
-              color: time == null ? greyColor11 : blackTextColor,
+              color: time == null ? greyColor4 : blackTextColor,
+              textAlign: TextAlign.start,
             ),
           ],
         ),

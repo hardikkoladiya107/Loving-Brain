@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'dart:io' as io;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:loving_brain/core/ai_data_tools.dart';
 import 'package:loving_brain/model/api_result_status.dart';
-
-// import 'package:loving_brain/secrets.dart'; // Import secrets
+import 'package:loving_brain/secrets.dart';
 
 import '../model/transcribe_model.dart';
 
@@ -14,12 +15,12 @@ class AiRepo {
 
   static final AiRepo _instance = AiRepo._();
 
-  static final String secretKey = "Bearer "; //${Secrets.openAiApiKey}";
+  static String get secretKey => "Bearer ${Secrets.openAiApiKey}";
 
   // Standard OpenAI Chat Completion Endpoint
-  static final String chatUrl = "https://api.openai.com/v1/chat/completions";
+  static const String chatUrl = "https://api.openai.com/v1/chat/completions";
 
-  Map<String, dynamic> headers = {
+  Map<String, dynamic> get headers => <String, dynamic>{
     "Content-Type": "application/json",
     "Authorization": secretKey,
   };
@@ -101,21 +102,8 @@ class AiRepo {
     String? systemPrompt,
   }) async {
     try {
-      // AiFileUploadModel? imageFileModel;
       TranscribeModel? transcribeModel;
       String finalText = messageText;
-
-      if (imageFile != null) {
-        // For GPT-4o, we can send base64 or URL.
-        // If sticking to file upload API, we need the file ID?
-        // Actually standard Chat API takes image_url.
-        // For simplicity let's stick to text first or handle image properly if needed.
-        // The previous code uploaded to 'files' endpoint which matches Assistants API.
-        // Here we will just append a note that image was sent for now if we don't want to complicate
-        // with base64 conversion in this specific turn.
-        // BUT, if user wants "fix", let's assume they want basic text chat working first.
-        // We can re-enable image support via Base64 if requested.
-      }
 
       if (audioFile != null) {
         final ApiResultStatus audioFileResponse = await transcribeAudio(
@@ -131,48 +119,150 @@ class AiRepo {
               finalText += "\n[Audio Transcription]: $transcribedText";
             }
           },
-          error: (Exception error) {
-            // Handle error or ignore
-          },
         );
       }
 
-      final List<Map<String, String>> messages = <Map<String, String>>[
-        <String, String>{
+      final List<Map<String, dynamic>> messages = <Map<String, dynamic>>[
+        <String, dynamic>{
           "role": "system",
           "content":
               systemPrompt ??
               "You are a helpful parenting assistant for LovingBrain.",
         },
-        <String, String>{"role": "user", "content": finalText},
       ];
 
+      // Add conversation history if available
+      if (history != null && history.isNotEmpty) {
+        messages.addAll(history);
+      }
+
+      // Format current user message (with image if present)
+      if (imageFile != null && await imageFile.exists()) {
+        try {
+          final List<int> imageBytes = await imageFile.readAsBytes();
+          final String base64Image = base64Encode(imageBytes);
+          final String extension = imageFile.path.split('.').last.toLowerCase();
+          final String mimeType = extension == 'png'
+              ? 'image/png'
+              : 'image/jpeg';
+          messages.add(<String, dynamic>{
+            "role": "user",
+            "content": <dynamic>[
+              <String, dynamic>{"type": "text", "text": finalText},
+              <String, dynamic>{
+                "type": "image_url",
+                "image_url": <String, dynamic>{
+                  "url": "data:$mimeType;base64,$base64Image",
+                },
+              },
+            ],
+          });
+        } catch (_) {
+          messages.add(<String, dynamic>{"role": "user", "content": finalText});
+        }
+      } else {
+        messages.add(<String, dynamic>{"role": "user", "content": finalText});
+      }
+
+      // First completion call with tools
       final Response<dynamic> response = await dio.post(
         chatUrl,
-        data: {
-          "model": "gpt-4o", // Updated to a valid model
+        data: <String, dynamic>{
+          "model": "gpt-4o",
           "messages": messages,
+          "tools": AiDataTools.openAiTools,
+          "tool_choice": "auto",
         },
         options: Options(headers: headers),
       );
 
-      // Transform OpenAI response to match what the app expects (AiResponseModel)
-      // The app expects `output` list in the response data.
       if (response.statusCode == 200) {
-        final String content =
-            (response.data
-                    as Map<String, dynamic>)['choices'][0]['message']['content']
-                as String;
-        // Mocking the structure expected by AiResponseModel/Cubit
-        // The cubit expects `output` which is a list of items.
+        final Map<String, dynamic> responseData =
+            response.data as Map<String, dynamic>;
+        final List<dynamic> choices = responseData['choices'] as List<dynamic>;
+        if (choices.isEmpty) {
+          return ApiResultStatus.error(
+            error: Exception("Empty OpenAI response"),
+          );
+        }
+
+        final Map<String, dynamic> choice = choices[0] as Map<String, dynamic>;
+        final Map<String, dynamic> message =
+            choice['message'] as Map<String, dynamic>;
+        final List<dynamic>? toolCalls =
+            message['tool_calls'] as List<dynamic>?;
+
+        // If the model requested function calling / tools
+        if (toolCalls != null && toolCalls.isNotEmpty) {
+          final List<Map<String, dynamic>> conversationWithTools =
+              List<Map<String, dynamic>>.from(messages);
+          conversationWithTools.add(message);
+
+          for (final dynamic call in toolCalls) {
+            final Map<String, dynamic> callMap = call as Map<String, dynamic>;
+            final String functionName =
+                callMap['function']['name']?.toString() ?? '';
+            final String argsStr =
+                callMap['function']['arguments']?.toString() ?? '{}';
+            Map<String, dynamic> args = <String, dynamic>{};
+            try {
+              args = jsonDecode(argsStr) as Map<String, dynamic>;
+            } catch (_) {}
+
+            final String toolResult = await AiDataTools.executeTool(
+              functionName,
+              args,
+            );
+
+            conversationWithTools.add(<String, dynamic>{
+              'role': 'tool',
+              'tool_call_id': callMap['id'],
+              'content': toolResult,
+            });
+          }
+
+          // Follow-up completion after tool execution
+          final Response<dynamic> followUp = await dio.post(
+            chatUrl,
+            data: <String, dynamic>{
+              "model": "gpt-4o",
+              "messages": conversationWithTools,
+            },
+            options: Options(headers: headers),
+          );
+
+          if (followUp.statusCode == 200) {
+            final Map<String, dynamic> followUpData =
+                followUp.data as Map<String, dynamic>;
+            final String finalContent =
+                (followUpData['choices']
+                        as List<dynamic>)[0]['message']['content']
+                    as String;
+            return ApiResultStatus.data(
+              data: <String, dynamic>{
+                "output": <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    "type": "message",
+                    "role": "assistant",
+                    "content": <Map<String, dynamic>>[
+                      <String, dynamic>{"type": "text", "text": finalContent},
+                    ],
+                  },
+                ],
+              },
+            );
+          }
+        }
+
+        final String content = message['content']?.toString() ?? '';
         return ApiResultStatus.data(
-          data: {
-            "output": [
-              {
+          data: <String, dynamic>{
+            "output": <Map<String, dynamic>>[
+              <String, dynamic>{
                 "type": "message",
                 "role": "assistant",
-                "content": [
-                  {"type": "text", "text": content},
+                "content": <Map<String, dynamic>>[
+                  <String, dynamic>{"type": "text", "text": content},
                 ],
               },
             ],
@@ -182,6 +272,8 @@ class AiRepo {
       return ApiResultStatus.error(error: Exception("Failed to get response"));
     } on DioException catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 

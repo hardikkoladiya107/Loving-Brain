@@ -56,8 +56,10 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
               context,
               MaterialPageRoute(
                 builder: (_) => InvitePendingScreen(
+                  invitationId: state.createdInvitationId,
                   recipientEmail: state.emailOrPhone.trim(),
                   role: state.selectedRole,
+                  childName: state.childName,
                 ),
               ),
             );

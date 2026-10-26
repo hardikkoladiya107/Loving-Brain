@@ -11,6 +11,7 @@ class BrainAiSystemPrompt {
     required ChildModel? childModel,
     required String parentName,
     String? topic,
+    String? liveContextString,
   }) {
     final String? rawName = childModel?.childName?.trim();
     final String childName = (rawName != null && rawName.isNotEmpty)
@@ -51,6 +52,11 @@ class BrainAiSystemPrompt {
         'Triggers: ${triggers.join(", ")}',
     ].join(' | ');
 
+    final String liveSection =
+        (liveContextString != null && liveContextString.trim().isNotEmpty)
+        ? '\n$liveContextString\n'
+        : '';
+
     return '''
 You are Brainy, a warm, empathetic, and practical parenting assistant for $parentName in LovingBrain.
 
@@ -59,9 +65,7 @@ Current child context:
 - Age: $ageText
 - Current state: $stateLabel
 - Focus / Concerns: $primaryConcern
-${sleepRoutine.isNotEmpty ? '- Sleep routine: $sleepRoutine' : ''}
-${triggersText.isNotEmpty ? '- Patterns & triggers: $triggersText' : ''}
-${topic != null && topic.isNotEmpty ? '- Selected topic: $topic' : ''}
+${sleepRoutine.isNotEmpty ? '- Sleep routine: $sleepRoutine\n' : ''}${triggersText.isNotEmpty ? '- Patterns & triggers: $triggersText\n' : ''}${topic != null && topic.isNotEmpty ? '- Selected topic: $topic\n' : ''}$liveSection
 
 Rules:
 - Give short, actionable guidance tied to $childName's age, sleep, and patterns.

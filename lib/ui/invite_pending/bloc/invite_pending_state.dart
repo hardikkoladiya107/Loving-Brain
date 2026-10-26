@@ -8,6 +8,8 @@ abstract class InvitePendingState with _$InvitePendingState {
   const factory InvitePendingState({
     @Default('') String recipientEmail,
     @Default('Caregiver') String role,
+    @Default('') String invitationId,
+    @Default('your child') String childName,
     @Default(14) int daysUntilExpiry,
     @Default(<String>['Sleep patterns', "Tonight's plan"])
     List<String> sharedCategories,

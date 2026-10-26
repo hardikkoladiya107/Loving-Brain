@@ -10,6 +10,7 @@ abstract class InviteCaregiverState with _$InviteCaregiverState {
     @Default('your child') String childName,
     @Default('') String emailOrPhone,
     @Default(false) bool isSending,
+    @Default('') String createdInvitationId,
     @Default(ApiResultStatus.initial()) ApiResultStatus sendStatus,
   }) = _InviteCaregiverState;
 }

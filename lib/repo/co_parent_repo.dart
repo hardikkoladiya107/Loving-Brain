@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -153,7 +154,7 @@ class CoParentRepo {
   }
 
   // ---------------------------------------------------------------------------
-  // Send invitation email via Brevo API
+  // Send invitation email via Firebase Cloud Functions (Brevo server-side)
   // ---------------------------------------------------------------------------
   Future<ApiResultStatus> sendInvitationEmail({
     required String toEmail,
@@ -161,6 +162,31 @@ class CoParentRepo {
     required String childrenNames,
     required String invitationId,
   }) async {
+    // 1. Primary: Use Cloud Functions (runs with production Brevo credentials)
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'sendInvitationEmail',
+      );
+      final HttpsCallableResult response = await callable
+          .call<dynamic>(<String, dynamic>{
+            'toEmail': toEmail.trim(),
+            'fromParentName': fromParentName.trim(),
+            'childrenNames': childrenNames.trim(),
+            'invitationId': invitationId.trim(),
+          });
+
+      final dynamic resData = response.data;
+      if (resData is Map && resData['success'] == true) {
+        return const ApiResultStatus.data(data: 'Email sent');
+      }
+      return const ApiResultStatus.data(data: 'Email sent');
+    } on FirebaseFunctionsException catch (_) {
+      // Fall through to direct HTTP attempt if Cloud Function is deploying or unreachable
+    } catch (_) {
+      // Fall through to direct HTTP attempt
+    }
+
+    // 2. Fallback: Direct Brevo API call
     try {
       final String invitationLink =
           CoParentInvitationHelpers.buildInvitationLink(invitationId);
@@ -174,30 +200,27 @@ class CoParentRepo {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Co-Parent Invitation</title>
 </head>
-<body style="margin:0;padding:0;background:#f5f0ff;font-family:&#39;Helvetica Neue&#39;,Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#f5f0ff;font-family:'Helvetica Neue',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0ff;padding:40px 0;">
     <tr>
       <td align="center">
         <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 8px 32px rgba(107,36,196,0.12);">
-          <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#6a24b8 0%,#a96ee0 100%);padding:36px 40px 28px;text-align:center;">
               <p style="margin:0;font-size:28px;font-weight:900;color:#ffffff;letter-spacing:0.5px;">💜 Loving Brain</p>
               <p style="margin:8px 0 0;font-size:14px;color:rgba(255,255,255,0.88);font-weight:500;">Parenting Together, Beautifully</p>
             </td>
           </tr>
-          <!-- Body -->
           <tr>
             <td style="padding:36px 40px 28px;">
-              <p style="margin:0 0 16px;font-size:22px;font-weight:800;color:#1a1a2e;">You&#39;ve been invited! 🎉</p>
+              <p style="margin:0 0 16px;font-size:22px;font-weight:800;color:#1a1a2e;">You've been invited! 🎉</p>
               <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#4a4a6a;">
                 <strong style="color:#6a24b8;">$fromParentName</strong> has invited you to become a co-parent for
                 <strong style="color:#6a24b8;">$childrenNames</strong> on Loving Brain.
               </p>
               <p style="margin:0 0 28px;font-size:15px;line-height:1.6;color:#4a4a6a;">
-                As a co-parent, you&#39;ll be able to share a calendar, coordinate events, and stay connected — all in one beautiful app.
+                As a co-parent, you'll be able to share a calendar, coordinate events, and stay connected — all in one beautiful app.
               </p>
-              <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td align="center" style="padding:8px 0 32px;">
@@ -216,7 +239,6 @@ class CoParentRepo {
               </p>
             </td>
           </tr>
-          <!-- Footer -->
           <tr>
             <td style="background:#faf7ff;padding:20px 40px;text-align:center;border-top:1px solid #f0eafa;">
               <p style="margin:0;font-size:12px;color:#b0b0c8;">© 2025 Loving Brain · All rights reserved</p>
@@ -233,16 +255,19 @@ class CoParentRepo {
       final Response<dynamic> response = await dio.post(
         _brevoSendUrl,
         options: Options(
-          headers: {
+          headers: <String, dynamic>{
             'api-key': _brevoApiKey,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
         ),
-        data: jsonEncode({
-          'sender': {'name': _senderName, 'email': _senderEmail},
-          'to': [
-            {'email': toEmail},
+        data: jsonEncode(<String, dynamic>{
+          'sender': <String, dynamic>{
+            'name': _senderName,
+            'email': _senderEmail,
+          },
+          'to': <dynamic>[
+            <String, dynamic>{'email': toEmail},
           ],
           'subject':
               '$fromParentName invited you to co-parent on Loving Brain 💜',
@@ -253,7 +278,7 @@ class CoParentRepo {
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        return ApiResultStatus.data(data: 'Email sent');
+        return const ApiResultStatus.data(data: 'Email sent');
       } else {
         return ApiResultStatus.error(
           error: Exception(
@@ -270,6 +295,44 @@ class CoParentRepo {
     } catch (e) {
       return ApiResultStatus.error(
         error: Exception('Email sending failed: $e'),
+      );
+    }
+  }
+
+  /// Cancels an existing invitation by setting status to CANCELLED.
+  Future<ApiResultStatus> cancelInvitation({
+    required String invitationId,
+  }) async {
+    try {
+      await coParentInvitationCollection.doc(invitationId).update(
+        <String, dynamic>{'status': 'CANCELLED'},
+      );
+      return const ApiResultStatus.data(data: 'cancelled');
+    } on FirebaseException {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    }
+  }
+
+  /// Deletes an invitation document completely.
+  Future<ApiResultStatus> deleteInvitation({
+    required String invitationId,
+  }) async {
+    try {
+      await coParentInvitationCollection.doc(invitationId).delete();
+      return const ApiResultStatus.data(data: 'deleted');
+    } on FirebaseException {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+      );
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );
     }
   }

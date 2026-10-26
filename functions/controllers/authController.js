@@ -1,7 +1,7 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
-const { getOtpEmailHtml } = require("../utils/emailTemplate");
+const { getOtpEmailHtml, getInvitationEmailHtml } = require("../utils/emailTemplate");
 
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
@@ -136,5 +136,61 @@ exports.verifyEmailOtp = onCall(async (request) => {
   } catch (error) {
     logger.error("Error generating custom token:", error);
     throw new HttpsError("internal", "Error generating authentication token.");
+  }
+});
+
+/**
+ * sendInvitationEmail
+ * Sends a co-parent or caregiver invitation email via Brevo using server credentials.
+ */
+exports.sendInvitationEmail = onCall(async (request) => {
+  const data = request.data || {};
+  const toEmail = data.toEmail ? data.toEmail.trim().toLowerCase() : "";
+  const fromParentName = data.fromParentName ? data.fromParentName.trim() : "A parent";
+  const childrenNames = data.childrenNames ? data.childrenNames.trim() : "your child";
+  const invitationId = data.invitationId ? data.invitationId.trim() : "";
+
+  if (!toEmail || !invitationId) {
+    throw new HttpsError("invalid-argument", "toEmail and invitationId are required.");
+  }
+
+  const apiKey = process.env.BREVO_API_KEY;
+  if (!apiKey) {
+    logger.error("BREVO_API_KEY configuration is missing at runtime.");
+    throw new HttpsError("failed-precondition", "Email service is unconfigured.");
+  }
+
+  const invitationLink = `https://www.lovingbrain.com/${invitationId}`;
+  const htmlContent = getInvitationEmailHtml(fromParentName, childrenNames, invitationLink);
+
+  try {
+    const response = await fetch(BREVO_API_URL, {
+      method: "POST",
+      headers: {
+        "api-key": apiKey,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+        to: [{ email: toEmail }],
+        subject: `${fromParentName} invited you to co-parent on Loving Brain 💜`,
+        htmlContent: htmlContent,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      logger.error(`Brevo invite email failed with status ${response.status}: ${errorText}`);
+      throw new HttpsError("internal", "Failed to send invitation email via Brevo.");
+    } else {
+      const successData = await response.json();
+      logger.info(`Brevo invite email sent successfully! Response: ${JSON.stringify(successData)}`);
+      return { success: true, message: "Invitation email sent successfully." };
+    }
+  } catch (error) {
+    logger.error("Error sending invitation email:", error);
+    if (error instanceof HttpsError) throw error;
+    throw new HttpsError("internal", "Failed to send invitation email.");
   }
 });

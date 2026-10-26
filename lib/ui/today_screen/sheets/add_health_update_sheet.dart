@@ -149,6 +149,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                         color: greyColor,
                         letterSpacing: 1.2,
+                        textAlign: TextAlign.start,
                       ),
                       4.spaceH,
                       Row(
