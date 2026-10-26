@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/notification_util.dart';
 
 import 'bloc/notifications_cubit.dart';
 import 'bloc/notifications_state.dart';
@@ -115,6 +116,43 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 color: greyColor,
                                 textAlign: TextAlign.start,
                               ),
+                          if (state.isPermissionDenied) ...[
+                            16.spaceH,
+                            GestureDetector(
+                              onTap: () async {
+                                final bool granted = await NotificationUtil.requestNotificationPermission();
+                                cubit.changeProps(isPermissionDenied: !granted);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(14.r),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFF3CD),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  border: Border.all(
+                                    color: const Color(0xFFFFEEBA),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.warning_amber_rounded,
+                                      color: const Color(0xFF856404),
+                                      size: 22.sp,
+                                    ),
+                                    10.spaceW,
+                                    Expanded(
+                                      child: "Notifications are turned off in your system settings. Reminders will not be delivered until enabled."
+                                          .appText(
+                                            fontSize: 13.sp,
+                                            color: const Color(0xFF856404),
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                           24.spaceH,
                           _buildToggleCard(
                             title: "Sleep reminders",

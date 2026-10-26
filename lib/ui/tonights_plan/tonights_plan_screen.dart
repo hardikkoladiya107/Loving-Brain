@@ -35,7 +35,11 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
       listener: (BuildContext context, TonightsPlanState state) {},
       builder: (BuildContext context, TonightsPlanState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
@@ -249,32 +253,29 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "$time - ",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                            fontFamily: 'Inter',
-                          ),
+                  Row(
+                    children: [
+                      "$time — ".appText(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                      Expanded(
+                        child: title.appText(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                          textAlign: TextAlign.start,
                         ),
-                        TextSpan(
-                          text: title,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                            fontFamily: 'Inter',
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   4.spaceH,
-                  subtitle.appText(fontSize: 12.sp, color: greyColor4),
+                  subtitle.replaceAll('$time - ', '').appText(
+                    fontSize: 12.sp,
+                    color: greyColor4,
+                    textAlign: TextAlign.start,
+                  ),
                 ],
               ),
             ),

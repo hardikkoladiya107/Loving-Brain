@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/notification_preferences_model.dart';
+import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/other/preferances.dart';
 
 import 'notifications_state.dart';
@@ -38,6 +39,12 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         maxDailyCap: defaultModel.maxDailyCap,
       );
     }
+    _checkPermission();
+  }
+
+  Future<void> _checkPermission() async {
+    final bool isGranted = await NotificationUtil.isPermissionGranted();
+    changeProps(isPermissionDenied: !isGranted);
   }
 
   void changeProps({
@@ -48,6 +55,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     String? quietHoursStart,
     String? quietHoursEnd,
     int? maxDailyCap,
+    bool? isPermissionDenied,
     ApiResultStatus? saveStatus,
   }) {
     emit(
@@ -59,6 +67,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         quietHoursStart: quietHoursStart ?? state.quietHoursStart,
         quietHoursEnd: quietHoursEnd ?? state.quietHoursEnd,
         maxDailyCap: maxDailyCap ?? state.maxDailyCap,
+        isPermissionDenied: isPermissionDenied ?? state.isPermissionDenied,
         saveStatus: saveStatus ?? ApiResultStatus.initial(),
       ),
     );

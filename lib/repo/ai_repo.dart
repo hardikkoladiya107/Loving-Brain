@@ -31,7 +31,13 @@ class AiRepo {
 
   static AiRepo get instance => _instance;
 
-  final Dio dio = Dio();
+  final Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
+    ),
+  );
 
   Future<ApiResultStatus> uploadFile({required File file}) async {
     try {

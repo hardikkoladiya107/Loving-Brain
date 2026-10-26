@@ -102,7 +102,7 @@ class SleepDetailsCubit extends Cubit<SleepDetailsState> {
     String calcTimeInSleep = '6h 52m';
     String calcWakeUpTime = '07:12 AM';
     String calcWentToBed = '08:00 PM';
-    String calcFellAsleepTime = '20 min';
+    String calcFellAsleepTime = 'None';
     String calcQuality = '4/5';
     final bool hasLogs = sleepLogs.isNotEmpty;
 
@@ -119,7 +119,7 @@ class SleepDetailsCubit extends Cubit<SleepDetailsState> {
       calcWakeUpTime = latest.wokeUpTime ?? fmt.format(latest.wakeTime);
       calcWentToBed = latest.fellAsleepTime ?? fmt.format(latest.bedTime);
       calcQuality = '${latest.sleepQualityIndex + 1}/5';
-      calcFellAsleepTime = latest.isNightWaking ? '1 night waking' : 'Normal';
+      calcFellAsleepTime = latest.isNightWaking ? '1 waking' : 'None';
     }
 
     changeProps(

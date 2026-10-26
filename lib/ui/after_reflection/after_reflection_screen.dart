@@ -89,10 +89,12 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                   ),
                 ),
               ),
-              SafeArea(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  children: [
+              Positioned.fill(
+                child: SafeArea(
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 80.h),
+                    children: [
                     16.spaceH,
                     Align(
                       alignment: Alignment.centerLeft,
@@ -244,8 +246,9 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
           bottomNavigationBar: Container(
             padding: EdgeInsets.only(
               top: 12.h,

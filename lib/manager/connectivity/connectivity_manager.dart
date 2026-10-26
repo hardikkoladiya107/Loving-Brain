@@ -22,7 +22,7 @@ class ConnectivityManager {
   void initConnectivity() {
     (Connectivity().checkConnectivity()).then((value) {
       if (value.any((element) => element == ConnectivityResult.none)) {
-        if (connectivityDialogVisible && navigatorKey.currentContext != null) {
+        if (!connectivityDialogVisible && navigatorKey.currentContext != null) {
           showPersistentDialog();
         }
       }

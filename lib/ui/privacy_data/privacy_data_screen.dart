@@ -196,7 +196,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                 ),
               ),
               SafeArea(
-                bottom: false,
+                bottom: true,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -223,7 +223,12 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                     ),
                     Expanded(
                       child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                          left: 20.w,
+                          right: 20.w,
+                          bottom: 80.h,
+                        ),
                         children: [
                           16.spaceH,
                           "Privacy & data".appText(
@@ -269,6 +274,35 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                     ),
                               ],
                             ),
+                          ),
+                          12.spaceH,
+                          SettingTile(
+                            icon: Icon(
+                              Icons.cloud_sync_outlined,
+                              size: 24.sp,
+                              color: const Color(0xFF665FCE),
+                            ),
+                            iconBackgroundColor: const Color(0xFFF3F2FE),
+                            title: "Offline sync",
+                            subtitle: state.isSyncing
+                                ? "Syncing pending updates..."
+                                : state.pendingOfflineUpdatesCount > 0
+                                ? "${state.pendingOfflineUpdatesCount} updates waiting to sync"
+                                : "All data is up to date",
+                            trailing: state.isSyncing
+                                ? SizedBox(
+                                    width: 18.w,
+                                    height: 18.w,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : null,
+                            onTap: state.isSyncing
+                                ? null
+                                : () => context
+                                      .read<PrivacyDataCubit>()
+                                      .manualSyncOfflineUpdates(),
                           ),
                           12.spaceH,
                           SettingTile(

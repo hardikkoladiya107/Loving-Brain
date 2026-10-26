@@ -8,6 +8,7 @@ class SettingTile extends StatelessWidget {
   final Color iconBackgroundColor;
   final String title;
   final String? subtitle;
+  final Widget? trailing;
   final VoidCallback? onTap;
 
   const SettingTile({
@@ -16,6 +17,7 @@ class SettingTile extends StatelessWidget {
     required this.iconBackgroundColor,
     required this.title,
     this.subtitle,
+    this.trailing,
     this.onTap,
   });
 
@@ -64,7 +66,8 @@ class SettingTile extends StatelessWidget {
                 ),
               ),
               16.spaceW,
-              Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
+              trailing ??
+                  Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
             ],
           ),
         ),

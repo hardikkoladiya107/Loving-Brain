@@ -35,10 +35,10 @@ class _BehaviourPatternScreenState extends State<BehaviourPatternScreen> {
       builder: (BuildContext context, BehaviourPatternState state) {
         final String triggersText = state.topTriggers.isNotEmpty
             ? state.topTriggers.join(', ')
-            : 'Hunger, transitions, overstimulation';
+            : 'Still learning triggers';
         final String helpedText = state.topHelpedStrategies.isNotEmpty
             ? state.topHelpedStrategies.join(', ')
-            : 'Quiet connection, lower stimulation';
+            : 'Still learning what helps';
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),

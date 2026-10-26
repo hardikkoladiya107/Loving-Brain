@@ -24,7 +24,6 @@ class NotificationUtil {
   static FlutterLocalNotificationsPlugin instance() => _localNotifications;
 
   static Future<void> initializePlatformNotifications() async {
-    await _requestPermissionIfNeeded();
     if (!kIsWeb && Platform.isIOS) {
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
@@ -39,9 +38,9 @@ class NotificationUtil {
 
     DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
-          requestSoundPermission: true,
-          requestBadgePermission: true,
-          requestAlertPermission: true,
+          requestSoundPermission: false,
+          requestBadgePermission: false,
+          requestAlertPermission: false,
         );
 
     InitializationSettings initializationSettings = InitializationSettings(
@@ -88,24 +87,36 @@ class NotificationUtil {
     });
   }
 
-  static Future<void> _requestPermissionIfNeeded() async {
-    if (Firebase.apps.isEmpty) {
-      return;
-    }
-    final bool isRequested =
-        preferences.getBool(SharedPreference.notificationPermissionRequested) ??
-        false;
-    if (!isRequested) {
-      await FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-      await preferences.putBool(
-        SharedPreference.notificationPermissionRequested,
-        true,
-      );
-    }
+  static Future<bool> isPermissionGranted() async {
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        final NotificationSettings settings =
+            await FirebaseMessaging.instance.getNotificationSettings();
+        return settings.authorizationStatus == AuthorizationStatus.authorized ||
+            settings.authorizationStatus == AuthorizationStatus.provisional;
+      }
+    } catch (_) {}
+    return true;
+  }
+
+  static Future<bool> requestNotificationPermission() async {
+    try {
+      if (Firebase.apps.isNotEmpty) {
+        final NotificationSettings settings =
+            await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        await preferences.putBool(
+          SharedPreference.notificationPermissionRequested,
+          true,
+        );
+        return settings.authorizationStatus == AuthorizationStatus.authorized ||
+            settings.authorizationStatus == AuthorizationStatus.provisional;
+      }
+    } catch (_) {}
+    return false;
   }
 
   static void _handleMessageClick(BuildContext context, RemoteMessage message) {

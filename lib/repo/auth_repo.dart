@@ -975,10 +975,14 @@ class AuthRepo {
       );
       final dynamic responseData = response.data;
       if (responseData is Map && responseData['success'] == false) {
+        String msg =
+            responseData['message']?.toString() ?? 'Failed to send OTP';
+        if (msg.toLowerCase().contains('brevo')) {
+          msg =
+              'Unable to send verification code to this email. Please check the address and try again.';
+        }
         return ApiResultStatus.error(
-          error: Exception(
-            responseData['message']?.toString() ?? 'Failed to send OTP',
-          ),
+          error: Exception(msg),
         );
       }
       return const ApiResultStatus.data(data: true);

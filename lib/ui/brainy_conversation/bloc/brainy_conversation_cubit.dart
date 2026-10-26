@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/content/brain_ai_system_prompt.dart';
@@ -389,6 +390,28 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             DateTime.now().millisecondsSinceEpoch + 10,
           ),
         },
+      );
+      return;
+    }
+
+    final List<ConnectivityResult> connectivity =
+        await Connectivity().checkConnectivity();
+    if (connectivity.any((ConnectivityResult c) => c == ConnectivityResult.none)) {
+      changeProps(
+        messages: <BrainyMessage>[
+          ...state.messages,
+          optimisticUserMsg,
+          BrainyMessage(
+            id: 'offline_${DateTime.now().millisecondsSinceEpoch}',
+            type: MessageType.aiInfo,
+            chipTitle: "You're offline",
+            headline: "You're offline right now",
+            subtext:
+                'Brainy needs an active internet connection to provide guidance. Please check your network and try again.',
+          ),
+        ],
+        isTyping: false,
+        clearSelectedImage: true,
       );
       return;
     }

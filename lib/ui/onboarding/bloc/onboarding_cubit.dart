@@ -56,6 +56,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     bool? isMoreThanOneSelected,
     String? successGoal,
     String? successGoalError,
+    String? childPhotoPath,
     String? childName,
     String? dateOfBirth,
     DateTime? childDob,
@@ -97,6 +98,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
             isMoreThanOneSelected ?? state.isMoreThanOneSelected,
         successGoal: successGoal ?? state.successGoal,
         successGoalError: successGoalError ?? state.successGoalError,
+        childPhotoPath: childPhotoPath ?? state.childPhotoPath,
         childName: childName ?? state.childName,
         dateOfBirth: dateOfBirth ?? state.dateOfBirth,
         childDob: childDob ?? state.childDob,
@@ -269,19 +271,30 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void toggleMoreThanOne() {
     final bool updated = !state.isMoreThanOneSelected;
-    if (!updated && state.concerns.length > 1) {
+    if (!updated) {
+      final List<String> single = state.concerns.isNotEmpty
+          ? <String>[state.concerns.first]
+          : const <String>[];
       changeProps(
         isMoreThanOneSelected: false,
-        concerns: const <String>[],
-        primaryConcern: '',
+        concerns: single,
+        primaryConcern: single.isNotEmpty ? single.first : '',
+        concernsError: "",
       );
     } else {
-      changeProps(isMoreThanOneSelected: updated);
+      changeProps(
+        isMoreThanOneSelected: true,
+        concernsError: "",
+      );
     }
   }
 
   void selectSuccessGoal(String goal) {
     changeProps(successGoal: goal, successGoalError: "");
+  }
+
+  void updateChildPhoto(String path) {
+    changeProps(childPhotoPath: path);
   }
 
   void updateChildName(String name) {

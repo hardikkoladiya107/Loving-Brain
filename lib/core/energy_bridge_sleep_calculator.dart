@@ -95,19 +95,19 @@ class SleepForecastResult {
       planSteps: <TonightPlanStep>[
         TonightPlanStep(
           title: 'Wind-down starts',
-          subtitle: '07:20 PM - 20 min',
+          subtitle: 'About 20 minutes',
           scheduledTime: defaultBedtime.subtract(const Duration(minutes: 40)),
           timeLabel: '07:20 PM',
         ),
         TonightPlanStep(
           title: 'Book in the bedroom',
-          subtitle: '07:40 PM - 20 min',
+          subtitle: 'About 20 minutes',
           scheduledTime: defaultBedtime.subtract(const Duration(minutes: 20)),
           timeLabel: '07:40 PM',
         ),
         TonightPlanStep(
           title: 'Lights out',
-          subtitle: '08:00 PM',
+          subtitle: 'Inside recommended window',
           scheduledTime: defaultBedtime,
           timeLabel: '08:00 PM',
         ),
@@ -378,19 +378,19 @@ class EnergyBridgeSleepCalculator {
     return <TonightPlanStep>[
       TonightPlanStep(
         title: 'Wind-down starts',
-        subtitle: '${timeFormat.format(step1Time)} - 20 min',
+        subtitle: 'About 20 minutes',
         scheduledTime: step1Time,
         timeLabel: timeFormat.format(step1Time),
       ),
       TonightPlanStep(
         title: 'Book in the bedroom',
-        subtitle: '${timeFormat.format(step2Time)} - 20 min',
+        subtitle: 'About 20 minutes',
         scheduledTime: step2Time,
         timeLabel: timeFormat.format(step2Time),
       ),
       TonightPlanStep(
         title: 'Lights out',
-        subtitle: timeFormat.format(bedtime),
+        subtitle: 'Inside recommended window',
         scheduledTime: bedtime,
         timeLabel: timeFormat.format(bedtime),
       ),

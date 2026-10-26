@@ -22,6 +22,7 @@ abstract class OnboardingState with _$OnboardingState {
     @Default(false) bool isMoreThanOneSelected,
     @Default('') String successGoal,
     @Default('') String successGoalError,
+    @Default('') String childPhotoPath,
     @Default('') String childName,
     @Default('') String childNameError,
     @Default('') String dateOfBirth,

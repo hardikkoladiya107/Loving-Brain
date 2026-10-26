@@ -114,16 +114,20 @@ class ForecastDetailsCard extends StatelessWidget {
             _buildPlanItem(
               context,
               "Wind-down starts",
-              "${state.windowStart} - 25 min",
+              "About 20 minutes",
             ),
             12.spaceH,
             _buildPlanItem(
               context,
               "Book in the bedroom",
-              "${state.bedtimeEstimate} - 20 min",
+              "About 20 minutes",
             ),
             12.spaceH,
-            _buildPlanItem(context, "Lights out", state.bedtimeEstimate),
+            _buildPlanItem(
+              context,
+              "Lights out",
+              "Inside recommended window",
+            ),
           ],
         ],
       ),

@@ -47,26 +47,30 @@ class _FamilySnapshotScreenState extends State<FamilySnapshotScreen> {
               SafeArea(
                 child: ListView(
                   children: [
-                    180.spaceH,
+                    260.spaceH,
                     "Here’s your\nfamily snapshot".appText(
                       textStyle: getTextStyle(
                         fraunces: true,
                         fontSize: 30,
-                        height: 0.8,
+                        height: 1.1,
                       ),
                     ),
                     10.spaceH,
                     "Based on what you’ve told us about ${state.childName}."
                         .appText(color: greyColor),
-                    12.spaceH,
+                    16.spaceH,
                     AppCard(
                       chipTitle: "What we noticed",
                       title: state.whatWeNoticed,
+                      subtitle:
+                          "We’ll shape your calm routines and daytime rhythms around this window.",
                     ),
-                    24.spaceH,
+                    16.spaceH,
                     AppCard(
                       chipTitle: "Try this first",
                       title: state.tryThisFirst,
+                      subtitle:
+                          "Small consistent shifts help bedtime and routines feel predictable.",
                     ),
                     24.spaceH,
                     AppButton(

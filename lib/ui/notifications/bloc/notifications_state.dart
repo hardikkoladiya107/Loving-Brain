@@ -15,6 +15,7 @@ abstract class NotificationsState with _$NotificationsState {
     @Default('21:00') String quietHoursStart,
     @Default('07:00') String quietHoursEnd,
     @Default(3) int maxDailyCap,
+    @Default(false) bool isPermissionDenied,
     @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
   }) = _NotificationsState;
 }

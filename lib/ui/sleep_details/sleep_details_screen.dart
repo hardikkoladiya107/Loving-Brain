@@ -47,6 +47,7 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
                   )
                 : ListView(
                     padding: EdgeInsets.zero,
+                    physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       SleepHeader(
                         titleWidget: "Sleep details".appText(
@@ -101,7 +102,7 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
                               backgroundColor: primaryColor,
                               textColor: Colors.white,
                             ),
-                            100.spaceH,
+                            SafeArea(top: false, child: 40.spaceH),
                           ],
                         ),
                       ),
@@ -255,7 +256,7 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
                 child: _buildSleepInfoItem(
                   Assets.v2.icons.icFellAsleep.path,
                   state.fellAsleepTime,
-                  "Fell asleep",
+                  "Night wakings",
                 ),
               ),
             ],

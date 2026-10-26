@@ -551,6 +551,11 @@ class TodayCubit extends Cubit<TodayState> {
         ? TodayLogRepo.parseTimeString(state.tantrumTime!, referenceDate: now)
         : now;
 
+    if (eventTime.isAfter(now)) {
+      triggerTantrumUpdateErrors();
+      return;
+    }
+
     final TantrumLogModel log = TantrumLogModel(
       whatHappened: state.tantrumWhatHappened.trim(),
       time: state.tantrumTime,

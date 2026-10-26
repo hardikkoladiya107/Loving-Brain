@@ -37,7 +37,9 @@ class MainCard extends StatelessWidget {
                   "${state.sleepForecastStart} - ${state.sleepForecastEnd}"
                       .appText(fontSize: 28.sp, fraunces: true),
                   8.spaceH,
-                  "Bedtime estimate ${state.bedtimeEstimate}. ${state.forecastSubtitle}"
+                  (state.forecastSubtitle.startsWith("Bedtime estimate")
+                          ? state.forecastSubtitle
+                          : "Bedtime estimate ${state.bedtimeEstimate}. ${state.forecastSubtitle}")
                       .appText(
                         fontSize: 12.sp,
                         color: greyColor6,

@@ -55,6 +55,13 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
         picked.hour,
         picked.minute,
       );
+      if (dt.isAfter(now)) {
+        showSnackBar(
+          message: "Please choose a time that isn't in the future.",
+          type: SnackBarType.ERROR,
+        );
+        return;
+      }
       final String formatted = DateFormat('hh:mm a').format(dt);
       context.read<TodayCubit>().setTantrumTime(formatted);
     }

@@ -123,7 +123,18 @@ class _MyAppState extends State<MyApp> {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
-          builder: EasyLoading.init(),
+          builder: (BuildContext context, Widget? child) {
+            final Widget easyLoadingChild = EasyLoading.init()(context, child);
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: MediaQuery.textScalerOf(context).clamp(
+                  minScaleFactor: 0.85,
+                  maxScaleFactor: 1.35,
+                ),
+              ),
+              child: easyLoadingChild,
+            );
+          },
         ),
       ),
     );

@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -329,7 +332,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 )
                 .appPadding(left: 20.r, right: 20.r),
           ],
-          20.spaceH,
+          40.spaceH,
         ],
       ),
     );
@@ -347,8 +350,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          height: 172.h,
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+          height: 142.h,
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFFF3F2FE) : Colors.white,
             borderRadius: BorderRadius.circular(24.r),
@@ -932,11 +935,55 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               .appPadding(left: 20.r, right: 20.r),
           20.spaceH,
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Assets.v2.icons.icChild.image(width: 100.r, height: 100.r),
-            ],
+          Center(
+            child: GestureDetector(
+              onTap: () => _pickChildPhoto(context),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 100.r,
+                    height: 100.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: const Color(0xFFE8E5F3),
+                      border: Border.all(color: _accentPurple, width: 2),
+                    ),
+                    child: ClipOval(
+                      child: state.childPhotoPath.isNotEmpty
+                          ? Image.file(
+                              File(state.childPhotoPath),
+                              width: 100.r,
+                              height: 100.r,
+                              fit: BoxFit.cover,
+                            )
+                          : Assets.v2.icons.icChild.image(
+                              width: 100.r,
+                              height: 100.r,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(6.r),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                      child: Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.white,
+                        size: 16.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           24.spaceH,
 
@@ -1139,13 +1186,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           12.spaceH,
 
           // 4 Relationship chips: Mother, Father, Guardian, Caregiver
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Wrap(
+              spacing: 10.w,
+              runSpacing: 8.h,
               children: <Widget>[
-                for (int i = 0; i < _roles.length; i++) ...<Widget>[
-                  if (i > 0) 8.spaceW,
+                for (int i = 0; i < _roles.length; i++)
                   _buildChip(
                     label: _roles[i],
                     isSelected: state.parentRole == _roles[i],
@@ -1155,10 +1202,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       );
                     },
                   ),
-                ],
               ],
             ),
-          ).appPadding(left: 20.r, right: 20.r),
+          ),
           if (state.parentRoleError.isNotEmpty) ...[
             6.spaceH,
             state.parentRoleError
@@ -1526,6 +1572,56 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickChildPhoto(BuildContext context) async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (BuildContext ctx) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: "Take a photo".appText(fontSize: 16),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  try {
+                    final XFile? photo = await ImagePicker().pickImage(
+                      source: ImageSource.camera,
+                      imageQuality: 80,
+                    );
+                    if (photo != null && context.mounted) {
+                      context.read<OnboardingCubit>().updateChildPhoto(photo.path);
+                    }
+                  } catch (_) {}
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: "Choose from gallery".appText(fontSize: 16),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  try {
+                    final XFile? photo = await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 80,
+                    );
+                    if (photo != null && context.mounted) {
+                      context.read<OnboardingCubit>().updateChildPhoto(photo.path);
+                    }
+                  } catch (_) {}
+                },
+              ),
+            ],
           ),
         );
       },

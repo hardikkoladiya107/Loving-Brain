@@ -29,12 +29,21 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         : 'your child';
 
     changeProps(childName: cName);
+    _checkPendingUpdates();
+  }
+
+  Future<void> _checkPendingUpdates() async {
+    final pending = await OfflineSyncRepo.instance.getPendingUpdates();
+    changeProps(pendingOfflineUpdatesCount: pending.length);
   }
 
   void changeProps({
     String? childName,
     bool? isDeletingAccount,
     bool? isAccountDeleted,
+    int? pendingOfflineUpdatesCount,
+    bool? isSyncing,
+    ApiResultStatus? syncStatus,
     ApiResultStatus? exportStatus,
     ApiResultStatus? deleteStatus,
     Map<String, dynamic>? exportedData,
@@ -44,10 +53,26 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         childName: childName ?? state.childName,
         isDeletingAccount: isDeletingAccount ?? state.isDeletingAccount,
         isAccountDeleted: isAccountDeleted ?? state.isAccountDeleted,
+        pendingOfflineUpdatesCount:
+            pendingOfflineUpdatesCount ?? state.pendingOfflineUpdatesCount,
+        isSyncing: isSyncing ?? state.isSyncing,
+        syncStatus: syncStatus ?? ApiResultStatus.initial(),
         exportStatus: exportStatus ?? ApiResultStatus.initial(),
         deleteStatus: deleteStatus ?? ApiResultStatus.initial(),
         exportedData: exportedData ?? state.exportedData,
       ),
+    );
+  }
+
+  Future<void> manualSyncOfflineUpdates() async {
+    changeProps(isSyncing: true, syncStatus: const ApiResultStatus.loading());
+    final ApiResultStatus<int> res =
+        await OfflineSyncRepo.instance.syncPendingUpdates();
+    final pending = await OfflineSyncRepo.instance.getPendingUpdates();
+    changeProps(
+      isSyncing: false,
+      pendingOfflineUpdatesCount: pending.length,
+      syncStatus: res,
     );
   }
 

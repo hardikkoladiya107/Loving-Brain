@@ -34,10 +34,10 @@ class TodayHeader extends StatelessWidget {
                   todayCubit.init();
                 },
                 child: Container(
-                  height: 40,
+                  constraints: BoxConstraints(minHeight: 40.h),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(40),
+                    borderRadius: BorderRadius.circular(40.r),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -51,18 +51,18 @@ class TodayHeader extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 8.w),
+                      8.spaceW,
                       Flexible(
                         child: state.childName.appText(
                           fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                          fontSize: 15,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                         ),
                       ),
                     ],
-                  ).appPadding(left: 6, right: 12, top: 6, bottom: 6),
+                  ).appPadding(left: 6.w, right: 12.w, top: 4.h, bottom: 4.h),
                 ),
               ),
             ),

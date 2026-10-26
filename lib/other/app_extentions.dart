@@ -78,7 +78,9 @@ extension extOnString on String {
   }
 
   bool get isValidEmail {
-    final RegExp regex = RegExp(r'^[\w\.\+-]+@([\w-]+\.)+[a-zA-Z]{2,}$');
+    if (contains('..')) return false;
+    final RegExp regex =
+        RegExp(r'^[\w\+-]+(\.[\w\+-]+)*@([\w-]+\.)+[a-zA-Z]{2,}$');
     return regex.hasMatch(this);
   }
 }

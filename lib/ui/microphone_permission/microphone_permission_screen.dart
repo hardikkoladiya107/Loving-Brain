@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/ui/widget/action_consent_screen.dart';
 
+import 'package:loving_brain/other/preferances.dart';
+
 import 'bloc/microphone_permission_cubit.dart';
 import 'bloc/microphone_permission_state.dart';
 
@@ -35,8 +37,8 @@ class _MicrophonePermissionScreenState
         return ActionConsentScreen(
           headerImage: Image.asset(
             Assets.v2.images.imgCuteCloud.path,
-            width: 200.w,
-            height: 200.w,
+            width: 120.w,
+            height: 120.w,
             fit: BoxFit.contain,
           ),
           title: "Can we use the microphone?",
@@ -49,9 +51,14 @@ class _MicrophonePermissionScreenState
           ],
           footerNote: "You can change this any time in Settings.",
           primaryButtonText: "Allow microphone",
-          onPrimaryAction: () {
-            context.read<MicrophonePermissionCubit>().grantPermission();
-            Navigator.pop(context);
+          onPrimaryAction: () async {
+            await preferences.putBool(SharedPreference.micExplainerSeen, true);
+            if (context.mounted) {
+              await context.read<MicrophonePermissionCubit>().grantPermission();
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            }
           },
           secondaryButtonText: "Not now",
           onSecondaryAction: () => Navigator.pop(context),

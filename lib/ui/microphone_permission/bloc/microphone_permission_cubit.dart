@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:record/record.dart';
 
 import 'microphone_permission_state.dart';
 
@@ -15,7 +16,14 @@ class MicrophonePermissionCubit extends Cubit<MicrophonePermissionState> {
     emit(state.copyWith(isGranted: isGranted ?? state.isGranted));
   }
 
-  void grantPermission() {
-    changeProps(isGranted: true);
+  Future<void> grantPermission() async {
+    try {
+      final AudioRecorder recorder = AudioRecorder();
+      final bool granted = await recorder.hasPermission();
+      recorder.dispose();
+      changeProps(isGranted: granted);
+    } catch (_) {
+      changeProps(isGranted: true);
+    }
   }
 }

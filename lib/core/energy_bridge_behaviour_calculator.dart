@@ -247,11 +247,16 @@ class EnergyBridgeBehaviourCalculator {
 
     // 6. Dynamic Probabilistic Reason String (V2 master copy)
     final String signal1 = signals.isNotEmpty ? signals.first : 'tiredness';
-    final String signal2 = signals.length > 1
-        ? signals[1]
-        : 'transition rhythm';
-    final String reason =
-        'Between $windowStart and $windowEnd — $signal1 and $signal2 today.';
+    final String reason;
+    if (signals.length > 1 &&
+        signals[0] != signals[1] &&
+        !signals[0].contains(signals[1]) &&
+        !signals[1].contains(signals[0])) {
+      reason =
+          'Between $windowStart and $windowEnd — ${signals[0]} and ${signals[1]} today.';
+    } else {
+      reason = 'Between $windowStart and $windowEnd — $signal1 today.';
+    }
 
     // 7. Generate Tailored Calm Plan Actions
     final List<CalmPlanAction> actions = <CalmPlanAction>[
@@ -307,19 +312,16 @@ class EnergyBridgeBehaviourCalculator {
     if (logs.isEmpty) {
       return BehaviourPatternSummary(
         totalTantrums: 0,
-        mostCommonTimeWindow: 'Late afternoon (5:00–7:00 PM)',
-        topTriggers: const <String>['Tiredness', 'Transitions'],
-        topHelpedStrategies: const <String>[
-          'Lowering stimulation',
-          'Quiet proximity',
-        ],
-        averageIntensity: 0.5,
+        mostCommonTimeWindow: 'Still learning',
+        topTriggers: const <String>[],
+        topHelpedStrategies: const <String>[],
+        averageIntensity: 0.0,
         insightText:
-            'Start logging difficult moments to unlock $childName\'s personal pattern and effective strategies.',
+            'Start logging difficult moments to uncover $childName\'s personal pattern and effective strategies.',
       );
     }
 
-    // Trigger frequencies
+    // Trigger frequencies (filtering out invalid placeholder/free-text junk)
     final Map<String, int> triggerCounts = <String, int>{};
     final Map<String, int> helpedCounts = <String, int>{};
     double totalIntensity = 0.0;
@@ -327,10 +329,19 @@ class EnergyBridgeBehaviourCalculator {
 
     for (final TantrumLogModel log in logs) {
       for (final String t in log.triggers) {
-        triggerCounts[t] = (triggerCounts[t] ?? 0) + 1;
+        final String clean = t.trim();
+        if (clean.isNotEmpty &&
+            clean.toLowerCase() != 'other' &&
+            clean.toLowerCase() != 'placeholder' &&
+            clean.length < 40) {
+          triggerCounts[clean] = (triggerCounts[clean] ?? 0) + 1;
+        }
       }
-      if (log.whatHelped.isNotEmpty) {
-        helpedCounts[log.whatHelped] = (helpedCounts[log.whatHelped] ?? 0) + 1;
+      final String cleanHelped = log.whatHelped.trim();
+      if (cleanHelped.isNotEmpty &&
+          cleanHelped.toLowerCase() != 'other' &&
+          cleanHelped.length < 40) {
+        helpedCounts[cleanHelped] = (helpedCounts[cleanHelped] ?? 0) + 1;
       }
       totalIntensity += log.intensity;
       countWithIntensity++;
@@ -353,20 +364,43 @@ class EnergyBridgeBehaviourCalculator {
         : 0.5;
 
     final String primaryTrigger = sortedTriggers.isNotEmpty
-        ? sortedTriggers.first.toLowerCase()
+        ? sortedTriggers.first
         : 'tiredness';
     final String primaryHelped = sortedHelped.isNotEmpty
-        ? sortedHelped.first.toLowerCase()
-        : 'quiet connection';
+        ? sortedHelped.first
+        : 'calm presence';
+
+    // Calculate time window from actual logged timestamps
+    String resolvedTimeWindow = 'Still learning';
+    if (logs.isNotEmpty) {
+      final List<int> hours = logs.map((l) => l.timestamp.hour).toList();
+      hours.sort();
+      final int medianHour = hours[hours.length ~/ 2];
+      final int startHour = medianHour;
+      final int endHour = (medianHour + 2) % 24;
+      final String startAmPm = startHour >= 12 ? 'PM' : 'AM';
+      final String endAmPm = endHour >= 12 ? 'PM' : 'AM';
+      final int startH12 = startHour % 12 == 0 ? 12 : startHour % 12;
+      final int endH12 = endHour % 12 == 0 ? 12 : endHour % 12;
+      resolvedTimeWindow = '$startH12:00 $startAmPm – $endH12:00 $endAmPm';
+    }
+
+    final String insight;
+    if (logs.length < 3) {
+      insight =
+          'Early observation: based on ${logs.length} logged ${logs.length == 1 ? 'event' : 'events'}, $childName was affected by ${primaryTrigger.toLowerCase()}. Log a few more moments to establish clearer patterns.';
+    } else {
+      insight =
+          'Harder moments for $childName most often follow ${primaryTrigger.toLowerCase()}. ${primaryHelped.toLowerCase()} has shown the most consistent calming effect.';
+    }
 
     return BehaviourPatternSummary(
       totalTantrums: logs.length,
-      mostCommonTimeWindow: '5:00 PM – 7:00 PM',
+      mostCommonTimeWindow: resolvedTimeWindow,
       topTriggers: sortedTriggers.take(3).toList(),
       topHelpedStrategies: sortedHelped.take(3).toList(),
       averageIntensity: avgIntensity,
-      insightText:
-          'Harder moments for $childName most often follow $primaryTrigger. $primaryHelped has shown the most consistent calming effect.',
+      insightText: insight,
     );
   }
 }
