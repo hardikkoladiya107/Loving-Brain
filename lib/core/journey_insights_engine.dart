@@ -199,9 +199,9 @@ class JourneyInsightsEngine {
     }
 
     // 3. Child name / gender pronouns
-    final String childName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? rawChildName = child?.childName?.trim();
+    final String childName = (rawChildName != null && rawChildName.isNotEmpty)
+        ? rawChildName
         : '';
     final String subject = childName.isNotEmpty
         ? childName

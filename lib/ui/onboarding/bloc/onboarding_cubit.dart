@@ -19,10 +19,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void init() {
     final UserModel? user = preferences.getUserModel();
+    final String? parentName = user?.parentName?.trim();
     final String initialParentName =
-        (user?.parentName != null && user!.parentName!.trim().isNotEmpty)
-        ? user.parentName!.trim()
-        : '';
+        (parentName != null && parentName.isNotEmpty) ? parentName : '';
     _locationData = user?.locationData;
     final DateTime today = DateTime.now();
     final String todayFormatted = DateFormat('d MMMM yyyy').format(today);

@@ -227,7 +227,7 @@ return $default(_that.recipientEmail,_that.role,_that.daysUntilExpiry,_that.shar
 
 
 class _InvitePendingState implements InvitePendingState {
-  const _InvitePendingState({this.recipientEmail = 'susan@example.com', this.role = 'Grandparent', this.daysUntilExpiry = 14,  List<String> sharedCategories = const <String>['Sleep patterns', "Tonight's plan"], this.isResending = false, this.isCancelled = false, this.actionStatus = const ApiResultStatus.initial()}): _sharedCategories = sharedCategories;
+  const _InvitePendingState({this.recipientEmail = '', this.role = 'Caregiver', this.daysUntilExpiry = 14,  List<String> sharedCategories = const <String>['Sleep patterns', "Tonight's plan"], this.isResending = false, this.isCancelled = false, this.actionStatus = const ApiResultStatus.initial()}): _sharedCategories = sharedCategories;
   
 
 @override@JsonKey() final  String recipientEmail;

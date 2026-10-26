@@ -138,25 +138,32 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
 
   Widget _buildInfoCardsRow(SleepDetailsState state) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildSmallInfoCard(
-          "WOKE",
-          state.wakeUpTime,
-          state.hasRealLogs ? "Logged wake" : "Expected",
-          false,
+        Expanded(
+          child: _buildSmallInfoCard(
+            "WOKE",
+            state.wakeUpTime,
+            state.hasRealLogs ? "Logged wake" : "Expected",
+            false,
+          ),
         ),
-        _buildSmallInfoCard(
-          "BEDTIME",
-          state.wentToBed,
-          state.hasRealLogs ? "Last logged" : "Target",
-          true,
+        8.spaceW,
+        Expanded(
+          child: _buildSmallInfoCard(
+            "BEDTIME",
+            state.wentToBed,
+            state.hasRealLogs ? "Last logged" : "Target",
+            true,
+          ),
         ),
-        _buildSmallInfoCard(
-          "QUALITY",
-          state.sleepQuality,
-          state.hasRealLogs ? "Rest rating" : "Baseline",
-          false,
+        8.spaceW,
+        Expanded(
+          child: _buildSmallInfoCard(
+            "QUALITY",
+            state.sleepQuality,
+            state.hasRealLogs ? "Rest rating" : "Baseline",
+            false,
+          ),
         ),
       ],
     );
@@ -169,8 +176,7 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
     bool isHighlighted,
   ) {
     return Container(
-      width: 110.w,
-      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 10.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),

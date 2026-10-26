@@ -40,8 +40,16 @@ class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String name = widget.caregiverName ?? "Grandma";
-    final String role = widget.caregiverRole ?? "Grandparent";
+    final String name =
+        (widget.caregiverName != null &&
+            widget.caregiverName!.trim().isNotEmpty)
+        ? widget.caregiverName!
+        : "Caregiver";
+    final String role =
+        (widget.caregiverRole != null &&
+            widget.caregiverRole!.trim().isNotEmpty)
+        ? widget.caregiverRole!
+        : "Caregiver";
 
     return BlocConsumer<InviteAcceptedCubit, InviteAcceptedState>(
       listener: (BuildContext context, InviteAcceptedState state) {},

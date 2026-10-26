@@ -132,18 +132,20 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       );
     }
 
+    final List<DocumentReference<Object?>?>? userChildren = user?.children;
     final DocumentReference<Object?>? childRef =
         user?.defaultChild ??
         localChild?.reference ??
-        ((user?.children != null && user!.children!.isNotEmpty)
-            ? user.children!.first
+        ((userChildren != null && userChildren.isNotEmpty)
+            ? userChildren.first
             : null);
 
     if (childRef != null) {
       try {
         final DocumentSnapshot<Object?> doc = await childRef.get();
-        if (doc.exists && doc.data() is Map<String, dynamic>) {
-          final Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+        final Object? docData = doc.data();
+        if (doc.exists && docData is Map<String, dynamic>) {
+          final Map<String, dynamic> data = docData;
           final ChildModel childModel = ChildModel.fromJson(
             data,
             doc.reference,
@@ -287,7 +289,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
 
         await childRef.update(updatePayload);
 
-        if (user?.uid != null && user!.uid!.isNotEmpty) {
+        final String? userUid = user?.uid;
+        if (userUid != null && userUid.isNotEmpty) {
           final Map<String, dynamic> userUpdate = <String, dynamic>{
             'child_name': trimmedName,
             'child_age': computedAge,
@@ -300,16 +303,17 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
             }
           }
           await AuthRepo.instance.updateUserToFireStore(
-            uId: user.uid,
+            uId: userUid,
             request: userUpdate,
           );
-          await AuthRepo.instance.syncUserAndDefaultChild(uId: user.uid!);
+          await AuthRepo.instance.syncUserAndDefaultChild(uId: userUid);
         }
 
         final DocumentSnapshot<Object?> doc = await childRef.get();
-        if (doc.exists && doc.data() is Map<String, dynamic>) {
+        final Object? docData = doc.data();
+        if (doc.exists && docData is Map<String, dynamic>) {
           final ChildModel newChild = ChildModel.fromJson(
-            doc.data()! as Map<String, dynamic>,
+            docData,
             doc.reference,
           );
           await preferences.saveDefaultChildModel(newChild);

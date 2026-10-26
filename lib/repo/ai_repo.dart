@@ -126,8 +126,9 @@ class AiRepo {
             transcribeModel = TranscribeModel.fromJson(
               data as Map<String, dynamic>,
             );
-            if (transcribeModel?.text != null) {
-              finalText += "\n[Audio Transcription]: ${transcribeModel!.text!}";
+            final String? transcribedText = transcribeModel?.text;
+            if (transcribedText != null && transcribedText.isNotEmpty) {
+              finalText += "\n[Audio Transcription]: $transcribedText";
             }
           },
           error: (Exception error) {

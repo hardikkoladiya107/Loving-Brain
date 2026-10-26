@@ -10,8 +10,8 @@ class InvitePendingCubit extends Cubit<InvitePendingState> {
 
   void init({String? recipient, String? role, int? daysUntilExpiry}) {
     changeProps(
-      recipientEmail: recipient ?? 'susan@example.com',
-      role: role ?? 'Grandparent',
+      recipientEmail: recipient ?? '',
+      role: role ?? 'Caregiver',
       daysUntilExpiry: daysUntilExpiry ?? 14,
       isCancelled: false,
       isResending: false,

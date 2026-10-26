@@ -229,7 +229,7 @@ return $default(_that.caregiverName,_that.caregiverRole,_that.sleepEnabled,_that
 
 
 class _PermissionsState implements PermissionsState {
-  const _PermissionsState({this.caregiverName = 'Ravi', this.caregiverRole = 'Partner', this.sleepEnabled = true, this.behaviourEnabled = true, this.healthNotesEnabled = false, this.plansEnabled = true, this.mentorshipEnabled = false, this.isSaving = false, this.saveStatus = const ApiResultStatus.initial()});
+  const _PermissionsState({this.caregiverName = 'Caregiver', this.caregiverRole = 'Partner', this.sleepEnabled = true, this.behaviourEnabled = true, this.healthNotesEnabled = false, this.plansEnabled = true, this.mentorshipEnabled = false, this.isSaving = false, this.saveStatus = const ApiResultStatus.initial()});
   
 
 @override@JsonKey() final  String caregiverName;

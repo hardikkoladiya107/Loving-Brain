@@ -14,19 +14,21 @@ class SleepNoDataCubit extends Cubit<SleepNoDataState> {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();
 
-    final String name =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
-        : (user?.childName != null && user!.childName!.trim().isNotEmpty)
-        ? user.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String? userChildName = user?.childName?.trim();
+    final String name = (childName != null && childName.isNotEmpty)
+        ? childName
+        : (userChildName != null && userChildName.isNotEmpty)
+        ? userChildName
         : 'your child';
 
-    String age = '17 months';
-    if (child?.childAge != null && child!.childAge!.trim().isNotEmpty) {
-      age = child.childAge!.trim();
-    } else if (user?.childAge != null && user!.childAge!.trim().isNotEmpty) {
-      age = user.childAge!.trim();
-    }
+    final String? childAge = child?.childAge?.trim();
+    final String? userChildAge = user?.childAge?.trim();
+    final String age = (childAge != null && childAge.isNotEmpty)
+        ? childAge
+        : (userChildAge != null && userChildAge.isNotEmpty)
+        ? userChildAge
+        : '17 months';
 
     changeProps(childName: name, childAge: age, isLoading: false);
   }

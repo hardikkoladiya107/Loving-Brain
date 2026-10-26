@@ -71,84 +71,93 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
         .doc(uid)
         .collection('saved_guidance')
         .snapshots()
-        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
-          if (isClosed) return;
-          if (snapshot.docs.isEmpty) {
+        .listen(
+          (QuerySnapshot<Map<String, dynamic>> snapshot) {
+            if (isClosed) return;
+            if (snapshot.docs.isEmpty) {
+              changeProps(
+                sleepItems: defaultSleep,
+                behaviourItems: defaultBehaviour,
+                parentWellbeingItems: defaultWellbeing,
+              );
+              return;
+            }
+
+            final DateTime now = DateTime.now();
+            final List<BrainySavedItem> sleep = [];
+            final List<BrainySavedItem> behaviour = [];
+            final List<BrainySavedItem> wellbeing = [];
+
+            for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+                in snapshot.docs) {
+              final Map<String, dynamic> data = doc.data();
+              final String topic = data['topic']?.toString().trim() ?? 'Sleep';
+              final String title =
+                  data['title']?.toString().trim() ?? 'Saved guidance';
+              final String? convId = data['conversation_id']?.toString();
+
+              DateTime savedAt = now;
+              final Object? rawSavedAt = data['saved_at'];
+              if (rawSavedAt is Timestamp) {
+                savedAt = rawSavedAt.toDate();
+              }
+
+              final String lowerTopic = topic.toLowerCase();
+              if (lowerTopic == 'sleep') {
+                sleep.add(
+                  BrainySavedItem(
+                    id: doc.id,
+                    conversationId: convId,
+                    title: title,
+                    subtitle: _formatSavedSubtitle(savedAt, now),
+                    imagePath: Assets.v2.images.imgSleep.path,
+                    imageBgColorValue: 0xFFF1EEFF,
+                    topic: topic,
+                  ),
+                );
+              } else if (lowerTopic == 'behaviour' || lowerTopic == 'mood') {
+                behaviour.add(
+                  BrainySavedItem(
+                    id: doc.id,
+                    conversationId: convId,
+                    title: title,
+                    subtitle: _formatSavedSubtitle(savedAt, now),
+                    imagePath: Assets.v2.images.imgTantrums.path,
+                    imageBgColorValue: 0xFFFEF0E8,
+                    topic: topic,
+                  ),
+                );
+              } else {
+                wellbeing.add(
+                  BrainySavedItem(
+                    id: doc.id,
+                    conversationId: convId,
+                    title: title,
+                    subtitle: _formatSavedSubtitle(savedAt, now),
+                    imagePath: Assets.v2.images.imgHealth.path,
+                    imageBgColorValue: 0xFFE2F0FF,
+                    topic: topic,
+                  ),
+                );
+              }
+            }
+
             changeProps(
-              sleepItems: defaultSleep,
-              behaviourItems: defaultBehaviour,
-              parentWellbeingItems: defaultWellbeing,
+              sleepItems: sleep.isNotEmpty ? sleep : defaultSleep,
+              behaviourItems: behaviour.isNotEmpty
+                  ? behaviour
+                  : defaultBehaviour,
+              parentWellbeingItems: wellbeing.isNotEmpty
+                  ? wellbeing
+                  : defaultWellbeing,
             );
-            return;
-          }
-
-          final DateTime now = DateTime.now();
-          final List<BrainySavedItem> sleep = [];
-          final List<BrainySavedItem> behaviour = [];
-          final List<BrainySavedItem> wellbeing = [];
-
-          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
-              in snapshot.docs) {
-            final Map<String, dynamic> data = doc.data();
-            final String topic = data['topic']?.toString().trim() ?? 'Sleep';
-            final String title =
-                data['title']?.toString().trim() ?? 'Saved guidance';
-            final String? convId = data['conversation_id']?.toString();
-
-            DateTime savedAt = now;
-            final Object? rawSavedAt = data['saved_at'];
-            if (rawSavedAt is Timestamp) {
-              savedAt = rawSavedAt.toDate();
-            }
-
-            final String lowerTopic = topic.toLowerCase();
-            if (lowerTopic == 'sleep') {
-              sleep.add(
-                BrainySavedItem(
-                  id: doc.id,
-                  conversationId: convId,
-                  title: title,
-                  subtitle: _formatSavedSubtitle(savedAt, now),
-                  imagePath: Assets.v2.images.imgSleep.path,
-                  imageBgColorValue: 0xFFF1EEFF,
-                  topic: topic,
-                ),
-              );
-            } else if (lowerTopic == 'behaviour' || lowerTopic == 'mood') {
-              behaviour.add(
-                BrainySavedItem(
-                  id: doc.id,
-                  conversationId: convId,
-                  title: title,
-                  subtitle: _formatSavedSubtitle(savedAt, now),
-                  imagePath: Assets.v2.images.imgTantrums.path,
-                  imageBgColorValue: 0xFFFEF0E8,
-                  topic: topic,
-                ),
-              );
-            } else {
-              wellbeing.add(
-                BrainySavedItem(
-                  id: doc.id,
-                  conversationId: convId,
-                  title: title,
-                  subtitle: _formatSavedSubtitle(savedAt, now),
-                  imagePath: Assets.v2.images.imgHealth.path,
-                  imageBgColorValue: 0xFFE2F0FF,
-                  topic: topic,
-                ),
-              );
-            }
-          }
-
-          changeProps(
-            sleepItems: sleep.isNotEmpty ? sleep : defaultSleep,
-            behaviourItems: behaviour.isNotEmpty ? behaviour : defaultBehaviour,
-            parentWellbeingItems: wellbeing.isNotEmpty
-                ? wellbeing
-                : defaultWellbeing,
-          );
-        });
+          },
+          onError: (_) {
+            _savedSubscription?.cancel();
+            _savedSubscription = null;
+          },
+          cancelOnError: true,
+        );
   }
 
   String _formatSavedSubtitle(DateTime savedAt, DateTime now) {

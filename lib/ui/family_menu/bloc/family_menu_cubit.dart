@@ -14,10 +14,9 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
 
   void init() {
     final ChildModel? child = preferences.getChildModel();
-
-    final String cName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String cName = (childName != null && childName.isNotEmpty)
+        ? childName
         : 'your child';
 
     changeProps(childName: cName, fetchStatus: const ApiResultStatus.loading());
@@ -27,33 +26,29 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
   Future<void> _loadCaregivers() async {
     final UserModel? user = preferences.getUserModel();
     final List<CaregiverItem> linked = <CaregiverItem>[];
+    final String? partnerId = user?.partnerUserId?.trim();
 
-    if (user?.partnerUserId != null && user!.partnerUserId!.trim().isNotEmpty) {
+    if (partnerId != null && partnerId.isNotEmpty) {
       UserModel? partnerUser;
       try {
-        partnerUser = await UserRepo.instance.getUserById(
-          uid: user.partnerUserId!.trim(),
-        );
+        partnerUser = await UserRepo.instance.getUserById(uid: partnerId);
       } catch (_) {}
 
-      final String name =
-          (partnerUser?.parentName != null &&
-              partnerUser!.parentName!.trim().isNotEmpty)
-          ? partnerUser.parentName!.trim()
+      final String? partnerName = partnerUser?.parentName?.trim();
+      final String name = (partnerName != null && partnerName.isNotEmpty)
+          ? partnerName
           : (partnerUser?.email?.split('@').first ?? 'Co-Parent');
       final String email = partnerUser?.email ?? partnerUser?.parentEmail ?? '';
 
       linked.add(
         CaregiverItem(
-          id: user.partnerUserId!,
+          id: partnerId,
           name: name,
           email: email,
           role: partnerUser?.relationshipToChild ?? 'Co-Parent',
           status: 'Linked',
         ),
       );
-    } else {
-      linked.addAll(state.linkedCaregivers);
     }
 
     changeProps(

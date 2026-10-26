@@ -307,10 +307,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       height: 24.r,
                     ),
                     12.spaceW,
-                    "More than one".appText(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF252360),
+                    Expanded(
+                      child: "More than one".appText(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF252360),
+                      ),
                     ),
                   ],
                 ),
@@ -345,8 +347,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          height: 152.h,
-          padding: EdgeInsets.all(16.r),
+          height: 172.h,
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFFF3F2FE) : Colors.white,
             borderRadius: BorderRadius.circular(24.r),
@@ -370,10 +372,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               iconPlaceholder,
               const Spacer(),
               title.appText(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: greyColor9,
                 textAlign: TextAlign.start,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
               4.spaceH,
               subtitle.appText(
@@ -382,6 +386,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 color: greyColor6,
                 textAlign: TextAlign.start,
                 height: 1.25,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -776,12 +782,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                "Naps per day".appText(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: greyColor9,
-                  textAlign: TextAlign.start,
+                Expanded(
+                  child: "Naps per day".appText(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: greyColor9,
+                    textAlign: TextAlign.start,
+                  ),
                 ),
+                12.spaceW,
                 // Stepper control: [ -  2  + ]
                 Container(
                   decoration: BoxDecoration(
@@ -864,14 +873,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // 4 Night Wakings Chips: None, 1-2, 3+, Varies
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.r),
-            child: Row(
+            child: Wrap(
+              spacing: 10.w,
+              runSpacing: 8.h,
               children: <Widget>[
-                for (
-                  int i = 0;
-                  i < _nightWakingsOptions.length;
-                  i++
-                ) ...<Widget>[
-                  if (i > 0) 10.spaceW,
+                for (int i = 0; i < _nightWakingsOptions.length; i++)
                   _buildChip(
                     label: _nightWakingsOptions[i],
                     isSelected: state.nightWakings == _nightWakingsOptions[i],
@@ -881,7 +887,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       );
                     },
                   ),
-                ],
               ],
             ),
           ),
@@ -1044,10 +1049,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // 3 Gender Pill Chips: Boy, Girl, Prefer not to say
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.r),
-            child: Row(
+            child: Wrap(
+              spacing: 10.w,
+              runSpacing: 8.h,
               children: <Widget>[
-                for (int i = 0; i < _genders.length; i++) ...<Widget>[
-                  if (i > 0) 10.spaceW,
+                for (int i = 0; i < _genders.length; i++)
                   _buildChip(
                     label: _genders[i],
                     isSelected: state.childGender == _genders[i],
@@ -1057,7 +1063,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       );
                     },
                   ),
-                ],
               ],
             ),
           ),
@@ -1178,23 +1183,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               .appPadding(left: 20.r, right: 20.r),
           12.spaceH,
 
-          // 3 Language chips: English, Hindi, Other
-          Row(
-            children: <Widget>[
-              for (int i = 0; i < _languages.length; i++) ...<Widget>[
-                if (i > 0) 10.spaceW,
-                _buildChip(
-                  label: _languages[i],
-                  isSelected: state.preferredLanguage == _languages[i],
-                  onTap: () {
-                    context.read<OnboardingCubit>().selectPreferredLanguage(
-                      _languages[i],
-                    );
-                  },
-                ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.r),
+            child: Wrap(
+              spacing: 10.w,
+              runSpacing: 8.h,
+              children: <Widget>[
+                for (int i = 0; i < _languages.length; i++)
+                  _buildChip(
+                    label: _languages[i],
+                    isSelected: state.preferredLanguage == _languages[i],
+                    onTap: () {
+                      context.read<OnboardingCubit>().selectPreferredLanguage(
+                        _languages[i],
+                      );
+                    },
+                  ),
               ],
-            ],
-          ).appPadding(left: 20.r, right: 20.r),
+            ),
+          ),
           if (state.preferredLanguageError.isNotEmpty) ...[
             6.spaceH,
             state.preferredLanguageError

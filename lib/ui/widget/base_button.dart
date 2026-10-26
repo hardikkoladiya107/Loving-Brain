@@ -26,11 +26,11 @@ class _BaseButtonState extends State<BaseButton>
           lowerBound: 0.0,
           upperBound: 0.05,
         )..addListener(() {
-          setState(() => _scaleTransformValue = 1 - animationController.value);
-          setState(
-            () =>
-                _scaleTransparentValue = (1 - (animationController.value * 12)),
-          );
+          if (!mounted) return;
+          setState(() {
+            _scaleTransformValue = 1 - animationController.value;
+            _scaleTransparentValue = 1 - (animationController.value * 12);
+          });
         });
     super.initState();
   }
@@ -83,6 +83,7 @@ class _BaseButtonState extends State<BaseButton>
     Future.delayed(
       const Duration(milliseconds: clickAnimationDurationMillis),
       () {
+        if (!mounted) return;
         try {
           animationController.reverse();
         } catch (e) {

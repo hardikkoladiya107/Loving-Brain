@@ -13,7 +13,7 @@ class PermissionsCubit extends Cubit<PermissionsState> {
     final bool isGrandparent = cleanRole.toLowerCase() == 'grandparent';
 
     changeProps(
-      caregiverName: caregiverName ?? 'Ravi',
+      caregiverName: caregiverName ?? 'Caregiver',
       caregiverRole: cleanRole,
       sleepEnabled: true,
       behaviourEnabled: !isGrandparent,

@@ -3,6 +3,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/ui/child_essentials/bloc/child_essentials_cubit.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_cubit.dart';
+import 'package:loving_brain/ui/family_menu/bloc/family_menu_state.dart';
 import 'package:loving_brain/ui/invite_caregiver/bloc/invite_caregiver_cubit.dart';
 import 'package:loving_brain/ui/invite_pending/bloc/invite_pending_cubit.dart';
 import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
@@ -98,6 +99,29 @@ void main() {
       cubit.init();
 
       expect(cubit.state.childName, isNotEmpty);
+      expect(cubit.state.linkedCaregivers, isA<List<CaregiverItem>>());
+      expect(cubit.state.pendingInvites, isA<List<CaregiverItem>>());
+
+      cubit.changeProps(
+        linkedCaregivers: const <CaregiverItem>[
+          CaregiverItem(
+            id: '1',
+            name: 'Co-Parent',
+            email: 'coparent@example.com',
+            role: 'Co-Parent',
+            status: 'Linked',
+          ),
+        ],
+        pendingInvites: const <CaregiverItem>[
+          CaregiverItem(
+            id: '2',
+            name: 'Caregiver',
+            email: 'caregiver@example.com',
+            role: 'Grandparent',
+            status: 'Pending',
+          ),
+        ],
+      );
       expect(cubit.state.linkedCaregivers.isNotEmpty, isTrue);
       expect(cubit.state.pendingInvites.isNotEmpty, isTrue);
 

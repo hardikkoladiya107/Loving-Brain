@@ -28,12 +28,9 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
   @override
   void initState() {
     super.initState();
-    _emailController = TextEditingController(text: "grandma@example.com");
+    _emailController = TextEditingController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InviteCaregiverCubit>().init();
-      context.read<InviteCaregiverCubit>().updateEmailOrPhone(
-        _emailController.text,
-      );
     });
   }
 
@@ -57,7 +54,12 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
             );
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => const InvitePendingScreen()),
+              MaterialPageRoute(
+                builder: (_) => InvitePendingScreen(
+                  recipientEmail: state.emailOrPhone.trim(),
+                  role: state.selectedRole,
+                ),
+              ),
             );
           },
           error: (Exception error) {
@@ -190,33 +192,40 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                                         onChanged: (String val) {
                                           cubit.updateEmailOrPhone(val);
                                         },
-                                        style: TextStyle(
-                                          fontFamily: 'Nunito',
+                                        style: getTextStyle(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w500,
                                           color: greyColor9,
                                         ),
-                                        decoration: const InputDecoration(
+                                        decoration: InputDecoration(
                                           isDense: true,
                                           contentPadding: EdgeInsets.zero,
                                           border: InputBorder.none,
+                                          hintText:
+                                              "e.g. name@example.com or phone",
+                                          hintStyle: getTextStyle(
+                                            fontSize: 16.sp,
+                                            color: greyColor4,
+                                            fontWeight: FontWeight.w400,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.all(3.r),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: primaryColor,
+                                if (state.emailOrPhone.trim().isNotEmpty)
+                                  Container(
+                                    padding: EdgeInsets.all(3.r),
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor,
+                                    ),
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 16.sp,
+                                    ),
                                   ),
-                                  child: Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 16.sp,
-                                  ),
-                                ),
                               ],
                             ),
                           ),

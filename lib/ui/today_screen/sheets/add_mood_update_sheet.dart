@@ -85,16 +85,22 @@ class AddMoodUpdateSheet extends StatelessWidget {
               ),
               12.spaceH,
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  "How is ${state.childName.isNotEmpty ? state.childName : 'your child'} feeling?"
-                      .appText(
-                        fontSize: 28.sp,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
-                  if (isError)
+                  Expanded(
+                    child:
+                        "How is ${state.childName.isNotEmpty ? state.childName : 'your child'} feeling?"
+                            .appText(
+                              fontSize: 28.sp,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                  ),
+                  if (isError) ...[
+                    8.spaceW,
                     Icon(Icons.error, color: Colors.red, size: 24.sp),
+                  ],
                 ],
               ),
               12.spaceH,

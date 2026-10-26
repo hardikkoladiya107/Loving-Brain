@@ -225,7 +225,7 @@ return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pen
 
 
 class _FamilyMenuState implements FamilyMenuState {
-  const _FamilyMenuState({this.isLoading = false, this.childName = 'your child',  List<CaregiverItem> linkedCaregivers = const <CaregiverItem>[CaregiverItem(id: 'user_ravi', name: 'Ravi', email: 'ravi@example.com', role: 'Partner', status: 'Linked')],  List<CaregiverItem> pendingInvites = const <CaregiverItem>[CaregiverItem(id: 'invite_grandma', name: 'Grandma Susan', email: 'susan@example.com', role: 'Grandparent', status: 'Awaiting response', daysRemaining: 12)], this.fetchStatus = const ApiResultStatus.initial()}): _linkedCaregivers = linkedCaregivers,_pendingInvites = pendingInvites;
+  const _FamilyMenuState({this.isLoading = false, this.childName = 'your child',  List<CaregiverItem> linkedCaregivers = const <CaregiverItem>[],  List<CaregiverItem> pendingInvites = const <CaregiverItem>[], this.fetchStatus = const ApiResultStatus.initial()}): _linkedCaregivers = linkedCaregivers,_pendingInvites = pendingInvites;
   
 
 @override@JsonKey() final  bool isLoading;

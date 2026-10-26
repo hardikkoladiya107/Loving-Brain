@@ -21,51 +21,52 @@ class SettingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48.w,
-              height: 48.w,
-              decoration: BoxDecoration(
-                color: iconBackgroundColor,
-                borderRadius: BorderRadius.circular(12),
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          child: Row(
+            children: [
+              Container(
+                width: 48.w,
+                height: 48.w,
+                decoration: BoxDecoration(
+                  color: iconBackgroundColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(child: icon),
               ),
-              child: Center(child: icon),
-            ),
-            16.spaceW,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  title.appText(
-                    fontSize: 16.sp,
-                    color: greyColor9,
-                    fontWeight: FontWeight.w600,
-                    textAlign: TextAlign.start,
-                  ),
-                  if (subtitle != null) ...[
-                    4.spaceH,
-                    subtitle!.appText(
-                      fontSize: 14.sp,
-                      color: greyColor,
+              16.spaceW,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    title.appText(
+                      fontSize: 16.sp,
+                      color: greyColor9,
+                      fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start,
                     ),
+                    if (subtitle != null) ...[
+                      4.spaceH,
+                      subtitle!.appText(
+                        fontSize: 14.sp,
+                        color: greyColor,
+                        textAlign: TextAlign.start,
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            16.spaceW,
-            Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
-          ],
+              16.spaceW,
+              Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
+            ],
+          ),
         ),
       ),
     );

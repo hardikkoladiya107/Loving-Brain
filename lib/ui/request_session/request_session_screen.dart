@@ -292,6 +292,7 @@ class _SessionFieldState extends State<SessionField> {
     }
     _controller = TextEditingController(text: widget.initialValue);
     _focusNode.addListener(() {
+      if (!mounted) return;
       setState(() {
         _isFocused = _focusNode.hasFocus;
       });
@@ -357,17 +358,21 @@ class _SessionFieldState extends State<SessionField> {
                     },
                     maxLines: null,
                     textInputAction: TextInputAction.next,
-                    style: TextStyle(
+                    style: getTextStyle(
                       fontSize: 16.sp,
                       color: darkBlue,
                       fontWeight: FontWeight.w600,
                       height: 1.3,
-                      fontFamily: 'Nunito',
                     ),
                     decoration: InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.only(top: 4.h, bottom: 8.h),
                       border: InputBorder.none,
+                      hintStyle: getTextStyle(
+                        fontSize: 16.sp,
+                        color: greyColor4,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ],

@@ -133,8 +133,8 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
           result.whenOrNull(
             data: (dynamic data) {
               final TranscribeModel model = TranscribeModel.fromJson(data);
-              if (model.text != null && model.text!.trim().isNotEmpty) {
-                final String recognized = model.text!.trim();
+              final String? recognized = model.text?.trim();
+              if (recognized != null && recognized.isNotEmpty) {
                 final String current = _textController.text.trim();
                 final String combined = current.isEmpty
                     ? recognized
@@ -197,149 +197,166 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 2.h,
-                    width: 60.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      color: greyColor7,
-                    ),
-                  ),
-                ],
-              ),
-              12.spaceH,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  "Quick note".appText(
-                    fontSize: 28.sp,
-                    fraunces: true,
-                    textAlign: TextAlign.start,
-                  ),
-                  if (isError)
-                    Icon(Icons.error, color: Colors.red, size: 24.sp),
-                ],
-              ),
-              24.spaceH,
-              Container(
-                height: 120.h,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: isError ? Colors.red : greyColor12),
-                ),
-                padding: EdgeInsets.all(16.w),
-                child: TextField(
-                  controller: _textController,
-                  maxLines: null,
-                  onChanged: (String val) =>
-                      context.read<TodayCubit>().setQuickNoteText(val),
-                  decoration: const InputDecoration(
-                    hintText: "Anything you want to remember about today...",
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              32.spaceH,
-              Center(
-                child: Column(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onLongPressStart: (_) => _startRecording(),
-                      onLongPressEnd: (_) => _stopRecordingAndTranscribe(),
-                      onTap: () {
-                        if (_isRecording) {
-                          _stopRecordingAndTranscribe();
-                        } else {
-                          _startRecording();
-                        }
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: _isRecording ? primaryColor : indigoLight,
-                          shape: BoxShape.circle,
-                          boxShadow: _isRecording
-                              ? [
-                                  BoxShadow(
-                                    color: primaryColor.withValues(alpha: 0.4),
-                                    blurRadius: 12.r,
-                                    spreadRadius: 2.r,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: _isTranscribing
-                            ? SizedBox(
-                                width: 32.sp,
-                                height: 32.sp,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  color: secondaryColor,
-                                ),
-                              )
-                            : Icon(
-                                Icons.mic,
-                                color: _isRecording
-                                    ? Colors.white
-                                    : secondaryColor,
-                                size: 32.sp,
-                              ),
+                    Container(
+                      height: 2.h,
+                      width: 60.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.r),
+                        color: greyColor7,
                       ),
                     ),
-                    8.spaceH,
-                    (_isTranscribing
-                            ? "Transcribing audio..."
-                            : _isRecording
-                            ? "Recording... (Release to finish)"
-                            : "Hold to record")
-                        .appText(
-                          color: _isRecording ? primaryColor : greyColor,
-                          fontSize: 12.sp,
-                          fontWeight: _isRecording
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                        ),
                   ],
                 ),
-              ),
-              32.spaceH,
-              AppButton(
-                isLoading: state.isLoading,
-                title: "Save note",
-                onTap: () {
-                  final String text = _textController.text.trim();
-                  if (text.isEmpty) {
-                    context.read<TodayCubit>().triggerNotesUpdateErrors();
-                    showSnackBar(
-                      message: "Please type or record a note first.",
-                      type: SnackBarType.None,
-                    );
-                  } else {
-                    context.read<TodayCubit>().setQuickNoteText(text);
-                    context.read<TodayCubit>().saveQuickNote();
-                  }
-                },
-                backgroundColor: primaryColor,
-                textColor: Colors.white,
-              ),
-              24.spaceH,
-            ],
-          ).appPadding(all: 16.r),
+                12.spaceH,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: "Quick note".appText(
+                        fontSize: 28.sp,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    if (isError) ...[
+                      8.spaceW,
+                      Icon(Icons.error, color: Colors.red, size: 24.sp),
+                    ],
+                  ],
+                ),
+                24.spaceH,
+                Container(
+                  height: 120.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: isError ? Colors.red : greyColor12,
+                    ),
+                  ),
+                  padding: EdgeInsets.all(16.w),
+                  child: TextField(
+                    controller: _textController,
+                    maxLines: null,
+                    onChanged: (String val) =>
+                        context.read<TodayCubit>().setQuickNoteText(val),
+                    decoration: InputDecoration(
+                      hintText: "Anything you want to remember about today...",
+                      hintStyle: getTextStyle(
+                        fontSize: 16.sp,
+                        color: greyColor4,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: getTextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: greyColor9,
+                    ),
+                  ),
+                ),
+                32.spaceH,
+                Center(
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onLongPressStart: (_) => _startRecording(),
+                        onLongPressEnd: (_) => _stopRecordingAndTranscribe(),
+                        onTap: () {
+                          if (_isRecording) {
+                            _stopRecordingAndTranscribe();
+                          } else {
+                            _startRecording();
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(
+                            color: _isRecording ? primaryColor : indigoLight,
+                            shape: BoxShape.circle,
+                            boxShadow: _isRecording
+                                ? [
+                                    BoxShadow(
+                                      color: primaryColor.withValues(
+                                        alpha: 0.4,
+                                      ),
+                                      blurRadius: 12.r,
+                                      spreadRadius: 2.r,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: _isTranscribing
+                              ? SizedBox(
+                                  width: 32.sp,
+                                  height: 32.sp,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: secondaryColor,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.mic,
+                                  color: _isRecording
+                                      ? Colors.white
+                                      : secondaryColor,
+                                  size: 32.sp,
+                                ),
+                        ),
+                      ),
+                      8.spaceH,
+                      (_isTranscribing
+                              ? "Transcribing audio..."
+                              : _isRecording
+                              ? "Recording... (Release to finish)"
+                              : "Hold to record")
+                          .appText(
+                            color: _isRecording ? primaryColor : greyColor,
+                            fontSize: 12.sp,
+                            fontWeight: _isRecording
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                    ],
+                  ),
+                ),
+                32.spaceH,
+                AppButton(
+                  isLoading: state.isLoading,
+                  title: "Save note",
+                  onTap: () {
+                    final String text = _textController.text.trim();
+                    if (text.isEmpty) {
+                      context.read<TodayCubit>().triggerNotesUpdateErrors();
+                      showSnackBar(
+                        message: "Please type or record a note first.",
+                        type: SnackBarType.None,
+                      );
+                    } else {
+                      context.read<TodayCubit>().setQuickNoteText(text);
+                      context.read<TodayCubit>().saveQuickNote();
+                    }
+                  },
+                  backgroundColor: primaryColor,
+                  textColor: Colors.white,
+                ),
+                24.spaceH,
+              ],
+            ).appPadding(all: 16.r),
+          ),
         );
       },
     );

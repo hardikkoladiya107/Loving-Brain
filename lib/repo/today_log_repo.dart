@@ -32,12 +32,14 @@ class TodayLogRepo {
   /// Resolves the currently active child ID from SharedPreferences or Firebase user.
   String? resolveActiveChildId() {
     final ChildModel? child = preferences.getChildModel();
-    if (child?.reference?.id != null && child!.reference!.id.isNotEmpty) {
-      return child.reference!.id;
+    final String? childId = child?.reference?.id;
+    if (childId != null && childId.isNotEmpty) {
+      return childId;
     }
     final UserModel? user = preferences.getUserModel();
-    if (user?.defaultChild?.id != null && user!.defaultChild!.id.isNotEmpty) {
-      return user.defaultChild!.id;
+    final String? defaultChildId = user?.defaultChild?.id;
+    if (defaultChildId != null && defaultChildId.isNotEmpty) {
+      return defaultChildId;
     }
     return null;
   }

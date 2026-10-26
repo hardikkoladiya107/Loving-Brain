@@ -53,8 +53,9 @@ class UserRepo {
       final DocumentSnapshot<Map<String, dynamic>> doc = await userCollection
           .doc(uid)
           .get();
-      if (doc.exists && doc.data() != null) {
-        return UserModel.fromJson(doc.data()!);
+      final Map<String, dynamic>? data = doc.data();
+      if (doc.exists && data != null) {
+        return UserModel.fromJson(data);
       }
       return null;
     } catch (e) {

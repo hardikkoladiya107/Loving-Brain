@@ -44,6 +44,7 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
     _controller = TextEditingController(text: widget.value);
     _focusNode = FocusNode();
     _focusNode.addListener(() {
+      if (!mounted) return;
       setState(() {
         _isFocused = _focusNode.hasFocus;
       });
@@ -107,10 +108,10 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                   onTap:
                       widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
                   onChanged: widget.onChanged,
-                  style: TextStyle(
+                  style: getTextStyle(
                     fontSize: 16.sp,
                     color: greyColor9,
-                    fontFamily: "Outfit",
+                    fontWeight: FontWeight.w500,
                   ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
@@ -119,10 +120,10 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                     hintText:
                         widget.hintText ??
                         'Enter ${widget.label.toLowerCase()}',
-                    hintStyle: TextStyle(
+                    hintStyle: getTextStyle(
                       fontSize: 16.sp,
-                      color: greyColor,
-                      fontFamily: "Outfit",
+                      color: greyColor4,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),

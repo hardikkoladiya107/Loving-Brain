@@ -6,7 +6,7 @@ part 'permissions_state.freezed.dart';
 @freezed
 abstract class PermissionsState with _$PermissionsState {
   const factory PermissionsState({
-    @Default('Ravi') String caregiverName,
+    @Default('Caregiver') String caregiverName,
     @Default('Partner') String caregiverRole,
     @Default(true) bool sleepEnabled,
     @Default(true) bool behaviourEnabled,

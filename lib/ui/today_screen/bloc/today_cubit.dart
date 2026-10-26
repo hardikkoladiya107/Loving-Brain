@@ -150,27 +150,28 @@ class TodayCubit extends Cubit<TodayState> {
       activeChildId: initialChildId,
     );
 
-    if (user?.uid != null && user!.uid!.isNotEmpty) {
+    final String? userUid = user?.uid;
+    if (userUid != null && userUid.isNotEmpty) {
       try {
         final UserModel? freshUser = await AuthRepo.instance
-            .syncUserAndDefaultChild(uId: user.uid!);
+            .syncUserAndDefaultChild(uId: userUid);
         if (freshUser != null) {
           user = freshUser;
           child = preferences.getChildModel();
         }
       } catch (_) {}
-    } else if (user != null && user.defaultChild != null) {
-      try {
-        final DocumentSnapshot<Object?> childSnap = await user.defaultChild!
-            .get();
-        if (childSnap.data() != null) {
-          child = ChildModel.fromJson(
-            childSnap.data() as Map<String, dynamic>,
-            childSnap.reference,
-          );
-          await preferences.saveChildModel(child);
-        }
-      } catch (_) {}
+    } else {
+      final DocumentReference<Object?>? defChild = user?.defaultChild;
+      if (defChild != null) {
+        try {
+          final DocumentSnapshot<Object?> childSnap = await defChild.get();
+          final Object? childData = childSnap.data();
+          if (childData is Map<String, dynamic>) {
+            child = ChildModel.fromJson(childData, childSnap.reference);
+            await preferences.saveChildModel(child);
+          }
+        } catch (_) {}
+      }
     }
 
     String pName = user?.parentName ?? 'Parent';

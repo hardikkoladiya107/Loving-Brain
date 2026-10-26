@@ -25,69 +25,77 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
         .doc(uid)
         .collection('conversations')
         .snapshots()
-        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
-          if (isClosed) return;
-          if (snapshot.docs.isEmpty) {
-            _emitDefaultItems();
-            return;
-          }
+        .listen(
+          (QuerySnapshot<Map<String, dynamic>> snapshot) {
+            if (isClosed) return;
+            if (snapshot.docs.isEmpty) {
+              _emitDefaultItems();
+              return;
+            }
 
-          final DateTime now = DateTime.now();
-          final List<(DateTime, BrainyHistoryItem)> parsed = [];
+            final DateTime now = DateTime.now();
+            final List<(DateTime, BrainyHistoryItem)> parsed = [];
 
-          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
-              in snapshot.docs) {
-            final Map<String, dynamic> data = doc.data();
-            final String convId = data['conversation_id']?.toString() ?? doc.id;
-            final String title =
-                (data['first_message']?.toString() ?? '').trim().isNotEmpty
-                ? data['first_message'].toString().trim()
-                : 'Conversation with Brainy';
-            final String? topic = data['topic']?.toString();
+            for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+                in snapshot.docs) {
+              final Map<String, dynamic> data = doc.data();
+              final String convId =
+                  data['conversation_id']?.toString() ?? doc.id;
+              final String title =
+                  (data['first_message']?.toString() ?? '').trim().isNotEmpty
+                  ? data['first_message'].toString().trim()
+                  : 'Conversation with Brainy';
+              final String? topic = data['topic']?.toString();
 
-            DateTime createdAt = now;
-            final Object? rawCreatedAt = data['created_at'];
-            if (rawCreatedAt is Timestamp) {
-              createdAt = rawCreatedAt.toDate();
-            } else {
-              final int? ms = int.tryParse(convId);
-              if (ms != null && ms > 1000000000000) {
-                createdAt = DateTime.fromMillisecondsSinceEpoch(ms);
+              DateTime createdAt = now;
+              final Object? rawCreatedAt = data['created_at'];
+              if (rawCreatedAt is Timestamp) {
+                createdAt = rawCreatedAt.toDate();
+              } else {
+                final int? ms = int.tryParse(convId);
+                if (ms != null && ms > 1000000000000) {
+                  createdAt = DateTime.fromMillisecondsSinceEpoch(ms);
+                }
+              }
+
+              parsed.add((
+                createdAt,
+                BrainyHistoryItem(
+                  conversationId: convId,
+                  title: title,
+                  subtitle: _formatRelativeDate(createdAt, now),
+                  topic: topic,
+                ),
+              ));
+            }
+
+            parsed.sort(
+              (
+                (DateTime, BrainyHistoryItem) a,
+                (DateTime, BrainyHistoryItem) b,
+              ) => b.$1.compareTo(a.$1),
+            );
+
+            final List<BrainyHistoryItem> thisWeek = [];
+            final List<BrainyHistoryItem> earlier = [];
+
+            for (final (DateTime, BrainyHistoryItem) entry in parsed) {
+              final int diffDays = now.difference(entry.$1).inDays;
+              if (diffDays <= 7) {
+                thisWeek.add(entry.$2);
+              } else {
+                earlier.add(entry.$2);
               }
             }
 
-            parsed.add((
-              createdAt,
-              BrainyHistoryItem(
-                conversationId: convId,
-                title: title,
-                subtitle: _formatRelativeDate(createdAt, now),
-                topic: topic,
-              ),
-            ));
-          }
-
-          parsed.sort(
-            (
-              (DateTime, BrainyHistoryItem) a,
-              (DateTime, BrainyHistoryItem) b,
-            ) => b.$1.compareTo(a.$1),
-          );
-
-          final List<BrainyHistoryItem> thisWeek = [];
-          final List<BrainyHistoryItem> earlier = [];
-
-          for (final (DateTime, BrainyHistoryItem) entry in parsed) {
-            final int diffDays = now.difference(entry.$1).inDays;
-            if (diffDays <= 7) {
-              thisWeek.add(entry.$2);
-            } else {
-              earlier.add(entry.$2);
-            }
-          }
-
-          changeProps(thisWeekHistory: thisWeek, earlierHistory: earlier);
-        });
+            changeProps(thisWeekHistory: thisWeek, earlierHistory: earlier);
+          },
+          onError: (_) {
+            _conversationSubscription?.cancel();
+            _conversationSubscription = null;
+          },
+          cancelOnError: true,
+        );
   }
 
   void changeProps({

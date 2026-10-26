@@ -22,12 +22,12 @@ abstract class SharedChildSummaryState with _$SharedChildSummaryState {
   const factory SharedChildSummaryState({
     @Default(false) bool isLoading,
     @Default('your child') String childName,
-    @Default('Ravi') String partnerName,
+    @Default('Co-Parent') String partnerName,
     @Default('Wind-down at 7:30 PM') String todaysPlanTitle,
     @Default('Sleep window 7:45 – 8:15 PM.') String todaysPlanSubtitle,
     @Default(<HandoverLogItem>[
       HandoverLogItem(
-        authorName: 'Ravi',
+        authorName: 'Co-Parent',
         isPartner: true,
         actionDescription: 'logged a nap',
         timeAgo: '3h ago',

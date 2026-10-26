@@ -12,44 +12,43 @@ class BrainAiSystemPrompt {
     required String parentName,
     String? topic,
   }) {
-    final String childName =
-        (childModel?.childName != null &&
-            childModel!.childName!.trim().isNotEmpty)
-        ? childModel.childName!.trim()
+    final String? rawName = childModel?.childName?.trim();
+    final String childName = (rawName != null && rawName.isNotEmpty)
+        ? rawName
         : 'your child';
     final ChildState? childState = childModel?.childState;
     final String stateLabel = childState?.label ?? 'not logged yet';
-    final String ageText =
-        (childModel?.childAge != null &&
-            childModel!.childAge!.trim().isNotEmpty)
-        ? childModel.childAge!.trim()
+    final String? rawAge = childModel?.childAge?.trim();
+    final String ageText = (rawAge != null && rawAge.isNotEmpty)
+        ? rawAge
         : 'unknown age';
+    final List<String>? concerns = childModel?.concerns;
     final String primaryConcern =
         childModel?.primaryConcern ??
-        ((childModel?.concerns != null && childModel!.concerns!.isNotEmpty)
-            ? childModel.concerns!.join(', ')
+        ((concerns != null && concerns.isNotEmpty)
+            ? concerns.join(', ')
             : 'General support');
+
+    final String? bedtime = childModel?.usualBedtime;
+    final String? wakeTime = childModel?.usualWakeTime;
+    final String? naps = childModel?.usualNaps;
+    final String? wakings = childModel?.nightWakings;
+
     final String sleepRoutine = [
-      if (childModel?.usualBedtime != null &&
-          childModel!.usualBedtime!.isNotEmpty)
-        'Bedtime: ${childModel.usualBedtime}',
-      if (childModel?.usualWakeTime != null &&
-          childModel!.usualWakeTime!.isNotEmpty)
-        'Wake time: ${childModel.usualWakeTime}',
-      if (childModel?.usualNaps != null && childModel!.usualNaps!.isNotEmpty)
-        'Naps: ${childModel.usualNaps}',
-      if (childModel?.nightWakings != null &&
-          childModel!.nightWakings!.isNotEmpty)
-        'Night wakings: ${childModel.nightWakings}',
+      if (bedtime != null && bedtime.isNotEmpty) 'Bedtime: $bedtime',
+      if (wakeTime != null && wakeTime.isNotEmpty) 'Wake time: $wakeTime',
+      if (naps != null && naps.isNotEmpty) 'Naps: $naps',
+      if (wakings != null && wakings.isNotEmpty) 'Night wakings: $wakings',
     ].join(' | ');
 
+    final List<String>? difficultTimes = childModel?.difficultTimes;
+    final List<String>? triggers = childModel?.possibleTriggers;
+
     final String triggersText = [
-      if (childModel?.difficultTimes != null &&
-          childModel!.difficultTimes!.isNotEmpty)
-        'Hardest times: ${childModel.difficultTimes!.join(", ")}',
-      if (childModel?.possibleTriggers != null &&
-          childModel!.possibleTriggers!.isNotEmpty)
-        'Triggers: ${childModel.possibleTriggers!.join(", ")}',
+      if (difficultTimes != null && difficultTimes.isNotEmpty)
+        'Hardest times: ${difficultTimes.join(", ")}',
+      if (triggers != null && triggers.isNotEmpty)
+        'Triggers: ${triggers.join(", ")}',
     ].join(' | ');
 
     return '''

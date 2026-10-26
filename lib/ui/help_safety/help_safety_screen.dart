@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/setting_tile.dart';
 import 'package:loving_brain/ui/widget/warning_box.dart';
@@ -30,10 +32,23 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
     });
   }
 
-  Future<void> _launch(String urlString) async {
+  Future<void> _launch(String urlString, {String? copyFallbackText}) async {
     final Uri? uri = Uri.tryParse(urlString);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri);
+    bool launched = false;
+    if (uri != null) {
+      try {
+        launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        launched = false;
+      }
+    }
+    if (!launched) {
+      final String fallback = copyFallbackText ?? urlString;
+      await Clipboard.setData(ClipboardData(text: fallback));
+      showSnackBar(
+        message: "Copied to clipboard: $fallback",
+        type: SnackBarType.SUCCESS,
+      );
     }
   }
 
@@ -143,6 +158,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                             subtitle: "Usually answered within a working day",
                             onTap: () => _launch(
                               "mailto:${state.supportEmail}?subject=LovingBrain Support Request",
+                              copyFallbackText: state.supportEmail,
                             ),
                           ),
                           12.spaceH,
@@ -157,6 +173,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                             subtitle: "Questions about guides and sessions",
                             onTap: () => _launch(
                               "mailto:${state.supportEmail}?subject=Mentorship Booking Help",
+                              copyFallbackText: state.supportEmail,
                             ),
                           ),
                           24.spaceH,

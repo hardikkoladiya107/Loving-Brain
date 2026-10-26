@@ -324,7 +324,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                   onChanged: onChanged,
                   decoration: InputDecoration(
                     hintText: hint,
-                    hintStyle: TextStyle(
+                    hintStyle: getTextStyle(
                       fontSize: 14.sp,
                       color: greyColor4,
                       fontWeight: FontWeight.w400,
@@ -333,7 +333,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                     isDense: true,
                     contentPadding: EdgeInsets.only(top: 4.h, bottom: 4.h),
                   ),
-                  style: TextStyle(
+                  style: getTextStyle(
                     fontSize: 14.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w500,

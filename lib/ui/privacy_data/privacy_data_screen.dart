@@ -254,14 +254,14 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                   ),
                                 ),
                                 16.spaceH,
-                                "Invite sent to Grandma".appText(
+                                "Your data stays protected".appText(
                                   fontSize: 20.sp,
                                   color: greyColor9,
                                   fraunces: true,
                                   textAlign: TextAlign.start,
                                 ),
                                 8.spaceH,
-                                "Sent 2 days ago to grandma@example.com. We'll let you know as soon as she accepts."
+                                "LovingBrain keeps ${state.childName}'s reflections, health notes, and family logs private and secure."
                                     .appText(
                                       fontSize: 14.sp,
                                       color: greyColor,
@@ -279,7 +279,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                             ),
                             iconBackgroundColor: const Color(0xFFFCF4FF),
                             title: "Linked caregivers",
-                            subtitle: "2 people · Ravi and Grandma",
+                            subtitle: "Manage linked caregivers & permissions",
                             onTap: () {
                               Navigator.push(
                                 context,

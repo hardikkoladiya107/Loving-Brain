@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:loving_brain/provider.dart';
 import 'package:loving_brain/router/app_router.dart';
 import 'firebase_options.dart';
@@ -105,6 +106,16 @@ class _MyAppState extends State<MyApp> {
           scaffoldMessengerKey: scaffoldMessengerKey,
           title: LocaleKeys.appName.tr(),
           debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            fontFamily: GoogleFonts.quicksand().fontFamily,
+            inputDecorationTheme: InputDecorationTheme(
+              hintStyle: getTextStyle(
+                fontSize: 16,
+                color: greyColor4,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,

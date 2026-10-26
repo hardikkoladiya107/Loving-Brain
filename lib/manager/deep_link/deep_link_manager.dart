@@ -56,9 +56,16 @@ class DeepLinkManager {
   /// Subscribes to links received while the app is already running.
   void listenToLinks() {
     _appLinkStreamSubscription?.cancel();
-    _appLinkStreamSubscription = appLinks.uriLinkStream.listen((Uri uri) async {
-      await _handleUri(uri);
-    });
+    _appLinkStreamSubscription = appLinks.uriLinkStream.listen(
+      (Uri uri) async {
+        await _handleUri(uri);
+      },
+      onError: (_) {
+        _appLinkStreamSubscription?.cancel();
+        _appLinkStreamSubscription = null;
+      },
+      cancelOnError: true,
+    );
   }
 
   void disposeListenToLinks() {
@@ -88,12 +95,13 @@ class DeepLinkManager {
       return;
     }
 
-    if (!snap.exists || snap.data() == null) {
+    final Map<String, dynamic>? snapData = snap.data();
+    if (!snap.exists || snapData == null) {
       _showError(LocaleKeys.deepLinkInvitationInvalid.tr());
       return;
     }
 
-    final InvitationModel invitation = InvitationModel.fromJson(snap.data()!);
+    final InvitationModel invitation = InvitationModel.fromJson(snapData);
 
     // 2. Invitation must still be pending.
     if (invitation.status != CoParentInvitationHelpers.statusRequested) {

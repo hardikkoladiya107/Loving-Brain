@@ -48,6 +48,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> logout() async {
+    profileSubscription?.cancel();
+    profileSubscription = null;
     changeProps(logoutApiResultStatus: const ApiResultStatus.loading());
     final ApiResultStatus apiResult = await AuthRepo.instance.logout();
     changeProps(logoutApiResultStatus: apiResult);
@@ -56,20 +58,26 @@ class ProfileCubit extends Cubit<ProfileState> {
   StreamSubscription? profileSubscription;
 
   void _listenToUser() {
-    if (state.userModel != null) {
+    final UserModel? user = state.userModel;
+    final String? uid = user?.uid;
+    if (uid != null && uid.isNotEmpty) {
       profileSubscription?.cancel();
       profileSubscription = AuthRepo.instance.userCollection
-          .doc(state.userModel!.uid)
+          .doc(uid)
           .snapshots()
-          .listen((event) {
-            if (event.data() != null) {
-              changeProps(
-                userModel: UserModel.fromJson(
-                  event.data() as Map<String, dynamic>,
-                ),
-              );
-            }
-          });
+          .listen(
+            (event) {
+              final Object? data = event.data();
+              if (data is Map<String, dynamic>) {
+                changeProps(userModel: UserModel.fromJson(data));
+              }
+            },
+            onError: (_) {
+              profileSubscription?.cancel();
+              profileSubscription = null;
+            },
+            cancelOnError: true,
+          );
     }
   }
 
@@ -77,11 +85,18 @@ class ProfileCubit extends Cubit<ProfileState> {
     profileSubscription?.cancel();
   }
 
+  @override
+  Future<void> close() {
+    profileSubscription?.cancel();
+    return super.close();
+  }
+
   void updateNotification() {
     // Optimistic update: flip the value in UI immediately
-    if (state.userModel != null) {
-      final bool newVal = !(state.userModel!.isNotification ?? false);
-      changeProps(userModel: state.userModel!.copyWith(isNotification: newVal));
+    final UserModel? user = state.userModel;
+    if (user != null) {
+      final bool newVal = !(user.isNotification ?? false);
+      changeProps(userModel: user.copyWith(isNotification: newVal));
     }
     // Persist to SharedPrefs + Firestore in the background
     UserRepo.instance.updateNotification();

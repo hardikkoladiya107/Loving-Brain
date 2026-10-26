@@ -29,22 +29,33 @@ class ForecastHeader extends StatelessWidget {
             ),
           ),
           8.spaceW,
-          Row(
-            children: [
-              "${state.timeOfDayGreeting} ".appText(
-                fontWeight: FontWeight.w400,
-                fontSize: 16.sp,
-                color: Colors.white,
-                textAlign: TextAlign.start,
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: "${state.timeOfDayGreeting} ",
+                    style: TextStyle(
+                      fontFamily: "Outfit",
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "${state.parentName}!",
+                    style: TextStyle(
+                      fontFamily: "Outfit",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16.sp,
+                      color: Colors.white,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
               ),
-              "${state.parentName}!".appText(
-                fontWeight: FontWeight.w600,
-                fontSize: 16.sp,
-                color: Colors.white,
-                letterSpacing: 1.2,
-                textAlign: TextAlign.start,
-              ),
-            ],
+              textAlign: TextAlign.start,
+            ),
           ),
         ],
       ),

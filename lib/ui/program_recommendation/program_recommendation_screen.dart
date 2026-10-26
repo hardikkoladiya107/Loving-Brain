@@ -315,11 +315,14 @@ class _ProgramRecommendationScreenState
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      price.appText(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: primaryColor,
+                      Expanded(
+                        child: price.appText(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: primaryColor,
+                        ),
                       ),
+                      8.spaceW,
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 12.w,

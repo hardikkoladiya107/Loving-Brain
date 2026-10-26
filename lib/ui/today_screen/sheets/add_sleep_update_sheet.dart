@@ -105,130 +105,133 @@ class AddSleepUpdateSheet extends StatelessWidget {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 2.h,
-                    width: 60.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.r),
-                      color: greyColor7,
-                    ),
-                  ),
-                ],
-              ),
-              12.spaceH,
-              "Sleep update".appText(
-                fontSize: 28.sp,
-                fraunces: true,
-                textAlign: TextAlign.start,
-              ),
-              12.spaceH,
-              "Takes about twenty seconds".appText(
-                color: greyColor,
-                fontSize: 14.sp,
-                textAlign: TextAlign.start,
-              ),
-              24.spaceH,
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildTimeInput(
-                      label: "FELL ASLEEP",
-                      time: state.fellAsleepTime,
-                      isError:
-                          state.showSleepUpdateErrors &&
-                          state.fellAsleepTime == null,
-                      onTap: () => _pickTime(context, false),
-                    ),
-                  ),
-                  12.spaceW,
-                  Expanded(
-                    child: _buildTimeInput(
-                      label: "WOKE UP",
-                      time: state.wokeUpTime,
-                      isError:
-                          state.showSleepUpdateErrors &&
-                          state.wokeUpTime == null,
-                      onTap: () => _pickTime(context, true),
-                    ),
-                  ),
-                ],
-              ),
-              24.spaceH,
-              _buildTimeInput(
-                label: "NAP STARTED & ENDED",
-                time: napTimeStr,
-                isError: state.showSleepUpdateErrors && napTimeStr == null,
-                isEditable: false,
-                dummyText: "HH:MM AM - HH:MM PM",
-              ),
-              24.spaceH,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  "Night waking".appText(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16.sp,
-                  ),
-                  CupertinoSwitch(
-                    value: state.isNightWaking,
-                    onChanged: (value) =>
-                        context.read<TodayCubit>().toggleNightWaking(value),
-                    activeTrackColor: primaryColor,
-                  ),
-                ],
-              ),
-              24.spaceH,
-              "SLEEP QUALITY".appText(
-                color: secondaryColor,
-                fontWeight: FontWeight.w800,
-                fontSize: 12.sp,
-                letterSpacing: 1.2,
-              ),
-              12.spaceH,
-              Row(
-                children: List.generate(
-                  5,
-                  (index) => GestureDetector(
-                    onTap: () =>
-                        context.read<TodayCubit>().setSleepQuality(index),
-                    child: Container(
-                      height: 24.h,
-                      width: 24.w,
-                      margin: EdgeInsets.only(right: 12.w),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 2.h,
+                      width: 60.w,
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: index <= state.sleepQualityIndex
-                            ? secondaryColor
-                            : greyColor11,
+                        borderRadius: BorderRadius.circular(10.r),
+                        color: greyColor7,
+                      ),
+                    ),
+                  ],
+                ),
+                12.spaceH,
+                "Sleep update".appText(
+                  fontSize: 28.sp,
+                  fraunces: true,
+                  textAlign: TextAlign.start,
+                ),
+                12.spaceH,
+                "Takes about twenty seconds".appText(
+                  color: greyColor,
+                  fontSize: 14.sp,
+                  textAlign: TextAlign.start,
+                ),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildTimeInput(
+                        label: "FELL ASLEEP",
+                        time: state.fellAsleepTime,
+                        isError:
+                            state.showSleepUpdateErrors &&
+                            state.fellAsleepTime == null,
+                        onTap: () => _pickTime(context, false),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: _buildTimeInput(
+                        label: "WOKE UP",
+                        time: state.wokeUpTime,
+                        isError:
+                            state.showSleepUpdateErrors &&
+                            state.wokeUpTime == null,
+                        onTap: () => _pickTime(context, true),
+                      ),
+                    ),
+                  ],
+                ),
+                24.spaceH,
+                _buildTimeInput(
+                  label: "NAP STARTED & ENDED",
+                  time: napTimeStr,
+                  isError: state.showSleepUpdateErrors && napTimeStr == null,
+                  isEditable: false,
+                  dummyText: "HH:MM AM - HH:MM PM",
+                ),
+                24.spaceH,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    "Night waking".appText(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.sp,
+                    ),
+                    CupertinoSwitch(
+                      value: state.isNightWaking,
+                      onChanged: (value) =>
+                          context.read<TodayCubit>().toggleNightWaking(value),
+                      activeTrackColor: primaryColor,
+                    ),
+                  ],
+                ),
+                24.spaceH,
+                "SLEEP QUALITY".appText(
+                  color: secondaryColor,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12.sp,
+                  letterSpacing: 1.2,
+                ),
+                12.spaceH,
+                Row(
+                  children: List.generate(
+                    5,
+                    (index) => GestureDetector(
+                      onTap: () =>
+                          context.read<TodayCubit>().setSleepQuality(index),
+                      child: Container(
+                        height: 24.h,
+                        width: 24.w,
+                        margin: EdgeInsets.only(right: 12.w),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: index <= state.sleepQualityIndex
+                              ? secondaryColor
+                              : greyColor11,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const Spacer(),
-              AppButton(
-                isLoading: state.isLoading,
-                title: "Save update",
-                onTap: () {
-                  if (state.fellAsleepTime == null ||
-                      state.wokeUpTime == null) {
-                    context.read<TodayCubit>().triggerSleepUpdateErrors();
-                  } else {
-                    context.read<TodayCubit>().saveSleepLog();
-                  }
-                },
-                backgroundColor: primaryColor,
-                textColor: Colors.white,
-              ),
-              24.spaceH,
-            ],
-          ).appPadding(all: 16.r),
+                24.spaceH,
+                AppButton(
+                  isLoading: state.isLoading,
+                  title: "Save update",
+                  onTap: () {
+                    if (state.fellAsleepTime == null ||
+                        state.wokeUpTime == null) {
+                      context.read<TodayCubit>().triggerSleepUpdateErrors();
+                    } else {
+                      context.read<TodayCubit>().saveSleepLog();
+                    }
+                  },
+                  backgroundColor: primaryColor,
+                  textColor: Colors.white,
+                ),
+                24.spaceH,
+              ],
+            ).appPadding(all: 16.r),
+          ),
         );
       },
     );
@@ -257,11 +260,13 @@ class AddSleepUpdateSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                label.appText(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w800,
-                  color: greyColor,
-                  letterSpacing: 1.2,
+                Expanded(
+                  child: label.appText(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w800,
+                    color: greyColor,
+                    letterSpacing: 1.2,
+                  ),
                 ),
                 if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
               ],

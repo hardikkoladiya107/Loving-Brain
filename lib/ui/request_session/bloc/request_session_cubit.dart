@@ -14,13 +14,13 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
 
   void init({GuideProfileModel? guide, String? initialConcern}) {
     final ChildModel? child = preferences.getChildModel();
-    final String cName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String cName = (childName != null && childName.isNotEmpty)
+        ? childName
         : 'your child';
-    final String cAge =
-        (child?.childAge != null && child!.childAge!.trim().isNotEmpty)
-        ? child.childAge!.trim()
+    final String? childAge = child?.childAge?.trim();
+    final String cAge = (childAge != null && childAge.isNotEmpty)
+        ? childAge
         : '18 months';
 
     changeProps(

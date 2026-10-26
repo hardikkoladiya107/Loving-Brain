@@ -282,6 +282,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                                           fontSize: 11.sp,
                                           fontWeight: FontWeight.w700,
                                           color: greyColor,
+                                          textAlign: TextAlign.start,
                                         ),
                                         2.spaceH,
                                         "Allergies, medications & care notes"
@@ -289,6 +290,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
                                               color: darkBlue,
+                                              textAlign: TextAlign.start,
                                             ),
                                       ],
                                     ),

@@ -396,8 +396,8 @@ class CoParentRepo {
       // Step 3 — refresh cached user model for the current session.
       final DocumentSnapshot<Map<String, dynamic>> freshDoc =
           await userCollection.doc(parentUid).get();
-      if (freshDoc.exists && freshDoc.data() != null) {
-        final Map<String, dynamic> freshData = freshDoc.data()!;
+      final Map<String, dynamic>? freshData = freshDoc.data();
+      if (freshDoc.exists && freshData != null) {
         freshData['uid'] = parentUid;
         final UserModel updatedUser = UserModel.fromJson(freshData);
         await preferences.saveUserModel(updatedUser);

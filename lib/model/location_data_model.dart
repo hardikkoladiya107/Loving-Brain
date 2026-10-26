@@ -64,11 +64,12 @@ class LocationDataModel {
 
   /// Subtitle showing state/region, country, and IANA timezone.
   String get subtitle {
+    final String? stateTrimmed = state?.trim();
     final List<String> parts = <String>[
-      if (state != null &&
-          state!.trim().isNotEmpty &&
-          state!.trim().toLowerCase() != city.trim().toLowerCase())
-        state!.trim(),
+      if (stateTrimmed != null &&
+          stateTrimmed.isNotEmpty &&
+          stateTrimmed.toLowerCase() != city.trim().toLowerCase())
+        stateTrimmed,
       if (country.trim().isNotEmpty) country.trim(),
     ];
     final String region = parts.join(', ');
@@ -77,12 +78,14 @@ class LocationDataModel {
   }
 
   Map<String, dynamic> toJson() {
+    final String? stateVal = state;
+    final String? countryCodeVal = countryCode;
     return <String, dynamic>{
       'city': city,
-      if (state != null && state!.isNotEmpty) 'state': state,
+      if (stateVal != null && stateVal.isNotEmpty) 'state': stateVal,
       'country': country,
-      if (countryCode != null && countryCode!.isNotEmpty)
-        'country_code': countryCode,
+      if (countryCodeVal != null && countryCodeVal.isNotEmpty)
+        'country_code': countryCodeVal,
       'timezone': timezone,
       'gmt_offset': gmtOffset,
       if (latitude != null) 'latitude': latitude,

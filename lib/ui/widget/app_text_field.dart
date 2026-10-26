@@ -94,6 +94,7 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   void _onFocusChange() {
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -309,11 +310,13 @@ class _AppTextFieldState extends State<AppTextField> {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Row(
               children: <Widget>[
-                widget.error!.appText(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.red,
-                  textAlign: TextAlign.start,
+                Expanded(
+                  child: widget.error!.appText(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.red,
+                    textAlign: TextAlign.start,
+                  ),
                 ),
               ],
             ),

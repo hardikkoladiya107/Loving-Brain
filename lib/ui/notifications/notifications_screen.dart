@@ -182,12 +182,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
                                         color: darkBlue,
+                                        textAlign: TextAlign.start,
                                       ),
                                       2.spaceH,
                                       "9:00 PM – 7:00 AM local time. Only confirmed sessions break through."
                                           .appText(
                                             fontSize: 12.sp,
                                             color: greyColor,
+                                            textAlign: TextAlign.start,
                                           ),
                                     ],
                                   ),

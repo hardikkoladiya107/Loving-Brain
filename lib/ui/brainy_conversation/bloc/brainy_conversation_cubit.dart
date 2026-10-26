@@ -154,39 +154,46 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         .collection('chats')
         .orderBy('time_stamp', descending: false)
         .snapshots()
-        .listen((QuerySnapshot<Map<String, dynamic>> snapshot) {
-          if (isClosed) return;
-          if (snapshot.docs.isEmpty) {
-            if (fallbackInitialQuestion != null &&
-                fallbackInitialQuestion.trim().isNotEmpty &&
-                state.messages.isEmpty &&
-                !state.isTyping) {
-              final List<BrainyMessage> pair = _buildFallbackAiCards(
-                fallbackInitialQuestion,
-                preferences.getChildModel(),
-              );
-              changeProps(
-                messages: <BrainyMessage>[
-                  BrainyMessage(
-                    id: 'fallback_q',
-                    type: MessageType.user,
-                    chipTitle: 'You asked',
-                    headline: fallbackInitialQuestion,
-                  ),
-                  ...pair,
-                ],
-              );
+        .listen(
+          (QuerySnapshot<Map<String, dynamic>> snapshot) {
+            if (isClosed) return;
+            if (snapshot.docs.isEmpty) {
+              if (fallbackInitialQuestion != null &&
+                  fallbackInitialQuestion.trim().isNotEmpty &&
+                  state.messages.isEmpty &&
+                  !state.isTyping) {
+                final List<BrainyMessage> pair = _buildFallbackAiCards(
+                  fallbackInitialQuestion,
+                  preferences.getChildModel(),
+                );
+                changeProps(
+                  messages: <BrainyMessage>[
+                    BrainyMessage(
+                      id: 'fallback_q',
+                      type: MessageType.user,
+                      chipTitle: 'You asked',
+                      headline: fallbackInitialQuestion,
+                    ),
+                    ...pair,
+                  ],
+                );
+              }
+              return;
             }
-            return;
-          }
 
-          final List<BrainyMessage> mapped = <BrainyMessage>[];
-          for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
-              in snapshot.docs) {
-            mapped.addAll(_mapDocToBrainyMessages(doc.id, doc.data()));
-          }
-          changeProps(messages: mapped);
-        });
+            final List<BrainyMessage> mapped = <BrainyMessage>[];
+            for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+                in snapshot.docs) {
+              mapped.addAll(_mapDocToBrainyMessages(doc.id, doc.data()));
+            }
+            changeProps(messages: mapped);
+          },
+          onError: (_) {
+            _chatsSubscription?.cancel();
+            _chatsSubscription = null;
+          },
+          cancelOnError: true,
+        );
   }
 
   List<BrainyMessage> _mapDocToBrainyMessages(
@@ -358,16 +365,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     // Fetch child and parent context for BrainAiSystemPrompt
     final UserModel? userModel = preferences.getUserModel();
     ChildModel? childModel = preferences.getChildModel();
-    if (childModel == null && userModel?.defaultChild != null) {
+    final DocumentReference<Object?>? childRef = userModel?.defaultChild;
+    if (childModel == null && childRef != null) {
       try {
-        final DocumentSnapshot<Object?> childSnap = await userModel!
-            .defaultChild!
-            .get();
-        if (childSnap.data() is Map<String, dynamic>) {
-          childModel = ChildModel.fromJson(
-            childSnap.data()! as Map<String, dynamic>,
-            childSnap.reference,
-          );
+        final DocumentSnapshot<Object?> childSnap = await childRef.get();
+        final Object? data = childSnap.data();
+        if (data is Map<String, dynamic>) {
+          childModel = ChildModel.fromJson(data, childSnap.reference);
         }
       } catch (_) {}
     }

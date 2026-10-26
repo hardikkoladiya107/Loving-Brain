@@ -54,35 +54,38 @@ class ForecastDetailsCard extends StatelessWidget {
                 ),
                 if (state.healthCaveat != null &&
                     state.healthCaveat!.isNotEmpty) ...[
-                  12.spaceH,
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 8.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: orangeLightColor,
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.health_and_safety_outlined,
-                          size: 16.sp,
-                          color: primaryColor,
-                        ),
-                        8.spaceW,
-                        Expanded(
-                          child: state.healthCaveat!.appText(
-                            fontSize: 12.sp,
+                  () {
+                    final String caveat = state.healthCaveat!;
+                    return Container(
+                      margin: EdgeInsets.only(top: 12.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: orangeLightColor,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.health_and_safety_outlined,
+                            size: 16.sp,
                             color: primaryColor,
-                            fontWeight: FontWeight.w500,
-                            textAlign: TextAlign.start,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
+                          8.spaceW,
+                          Expanded(
+                            child: caveat.appText(
+                              fontSize: 12.sp,
+                              color: primaryColor,
+                              fontWeight: FontWeight.w500,
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }(),
                 ],
               ],
             ),

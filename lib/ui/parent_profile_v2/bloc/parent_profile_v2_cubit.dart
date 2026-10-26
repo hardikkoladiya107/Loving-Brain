@@ -49,9 +49,10 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
     final ChildModel? child = preferences.getChildModel();
     if (user != null) {
       _applyFromUser(user, child);
-      if (user.uid != null && user.uid!.isNotEmpty) {
+      final String? uid = user.uid;
+      if (uid != null && uid.isNotEmpty) {
         final UserModel? freshUser = await AuthRepo.instance.getUserFromUid(
-          uId: user.uid!,
+          uId: uid,
         );
         if (freshUser != null) {
           await preferences.saveUserModel(freshUser);
@@ -159,9 +160,10 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
           .updateUserToFireStore(uId: user.uid, request: userUpdate);
 
       if (result is Data) {
-        if (state.location.trim().isNotEmpty && user.defaultChild != null) {
+        final DocumentReference<Object?>? childRef = user.defaultChild;
+        if (state.location.trim().isNotEmpty && childRef != null) {
           try {
-            await user.defaultChild!.update(<String, dynamic>{
+            await childRef.update(<String, dynamic>{
               'location': resolvedLoc?.toJson() ?? state.location.trim(),
               if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
               if (state.relationship.trim().isNotEmpty)
@@ -170,8 +172,10 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
           } catch (_) {}
         }
 
-        final UserModel? newModel = await AuthRepo.instance
-            .syncUserAndDefaultChild(uId: user.uid!);
+        final String? userUid = user.uid;
+        final UserModel? newModel = (userUid != null && userUid.isNotEmpty)
+            ? await AuthRepo.instance.syncUserAndDefaultChild(uId: userUid)
+            : null;
         changeProps(
           user: newModel ?? user,
           saveStatus: const ApiResultStatus.data(

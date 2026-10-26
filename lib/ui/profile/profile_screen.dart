@@ -727,9 +727,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    if (navigatorKey.currentContext != null) {
-      navigatorKey.currentContext!.read<ProfileCubit>().dispose();
-    }
+    try {
+      final BuildContext? ctx = navigatorKey.currentContext;
+      if (ctx != null) {
+        ctx.read<ProfileCubit>().dispose();
+      }
+    } catch (_) {}
     super.dispose();
   }
 
@@ -905,7 +908,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _profileImage(UserModel? userModel) {
-    if ((userModel?.profileImage ?? "").isEmpty) {
+    final String? profileImage = userModel?.profileImage;
+    if (profileImage == null || profileImage.isEmpty) {
       return Container(
         height: 120.r,
         width: 120.r,
@@ -917,7 +921,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
     return AppImage(
-      imageUrl: userModel!.profileImage!,
+      imageUrl: profileImage,
       height: 120.r,
       width: 120.r,
       shape: BoxShape.circle,

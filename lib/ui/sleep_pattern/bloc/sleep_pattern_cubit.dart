@@ -42,9 +42,9 @@ class SleepPatternCubit extends Cubit<SleepPatternState> {
     changeProps(isLoading: true);
 
     final ChildModel? child = preferences.getChildModel();
-    final String cName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String cName = (childName != null && childName.isNotEmpty)
+        ? childName
         : 'your child';
 
     final String childId =

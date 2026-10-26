@@ -29,7 +29,8 @@ class CaregiverPermissionsModel {
   bool get parentReflectionsNeverShared => true;
 
   String get caregiverName {
-    if (name != null && name!.trim().isNotEmpty) return name!.trim();
+    final String? trimmed = name?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) return trimmed;
     return caregiverEmail.contains('@')
         ? caregiverEmail.split('@').first
         : caregiverEmail;
@@ -44,7 +45,7 @@ class CaregiverPermissionsModel {
     String? caregiverEmail,
   }) {
     return CaregiverPermissionsModel.defaultForRole(
-      email: caregiverEmail ?? '$name@example.com',
+      email: caregiverEmail ?? '',
       name: name,
       role: role,
     );

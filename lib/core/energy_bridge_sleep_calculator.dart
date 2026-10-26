@@ -152,9 +152,9 @@ class EnergyBridgeSleepCalculator {
     DateTime? referenceNow,
   }) {
     final DateTime now = referenceNow ?? DateTime.now();
-    final String cName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String cName = (childName != null && childName.isNotEmpty)
+        ? childName
         : 'your child';
 
     // 1. Resolve child age in months

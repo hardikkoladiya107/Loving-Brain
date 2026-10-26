@@ -407,15 +407,17 @@ class UserModel {
 
   /// Returns 0 if the user missed a day (difference > 1), otherwise returns the stored streak.
   int get displayStreak {
-    if (_streak == null || _streak == 0) return 0;
-    if (_lastStreakUpdate == null) return _streak!; // Should sync eventually
+    final int streakVal = _streak ?? 0;
+    if (streakVal == 0) return 0;
+    final DateTime? lastUpdate = _lastStreakUpdate;
+    if (lastUpdate == null) return streakVal; // Should sync eventually
 
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
     final DateTime last = DateTime(
-      _lastStreakUpdate!.year,
-      _lastStreakUpdate!.month,
-      _lastStreakUpdate!.day,
+      lastUpdate.year,
+      lastUpdate.month,
+      lastUpdate.day,
     );
 
     final int difference = today.difference(last).inDays;
@@ -423,7 +425,7 @@ class UserModel {
     if (difference > 1) {
       return 0; // Missed a day, streak is effectively broken
     }
-    return _streak!;
+    return streakVal;
   }
 
   bool? get isNotification => _isNotification;
@@ -451,7 +453,7 @@ class UserModel {
     final bool hasParentName = (_parentName ?? '').trim().isNotEmpty;
     final bool hasChild =
         _defaultChild != null ||
-        (_children != null && _children!.isNotEmpty) ||
+        (_children?.isNotEmpty == true) ||
         (_childName ?? '').trim().isNotEmpty;
     return hasParentName && hasChild;
   }

@@ -60,9 +60,9 @@ class CalmPlanCubit extends Cubit<CalmPlanState> {
 
   void _loadDefaultPlan() {
     final ChildModel? child = preferences.getChildModel();
-    final String name =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String name = (childName != null && childName.isNotEmpty)
+        ? childName
         : 'your child';
 
     final BehaviourForecastResult forecast =

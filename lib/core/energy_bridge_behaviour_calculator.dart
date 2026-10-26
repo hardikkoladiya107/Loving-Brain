@@ -110,10 +110,9 @@ class EnergyBridgeBehaviourCalculator {
     DateTime? referenceTime,
   }) {
     final DateTime now = referenceTime ?? DateTime.now();
-    final String childName =
-        (childModel?.childName != null &&
-            childModel!.childName!.trim().isNotEmpty)
-        ? childModel.childName!.trim()
+    final String? rawName = childModel?.childName?.trim();
+    final String childName = (rawName != null && rawName.isNotEmpty)
+        ? rawName
         : 'your child';
 
     final int childAgeMonths = AgeUtils.resolvedAgeInMonths(
@@ -150,14 +149,14 @@ class EnergyBridgeBehaviourCalculator {
     }
 
     // Signal C: Historical difficult times matching current time of day
-    if (childModel?.difficultTimes != null &&
-        childModel!.difficultTimes!.isNotEmpty) {
+    final List<String>? diffTimes = childModel?.difficultTimes;
+    if (diffTimes != null && diffTimes.isNotEmpty) {
       final int hour = now.hour;
       final bool isLateAfternoonOrEvening = hour >= 16 && hour <= 20;
       if (isLateAfternoonOrEvening &&
-          (childModel.difficultTimes!.contains('Evening') ||
-              childModel.difficultTimes!.contains('Late afternoon') ||
-              childModel.difficultTimes!.contains('Bedtime'))) {
+          (diffTimes.contains('Evening') ||
+              diffTimes.contains('Late afternoon') ||
+              diffTimes.contains('Bedtime'))) {
         signals.add('late afternoon transition rhythm');
       }
     }

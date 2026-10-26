@@ -81,16 +81,19 @@ class AuthRepo {
     await preferences.putBool(SharedPreference.isLogin, true);
 
     try {
+      final List<DocumentReference<Object?>?>? userChildren =
+          userModel.children;
       final DocumentReference? childRef =
           userModel.defaultChild ??
-          ((userModel.children != null && userModel.children!.isNotEmpty)
-              ? userModel.children!.first
+          ((userChildren != null && userChildren.isNotEmpty)
+              ? userChildren.first
               : null);
       if (childRef != null) {
         final DocumentSnapshot<Object?> childSnap = await childRef.get();
-        if (childSnap.exists && childSnap.data() is Map<String, dynamic>) {
+        final Object? childData = childSnap.data();
+        if (childSnap.exists && childData is Map<String, dynamic>) {
           final ChildModel childModel = ChildModel.fromJson(
-            childSnap.data()! as Map<String, dynamic>,
+            childData,
             childRef,
           );
           await preferences.saveDefaultChildModel(childModel);
@@ -817,7 +820,9 @@ class AuthRepo {
         ...request,
       };
       final UserModel? currentUser = preferences.getUserModel();
-      if (currentUser?.children != null && currentUser!.children!.isNotEmpty) {
+      final List<DocumentReference<Object?>?>? existingChildren =
+          currentUser?.children;
+      if (existingChildren != null && existingChildren.isNotEmpty) {
         userUpdate["children"] = FieldValue.arrayUnion([documentReference]);
       } else {
         userUpdate["children"] = [documentReference];

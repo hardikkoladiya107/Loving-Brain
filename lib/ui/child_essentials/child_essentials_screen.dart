@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/child_essentials_cubit.dart';
@@ -19,130 +22,53 @@ class ChildEssentialsScreen extends StatefulWidget {
 }
 
 class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
+  String? _coParentName;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChildEssentialsCubit>().init();
+      _loadCoParentName();
     });
   }
 
-  Future<void> _showAddItemDialog(BuildContext context) async {
-    final TextEditingController textController = TextEditingController();
-    String selectedCategory = "Allergies";
+  Future<void> _loadCoParentName() async {
+    final UserModel? user = preferences.getUserModel();
+    if (user?.partnerUserId != null && user!.partnerUserId!.trim().isNotEmpty) {
+      try {
+        final UserModel? partnerUser = await UserRepo.instance.getUserById(
+          uid: user.partnerUserId!.trim(),
+        );
+        final String name =
+            (partnerUser?.parentName != null &&
+                partnerUser!.parentName!.trim().isNotEmpty)
+            ? partnerUser.parentName!.trim()
+            : (partnerUser?.email?.split('@').first ?? '');
+        if (name.isNotEmpty && mounted) {
+          setState(() {
+            _coParentName = name;
+          });
+        }
+      } catch (_) {}
+    }
+  }
 
+  Future<void> _showAddItemDialog(BuildContext context) async {
     await showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (BuildContext ctx, StateSetter setModalState) {
-            return AlertDialog(
-              backgroundColor: const Color(0xFFFEF8F4),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              title: "Add Essential Item".appText(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: darkBlue,
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  "Select category:".appText(fontSize: 14.sp, color: greyColor),
-                  8.spaceH,
-                  Row(
-                    children: [
-                      ChoiceChip(
-                        label: Text(
-                          "Allergy",
-                          style: TextStyle(
-                            fontFamily: 'Nunito',
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                        selected: selectedCategory == "Allergies",
-                        selectedColor: orangeLightColor,
-                        onSelected: (bool selected) {
-                          setModalState(() => selectedCategory = "Allergies");
-                        },
-                      ),
-                      8.spaceW,
-                      ChoiceChip(
-                        label: Text(
-                          "Medication",
-                          style: TextStyle(
-                            fontFamily: 'Nunito',
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                        selected: selectedCategory == "Medications",
-                        selectedColor: const Color(0xFFF1EEFF),
-                        onSelected: (bool selected) {
-                          setModalState(() => selectedCategory = "Medications");
-                        },
-                      ),
-                    ],
-                  ),
-                  16.spaceH,
-                  TextField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      hintText: "e.g., Peanuts, Ibuprofen 5ml",
-                      hintStyle: TextStyle(
-                        fontFamily: 'Nunito',
-                        fontSize: 14.sp,
-                        color: greyColor,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: greyColor.withValues(alpha: 0.3),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  child: "Cancel".appText(fontSize: 14.sp, color: greyColor),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  onPressed: () {
-                    final String val = textController.text.trim();
-                    if (val.isNotEmpty) {
-                      if (selectedCategory == "Allergies") {
-                        context.read<ChildEssentialsCubit>().addAllergy(val);
-                      } else {
-                        context.read<ChildEssentialsCubit>().addMedication(val);
-                      }
-                    }
-                    Navigator.pop(dialogContext);
-                  },
-                  child: "Add".appText(
-                    fontSize: 14.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            );
+        return _AddEssentialItemDialog(
+          onAdd: (String category, String value) {
+            if (category == "Allergies") {
+              context.read<ChildEssentialsCubit>().addAllergy(value);
+            } else {
+              context.read<ChildEssentialsCubit>().addMedication(value);
+            }
           },
         );
       },
     );
-    textController.dispose();
   }
 
   @override
@@ -308,7 +234,10 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                                   ],
                                 ),
                                 8.spaceH,
-                                "Ravi, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record."
+                                ((_coParentName != null &&
+                                            _coParentName!.trim().isNotEmpty)
+                                        ? "$_coParentName, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record."
+                                        : "Your linked co-parents, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record.")
                                     .appText(
                                       fontSize: 14.sp,
                                       color: greyColor9,
@@ -325,7 +254,6 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                   ],
                 ),
               ),
-              _buildBottomActions(context),
             ],
           ),
         );
@@ -376,9 +304,14 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                   fontSize: 16.sp,
                   color: greyColor9,
                   fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.start,
                 ),
                 4.spaceH,
-                subtitle.appText(fontSize: 14.sp, color: greyColor),
+                subtitle.appText(
+                  fontSize: 14.sp,
+                  color: greyColor,
+                  textAlign: TextAlign.start,
+                ),
               ],
             ),
           ),
@@ -387,36 +320,138 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
       ),
     );
   }
+}
 
-  Widget _buildBottomActions(BuildContext context) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: 32.h,
-          bottom: 32.h,
-          left: 20.w,
-          right: 20.w,
-        ),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFFFEF8F4).withValues(alpha: 0.0),
-              const Color(0xFFFEF8F4),
-              const Color(0xFFFEF8F4),
-            ],
-            stops: const [0.0, 0.4, 1.0],
-          ),
-        ),
-        child: AppButton(
-          title: "Add item",
-          onTap: () => _showAddItemDialog(context),
+class _AddEssentialItemDialog extends StatefulWidget {
+  final void Function(String category, String value) onAdd;
+
+  const _AddEssentialItemDialog({required this.onAdd});
+
+  @override
+  State<_AddEssentialItemDialog> createState() =>
+      _AddEssentialItemDialogState();
+}
+
+class _AddEssentialItemDialogState extends State<_AddEssentialItemDialog> {
+  late final TextEditingController _textController;
+  String _selectedCategory = "Allergies";
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color(0xFFFEF8F4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      title: "Add Essential Item".appText(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.bold,
+        color: darkBlue,
+        textAlign: TextAlign.start,
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            "Select category:".appText(
+              fontSize: 14.sp,
+              color: greyColor,
+              textAlign: TextAlign.start,
+            ),
+            8.spaceH,
+            Row(
+              children: [
+                ChoiceChip(
+                  label: Text(
+                    "Allergy",
+                    style: TextStyle(fontFamily: 'Nunito', fontSize: 12.sp),
+                  ),
+                  selected: _selectedCategory == "Allergies",
+                  selectedColor: orangeLightColor,
+                  onSelected: (bool selected) {
+                    setState(() => _selectedCategory = "Allergies");
+                  },
+                ),
+                8.spaceW,
+                ChoiceChip(
+                  label: Text(
+                    "Medication",
+                    style: TextStyle(fontFamily: 'Nunito', fontSize: 12.sp),
+                  ),
+                  selected: _selectedCategory == "Medications",
+                  selectedColor: const Color(0xFFF1EEFF),
+                  onSelected: (bool selected) {
+                    setState(() => _selectedCategory = "Medications");
+                  },
+                ),
+              ],
+            ),
+            16.spaceH,
+            TextField(
+              controller: _textController,
+              autofocus: true,
+              style: getTextStyle(
+                fontSize: 14.sp,
+                color: greyColor9,
+                fontWeight: FontWeight.w500,
+              ),
+              decoration: InputDecoration(
+                hintText: "e.g., Peanuts, Ibuprofen 5ml",
+                hintStyle: getTextStyle(
+                  fontSize: 14.sp,
+                  color: greyColor4,
+                  fontWeight: FontWeight.w400,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(
+                    color: greyColor.withValues(alpha: 0.3),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: "Cancel".appText(fontSize: 14.sp, color: greyColor),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+          onPressed: () {
+            final String val = _textController.text.trim();
+            if (val.isNotEmpty) {
+              widget.onAdd(_selectedCategory, val);
+            }
+            Navigator.pop(context);
+          },
+          child: "Add".appText(
+            fontSize: 14.sp,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

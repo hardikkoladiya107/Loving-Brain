@@ -2,8 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 
 import 'shared_child_summary_state.dart';
 
@@ -16,13 +18,27 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
     final ChildModel? child = preferences.getChildModel();
-
-    final String cName =
-        (child?.childName != null && child!.childName!.trim().isNotEmpty)
-        ? child.childName!.trim()
+    final String? childName = child?.childName?.trim();
+    final String cName = (childName != null && childName.isNotEmpty)
+        ? childName
         : 'your child';
 
-    final String pName = 'Ravi';
+    final UserModel? user = preferences.getUserModel();
+    String pName = 'Co-Parent';
+    final String? partnerId = user?.partnerUserId?.trim();
+    if (partnerId != null && partnerId.isNotEmpty) {
+      try {
+        final UserModel? partnerUser = await UserRepo.instance.getUserById(
+          uid: partnerId,
+        );
+        final String? partnerParentName = partnerUser?.parentName?.trim();
+        if (partnerParentName != null && partnerParentName.isNotEmpty) {
+          pName = partnerParentName;
+        } else if (partnerUser?.email?.isNotEmpty == true) {
+          pName = partnerUser!.email!.split('@').first;
+        }
+      } catch (_) {}
+    }
 
     final String childId =
         child?.reference?.id ??

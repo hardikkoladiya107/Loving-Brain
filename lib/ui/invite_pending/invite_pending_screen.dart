@@ -153,13 +153,16 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
                               children: [
                                 StatusPill.pending(),
                                 16.spaceH,
-                                "Invite sent to ${state.role}".appText(
-                                  fontSize: 20.sp,
-                                  color: greyColor9,
-                                  fraunces: true,
-                                ),
+                                "Invite sent to ${state.role.isNotEmpty ? state.role : 'Caregiver'}"
+                                    .appText(
+                                      fontSize: 20.sp,
+                                      color: greyColor9,
+                                      fraunces: true,
+                                    ),
                                 8.spaceH,
-                                "Sent to ${state.recipientEmail}. We'll let you know as soon as they accept."
+                                (state.recipientEmail.trim().isNotEmpty
+                                        ? "Sent to ${state.recipientEmail}. We'll let you know as soon as they accept."
+                                        : "We'll let you know as soon as they accept.")
                                     .appText(
                                       fontSize: 14.sp,
                                       color: greyColor6,

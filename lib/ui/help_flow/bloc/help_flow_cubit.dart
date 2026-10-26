@@ -60,17 +60,26 @@ class HelpFlowCubit extends Cubit<HelpFlowState> {
 
   void _listenToChild(DocumentReference<Object?>? defaultChildRef) {
     _childSubscription?.cancel();
-    _childSubscription = defaultChildRef?.snapshots().listen((
-      DocumentSnapshot<Object?> event,
-    ) {
-      if (event.data() != null) {
-        final ChildModel childModel = ChildModel.fromJson(
-          event.data() as Map<String, dynamic>,
-          event.reference,
-        );
-        changeProps(childModel: childModel, childState: childModel.childState);
-      }
-    });
+    _childSubscription = defaultChildRef?.snapshots().listen(
+      (DocumentSnapshot<Object?> event) {
+        final Object? data = event.data();
+        if (data is Map<String, dynamic>) {
+          final ChildModel childModel = ChildModel.fromJson(
+            data,
+            event.reference,
+          );
+          changeProps(
+            childModel: childModel,
+            childState: childModel.childState,
+          );
+        }
+      },
+      onError: (_) {
+        _childSubscription?.cancel();
+        _childSubscription = null;
+      },
+      cancelOnError: true,
+    );
   }
 
   Future<void> selectProblem(String problemType) async {

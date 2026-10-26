@@ -186,11 +186,13 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    "POSSIBLE TRIGGER".appText(
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 12.sp,
-                      letterSpacing: 1.2,
+                    Expanded(
+                      child: "POSSIBLE TRIGGER".appText(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12.sp,
+                        letterSpacing: 1.2,
+                      ),
                     ),
                     if (isTriggersError)
                       Icon(Icons.error, color: Colors.red, size: 16.sp),
@@ -287,11 +289,13 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              label.appText(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w800,
-                color: greyColor,
-                letterSpacing: 1.2,
+              Expanded(
+                child: label.appText(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w800,
+                  color: greyColor,
+                  letterSpacing: 1.2,
+                ),
               ),
               if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
             ],
@@ -303,15 +307,21 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
               Expanded(
                 child: TextField(
                   onChanged: onChanged,
+                  style: getTextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: greyColor9,
+                  ),
                   decoration: InputDecoration(
                     hintText: hint,
+                    hintStyle: getTextStyle(
+                      fontSize: 16.sp,
+                      color: greyColor4,
+                      fontWeight: FontWeight.w400,
+                    ),
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding: EdgeInsets.zero,
-                  ),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -345,11 +355,13 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                label.appText(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w800,
-                  color: greyColor,
-                  letterSpacing: 1.2,
+                Expanded(
+                  child: label.appText(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w800,
+                    color: greyColor,
+                    letterSpacing: 1.2,
+                  ),
                 ),
                 if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
               ],
@@ -361,7 +373,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 (time ?? "05:20 PM").appText(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
-                  color: time == null ? greyColor11 : blackTextColor,
+                  color: time == null ? greyColor4 : greyColor9,
                 ),
                 Icon(
                   Icons.access_time_filled,

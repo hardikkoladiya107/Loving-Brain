@@ -35,15 +35,14 @@ class EssentialModel {
   // Convert to JSON
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> map = <String, dynamic>{};
-
-    if (_notes != null) {
-      map['notes'] = _notes!.map((e) => e.toJson()).toList();
+    final List<EssentialNote>? notesList = _notes;
+    if (notesList != null) {
+      map['notes'] = notesList.map((EssentialNote e) => e.toJson()).toList();
     }
-
-    if (_attachments != null) {
-      map['attachments'] = _attachments;
+    final List<String>? attachmentsList = _attachments;
+    if (attachmentsList != null) {
+      map['attachments'] = attachmentsList;
     }
-
     return map;
   }
 }

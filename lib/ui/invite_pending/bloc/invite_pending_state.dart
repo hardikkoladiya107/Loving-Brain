@@ -6,8 +6,8 @@ part 'invite_pending_state.freezed.dart';
 @freezed
 abstract class InvitePendingState with _$InvitePendingState {
   const factory InvitePendingState({
-    @Default('susan@example.com') String recipientEmail,
-    @Default('Grandparent') String role,
+    @Default('') String recipientEmail,
+    @Default('Caregiver') String role,
     @Default(14) int daysUntilExpiry,
     @Default(<String>['Sleep patterns', "Tonight's plan"])
     List<String> sharedCategories,

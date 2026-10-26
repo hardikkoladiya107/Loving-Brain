@@ -26,27 +26,8 @@ abstract class FamilyMenuState with _$FamilyMenuState {
   const factory FamilyMenuState({
     @Default(false) bool isLoading,
     @Default('your child') String childName,
-    @Default(<CaregiverItem>[
-      CaregiverItem(
-        id: 'user_ravi',
-        name: 'Ravi',
-        email: 'ravi@example.com',
-        role: 'Partner',
-        status: 'Linked',
-      ),
-    ])
-    List<CaregiverItem> linkedCaregivers,
-    @Default(<CaregiverItem>[
-      CaregiverItem(
-        id: 'invite_grandma',
-        name: 'Grandma Susan',
-        email: 'susan@example.com',
-        role: 'Grandparent',
-        status: 'Awaiting response',
-        daysRemaining: 12,
-      ),
-    ])
-    List<CaregiverItem> pendingInvites,
+    @Default(<CaregiverItem>[]) List<CaregiverItem> linkedCaregivers,
+    @Default(<CaregiverItem>[]) List<CaregiverItem> pendingInvites,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _FamilyMenuState;
 }
