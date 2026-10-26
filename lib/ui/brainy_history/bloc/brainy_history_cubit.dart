@@ -13,7 +13,17 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _conversationSubscription;
 
-  static final Set<String> _deletedSampleIds = <String>{};
+  Set<String> _getDeletedSampleIds() {
+    final String stored = preferences.getString('deleted_brainy_samples') ?? '';
+    if (stored.isEmpty) return <String>{};
+    return stored.split(',').where((String s) => s.isNotEmpty).toSet();
+  }
+
+  void _saveDeletedSampleId(String id) {
+    final Set<String> current = _getDeletedSampleIds();
+    current.add(id);
+    preferences.putString('deleted_brainy_samples', current.join(','));
+  }
 
   void init() {
     emit(const BrainyHistoryState());
@@ -31,10 +41,15 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
           (QuerySnapshot<Map<String, dynamic>> snapshot) {
             if (isClosed) return;
             if (snapshot.docs.isEmpty) {
-              changeProps(
-                thisWeekHistory: const <BrainyHistoryItem>[],
-                earlierHistory: const <BrainyHistoryItem>[],
-              );
+              final Set<String> deleted = _getDeletedSampleIds();
+              if (deleted.length < 3) {
+                _emitDefaultItems();
+              } else {
+                changeProps(
+                  thisWeekHistory: const <BrainyHistoryItem>[],
+                  earlierHistory: const <BrainyHistoryItem>[],
+                );
+              }
               return;
             }
 
@@ -116,15 +131,16 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   }
 
   void _emitDefaultItems() {
+    final Set<String> deleted = _getDeletedSampleIds();
     final List<BrainyHistoryItem> thisWeek = <BrainyHistoryItem>[
-      if (!_deletedSampleIds.contains('sample_bedtime'))
+      if (!deleted.contains('sample_bedtime'))
         BrainyHistoryItem(
           conversationId: 'sample_bedtime',
           title: 'Why is bedtime harder lately?',
           subtitle: 'Today',
           topic: 'Sleep',
         ),
-      if (!_deletedSampleIds.contains('sample_age'))
+      if (!deleted.contains('sample_age'))
         BrainyHistoryItem(
           conversationId: 'sample_age',
           title: 'Is this normal for her age?',
@@ -134,7 +150,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
     ];
 
     final List<BrainyHistoryItem> earlier = <BrainyHistoryItem>[
-      if (!_deletedSampleIds.contains('sample_naps'))
+      if (!deleted.contains('sample_naps'))
         BrainyHistoryItem(
           conversationId: 'sample_naps',
           title: 'What can I try for naps?',
@@ -163,7 +179,7 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   Future<void> deleteConversation(String conversationId) async {
     if (conversationId.isEmpty) return;
     if (conversationId.startsWith('sample_')) {
-      _deletedSampleIds.add(conversationId);
+      _saveDeletedSampleId(conversationId);
     } else {
       await AuthRepo.instance.deleteConversation(
         conversationId: conversationId,

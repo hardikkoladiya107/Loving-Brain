@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'brainy_conversation_state.freezed.dart';
 
-enum MessageType { user, aiInfo, aiAction }
+enum MessageType { user, aiInfo, aiAction, safetyAlert }
 
 class BrainyMessage {
   final String? id;

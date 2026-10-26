@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:loving_brain/core/emergency_detector.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
@@ -342,6 +343,18 @@ class AiDataTools {
         : 'this age';
     final String lower = question.toLowerCase();
     final String lowerTopic = (topic ?? '').toLowerCase();
+
+    if (EmergencyDetector.isEmergency(question)) {
+      final String phone = EmergencyDetector.getEmergencyDisplayNumber();
+      return '''
+Struggling to breathe, turning blue, or loss of consciousness is an acute clinical emergency.
+---
+Call emergency services ($phone) immediately.
+Do not wait or rely on app guidance. Seek professional emergency medical care right away.
+---
+Contact emergency medical services or proceed to the nearest emergency department immediately.
+''';
+    }
 
     final Map<String, dynamic> todayData = await getTodaySummaryData(
       childId: childModel?.reference?.id,

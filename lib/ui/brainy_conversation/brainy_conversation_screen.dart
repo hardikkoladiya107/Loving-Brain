@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loving_brain/core/emergency_detector.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
+import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
+import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'bloc/brainy_conversation_cubit.dart';
 import 'bloc/brainy_conversation_state.dart';
@@ -78,6 +82,35 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
           previous.isTyping != current.isTyping,
       listener: (context, state) {
         _scrollToBottom();
+        if (state.messages.isNotEmpty &&
+            state.messages.last.type == MessageType.safetyAlert) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            AlertBottomSheet.showSafetyConcern(
+              context,
+              alertPillText: "Immediate emergency attention",
+              title: "Please contact emergency services immediately",
+              message:
+                  "Struggling to breathe or turning blue is an acute medical emergency. LovingBrain cannot assess symptoms or replace emergency medical care.",
+              primaryButtonText:
+                  "Call emergency services (${EmergencyDetector.getEmergencyDisplayNumber()})",
+              onCallEmergency: () async {
+                final Uri uri = Uri.parse(
+                  EmergencyDetector.getEmergencyPhone(),
+                );
+                try {
+                  await launchUrl(uri);
+                } catch (_) {}
+              },
+              onReadSafety: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HelpSafetyScreen()),
+                );
+              },
+            );
+          });
+        }
       },
       builder: (context, state) {
         return Scaffold(
@@ -355,6 +388,11 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
         chipColor = indigoLight;
         chipBgColor = const Color(0xFFE5E7EB);
         break;
+      case MessageType.safetyAlert:
+        icon = Icons.warning_amber_rounded;
+        chipColor = const Color(0xFFD32F2F);
+        chipBgColor = const Color(0xFFFFEBEE);
+        break;
     }
 
     return _buildMessageCard(
@@ -419,7 +457,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                 color: chipColor,
                 bgColor: chipBgColor,
               ),
-              if (msg.type != MessageType.user)
+              if (msg.type != MessageType.user &&
+                  msg.type != MessageType.safetyAlert)
                 InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () => context
@@ -507,6 +546,63 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
               color: greyColor,
               textAlign: TextAlign.start,
               height: 1.4,
+            ),
+          ],
+          if (msg.type == MessageType.safetyAlert) ...[
+            20.spaceH,
+            SizedBox(
+              width: double.infinity,
+              height: 48.h,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFD32F2F),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  elevation: 0,
+                ),
+                icon: Icon(Icons.phone_in_talk_rounded, size: 20.sp),
+                label:
+                    "Call emergency services (${EmergencyDetector.getEmergencyDisplayNumber()})"
+                        .appText(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                onPressed: () async {
+                  final Uri uri = Uri.parse(
+                    EmergencyDetector.getEmergencyPhone(),
+                  );
+                  try {
+                    await launchUrl(uri);
+                  } catch (_) {}
+                },
+              ),
+            ),
+            10.spaceH,
+            SizedBox(
+              width: double.infinity,
+              height: 44.h,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFD32F2F), width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                ),
+                child: "Read safety information".appText(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFD32F2F),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HelpSafetyScreen()),
+                  );
+                },
+              ),
             ),
           ],
         ],

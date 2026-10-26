@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/content/brain_ai_system_prompt.dart';
 import 'package:loving_brain/core/ai_data_tools.dart';
+import 'package:loving_brain/core/emergency_detector.dart';
 import 'package:loving_brain/model/ai_response_model.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -214,6 +215,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         type = MessageType.aiInfo;
       } else if (cardType == 'aiAction') {
         type = MessageType.aiAction;
+      } else if (cardType == 'safetyAlert') {
+        type = MessageType.safetyAlert;
       }
       return [
         BrainyMessage(
@@ -225,6 +228,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
                   ? 'You asked'
                   : type == MessageType.aiInfo
                   ? 'What may be happening'
+                  : type == MessageType.safetyAlert
+                  ? 'Immediate Attention'
                   : 'What to try now'),
           headline:
               data['headline']?.toString() ?? data['text']?.toString() ?? '',
@@ -320,6 +325,73 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       imageLocalPath: imageFile?.path,
       audioLocalPath: audioFile?.path,
     );
+
+    if (EmergencyDetector.isEmergency(displayHeadline) ||
+        (cleanText.isNotEmpty && EmergencyDetector.isEmergency(cleanText))) {
+      final String displayNumber =
+          EmergencyDetector.getEmergencyDisplayNumber();
+      final BrainyMessage safetyMsg = BrainyMessage(
+        id: 'safety_${DateTime.now().millisecondsSinceEpoch}',
+        type: MessageType.safetyAlert,
+        chipTitle: 'Immediate Attention',
+        headline: 'Please contact emergency services ($displayNumber)',
+        subtext:
+            "LovingBrain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.",
+      );
+
+      changeProps(
+        messages: <BrainyMessage>[
+          ...state.messages,
+          optimisticUserMsg,
+          safetyMsg,
+        ],
+        isTyping: false,
+        clearSelectedImage: true,
+      );
+
+      final String convId = await _ensureConversationCreated(displayHeadline);
+
+      await AuthRepo.instance.addChatToConversation(
+        conversationId: convId,
+        request: {
+          'text': displayHeadline,
+          'chip_title': optimisticUserMsg.chipTitle,
+          'headline': displayHeadline,
+          'subtext': null,
+          'card_type': 'user',
+          'type': 'input_text',
+          'role': 'user',
+          'image_local_path': imageFile?.path,
+          'audio_local_path': audioFile?.path,
+          'image_network_path': '',
+          'audio_network_path': '',
+          'is_saved': false,
+          'time_stamp': Timestamp.now(),
+        },
+      );
+
+      await AuthRepo.instance.addChatToConversation(
+        conversationId: convId,
+        request: {
+          'text': safetyMsg.headline,
+          'chip_title': safetyMsg.chipTitle,
+          'headline': safetyMsg.headline,
+          'subtext': safetyMsg.subtext,
+          'card_type': 'safetyAlert',
+          'type': 'text',
+          'role': 'assistant',
+          'image_local_path': null,
+          'audio_local_path': null,
+          'image_network_path': '',
+          'audio_network_path': '',
+          'is_saved': false,
+          'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
+            DateTime.now().millisecondsSinceEpoch + 10,
+          ),
+        },
+      );
+      return;
+    }
 
     changeProps(
       messages: [...state.messages, optimisticUserMsg],
@@ -585,6 +657,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     String question,
     ChildModel? child,
   ) {
+    if (EmergencyDetector.isEmergency(question)) {
+      final String displayNumber =
+          EmergencyDetector.getEmergencyDisplayNumber();
+      return <BrainyMessage>[
+        BrainyMessage(
+          type: MessageType.safetyAlert,
+          chipTitle: 'Immediate Attention',
+          headline: 'Please contact emergency services ($displayNumber)',
+          subtext:
+              'LovingBrain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.',
+        ),
+      ];
+    }
+
     final String childName = (child?.childName ?? '').trim().isNotEmpty
         ? child!.childName!.trim()
         : 'your child';

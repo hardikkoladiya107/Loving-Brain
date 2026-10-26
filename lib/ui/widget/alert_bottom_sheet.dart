@@ -211,6 +211,10 @@ class AlertBottomSheet extends StatelessWidget {
     BuildContext context, {
     VoidCallback? onCallEmergency,
     VoidCallback? onReadSafety,
+    String? alertPillText,
+    String? title,
+    String? message,
+    String? primaryButtonText,
   }) {
     showModalBottomSheet<void>(
       context: context,
@@ -218,11 +222,12 @@ class AlertBottomSheet extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (BuildContext ctx) => AlertBottomSheet(
         icon: const SizedBox.shrink(),
-        alertPillText: "This may need professional attention",
-        title: "Please contact a health professional",
+        alertPillText: alertPillText ?? "This may need professional attention",
+        title: title ?? "Please contact a health professional",
         message:
+            message ??
             "A fever with reduced drinking in a child this age is something a clinician should look at. LovingBrain can't assess symptoms.",
-        primaryButtonText: "Call emergency services",
+        primaryButtonText: primaryButtonText ?? "Call emergency services",
         onPrimaryAction: () {
           Navigator.pop(ctx);
           onCallEmergency?.call();
