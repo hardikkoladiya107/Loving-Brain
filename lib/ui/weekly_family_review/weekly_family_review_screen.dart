@@ -23,120 +23,107 @@ class WeeklyFamilyReviewScreen extends StatefulWidget {
 }
 
 class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
-  late final WeeklyFamilyReviewCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = WeeklyFamilyReviewCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<WeeklyFamilyReviewCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<WeeklyFamilyReviewCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<WeeklyFamilyReviewCubit, WeeklyFamilyReviewState>(
-        listener: (BuildContext context, WeeklyFamilyReviewState state) {},
-        builder: (BuildContext context, WeeklyFamilyReviewState state) {
-          final String dateLabel =
-              state.insights?.dateRangeLabel ?? 'This week';
+    return BlocConsumer<WeeklyFamilyReviewCubit, WeeklyFamilyReviewState>(
+      listener: (BuildContext context, WeeklyFamilyReviewState state) {},
+      builder: (BuildContext context, WeeklyFamilyReviewState state) {
+        final String dateLabel = state.insights?.dateRangeLabel ?? 'This week';
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150,
+                top: -150,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            'This week'.appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            dateLabel.appText(
-                              fontSize: 14.sp,
-                              color: greyColor9,
-                              textAlign: TextAlign.start,
-                            ),
-                            24.spaceH,
-                            _buildPositiveChangeCard(state),
-                            16.spaceH,
-                            _buildContinuingDifficultyCard(state),
-                            16.spaceH,
-                            _buildUsefulPatternCard(state),
-                            160.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          'This week'.appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          dateLabel.appText(
+                            fontSize: 14.sp,
+                            color: greyColor9,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          _buildPositiveChangeCard(state),
+                          16.spaceH,
+                          _buildContinuingDifficultyCard(state),
+                          16.spaceH,
+                          _buildUsefulPatternCard(state),
+                          160.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context, state),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, state),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -263,7 +250,9 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
             AppButton(
               title: 'Try the recommendation',
               onTap: () async {
-                await _cubit.startRecommendedExperiment();
+                await context
+                    .read<WeeklyFamilyReviewCubit>()
+                    .startRecommendedExperiment();
                 if (context.mounted) {
                   Navigator.push(
                     context,
@@ -283,7 +272,9 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
                 textAlign: TextAlign.center,
               ),
               onTap: () {
-                final String prompt = _cubit.buildBrainyPrompt();
+                final String prompt = context
+                    .read<WeeklyFamilyReviewCubit>()
+                    .buildBrainyPrompt();
                 Navigator.push(
                   context,
                   MaterialPageRoute(

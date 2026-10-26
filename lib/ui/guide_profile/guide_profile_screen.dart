@@ -27,200 +27,191 @@ class GuideProfileScreen extends StatefulWidget {
 }
 
 class _GuideProfileScreenState extends State<GuideProfileScreen> {
-  late final GuideProfileCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = GuideProfileCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init(guideId: widget.guideId, supportArea: widget.supportArea);
+      context.read<GuideProfileCubit>().init(
+        guideId: widget.guideId,
+        supportArea: widget.supportArea,
+      );
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<GuideProfileCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<GuideProfileCubit, GuideProfileState>(
-        listener: (BuildContext context, GuideProfileState state) {},
-        builder: (BuildContext context, GuideProfileState state) {
-          final GuideProfileModel guide =
-              state.guide ?? MentorshipRepo.defaultGuides.first;
+    return BlocConsumer<GuideProfileCubit, GuideProfileState>(
+      listener: (BuildContext context, GuideProfileState state) {},
+      builder: (BuildContext context, GuideProfileState state) {
+        final GuideProfileModel guide =
+            state.guide ?? MentorshipRepo.defaultGuides.first;
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top glow
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: Alignment.topCenter,
-                        radius: 1.0,
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top glow
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Container(
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.topCenter,
+                      radius: 1.0,
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: EdgeInsets.all(8.r),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "Guide profile".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.center,
-                            ),
-                            32.spaceH,
-                            Center(
-                              child: Container(
-                                width: 120.w,
-                                height: 120.w,
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFF4DD0E1), // Teal
-                                  shape: BoxShape.circle,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "Guide profile".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.center,
+                          ),
+                          32.spaceH,
+                          Center(
+                            child: Container(
+                              width: 120.w,
+                              height: 120.w,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF4DD0E1), // Teal
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 80.sp,
+                                  color: Colors.white,
                                 ),
-                                child: Center(
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 80.sp,
-                                    color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          16.spaceH,
+                          guide.name.appText(
+                            fontSize: 24.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.center,
+                          ),
+                          8.spaceH,
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 6.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE8F5E9),
+                                borderRadius: BorderRadius.circular(20.r),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: const Color(0xFF43A047),
+                                    size: 16.sp,
                                   ),
-                                ),
+                                  6.spaceW,
+                                  "Verified guide".appText(
+                                    fontSize: 12.sp,
+                                    color: const Color(0xFF43A047),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ],
                               ),
                             ),
-                            16.spaceH,
-                            guide.name.appText(
-                              fontSize: 24.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.center,
-                            ),
-                            8.spaceH,
-                            Center(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 6.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE8F5E9),
-                                  borderRadius: BorderRadius.circular(20.r),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: const Color(0xFF43A047),
-                                      size: 16.sp,
-                                    ),
-                                    6.spaceW,
-                                    "Verified guide".appText(
-                                      fontSize: 12.sp,
-                                      color: const Color(0xFF43A047),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
+                          ),
+                          24.spaceH,
+                          Wrap(
+                            spacing: 8.w,
+                            runSpacing: 8.h,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              ...guide.languages.map(
+                                (String lang) => _buildTag(lang),
                               ),
-                            ),
-                            24.spaceH,
-                            Wrap(
-                              spacing: 8.w,
-                              runSpacing: 8.h,
-                              alignment: WrapAlignment.center,
-                              children: [
-                                ...guide.languages.map(
-                                  (String lang) => _buildTag(lang),
-                                ),
-                                ...guide.supportAreas.map(
-                                  (String area) => _buildTag(area),
-                                ),
-                              ],
-                            ),
-                            32.spaceH,
-                            _buildHowWorksCard(guide),
-                            16.spaceH,
-                            _buildEstimateCard(guide),
-                            140.spaceH,
-                          ],
-                        ),
+                              ...guide.supportAreas.map(
+                                (String area) => _buildTag(area),
+                              ),
+                            ],
+                          ),
+                          32.spaceH,
+                          _buildHowWorksCard(guide),
+                          16.spaceH,
+                          _buildEstimateCard(guide),
+                          140.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context, guide),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, guide),
+            ],
+          ),
+        );
+      },
     );
   }
 

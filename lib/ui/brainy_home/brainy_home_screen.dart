@@ -24,6 +24,14 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
   final TextEditingController _textController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BrainyHomeCubit>().init();
+    });
+  }
+
+  @override
   void dispose() {
     _textController.dispose();
     super.dispose();
@@ -50,137 +58,133 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BrainyHomeCubit>(
-      create: (BuildContext context) => BrainyHomeCubit()..init(),
-      child: BlocBuilder<BrainyHomeCubit, BrainyHomeState>(
-        builder: (context, state) {
-          if (_textController.text != state.chatText) {
-            _textController.value = _textController.value.copyWith(
-              text: state.chatText,
-              selection: TextSelection.collapsed(offset: state.chatText.length),
-            );
-          }
+    return BlocBuilder<BrainyHomeCubit, BrainyHomeState>(
+      builder: (context, state) {
+        if (_textController.text != state.chatText) {
+          _textController.value = _textController.value.copyWith(
+            text: state.chatText,
+            selection: TextSelection.collapsed(offset: state.chatText.length),
+          );
+        }
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      _buildTopBar(context),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            Row(
-                              children: [
-                                Container(
-                                  width: 80.w,
-                                  height: 80.w,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: AssetImage(
-                                        Assets.v2.images.imgBrainyHome.path,
-                                      ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    _buildTopBar(context),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          Row(
+                            children: [
+                              Container(
+                                width: 80.w,
+                                height: 80.w,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: AssetImage(
+                                      Assets.v2.images.imgBrainyHome.path,
                                     ),
                                   ),
                                 ),
-                                16.spaceW,
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      "Hi ${state.parentName}, I'm Brainy"
-                                          .appText(
-                                            fontSize: 24.sp,
-                                            fraunces: true,
-                                            color: darkBlue,
-                                            textAlign: TextAlign.start,
-                                            height: 1.2,
-                                          ),
-                                      12.spaceH,
-                                      "I know ${state.childName}'s age, recent\nsleep and what you're\nworking on."
-                                          .appText(
-                                            fontSize: 14.sp,
-                                            color: greyColor,
-                                            textAlign: TextAlign.start,
-                                            height: 1.4,
-                                          ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            32.spaceH,
-                            "TOPICS".appText(
-                              fontSize: 12.sp,
-                              color: secondaryColor,
-                              fontWeight: FontWeight.w700,
-                              textAlign: TextAlign.start,
-                            ),
-                            12.spaceH,
-                            Wrap(
-                              spacing: 8.w,
-                              runSpacing: 12.h,
-                              children: [
-                                _buildTopicChip(context, state, "Sleep"),
-                                _buildTopicChip(context, state, "Behaviour"),
-                                _buildTopicChip(context, state, "Mood"),
-                                _buildTopicChip(context, state, "Health"),
-                                _buildTopicChip(context, state, "General"),
-                              ],
-                            ),
-                            32.spaceH,
-                            "SUGGESTED FOR TODAY".appText(
-                              fontSize: 12.sp,
-                              color: greyColor4,
-                              fontWeight: FontWeight.w700,
-                              textAlign: TextAlign.start,
-                            ),
-                            12.spaceH,
-                            ...state.suggestedQuestions.map(
-                              (q) => Padding(
-                                padding: EdgeInsets.only(bottom: 12.h),
-                                child: _buildSuggestedCard(context, state, q),
                               ),
+                              16.spaceW,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    "Hi ${state.parentName}, I'm Brainy"
+                                        .appText(
+                                          fontSize: 24.sp,
+                                          fraunces: true,
+                                          color: darkBlue,
+                                          textAlign: TextAlign.start,
+                                          height: 1.2,
+                                        ),
+                                    12.spaceH,
+                                    "I know ${state.childName}'s age, recent\nsleep and what you're\nworking on."
+                                        .appText(
+                                          fontSize: 14.sp,
+                                          color: greyColor,
+                                          textAlign: TextAlign.start,
+                                          height: 1.4,
+                                        ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          32.spaceH,
+                          "TOPICS".appText(
+                            fontSize: 12.sp,
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700,
+                            textAlign: TextAlign.start,
+                          ),
+                          12.spaceH,
+                          Wrap(
+                            spacing: 8.w,
+                            runSpacing: 12.h,
+                            children: [
+                              _buildTopicChip(context, state, "Sleep"),
+                              _buildTopicChip(context, state, "Behaviour"),
+                              _buildTopicChip(context, state, "Mood"),
+                              _buildTopicChip(context, state, "Health"),
+                              _buildTopicChip(context, state, "General"),
+                            ],
+                          ),
+                          32.spaceH,
+                          "SUGGESTED FOR TODAY".appText(
+                            fontSize: 12.sp,
+                            color: greyColor4,
+                            fontWeight: FontWeight.w700,
+                            textAlign: TextAlign.start,
+                          ),
+                          12.spaceH,
+                          ...state.suggestedQuestions.map(
+                            (q) => Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: _buildSuggestedCard(context, state, q),
                             ),
-                            120.spaceH,
-                          ],
-                        ),
+                          ),
+                          120.spaceH,
+                        ],
                       ),
-                      _buildBottomInputAndNav(context, state),
-                    ],
-                  ),
+                    ),
+                    _buildBottomInputAndNav(context, state),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

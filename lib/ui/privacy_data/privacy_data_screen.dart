@@ -29,21 +29,12 @@ class PrivacyDataScreen extends StatefulWidget {
 }
 
 class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
-  late final PrivacyDataCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = PrivacyDataCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<PrivacyDataCubit>().init();
     });
-  }
-
-  @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
   }
 
   void _confirmDeleteAccount(BuildContext context) {
@@ -109,7 +100,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                       textColor: Colors.white,
                       onTap: () {
                         Navigator.pop(dialogContext);
-                        _cubit.deleteAccount();
+                        context.read<PrivacyDataCubit>().deleteAccount();
                       },
                     ),
                   ),
@@ -124,240 +115,237 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _cubit,
-      child: BlocConsumer<PrivacyDataCubit, PrivacyDataState>(
-        bloc: _cubit,
-        listener: (BuildContext context, PrivacyDataState state) {
-          state.exportStatus.whenOrNull(
-            loading: () => EasyLoading.show(status: 'Exporting data...'),
-            data: (_) {
-              EasyLoading.dismiss();
-              showSnackBar(
-                message: "Your data has been exported successfully.",
-                type: SnackBarType.SUCCESS,
-              );
-            },
-            error: (Exception error) {
-              EasyLoading.dismiss();
-              showSnackBar(
-                message: error.toString().replaceAll('Exception: ', ''),
-                type: SnackBarType.ERROR,
-              );
-            },
-          );
+    return BlocConsumer<PrivacyDataCubit, PrivacyDataState>(
+      listener: (BuildContext context, PrivacyDataState state) {
+        state.exportStatus.whenOrNull(
+          loading: () => EasyLoading.show(status: 'Exporting data...'),
+          data: (_) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: "Your data has been exported successfully.",
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
 
-          state.deleteStatus.whenOrNull(
-            loading: () => EasyLoading.show(status: 'Deleting account...'),
-            data: (_) {
-              EasyLoading.dismiss();
-              showSnackBar(
-                message: "Account deleted successfully.",
-                type: SnackBarType.SUCCESS,
-              );
-              context.go(RoutePaths.welcome);
-            },
-            error: (Exception error) {
-              EasyLoading.dismiss();
-              showSnackBar(
-                message: error.toString().replaceAll('Exception: ', ''),
-                type: SnackBarType.ERROR,
-              );
-            },
-          );
-        },
-        builder: (BuildContext context, PrivacyDataState state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        state.deleteStatus.whenOrNull(
+          loading: () => EasyLoading.show(status: 'Deleting account...'),
+          data: (_) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: "Account deleted successfully.",
+              type: SnackBarType.SUCCESS,
+            );
+            context.go(RoutePaths.welcome);
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
+      builder: (BuildContext context, PrivacyDataState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "Privacy & data".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "Privacy & data".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            24.spaceH,
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(20.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  StatusPill(
-                                    text: "In short",
-                                    textColor: yellowColor1,
-                                    backgroundColor: lightYellowColor,
-                                    leading: Icon(
-                                      Icons.stars,
-                                      color: yellowColor1,
-                                      size: 14.sp,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                StatusPill(
+                                  text: "In short",
+                                  textColor: yellowColor1,
+                                  backgroundColor: lightYellowColor,
+                                  leading: Icon(
+                                    Icons.stars,
+                                    color: yellowColor1,
+                                    size: 14.sp,
+                                  ),
+                                ),
+                                16.spaceH,
+                                "Invite sent to Grandma".appText(
+                                  fontSize: 20.sp,
+                                  color: greyColor9,
+                                  fraunces: true,
+                                  textAlign: TextAlign.start,
+                                ),
+                                8.spaceH,
+                                "Sent 2 days ago to grandma@example.com. We'll let you know as soon as she accepts."
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor,
+                                      textAlign: TextAlign.start,
                                     ),
-                                  ),
-                                  16.spaceH,
-                                  "Invite sent to Grandma".appText(
-                                    fontSize: 20.sp,
-                                    color: greyColor9,
-                                    fraunces: true,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  8.spaceH,
-                                  "Sent 2 days ago to grandma@example.com. We'll let you know as soon as she accepts."
-                                      .appText(
-                                        fontSize: 14.sp,
-                                        color: greyColor,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                ],
-                              ),
+                              ],
                             ),
-                            12.spaceH,
-                            SettingTile(
-                              icon: Image.asset(
-                                Assets.v2.icons.icLinkedCaregivers.path,
-                                width: 24.sp,
-                                height: 24.sp,
-                              ),
-                              iconBackgroundColor: const Color(0xFFFCF4FF),
-                              title: "Linked caregivers",
-                              subtitle: "2 people · Ravi and Grandma",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const FamilyMenuScreen(),
-                                  ),
-                                );
-                              },
+                          ),
+                          12.spaceH,
+                          SettingTile(
+                            icon: Image.asset(
+                              Assets.v2.icons.icLinkedCaregivers.path,
+                              width: 24.sp,
+                              height: 24.sp,
                             ),
-                            12.spaceH,
-                            SettingTile(
-                              icon: Image.asset(
-                                Assets.v2.icons.icPrivacyPolicy.path,
-                                width: 24.sp,
-                                height: 24.sp,
-                              ),
-                              iconBackgroundColor: const Color(0xFFF0F6FF),
-                              title: "Read the full privacy policy",
-                              subtitle: "Updated March 2026",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) => const PrivacyPolicyScreen(),
-                                  ),
-                                );
-                              },
+                            iconBackgroundColor: const Color(0xFFFCF4FF),
+                            title: "Linked caregivers",
+                            subtitle: "2 people · Ravi and Grandma",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const FamilyMenuScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          12.spaceH,
+                          SettingTile(
+                            icon: Image.asset(
+                              Assets.v2.icons.icPrivacyPolicy.path,
+                              width: 24.sp,
+                              height: 24.sp,
                             ),
-                            24.spaceH,
-                            AppButton(
-                              title: "Export my data",
-                              backgroundColor: Colors.white,
-                              textColor: greyColor9,
-                              borderColor: greyColor.withValues(alpha: 0.2),
-                              onTap: () => _cubit.exportData(),
-                            ),
-                            24.spaceH,
-                            WarningBox(
-                              label: "Permanent",
-                              body:
-                                  "Deleting removes ${state.childName}'s profile, every update and all guidance. Linked caregivers lose access immediately. This can't be undone.",
-                            ),
-                            24.spaceH,
-                            AppButton(
-                              title: state.isDeletingAccount
-                                  ? "Deleting..."
-                                  : "Delete account",
-                              backgroundColor: Colors.white,
-                              textColor: const Color(0xFFD84315), // Red
-                              borderColor: const Color(0xFFD84315),
-                              onTap: state.isDeletingAccount
-                                  ? null
-                                  : () => _confirmDeleteAccount(context),
-                            ),
-                            40.spaceH,
-                          ],
-                        ),
+                            iconBackgroundColor: const Color(0xFFF0F6FF),
+                            title: "Read the full privacy policy",
+                            subtitle: "Updated March 2026",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (_) => const PrivacyPolicyScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          24.spaceH,
+                          AppButton(
+                            title: "Export my data",
+                            backgroundColor: Colors.white,
+                            textColor: greyColor9,
+                            borderColor: greyColor.withValues(alpha: 0.2),
+                            onTap: () =>
+                                context.read<PrivacyDataCubit>().exportData(),
+                          ),
+                          24.spaceH,
+                          WarningBox(
+                            label: "Permanent",
+                            body:
+                                "Deleting removes ${state.childName}'s profile, every update and all guidance. Linked caregivers lose access immediately. This can't be undone.",
+                          ),
+                          24.spaceH,
+                          AppButton(
+                            title: state.isDeletingAccount
+                                ? "Deleting..."
+                                : "Delete account",
+                            backgroundColor: Colors.white,
+                            textColor: const Color(0xFFD84315), // Red
+                            borderColor: const Color(0xFFD84315),
+                            onTap: state.isDeletingAccount
+                                ? null
+                                : () => _confirmDeleteAccount(context),
+                          ),
+                          40.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

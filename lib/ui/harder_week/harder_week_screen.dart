@@ -22,120 +22,107 @@ class HarderWeekScreen extends StatefulWidget {
 }
 
 class _HarderWeekScreenState extends State<HarderWeekScreen> {
-  late final HarderWeekCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = HarderWeekCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<HarderWeekCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<HarderWeekCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<HarderWeekCubit, HarderWeekState>(
-        listener: (BuildContext context, HarderWeekState state) {},
-        builder: (BuildContext context, HarderWeekState state) {
-          final String dateLabel =
-              state.insights?.dateRangeLabel ?? 'This week';
+    return BlocConsumer<HarderWeekCubit, HarderWeekState>(
+      listener: (BuildContext context, HarderWeekState state) {},
+      builder: (BuildContext context, HarderWeekState state) {
+        final String dateLabel = state.insights?.dateRangeLabel ?? 'This week';
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150,
+                top: -150,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            'This week'.appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            dateLabel.appText(
-                              fontSize: 14.sp,
-                              color: greyColor9,
-                              textAlign: TextAlign.start,
-                            ),
-                            24.spaceH,
-                            _buildThisWeekCard(state),
-                            16.spaceH,
-                            _buildWhatWeNoticedCard(state),
-                            16.spaceH,
-                            _buildSmallThingToTryCard(state),
-                            200.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          'This week'.appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          dateLabel.appText(
+                            fontSize: 14.sp,
+                            color: greyColor9,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          _buildThisWeekCard(state),
+                          16.spaceH,
+                          _buildWhatWeNoticedCard(state),
+                          16.spaceH,
+                          _buildSmallThingToTryCard(state),
+                          200.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -273,7 +260,9 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
             AppButton(
               title: 'Talk to Brainy about this',
               onTap: () {
-                final String prompt = _cubit.buildBrainyDisruptionPrompt();
+                final String prompt = context
+                    .read<HarderWeekCubit>()
+                    .buildBrainyDisruptionPrompt();
                 Navigator.push(
                   context,
                   MaterialPageRoute(

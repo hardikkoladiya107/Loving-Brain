@@ -7,7 +7,6 @@ import 'package:loving_brain/ui/sleep_details/sleep_details_screen.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_details_card.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_header.dart';
-import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/sleep_forecast_cubit.dart';
@@ -22,82 +21,63 @@ class SleepForecastScreen extends StatefulWidget {
 }
 
 class _SleepForecastScreenState extends State<SleepForecastScreen> {
-  late final SleepForecastCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = SleepForecastCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<SleepForecastCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<SleepForecastCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<SleepForecastCubit, SleepForecastState>(
-        listener: (BuildContext context, SleepForecastState state) {},
-        builder: (BuildContext context, SleepForecastState state) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light.copyWith(
-              statusBarColor: darkBlue,
-            ),
-            child: Scaffold(
-              extendBodyBehindAppBar: true,
-              backgroundColor: const Color(0xFFFEF8F4),
-              body: state.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(color: primaryColor),
-                    )
-                  : ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
-                        const ForecastHeader(),
-                        16.spaceH,
-                        const ForecastDaysRow(),
-                        16.spaceH,
-                        const ForecastDetailsCard(),
-                        32.spaceH,
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: AppButton(
-                            title: "View details",
-                            onTap: () {
-                              final TodayCubit todayCubit = context
-                                  .read<TodayCubit>();
-                              // Pop the Forecast bottom sheet
-                              Navigator.pop(context);
-                              // Open Details as a new bottom sheet
-                              showModalBottomSheet<void>(
-                                context: context,
-                                isScrollControlled: true,
-                                useSafeArea: true,
-                                builder: (BuildContext sheetCtx) =>
-                                    BlocProvider<TodayCubit>.value(
-                                      value: todayCubit,
-                                      child: const SleepDetailsScreen(),
-                                    ),
-                              );
-                            },
-                            backgroundColor: primaryColor,
-                            textColor: Colors.white,
-                          ),
+    return BlocConsumer<SleepForecastCubit, SleepForecastState>(
+      listener: (BuildContext context, SleepForecastState state) {},
+      builder: (BuildContext context, SleepForecastState state) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: state.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: primaryColor),
+                  )
+                : ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      const ForecastHeader(),
+                      16.spaceH,
+                      const ForecastDaysRow(),
+                      16.spaceH,
+                      const ForecastDetailsCard(),
+                      32.spaceH,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: AppButton(
+                          title: "View details",
+                          onTap: () {
+                            // Pop the Forecast bottom sheet
+                            Navigator.pop(context);
+                            // Open Details as a new bottom sheet
+                            showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              useSafeArea: true,
+                              builder: (BuildContext sheetCtx) =>
+                                  const SleepDetailsScreen(),
+                            );
+                          },
+                          backgroundColor: primaryColor,
+                          textColor: Colors.white,
                         ),
-                        100.spaceH,
-                      ],
-                    ),
-            ),
-          );
-        },
-      ),
+                      ),
+                      100.spaceH,
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 }

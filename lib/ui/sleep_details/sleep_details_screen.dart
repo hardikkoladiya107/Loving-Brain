@@ -23,107 +23,93 @@ class SleepDetailsScreen extends StatefulWidget {
 }
 
 class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
-  late final SleepDetailsCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = SleepDetailsCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<SleepDetailsCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<SleepDetailsCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<SleepDetailsCubit, SleepDetailsState>(
-        listener: (BuildContext context, SleepDetailsState state) {},
-        builder: (BuildContext context, SleepDetailsState state) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light.copyWith(
-              statusBarColor: darkBlue,
-            ),
-            child: Scaffold(
-              extendBodyBehindAppBar: true,
-              backgroundColor: const Color(0xFFFEF8F4),
-              body: state.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(color: primaryColor),
-                    )
-                  : ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
-                        SleepHeader(
-                          titleWidget: "Sleep details".appText(
-                            fontSize: 24.sp,
-                            color: Colors.white,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          chipText: "Tonight",
-                          timeText: "${state.windowStart} - ${state.windowEnd}",
-                          estimateText:
-                              "Bedtime estimate ${state.bedtimeEstimate}",
-                          cloudImagePath:
-                              Assets.v2.images.imgNoriSleepDetails.path,
+    return BlocConsumer<SleepDetailsCubit, SleepDetailsState>(
+      listener: (BuildContext context, SleepDetailsState state) {},
+      builder: (BuildContext context, SleepDetailsState state) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: state.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: primaryColor),
+                  )
+                : ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      SleepHeader(
+                        titleWidget: "Sleep details".appText(
+                          fontSize: 24.sp,
+                          color: Colors.white,
+                          fraunces: true,
+                          textAlign: TextAlign.start,
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              16.spaceH,
-                              _buildConfidenceRow(state),
-                              24.spaceH,
-                              _buildInfoCardsRow(state),
-                              24.spaceH,
-                              _buildLastSleepInfoCard(state),
-                              32.spaceH,
-                              AppButton(
-                                title: "Update sleep",
-                                onTap: () async {
-                                  await showAddSleepUpdateSheet(context);
-                                  if (mounted) {
-                                    _cubit.init();
-                                  }
-                                },
-                                backgroundColor: Colors.white,
-                                textColor: Colors.black,
-                              ),
-                              12.spaceH,
-                              AppButton(
-                                title: "View tonight's plan",
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext routeCtx) =>
-                                          const TonightsPlanScreen(),
-                                    ),
-                                  );
-                                },
-                                backgroundColor: primaryColor,
-                                textColor: Colors.white,
-                              ),
-                              100.spaceH,
-                            ],
-                          ),
+                        chipText: "Tonight",
+                        timeText: "${state.windowStart} - ${state.windowEnd}",
+                        estimateText:
+                            "Bedtime estimate ${state.bedtimeEstimate}",
+                        cloudImagePath:
+                            Assets.v2.images.imgNoriSleepDetails.path,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            16.spaceH,
+                            _buildConfidenceRow(state),
+                            24.spaceH,
+                            _buildInfoCardsRow(state),
+                            24.spaceH,
+                            _buildLastSleepInfoCard(state),
+                            32.spaceH,
+                            AppButton(
+                              title: "Update sleep",
+                              onTap: () async {
+                                await showAddSleepUpdateSheet(context);
+                                if (context.mounted) {
+                                  context.read<SleepDetailsCubit>().init();
+                                }
+                              },
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                            ),
+                            12.spaceH,
+                            AppButton(
+                              title: "View tonight's plan",
+                              onTap: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext routeCtx) =>
+                                        const TonightsPlanScreen(),
+                                  ),
+                                );
+                              },
+                              backgroundColor: primaryColor,
+                              textColor: Colors.white,
+                            ),
+                            100.spaceH,
+                          ],
                         ),
-                      ],
-                    ),
-            ),
-          );
-        },
-      ),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 

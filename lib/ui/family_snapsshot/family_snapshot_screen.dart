@@ -21,82 +21,69 @@ class FamilySnapshotScreen extends StatefulWidget {
 }
 
 class _FamilySnapshotScreenState extends State<FamilySnapshotScreen> {
-  late final FamilySnapshotCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = FamilySnapshotCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<FamilySnapshotCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<FamilySnapshotCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<FamilySnapshotCubit, FamilySnapshotState>(
-        bloc: _cubit,
-        listener: (BuildContext context, FamilySnapshotState state) {},
-        builder: (BuildContext context, FamilySnapshotState state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                Positioned.fill(
-                  child: Image.asset(
-                    Assets.v2.images.imgFamilySnapshotBg.path,
-                    fit: BoxFit.cover,
-                  ),
+    return BlocConsumer<FamilySnapshotCubit, FamilySnapshotState>(
+      listener: (BuildContext context, FamilySnapshotState state) {},
+      builder: (BuildContext context, FamilySnapshotState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  Assets.v2.images.imgFamilySnapshotBg.path,
+                  fit: BoxFit.cover,
                 ),
-                SafeArea(
-                  child: ListView(
-                    children: [
-                      180.spaceH,
-                      "Here’s your\nfamily snapshot".appText(
-                        textStyle: getTextStyle(
-                          fraunces: true,
-                          fontSize: 30,
-                          height: 0.8,
-                        ),
+              ),
+              SafeArea(
+                child: ListView(
+                  children: [
+                    180.spaceH,
+                    "Here’s your\nfamily snapshot".appText(
+                      textStyle: getTextStyle(
+                        fraunces: true,
+                        fontSize: 30,
+                        height: 0.8,
                       ),
-                      10.spaceH,
-                      "Based on what you’ve told us about ${state.childName}."
-                          .appText(color: greyColor),
-                      12.spaceH,
-                      AppCard(
-                        chipTitle: "What we noticed",
-                        title: state.whatWeNoticed,
-                      ),
-                      24.spaceH,
-                      AppCard(
-                        chipTitle: "Try this first",
-                        title: state.tryThisFirst,
-                      ),
-                      24.spaceH,
-                      AppButton(
-                        onTap: () {
-                          preferences.putBool(SharedPreference.isLogin, true);
-                          context.go(RoutePaths.base);
-                        },
-                        title: "Go to Today",
-                      ),
-                      32.spaceH,
-                    ],
-                  ).appPadding(left: 20.r, right: 20.r),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                    ),
+                    10.spaceH,
+                    "Based on what you’ve told us about ${state.childName}."
+                        .appText(color: greyColor),
+                    12.spaceH,
+                    AppCard(
+                      chipTitle: "What we noticed",
+                      title: state.whatWeNoticed,
+                    ),
+                    24.spaceH,
+                    AppCard(
+                      chipTitle: "Try this first",
+                      title: state.tryThisFirst,
+                    ),
+                    24.spaceH,
+                    AppButton(
+                      onTap: () {
+                        preferences.putBool(SharedPreference.isLogin, true);
+                        context.go(RoutePaths.base);
+                      },
+                      title: "Go to Today",
+                    ),
+                    32.spaceH,
+                  ],
+                ).appPadding(left: 20.r, right: 20.r),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

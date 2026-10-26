@@ -28,161 +28,149 @@ class TodayScreen extends StatefulWidget {
 }
 
 class _TodayScreenState extends State<TodayScreen> {
-  late final TodayCubit _todayCubit;
-
   @override
   void initState() {
     super.initState();
-    _todayCubit = TodayCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _todayCubit.init();
+      context.read<TodayCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _todayCubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<TodayCubit>.value(
-      value: _todayCubit,
-      child: BlocBuilder<TodayCubit, TodayState>(
-        builder: (BuildContext context, TodayState state) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.dark.copyWith(
-              statusBarColor: Colors.transparent,
-            ),
-            child: Scaffold(
-              backgroundColor: const Color(0xFFFEF8F4),
-              body: Stack(
-                children: [
-                  Positioned(
-                    left: -283,
-                    top: -283,
-                    child: Container(
-                      width: 450,
-                      height: 450,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            cardColor4.withValues(alpha: 0.5),
-                            cardColor4.withValues(alpha: 0.0),
-                          ],
-                          stops: const [0.0, 1.0],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SafeArea(
-                    bottom: false,
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 16.h,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const TodayHeader(),
-                          SizedBox(height: 24.h),
-                          if (state.mode == TodayMode.normal) ...[
-                            const MainCard(),
-                            SizedBox(height: 24.h),
-                            const NoticedRow(),
-                            SizedBox(height: 24.h),
-                            const NiceWorkCard(),
-                            SizedBox(height: 24.h),
-                            const ActionGrid(),
-                          ] else if (state.mode == TodayMode.newParent) ...[
-                            const AddSleepCard(),
-                            SizedBox(height: 16.h),
-                            AppButton(
-                              title: "Add behaviour update",
-                              onTap: () {
-                                showAddTantrumsUpdateSheet(context);
-                              },
-                              backgroundColor: Colors.white,
-                              textColor: greyColor9,
-                            ),
-                            SizedBox(height: 16.h),
-                            AppButton(
-                              title: "Daily quick log",
-                              onTap: () {
-                                showAddBehaviourSheet(context);
-                              },
-                              backgroundColor: Colors.white,
-                              textColor: greyColor9,
-                            ),
-                            SizedBox(height: 24.h),
-                            const ActionGrid(),
-                            SizedBox(height: 16.h),
-                            AppButton(
-                              title: "Ask Brainy",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const BrainyConversationScreen(
-                                      initialChat:
-                                          "I'm new here and want to understand how Loving-Brain works for my child.",
-                                      topic: "Getting Started",
-                                    ),
-                                  ),
-                                );
-                              },
-                              backgroundColor: Colors.transparent,
-                              textColor: greyColor9,
-                            ),
-                          ] else if (state.mode ==
-                              TodayMode.importantHeadsUp) ...[
-                            const HeadsUpCard(),
-                            SizedBox(height: 16.h),
-                            AppButton(
-                              title: "Play audio",
-                              onTap: () {
-                                showViewSupportSheet(context);
-                              },
-                              backgroundColor: Colors.white,
-                              textColor: greyColor9,
-                            ),
-                            SizedBox(height: 16.h),
-                            AppButton(
-                              title: "Ask Brainy",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const BrainyConversationScreen(
-                                      initialChat:
-                                          "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
-                                      topic: "Calm Heads-Up",
-                                    ),
-                                  ),
-                                );
-                              },
-                              backgroundColor: Colors.transparent,
-                              textColor: greyColor9,
-                            ),
-                            SizedBox(height: 24.h),
-                            const NoticedRow(),
-                            SizedBox(height: 24.h),
-                            const ActionGrid(),
-                          ],
-                          SizedBox(height: 100.h),
+    return BlocBuilder<TodayCubit, TodayState>(
+      builder: (BuildContext context, TodayState state) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.dark.copyWith(
+            statusBarColor: Colors.transparent,
+          ),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                Positioned(
+                  left: -283,
+                  top: -283,
+                  child: Container(
+                    width: 450,
+                    height: 450,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          cardColor4.withValues(alpha: 0.5),
+                          cardColor4.withValues(alpha: 0.0),
                         ],
+                        stops: const [0.0, 1.0],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 16.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const TodayHeader(),
+                        SizedBox(height: 24.h),
+                        if (state.mode == TodayMode.normal) ...[
+                          const MainCard(),
+                          SizedBox(height: 24.h),
+                          const NoticedRow(),
+                          SizedBox(height: 24.h),
+                          const NiceWorkCard(),
+                          SizedBox(height: 24.h),
+                          const ActionGrid(),
+                        ] else if (state.mode == TodayMode.newParent) ...[
+                          const AddSleepCard(),
+                          SizedBox(height: 16.h),
+                          AppButton(
+                            title: "Add behaviour update",
+                            onTap: () {
+                              showAddTantrumsUpdateSheet(context);
+                            },
+                            backgroundColor: Colors.white,
+                            textColor: greyColor9,
+                          ),
+                          SizedBox(height: 16.h),
+                          AppButton(
+                            title: "Daily quick log",
+                            onTap: () {
+                              showAddBehaviourSheet(context);
+                            },
+                            backgroundColor: Colors.white,
+                            textColor: greyColor9,
+                          ),
+                          SizedBox(height: 24.h),
+                          const ActionGrid(),
+                          SizedBox(height: 16.h),
+                          AppButton(
+                            title: "Ask Brainy",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const BrainyConversationScreen(
+                                    initialChat:
+                                        "I'm new here and want to understand how Loving-Brain works for my child.",
+                                    topic: "Getting Started",
+                                  ),
+                                ),
+                              );
+                            },
+                            backgroundColor: Colors.transparent,
+                            textColor: greyColor9,
+                          ),
+                        ] else if (state.mode ==
+                            TodayMode.importantHeadsUp) ...[
+                          const HeadsUpCard(),
+                          SizedBox(height: 16.h),
+                          AppButton(
+                            title: "Play audio",
+                            onTap: () {
+                              showViewSupportSheet(context);
+                            },
+                            backgroundColor: Colors.white,
+                            textColor: greyColor9,
+                          ),
+                          SizedBox(height: 16.h),
+                          AppButton(
+                            title: "Ask Brainy",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const BrainyConversationScreen(
+                                    initialChat:
+                                        "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
+                                    topic: "Calm Heads-Up",
+                                  ),
+                                ),
+                              );
+                            },
+                            backgroundColor: Colors.transparent,
+                            textColor: greyColor9,
+                          ),
+                          SizedBox(height: 24.h),
+                          const NoticedRow(),
+                          SizedBox(height: 24.h),
+                          const ActionGrid(),
+                        ],
+                        SizedBox(height: 100.h),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

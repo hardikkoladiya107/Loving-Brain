@@ -26,183 +26,174 @@ class InvitePendingScreen extends StatefulWidget {
 }
 
 class _InvitePendingScreenState extends State<InvitePendingScreen> {
-  late final InvitePendingCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = InvitePendingCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init(recipient: widget.recipientEmail, role: widget.role);
+      context.read<InvitePendingCubit>().init(
+        recipient: widget.recipientEmail,
+        role: widget.role,
+      );
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<InvitePendingCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<InvitePendingCubit, InvitePendingState>(
-        listener: (BuildContext context, InvitePendingState state) {
-          state.actionStatus.whenOrNull(
-            data: (dynamic data) {
-              if (data == 'invite_resent') {
-                showSnackBar(
-                  message: "Invite resent to ${state.recipientEmail}",
-                  type: SnackBarType.SUCCESS,
-                );
-              } else if (data == 'invite_cancelled') {
-                showSnackBar(
-                  message: "Invitation cancelled",
-                  type: SnackBarType.SUCCESS,
-                );
-                Navigator.pop(context);
-              }
-            },
-          );
-        },
-        builder: (BuildContext context, InvitePendingState state) {
-          final InvitePendingCubit cubit = context.read<InvitePendingCubit>();
+    return BlocConsumer<InvitePendingCubit, InvitePendingState>(
+      listener: (BuildContext context, InvitePendingState state) {
+        state.actionStatus.whenOrNull(
+          data: (dynamic data) {
+            if (data == 'invite_resent') {
+              showSnackBar(
+                message: "Invite resent to ${state.recipientEmail}",
+                type: SnackBarType.SUCCESS,
+              );
+            } else if (data == 'invite_cancelled') {
+              showSnackBar(
+                message: "Invitation cancelled",
+                type: SnackBarType.SUCCESS,
+              );
+              Navigator.pop(context);
+            }
+          },
+        );
+      },
+      builder: (BuildContext context, InvitePendingState state) {
+        final InvitePendingCubit cubit = context.read<InvitePendingCubit>();
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "Invite pending".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "Invite pending".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20.r),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            24.spaceH,
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(20.r),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  StatusPill.pending(),
-                                  16.spaceH,
-                                  "Invite sent to ${state.role}".appText(
-                                    fontSize: 20.sp,
-                                    color: greyColor9,
-                                    fraunces: true,
-                                  ),
-                                  8.spaceH,
-                                  "Sent to ${state.recipientEmail}. We'll let you know as soon as they accept."
-                                      .appText(
-                                        fontSize: 14.sp,
-                                        color: greyColor6,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                ],
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                StatusPill.pending(),
+                                16.spaceH,
+                                "Invite sent to ${state.role}".appText(
+                                  fontSize: 20.sp,
+                                  color: greyColor9,
+                                  fraunces: true,
+                                ),
+                                8.spaceH,
+                                "Sent to ${state.recipientEmail}. We'll let you know as soon as they accept."
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor6,
+                                      textAlign: TextAlign.start,
+                                    ),
+                              ],
                             ),
-                            12.spaceH,
-                            InfoBox.white(
-                              title: "What they'll see when they join",
-                              body:
-                                  "Sleep updates and today's plan. Nothing else, unless you change it.",
-                            ),
-                            12.spaceH,
-                            InfoBox(
-                              iconData: null,
-                              textColor: primaryColor,
-                              backgroundColor: softPeachOrange,
-                              body:
-                                  "Invites expire after ${state.daysUntilExpiry} days. Nothing is shared until they accept.",
-                            ),
-                            180.spaceH,
-                          ],
-                        ),
+                          ),
+                          12.spaceH,
+                          InfoBox.white(
+                            title: "What they'll see when they join",
+                            body:
+                                "Sleep updates and today's plan. Nothing else, unless you change it.",
+                          ),
+                          12.spaceH,
+                          InfoBox(
+                            iconData: null,
+                            textColor: primaryColor,
+                            backgroundColor: softPeachOrange,
+                            body:
+                                "Invites expire after ${state.daysUntilExpiry} days. Nothing is shared until they accept.",
+                          ),
+                          180.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context, state, cubit),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, state, cubit),
+            ],
+          ),
+        );
+      },
     );
   }
 

@@ -22,75 +22,63 @@ class SleepPatternScreen extends StatefulWidget {
 }
 
 class _SleepPatternScreenState extends State<SleepPatternScreen> {
-  late final SleepPatternCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = SleepPatternCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<SleepPatternCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<SleepPatternCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<SleepPatternCubit, SleepPatternState>(
-        listener: (BuildContext context, SleepPatternState state) {},
-        builder: (BuildContext context, SleepPatternState state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: state.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: primaryColor),
-                  )
-                : Stack(
-                    children: [
-                      ListView(
-                        padding: EdgeInsets.zero,
-                        children: [
-                          _buildHeader(context),
-                          16.spaceH,
-                          _buildCircularProgressCard(state),
-                          16.spaceH,
-                          _buildWeeklySleepChart(state),
-                          16.spaceH,
-                          _buildNoticeCard(state),
-                          100.spaceH,
-                        ],
+    return BlocConsumer<SleepPatternCubit, SleepPatternState>(
+      listener: (BuildContext context, SleepPatternState state) {},
+      builder: (BuildContext context, SleepPatternState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: state.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(color: primaryColor),
+                )
+              : Stack(
+                  children: [
+                    ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        _buildHeader(context),
+                        16.spaceH,
+                        _buildCircularProgressCard(state),
+                        16.spaceH,
+                        _buildWeeklySleepChart(state),
+                        16.spaceH,
+                        _buildNoticeCard(state),
+                        100.spaceH,
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 20.h,
+                      left: 20.w,
+                      right: 20.w,
+                      child: AppButton(
+                        title: "Try this change",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext routeCtx) =>
+                                  const ProgramRecommendationScreen(),
+                            ),
+                          );
+                        },
+                        backgroundColor: primaryColor,
+                        textColor: Colors.white,
                       ),
-                      Positioned(
-                        bottom: 20.h,
-                        left: 20.w,
-                        right: 20.w,
-                        child: AppButton(
-                          title: "Try this change",
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext routeCtx) =>
-                                    const ProgramRecommendationScreen(),
-                              ),
-                            );
-                          },
-                          backgroundColor: primaryColor,
-                          textColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-          );
-        },
-      ),
+                    ),
+                  ],
+                ),
+        );
+      },
     );
   }
 

@@ -21,88 +21,77 @@ class TonightsPlanScreen extends StatefulWidget {
 }
 
 class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
-  late final TonightsPlanCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = TonightsPlanCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<TonightsPlanCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<TonightsPlanCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<TonightsPlanCubit, TonightsPlanState>(
-        listener: (BuildContext context, TonightsPlanState state) {},
-        builder: (BuildContext context, TonightsPlanState state) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light.copyWith(
-              statusBarColor: darkBlue,
-            ),
-            child: Scaffold(
-              extendBodyBehindAppBar: true,
-              backgroundColor: const Color(0xFFFEF8F4),
-              body: state.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(color: primaryColor),
-                    )
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              _buildHeader(context),
-                              16.spaceH,
-                              _buildTimelineCard(state),
-                              16.spaceH,
-                              _buildInfoCard(state),
-                              16.spaceH,
-                            ],
-                          ),
-                        ),
-                        Row(
+    return BlocConsumer<TonightsPlanCubit, TonightsPlanState>(
+      listener: (BuildContext context, TonightsPlanState state) {},
+      builder: (BuildContext context, TonightsPlanState state) {
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          child: Scaffold(
+            extendBodyBehindAppBar: true,
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: state.isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(color: primaryColor),
+                  )
+                : Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
                           children: [
-                            Expanded(
-                              child: AppButton(
-                                title: state.isPlanStarted
-                                    ? "Stop plan"
-                                    : "Start plan",
-                                onTap: () => _cubit.startPlan(),
-                                backgroundColor: primaryColor,
-                                textColor: Colors.white,
-                                padding: EdgeInsetsGeometry.zero,
-                              ),
-                            ),
-                            12.spaceW,
-                            Expanded(
-                              child: AppButton(
-                                title: state.isAudioPlaying
-                                    ? "Pause audio"
-                                    : "Play audio",
-                                onTap: () => _cubit.toggleAudio(),
-                                backgroundColor: Colors.white,
-                                textColor: Colors.black,
-                                padding: EdgeInsetsGeometry.zero,
-                              ),
-                            ),
+                            _buildHeader(context),
+                            16.spaceH,
+                            _buildTimelineCard(state),
+                            16.spaceH,
+                            _buildInfoCard(state),
+                            16.spaceH,
                           ],
-                        ).appPadding(all: 16.w),
-                      ],
-                    ),
-            ),
-          );
-        },
-      ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              title: state.isPlanStarted
+                                  ? "Stop plan"
+                                  : "Start plan",
+                              onTap: () =>
+                                  context.read<TonightsPlanCubit>().startPlan(),
+                              backgroundColor: primaryColor,
+                              textColor: Colors.white,
+                              padding: EdgeInsetsGeometry.zero,
+                            ),
+                          ),
+                          12.spaceW,
+                          Expanded(
+                            child: AppButton(
+                              title: state.isAudioPlaying
+                                  ? "Pause audio"
+                                  : "Play audio",
+                              onTap: () => context
+                                  .read<TonightsPlanCubit>()
+                                  .toggleAudio(),
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              padding: EdgeInsetsGeometry.zero,
+                            ),
+                          ),
+                        ],
+                      ).appPadding(all: 16.w),
+                    ],
+                  ),
+          ),
+        );
+      },
     );
   }
 

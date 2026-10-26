@@ -26,10 +26,7 @@ void showAddNotesUpdateSheet(BuildContext context) {
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
-    builder: (BuildContext context) => BlocProvider<TodayCubit>.value(
-      value: cubit,
-      child: const AddNotesUpdateSheet(),
-    ),
+    builder: (BuildContext context) => const AddNotesUpdateSheet(),
   );
 }
 

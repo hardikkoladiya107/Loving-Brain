@@ -141,16 +141,12 @@ class MainCard extends StatelessWidget {
         AppButton(
           title: "View details",
           onTap: () {
-            final TodayCubit todayCubit = context.read<TodayCubit>();
             showModalBottomSheet<void>(
               context: context,
               isScrollControlled: true,
               useSafeArea: true,
               builder: (BuildContext sheetContext) =>
-                  BlocProvider<TodayCubit>.value(
-                    value: todayCubit,
-                    child: const SleepForecastScreen(),
-                  ),
+                  const SleepForecastScreen(),
             );
           },
         ),

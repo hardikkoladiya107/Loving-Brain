@@ -16,7 +16,6 @@ import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
 
 Future<void> showAddSleepUpdateSheet(BuildContext context) {
-  final TodayCubit cubit = context.read<TodayCubit>();
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
@@ -24,10 +23,7 @@ Future<void> showAddSleepUpdateSheet(BuildContext context) {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.75,
     ),
-    builder: (BuildContext context) => BlocProvider<TodayCubit>.value(
-      value: cubit,
-      child: const AddSleepUpdateSheet(),
-    ),
+    builder: (BuildContext context) => const AddSleepUpdateSheet(),
   );
 }
 

@@ -20,23 +20,6 @@ class AfterReflectionScreen extends StatefulWidget {
 }
 
 class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<AfterReflectionCubit>(
-      create: (BuildContext context) => AfterReflectionCubit()..init(),
-      child: const _AfterReflectionView(),
-    );
-  }
-}
-
-class _AfterReflectionView extends StatefulWidget {
-  const _AfterReflectionView();
-
-  @override
-  State<_AfterReflectionView> createState() => _AfterReflectionViewState();
-}
-
-class _AfterReflectionViewState extends State<_AfterReflectionView> {
   late final TextEditingController _beforeController;
   late final TextEditingController _durationController;
 

@@ -13,7 +13,6 @@ import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
 
 void showAddTantrumsUpdateSheet(BuildContext context) {
-  final TodayCubit cubit = context.read<TodayCubit>();
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
@@ -21,8 +20,7 @@ void showAddTantrumsUpdateSheet(BuildContext context) {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.85,
     ),
-    builder: (BuildContext context) =>
-        BlocProvider.value(value: cubit, child: const AddTantrumsUpdateSheet()),
+    builder: (BuildContext context) => const AddTantrumsUpdateSheet(),
   );
 }
 

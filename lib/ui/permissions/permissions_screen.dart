@@ -25,14 +25,11 @@ class PermissionsScreen extends StatefulWidget {
 }
 
 class _PermissionsScreenState extends State<PermissionsScreen> {
-  late final PermissionsCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = PermissionsCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init(
+      context.read<PermissionsCubit>().init(
         caregiverName: widget.caregiverName,
         role: widget.caregiverRole,
       );
@@ -40,209 +37,200 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<PermissionsCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<PermissionsCubit, PermissionsState>(
-        listener: (BuildContext context, PermissionsState state) {
-          state.saveStatus.whenOrNull(
-            loading: () => EasyLoading.show(),
-            data: (dynamic data) {
-              EasyLoading.dismiss();
-              if (data == 'permissions_saved') {
-                showSnackBar(
-                  message: "Permissions saved successfully",
-                  type: SnackBarType.SUCCESS,
-                );
-                Navigator.pop(context);
-              } else if (data == 'access_revoked') {
-                showSnackBar(
-                  message: "Access removed for ${state.caregiverName}",
-                  type: SnackBarType.SUCCESS,
-                );
-                Navigator.pop(context);
-              }
-            },
-            error: (Exception error) {
-              EasyLoading.dismiss();
+    return BlocConsumer<PermissionsCubit, PermissionsState>(
+      listener: (BuildContext context, PermissionsState state) {
+        state.saveStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (dynamic data) {
+            EasyLoading.dismiss();
+            if (data == 'permissions_saved') {
               showSnackBar(
-                message: error.toString().replaceAll('Exception: ', ''),
-                type: SnackBarType.ERROR,
+                message: "Permissions saved successfully",
+                type: SnackBarType.SUCCESS,
               );
-            },
-          );
-        },
-        builder: (BuildContext context, PermissionsState state) {
-          final PermissionsCubit cubit = context.read<PermissionsCubit>();
+              Navigator.pop(context);
+            } else if (data == 'access_revoked') {
+              showSnackBar(
+                message: "Access removed for ${state.caregiverName}",
+                type: SnackBarType.SUCCESS,
+              );
+              Navigator.pop(context);
+            }
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
+      builder: (BuildContext context, PermissionsState state) {
+        final PermissionsCubit cubit = context.read<PermissionsCubit>();
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "What ${state.caregiverName} can see".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "What ${state.caregiverName} can see".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          "Change any of this at any time.".appText(
+                            fontSize: 14.sp,
+                            color: greyColor,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          _buildToggleCard(
+                            title: "Sleep",
+                            subtitle: "Naps, bedtimes and night waking",
+                            value: state.sleepEnabled,
+                            onChanged: (_) => cubit.toggleSleep(),
+                          ),
+                          12.spaceH,
+                          _buildToggleCard(
+                            title: "Behaviour",
+                            subtitle: "Tantrum updates and patterns",
+                            value: state.behaviourEnabled,
+                            onChanged: (_) => cubit.toggleBehaviour(),
+                          ),
+                          12.spaceH,
+                          _buildToggleCard(
+                            title: "Health notes",
+                            subtitle: "Illness, teething and medication",
+                            value: state.healthNotesEnabled,
+                            onChanged: (_) => cubit.toggleHealthNotes(),
+                          ),
+                          12.spaceH,
+                          _buildToggleCard(
+                            title: "Plans",
+                            subtitle: "Today's plan and what you're trying",
+                            value: state.plansEnabled,
+                            onChanged: (_) => cubit.togglePlans(),
+                          ),
+                          12.spaceH,
+                          _buildToggleCard(
+                            title: "Mentorship summaries",
+                            subtitle: "Notes from sessions with a guide",
+                            value: state.mentorshipEnabled,
+                            onChanged: (_) => cubit.toggleMentorship(),
+                          ),
+                          16.spaceH,
+                          Container(
+                            padding: EdgeInsets.all(16.r),
+                            decoration: BoxDecoration(
+                              color: softPeachOrange,
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            8.spaceH,
-                            "Change any of this at any time.".appText(
-                              fontSize: 14.sp,
-                              color: greyColor,
-                              textAlign: TextAlign.start,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.lock_outline,
+                                  color: primaryColor,
+                                  size: 20.sp,
+                                ),
+                                12.spaceW,
+                                Expanded(
+                                  child:
+                                      "Parent reflections and private notes are never shared with co-parents or caregivers under any circumstances."
+                                          .appText(
+                                            fontSize: 13.sp,
+                                            color: greyColor9,
+                                            textAlign: TextAlign.start,
+                                            height: 1.4,
+                                          ),
+                                ),
+                              ],
                             ),
-                            24.spaceH,
-                            _buildToggleCard(
-                              title: "Sleep",
-                              subtitle: "Naps, bedtimes and night waking",
-                              value: state.sleepEnabled,
-                              onChanged: (_) => cubit.toggleSleep(),
-                            ),
-                            12.spaceH,
-                            _buildToggleCard(
-                              title: "Behaviour",
-                              subtitle: "Tantrum updates and patterns",
-                              value: state.behaviourEnabled,
-                              onChanged: (_) => cubit.toggleBehaviour(),
-                            ),
-                            12.spaceH,
-                            _buildToggleCard(
-                              title: "Health notes",
-                              subtitle: "Illness, teething and medication",
-                              value: state.healthNotesEnabled,
-                              onChanged: (_) => cubit.toggleHealthNotes(),
-                            ),
-                            12.spaceH,
-                            _buildToggleCard(
-                              title: "Plans",
-                              subtitle: "Today's plan and what you're trying",
-                              value: state.plansEnabled,
-                              onChanged: (_) => cubit.togglePlans(),
-                            ),
-                            12.spaceH,
-                            _buildToggleCard(
-                              title: "Mentorship summaries",
-                              subtitle: "Notes from sessions with a guide",
-                              value: state.mentorshipEnabled,
-                              onChanged: (_) => cubit.toggleMentorship(),
-                            ),
-                            16.spaceH,
-                            Container(
-                              padding: EdgeInsets.all(16.r),
-                              decoration: BoxDecoration(
-                                color: softPeachOrange,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.lock_outline,
-                                    color: primaryColor,
-                                    size: 20.sp,
-                                  ),
-                                  12.spaceW,
-                                  Expanded(
-                                    child:
-                                        "Parent reflections and private notes are never shared with co-parents or caregivers under any circumstances."
-                                            .appText(
-                                              fontSize: 13.sp,
-                                              color: greyColor9,
-                                              textAlign: TextAlign.start,
-                                              height: 1.4,
-                                            ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            160.spaceH,
-                          ],
-                        ),
+                          ),
+                          160.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context, state, cubit),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, state, cubit),
+            ],
+          ),
+        );
+      },
     );
   }
 

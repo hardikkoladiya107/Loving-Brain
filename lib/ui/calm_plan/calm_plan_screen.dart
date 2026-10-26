@@ -23,26 +23,6 @@ class CalmPlanScreen extends StatefulWidget {
 
 class _CalmPlanScreenState extends State<CalmPlanScreen> {
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<CalmPlanCubit>(
-      create: (BuildContext context) =>
-          CalmPlanCubit()..init(forecast: widget.forecast),
-      child: _CalmPlanView(forecast: widget.forecast),
-    );
-  }
-}
-
-class _CalmPlanView extends StatefulWidget {
-  final BehaviourForecastResult? forecast;
-
-  const _CalmPlanView({this.forecast});
-
-  @override
-  State<_CalmPlanView> createState() => _CalmPlanViewState();
-}
-
-class _CalmPlanViewState extends State<_CalmPlanView> {
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {

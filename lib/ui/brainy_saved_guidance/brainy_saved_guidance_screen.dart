@@ -18,24 +18,6 @@ class BrainySavedGuidanceScreen extends StatefulWidget {
 
 class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<BrainySavedGuidanceCubit>(
-      create: (BuildContext context) => BrainySavedGuidanceCubit()..init(),
-      child: const _BrainySavedGuidanceView(),
-    );
-  }
-}
-
-class _BrainySavedGuidanceView extends StatefulWidget {
-  const _BrainySavedGuidanceView();
-
-  @override
-  State<_BrainySavedGuidanceView> createState() =>
-      _BrainySavedGuidanceViewState();
-}
-
-class _BrainySavedGuidanceViewState extends State<_BrainySavedGuidanceView> {
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {

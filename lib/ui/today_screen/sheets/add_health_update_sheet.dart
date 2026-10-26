@@ -12,13 +12,11 @@ import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 
 void showAddHealthUpdateSheet(BuildContext context) {
-  final TodayCubit cubit = context.read<TodayCubit>();
   showModalBottomSheet(
     context: context,
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
-    builder: (BuildContext context) =>
-        BlocProvider.value(value: cubit, child: const AddHealthUpdateSheet()),
+    builder: (BuildContext context) => const AddHealthUpdateSheet(),
   );
 }
 

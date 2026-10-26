@@ -20,23 +20,6 @@ class CalmHeadsUpScreen extends StatefulWidget {
 
 class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<CalmHeadsUpCubit>(
-      create: (BuildContext context) => CalmHeadsUpCubit()..init(),
-      child: const _CalmHeadsUpView(),
-    );
-  }
-}
-
-class _CalmHeadsUpView extends StatefulWidget {
-  const _CalmHeadsUpView();
-
-  @override
-  State<_CalmHeadsUpView> createState() => _CalmHeadsUpViewState();
-}
-
-class _CalmHeadsUpViewState extends State<_CalmHeadsUpView> {
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {

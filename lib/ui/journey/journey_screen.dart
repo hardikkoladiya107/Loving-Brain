@@ -25,114 +25,104 @@ class JourneyScreen extends StatefulWidget {
 }
 
 class _JourneyScreenState extends State<JourneyScreen> {
-  late final JourneyCubit _journeyCubit;
-
   @override
   void initState() {
     super.initState();
-    _journeyCubit = JourneyCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _journeyCubit.init();
+      context.read<JourneyCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _journeyCubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<JourneyCubit>.value(
-      value: _journeyCubit,
-      child: BlocConsumer<JourneyCubit, JourneyState>(
-        listener: (BuildContext context, JourneyState state) {},
-        builder: (BuildContext context, JourneyState state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocConsumer<JourneyCubit, JourneyState>(
+      listener: (BuildContext context, JourneyState state) {},
+      builder: (BuildContext context, JourneyState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150,
+                top: -150,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      16.spaceH,
-                      GestureDetector(
-                        onTap: () {
-                          // Tap header to cycle modes for testing
-                          _journeyCubit.cycleMode();
-                          if (_journeyCubit.state.mode == JourneyMode.normal) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const ConsistencyRecognitionScreen(),
-                              ),
-                            );
-                          }
-                        },
-                        child: 'Journey'.appText(
-                          fontSize: 28.sp,
-                          color: greyColor9,
-                          fraunces: true,
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                      8.spaceH,
-                      'How things have been changing for your family.'.appText(
-                        fontSize: 16.sp,
+              ),
+              SafeArea(
+                bottom: false,
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  children: [
+                    16.spaceH,
+                    GestureDetector(
+                      onTap: () {
+                        // Tap header to cycle modes for testing
+                        final JourneyCubit jCubit = context
+                            .read<JourneyCubit>();
+                        jCubit.cycleMode();
+                        if (jCubit.state.mode == JourneyMode.normal) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const ConsistencyRecognitionScreen(),
+                            ),
+                          );
+                        }
+                      },
+                      child: 'Journey'.appText(
+                        fontSize: 28.sp,
                         color: greyColor9,
+                        fraunces: true,
                         textAlign: TextAlign.start,
                       ),
-                      12.spaceH,
-                      _buildWeeklyReviewCard(context, state),
-                      32.spaceH,
-                      'ALSO HERE'.appText(
-                        fontSize: 12.sp,
-                        color: secondaryColor,
-                        fontWeight: FontWeight.w700,
-                        textAlign: TextAlign.start,
-                      ),
-                      16.spaceH,
-                      _buildSleepJourneyCard(context, state),
-                      12.spaceH,
-                      _buildFamilyTimelineCard(context),
-                      12.spaceH,
-                      _buildSavedGuidanceCard(context, state),
-                      12.spaceH,
-                      _buildConsistencyCard(context, state),
-                      12.spaceH,
-                      _buildGuidedMentorshipCard(context),
-                      128.spaceH,
-                    ],
-                  ),
+                    ),
+                    8.spaceH,
+                    'How things have been changing for your family.'.appText(
+                      fontSize: 16.sp,
+                      color: greyColor9,
+                      textAlign: TextAlign.start,
+                    ),
+                    12.spaceH,
+                    _buildWeeklyReviewCard(context, state),
+                    32.spaceH,
+                    'ALSO HERE'.appText(
+                      fontSize: 12.sp,
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w700,
+                      textAlign: TextAlign.start,
+                    ),
+                    16.spaceH,
+                    _buildSleepJourneyCard(context, state),
+                    12.spaceH,
+                    _buildFamilyTimelineCard(context),
+                    12.spaceH,
+                    _buildSavedGuidanceCard(context, state),
+                    12.spaceH,
+                    _buildConsistencyCard(context, state),
+                    12.spaceH,
+                    _buildGuidedMentorshipCard(context),
+                    128.spaceH,
+                  ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -223,7 +213,9 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 context,
                 MaterialPageRoute(builder: (_) => targetScreen),
               ).then((_) {
-                _journeyCubit.init();
+                if (context.mounted) {
+                  context.read<JourneyCubit>().init();
+                }
               });
             },
           ),

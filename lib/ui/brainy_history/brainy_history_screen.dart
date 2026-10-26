@@ -18,23 +18,6 @@ class BrainyHistoryScreen extends StatefulWidget {
 
 class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<BrainyHistoryCubit>(
-      create: (BuildContext context) => BrainyHistoryCubit()..init(),
-      child: const _BrainyHistoryView(),
-    );
-  }
-}
-
-class _BrainyHistoryView extends StatefulWidget {
-  const _BrainyHistoryView();
-
-  @override
-  State<_BrainyHistoryView> createState() => _BrainyHistoryViewState();
-}
-
-class _BrainyHistoryViewState extends State<_BrainyHistoryView> {
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {

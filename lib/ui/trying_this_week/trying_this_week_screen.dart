@@ -7,7 +7,6 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_notes_update_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
@@ -23,141 +22,129 @@ class TryingThisWeekScreen extends StatefulWidget {
 }
 
 class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
-  late final TryingThisWeekCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = TryingThisWeekCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<TryingThisWeekCubit>().init();
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<TryingThisWeekCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<TryingThisWeekCubit, TryingThisWeekState>(
-        listener: (BuildContext context, TryingThisWeekState state) {
-          if (state.finishStatus is Data) {
-            showSnackBar(
-              message: 'Experiment finished early.',
-              type: SnackBarType.SUCCESS,
-            );
-          }
-        },
-        builder: (BuildContext context, TryingThisWeekState state) {
-          final String changeTitle =
-              state.experiment?.changeTitle ??
-              'An earlier, shorter\nafternoon nap';
-          final String observeTarget =
-              state.experiment?.observeTarget ??
-              'Evening mood and how easily\nbedtime goes';
-          final DateTime reviewDate =
-              state.experiment?.reviewDate ??
-              DateTime.now().add(const Duration(days: 4));
-          final String reviewDateStr = DateFormat(
-            'EEEE d MMMM',
-          ).format(reviewDate);
+    return BlocConsumer<TryingThisWeekCubit, TryingThisWeekState>(
+      listener: (BuildContext context, TryingThisWeekState state) {
+        if (state.finishStatus is Data) {
+          showSnackBar(
+            message: 'Experiment finished early.',
+            type: SnackBarType.SUCCESS,
+          );
+        }
+      },
+      builder: (BuildContext context, TryingThisWeekState state) {
+        final String changeTitle =
+            state.experiment?.changeTitle ??
+            'An earlier, shorter\nafternoon nap';
+        final String observeTarget =
+            state.experiment?.observeTarget ??
+            'Evening mood and how easily\nbedtime goes';
+        final DateTime reviewDate =
+            state.experiment?.reviewDate ??
+            DateTime.now().add(const Duration(days: 4));
+        final String reviewDateStr = DateFormat(
+          'EEEE d MMMM',
+        ).format(reviewDate);
 
-          final int currentDay = state.currentDay;
-          final int totalDays = state.totalDays;
-          final double progress = (currentDay / totalDays).clamp(0.0, 1.0);
+        final int currentDay = state.currentDay;
+        final int totalDays = state.totalDays;
+        final double progress = (currentDay / totalDays).clamp(0.0, 1.0);
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150,
+                top: -150,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "What we're trying this week".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                              height: 1.2,
-                            ),
-                            24.spaceH,
-                            _buildChangeCard(
-                              changeTitle,
-                              currentDay,
-                              totalDays,
-                              progress,
-                            ),
-                            16.spaceH,
-                            _buildObserveCard(observeTarget),
-                            16.spaceH,
-                            _buildReviewDateCard(reviewDateStr),
-                            180.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "What we're trying this week".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                            height: 1.2,
+                          ),
+                          24.spaceH,
+                          _buildChangeCard(
+                            changeTitle,
+                            currentDay,
+                            totalDays,
+                            progress,
+                          ),
+                          16.spaceH,
+                          _buildObserveCard(observeTarget),
+                          16.spaceH,
+                          _buildReviewDateCard(reviewDateStr),
+                          180.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -296,10 +283,7 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.white,
-                  builder: (BuildContext ctx) => BlocProvider<TodayCubit>(
-                    create: (_) => TodayCubit(),
-                    child: const AddNotesUpdateSheet(),
-                  ),
+                  builder: (BuildContext ctx) => const AddNotesUpdateSheet(),
                 );
               },
             ),
@@ -372,9 +356,9 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
                                   textColor: Colors.white,
                                   onTap: () async {
                                     Navigator.pop(ctx);
-                                    await _cubit.finishEarly(
-                                      'Ended early by parent',
-                                    );
+                                    await context
+                                        .read<TryingThisWeekCubit>()
+                                        .finishEarly('Ended early by parent');
                                     if (context.mounted) {
                                       Navigator.pop(context);
                                     }

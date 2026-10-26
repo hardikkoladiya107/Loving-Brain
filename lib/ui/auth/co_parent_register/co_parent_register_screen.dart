@@ -1,4 +1,4 @@
-﻿import 'dart:math';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -49,172 +49,167 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<CoParentRegisterCubit>(
-      create: (_) => CoParentRegisterCubit(),
-      child: BlocConsumer<CoParentRegisterCubit, CoParentRegisterState>(
-        listener: (context, state) {
-          state.apiResultStatus.whenOrNull(
-            loading: () => EasyLoading.show(),
-            data: (data) {
-              EasyLoading.dismiss();
-              // Navigate main screen location to parent profile and overlay Success Screen via GoRouter
-              if (!mounted) return;
-              context.go(RoutePaths.parentProfile);
-              context.push(
-                RoutePaths.successScreen,
-                extra: LocaleKeys.coParentSuccessText.tr(),
-              );
-            },
-            error: (error) {
-              EasyLoading.dismiss();
-              showSnackBar(
-                message: error.toString().replaceAll('Exception: ', ''),
-                type: SnackBarType.ERROR,
-              );
-            },
-          );
-        },
-        builder: (context, state) {
-          // Sync controllers from state
-          if (_passwordController.text != state.password) {
-            _passwordController.value = _passwordController.value.copyWith(
-              text: state.password,
-              selection: TextSelection.collapsed(
-                offset: min(
-                  _passwordController.value.selection.start,
-                  state.password.length,
-                ),
-              ),
+    return BlocConsumer<CoParentRegisterCubit, CoParentRegisterState>(
+      listener: (context, state) {
+        state.apiResultStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (data) {
+            EasyLoading.dismiss();
+            // Navigate main screen location to parent profile and overlay Success Screen via GoRouter
+            if (!mounted) return;
+            context.go(RoutePaths.parentProfile);
+            context.push(
+              RoutePaths.successScreen,
+              extra: LocaleKeys.coParentSuccessText.tr(),
             );
-          }
-          if (_confirmPasswordController.text != state.confirmPassword) {
-            _confirmPasswordController.value = _confirmPasswordController.value
-                .copyWith(
-                  text: state.confirmPassword,
-                  selection: TextSelection.collapsed(
-                    offset: min(
-                      _confirmPasswordController.value.selection.start,
-                      state.confirmPassword.length,
-                    ),
+          },
+          error: (error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
+      builder: (context, state) {
+        // Sync controllers from state
+        if (_passwordController.text != state.password) {
+          _passwordController.value = _passwordController.value.copyWith(
+            text: state.password,
+            selection: TextSelection.collapsed(
+              offset: min(
+                _passwordController.value.selection.start,
+                state.password.length,
+              ),
+            ),
+          );
+        }
+        if (_confirmPasswordController.text != state.confirmPassword) {
+          _confirmPasswordController.value = _confirmPasswordController.value
+              .copyWith(
+                text: state.confirmPassword,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    _confirmPasswordController.value.selection.start,
+                    state.confirmPassword.length,
                   ),
-                );
-          }
+                ),
+              );
+        }
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFAFAFA),
-            extendBodyBehindAppBar: true,
-            // Custom standard transparent AppBar with circular pop button
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              leadingWidth: 70.w,
-              leading: Center(
-                child: GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Container(
-                    width: 40.r,
-                    height: 40.r,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFF0E5FC),
-                        width: 1.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+        return Scaffold(
+          backgroundColor: const Color(0xFFFAFAFA),
+          extendBodyBehindAppBar: true,
+          // Custom standard transparent AppBar with circular pop button
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leadingWidth: 70.w,
+            leading: Center(
+              child: GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  width: 40.r,
+                  height: 40.r,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFF0E5FC),
+                      width: 1.5,
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 14,
-                        color: Colors.black87,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
                       ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 14,
+                      color: Colors.black87,
                     ),
                   ),
                 ),
               ),
             ),
-            body: Stack(
-              children: [
-                // Base background color
-                Positioned.fill(
-                  child: Container(color: const Color(0xFFFAFAFA)),
-                ),
-                // Premium Ambient Glow Background
-                Positioned(
-                  top: -100.h,
-                  left: -100.w,
-                  child: Container(
-                    width: 320.w,
-                    height: 320.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFE5D1FA).withValues(alpha: 0.4),
-                    ),
+          ),
+          body: Stack(
+            children: [
+              // Base background color
+              Positioned.fill(child: Container(color: const Color(0xFFFAFAFA))),
+              // Premium Ambient Glow Background
+              Positioned(
+                top: -100.h,
+                left: -100.w,
+                child: Container(
+                  width: 320.w,
+                  height: 320.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFE5D1FA).withValues(alpha: 0.4),
                   ),
                 ),
-                Positioned(
-                  top: 220.h,
-                  right: -120.w,
-                  child: Container(
-                    width: 340.w,
-                    height: 340.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFFFD4E5).withValues(alpha: 0.35),
-                    ),
+              ),
+              Positioned(
+                top: 220.h,
+                right: -120.w,
+                child: Container(
+                  width: 340.w,
+                  height: 340.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFD4E5).withValues(alpha: 0.35),
                   ),
                 ),
-                Positioned(
-                  bottom: -120.h,
-                  left: -60.w,
-                  child: Container(
-                    width: 280.w,
-                    height: 280.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFFD6E4FF).withValues(alpha: 0.35),
-                    ),
+              ),
+              Positioned(
+                bottom: -120.h,
+                left: -60.w,
+                child: Container(
+                  width: 280.w,
+                  height: 280.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFD6E4FF).withValues(alpha: 0.35),
                   ),
                 ),
-                Positioned.fill(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 70, sigmaY: 70),
-                    child: Container(color: Colors.transparent),
+              ),
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 70, sigmaY: 70),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+              // Main content
+              Positioned.fill(
+                child: SafeArea(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        16.spaceH,
+                        _header(),
+                        20.spaceH,
+                        _heroCard(),
+                        20.spaceH,
+                        _formCard(context, state),
+                        24.spaceH,
+                      ],
+                    ).appPadding(left: 20, right: 20),
                   ),
                 ),
-                // Main content
-                Positioned.fill(
-                  child: SafeArea(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          16.spaceH,
-                          _header(),
-                          20.spaceH,
-                          _heroCard(),
-                          20.spaceH,
-                          _formCard(context, state),
-                          24.spaceH,
-                        ],
-                      ).appPadding(left: 20, right: 20),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

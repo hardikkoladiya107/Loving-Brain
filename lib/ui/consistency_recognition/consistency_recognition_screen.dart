@@ -21,126 +21,119 @@ class ConsistencyRecognitionScreen extends StatefulWidget {
 
 class _ConsistencyRecognitionScreenState
     extends State<ConsistencyRecognitionScreen> {
-  late final ConsistencyRecognitionCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = ConsistencyRecognitionCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init(initialDays: widget.initialDaysCheckedIn);
+      context.read<ConsistencyRecognitionCubit>().init(
+        initialDays: widget.initialDaysCheckedIn,
+      );
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<ConsistencyRecognitionCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<ConsistencyRecognitionCubit, ConsistencyRecognitionState>(
-        listener: (BuildContext context, ConsistencyRecognitionState state) {},
-        builder: (BuildContext context, ConsistencyRecognitionState state) {
-          final int days = state.daysCheckedIn;
-          final String headline = days == 5
-              ? "You've shown up five\ndays this week"
-              : "You've shown up $days\ndays this week";
+    return BlocConsumer<
+      ConsistencyRecognitionCubit,
+      ConsistencyRecognitionState
+    >(
+      listener: (BuildContext context, ConsistencyRecognitionState state) {},
+      builder: (BuildContext context, ConsistencyRecognitionState state) {
+        final int days = state.daysCheckedIn;
+        final String headline = days == 5
+            ? "You've shown up five\ndays this week"
+            : "You've shown up $days\ndays this week";
 
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top glow behind image
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: Alignment.topCenter,
-                        radius: 1.0,
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top glow behind image
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: Container(
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.topCenter,
+                      radius: 1.0,
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            40.spaceH,
-                            Center(
-                              child: Image.asset(
-                                Assets
-                                    .v2
-                                    .images
-                                    .imgJourneyConsistencyRecognition
-                                    .path,
-                                width: 250.w,
-                                height: 250.w,
-                                fit: BoxFit.contain,
-                              ),
+              ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          40.spaceH,
+                          Center(
+                            child: Image.asset(
+                              Assets
+                                  .v2
+                                  .images
+                                  .imgJourneyConsistencyRecognition
+                                  .path,
+                              width: 250.w,
+                              height: 250.w,
+                              fit: BoxFit.contain,
                             ),
-                            24.spaceH,
-                            headline.appText(
-                              fontSize: 28.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.center,
-                              height: 1.2,
-                            ),
-                            16.spaceH,
-                            'No streak to lose we just wanted to notice the effort.'
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor,
-                                  textAlign: TextAlign.center,
-                                ),
-                            32.spaceH,
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24.w,
-                                vertical: 20.h,
+                          ),
+                          24.spaceH,
+                          headline.appText(
+                            fontSize: 28.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.center,
+                            height: 1.2,
+                          ),
+                          16.spaceH,
+                          'No streak to lose we just wanted to notice the effort.'
+                              .appText(
+                                fontSize: 14.sp,
+                                color: greyColor,
+                                textAlign: TextAlign.center,
                               ),
-                              decoration: BoxDecoration(
-                                color: softPeachOrange,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child:
-                                  "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too."
-                                      .appText(
-                                        fontSize: 14.sp,
-                                        color: greyColor9,
-                                        textAlign: TextAlign.start,
-                                      ),
+                          32.spaceH,
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24.w,
+                              vertical: 20.h,
                             ),
-                            120.spaceH,
-                          ],
-                        ),
+                            decoration: BoxDecoration(
+                              color: softPeachOrange,
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child:
+                                "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too."
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor9,
+                                      textAlign: TextAlign.start,
+                                    ),
+                          ),
+                          120.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context),
+            ],
+          ),
+        );
+      },
     );
   }
 

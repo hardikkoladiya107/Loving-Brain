@@ -21,23 +21,6 @@ class BehaviourPatternScreen extends StatefulWidget {
 
 class _BehaviourPatternScreenState extends State<BehaviourPatternScreen> {
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<BehaviourPatternCubit>(
-      create: (BuildContext context) => BehaviourPatternCubit()..init(),
-      child: const _BehaviourPatternView(),
-    );
-  }
-}
-
-class _BehaviourPatternView extends StatefulWidget {
-  const _BehaviourPatternView();
-
-  @override
-  State<_BehaviourPatternView> createState() => _BehaviourPatternViewState();
-}
-
-class _BehaviourPatternViewState extends State<_BehaviourPatternView> {
-  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {

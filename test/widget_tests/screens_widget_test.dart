@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:loving_brain/provider.dart';
 import 'package:loving_brain/ui/family_snapsshot/family_snapshot_screen.dart';
 import 'package:loving_brain/ui/sleep_low_confidence/sleep_low_confidence_screen.dart';
 import 'package:loving_brain/ui/sleep_no_data/sleep_no_data_screen.dart';
 
 Widget createScreenTestApp(Widget child) {
-  return ScreenUtilInit(
-    designSize: const Size(389, 780),
-    minTextAdapt: true,
-    splitScreenMode: true,
-    builder: (BuildContext context, Widget? _) {
-      return MaterialApp(home: child);
-    },
+  return MultiBlocProvider(
+    providers: blocProvider,
+    child: ScreenUtilInit(
+      designSize: const Size(389, 780),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (BuildContext context, Widget? _) {
+        return MaterialApp(home: child);
+      },
+    ),
   );
 }
 

@@ -30,21 +30,12 @@ class InviteAcceptedScreen extends StatefulWidget {
 }
 
 class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
-  late final InviteAcceptedCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = InviteAcceptedCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init();
+      context.read<InviteAcceptedCubit>().init();
     });
-  }
-
-  @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
   }
 
   @override
@@ -52,156 +43,152 @@ class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
     final String name = widget.caregiverName ?? "Grandma";
     final String role = widget.caregiverRole ?? "Grandparent";
 
-    return BlocProvider<InviteAcceptedCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<InviteAcceptedCubit, InviteAcceptedState>(
-        bloc: _cubit,
-        listener: (BuildContext context, InviteAcceptedState state) {},
-        builder: (BuildContext context, InviteAcceptedState state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocConsumer<InviteAcceptedCubit, InviteAcceptedState>(
+      listener: (BuildContext context, InviteAcceptedState state) {},
+      builder: (BuildContext context, InviteAcceptedState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "Invite status".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "Invite status".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(20.r),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            24.spaceH,
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.all(20.r),
-                              decoration: BoxDecoration(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                StatusPill.accepted(),
+                                16.spaceH,
+                                "$name has joined".appText(
+                                  fontSize: 20.sp,
+                                  color: greyColor9,
+                                  fraunces: true,
+                                ),
+                                8.spaceH,
+                                "They can now see what you've shared sleep updates and today's plan."
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor,
+                                      textAlign: TextAlign.start,
+                                    ),
+                              ],
+                            ),
+                          ),
+                          12.spaceH,
+                          PersonCard(
+                            avatar: Container(
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFDC21A),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.face,
+                                size: 30.sp,
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  StatusPill.accepted(),
-                                  16.spaceH,
-                                  "$name has joined".appText(
-                                    fontSize: 20.sp,
-                                    color: greyColor9,
-                                    fraunces: true,
-                                  ),
-                                  8.spaceH,
-                                  "They can now see what you've shared sleep updates and today's plan."
-                                      .appText(
-                                        fontSize: 14.sp,
-                                        color: greyColor,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                ],
                               ),
                             ),
-                            12.spaceH,
-                            PersonCard(
-                              avatar: Container(
-                                decoration: const BoxDecoration(
-                                  color: Color(0xFFFDC21A),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.face,
-                                  size: 30.sp,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              name: name,
-                              subtitle: "$role · joined today",
-                              statusPill: StatusPill.linked(),
-                              showChevron: false,
-                            ),
-                            12.spaceH,
-                            InfoBox.white(
-                              title: "Worth checking",
-                              body:
-                                  "Have a look at what they can see. You can adjust it now or any time later.",
-                            ),
-                            180.spaceH,
-                          ],
-                        ),
+                            name: name,
+                            subtitle: "$role · joined today",
+                            statusPill: StatusPill.linked(),
+                            showChevron: false,
+                          ),
+                          12.spaceH,
+                          InfoBox.white(
+                            title: "Worth checking",
+                            body:
+                                "Have a look at what they can see. You can adjust it now or any time later.",
+                          ),
+                          180.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context, name, role),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, name, role),
+            ],
+          ),
+        );
+      },
     );
   }
 

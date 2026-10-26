@@ -56,128 +56,118 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
     },
   ];
 
-  late final ChooseSupportAreaCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = ChooseSupportAreaCubit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit.init(initialArea: widget.initialArea);
+      context.read<ChooseSupportAreaCubit>().init(
+        initialArea: widget.initialArea,
+      );
     });
   }
 
   @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocProvider<ChooseSupportAreaCubit>.value(
-      value: _cubit,
-      child: BlocConsumer<ChooseSupportAreaCubit, ChooseSupportAreaState>(
-        listener: (BuildContext context, ChooseSupportAreaState state) {},
-        builder: (BuildContext context, ChooseSupportAreaState state) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+    return BlocConsumer<ChooseSupportAreaCubit, ChooseSupportAreaState>(
+      listener: (BuildContext context, ChooseSupportAreaState state) {},
+      builder: (BuildContext context, ChooseSupportAreaState state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: EdgeInsets.all(8.r),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(8.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "What kind of support?".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            "Pick the one closest to what you need right now."
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                ),
-                            24.spaceH,
-                            ...List.generate(_options.length, (int index) {
-                              final Map<String, dynamic> item = _options[index];
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: 12.h),
-                                child: _buildOptionCard(
-                                  context: context,
-                                  index: index,
-                                  iconPath: item["icon"] as String,
-                                  bgColor: item["bg"] as Color,
-                                  title: item["title"] as String,
-                                  subtitle: item["subtitle"] as String,
-                                  isSelected: index == state.selectedIndex,
-                                ),
-                              );
-                            }),
-                            140.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "What kind of support?".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          "Pick the one closest to what you need right now."
+                              .appText(
+                                fontSize: 14.sp,
+                                color: greyColor9,
+                                textAlign: TextAlign.start,
+                              ),
+                          24.spaceH,
+                          ...List.generate(_options.length, (int index) {
+                            final Map<String, dynamic> item = _options[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: _buildOptionCard(
+                                context: context,
+                                index: index,
+                                iconPath: item["icon"] as String,
+                                bgColor: item["bg"] as Color,
+                                title: item["title"] as String,
+                                subtitle: item["subtitle"] as String,
+                                isSelected: index == state.selectedIndex,
+                              ),
+                            );
+                          }),
+                          140.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context, state),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+              _buildBottomActions(context, state),
+            ],
+          ),
+        );
+      },
     );
   }
 
