@@ -12,6 +12,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
@@ -124,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  void _onBackTap(OnboardingState state) {
+  Future<void> _onBackTap(OnboardingState state) async {
     if (state.currentPage > 0) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 320),
@@ -132,6 +133,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
     } else if (context.canPop()) {
       context.pop();
+    } else {
+      await AuthRepo.instance.logout();
+      if (!mounted) return;
+      context.go(RoutePaths.welcome);
     }
   }
 
@@ -1504,72 +1509,81 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         );
       },
       builder: (BuildContext context, OnboardingState state) {
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.v2.images.imgBg.path),
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            if (didPop) {
+              return;
+            }
+            _onBackTap(state);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(Assets.v2.images.imgBg.path),
+              ),
             ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // Top navigation row with back button
-                  BaseButton(
-                    child: Assets.v2.icons.icBack.svg(),
-                    onTap: () => _onBackTap(state),
-                  ),
-                  10.spaceH,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Top navigation row with back button
+                    BaseButton(
+                      child: Assets.v2.icons.icBack.svg(),
+                      onTap: () => _onBackTap(state),
+                    ),
+                    10.spaceH,
 
-                  // 6-segment linear progress indicator
-                  OnboardingPageIndicator(
-                    totalPages: _totalPages,
-                    currentPage: state.currentPage,
-                    controller: _pageController,
-                    activeColor: _accentPurple,
-                    onSegmentTap: (int index) {
-                      _pageController.animateToPage(
-                        index,
-                        duration: const Duration(milliseconds: 320),
-                        curve: Curves.easeOut,
-                      );
-                    },
-                  ).appPadding(left: 20.r, right: 20.r),
-                  20.spaceH,
-
-                  Expanded(
-                    child: PageView(
+                    // 6-segment linear progress indicator
+                    OnboardingPageIndicator(
+                      totalPages: _totalPages,
+                      currentPage: state.currentPage,
                       controller: _pageController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      onPageChanged: (int index) {
-                        context.read<OnboardingCubit>().onPageChanged(index);
+                      activeColor: _accentPurple,
+                      onSegmentTap: (int index) {
+                        _pageController.animateToPage(
+                          index,
+                          duration: const Duration(milliseconds: 320),
+                          curve: Curves.easeOut,
+                        );
                       },
-                      children: <Widget>[
-                        _buildPage1(state),
-                        _buildPage2(state),
-                        _buildPage3(state),
-                        _buildPage4(state),
-                        _buildPage5(state),
-                        _buildPage6(state),
-                      ],
-                    ),
-                  ),
+                    ).appPadding(left: 20.r, right: 20.r),
+                    20.spaceH,
 
-                  // Bottom Action Button: Continue
-                  16.spaceH,
-                  AppButton(
-                    onTap: () => _onNextTap(state),
-                    title: "Continue",
-                    isLoading: state.completeStatus.maybeWhen(
-                      loading: () => true,
-                      orElse: () => false,
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onPageChanged: (int index) {
+                          context.read<OnboardingCubit>().onPageChanged(index);
+                        },
+                        children: <Widget>[
+                          _buildPage1(state),
+                          _buildPage2(state),
+                          _buildPage3(state),
+                          _buildPage4(state),
+                          _buildPage5(state),
+                          _buildPage6(state),
+                        ],
+                      ),
                     ),
-                  ),
-                  32.spaceH,
-                ],
+
+                    // Bottom Action Button: Continue
+                    16.spaceH,
+                    AppButton(
+                      onTap: () => _onNextTap(state),
+                      title: "Continue",
+                      isLoading: state.completeStatus.maybeWhen(
+                        loading: () => true,
+                        orElse: () => false,
+                      ),
+                    ),
+                    32.spaceH,
+                  ],
+                ),
               ),
             ),
           ),
