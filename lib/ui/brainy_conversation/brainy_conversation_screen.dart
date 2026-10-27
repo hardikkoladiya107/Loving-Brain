@@ -450,12 +450,19 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     final bool isPlayingThis =
         state.playingMessageId == msgKey && state.isAudioPlaying;
 
+    final bool isUser = msg.type == MessageType.user;
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(isUser ? 24.r : 4.r),
+          topRight: Radius.circular(isUser ? 4.r : 24.r),
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -694,7 +701,12 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.r),
+          topRight: Radius.circular(24.r),
+          bottomLeft: Radius.circular(24.r),
+          bottomRight: Radius.circular(24.r),
+        ),
         border: Border.all(color: const Color(0xFFF3ECE7), width: 1),
         boxShadow: <BoxShadow>[
           BoxShadow(
