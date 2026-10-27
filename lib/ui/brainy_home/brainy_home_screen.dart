@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -23,6 +24,7 @@ class BrainyHomeScreen extends StatefulWidget {
 
 class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
   final TextEditingController _textController = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -54,6 +56,212 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
         builder: (_) =>
             BrainyConversationScreen(initialChat: trimmed, topic: topic),
       ),
+    );
+  }
+
+  Future<void> _showImageSourcePicker(
+    BuildContext context,
+    String topic,
+  ) async {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+          ),
+          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: greyColor4,
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                ),
+              ),
+              16.spaceH,
+              "Attach Photos".appText(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: darkBlue,
+                fraunces: true,
+                textAlign: TextAlign.start,
+              ),
+              4.spaceH,
+              "Take a new photo or choose from your gallery".appText(
+                fontSize: 13.sp,
+                color: greyColor6,
+                textAlign: TextAlign.start,
+              ),
+              20.spaceH,
+              InkWell(
+                borderRadius: BorderRadius.circular(16.r),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  try {
+                    final XFile? picked = await _imagePicker.pickImage(
+                      source: ImageSource.camera,
+                      imageQuality: 80,
+                    );
+                    if (picked != null && context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BrainyConversationScreen(
+                            initialImagePaths: <String>[picked.path],
+                            topic: topic,
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (_) {}
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF9FD),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: const Color(0xFFECEBFA)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFEEEBFF),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.camera_alt_rounded,
+                          color: secondaryColor,
+                          size: 22.sp,
+                        ),
+                      ),
+                      14.spaceW,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            "Camera".appText(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: darkBlue,
+                              textAlign: TextAlign.start,
+                            ),
+                            2.spaceH,
+                            "Take a new photo using your camera".appText(
+                              fontSize: 12.sp,
+                              color: greyColor6,
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: greyColor4,
+                        size: 22.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              12.spaceH,
+              InkWell(
+                borderRadius: BorderRadius.circular(16.r),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  try {
+                    final List<XFile> pickedList = await _imagePicker
+                        .pickMultiImage(imageQuality: 80);
+                    if (pickedList.isNotEmpty && context.mounted) {
+                      final List<String> paths = pickedList
+                          .map((XFile e) => e.path)
+                          .toList();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BrainyConversationScreen(
+                            initialImagePaths: paths,
+                            topic: topic,
+                          ),
+                        ),
+                      );
+                    }
+                  } catch (_) {}
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF9FD),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: const Color(0xFFECEBFA)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFF2EE),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.photo_library_rounded,
+                          color: primaryColor,
+                          size: 22.sp,
+                        ),
+                      ),
+                      14.spaceW,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            "Gallery".appText(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: darkBlue,
+                              textAlign: TextAlign.start,
+                            ),
+                            2.spaceH,
+                            "Select one or multiple photos from gallery"
+                                .appText(
+                                  fontSize: 12.sp,
+                                  color: greyColor6,
+                                  textAlign: TextAlign.start,
+                                ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: greyColor4,
+                        size: 22.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -358,12 +566,82 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                   tfType: TFTYPE.FILLED,
                   filled: true,
                   fillColor: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(27.r),
+                  height: 54.h,
+                  maxLines: 4,
+                  minLines: 1,
+                  textAlignVertical: TextAlignVertical.center,
+                  rowCrossAxisAlignment: CrossAxisAlignment.center,
                   contentPadding: EdgeInsets.only(
                     left: 20.w,
-                    right: 20.w,
-                    top: 0.h,
-                    bottom: 6.h,
+                    right: 6.w,
+                    top: 0,
+                    bottom: 0,
+                  ),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(
+                          minWidth: 32.w,
+                          minHeight: 32.w,
+                        ),
+                        onPressed: () => _showImageSourcePicker(
+                          context,
+                          state.selectedTopic,
+                        ),
+                        icon: Icon(
+                          Icons.image_outlined,
+                          color: greyColor4,
+                          size: 20.sp,
+                        ),
+                      ),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(
+                          minWidth: 32.w,
+                          minHeight: 32.w,
+                        ),
+                        onPressed: () async {
+                          final bool granted =
+                              await PermissionHelper.ensureMicrophonePermission(
+                                context,
+                              );
+                          if (!granted || !context.mounted) return;
+
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (sheetContext) => BrainyVoiceSheet(
+                              topic: state.selectedTopic,
+                              onSendAudio: (audioFile, text) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BrainyConversationScreen(
+                                      initialAudioFile: audioFile,
+                                      initialChat: text,
+                                      topic: state.selectedTopic,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.mic_none_rounded,
+                          color: greyColor4,
+                          size: 20.sp,
+                        ),
+                      ),
+                      6.spaceW,
+                    ],
                   ),
                   onChanged: (val) {
                     context.read<BrainyHomeCubit>().updateChatText(val);
@@ -384,38 +662,20 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(30),
-                    onTap: () async {
+                    borderRadius: BorderRadius.circular(27.r),
+                    onTap: () {
                       if (hasText) {
                         _openConversation(
                           context,
                           initialChat: state.chatText,
                           topic: state.selectedTopic,
                         );
-                      } else {
-                        final bool granted =
-                            await PermissionHelper.ensureMicrophonePermission(
-                              context,
-                            );
-                        if (!granted || !context.mounted) return;
-
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          backgroundColor: Colors.transparent,
-                          builder: (sheetContext) =>
-                              BrainyVoiceSheet(topic: state.selectedTopic),
-                        );
                       }
                     },
                     child: SizedBox(
-                      width: 56.w,
-                      height: 56.w,
-                      child: Icon(
-                        hasText ? Icons.send : Icons.mic,
-                        color: Colors.white,
-                        size: hasText ? 24.sp : 28.sp,
-                      ),
+                      width: 54.h,
+                      height: 54.h,
+                      child: Icon(Icons.send, color: Colors.white, size: 22.sp),
                     ),
                   ),
                 ),

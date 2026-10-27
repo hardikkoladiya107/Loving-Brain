@@ -27,12 +27,14 @@ class BrainyConversationScreen extends StatefulWidget {
     this.conversationId,
     this.initialChat,
     this.initialAudioFile,
+    this.initialImagePaths,
     this.topic,
   });
 
   final String? conversationId;
   final String? initialChat;
   final File? initialAudioFile;
+  final List<String>? initialImagePaths;
   final String? topic;
 
   @override
@@ -55,6 +57,12 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
         initialAudioFile: widget.initialAudioFile,
         topic: widget.topic,
       );
+      if (widget.initialImagePaths != null &&
+          widget.initialImagePaths!.isNotEmpty) {
+        context.read<BrainyConversationCubit>().addSelectedImages(
+          widget.initialImagePaths!,
+        );
+      }
     });
   }
 
@@ -260,6 +268,96 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     return '${minutes.toString().padLeft(1, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
+  Future<void> _confirmDeleteVoiceNote() async {
+    final BrainyConversationCubit cubit = context
+        .read<BrainyConversationCubit>();
+    if (cubit.state.isAttachedAudioPlaying) {
+      await cubit.togglePlayAttachedAudio();
+    }
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56.w,
+                  height: 56.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: const Color(0xFFD84315),
+                    size: 28.sp,
+                  ),
+                ),
+                18.spaceH,
+                "Delete voice note?".appText(
+                  fontSize: 22.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                "Are you sure you want to delete this voice note? You will be able to record a new one."
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      height: 1.4,
+                      textAlign: TextAlign.center,
+                    ),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Delete',
+                        backgroundColor: const Color(0xFFE53935),
+                        borderColor: const Color(0xFFE53935),
+                        textColor: Colors.white,
+                        onTap: () async {
+                          Navigator.pop(dialogContext);
+                          await cubit.removeAttachedAudio();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BrainyConversationCubit, BrainyConversationState>(
@@ -383,52 +481,18 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                     // Multiple images preview thumbnails
                     if (state.selectedImagePaths.isNotEmpty)
                       Container(
-                        height: 76.h,
+                        height: 72.h,
                         margin: EdgeInsets.only(
                           left: 20.w,
                           right: 20.w,
-                          bottom: 10.h,
+                          bottom: 4.h,
                         ),
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
-                          itemCount: state.selectedImagePaths.length + 1,
+                          itemCount: state.selectedImagePaths.length,
                           separatorBuilder: (BuildContext context, int index) =>
                               10.spaceW,
                           itemBuilder: (BuildContext _, int imgIdx) {
-                            if (imgIdx == state.selectedImagePaths.length) {
-                              return GestureDetector(
-                                onTap: () => _showImageSourcePicker(context),
-                                child: Container(
-                                  width: 76.h,
-                                  height: 76.h,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16.r),
-                                    border: Border.all(
-                                      color: const Color(0xFFE5E7EB),
-                                      width: 1.5.w,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.add_photo_alternate_outlined,
-                                        color: secondaryColor,
-                                        size: 22.sp,
-                                      ),
-                                      4.spaceH,
-                                      "Add".appText(
-                                        fontSize: 11.sp,
-                                        color: secondaryColor,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-
                             final String imagePath =
                                 state.selectedImagePaths[imgIdx];
                             return Stack(
@@ -437,8 +501,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                   borderRadius: BorderRadius.circular(16.r),
                                   child: Image.file(
                                     File(imagePath),
-                                    height: 76.h,
-                                    width: 76.h,
+                                    height: 72.h,
+                                    width: 72.h,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -476,7 +540,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                         margin: EdgeInsets.only(
                           left: 20.w,
                           right: 20.w,
-                          bottom: 10.h,
+                          bottom: 4.h,
                         ),
                         padding: EdgeInsets.symmetric(
                           horizontal: 14.w,
@@ -590,18 +654,18 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                 color: redColor,
                                 size: 20.sp,
                               ),
-                              onPressed: () => context
-                                  .read<BrainyConversationCubit>()
-                                  .removeAttachedAudio(),
+                              onPressed: _confirmDeleteVoiceNote,
                             ),
                           ],
                         ),
                       ),
 
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 16.h,
+                      padding: EdgeInsets.only(
+                        left: 20.w,
+                        right: 20.w,
+                        top: 4.h,
+                        bottom: 16.h,
                       ),
                       child: Row(
                         children: [
@@ -612,23 +676,32 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                               tfType: TFTYPE.FILLED,
                               filled: true,
                               fillColor: Colors.white,
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(27.r),
+                              height: 54.h,
                               maxLines: 4,
                               minLines: 1,
+                              textAlignVertical: TextAlignVertical.center,
+                              rowCrossAxisAlignment: CrossAxisAlignment.center,
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(500),
                               ],
                               contentPadding: EdgeInsets.only(
                                 left: 20.w,
-                                right: 8.w,
-                                top: 8.h,
-                                bottom: 8.h,
+                                right: 6.w,
+                                top: 0,
+                                bottom: 0,
                               ),
                               suffixIcon: Row(
                                 mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   IconButton(
                                     visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(
+                                      minWidth: 32.w,
+                                      minHeight: 32.w,
+                                    ),
                                     onPressed: () =>
                                         _showImageSourcePicker(context),
                                     icon: Icon(
@@ -639,6 +712,11 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                   ),
                                   IconButton(
                                     visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(
+                                      minWidth: 32.w,
+                                      minHeight: 32.w,
+                                    ),
                                     onPressed: () async {
                                       final bool granted =
                                           await PermissionHelper.ensureMicrophonePermission(
@@ -676,7 +754,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                       size: 20.sp,
                                     ),
                                   ),
-                                  4.spaceW,
+                                  6.spaceW,
                                 ],
                               ),
                               onSubmitted: (val) {
@@ -697,7 +775,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                 shape: BoxShape.circle,
                               ),
                               child: InkWell(
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(27.r),
                                 onTap: () {
                                   context
                                       .read<BrainyConversationCubit>()
@@ -706,12 +784,12 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                   _scrollToBottom();
                                 },
                                 child: SizedBox(
-                                  width: 56.w,
-                                  height: 56.w,
+                                  width: 54.h,
+                                  height: 54.h,
                                   child: Icon(
                                     Icons.send,
                                     color: Colors.white,
-                                    size: 24.sp,
+                                    size: 22.sp,
                                   ),
                                 ),
                               ),

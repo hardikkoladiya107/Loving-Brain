@@ -41,6 +41,8 @@ class AppTextField extends StatefulWidget {
     this.showError = true,
     this.onFieldTap,
     this.onSubmitted,
+    this.textAlignVertical,
+    this.rowCrossAxisAlignment,
   });
 
   final String? title;
@@ -76,6 +78,8 @@ class AppTextField extends StatefulWidget {
   final BorderRadius? borderRadius;
   final FocusNode? focusNode;
   final BoxBorder? border;
+  final TextAlignVertical? textAlignVertical;
+  final CrossAxisAlignment? rowCrossAxisAlignment;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -202,9 +206,11 @@ class _AppTextFieldState extends State<AppTextField> {
             padding: effectivePadding,
             decoration: containerDecoration,
             child: Row(
-              crossAxisAlignment: isMultiline
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
+              crossAxisAlignment:
+                  widget.rowCrossAxisAlignment ??
+                  ((widget.minLines != null && widget.minLines! > 1)
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center),
               children: <Widget>[
                 if (widget.prefixIcon != null) ...<Widget>[
                   Padding(
@@ -248,9 +254,11 @@ class _AppTextFieldState extends State<AppTextField> {
                         ),
                         child: TextField(
                           focusNode: _effectiveFocusNode,
-                          textAlignVertical: isMultiline
-                              ? TextAlignVertical.top
-                              : TextAlignVertical.center,
+                          textAlignVertical:
+                              widget.textAlignVertical ??
+                              ((widget.minLines != null && widget.minLines! > 1)
+                                  ? TextAlignVertical.top
+                                  : TextAlignVertical.center),
                           readOnly: widget.readOnly ?? false,
                           enabled: !(widget.readOnly ?? false),
                           keyboardType: widget.keyboardType,
