@@ -310,6 +310,94 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
     } catch (_) {}
   }
 
+  Future<void> _confirmDeleteVoiceNote() async {
+    if (_isPlaying) {
+      await _audioPlayer.pause();
+    }
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56.w,
+                  height: 56.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: Color(0xFFD84315),
+                    size: 28.sp,
+                  ),
+                ),
+                18.spaceH,
+                "Delete voice note?".appText(
+                  fontSize: 22.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                "Are you sure you want to delete this voice note? You will be able to record a new one."
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      height: 1.4,
+                      textAlign: TextAlign.center,
+                    ),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Delete',
+                        backgroundColor: const Color(0xFFE53935),
+                        borderColor: const Color(0xFFE53935),
+                        textColor: Colors.white,
+                        onTap: () async {
+                          Navigator.pop(dialogContext);
+                          await _deleteRecording();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _deleteRecording() async {
     try {
       await _audioPlayer.stop();
@@ -498,7 +586,7 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
               ),
               6.spaceW,
               GestureDetector(
-                onTap: _deleteRecording,
+                onTap: _confirmDeleteVoiceNote,
                 behavior: HitTestBehavior.opaque,
                 child: Container(
                   padding: EdgeInsets.all(8.w),
