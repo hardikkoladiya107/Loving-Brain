@@ -566,6 +566,11 @@ void main() {
         await tester.pumpWidget(buildScreen(EdgeInsets.zero));
         await tester.pump();
 
+        // Verify photo and microphone action icons are visible on initial screen
+        expect(find.byIcon(Icons.image_outlined), findsOneWidget);
+        expect(find.byIcon(Icons.mic_none_rounded), findsOneWidget);
+        expect(find.byIcon(Icons.send), findsOneWidget);
+
         final spacerFinder = find.byWidgetPredicate(
           (Widget w) =>
               w is SizedBox &&
