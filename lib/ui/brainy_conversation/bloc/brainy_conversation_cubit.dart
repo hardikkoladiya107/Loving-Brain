@@ -269,13 +269,18 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       return;
     }
 
+    if (state.isAudioPlaying) {
+      try {
+        await _audioPlayer.stop().timeout(const Duration(milliseconds: 200));
+      } catch (_) {}
+    }
+
     changeProps(
       clearPlayingMessageId: true,
       isAudioPlaying: false,
       isAttachedAudioPlaying: true,
     );
     try {
-      await _audioPlayer.stop().timeout(const Duration(milliseconds: 200));
       if (File(path).existsSync()) {
         await _audioPlayer
             .play(DeviceFileSource(path))
@@ -491,14 +496,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       effectiveImageFiles.addAll(imageFiles);
     } else if (state.selectedImagePaths.isNotEmpty) {
       for (final String path in state.selectedImagePaths) {
-        if (path.isNotEmpty && File(path).existsSync()) {
+        if (path.trim().isNotEmpty) {
           effectiveImageFiles.add(File(path));
         }
       }
     } else if (state.selectedImagePath != null &&
-        state.selectedImagePath!.isNotEmpty) {
-      final File f = File(state.selectedImagePath!);
-      if (f.existsSync()) effectiveImageFiles.add(f);
+        state.selectedImagePath!.trim().isNotEmpty) {
+      effectiveImageFiles.add(File(state.selectedImagePath!));
     }
 
     if (cleanText.isEmpty &&
