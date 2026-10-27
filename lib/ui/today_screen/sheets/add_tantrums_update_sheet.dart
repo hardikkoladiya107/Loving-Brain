@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_choice_chip.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
@@ -208,31 +209,18 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 12.spaceH,
                 Wrap(
                   spacing: 8.w,
-                  runSpacing: 8.h,
+                  runSpacing: 10.h,
                   children: List.generate(triggers.length, (int index) {
                     final String trigger = triggers[index];
                     final bool isSelected = state.selectedTantrumTriggers
                         .contains(trigger);
-                    return GestureDetector(
+                    return AppChoiceChip(
+                      label: trigger,
+                      isSelected: isSelected,
+                      isError: isTriggersError && !isSelected,
                       onTap: () => context
                           .read<TodayCubit>()
                           .toggleTantrumTrigger(trigger),
-                      child: Chip(
-                        label: trigger.appText(
-                          color: isSelected ? secondaryColor : Colors.black,
-                        ),
-                        backgroundColor: isSelected
-                            ? indigoLight
-                            : Colors.white,
-                        side: BorderSide(
-                          color: isErrorColor(isSelected, isTriggersError)
-                              ? Colors.red
-                              : (isSelected ? secondaryColor : greyColor12),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.r),
-                        ),
-                      ),
                     );
                   }),
                 ),

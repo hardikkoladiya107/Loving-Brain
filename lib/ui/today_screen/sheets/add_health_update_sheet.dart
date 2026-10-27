@@ -11,6 +11,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
 import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_choice_chip.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
@@ -112,31 +113,18 @@ class AddHealthUpdateSheet extends StatelessWidget {
                 24.spaceH,
                 Wrap(
                   spacing: 8.w,
-                  runSpacing: 8.h,
+                  runSpacing: 10.h,
                   children: List.generate(issues.length, (int index) {
                     final String issue = issues[index];
                     final bool isSelected = state.selectedHealthIssues.contains(
                       issue,
                     );
-                    return GestureDetector(
+                    return AppChoiceChip(
+                      label: issue,
+                      isSelected: isSelected,
+                      isError: isError && !isSelected,
                       onTap: () =>
                           context.read<TodayCubit>().toggleHealthIssue(issue),
-                      child: Chip(
-                        label: issue.appText(
-                          color: isSelected ? secondaryColor : Colors.black,
-                        ),
-                        backgroundColor: isSelected
-                            ? indigoLight
-                            : Colors.white,
-                        side: BorderSide(
-                          color: (isError && !isSelected)
-                              ? Colors.red
-                              : (isSelected ? secondaryColor : greyColor12),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.r),
-                        ),
-                      ),
                     );
                   }),
                 ),
