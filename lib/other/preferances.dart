@@ -146,6 +146,13 @@ class SharedPreference {
     return await _preferences?.remove(user) ?? false;
   }
 
+  Future<bool> clearAll() async {
+    if (_preferences == null) {
+      return false;
+    }
+    return await _preferences!.clear();
+  }
+
   static const String notificationPreferencesKey =
       "notification_preferences_v2";
 

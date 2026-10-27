@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../generated/locale_keys.g.dart';
@@ -276,7 +277,10 @@ class AuthRepo {
         await FirebaseAuth.instance.signOut();
       } catch (_) {}
 
-      await preferences.clearUser();
+      try {
+        await OfflineSyncRepo.instance.clearQueue();
+      } catch (_) {}
+      await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
       return const ApiResultStatus.data(data: "");
     } on Exception catch (e) {
@@ -286,7 +290,10 @@ class AuthRepo {
       try {
         await FirebaseAuth.instance.signOut();
       } catch (_) {}
-      await preferences.clearUser();
+      try {
+        await OfflineSyncRepo.instance.clearQueue();
+      } catch (_) {}
+      await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
       return ApiResultStatus.error(error: e);
     }
@@ -301,37 +308,105 @@ class AuthRepo {
       uid,
     );
 
+    // 1. Delete user subcollections
     try {
       await _deleteUserSubcollections(userRef);
     } catch (e) {
       debugPrint('Error deleting user subcollections: $e');
     }
 
-    final List<DocumentReference<Object?>>? childRefs = userModel?.children;
-    if (childRefs != null && childRefs.isNotEmpty) {
-      for (final DocumentReference<Object?> ref in childRefs) {
-        try {
-          await _deleteOrUnlinkChild(ref.id, uid);
-        } catch (e) {
-          debugPrint('Error deleting/unlinking child ${ref.id}: $e');
+    // 2. Discover ALL child IDs associated with this user (local + firestore + query)
+    final Set<String> childIds = <String>{};
+    if (userModel?.children != null) {
+      for (final DocumentReference<Object?> ref in userModel!.children!) {
+        if (ref.id.isNotEmpty) childIds.add(ref.id);
+      }
+    }
+    DocumentSnapshot<Map<String, dynamic>>? userDoc;
+    try {
+      userDoc = await userRef.get();
+      final List<dynamic>? rawChildren =
+          userDoc.data()?['children'] as List<dynamic>?;
+      if (rawChildren != null) {
+        for (final dynamic item in rawChildren) {
+          if (item is DocumentReference) {
+            childIds.add(item.id);
+          } else if (item is String && item.isNotEmpty) {
+            childIds.add(item.split('/').last);
+          }
         }
       }
-    }
+    } catch (_) {}
 
-    if (email != null && email.isNotEmpty) {
+    try {
+      final QuerySnapshot<Map<String, dynamic>> parentChildren =
+          await childrenCollection
+              .where('parent_reference_ids', arrayContains: uid)
+              .get();
+      for (final DocumentSnapshot<Map<String, dynamic>> doc
+          in parentChildren.docs) {
+        childIds.add(doc.id);
+      }
+    } catch (_) {}
+
+    // 3. Delete or unlink each child and track completely deleted ones
+    final Set<String> deletedChildIds = <String>{};
+    for (final String childId in childIds) {
       try {
-        await _deleteCoParentInvitations(email);
+        final bool wasDeleted = await _deleteOrUnlinkChild(childId, uid);
+        if (wasDeleted) {
+          deletedChildIds.add(childId);
+        }
       } catch (e) {
-        debugPrint('Error deleting co-parent invitations: $e');
+        debugPrint('Error deleting/unlinking child $childId: $e');
       }
     }
 
+    // 4. Unlink co-parent partner if linked
     try {
-      await _deleteSharedEventsByCreator(uid);
+      final String? partnerUid =
+          userModel?.partnerUserId ??
+          userDoc?.data()?['partner_user_id'] as String?;
+      if (partnerUid != null && partnerUid.isNotEmpty) {
+        await userCollection.doc(partnerUid).update(<String, dynamic>{
+          'partner_user_id': FieldValue.delete(),
+          'is_active_logger': true,
+        });
+      }
+    } catch (e) {
+      debugPrint('Error unlinking partner: $e');
+    }
+
+    // 5. Delete co-parent invitations
+    try {
+      await _deleteCoParentInvitations(email: email, childIds: deletedChildIds);
+    } catch (e) {
+      debugPrint('Error deleting co-parent invitations: $e');
+    }
+
+    // 6. Delete shared events
+    try {
+      await _deleteSharedEvents(uid: uid, childIds: deletedChildIds);
     } catch (e) {
       debugPrint('Error deleting shared events: $e');
     }
 
+    // 7. Delete mentorship requests
+    try {
+      final QuerySnapshot<Map<String, dynamic>> requestsSnap =
+          await FirebaseFirestore.instance
+              .collection('mentorship_requests')
+              .where('userId', isEqualTo: uid)
+              .get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d
+          in requestsSnap.docs) {
+        await d.reference.delete();
+      }
+    } catch (e) {
+      debugPrint('Error deleting mentorship requests: $e');
+    }
+
+    // 8. Delete user document
     try {
       await userRef.delete();
     } catch (e) {
@@ -342,7 +417,7 @@ class AuthRepo {
   Future<void> _deleteUserSubcollections(
     DocumentReference<Map<String, dynamic>> userRef,
   ) async {
-    final List<String> subcollections = [
+    final List<String> subcollections = <String>[
       'conversations',
       'saved_guidance',
       'journals',
@@ -373,70 +448,116 @@ class AuthRepo {
     }
   }
 
-  Future<void> _deleteOrUnlinkChild(String childId, String uid) async {
+  Future<bool> _deleteOrUnlinkChild(String childId, String uid) async {
     final DocumentSnapshot<Map<String, dynamic>> childSnap =
         await childrenCollection.doc(childId).get();
-    if (!childSnap.exists || childSnap.data() == null) return;
+    if (!childSnap.exists || childSnap.data() == null) return false;
 
     final List<dynamic>? parentIds = childSnap.data()?['parent_reference_ids'];
     final List<String> ids =
         parentIds
-            ?.map((e) => e?.toString() ?? '')
-            .where((s) => s.isNotEmpty)
+            ?.map((dynamic e) => e?.toString() ?? '')
+            .where((String s) => s.isNotEmpty)
             .toList() ??
-        [];
+        <String>[];
 
     if (ids.isEmpty || (ids.length == 1 && ids.first == uid)) {
       final DocumentReference<Map<String, dynamic>> childRef =
           childrenCollection.doc(childId);
+      final List<String> childSubcollections = <String>[
+        'sleep_logs',
+        'behaviours',
+        'events',
+        'states',
+        'tantrum_logs',
+        'mood_logs',
+        'health_logs',
+        'quick_notes',
+        'experiments',
+      ];
+      for (final String subName in childSubcollections) {
+        try {
+          final QuerySnapshot<Map<String, dynamic>> subSnap = await childRef
+              .collection(subName)
+              .get();
+          for (final DocumentSnapshot<Map<String, dynamic>> d in subSnap.docs) {
+            await d.reference.delete();
+          }
+        } catch (_) {}
+      }
+
+      // Also clean up Energy Bridge timer document for this child if it exists
       try {
-        final CollectionReference<Map<String, dynamic>> sleepLogs = childRef
-            .collection('sleep_logs');
-        final QuerySnapshot<Map<String, dynamic>> sleepSnap = await sleepLogs
-            .get();
-        for (final DocumentSnapshot<Map<String, dynamic>> d in sleepSnap.docs) {
-          await d.reference.delete();
-        }
+        await FirebaseFirestore.instance
+            .collection('energy_bridge')
+            .doc(childId)
+            .delete();
       } catch (_) {}
-      try {
-        final CollectionReference<Map<String, dynamic>> behaviours = childRef
-            .collection('behaviours');
-        final QuerySnapshot<Map<String, dynamic>> behSnap = await behaviours
-            .get();
-        for (final DocumentSnapshot<Map<String, dynamic>> d in behSnap.docs) {
-          await d.reference.delete();
-        }
-      } catch (_) {}
+
       await childRef.delete();
+      return true;
     } else {
-      await childrenCollection.doc(childId).update({
-        'parent_reference_ids': FieldValue.arrayRemove([uid]),
+      await childrenCollection.doc(childId).update(<String, dynamic>{
+        'parent_reference_ids': FieldValue.arrayRemove(<dynamic>[uid]),
       });
+      return false;
     }
   }
 
-  Future<void> _deleteCoParentInvitations(String email) async {
-    final QuerySnapshot<Map<String, dynamic>> fromSnap =
-        await _coParentInvitationCollection
-            .where('from_parent', isEqualTo: email)
-            .get();
-    for (final DocumentSnapshot<Map<String, dynamic>> d in fromSnap.docs) {
-      await d.reference.delete();
+  Future<void> _deleteCoParentInvitations({
+    required String? email,
+    required Set<String> childIds,
+  }) async {
+    if (email != null && email.isNotEmpty) {
+      final QuerySnapshot<Map<String, dynamic>> fromSnap =
+          await _coParentInvitationCollection
+              .where('from_parent', isEqualTo: email)
+              .get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d in fromSnap.docs) {
+        await d.reference.delete();
+      }
+      final QuerySnapshot<Map<String, dynamic>> toSnap =
+          await _coParentInvitationCollection
+              .where('to_parent', isEqualTo: email)
+              .get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d in toSnap.docs) {
+        await d.reference.delete();
+      }
     }
-    final QuerySnapshot<Map<String, dynamic>> toSnap =
-        await _coParentInvitationCollection
-            .where('to_parent', isEqualTo: email)
-            .get();
-    for (final DocumentSnapshot<Map<String, dynamic>> d in toSnap.docs) {
-      await d.reference.delete();
+    for (final String cId in childIds) {
+      try {
+        final QuerySnapshot<Map<String, dynamic>> childInvites =
+            await _coParentInvitationCollection
+                .where('children', isEqualTo: cId)
+                .get();
+        for (final DocumentSnapshot<Map<String, dynamic>> d
+            in childInvites.docs) {
+          await d.reference.delete();
+        }
+      } catch (_) {}
     }
   }
 
-  Future<void> _deleteSharedEventsByCreator(String uid) async {
+  Future<void> _deleteSharedEvents({
+    required String uid,
+    required Set<String> childIds,
+  }) async {
     final QuerySnapshot<Map<String, dynamic>> snap =
         await _sharedEventCollection.where('created_by', isEqualTo: uid).get();
     for (final DocumentSnapshot<Map<String, dynamic>> d in snap.docs) {
       await d.reference.delete();
+    }
+    for (final String cId in childIds) {
+      try {
+        final QuerySnapshot<Map<String, dynamic>> childEvents =
+            await _sharedEventCollection
+                .where('child_id', isEqualTo: cId)
+                .get();
+        for (final DocumentSnapshot<Map<String, dynamic>> d
+            in childEvents.docs) {
+          await d.reference.delete();
+        }
+      } catch (_) {}
     }
   }
 
