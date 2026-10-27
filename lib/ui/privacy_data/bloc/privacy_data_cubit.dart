@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/user_model.dart';
@@ -28,7 +29,13 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         ? user.childName!.trim()
         : 'your child';
 
-    changeProps(childName: cName);
+    final String lastSync =
+        preferences.getString('last_offline_sync_time') ?? '';
+
+    changeProps(
+      childName: cName,
+      lastSyncedTime: lastSync.isNotEmpty ? lastSync : 'Just now',
+    );
     _checkPendingUpdates();
   }
 
@@ -44,6 +51,7 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
     bool? isAccountDeleted,
     int? pendingOfflineUpdatesCount,
     bool? isSyncing,
+    String? lastSyncedTime,
     ApiResultStatus? syncStatus,
     ApiResultStatus? exportStatus,
     ApiResultStatus? deleteStatus,
@@ -57,6 +65,7 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         pendingOfflineUpdatesCount:
             pendingOfflineUpdatesCount ?? state.pendingOfflineUpdatesCount,
         isSyncing: isSyncing ?? state.isSyncing,
+        lastSyncedTime: lastSyncedTime ?? state.lastSyncedTime,
         syncStatus: syncStatus ?? ApiResultStatus.initial(),
         exportStatus: exportStatus ?? ApiResultStatus.initial(),
         deleteStatus: deleteStatus ?? ApiResultStatus.initial(),
@@ -67,11 +76,17 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
 
   Future<void> manualSyncOfflineUpdates() async {
     changeProps(isSyncing: true, syncStatus: const ApiResultStatus.loading());
+    // Minimum visual delay so user sees smooth active sync state
+    await Future<void>.delayed(const Duration(milliseconds: 600));
     final ApiResultStatus<int> res = await OfflineSyncRepo.instance
         .syncPendingUpdates();
     final pending = await OfflineSyncRepo.instance.getPendingUpdates();
+    final String nowFormatted = DateFormat('h:mm a').format(DateTime.now());
+    await preferences.putString('last_offline_sync_time', nowFormatted);
+    if (isClosed) return;
     changeProps(
       isSyncing: false,
+      lastSyncedTime: nowFormatted,
       pendingOfflineUpdatesCount: pending.length,
       syncStatus: res,
     );

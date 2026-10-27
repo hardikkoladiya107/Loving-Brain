@@ -13,6 +13,7 @@ abstract class PrivacyDataState with _$PrivacyDataState {
     @Default(false) bool isAccountDeleted,
     @Default(0) int pendingOfflineUpdatesCount,
     @Default(false) bool isSyncing,
+    @Default('') String lastSyncedTime,
     @Default(ApiResultStatus.initial()) ApiResultStatus syncStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus exportStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus deleteStatus,

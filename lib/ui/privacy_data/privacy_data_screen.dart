@@ -115,10 +115,208 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
     );
   }
 
+  void _showOfflineSyncSheet(BuildContext context) {
+    final PrivacyDataCubit cubit = context.read<PrivacyDataCubit>();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (BuildContext sheetContext) {
+        return BlocProvider<PrivacyDataCubit>.value(
+          value: cubit,
+          child: BlocBuilder<PrivacyDataCubit, PrivacyDataState>(
+            builder: (BuildContext context, PrivacyDataState state) {
+              return Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.85,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                child: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 44.w,
+                            height: 4.h,
+                            decoration: BoxDecoration(
+                              color: greyColor7,
+                              borderRadius: BorderRadius.circular(2.r),
+                            ),
+                          ),
+                        ),
+                        20.spaceH,
+                        "Offline sync".appText(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.bold,
+                          fraunces: true,
+                          color: greyColor9,
+                        ),
+                        6.spaceH,
+                        "Cloud synchronization & offline storage".appText(
+                          fontSize: 14.sp,
+                          color: greyColor,
+                        ),
+                        20.spaceH,
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16.r),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3F2FE),
+                            borderRadius: BorderRadius.circular(16.r),
+                            border: Border.all(
+                              color: const Color(
+                                0xFF665FCE,
+                              ).withValues(alpha: 0.15),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 44.w,
+                                height: 44.w,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    state.isSyncing
+                                        ? Icons.sync_rounded
+                                        : (state.pendingOfflineUpdatesCount > 0
+                                              ? Icons.cloud_upload_outlined
+                                              : Icons.cloud_done_rounded),
+                                    color: const Color(0xFF665FCE),
+                                    size: 24.sp,
+                                  ),
+                                ),
+                              ),
+                              14.spaceW,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    (state.pendingOfflineUpdatesCount > 0
+                                            ? "${state.pendingOfflineUpdatesCount} updates waiting to sync"
+                                            : "All data is up to date")
+                                        .appText(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: greyColor9,
+                                        ),
+                                    4.spaceH,
+                                    (state.isSyncing
+                                            ? "Syncing in progress..."
+                                            : "Last synced: ${state.lastSyncedTime.isNotEmpty ? state.lastSyncedTime : 'Just now'}")
+                                        .appText(
+                                          fontSize: 13.sp,
+                                          color: greyColor,
+                                        ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        16.spaceH,
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(16.r),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFEF8F4),
+                            borderRadius: BorderRadius.circular(16.r),
+                            border: Border.all(color: const Color(0xFFE9E2DC)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.shield_outlined,
+                                    size: 20.sp,
+                                    color: primaryColor,
+                                  ),
+                                  8.spaceW,
+                                  Expanded(
+                                    child: "Offline Resilience Guarantee"
+                                        .appText(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: greyColor9,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              8.spaceH,
+                              "LovingBrain automatically saves all logs, sleep forecasts, and parent notes locally on your device. When your phone reconnects to the internet, pending logs are seamlessly uploaded so nothing typed is ever lost."
+                                  .appText(
+                                    fontSize: 13.sp,
+                                    color: greyColor,
+                                    height: 1.4,
+                                  ),
+                            ],
+                          ),
+                        ),
+                        24.spaceH,
+                        AppButton(
+                          title: state.isSyncing ? "Syncing..." : "Sync now",
+                          isLoading: state.isSyncing,
+                          backgroundColor: primaryColor,
+                          textColor: Colors.white,
+                          onTap: state.isSyncing
+                              ? null
+                              : () {
+                                  sheetContext
+                                      .read<PrivacyDataCubit>()
+                                      .manualSyncOfflineUpdates();
+                                },
+                        ),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(sheetContext).padding.bottom + 12.h,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PrivacyDataCubit, PrivacyDataState>(
       listener: (BuildContext context, PrivacyDataState state) {
+        state.syncStatus.whenOrNull(
+          data: (dynamic data) {
+            final int count = (data is int) ? data : 0;
+            showSnackBar(
+              message: count > 0
+                  ? "Synced $count pending update(s) to cloud successfully."
+                  : "All data is up to date. Cloud storage is synchronized.",
+              type: SnackBarType.SUCCESS,
+            );
+          },
+          error: (Exception error) {
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+
         state.exportStatus.whenOrNull(
           loading: () => EasyLoading.show(status: 'Exporting data...'),
           data: (_) {
@@ -300,11 +498,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                     ),
                                   )
                                 : null,
-                            onTap: state.isSyncing
-                                ? null
-                                : () => context
-                                      .read<PrivacyDataCubit>()
-                                      .manualSyncOfflineUpdates(),
+                            onTap: () => _showOfflineSyncSheet(context),
                           ),
                           12.spaceH,
                           SettingTile(
