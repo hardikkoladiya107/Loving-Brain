@@ -95,7 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                             21.spaceH,
                             AppTextField(
                               title: "Email or Mobile Number",
-                              hint: "Enter email or mobile number",
+                              hint: "Enter email or 10-digit mobile (+91)",
                               keyboardType: TextInputType.emailAddress,
                               onChanged: (val) {
                                 context.read<RegisterCubit>().changeProps(

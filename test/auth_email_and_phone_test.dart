@@ -33,7 +33,7 @@ void main() {
     });
 
     test(
-      'Phone number without country code (+) flags country code requirement',
+      '10-digit Indian phone number without +91 automatically adds +91 and routes to phone auth',
       () async {
         final RegisterCubit cubit = RegisterCubit();
         cubit.init();
@@ -41,38 +41,57 @@ void main() {
         cubit.changeProps(emailAddress: '9876543210');
         await cubit.sendOtp();
 
+        expect(cubit.state.emailAddress, '+919876543210');
+        expect(cubit.state.isPhoneAuth, isTrue);
+        expect(cubit.state.emailAddressError, isEmpty);
+        cubit.close();
+      },
+    );
+
+    test(
+      '11-digit phone with leading 0 strips 0 and automatically adds +91',
+      () async {
+        final RegisterCubit cubit = RegisterCubit();
+        cubit.init();
+
+        cubit.changeProps(emailAddress: '09876543210');
+        await cubit.sendOtp();
+
+        expect(cubit.state.emailAddress, '+919876543210');
+        expect(cubit.state.isPhoneAuth, isTrue);
+        expect(cubit.state.emailAddressError, isEmpty);
+        cubit.close();
+      },
+    );
+
+    test(
+      'Invalid phone length (<10 digits) flags valid 10-digit mobile error',
+      () async {
+        final RegisterCubit cubit = RegisterCubit();
+        cubit.init();
+
+        cubit.changeProps(emailAddress: '98765');
+        await cubit.sendOtp();
+
         expect(
           cubit.state.emailAddressError,
-          contains('Please include country code with "+"'),
+          'Please enter a valid 10-digit mobile number',
         );
         expect(cubit.state.isPhoneAuth, isFalse);
         cubit.close();
       },
     );
 
-    test('Malformed phone number flags invalid phone error', () async {
-      final RegisterCubit cubit = RegisterCubit();
-      cubit.init();
-
-      cubit.changeProps(emailAddress: '+12');
-      await cubit.sendOtp();
-
-      expect(
-        cubit.state.emailAddressError,
-        'Please enter a valid phone number',
-      );
-      cubit.close();
-    });
-
     test(
-      'Valid phone with country code routes to phone auth and codeSent',
+      'Valid phone with +91 country code routes to phone auth and codeSent',
       () async {
         final RegisterCubit cubit = RegisterCubit();
         cubit.init();
 
-        cubit.changeProps(emailAddress: '+16505551234');
+        cubit.changeProps(emailAddress: '+919876543210');
         await cubit.sendOtp();
 
+        expect(cubit.state.emailAddress, '+919876543210');
         expect(cubit.state.isPhoneAuth, isTrue);
         expect(cubit.state.emailAddressError, isEmpty);
         cubit.close();

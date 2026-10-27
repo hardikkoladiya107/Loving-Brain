@@ -228,23 +228,41 @@ class RegisterCubit extends Cubit<RegisterState> {
         submittingMethod: '',
       );
     } else {
-      // Mobile Number validation and Firebase Phone Auth
-      final String cleanPhone = input.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+      // Mobile Number validation and Firebase Phone Auth (India-first with auto +91)
+      String cleanPhone = input.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+
+      // Strip leading zero if 11 digits (e.g. 09876543210 -> 9876543210)
+      if (cleanPhone.startsWith('0') && cleanPhone.length == 11) {
+        cleanPhone = cleanPhone.substring(1);
+      }
+
+      // If user did not provide a leading '+', handle India auto-prefix
       if (!cleanPhone.startsWith('+')) {
+        if (cleanPhone.startsWith('91') && cleanPhone.length == 12) {
+          cleanPhone = '+$cleanPhone';
+        } else if (cleanPhone.length == 10 &&
+            RegExp(r'^\d{10}$').hasMatch(cleanPhone)) {
+          cleanPhone = '+91$cleanPhone';
+        } else {
+          changeProps(
+            emailAddressError: 'Please enter a valid 10-digit mobile number',
+          );
+          return;
+        }
+      }
+
+      // Validate normalized E.164 phone number (10-digit Indian number or valid E.164)
+      final RegExp phoneRegex = RegExp(r'^\+[0-9]{10,15}$');
+      if (!phoneRegex.hasMatch(cleanPhone) ||
+          (cleanPhone.startsWith('+91') && cleanPhone.length != 13)) {
         changeProps(
-          emailAddressError:
-              'Please include country code with "+" (e.g. +1 555 123 4567 or +91...)',
+          emailAddressError: 'Please enter a valid 10-digit mobile number',
         );
         return;
       }
 
-      final RegExp phoneRegex = RegExp(r'^\+[0-9]{7,15}$');
-      if (!phoneRegex.hasMatch(cleanPhone)) {
-        changeProps(emailAddressError: 'Please enter a valid phone number');
-        return;
-      }
-
       changeProps(
+        emailAddress: cleanPhone,
         emailAddressError: '',
         apiResultStatus: const ApiResultStatus.loading(),
         isAuthSubmitting: true,
