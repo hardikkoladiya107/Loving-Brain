@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -30,8 +31,25 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
-    with SingleTickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController emailTextEditingController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<RegisterCubit>().init();
+    });
+  }
+
+  @override
+  void dispose() {
+    emailTextEditingController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterCubit, RegisterState>(
@@ -46,91 +64,142 @@ class _RegisterScreenState extends State<RegisterScreen>
         final bool isEmailLoading =
             state.isAuthSubmitting && submittingMethod == 'email';
 
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage(Assets.v2.images.imgBg.path),
+        if (emailTextEditingController.value.text != state.emailAddress) {
+          emailTextEditingController.value = emailTextEditingController.value
+              .copyWith(
+                text: state.emailAddress,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    emailTextEditingController.value.selection.start,
+                    state.emailAddress.length,
+                  ),
+                ),
+              );
+        }
+
+        return PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            context.read<RegisterCubit>().init();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(Assets.v2.images.imgBg.path),
+              ),
             ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SafeArea(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            BaseButton(
-                              child: Assets.v2.icons.icBack.svg(),
-                              onTap: () {
-                                if (context.canPop()) {
-                                  context.pop();
-                                } else {
-                                  context.go(RoutePaths.welcome);
-                                }
-                              },
-                            ),
-                            "Let’s get you set up"
-                                .appText(
-                                  fraunces: true,
-                                  fontSize: 28,
-                                  textAlign: TextAlign.start,
-                                )
-                                .appPadding(left: 20.r, right: 20.r),
-                            "We only ask for what we need to make your first suggestion useful."
-                                .appText(
-                                  textAlign: TextAlign.start,
-                                  fontSize: 14,
-                                )
-                                .appPadding(left: 20.r, right: 20.r),
-                            21.spaceH,
-                            AppTextField(
-                              title: "Email or Mobile Number",
-                              hint: "Enter email or Mobile number",
-                              keyboardType: TextInputType.emailAddress,
-                              onChanged: (val) {
-                                context.read<RegisterCubit>().changeProps(
-                                  emailAddress: val,
-                                );
-                              },
-                              error: state.emailAddressError.isNotEmpty
-                                  ? state.emailAddressError
-                                  : null,
-                            ).appPadding(left: 20.r, right: 20.r),
-                            32.spaceH,
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    color: greyColor2,
-                                    height: 1.r,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              BaseButton(
+                                child: Assets.v2.icons.icBack.svg(),
+                                onTap: () {
+                                  context.read<RegisterCubit>().init();
+                                  if (context.canPop()) {
+                                    context.pop();
+                                  } else {
+                                    context.go(RoutePaths.welcome);
+                                  }
+                                },
+                              ),
+                              "Let’s get you set up"
+                                  .appText(
+                                    fraunces: true,
+                                    fontSize: 28,
+                                    textAlign: TextAlign.start,
+                                  )
+                                  .appPadding(left: 20.r, right: 20.r),
+                              "We only ask for what we need to make your first suggestion useful."
+                                  .appText(
+                                    textAlign: TextAlign.start,
+                                    fontSize: 14,
+                                  )
+                                  .appPadding(left: 20.r, right: 20.r),
+                              21.spaceH,
+                              AppTextField(
+                                controller: emailTextEditingController,
+                                title: "Email or Mobile Number",
+                                hint: "Enter email or Mobile number",
+                                keyboardType: TextInputType.emailAddress,
+                                onChanged: (val) {
+                                  context.read<RegisterCubit>().changeProps(
+                                    emailAddress: val,
+                                    emailAddressError: '',
+                                  );
+                                },
+                                error: state.emailAddressError.isNotEmpty
+                                    ? state.emailAddressError
+                                    : null,
+                              ).appPadding(left: 20.r, right: 20.r),
+                              32.spaceH,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      color: greyColor2,
+                                      height: 1.r,
+                                    ),
+                                  ),
+                                  12.spaceW,
+                                  "Or".appText(
+                                    textAlign: TextAlign.start,
+                                    fontSize: 14,
+                                  ),
+                                  12.spaceW,
+                                  Expanded(
+                                    child: Container(
+                                      color: greyColor2,
+                                      height: 1.r,
+                                    ),
+                                  ),
+                                ],
+                              ).appPadding(left: 20.r, right: 20.r),
+                              32.spaceH,
+                              if (Platform.isIOS) ...[
+                                AppButton(
+                                  onTap: state.isAuthSubmitting
+                                      ? null
+                                      : () {
+                                          FocusScope.of(context).unfocus();
+                                          context
+                                              .read<RegisterCubit>()
+                                              .signInWithApple();
+                                        },
+                                  backgroundColor: Colors.black,
+                                  isLoading: isAppleLoading,
+                                  loaderColor: Colors.white,
+                                  widget: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Assets.v2.icons.icAppleIcon.image(
+                                        color: Colors.white,
+                                        height: 24.r,
+                                        width: 24.r,
+                                      ),
+                                      10.spaceW,
+                                      "Continue with Apple".appText(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                12.spaceW,
-                                "Or".appText(
-                                  textAlign: TextAlign.start,
-                                  fontSize: 14,
-                                ),
-                                12.spaceW,
-                                Expanded(
-                                  child: Container(
-                                    color: greyColor2,
-                                    height: 1.r,
-                                  ),
-                                ),
+                                16.spaceH,
                               ],
-                            ).appPadding(left: 20.r, right: 20.r),
-                            32.spaceH,
-                            if (Platform.isIOS) ...[
                               AppButton(
                                 onTap: state.isAuthSubmitting
                                     ? null
@@ -138,75 +207,46 @@ class _RegisterScreenState extends State<RegisterScreen>
                                         FocusScope.of(context).unfocus();
                                         context
                                             .read<RegisterCubit>()
-                                            .signInWithApple();
+                                            .googleAuthenticate();
                                       },
-                                backgroundColor: Colors.black,
-                                isLoading: isAppleLoading,
-                                loaderColor: Colors.white,
+                                backgroundColor: Colors.white,
+                                isLoading: isGoogleLoading,
+                                loaderColor: primaryColor,
                                 widget: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Assets.v2.icons.icAppleIcon.image(
-                                      color: Colors.white,
+                                    Assets.v2.icons.icGoogleIcon.image(
                                       height: 24.r,
                                       width: 24.r,
                                     ),
                                     10.spaceW,
-                                    "Continue with Apple".appText(
-                                      color: Colors.white,
+                                    "Continue with Google".appText(
+                                      color: Colors.black,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ],
                                 ),
                               ),
-                              16.spaceH,
-                            ],
-                            AppButton(
-                              onTap: state.isAuthSubmitting
-                                  ? null
-                                  : () {
-                                      FocusScope.of(context).unfocus();
-                                      context
-                                          .read<RegisterCubit>()
-                                          .googleAuthenticate();
-                                    },
-                              backgroundColor: Colors.white,
-                              isLoading: isGoogleLoading,
-                              loaderColor: primaryColor,
-                              widget: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Assets.v2.icons.icGoogleIcon.image(
-                                    height: 24.r,
-                                    width: 24.r,
-                                  ),
-                                  10.spaceW,
-                                  "Continue with Google".appText(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ],
+                              const Spacer(),
+                              24.spaceH,
+                              AppButton(
+                                onTap: state.isAuthSubmitting
+                                    ? null
+                                    : () {
+                                        FocusScope.of(context).unfocus();
+                                        context.read<RegisterCubit>().sendOtp();
+                                      },
+                                title: "Continue",
+                                isLoading: isEmailLoading,
                               ),
-                            ),
-                            const Spacer(),
-                            24.spaceH,
-                            AppButton(
-                              onTap: state.isAuthSubmitting
-                                  ? null
-                                  : () {
-                                      FocusScope.of(context).unfocus();
-                                      context.read<RegisterCubit>().sendOtp();
-                                    },
-                              title: "Continue",
-                              isLoading: isEmailLoading,
-                            ),
-                            32.spaceH,
-                          ],
+                              32.spaceH,
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
