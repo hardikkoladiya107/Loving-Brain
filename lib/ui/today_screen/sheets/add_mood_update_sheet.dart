@@ -103,6 +103,15 @@ class AddMoodUpdateSheet extends StatelessWidget {
                   ],
                 ],
               ),
+              if (isError) ...[
+                6.spaceH,
+                "Please select how your child is feeling".appText(
+                  color: Colors.red,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.start,
+                ),
+              ],
               12.spaceH,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -201,6 +210,10 @@ class AddMoodUpdateSheet extends StatelessWidget {
                 onTap: () {
                   if (state.selectedChildMoodIndex == -1) {
                     context.read<TodayCubit>().triggerMoodUpdateErrors();
+                    showSnackBar(
+                      message: "Please select how your child is feeling",
+                      type: SnackBarType.ERROR,
+                    );
                   } else {
                     context.read<TodayCubit>().saveMoodLog();
                   }

@@ -296,9 +296,12 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
                       CoParentInvitationHelpers.buildInvitationLink(
                         state.invitationId,
                       );
-                  Share.share(
-                    "Join me on Loving Brain to care for ${state.childName}: $link",
-                    subject: "Join me on Loving Brain",
+                  SharePlus.instance.share(
+                    ShareParams(
+                      text:
+                          "Join me on Loving Brain to care for ${state.childName}: $link",
+                      subject: "Join me on Loving Brain",
+                    ),
                   );
                 },
               ),
