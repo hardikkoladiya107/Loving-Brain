@@ -306,11 +306,17 @@ class TodayCubit extends Cubit<TodayState> {
 
   void setSleepQuality(int index) => changeProps(sleepQualityIndex: index);
 
-  void setFellAsleepTime(String time) =>
-      changeProps(fellAsleepTime: time, showSleepUpdateErrors: false);
+  void setFellAsleepTime(String time) => changeProps(
+    fellAsleepTime: time,
+    napStartTime: time,
+    showSleepUpdateErrors: false,
+  );
 
-  void setWokeUpTime(String time) =>
-      changeProps(wokeUpTime: time, showSleepUpdateErrors: false);
+  void setWokeUpTime(String time) => changeProps(
+    wokeUpTime: time,
+    napEndTime: time,
+    showSleepUpdateErrors: false,
+  );
 
   void setNapTimes(String? start, String? end) => changeProps(
     napStartTime: start,
@@ -377,9 +383,7 @@ class TodayCubit extends Cubit<TodayState> {
         childId: childId,
         log: nightLog,
       );
-    }
-
-    if (hasNap) {
+    } else if (hasNap) {
       final DateTime napBed = TodayLogRepo.parseTimeString(
         state.napStartTime!,
         referenceDate: now,
