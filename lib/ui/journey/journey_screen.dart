@@ -11,6 +11,7 @@ import 'package:loving_brain/ui/family_timeline/family_timeline_screen.dart';
 import 'package:loving_brain/ui/harder_week/harder_week_screen.dart';
 import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
+import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
 import 'package:loving_brain/ui/trying_this_week/trying_this_week_screen.dart';
 import 'package:loving_brain/ui/weekly_family_review/weekly_family_review_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -250,8 +251,12 @@ class _JourneyScreenState extends State<JourneyScreen> {
         } else {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const MentorshipLandingScreen()),
-          );
+            MaterialPageRoute(builder: (_) => const ProgrammeDetailScreen()),
+          ).then((_) {
+            if (context.mounted) {
+              context.read<JourneyCubit>().init();
+            }
+          });
         }
       },
       child: Container(
