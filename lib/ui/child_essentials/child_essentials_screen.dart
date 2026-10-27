@@ -9,8 +9,10 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
+import 'allergies_screen.dart';
 import 'bloc/child_essentials_cubit.dart';
 import 'bloc/child_essentials_state.dart';
+import 'medications_screen.dart';
 
 /// Screen 53: Child Essentials.
 /// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
@@ -176,6 +178,15 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                             iconColor: const Color(0xFFE91E63),
                             title: "Allergies",
                             subtitle: allergiesSubtitle,
+                            onTap: () {
+                              Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext _) =>
+                                      const AllergiesScreen(),
+                                ),
+                              );
+                            },
                           ),
                           12.spaceH,
                           _buildListItem(
@@ -184,6 +195,15 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                             iconColor: primaryColor,
                             title: "Medications",
                             subtitle: medicationsSubtitle,
+                            onTap: () {
+                              Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext _) =>
+                                      const MedicationsScreen(),
+                                ),
+                              );
+                            },
                           ),
                           16.spaceH,
                           AppButton(
@@ -268,55 +288,60 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
     required Color iconColor,
     required String title,
     required String subtitle,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: EdgeInsets.all(20.r),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48.w,
-            height: 48.w,
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              borderRadius: BorderRadius.circular(16.r),
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: EdgeInsets.all(20.r),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48.w,
+              height: 48.w,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Center(
+                child: iconPath != null
+                    ? Image.asset(
+                        iconPath,
+                        width: 24.sp,
+                        height: 24.sp,
+                        fit: BoxFit.contain,
+                      )
+                    : Icon(iconData, color: iconColor, size: 24.sp),
+              ),
             ),
-            child: Center(
-              child: iconPath != null
-                  ? Image.asset(
-                      iconPath,
-                      width: 24.sp,
-                      height: 24.sp,
-                      fit: BoxFit.contain,
-                    )
-                  : Icon(iconData, color: iconColor, size: 24.sp),
+            16.spaceW,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  title.appText(
+                    fontSize: 16.sp,
+                    color: greyColor9,
+                    fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.start,
+                  ),
+                  4.spaceH,
+                  subtitle.appText(
+                    fontSize: 14.sp,
+                    color: greyColor,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
             ),
-          ),
-          16.spaceW,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title.appText(
-                  fontSize: 16.sp,
-                  color: greyColor9,
-                  fontWeight: FontWeight.w500,
-                  textAlign: TextAlign.start,
-                ),
-                4.spaceH,
-                subtitle.appText(
-                  fontSize: 14.sp,
-                  color: greyColor,
-                  textAlign: TextAlign.start,
-                ),
-              ],
-            ),
-          ),
-          Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
-        ],
+            Icon(Icons.chevron_right, color: greyColor, size: 24.sp),
+          ],
+        ),
       ),
     );
   }

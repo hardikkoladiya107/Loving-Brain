@@ -8,7 +8,9 @@ import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
 import 'package:loving_brain/ui/auth/welcome/welcome_screen.dart';
 import 'package:loving_brain/ui/base_screen/base_screen.dart';
+import 'package:loving_brain/ui/child_essentials/allergies_screen.dart';
 import 'package:loving_brain/ui/child_essentials/child_essentials_screen.dart';
+import 'package:loving_brain/ui/child_essentials/medications_screen.dart';
 import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/family_snapsshot/family_snapshot_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_guidance_screen.dart';
@@ -90,6 +92,16 @@ class AppRouter {
           path: RoutePaths.essentials,
           builder: (BuildContext context, GoRouterState state) =>
               const ChildEssentialsScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.allergies,
+          builder: (BuildContext context, GoRouterState state) =>
+              const AllergiesScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.medications,
+          builder: (BuildContext context, GoRouterState state) =>
+              const MedicationsScreen(),
         ),
         GoRoute(
           path: RoutePaths.helpProblemSelection,

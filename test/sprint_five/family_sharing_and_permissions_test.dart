@@ -264,6 +264,12 @@ void main() {
       cubit.addMedication('Vitamin D3 drops');
       expect(cubit.state.medications, contains('Vitamin D3 drops'));
 
+      cubit.removeAllergy(0);
+      expect(cubit.state.allergies, isEmpty);
+
+      cubit.removeMedication(0);
+      expect(cubit.state.medications, isEmpty);
+
       cubit.close();
     });
   });
