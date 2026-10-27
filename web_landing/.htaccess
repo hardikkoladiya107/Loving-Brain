@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Allow existing files and folders to be served directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 2. Rewrite invitation links like /FGz2CJZPA92mlXv30GXj to /invite.html
+  RewriteRule ^([a-zA-Z0-9_-]{10,})$ /invite.html?id=$1 [L,QSA]
+
+  # 3. Rewrite /invite/abc123 to /invite.html
+  RewriteRule ^invite/([a-zA-Z0-9_-]+)$ /invite.html?id=$1 [L,QSA]
+</IfModule>

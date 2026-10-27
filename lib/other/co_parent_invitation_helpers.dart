@@ -13,10 +13,24 @@ class CoParentInvitationHelpers {
   /// Base URL embedded in invitation emails (must match Android manifest + iOS entitlements).
   static const String invitationBaseUrl = 'https://www.lovingbrain.com';
 
+  /// Google Play Store URL for Loving Brain.
+  static const String playStoreUrl =
+      'https://play.google.com/store/apps/details?id=com.app.loving_brain';
+
+  /// Apple App Store URL for Loving Brain.
+  static const String appStoreUrl =
+      'https://apps.apple.com/app/loving-brain/id6470000000';
+
   /// Builds the universal link sent in the invitation email.
   static String buildInvitationLink(String invitationId) {
     final String id = invitationId.trim();
     return '$invitationBaseUrl/$id';
+  }
+
+  /// Builds the custom scheme link for direct app launch (`lovingbrain://invite/{id}`).
+  static String buildCustomSchemeInvitationLink(String invitationId) {
+    final String id = invitationId.trim();
+    return 'lovingbrain://invite/$id';
   }
 
   /// Normalizes emails for comparison (trim + lowercase).
@@ -27,25 +41,44 @@ class CoParentInvitationHelpers {
     return normalizeEmail(emailA) == normalizeEmail(emailB);
   }
 
-  /// Extracts the Firestore invitation document id from a universal link URI.
+  /// Extracts the Firestore invitation document id from any invitation URI.
   ///
-  /// Examples:
-  /// - `https://www.lovingbrain.com/abc123` → `abc123`
-  /// - `https://lovingbrain.com/abc123/` → `abc123`
+  /// Supports:
+  /// - Universal links: `https://www.lovingbrain.com/abc123` → `abc123`
+  /// - Without www: `https://lovingbrain.com/abc123/` → `abc123`
+  /// - Explicit path: `https://www.lovingbrain.com/invite/abc123` → `abc123`
+  /// - Query parameter: `https://www.lovingbrain.com/invite.html?id=abc123` → `abc123`
+  /// - Custom scheme with path: `lovingbrain://invite/abc123` → `abc123`
+  /// - Custom scheme direct: `lovingbrain://abc123` → `abc123`
   static String? parseInvitationIdFromUri(Uri uri) {
-    final String path = uri.path.trim();
-    if (path.isEmpty || path == '/') {
-      return null;
+    // 1. Check query parameter `id` or `invitationId`
+    final String? queryId =
+        uri.queryParameters['id'] ?? uri.queryParameters['invitationId'];
+    if (queryId != null && queryId.trim().isNotEmpty) {
+      return queryId.trim();
     }
-    final String invitationId = path
-        .split('/')
-        .where((String segment) => segment.isNotEmpty)
-        .last
-        .trim();
-    if (invitationId.isEmpty) {
-      return null;
+
+    // 2. Check path segments (e.g. /abc123 or /invite/abc123)
+    final List<String> segments = uri.pathSegments
+        .where((String segment) => segment.trim().isNotEmpty)
+        .toList();
+    if (segments.isNotEmpty) {
+      final String candidate = segments.last.trim();
+      if (candidate.isNotEmpty &&
+          candidate != 'invite' &&
+          candidate != 'invite.html') {
+        return candidate;
+      }
     }
-    return invitationId;
+
+    // 3. Fallback for custom schemes where host is the id: lovingbrain://abc123
+    if (uri.scheme == 'lovingbrain' &&
+        uri.host.isNotEmpty &&
+        uri.host != 'invite') {
+      return uri.host.trim();
+    }
+
+    return null;
   }
 
   /// Parses comma-separated child document ids stored on the invitation.

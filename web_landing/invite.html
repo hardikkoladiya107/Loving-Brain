@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join Loving Brain | Parenting Together, Beautifully</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #FEF8F4;
+      font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #212E5A;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+    .card {
+      background: #FFFFFF;
+      max-width: 480px;
+      width: 100%;
+      border-radius: 28px;
+      border: 1px solid #F5EAE4;
+      box-shadow: 0 12px 40px rgba(240, 109, 77, 0.09);
+      overflow: hidden;
+      text-align: center;
+    }
+    .header {
+      background: linear-gradient(180deg, #FFF7F2 0%, #FFFFFF 100%);
+      padding: 36px 24px 16px 24px;
+    }
+    .logo {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 12px auto;
+      display: block;
+    }
+    .brand-title {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #212E5A;
+    }
+    .brand-sub {
+      font-size: 13px;
+      color: #8A8A8A;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .content {
+      padding: 16px 28px 36px 28px;
+    }
+    .tag {
+      display: inline-block;
+      background: #FFF2ED;
+      color: #F06D4D;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      border: 1px solid #FADCD0;
+    }
+    .heading {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #212E5A;
+      margin-bottom: 8px;
+    }
+    .desc {
+      font-size: 14px;
+      line-height: 22px;
+      color: #555555;
+      margin-bottom: 24px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 15px 24px;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      border: none;
+      margin-bottom: 12px;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #F06D4D 0%, #FF8A65 100%);
+      color: #FFFFFF;
+      box-shadow: 0 6px 20px rgba(240, 109, 77, 0.35);
+    }
+    .btn-secondary {
+      background: #F4F2F9;
+      color: #665FCE;
+      border: 1px solid #E4E0F4;
+    }
+    .store-grid {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      margin-bottom: 20px;
+    }
+    .store-btn {
+      flex: 1;
+      background: #111111;
+      color: #FFFFFF;
+      padding: 11px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .desktop-box {
+      background: #FFFDFB;
+      border: 1.5px dashed #E6DDD7;
+      border-radius: 18px;
+      padding: 20px 16px;
+      margin-top: 10px;
+      margin-bottom: 16px;
+    }
+    .qr-img {
+      width: 140px;
+      height: 140px;
+      margin: 12px auto;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid #ECECEC;
+    }
+    .footer {
+      padding: 18px 24px;
+      background: #FAF6F3;
+      border-top: 1px solid #F1E9E3;
+      font-size: 11px;
+      color: #ADB5BD;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <img class="logo" src="https://storage.googleapis.com/hugsand-heart-u86wap.firebasestorage.app/app_assets/loving_brain_logo.png" alt="Loving Brain" />
+      <h1 class="brand-title">Loving Brain</h1>
+      <p class="brand-sub">Parenting Together, Beautifully</p>
+    </div>
+
+    <div class="content">
+      <div class="tag">📱 Mobile App Invitation</div>
+      <h2 class="heading">You've been invited!</h2>
+      <p class="desc">
+        A parent has invited you to collaborate on Loving Brain. Stay synced on sleep forecasts, routines, and daily plans in one calm space.
+      </p>
+
+      <!-- Action Buttons for Mobile -->
+      <div id="mobileActions">
+        <a id="openAppBtn" href="#" class="btn btn-primary">Open in Loving Brain App</a>
+        <p style="font-size: 12px; color: #8A8A8A; margin: 12px 0 6px 0; font-weight: 600;">Don't have the app installed yet?</p>
+        <div class="store-grid">
+          <a class="store-btn" id="appStoreBtn" href="https://apps.apple.com/app/loving-brain/id6470000000" target="_blank">
+            <span></span> App Store
+          </a>
+          <a class="store-btn" id="playStoreBtn" href="https://play.google.com/store/apps/details?id=com.app.loving_brain" target="_blank">
+            <span>▶</span> Google Play
+          </a>
+        </div>
+      </div>
+
+      <!-- Action Box for Desktop Users -->
+      <div id="desktopActions" style="display: none;" class="desktop-box">
+        <p style="font-size: 13px; font-weight: 700; color: #212E5A;">Scan to Open on your Phone</p>
+        <p style="font-size: 12px; color: #767676; margin-top: 4px;">Loving Brain is designed for smartphones. Point your camera here:</p>
+        <img id="qrCodeImg" class="qr-img" src="" alt="Scan QR code with phone" />
+        <div class="store-grid">
+          <a class="store-btn" href="https://apps.apple.com/app/loving-brain/id6470000000" target="_blank"> App Store</a>
+          <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.app.loving_brain" target="_blank">▶ Google Play</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      © 2026 Loving Brain · Nurturing calm, connected families.
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // 1. Extract invitation ID from URL path or query string (?id=...)
+      const pathSegments = window.location.pathname.split('/').filter(Boolean);
+      const urlParams = new URLSearchParams(window.location.search);
+      let invitationId = urlParams.get('id') || urlParams.get('invitationId') || '';
+      
+      if (!invitationId && pathSegments.length > 0) {
+        const lastSegment = pathSegments[pathSegments.length - 1];
+        if (lastSegment !== 'invite.html' && lastSegment !== 'invite') {
+          invitationId = lastSegment;
+        }
+      }
+
+      const customSchemeUrl = invitationId ? 'lovingbrain://invite/' + invitationId : 'lovingbrain://';
+      const universalLink = 'https://www.lovingbrain.com/' + invitationId;
+
+      // 2. Platform Detection
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+      const isAndroid = /android/i.test(userAgent);
+      const isMobile = isIOS || isAndroid;
+
+      const openAppBtn = document.getElementById('openAppBtn');
+      const mobileActions = document.getElementById('mobileActions');
+      const desktopActions = document.getElementById('desktopActions');
+      const qrCodeImg = document.getElementById('qrCodeImg');
+
+      if (isMobile) {
+        mobileActions.style.display = 'block';
+        desktopActions.style.display = 'none';
+
+        if (isAndroid) {
+          // Android intent link: attempts to open app; if not installed, falls back to Play Store
+          const androidIntent = 'intent://invite/' + invitationId + '#Intent;scheme=lovingbrain;package=com.app.loving_brain;end';
+          openAppBtn.href = androidIntent;
+        } else {
+          openAppBtn.href = customSchemeUrl;
+        }
+
+        // Automatic attempt to open app on mobile after 500ms
+        setTimeout(function() {
+          if (invitationId) {
+            window.location.href = isAndroid
+              ? 'intent://invite/' + invitationId + '#Intent;scheme=lovingbrain;package=com.app.loving_brain;end'
+              : customSchemeUrl;
+          }
+        }, 500);
+      } else {
+        // Desktop Browser (Mac, PC, Linux)
+        mobileActions.style.display = 'none';
+        desktopActions.style.display = 'block';
+        qrCodeImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=2&data=' + encodeURIComponent(universalLink);
+      }
+    })();
+  </script>
+</body>
+</html>

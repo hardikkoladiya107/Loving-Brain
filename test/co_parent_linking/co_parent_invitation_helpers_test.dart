@@ -19,9 +19,52 @@ void main() {
       );
     });
 
+    test('extracts id from custom scheme lovingbrain://invite/abc123xyz', () {
+      final Uri uri = Uri.parse('lovingbrain://invite/abc123xyz');
+      expect(
+        CoParentInvitationHelpers.parseInvitationIdFromUri(uri),
+        'abc123xyz',
+      );
+    });
+
+    test('extracts id from custom scheme lovingbrain://abc123xyz', () {
+      final Uri uri = Uri.parse('lovingbrain://abc123xyz');
+      expect(
+        CoParentInvitationHelpers.parseInvitationIdFromUri(uri),
+        'abc123xyz',
+      );
+    });
+
+    test('extracts id from query parameter ?id=abc123xyz', () {
+      final Uri uri = Uri.parse(
+        'https://www.lovingbrain.com/invite.html?id=abc123xyz',
+      );
+      expect(
+        CoParentInvitationHelpers.parseInvitationIdFromUri(uri),
+        'abc123xyz',
+      );
+    });
+
     test('returns null for root path', () {
       final Uri uri = Uri.parse('https://www.lovingbrain.com/');
       expect(CoParentInvitationHelpers.parseInvitationIdFromUri(uri), isNull);
+    });
+  });
+
+  group('CoParentInvitationHelpers store & custom scheme builders', () {
+    test('builds custom scheme link properly', () {
+      expect(
+        CoParentInvitationHelpers.buildCustomSchemeInvitationLink('inv999'),
+        'lovingbrain://invite/inv999',
+      );
+    });
+
+    test('store URLs contain valid package name and app identifiers', () {
+      expect(
+        CoParentInvitationHelpers.playStoreUrl,
+        contains('com.app.loving_brain'),
+      );
+      expect(CoParentInvitationHelpers.appStoreUrl, contains('loving-brain'));
     });
   });
 

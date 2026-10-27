@@ -28,17 +28,26 @@
             android:windowSoftInputMode="adjustResize">
 
 
-            <!--DEEP LINK-->
+            <!-- Universal Links / App Links -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- Replace with your domain -->
                 <data
                     android:scheme="https"
                     android:host="www.lovingbrain.com" />
+                <data
+                    android:scheme="https"
+                    android:host="lovingbrain.com" />
+            </intent-filter>
+
+            <!-- Custom URL Scheme for Direct App Launch -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="lovingbrain" />
             </intent-filter>
 
 
