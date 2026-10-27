@@ -108,6 +108,8 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                           8.spaceW,
                           _buildFilterChip('Behaviour', state),
                           8.spaceW,
+                          _buildFilterChip('Notes', state),
+                          8.spaceW,
                           _buildFilterChip('Mentorship', state),
                         ],
                       ),

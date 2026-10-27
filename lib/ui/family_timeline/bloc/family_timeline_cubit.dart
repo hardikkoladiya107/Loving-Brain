@@ -114,6 +114,10 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
                 e.type.contains('smart_moment'),
           )
           .toList();
+    } else if (filter == 'Notes' || filter == 'Note') {
+      return source
+          .where((TimelineEventModel e) => e.type.contains('note'))
+          .toList();
     } else if (filter == 'Mentorship') {
       return source
           .where(

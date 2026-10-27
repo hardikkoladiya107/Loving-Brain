@@ -275,6 +275,13 @@ void main() {
           subtitle: 'With Priya',
           timestamp: DateTime.now(),
         ),
+        TimelineEventModel(
+          id: '4',
+          type: 'quick_note',
+          title: 'Quick note',
+          subtitle: 'Took 10 minutes to settle',
+          timestamp: DateTime.now(),
+        ),
       ];
 
       cubit.changeProps(allEvents: events, filteredEvents: events);
@@ -287,12 +294,16 @@ void main() {
       expect(cubit.state.filteredEvents.length, 1);
       expect(cubit.state.filteredEvents.first.type, 'tantrum_log');
 
+      cubit.setFilter('Notes');
+      expect(cubit.state.filteredEvents.length, 1);
+      expect(cubit.state.filteredEvents.first.type, 'quick_note');
+
       cubit.setFilter('Mentorship');
       expect(cubit.state.filteredEvents.length, 1);
       expect(cubit.state.filteredEvents.first.type, 'mentorship');
 
       cubit.setFilter('All');
-      expect(cubit.state.filteredEvents.length, 3);
+      expect(cubit.state.filteredEvents.length, 4);
 
       cubit.close();
     });
