@@ -24,23 +24,31 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await NotificationUtil.initializeBGNotifications();
 
-  final String title =
-      message.notification?.title ?? message.data['title']?.toString() ?? '';
-  final String body =
-      message.notification?.body ?? message.data['body']?.toString() ?? '';
+  // Data-only messages are not automatically displayed by the Android OS tray,
+  // so we display them via local notifications while preventing duplicates for notification messages.
+  if (message.notification == null) {
+    final String title = message.data['title']?.toString() ?? 'Loving Brain';
+    final String body = message.data['body']?.toString() ?? '';
+    final String payload =
+        message.data['type']?.toString() ??
+        message.data['route']?.toString() ??
+        '';
 
-  await NotificationUtil.showLocalNotification(
-    id: message.hashCode,
-    title: title,
-    body: body,
-    payload: message.data['type']?.toString() ?? '',
-  );
+    if (title.isNotEmpty || body.isNotEmpty) {
+      await NotificationUtil.showLocalNotification(
+        id: message.hashCode,
+        title: title,
+        body: body,
+        payload: payload,
+      );
+    }
+  }
 }
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse? payload) {
-  if (payload != null) {
-    //Get.toNamed(Routes.login);
+  if (payload != null && payload.payload != null) {
+    NotificationUtil.handleNotificationClick(payload.payload);
   }
 }
 

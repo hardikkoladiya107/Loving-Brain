@@ -6,6 +6,7 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
+import 'package:loving_brain/other/notification_util.dart';
 import '../../other/preferances.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -29,6 +30,12 @@ class _SplashScreenState extends State<SplashScreen> {
         if (isLogin) {
           if (userModel?.isOnboardingCompleted != true) {
             context.go(RoutePaths.onboarding);
+            return;
+          }
+          final String? pendingRoute =
+              NotificationUtil.consumePendingNotificationRoute();
+          if (pendingRoute != null) {
+            context.go(pendingRoute);
             return;
           }
           context.go(RoutePaths.base);

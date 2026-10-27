@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/ui/widget/action_consent_screen.dart';
 
 import 'bloc/notifications_permission_cubit.dart';
@@ -52,9 +53,15 @@ class _NotificationsPermissionScreenState
           ],
           footerNote: "You can change this any time in Settings.",
           primaryButtonText: "Allow notifications",
-          onPrimaryAction: () {
-            context.read<NotificationsPermissionCubit>().grantPermission();
-            Navigator.pop(context);
+          onPrimaryAction: () async {
+            final bool granted =
+                await NotificationUtil.requestNotificationPermission();
+            if (context.mounted) {
+              context.read<NotificationsPermissionCubit>().changeProps(
+                isGranted: granted,
+              );
+              Navigator.pop(context);
+            }
           },
           secondaryButtonText: "Not now",
           onSecondaryAction: () => Navigator.pop(context),

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -16,12 +17,79 @@ import '../../main.dart';
 class NotificationUtil {
   NotificationUtil._();
 
-  static String channelId = 'com.app.lovingbrain';
-  static String channelName = 'loving Brain Notification';
-  static String channelDesc = 'loving Brain mobile app notification channel';
-  static final _localNotifications = FlutterLocalNotificationsPlugin();
+  static const String channelId = 'com.app.lovingbrain';
+  static const String channelName = 'Loving Brain Notifications';
+  static const String channelDesc =
+      'Loving Brain mobile app notifications for bedtime, routines, sleep, and family updates';
+
+  static final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   static FlutterLocalNotificationsPlugin instance() => _localNotifications;
+
+  static String? _pendingNotificationRoute;
+
+  /// Returns and clears any pending route queued by cold-start notification clicks.
+  static String? consumePendingNotificationRoute() {
+    final String? route = _pendingNotificationRoute;
+    _pendingNotificationRoute = null;
+    return route;
+  }
+
+  /// Resolves the app route for a given notification payload or type string.
+  static String resolveRouteForPayload(String? payload) {
+    if (payload == null || payload.trim().isEmpty) {
+      return RoutePaths.base;
+    }
+    final String clean = payload.trim();
+    if (clean == 'energy_bridge' || clean.startsWith('energy_bridge:')) {
+      return RoutePaths.base;
+    }
+    if (clean == 'invitation' ||
+        clean == 'co_parent_invitation' ||
+        clean == 'invite') {
+      return RoutePaths.base;
+    }
+    if (clean == 'essentials') {
+      return RoutePaths.essentials;
+    }
+    if (clean == 'help' || clean == 'guidance') {
+      return RoutePaths.helpProblemSelection;
+    }
+    if (clean == 'family_snapshot') {
+      return RoutePaths.familySnapshot;
+    }
+    if (clean == 'subscription') {
+      return RoutePaths.subscription;
+    }
+    return RoutePaths.base;
+  }
+
+  /// Centralized notification click handler for foreground, background, and cold start.
+  static void handleNotificationClick(String? payload) {
+    if (payload == null) return;
+    final String targetRoute = resolveRouteForPayload(payload);
+
+    final BuildContext? context = navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      final UserModel? userModel = preferences.getUserModel();
+      final bool isLogin =
+          (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+          (userModel?.uid?.trim().isNotEmpty ?? false);
+
+      if (isLogin) {
+        if (userModel?.isOnboardingCompleted != true) {
+          context.go(RoutePaths.onboarding);
+          return;
+        }
+        context.push(targetRoute);
+      } else {
+        context.go(RoutePaths.welcome);
+      }
+    } else {
+      _pendingNotificationRoute = targetRoute;
+    }
+  }
 
   static Future<void> initializePlatformNotifications() async {
     if (!kIsWeb && Platform.isIOS) {
@@ -33,58 +101,107 @@ class NotificationUtil {
           );
     }
     tz.initializeTimeZones();
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@drawable/ic_notification_icon');
 
-    DarwinInitializationSettings initializationSettingsIOS =
+    const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
           requestSoundPermission: false,
           requestBadgePermission: false,
           requestAlertPermission: false,
         );
 
-    InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
+
+    // Create high-importance notification channel on Android (API 26+)
+    if (!kIsWeb && Platform.isAndroid) {
+      const AndroidNotificationChannel androidNotificationChannel =
+          AndroidNotificationChannel(
+            channelId,
+            channelName,
+            description: channelDesc,
+            importance: Importance.max,
+            playSound: true,
+            enableVibration: true,
+          );
+
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          _localNotifications
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
+
+      await androidImplementation?.createNotificationChannel(
+        androidNotificationChannel,
+      );
+    }
 
     await _localNotifications.initialize(
       settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse? payload) {
-        onDidReceiveLocalNotification(payload);
+        handleNotificationClick(payload?.payload);
       },
       onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
     );
 
+    // Check if cold start was launched from a local notification
+    final NotificationAppLaunchDetails? launchDetails =
+        await _localNotifications.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp ?? false) {
+      final NotificationResponse? response =
+          launchDetails?.notificationResponse;
+      if (response != null && response.payload != null) {
+        handleNotificationClick(response.payload);
+      }
+    }
+
+    // Foreground FCM listener: display local banner
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      if (Platform.isAndroid) {
-        await _localNotifications
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >()
-            ?.requestNotificationsPermission();
-      }
+      final String title =
+          message.notification?.title ??
+          message.data['title']?.toString() ??
+          'Loving Brain';
+      final String body =
+          message.notification?.body ?? message.data['body']?.toString() ?? '';
+      final String payload =
+          message.data['type']?.toString() ??
+          message.data['route']?.toString() ??
+          '';
 
-      showLocalNotification(
-        id: message.data.hashCode,
-        title: message.notification?.title ?? "",
-        body: message.notification?.body ?? "",
-        payload: message.data['type']?.toString() ?? "",
-      );
+      if (title.isNotEmpty || body.isNotEmpty) {
+        await showLocalNotification(
+          id: message.hashCode,
+          title: title,
+          body: body,
+          payload: payload,
+        );
+      }
     });
 
+    // FCM opened app from background listener
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (navigatorKey.currentContext != null) {
-        _handleMessageClick(navigatorKey.currentContext!, message);
-      }
+      final String payload =
+          message.data['type']?.toString() ??
+          message.data['route']?.toString() ??
+          '';
+      handleNotificationClick(payload);
     });
-    FirebaseMessaging.instance.getInitialMessage().then((value) {
-      if (value != null) {
-        if (navigatorKey.currentContext != null) {
-          _handleMessageClick(navigatorKey.currentContext!, value);
-        }
-      }
-    });
+
+    // FCM cold start launch
+    final RemoteMessage? initialMessage = await FirebaseMessaging.instance
+        .getInitialMessage();
+    if (initialMessage != null) {
+      final String payload =
+          initialMessage.data['type']?.toString() ??
+          initialMessage.data['route']?.toString() ??
+          '';
+      handleNotificationClick(payload);
+    }
   }
 
   static Future<bool> isPermissionGranted() async {
@@ -101,52 +218,49 @@ class NotificationUtil {
 
   static Future<bool> requestNotificationPermission() async {
     try {
+      bool isAuthorized = false;
       if (Firebase.apps.isNotEmpty) {
         final NotificationSettings settings = await FirebaseMessaging.instance
             .requestPermission(alert: true, badge: true, sound: true);
-        await preferences.putBool(
-          SharedPreference.notificationPermissionRequested,
-          true,
-        );
-        return settings.authorizationStatus == AuthorizationStatus.authorized ||
+        isAuthorized =
+            settings.authorizationStatus == AuthorizationStatus.authorized ||
             settings.authorizationStatus == AuthorizationStatus.provisional;
       }
+
+      if (!kIsWeb && Platform.isAndroid) {
+        final bool? androidGranted = await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.requestNotificationsPermission();
+        if (androidGranted != null) {
+          isAuthorized = isAuthorized || androidGranted;
+        }
+      }
+
+      await preferences.putBool(
+        SharedPreference.notificationPermissionRequested,
+        true,
+      );
+      return isAuthorized;
     } catch (_) {}
     return false;
-  }
-
-  static void _handleMessageClick(BuildContext context, RemoteMessage message) {
-    final String type = message.data['type']?.toString() ?? '';
-    if (type == 'energy_bridge' || type.startsWith('energy_bridge:')) {
-      context.push(RoutePaths.base);
-      return;
-    }
   }
 
   static Future<void> initializeBGNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@drawable/ic_notification_icon');
 
-    DarwinInitializationSettings initializationSettingsIOS =
-        const DarwinInitializationSettings();
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
 
-    InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await _localNotifications.initialize(settings: initializationSettings);
-  }
-
-  static void onDidReceiveLocalNotification(dynamic payload) {
-    final String? dataPayload = payload?.payload?.toString();
-    if (dataPayload != null &&
-        (dataPayload == 'energy_bridge' ||
-            dataPayload.startsWith('energy_bridge:'))) {
-      if (navigatorKey.currentContext != null) {
-        navigatorKey.currentContext!.push(RoutePaths.base);
-      }
-    }
   }
 
   static Future<void> showLocalNotification({
@@ -209,7 +323,7 @@ class NotificationUtil {
     int progress = 0,
     int maxProgress = 0,
   }) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
           channelId,
           channelName,
@@ -226,13 +340,12 @@ class NotificationUtil {
           enableVibration: vibration,
         );
 
-    await _localNotifications.getNotificationAppLaunchDetails();
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: DarwinNotificationDetails(
+      iOS: const DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
-        presentSound: sound,
+        presentSound: true,
         presentBanner: true,
         presentList: true,
       ),
