@@ -7,6 +7,7 @@ class UserModel {
     String? uid,
     String? platform,
     String? email,
+    String? phoneNumber,
     String? productId,
     String? originalTransactionId,
     String? subscriptionStatus,
@@ -42,6 +43,7 @@ class UserModel {
     _uid = uid;
     _platform = platform;
     _email = email;
+    _phoneNumber = phoneNumber;
     _productId = productId;
     _originalTransactionId = originalTransactionId;
     _subscriptionStatus = subscriptionStatus;
@@ -88,6 +90,7 @@ class UserModel {
     _purchaseToken = jsonObject['purchase_token'];
     _email = jsonObject['email'];
     _displayName = jsonObject['display_name'];
+    _phoneNumber = jsonObject['phone_number'] ?? jsonObject['phoneNumber'];
     _parentName = jsonObject['parent_name'];
     _parentGender = jsonObject['parent_gender'];
     _childName = jsonObject['child_name'];
@@ -255,6 +258,7 @@ class UserModel {
   String? _platform;
   String? _productId;
   String? _email;
+  String? _phoneNumber;
   String? _originalTransactionId;
   String? _subscriptionStatus;
   String? _transactionId;
@@ -294,6 +298,7 @@ class UserModel {
     String? platform,
     String? productId,
     String? email,
+    String? phoneNumber,
     String? originalTransactionId,
     String? subscriptionStatus,
     String? transactionId,
@@ -329,6 +334,7 @@ class UserModel {
       uid: uid ?? _uid,
       platform: platform ?? _platform,
       email: email ?? _email,
+      phoneNumber: phoneNumber ?? _phoneNumber,
       productId: productId ?? _productId,
       subscriptionStatus: subscriptionStatus ?? _subscriptionStatus,
       originalTransactionId: originalTransactionId ?? _originalTransactionId,
@@ -370,6 +376,8 @@ class UserModel {
   String? get productId => _productId;
 
   String? get email => _email;
+
+  String? get phoneNumber => _phoneNumber;
 
   String? get parentEmail => _parentEmail;
 
@@ -469,6 +477,7 @@ class UserModel {
 
     map['platform'] = _platform;
     map['email'] = _email;
+    map['phone_number'] = _phoneNumber;
     map['product_id'] = _productId;
     map['original_transaction_id'] = _originalTransactionId;
     map['subscription_status'] = _subscriptionStatus;

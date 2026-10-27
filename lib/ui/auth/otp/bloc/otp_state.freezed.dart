@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$OtpState {
 
- String get otpCode; String get otpError; ApiResultStatus<dynamic> get verifyStatus; ApiResultStatus<dynamic> get resendStatus; bool get isSubmitting; int get resendCountdown; bool get canResend; String get destination; String get verificationId; int? get resendToken; bool get isPhoneAuth; int get failedAttempts; bool get isLocked; int get lockoutSeconds;
+ String get otpCode; String get otpError; ApiResultStatus<dynamic> get verifyStatus; ApiResultStatus<dynamic> get resendStatus; bool get isSubmitting; int get resendCountdown; bool get canResend; String get destination; String get verificationId; int? get resendToken; bool get isPhoneAuth; int get failedAttempts; bool get isLocked; int get lockoutSeconds; String get linkedEmail; String get linkedPhone;
 /// Create a copy of OtpState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $OtpStateCopyWith<OtpState> get copyWith => _$OtpStateCopyWithImpl<OtpState>(thi
 @override
 bool operator ==(Object other) {
   final _this = this as OtpState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OtpState&&(identical(other.otpCode, _this.otpCode) || other.otpCode == _this.otpCode)&&(identical(other.otpError, _this.otpError) || other.otpError == _this.otpError)&&(identical(other.verifyStatus, _this.verifyStatus) || other.verifyStatus == _this.verifyStatus)&&(identical(other.resendStatus, _this.resendStatus) || other.resendStatus == _this.resendStatus)&&(identical(other.isSubmitting, _this.isSubmitting) || other.isSubmitting == _this.isSubmitting)&&(identical(other.resendCountdown, _this.resendCountdown) || other.resendCountdown == _this.resendCountdown)&&(identical(other.canResend, _this.canResend) || other.canResend == _this.canResend)&&(identical(other.destination, _this.destination) || other.destination == _this.destination)&&(identical(other.verificationId, _this.verificationId) || other.verificationId == _this.verificationId)&&(identical(other.resendToken, _this.resendToken) || other.resendToken == _this.resendToken)&&(identical(other.isPhoneAuth, _this.isPhoneAuth) || other.isPhoneAuth == _this.isPhoneAuth)&&(identical(other.failedAttempts, _this.failedAttempts) || other.failedAttempts == _this.failedAttempts)&&(identical(other.isLocked, _this.isLocked) || other.isLocked == _this.isLocked)&&(identical(other.lockoutSeconds, _this.lockoutSeconds) || other.lockoutSeconds == _this.lockoutSeconds));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OtpState&&(identical(other.otpCode, _this.otpCode) || other.otpCode == _this.otpCode)&&(identical(other.otpError, _this.otpError) || other.otpError == _this.otpError)&&(identical(other.verifyStatus, _this.verifyStatus) || other.verifyStatus == _this.verifyStatus)&&(identical(other.resendStatus, _this.resendStatus) || other.resendStatus == _this.resendStatus)&&(identical(other.isSubmitting, _this.isSubmitting) || other.isSubmitting == _this.isSubmitting)&&(identical(other.resendCountdown, _this.resendCountdown) || other.resendCountdown == _this.resendCountdown)&&(identical(other.canResend, _this.canResend) || other.canResend == _this.canResend)&&(identical(other.destination, _this.destination) || other.destination == _this.destination)&&(identical(other.verificationId, _this.verificationId) || other.verificationId == _this.verificationId)&&(identical(other.resendToken, _this.resendToken) || other.resendToken == _this.resendToken)&&(identical(other.isPhoneAuth, _this.isPhoneAuth) || other.isPhoneAuth == _this.isPhoneAuth)&&(identical(other.failedAttempts, _this.failedAttempts) || other.failedAttempts == _this.failedAttempts)&&(identical(other.isLocked, _this.isLocked) || other.isLocked == _this.isLocked)&&(identical(other.lockoutSeconds, _this.lockoutSeconds) || other.lockoutSeconds == _this.lockoutSeconds)&&(identical(other.linkedEmail, _this.linkedEmail) || other.linkedEmail == _this.linkedEmail)&&(identical(other.linkedPhone, _this.linkedPhone) || other.linkedPhone == _this.linkedPhone));
 }
 
 
 @override
 int get hashCode {
   final _this = this as OtpState;
-  return Object.hash(runtimeType,_this.otpCode,_this.otpError,_this.verifyStatus,_this.resendStatus,_this.isSubmitting,_this.resendCountdown,_this.canResend,_this.destination,_this.verificationId,_this.resendToken,_this.isPhoneAuth,_this.failedAttempts,_this.isLocked,_this.lockoutSeconds);
+  return Object.hash(runtimeType,_this.otpCode,_this.otpError,_this.verifyStatus,_this.resendStatus,_this.isSubmitting,_this.resendCountdown,_this.canResend,_this.destination,_this.verificationId,_this.resendToken,_this.isPhoneAuth,_this.failedAttempts,_this.isLocked,_this.lockoutSeconds,_this.linkedEmail,_this.linkedPhone);
 }
 
 @override
 String toString() {
   final _this = this as OtpState;
-  return 'OtpState(otpCode: ${_this.otpCode}, otpError: ${_this.otpError}, verifyStatus: ${_this.verifyStatus}, resendStatus: ${_this.resendStatus}, isSubmitting: ${_this.isSubmitting}, resendCountdown: ${_this.resendCountdown}, canResend: ${_this.canResend}, destination: ${_this.destination}, verificationId: ${_this.verificationId}, resendToken: ${_this.resendToken}, isPhoneAuth: ${_this.isPhoneAuth}, failedAttempts: ${_this.failedAttempts}, isLocked: ${_this.isLocked}, lockoutSeconds: ${_this.lockoutSeconds})';
+  return 'OtpState(otpCode: ${_this.otpCode}, otpError: ${_this.otpError}, verifyStatus: ${_this.verifyStatus}, resendStatus: ${_this.resendStatus}, isSubmitting: ${_this.isSubmitting}, resendCountdown: ${_this.resendCountdown}, canResend: ${_this.canResend}, destination: ${_this.destination}, verificationId: ${_this.verificationId}, resendToken: ${_this.resendToken}, isPhoneAuth: ${_this.isPhoneAuth}, failedAttempts: ${_this.failedAttempts}, isLocked: ${_this.isLocked}, lockoutSeconds: ${_this.lockoutSeconds}, linkedEmail: ${_this.linkedEmail}, linkedPhone: ${_this.linkedPhone})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $OtpStateCopyWith<$Res>  {
   factory $OtpStateCopyWith(OtpState value, $Res Function(OtpState) _then) = _$OtpStateCopyWithImpl;
 @useResult
 $Res call({
- String otpCode, String otpError, ApiResultStatus<dynamic> verifyStatus, ApiResultStatus<dynamic> resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination, String verificationId, int? resendToken, bool isPhoneAuth, int failedAttempts, bool isLocked, int lockoutSeconds
+ String otpCode, String otpError, ApiResultStatus<dynamic> verifyStatus, ApiResultStatus<dynamic> resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination, String verificationId, int? resendToken, bool isPhoneAuth, int failedAttempts, bool isLocked, int lockoutSeconds, String linkedEmail, String linkedPhone
 });
 
 
@@ -68,7 +68,7 @@ class _$OtpStateCopyWithImpl<$Res>
 
 /// Create a copy of OtpState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? otpCode = null,Object? otpError = null,Object? verifyStatus = null,Object? resendStatus = null,Object? isSubmitting = null,Object? resendCountdown = null,Object? canResend = null,Object? destination = null,Object? verificationId = null,Object? resendToken = freezed,Object? isPhoneAuth = null,Object? failedAttempts = null,Object? isLocked = null,Object? lockoutSeconds = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? otpCode = null,Object? otpError = null,Object? verifyStatus = null,Object? resendStatus = null,Object? isSubmitting = null,Object? resendCountdown = null,Object? canResend = null,Object? destination = null,Object? verificationId = null,Object? resendToken = freezed,Object? isPhoneAuth = null,Object? failedAttempts = null,Object? isLocked = null,Object? lockoutSeconds = null,Object? linkedEmail = null,Object? linkedPhone = null,}) {
   return _then(OtpState(
 otpCode: null == otpCode ? _self.otpCode : otpCode // ignore: cast_nullable_to_non_nullable
 as String,otpError: null == otpError ? _self.otpError : otpError // ignore: cast_nullable_to_non_nullable
@@ -84,7 +84,9 @@ as int?,isPhoneAuth: null == isPhoneAuth ? _self.isPhoneAuth : isPhoneAuth // ig
 as bool,failedAttempts: null == failedAttempts ? _self.failedAttempts : failedAttempts // ignore: cast_nullable_to_non_nullable
 as int,isLocked: null == isLocked ? _self.isLocked : isLocked // ignore: cast_nullable_to_non_nullable
 as bool,lockoutSeconds: null == lockoutSeconds ? _self.lockoutSeconds : lockoutSeconds // ignore: cast_nullable_to_non_nullable
-as int,
+as int,linkedEmail: null == linkedEmail ? _self.linkedEmail : linkedEmail // ignore: cast_nullable_to_non_nullable
+as String,linkedPhone: null == linkedPhone ? _self.linkedPhone : linkedPhone // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 /// Create a copy of OtpState
@@ -187,10 +189,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination,  String verificationId,  int? resendToken,  bool isPhoneAuth,  int failedAttempts,  bool isLocked,  int lockoutSeconds)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination,  String verificationId,  int? resendToken,  bool isPhoneAuth,  int failedAttempts,  bool isLocked,  int lockoutSeconds,  String linkedEmail,  String linkedPhone)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OtpState() when $default != null:
-return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination,_that.verificationId,_that.resendToken,_that.isPhoneAuth,_that.failedAttempts,_that.isLocked,_that.lockoutSeconds);case _:
+return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination,_that.verificationId,_that.resendToken,_that.isPhoneAuth,_that.failedAttempts,_that.isLocked,_that.lockoutSeconds,_that.linkedEmail,_that.linkedPhone);case _:
   return orElse();
 
 }
@@ -208,10 +210,10 @@ return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStat
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination,  String verificationId,  int? resendToken,  bool isPhoneAuth,  int failedAttempts,  bool isLocked,  int lockoutSeconds)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination,  String verificationId,  int? resendToken,  bool isPhoneAuth,  int failedAttempts,  bool isLocked,  int lockoutSeconds,  String linkedEmail,  String linkedPhone)  $default,) {final _that = this;
 switch (_that) {
 case _OtpState():
-return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination,_that.verificationId,_that.resendToken,_that.isPhoneAuth,_that.failedAttempts,_that.isLocked,_that.lockoutSeconds);case _:
+return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination,_that.verificationId,_that.resendToken,_that.isPhoneAuth,_that.failedAttempts,_that.isLocked,_that.lockoutSeconds,_that.linkedEmail,_that.linkedPhone);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -228,10 +230,10 @@ return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStat
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination,  String verificationId,  int? resendToken,  bool isPhoneAuth,  int failedAttempts,  bool isLocked,  int lockoutSeconds)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String otpCode,  String otpError,  ApiResultStatus<dynamic> verifyStatus,  ApiResultStatus<dynamic> resendStatus,  bool isSubmitting,  int resendCountdown,  bool canResend,  String destination,  String verificationId,  int? resendToken,  bool isPhoneAuth,  int failedAttempts,  bool isLocked,  int lockoutSeconds,  String linkedEmail,  String linkedPhone)?  $default,) {final _that = this;
 switch (_that) {
 case _OtpState() when $default != null:
-return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination,_that.verificationId,_that.resendToken,_that.isPhoneAuth,_that.failedAttempts,_that.isLocked,_that.lockoutSeconds);case _:
+return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStatus,_that.isSubmitting,_that.resendCountdown,_that.canResend,_that.destination,_that.verificationId,_that.resendToken,_that.isPhoneAuth,_that.failedAttempts,_that.isLocked,_that.lockoutSeconds,_that.linkedEmail,_that.linkedPhone);case _:
   return null;
 
 }
@@ -243,7 +245,7 @@ return $default(_that.otpCode,_that.otpError,_that.verifyStatus,_that.resendStat
 
 
 class _OtpState implements OtpState {
-  const _OtpState({this.otpCode = '', this.otpError = '', this.verifyStatus = const ApiResultStatus.initial(), this.resendStatus = const ApiResultStatus.initial(), this.isSubmitting = false, this.resendCountdown = 30, this.canResend = false, this.destination = '', this.verificationId = '', this.resendToken = null, this.isPhoneAuth = false, this.failedAttempts = 0, this.isLocked = false, this.lockoutSeconds = 0});
+  const _OtpState({this.otpCode = '', this.otpError = '', this.verifyStatus = const ApiResultStatus.initial(), this.resendStatus = const ApiResultStatus.initial(), this.isSubmitting = false, this.resendCountdown = 30, this.canResend = false, this.destination = '', this.verificationId = '', this.resendToken = null, this.isPhoneAuth = false, this.failedAttempts = 0, this.isLocked = false, this.lockoutSeconds = 0, this.linkedEmail = '', this.linkedPhone = ''});
   
 
 @override@JsonKey() final  String otpCode;
@@ -260,6 +262,8 @@ class _OtpState implements OtpState {
 @override@JsonKey() final  int failedAttempts;
 @override@JsonKey() final  bool isLocked;
 @override@JsonKey() final  int lockoutSeconds;
+@override@JsonKey() final  String linkedEmail;
+@override@JsonKey() final  String linkedPhone;
 
 /// Create a copy of OtpState
 /// with the given fields replaced by the non-null parameter values.
@@ -271,18 +275,18 @@ _$OtpStateCopyWith<_OtpState> get copyWith => __$OtpStateCopyWithImpl<_OtpState>
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OtpState&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.otpError, otpError) || other.otpError == otpError)&&(identical(other.verifyStatus, verifyStatus) || other.verifyStatus == verifyStatus)&&(identical(other.resendStatus, resendStatus) || other.resendStatus == resendStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.resendCountdown, resendCountdown) || other.resendCountdown == resendCountdown)&&(identical(other.canResend, canResend) || other.canResend == canResend)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.verificationId, verificationId) || other.verificationId == verificationId)&&(identical(other.resendToken, resendToken) || other.resendToken == resendToken)&&(identical(other.isPhoneAuth, isPhoneAuth) || other.isPhoneAuth == isPhoneAuth)&&(identical(other.failedAttempts, failedAttempts) || other.failedAttempts == failedAttempts)&&(identical(other.isLocked, isLocked) || other.isLocked == isLocked)&&(identical(other.lockoutSeconds, lockoutSeconds) || other.lockoutSeconds == lockoutSeconds));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _OtpState&&(identical(other.otpCode, otpCode) || other.otpCode == otpCode)&&(identical(other.otpError, otpError) || other.otpError == otpError)&&(identical(other.verifyStatus, verifyStatus) || other.verifyStatus == verifyStatus)&&(identical(other.resendStatus, resendStatus) || other.resendStatus == resendStatus)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.resendCountdown, resendCountdown) || other.resendCountdown == resendCountdown)&&(identical(other.canResend, canResend) || other.canResend == canResend)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.verificationId, verificationId) || other.verificationId == verificationId)&&(identical(other.resendToken, resendToken) || other.resendToken == resendToken)&&(identical(other.isPhoneAuth, isPhoneAuth) || other.isPhoneAuth == isPhoneAuth)&&(identical(other.failedAttempts, failedAttempts) || other.failedAttempts == failedAttempts)&&(identical(other.isLocked, isLocked) || other.isLocked == isLocked)&&(identical(other.lockoutSeconds, lockoutSeconds) || other.lockoutSeconds == lockoutSeconds)&&(identical(other.linkedEmail, linkedEmail) || other.linkedEmail == linkedEmail)&&(identical(other.linkedPhone, linkedPhone) || other.linkedPhone == linkedPhone));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,otpCode,otpError,verifyStatus,resendStatus,isSubmitting,resendCountdown,canResend,destination,verificationId,resendToken,isPhoneAuth,failedAttempts,isLocked,lockoutSeconds);
+    return Object.hash(runtimeType,otpCode,otpError,verifyStatus,resendStatus,isSubmitting,resendCountdown,canResend,destination,verificationId,resendToken,isPhoneAuth,failedAttempts,isLocked,lockoutSeconds,linkedEmail,linkedPhone);
 }
 
 @override
 String toString() {
-    return 'OtpState(otpCode: $otpCode, otpError: $otpError, verifyStatus: $verifyStatus, resendStatus: $resendStatus, isSubmitting: $isSubmitting, resendCountdown: $resendCountdown, canResend: $canResend, destination: $destination, verificationId: $verificationId, resendToken: $resendToken, isPhoneAuth: $isPhoneAuth, failedAttempts: $failedAttempts, isLocked: $isLocked, lockoutSeconds: $lockoutSeconds)';
+    return 'OtpState(otpCode: $otpCode, otpError: $otpError, verifyStatus: $verifyStatus, resendStatus: $resendStatus, isSubmitting: $isSubmitting, resendCountdown: $resendCountdown, canResend: $canResend, destination: $destination, verificationId: $verificationId, resendToken: $resendToken, isPhoneAuth: $isPhoneAuth, failedAttempts: $failedAttempts, isLocked: $isLocked, lockoutSeconds: $lockoutSeconds, linkedEmail: $linkedEmail, linkedPhone: $linkedPhone)';
 }
 
 
@@ -293,7 +297,7 @@ abstract mixin class _$OtpStateCopyWith<$Res> implements $OtpStateCopyWith<$Res>
   factory _$OtpStateCopyWith(_OtpState value, $Res Function(_OtpState) _then) = __$OtpStateCopyWithImpl;
 @override @useResult
 $Res call({
- String otpCode, String otpError, ApiResultStatus<dynamic> verifyStatus, ApiResultStatus<dynamic> resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination, String verificationId, int? resendToken, bool isPhoneAuth, int failedAttempts, bool isLocked, int lockoutSeconds
+ String otpCode, String otpError, ApiResultStatus<dynamic> verifyStatus, ApiResultStatus<dynamic> resendStatus, bool isSubmitting, int resendCountdown, bool canResend, String destination, String verificationId, int? resendToken, bool isPhoneAuth, int failedAttempts, bool isLocked, int lockoutSeconds, String linkedEmail, String linkedPhone
 });
 
 
@@ -310,7 +314,7 @@ class __$OtpStateCopyWithImpl<$Res>
 
 /// Create a copy of OtpState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? otpCode = null,Object? otpError = null,Object? verifyStatus = null,Object? resendStatus = null,Object? isSubmitting = null,Object? resendCountdown = null,Object? canResend = null,Object? destination = null,Object? verificationId = null,Object? resendToken = freezed,Object? isPhoneAuth = null,Object? failedAttempts = null,Object? isLocked = null,Object? lockoutSeconds = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? otpCode = null,Object? otpError = null,Object? verifyStatus = null,Object? resendStatus = null,Object? isSubmitting = null,Object? resendCountdown = null,Object? canResend = null,Object? destination = null,Object? verificationId = null,Object? resendToken = freezed,Object? isPhoneAuth = null,Object? failedAttempts = null,Object? isLocked = null,Object? lockoutSeconds = null,Object? linkedEmail = null,Object? linkedPhone = null,}) {
   return _then(_OtpState(
 otpCode: null == otpCode ? _self.otpCode : otpCode // ignore: cast_nullable_to_non_nullable
 as String,otpError: null == otpError ? _self.otpError : otpError // ignore: cast_nullable_to_non_nullable
@@ -326,7 +330,9 @@ as int?,isPhoneAuth: null == isPhoneAuth ? _self.isPhoneAuth : isPhoneAuth // ig
 as bool,failedAttempts: null == failedAttempts ? _self.failedAttempts : failedAttempts // ignore: cast_nullable_to_non_nullable
 as int,isLocked: null == isLocked ? _self.isLocked : isLocked // ignore: cast_nullable_to_non_nullable
 as bool,lockoutSeconds: null == lockoutSeconds ? _self.lockoutSeconds : lockoutSeconds // ignore: cast_nullable_to_non_nullable
-as int,
+as int,linkedEmail: null == linkedEmail ? _self.linkedEmail : linkedEmail // ignore: cast_nullable_to_non_nullable
+as String,linkedPhone: null == linkedPhone ? _self.linkedPhone : linkedPhone // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

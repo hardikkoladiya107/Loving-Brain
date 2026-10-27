@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RegisterState {
 
- bool get obscureTextPassword; bool get obscureTextConfirmPassword; String get emailAddress; String get password; String get confirmPassword; String get emailAddressError; String get passwordError; String get confirmPasswordError; bool get isTermsAndConditionAccepted; ApiResultStatus<dynamic> get apiResultStatus; bool get isAuthSubmitting;/// 0 = email step, 1 = password step
- int get currentStep; bool get isEmailChecking; bool get isPhoneAuth; String get phoneVerificationId; int? get phoneResendToken;
+ bool get obscureTextPassword; bool get obscureTextConfirmPassword; String get phoneNumber; String get phoneNumberError; String get emailAddress; String get password; String get confirmPassword; String get emailAddressError; String get passwordError; String get confirmPasswordError; bool get isTermsAndConditionAccepted; ApiResultStatus<dynamic> get apiResultStatus; bool get isAuthSubmitting;/// 0 = email step, 1 = password step
+ int get currentStep; bool get isEmailChecking; bool get isPhoneAuth; String get phoneVerificationId; int? get phoneResendToken; String get linkedEmail; String get linkedPhone;
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,20 +28,20 @@ $RegisterStateCopyWith<RegisterState> get copyWith => _$RegisterStateCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as RegisterState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterState&&(identical(other.obscureTextPassword, _this.obscureTextPassword) || other.obscureTextPassword == _this.obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, _this.obscureTextConfirmPassword) || other.obscureTextConfirmPassword == _this.obscureTextConfirmPassword)&&(identical(other.emailAddress, _this.emailAddress) || other.emailAddress == _this.emailAddress)&&(identical(other.password, _this.password) || other.password == _this.password)&&(identical(other.confirmPassword, _this.confirmPassword) || other.confirmPassword == _this.confirmPassword)&&(identical(other.emailAddressError, _this.emailAddressError) || other.emailAddressError == _this.emailAddressError)&&(identical(other.passwordError, _this.passwordError) || other.passwordError == _this.passwordError)&&(identical(other.confirmPasswordError, _this.confirmPasswordError) || other.confirmPasswordError == _this.confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, _this.isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == _this.isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.isAuthSubmitting, _this.isAuthSubmitting) || other.isAuthSubmitting == _this.isAuthSubmitting)&&(identical(other.currentStep, _this.currentStep) || other.currentStep == _this.currentStep)&&(identical(other.isEmailChecking, _this.isEmailChecking) || other.isEmailChecking == _this.isEmailChecking)&&(identical(other.isPhoneAuth, _this.isPhoneAuth) || other.isPhoneAuth == _this.isPhoneAuth)&&(identical(other.phoneVerificationId, _this.phoneVerificationId) || other.phoneVerificationId == _this.phoneVerificationId)&&(identical(other.phoneResendToken, _this.phoneResendToken) || other.phoneResendToken == _this.phoneResendToken));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RegisterState&&(identical(other.obscureTextPassword, _this.obscureTextPassword) || other.obscureTextPassword == _this.obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, _this.obscureTextConfirmPassword) || other.obscureTextConfirmPassword == _this.obscureTextConfirmPassword)&&(identical(other.phoneNumber, _this.phoneNumber) || other.phoneNumber == _this.phoneNumber)&&(identical(other.phoneNumberError, _this.phoneNumberError) || other.phoneNumberError == _this.phoneNumberError)&&(identical(other.emailAddress, _this.emailAddress) || other.emailAddress == _this.emailAddress)&&(identical(other.password, _this.password) || other.password == _this.password)&&(identical(other.confirmPassword, _this.confirmPassword) || other.confirmPassword == _this.confirmPassword)&&(identical(other.emailAddressError, _this.emailAddressError) || other.emailAddressError == _this.emailAddressError)&&(identical(other.passwordError, _this.passwordError) || other.passwordError == _this.passwordError)&&(identical(other.confirmPasswordError, _this.confirmPasswordError) || other.confirmPasswordError == _this.confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, _this.isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == _this.isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, _this.apiResultStatus) || other.apiResultStatus == _this.apiResultStatus)&&(identical(other.isAuthSubmitting, _this.isAuthSubmitting) || other.isAuthSubmitting == _this.isAuthSubmitting)&&(identical(other.currentStep, _this.currentStep) || other.currentStep == _this.currentStep)&&(identical(other.isEmailChecking, _this.isEmailChecking) || other.isEmailChecking == _this.isEmailChecking)&&(identical(other.isPhoneAuth, _this.isPhoneAuth) || other.isPhoneAuth == _this.isPhoneAuth)&&(identical(other.phoneVerificationId, _this.phoneVerificationId) || other.phoneVerificationId == _this.phoneVerificationId)&&(identical(other.phoneResendToken, _this.phoneResendToken) || other.phoneResendToken == _this.phoneResendToken)&&(identical(other.linkedEmail, _this.linkedEmail) || other.linkedEmail == _this.linkedEmail)&&(identical(other.linkedPhone, _this.linkedPhone) || other.linkedPhone == _this.linkedPhone));
 }
 
 
 @override
 int get hashCode {
   final _this = this as RegisterState;
-  return Object.hash(runtimeType,_this.obscureTextPassword,_this.obscureTextConfirmPassword,_this.emailAddress,_this.password,_this.confirmPassword,_this.emailAddressError,_this.passwordError,_this.confirmPasswordError,_this.isTermsAndConditionAccepted,_this.apiResultStatus,_this.isAuthSubmitting,_this.currentStep,_this.isEmailChecking,_this.isPhoneAuth,_this.phoneVerificationId,_this.phoneResendToken);
+  return Object.hashAll([runtimeType,_this.obscureTextPassword,_this.obscureTextConfirmPassword,_this.phoneNumber,_this.phoneNumberError,_this.emailAddress,_this.password,_this.confirmPassword,_this.emailAddressError,_this.passwordError,_this.confirmPasswordError,_this.isTermsAndConditionAccepted,_this.apiResultStatus,_this.isAuthSubmitting,_this.currentStep,_this.isEmailChecking,_this.isPhoneAuth,_this.phoneVerificationId,_this.phoneResendToken,_this.linkedEmail,_this.linkedPhone]);
 }
 
 @override
 String toString() {
   final _this = this as RegisterState;
-  return 'RegisterState(obscureTextPassword: ${_this.obscureTextPassword}, obscureTextConfirmPassword: ${_this.obscureTextConfirmPassword}, emailAddress: ${_this.emailAddress}, password: ${_this.password}, confirmPassword: ${_this.confirmPassword}, emailAddressError: ${_this.emailAddressError}, passwordError: ${_this.passwordError}, confirmPasswordError: ${_this.confirmPasswordError}, isTermsAndConditionAccepted: ${_this.isTermsAndConditionAccepted}, apiResultStatus: ${_this.apiResultStatus}, isAuthSubmitting: ${_this.isAuthSubmitting}, currentStep: ${_this.currentStep}, isEmailChecking: ${_this.isEmailChecking}, isPhoneAuth: ${_this.isPhoneAuth}, phoneVerificationId: ${_this.phoneVerificationId}, phoneResendToken: ${_this.phoneResendToken})';
+  return 'RegisterState(obscureTextPassword: ${_this.obscureTextPassword}, obscureTextConfirmPassword: ${_this.obscureTextConfirmPassword}, phoneNumber: ${_this.phoneNumber}, phoneNumberError: ${_this.phoneNumberError}, emailAddress: ${_this.emailAddress}, password: ${_this.password}, confirmPassword: ${_this.confirmPassword}, emailAddressError: ${_this.emailAddressError}, passwordError: ${_this.passwordError}, confirmPasswordError: ${_this.confirmPasswordError}, isTermsAndConditionAccepted: ${_this.isTermsAndConditionAccepted}, apiResultStatus: ${_this.apiResultStatus}, isAuthSubmitting: ${_this.isAuthSubmitting}, currentStep: ${_this.currentStep}, isEmailChecking: ${_this.isEmailChecking}, isPhoneAuth: ${_this.isPhoneAuth}, phoneVerificationId: ${_this.phoneVerificationId}, phoneResendToken: ${_this.phoneResendToken}, linkedEmail: ${_this.linkedEmail}, linkedPhone: ${_this.linkedPhone})';
 }
 
 
@@ -52,7 +52,7 @@ abstract mixin class $RegisterStateCopyWith<$Res>  {
   factory $RegisterStateCopyWith(RegisterState value, $Res Function(RegisterState) _then) = _$RegisterStateCopyWithImpl;
 @useResult
 $Res call({
- bool obscureTextPassword, bool obscureTextConfirmPassword, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus<dynamic> apiResultStatus, bool isAuthSubmitting, int currentStep, bool isEmailChecking, bool isPhoneAuth, String phoneVerificationId, int? phoneResendToken
+ bool obscureTextPassword, bool obscureTextConfirmPassword, String phoneNumber, String phoneNumberError, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus<dynamic> apiResultStatus, bool isAuthSubmitting, int currentStep, bool isEmailChecking, bool isPhoneAuth, String phoneVerificationId, int? phoneResendToken, String linkedEmail, String linkedPhone
 });
 
 
@@ -69,11 +69,13 @@ class _$RegisterStateCopyWithImpl<$Res>
 
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,Object? currentStep = null,Object? isEmailChecking = null,Object? isPhoneAuth = null,Object? phoneVerificationId = null,Object? phoneResendToken = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? phoneNumber = null,Object? phoneNumberError = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,Object? currentStep = null,Object? isEmailChecking = null,Object? isPhoneAuth = null,Object? phoneVerificationId = null,Object? phoneResendToken = freezed,Object? linkedEmail = null,Object? linkedPhone = null,}) {
   return _then(RegisterState(
 obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
 as bool,obscureTextConfirmPassword: null == obscureTextConfirmPassword ? _self.obscureTextConfirmPassword : obscureTextConfirmPassword // ignore: cast_nullable_to_non_nullable
-as bool,emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
+as bool,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
+as String,phoneNumberError: null == phoneNumberError ? _self.phoneNumberError : phoneNumberError // ignore: cast_nullable_to_non_nullable
+as String,emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,confirmPassword: null == confirmPassword ? _self.confirmPassword : confirmPassword // ignore: cast_nullable_to_non_nullable
 as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
@@ -87,7 +89,9 @@ as int,isEmailChecking: null == isEmailChecking ? _self.isEmailChecking : isEmai
 as bool,isPhoneAuth: null == isPhoneAuth ? _self.isPhoneAuth : isPhoneAuth // ignore: cast_nullable_to_non_nullable
 as bool,phoneVerificationId: null == phoneVerificationId ? _self.phoneVerificationId : phoneVerificationId // ignore: cast_nullable_to_non_nullable
 as String,phoneResendToken: freezed == phoneResendToken ? _self.phoneResendToken : phoneResendToken // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,linkedEmail: null == linkedEmail ? _self.linkedEmail : linkedEmail // ignore: cast_nullable_to_non_nullable
+as String,linkedPhone: null == linkedPhone ? _self.linkedPhone : linkedPhone // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 /// Create a copy of RegisterState
@@ -181,10 +185,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking,  bool isPhoneAuth,  String phoneVerificationId,  int? phoneResendToken)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String phoneNumber,  String phoneNumberError,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking,  bool isPhoneAuth,  String phoneVerificationId,  int? phoneResendToken,  String linkedEmail,  String linkedPhone)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RegisterState() when $default != null:
-return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking,_that.isPhoneAuth,_that.phoneVerificationId,_that.phoneResendToken);case _:
+return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.phoneNumber,_that.phoneNumberError,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking,_that.isPhoneAuth,_that.phoneVerificationId,_that.phoneResendToken,_that.linkedEmail,_that.linkedPhone);case _:
   return orElse();
 
 }
@@ -202,10 +206,10 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking,  bool isPhoneAuth,  String phoneVerificationId,  int? phoneResendToken)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String phoneNumber,  String phoneNumberError,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking,  bool isPhoneAuth,  String phoneVerificationId,  int? phoneResendToken,  String linkedEmail,  String linkedPhone)  $default,) {final _that = this;
 switch (_that) {
 case _RegisterState():
-return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking,_that.isPhoneAuth,_that.phoneVerificationId,_that.phoneResendToken);case _:
+return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.phoneNumber,_that.phoneNumberError,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking,_that.isPhoneAuth,_that.phoneVerificationId,_that.phoneResendToken,_that.linkedEmail,_that.linkedPhone);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -222,10 +226,10 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking,  bool isPhoneAuth,  String phoneVerificationId,  int? phoneResendToken)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool obscureTextPassword,  bool obscureTextConfirmPassword,  String phoneNumber,  String phoneNumberError,  String emailAddress,  String password,  String confirmPassword,  String emailAddressError,  String passwordError,  String confirmPasswordError,  bool isTermsAndConditionAccepted,  ApiResultStatus<dynamic> apiResultStatus,  bool isAuthSubmitting,  int currentStep,  bool isEmailChecking,  bool isPhoneAuth,  String phoneVerificationId,  int? phoneResendToken,  String linkedEmail,  String linkedPhone)?  $default,) {final _that = this;
 switch (_that) {
 case _RegisterState() when $default != null:
-return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking,_that.isPhoneAuth,_that.phoneVerificationId,_that.phoneResendToken);case _:
+return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that.phoneNumber,_that.phoneNumberError,_that.emailAddress,_that.password,_that.confirmPassword,_that.emailAddressError,_that.passwordError,_that.confirmPasswordError,_that.isTermsAndConditionAccepted,_that.apiResultStatus,_that.isAuthSubmitting,_that.currentStep,_that.isEmailChecking,_that.isPhoneAuth,_that.phoneVerificationId,_that.phoneResendToken,_that.linkedEmail,_that.linkedPhone);case _:
   return null;
 
 }
@@ -237,11 +241,13 @@ return $default(_that.obscureTextPassword,_that.obscureTextConfirmPassword,_that
 
 
 class _RegisterState implements RegisterState {
-  const _RegisterState({this.obscureTextPassword = true, this.obscureTextConfirmPassword = true, this.emailAddress = '', this.password = '', this.confirmPassword = '', this.emailAddressError = '', this.passwordError = '', this.confirmPasswordError = '', this.isTermsAndConditionAccepted = false, this.apiResultStatus = const ApiResultStatus.initial(), this.isAuthSubmitting = false, this.currentStep = 0, this.isEmailChecking = false, this.isPhoneAuth = false, this.phoneVerificationId = '', this.phoneResendToken = null});
+  const _RegisterState({this.obscureTextPassword = true, this.obscureTextConfirmPassword = true, this.phoneNumber = '', this.phoneNumberError = '', this.emailAddress = '', this.password = '', this.confirmPassword = '', this.emailAddressError = '', this.passwordError = '', this.confirmPasswordError = '', this.isTermsAndConditionAccepted = false, this.apiResultStatus = const ApiResultStatus.initial(), this.isAuthSubmitting = false, this.currentStep = 0, this.isEmailChecking = false, this.isPhoneAuth = false, this.phoneVerificationId = '', this.phoneResendToken = null, this.linkedEmail = '', this.linkedPhone = ''});
   
 
 @override@JsonKey() final  bool obscureTextPassword;
 @override@JsonKey() final  bool obscureTextConfirmPassword;
+@override@JsonKey() final  String phoneNumber;
+@override@JsonKey() final  String phoneNumberError;
 @override@JsonKey() final  String emailAddress;
 @override@JsonKey() final  String password;
 @override@JsonKey() final  String confirmPassword;
@@ -257,6 +263,8 @@ class _RegisterState implements RegisterState {
 @override@JsonKey() final  bool isPhoneAuth;
 @override@JsonKey() final  String phoneVerificationId;
 @override@JsonKey() final  int? phoneResendToken;
+@override@JsonKey() final  String linkedEmail;
+@override@JsonKey() final  String linkedPhone;
 
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
@@ -268,18 +276,18 @@ _$RegisterStateCopyWith<_RegisterState> get copyWith => __$RegisterStateCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterState&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, obscureTextConfirmPassword) || other.obscureTextConfirmPassword == obscureTextConfirmPassword)&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.isEmailChecking, isEmailChecking) || other.isEmailChecking == isEmailChecking)&&(identical(other.isPhoneAuth, isPhoneAuth) || other.isPhoneAuth == isPhoneAuth)&&(identical(other.phoneVerificationId, phoneVerificationId) || other.phoneVerificationId == phoneVerificationId)&&(identical(other.phoneResendToken, phoneResendToken) || other.phoneResendToken == phoneResendToken));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RegisterState&&(identical(other.obscureTextPassword, obscureTextPassword) || other.obscureTextPassword == obscureTextPassword)&&(identical(other.obscureTextConfirmPassword, obscureTextConfirmPassword) || other.obscureTextConfirmPassword == obscureTextConfirmPassword)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.phoneNumberError, phoneNumberError) || other.phoneNumberError == phoneNumberError)&&(identical(other.emailAddress, emailAddress) || other.emailAddress == emailAddress)&&(identical(other.password, password) || other.password == password)&&(identical(other.confirmPassword, confirmPassword) || other.confirmPassword == confirmPassword)&&(identical(other.emailAddressError, emailAddressError) || other.emailAddressError == emailAddressError)&&(identical(other.passwordError, passwordError) || other.passwordError == passwordError)&&(identical(other.confirmPasswordError, confirmPasswordError) || other.confirmPasswordError == confirmPasswordError)&&(identical(other.isTermsAndConditionAccepted, isTermsAndConditionAccepted) || other.isTermsAndConditionAccepted == isTermsAndConditionAccepted)&&(identical(other.apiResultStatus, apiResultStatus) || other.apiResultStatus == apiResultStatus)&&(identical(other.isAuthSubmitting, isAuthSubmitting) || other.isAuthSubmitting == isAuthSubmitting)&&(identical(other.currentStep, currentStep) || other.currentStep == currentStep)&&(identical(other.isEmailChecking, isEmailChecking) || other.isEmailChecking == isEmailChecking)&&(identical(other.isPhoneAuth, isPhoneAuth) || other.isPhoneAuth == isPhoneAuth)&&(identical(other.phoneVerificationId, phoneVerificationId) || other.phoneVerificationId == phoneVerificationId)&&(identical(other.phoneResendToken, phoneResendToken) || other.phoneResendToken == phoneResendToken)&&(identical(other.linkedEmail, linkedEmail) || other.linkedEmail == linkedEmail)&&(identical(other.linkedPhone, linkedPhone) || other.linkedPhone == linkedPhone));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,obscureTextPassword,obscureTextConfirmPassword,emailAddress,password,confirmPassword,emailAddressError,passwordError,confirmPasswordError,isTermsAndConditionAccepted,apiResultStatus,isAuthSubmitting,currentStep,isEmailChecking,isPhoneAuth,phoneVerificationId,phoneResendToken);
+    return Object.hashAll([runtimeType,obscureTextPassword,obscureTextConfirmPassword,phoneNumber,phoneNumberError,emailAddress,password,confirmPassword,emailAddressError,passwordError,confirmPasswordError,isTermsAndConditionAccepted,apiResultStatus,isAuthSubmitting,currentStep,isEmailChecking,isPhoneAuth,phoneVerificationId,phoneResendToken,linkedEmail,linkedPhone]);
 }
 
 @override
 String toString() {
-    return 'RegisterState(obscureTextPassword: $obscureTextPassword, obscureTextConfirmPassword: $obscureTextConfirmPassword, emailAddress: $emailAddress, password: $password, confirmPassword: $confirmPassword, emailAddressError: $emailAddressError, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, isTermsAndConditionAccepted: $isTermsAndConditionAccepted, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting, currentStep: $currentStep, isEmailChecking: $isEmailChecking, isPhoneAuth: $isPhoneAuth, phoneVerificationId: $phoneVerificationId, phoneResendToken: $phoneResendToken)';
+    return 'RegisterState(obscureTextPassword: $obscureTextPassword, obscureTextConfirmPassword: $obscureTextConfirmPassword, phoneNumber: $phoneNumber, phoneNumberError: $phoneNumberError, emailAddress: $emailAddress, password: $password, confirmPassword: $confirmPassword, emailAddressError: $emailAddressError, passwordError: $passwordError, confirmPasswordError: $confirmPasswordError, isTermsAndConditionAccepted: $isTermsAndConditionAccepted, apiResultStatus: $apiResultStatus, isAuthSubmitting: $isAuthSubmitting, currentStep: $currentStep, isEmailChecking: $isEmailChecking, isPhoneAuth: $isPhoneAuth, phoneVerificationId: $phoneVerificationId, phoneResendToken: $phoneResendToken, linkedEmail: $linkedEmail, linkedPhone: $linkedPhone)';
 }
 
 
@@ -290,7 +298,7 @@ abstract mixin class _$RegisterStateCopyWith<$Res> implements $RegisterStateCopy
   factory _$RegisterStateCopyWith(_RegisterState value, $Res Function(_RegisterState) _then) = __$RegisterStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool obscureTextPassword, bool obscureTextConfirmPassword, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus<dynamic> apiResultStatus, bool isAuthSubmitting, int currentStep, bool isEmailChecking, bool isPhoneAuth, String phoneVerificationId, int? phoneResendToken
+ bool obscureTextPassword, bool obscureTextConfirmPassword, String phoneNumber, String phoneNumberError, String emailAddress, String password, String confirmPassword, String emailAddressError, String passwordError, String confirmPasswordError, bool isTermsAndConditionAccepted, ApiResultStatus<dynamic> apiResultStatus, bool isAuthSubmitting, int currentStep, bool isEmailChecking, bool isPhoneAuth, String phoneVerificationId, int? phoneResendToken, String linkedEmail, String linkedPhone
 });
 
 
@@ -307,11 +315,13 @@ class __$RegisterStateCopyWithImpl<$Res>
 
 /// Create a copy of RegisterState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,Object? currentStep = null,Object? isEmailChecking = null,Object? isPhoneAuth = null,Object? phoneVerificationId = null,Object? phoneResendToken = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? obscureTextPassword = null,Object? obscureTextConfirmPassword = null,Object? phoneNumber = null,Object? phoneNumberError = null,Object? emailAddress = null,Object? password = null,Object? confirmPassword = null,Object? emailAddressError = null,Object? passwordError = null,Object? confirmPasswordError = null,Object? isTermsAndConditionAccepted = null,Object? apiResultStatus = null,Object? isAuthSubmitting = null,Object? currentStep = null,Object? isEmailChecking = null,Object? isPhoneAuth = null,Object? phoneVerificationId = null,Object? phoneResendToken = freezed,Object? linkedEmail = null,Object? linkedPhone = null,}) {
   return _then(_RegisterState(
 obscureTextPassword: null == obscureTextPassword ? _self.obscureTextPassword : obscureTextPassword // ignore: cast_nullable_to_non_nullable
 as bool,obscureTextConfirmPassword: null == obscureTextConfirmPassword ? _self.obscureTextConfirmPassword : obscureTextConfirmPassword // ignore: cast_nullable_to_non_nullable
-as bool,emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
+as bool,phoneNumber: null == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
+as String,phoneNumberError: null == phoneNumberError ? _self.phoneNumberError : phoneNumberError // ignore: cast_nullable_to_non_nullable
+as String,emailAddress: null == emailAddress ? _self.emailAddress : emailAddress // ignore: cast_nullable_to_non_nullable
 as String,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,confirmPassword: null == confirmPassword ? _self.confirmPassword : confirmPassword // ignore: cast_nullable_to_non_nullable
 as String,emailAddressError: null == emailAddressError ? _self.emailAddressError : emailAddressError // ignore: cast_nullable_to_non_nullable
@@ -325,7 +335,9 @@ as int,isEmailChecking: null == isEmailChecking ? _self.isEmailChecking : isEmai
 as bool,isPhoneAuth: null == isPhoneAuth ? _self.isPhoneAuth : isPhoneAuth // ignore: cast_nullable_to_non_nullable
 as bool,phoneVerificationId: null == phoneVerificationId ? _self.phoneVerificationId : phoneVerificationId // ignore: cast_nullable_to_non_nullable
 as String,phoneResendToken: freezed == phoneResendToken ? _self.phoneResendToken : phoneResendToken // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,linkedEmail: null == linkedEmail ? _self.linkedEmail : linkedEmail // ignore: cast_nullable_to_non_nullable
+as String,linkedPhone: null == linkedPhone ? _self.linkedPhone : linkedPhone // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

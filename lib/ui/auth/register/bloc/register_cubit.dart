@@ -23,6 +23,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   void changeProps({
     bool? obscureTextPassword,
     bool? obscureTextConfirmPassword,
+    String? phoneNumber,
+    String? phoneNumberError,
     String? emailAddress,
     String? password,
     String? confirmPassword,
@@ -38,6 +40,8 @@ class RegisterCubit extends Cubit<RegisterState> {
     String? phoneVerificationId,
     int? phoneResendToken,
     String? submittingMethod,
+    String? linkedEmail,
+    String? linkedPhone,
   }) {
     if (submittingMethod != null) {
       _submittingMethod = submittingMethod;
@@ -49,6 +53,8 @@ class RegisterCubit extends Cubit<RegisterState> {
         obscureTextPassword: obscureTextPassword ?? state.obscureTextPassword,
         obscureTextConfirmPassword:
             obscureTextConfirmPassword ?? state.obscureTextConfirmPassword,
+        phoneNumber: phoneNumber ?? state.phoneNumber,
+        phoneNumberError: phoneNumberError ?? state.phoneNumberError,
         emailAddress: emailAddress ?? state.emailAddress,
         password: password ?? state.password,
         confirmPassword: confirmPassword ?? state.confirmPassword,
@@ -65,6 +71,8 @@ class RegisterCubit extends Cubit<RegisterState> {
         isPhoneAuth: isPhoneAuth ?? state.isPhoneAuth,
         phoneVerificationId: phoneVerificationId ?? state.phoneVerificationId,
         phoneResendToken: phoneResendToken ?? state.phoneResendToken,
+        linkedEmail: linkedEmail ?? state.linkedEmail,
+        linkedPhone: linkedPhone ?? state.linkedPhone,
       ),
     );
   }
@@ -172,6 +180,8 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void clearFields() {
     changeProps(
+      phoneNumber: '',
+      phoneNumberError: '',
       emailAddress: '',
       emailAddressError: '',
       password: '',
@@ -189,81 +199,89 @@ class RegisterCubit extends Cubit<RegisterState> {
       phoneVerificationId: '',
       phoneResendToken: null,
       submittingMethod: '',
+      linkedEmail: '',
+      linkedPhone: '',
     );
   }
 
   Future<void> sendOtp() async {
-    final String input = state.emailAddress.trim();
-    if (input.isEmpty) {
+    String rawPhone = state.phoneNumber.trim();
+    String rawEmail = state.emailAddress.trim();
+
+    // Fallback: if phoneNumber is empty and emailAddress was used for digits (e.g. legacy/tests)
+    if (rawPhone.isEmpty && rawEmail.isNotEmpty && !rawEmail.contains('@')) {
+      rawPhone = rawEmail;
+      rawEmail = '';
+    }
+
+    if (rawPhone.isEmpty && rawEmail.isEmpty) {
       changeProps(
+        phoneNumberError: 'Please enter your mobile number or email address',
         emailAddressError: 'Please enter your email or mobile number',
       );
       return;
     }
 
-    final bool isEmail = input.contains('@');
-    if (isEmail) {
-      if (!input.isValidEmail) {
-        changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
-        return;
-      }
-
-      changeProps(
-        emailAddressError: '',
-        apiResultStatus: const ApiResultStatus.loading(),
-        isAuthSubmitting: true,
-        submittingMethod: 'email',
-        isPhoneAuth: false,
-        phoneVerificationId: '',
-        phoneResendToken: null,
-      );
-
-      final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
-        email: input,
-      );
-
-      changeProps(
-        apiResultStatus: apiResult,
-        isAuthSubmitting: false,
-        submittingMethod: '',
-      );
-    } else {
-      // Mobile Number validation and Firebase Phone Auth (India-first with auto +91)
-      String cleanPhone = input.replaceAll(RegExp(r'[\s\-\(\)]'), '');
-
-      // Strip leading zero if 11 digits (e.g. 09876543210 -> 9876543210)
+    String cleanPhone = '';
+    if (rawPhone.isNotEmpty) {
+      cleanPhone = rawPhone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
       if (cleanPhone.startsWith('0') && cleanPhone.length == 11) {
         cleanPhone = cleanPhone.substring(1);
       }
 
-      // If user did not provide a leading '+', handle India auto-prefix
-      if (!cleanPhone.startsWith('+')) {
-        if (cleanPhone.startsWith('91') && cleanPhone.length == 12) {
+      // Validate country code — only Indian (+91) supported
+      if (cleanPhone.startsWith('+')) {
+        if (!cleanPhone.startsWith('+91')) {
+          changeProps(
+            phoneNumberError:
+                'We only allow Indian mobile numbers (+91) at this time',
+          );
+          return;
+        }
+        final String digits = cleanPhone.substring(3);
+        if (digits.length != 10 || !RegExp(r'^\d{10}$').hasMatch(digits)) {
+          changeProps(
+            phoneNumberError:
+                'Please enter a valid 10-digit Indian mobile number',
+          );
+          return;
+        }
+      } else {
+        if (cleanPhone.startsWith('91') &&
+            cleanPhone.length == 12 &&
+            RegExp(r'^\d{12}$').hasMatch(cleanPhone)) {
           cleanPhone = '+$cleanPhone';
         } else if (cleanPhone.length == 10 &&
             RegExp(r'^\d{10}$').hasMatch(cleanPhone)) {
+          // Auto-add +91 as requested
           cleanPhone = '+91$cleanPhone';
         } else {
           changeProps(
-            emailAddressError: 'Please enter a valid 10-digit mobile number',
+            phoneNumberError:
+                'Please enter a valid 10-digit Indian mobile number',
           );
           return;
         }
       }
+    }
 
-      // Validate normalized E.164 phone number (10-digit Indian number or valid E.164)
-      final RegExp phoneRegex = RegExp(r'^\+[0-9]{10,15}$');
-      if (!phoneRegex.hasMatch(cleanPhone) ||
-          (cleanPhone.startsWith('+91') && cleanPhone.length != 13)) {
-        changeProps(
-          emailAddressError: 'Please enter a valid 10-digit mobile number',
-        );
+    String cleanEmail = '';
+    if (rawEmail.isNotEmpty) {
+      cleanEmail = rawEmail.toLowerCase();
+      if (!cleanEmail.isValidEmail) {
+        changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
         return;
       }
+    }
 
+    // Branch 1: User provided phone number (either phone alone or both phone & email)
+    if (cleanPhone.isNotEmpty) {
       changeProps(
-        emailAddress: cleanPhone,
+        phoneNumber: cleanPhone,
+        phoneNumberError: '',
         emailAddressError: '',
+        linkedEmail: cleanEmail,
+        linkedPhone: cleanPhone,
         apiResultStatus: const ApiResultStatus.loading(),
         isAuthSubmitting: true,
         submittingMethod: 'phone',
@@ -295,6 +313,31 @@ class RegisterCubit extends Cubit<RegisterState> {
             submittingMethod: '',
           );
         },
+      );
+    } else {
+      // Branch 2: User provided email only
+      changeProps(
+        emailAddress: cleanEmail,
+        emailAddressError: '',
+        phoneNumberError: '',
+        linkedEmail: cleanEmail,
+        linkedPhone: '',
+        apiResultStatus: const ApiResultStatus.loading(),
+        isAuthSubmitting: true,
+        submittingMethod: 'email',
+        isPhoneAuth: false,
+        phoneVerificationId: '',
+        phoneResendToken: null,
+      );
+
+      final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
+        email: cleanEmail,
+      );
+
+      changeProps(
+        apiResultStatus: apiResult,
+        isAuthSubmitting: false,
+        submittingMethod: '',
       );
     }
   }

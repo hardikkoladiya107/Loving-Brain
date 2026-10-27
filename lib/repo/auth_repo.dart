@@ -1111,9 +1111,52 @@ class AuthRepo {
     }
   }
 
+  /// Searches for an existing user document by phone number or email.
+  Future<DocumentSnapshot<Map<String, dynamic>>?> findUserByPhoneOrEmail({
+    String? phoneNumber,
+    String? email,
+  }) async {
+    try {
+      if (phoneNumber != null && phoneNumber.trim().isNotEmpty) {
+        final QuerySnapshot<Map<String, dynamic>> phoneSnap =
+            await userCollection
+                .where('phone_number', isEqualTo: phoneNumber.trim())
+                .limit(1)
+                .get();
+        if (phoneSnap.docs.isNotEmpty) {
+          return phoneSnap.docs.first;
+        }
+      }
+      if (email != null && email.trim().isNotEmpty) {
+        final String clean = email.trim().toLowerCase();
+        final QuerySnapshot<Map<String, dynamic>> emailSnap =
+            await userCollection
+                .where('email', isEqualTo: clean)
+                .limit(1)
+                .get();
+        if (emailSnap.docs.isNotEmpty) {
+          return emailSnap.docs.first;
+        }
+        final QuerySnapshot<Map<String, dynamic>> rawEmailSnap =
+            await userCollection
+                .where('email', isEqualTo: email.trim())
+                .limit(1)
+                .get();
+        if (rawEmailSnap.docs.isNotEmpty) {
+          return rawEmailSnap.docs.first;
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error searching user by phone or email: $e');
+      return null;
+    }
+  }
+
   Future<ApiResultStatus> verifyEmailOtp({
     required String email,
     required String otpCode,
+    String? linkedPhone,
   }) async {
     try {
       final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
@@ -1134,24 +1177,70 @@ class AuthRepo {
           .signInWithCustomToken(token);
 
       if (credential.user != null) {
+        final String cleanEmail = email.trim().toLowerCase();
+        final String cleanPhone = linkedPhone?.trim() ?? '';
+
         UserModel? userModel = await getUserFromUid(uId: credential.user!.uid);
 
         if (userModel == null) {
-          // If the user doesn't exist in Firestore, this is a new registration.
-          await addUserToFireStore(
-            uId: credential.user!.uid,
-            request: {
-              "uid": credential.user!.uid,
-              "display_name":
-                  credential.user!.displayName ?? email.split('@')[0],
-              "email": email,
-              "is_google_sign_in": false,
-              "is_apple_in": false,
-              "streak": 0,
-              "last_opened": DateTime.now(),
-              "is_onboarding_completed": false,
-            },
-          );
+          final DocumentSnapshot<Map<String, dynamic>>? existingDoc =
+              await findUserByPhoneOrEmail(
+                email: cleanEmail,
+                phoneNumber: cleanPhone,
+              );
+
+          if (existingDoc != null && existingDoc.data() != null) {
+            final Map<String, dynamic> existingData = Map<String, dynamic>.from(
+              existingDoc.data()!,
+            );
+            existingData['uid'] = credential.user!.uid;
+            existingData['email'] = cleanEmail;
+            if (cleanPhone.isNotEmpty) {
+              existingData['phone_number'] = cleanPhone;
+            }
+            await userCollection
+                .doc(credential.user!.uid)
+                .set(existingData, SetOptions(merge: true));
+
+            final Map<String, dynamic> updateMap = <String, dynamic>{
+              'email': cleanEmail,
+            };
+            if (cleanPhone.isNotEmpty) {
+              updateMap['phone_number'] = cleanPhone;
+            }
+            await userCollection
+                .doc(existingDoc.id)
+                .set(updateMap, SetOptions(merge: true));
+          } else {
+            // New user registration
+            await addUserToFireStore(
+              uId: credential.user!.uid,
+              request: <String, dynamic>{
+                'uid': credential.user!.uid,
+                'display_name':
+                    credential.user!.displayName ?? cleanEmail.split('@')[0],
+                'email': cleanEmail,
+                'phone_number': cleanPhone,
+                'is_google_sign_in': false,
+                'is_apple_in': false,
+                'streak': 0,
+                'last_opened': DateTime.now(),
+                'is_onboarding_completed': false,
+              },
+            );
+          }
+        } else {
+          final Map<String, dynamic> updates = <String, dynamic>{
+            'email': cleanEmail,
+          };
+          if (cleanPhone.isNotEmpty &&
+              (userModel.phoneNumber == null ||
+                  userModel.phoneNumber!.isEmpty)) {
+            updates['phone_number'] = cleanPhone;
+          }
+          await userCollection
+              .doc(credential.user!.uid)
+              .set(updates, SetOptions(merge: true));
         }
 
         userModel = await syncUserAndDefaultChild(uId: credential.user!.uid);
@@ -1246,6 +1335,7 @@ class AuthRepo {
     required String verificationId,
     required String smsCode,
     required String phoneNumber,
+    String? linkedEmail,
   }) async {
     try {
       final PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -1260,6 +1350,7 @@ class AuthRepo {
         final UserModel? userModel = await _syncPhoneAuthUser(
           user: userCred.user!,
           phoneNumber: phoneNumber,
+          linkedEmail: linkedEmail,
         );
         if (userModel == null) {
           return ApiResultStatus.error(
@@ -1287,23 +1378,70 @@ class AuthRepo {
   Future<UserModel?> _syncPhoneAuthUser({
     required User user,
     required String phoneNumber,
+    String? linkedEmail,
   }) async {
+    final String cleanPhone = phoneNumber.trim();
+    final String cleanEmail = linkedEmail?.trim().toLowerCase() ?? '';
+
     UserModel? userModel = await getUserFromUid(uId: user.uid);
     if (userModel == null) {
-      await addUserToFireStore(
-        uId: user.uid,
-        request: <String, dynamic>{
-          'uid': user.uid,
-          'display_name': user.displayName ?? phoneNumber,
-          'email': user.email ?? '',
-          'phone_number': phoneNumber,
-          'is_google_sign_in': false,
-          'is_apple_in': false,
-          'streak': 0,
-          'last_opened': DateTime.now(),
-          'is_onboarding_completed': false,
-        },
-      );
+      final DocumentSnapshot<Map<String, dynamic>>? existingDoc =
+          await findUserByPhoneOrEmail(
+            phoneNumber: cleanPhone,
+            email: cleanEmail,
+          );
+
+      if (existingDoc != null && existingDoc.data() != null) {
+        final Map<String, dynamic> existingData = Map<String, dynamic>.from(
+          existingDoc.data()!,
+        );
+        existingData['uid'] = user.uid;
+        existingData['phone_number'] = cleanPhone;
+        if (cleanEmail.isNotEmpty) {
+          existingData['email'] = cleanEmail;
+        }
+        await userCollection
+            .doc(user.uid)
+            .set(existingData, SetOptions(merge: true));
+
+        final Map<String, dynamic> updateMap = <String, dynamic>{
+          'phone_number': cleanPhone,
+        };
+        if (cleanEmail.isNotEmpty) {
+          updateMap['email'] = cleanEmail;
+        }
+        await userCollection
+            .doc(existingDoc.id)
+            .set(updateMap, SetOptions(merge: true));
+      } else {
+        await addUserToFireStore(
+          uId: user.uid,
+          request: <String, dynamic>{
+            'uid': user.uid,
+            'display_name':
+                user.displayName ??
+                (cleanEmail.isNotEmpty
+                    ? cleanEmail.split('@').first
+                    : cleanPhone),
+            'email': cleanEmail,
+            'phone_number': cleanPhone,
+            'is_google_sign_in': false,
+            'is_apple_in': false,
+            'streak': 0,
+            'last_opened': DateTime.now(),
+            'is_onboarding_completed': false,
+          },
+        );
+      }
+    } else {
+      final Map<String, dynamic> updates = <String, dynamic>{
+        'phone_number': cleanPhone,
+      };
+      if (cleanEmail.isNotEmpty &&
+          (userModel.email == null || userModel.email!.isEmpty)) {
+        updates['email'] = cleanEmail;
+      }
+      await userCollection.doc(user.uid).set(updates, SetOptions(merge: true));
     }
     userModel = await syncUserAndDefaultChild(uId: user.uid);
     if (userModel != null) {

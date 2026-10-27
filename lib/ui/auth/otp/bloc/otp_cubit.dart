@@ -17,6 +17,8 @@ class OtpCubit extends Cubit<OtpState> {
     String? verificationId,
     int? resendToken,
     bool isPhoneAuth = false,
+    String? linkedEmail,
+    String? linkedPhone,
   }) {
     emit(const OtpState());
     changeProps(
@@ -24,6 +26,8 @@ class OtpCubit extends Cubit<OtpState> {
       verificationId: verificationId ?? '',
       resendToken: resendToken,
       isPhoneAuth: isPhoneAuth,
+      linkedEmail: linkedEmail ?? '',
+      linkedPhone: linkedPhone ?? '',
     );
     startResendTimer();
   }
@@ -72,6 +76,8 @@ class OtpCubit extends Cubit<OtpState> {
     int? failedAttempts,
     bool? isLocked,
     int? lockoutSeconds,
+    String? linkedEmail,
+    String? linkedPhone,
   }) {
     emit(
       state.copyWith(
@@ -89,6 +95,8 @@ class OtpCubit extends Cubit<OtpState> {
         failedAttempts: failedAttempts ?? state.failedAttempts,
         isLocked: isLocked ?? state.isLocked,
         lockoutSeconds: lockoutSeconds ?? state.lockoutSeconds,
+        linkedEmail: linkedEmail ?? state.linkedEmail,
+        linkedPhone: linkedPhone ?? state.linkedPhone,
       ),
     );
   }
@@ -96,6 +104,56 @@ class OtpCubit extends Cubit<OtpState> {
   void onOtpChanged(String value) {
     if (state.isLocked) return;
     changeProps(otpCode: value, otpError: '');
+  }
+
+  Future<void> switchToAlternativeOtp() async {
+    if (state.isPhoneAuth && state.linkedEmail.isNotEmpty) {
+      changeProps(
+        resendStatus: const ApiResultStatus.loading(),
+        otpCode: '',
+        otpError: '',
+      );
+      final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
+        email: state.linkedEmail,
+      );
+      if (apiResult is Data) {
+        changeProps(
+          destination: state.linkedEmail,
+          isPhoneAuth: false,
+          resendStatus: apiResult,
+        );
+        startResendTimer();
+      } else {
+        changeProps(resendStatus: apiResult);
+      }
+    } else if (!state.isPhoneAuth && state.linkedPhone.isNotEmpty) {
+      changeProps(
+        resendStatus: const ApiResultStatus.loading(),
+        otpCode: '',
+        otpError: '',
+      );
+      await AuthRepo.instance.sendPhoneOtp(
+        phoneNumber: state.linkedPhone,
+        onCodeSent: (String newVerificationId, int? newResendToken) {
+          changeProps(
+            destination: state.linkedPhone,
+            verificationId: newVerificationId,
+            resendToken: newResendToken,
+            isPhoneAuth: true,
+            resendStatus: const ApiResultStatus.data(data: true),
+          );
+          startResendTimer();
+        },
+        onError: (Exception error) {
+          changeProps(resendStatus: ApiResultStatus.error(error: error));
+        },
+        onAutoVerified: (UserModel userModel) {
+          changeProps(
+            verifyStatus: ApiResultStatus.data(data: userModel.toJson()),
+          );
+        },
+      );
+    }
   }
 
   Future<void> resendOtp() async {
@@ -179,10 +237,16 @@ class OtpCubit extends Cubit<OtpState> {
               verificationId: state.verificationId,
               smsCode: code,
               phoneNumber: state.destination,
+              linkedEmail: state.linkedEmail.isNotEmpty
+                  ? state.linkedEmail
+                  : null,
             )
           : await AuthRepo.instance.verifyEmailOtp(
               email: state.destination,
               otpCode: code,
+              linkedPhone: state.linkedPhone.isNotEmpty
+                  ? state.linkedPhone
+                  : null,
             );
 
       if (apiResult is Data) {

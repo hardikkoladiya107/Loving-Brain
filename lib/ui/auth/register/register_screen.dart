@@ -32,6 +32,8 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController phoneTextEditingController =
+      TextEditingController();
   final TextEditingController emailTextEditingController =
       TextEditingController();
 
@@ -46,6 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   void dispose() {
+    phoneTextEditingController.dispose();
     emailTextEditingController.dispose();
     super.dispose();
   }
@@ -61,8 +64,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             state.isAuthSubmitting && submittingMethod == 'apple';
         final bool isGoogleLoading =
             state.isAuthSubmitting && submittingMethod == 'google';
-        final bool isEmailLoading =
-            state.isAuthSubmitting && submittingMethod == 'email';
+        final bool isContinueLoading =
+            state.isAuthSubmitting &&
+            (submittingMethod == 'email' || submittingMethod == 'phone');
+
+        if (phoneTextEditingController.value.text != state.phoneNumber) {
+          phoneTextEditingController.value = phoneTextEditingController.value
+              .copyWith(
+                text: state.phoneNumber,
+                selection: TextSelection.collapsed(
+                  offset: min(
+                    phoneTextEditingController.value.selection.start,
+                    state.phoneNumber.length,
+                  ),
+                ),
+              );
+        }
 
         if (emailTextEditingController.value.text != state.emailAddress) {
           emailTextEditingController.value = emailTextEditingController.value
@@ -130,13 +147,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   .appText(
                                     textAlign: TextAlign.start,
                                     fontSize: 14,
+                                    color: greyColor,
                                   )
                                   .appPadding(left: 20.r, right: 20.r),
                               21.spaceH,
                               AppTextField(
+                                controller: phoneTextEditingController,
+                                title: "PHONE NUMBER",
+                                hint: "+91 99765 43210",
+                                keyboardType: TextInputType.phone,
+                                onChanged: (val) {
+                                  context.read<RegisterCubit>().changeProps(
+                                    phoneNumber: val,
+                                    phoneNumberError: '',
+                                  );
+                                },
+                                error: state.phoneNumberError.isNotEmpty
+                                    ? state.phoneNumberError
+                                    : null,
+                              ).appPadding(left: 20.r, right: 20.r),
+                              6.spaceH,
+                              "Indian mobile numbers only (+91 auto-added if omitted)"
+                                  .appText(
+                                    fontSize: 11,
+                                    color: greyColor,
+                                    textAlign: TextAlign.start,
+                                  )
+                                  .appPadding(left: 24.r, right: 20.r),
+                              14.spaceH,
+                              AppTextField(
                                 controller: emailTextEditingController,
-                                title: "Email or Mobile Number",
-                                hint: "Enter email or Mobile number",
+                                title: "EMAIL",
+                                hint: "you@example.com",
                                 keyboardType: TextInputType.emailAddress,
                                 onChanged: (val) {
                                   context.read<RegisterCubit>().changeProps(
@@ -148,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ? state.emailAddressError
                                     : null,
                               ).appPadding(left: 20.r, right: 20.r),
-                              32.spaceH,
+                              28.spaceH,
                               Row(
                                 children: [
                                   Expanded(
@@ -158,9 +200,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                                   12.spaceW,
-                                  "Or".appText(
+                                  "or".appText(
                                     textAlign: TextAlign.start,
                                     fontSize: 14,
+                                    color: greyColor,
                                   ),
                                   12.spaceW,
                                   Expanded(
@@ -171,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 ],
                               ).appPadding(left: 20.r, right: 20.r),
-                              32.spaceH,
+                              24.spaceH,
                               if (Platform.isIOS) ...[
                                 AppButton(
                                   onTap: state.isAuthSubmitting
@@ -182,7 +225,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                               .read<RegisterCubit>()
                                               .signInWithApple();
                                         },
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: const Color(0xFF1F222A),
                                   isLoading: isAppleLoading,
                                   loaderColor: Colors.white,
                                   widget: Row(
@@ -201,7 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ],
                                   ),
                                 ),
-                                16.spaceH,
+                                14.spaceH,
                               ],
                               AppButton(
                                 onTap: state.isAuthSubmitting
@@ -212,9 +255,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             .read<RegisterCubit>()
                                             .googleAuthenticate();
                                       },
-                                backgroundColor: Colors.white,
+                                backgroundColor: const Color(0xFF1F222A),
                                 isLoading: isGoogleLoading,
-                                loaderColor: primaryColor,
+                                loaderColor: Colors.white,
                                 widget: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -224,7 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                     10.spaceW,
                                     "Continue with Google".appText(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ],
@@ -240,7 +283,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         context.read<RegisterCubit>().sendOtp();
                                       },
                                 title: "Continue",
-                                isLoading: isEmailLoading,
+                                isLoading: isContinueLoading,
                               ),
                               32.spaceH,
                             ],
@@ -299,10 +342,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 router.go(RoutePaths.onboarding);
               }
             } else {
-              final String destination = state.emailAddress.trim();
+              final String destination = state.isPhoneAuth
+                  ? state.phoneNumber.trim()
+                  : state.emailAddress.trim();
               final bool isPhone = state.isPhoneAuth;
               final String verificationId = state.phoneVerificationId;
               final int? resendToken = state.phoneResendToken;
+              final String linkedEmail = state.linkedEmail;
+              final String linkedPhone = state.linkedPhone;
 
               context.read<RegisterCubit>().changeProps(
                 apiResultStatus: const ApiResultStatus.initial(),
@@ -314,6 +361,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   'verificationId': verificationId,
                   'resendToken': resendToken,
                   'isPhoneAuth': isPhone,
+                  'linkedEmail': linkedEmail,
+                  'linkedPhone': linkedPhone,
                 },
               );
             }

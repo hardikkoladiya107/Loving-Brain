@@ -9,6 +9,8 @@ abstract class RegisterState with _$RegisterState {
   const factory RegisterState({
     @Default(true) bool obscureTextPassword,
     @Default(true) bool obscureTextConfirmPassword,
+    @Default('') String phoneNumber,
+    @Default('') String phoneNumberError,
     @Default('') String emailAddress,
     @Default('') String password,
     @Default('') String confirmPassword,
@@ -25,5 +27,7 @@ abstract class RegisterState with _$RegisterState {
     @Default(false) bool isPhoneAuth,
     @Default('') String phoneVerificationId,
     @Default(null) int? phoneResendToken,
+    @Default('') String linkedEmail,
+    @Default('') String linkedPhone,
   }) = _RegisterState;
 }

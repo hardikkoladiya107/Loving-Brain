@@ -20,5 +20,7 @@ abstract class OtpState with _$OtpState {
     @Default(0) int failedAttempts,
     @Default(false) bool isLocked,
     @Default(0) int lockoutSeconds,
+    @Default('') String linkedEmail,
+    @Default('') String linkedPhone,
   }) = _OtpState;
 }

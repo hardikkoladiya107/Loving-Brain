@@ -30,12 +30,16 @@ class OtpScreen extends StatefulWidget {
     this.verificationId,
     this.resendToken,
     this.isPhoneAuth = false,
+    this.linkedEmail,
+    this.linkedPhone,
   });
 
   final String? destination;
   final String? verificationId;
   final int? resendToken;
   final bool isPhoneAuth;
+  final String? linkedEmail;
+  final String? linkedPhone;
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -52,6 +56,8 @@ class _OtpScreenState extends State<OtpScreen> {
         verificationId: widget.verificationId,
         resendToken: widget.resendToken,
         isPhoneAuth: widget.isPhoneAuth,
+        linkedEmail: widget.linkedEmail,
+        linkedPhone: widget.linkedPhone,
       );
     });
   }
@@ -256,13 +262,37 @@ class _OtpScreenState extends State<OtpScreen> {
                               "Retry in ${state.resendCountdown}s"
                                   .appText()
                                   .appPadding(left: 20.r, right: 20.r),
-                            "Kindly check if email entered is correct"
+                            (state.isPhoneAuth
+                                    ? "Kindly check if mobile number entered is correct"
+                                    : "Kindly check if email entered is correct")
                                 .appText(
                                   textAlign: TextAlign.start,
                                   color: greyColor6,
                                   fontSize: 14,
                                 )
                                 .appPadding(left: 20.r, right: 20.r),
+                            if ((state.isPhoneAuth &&
+                                    state.linkedEmail.isNotEmpty) ||
+                                (!state.isPhoneAuth &&
+                                    state.linkedPhone.isNotEmpty)) ...<Widget>[
+                              12.spaceH,
+                              BaseButton(
+                                onTap: () => context
+                                    .read<OtpCubit>()
+                                    .switchToAlternativeOtp(),
+                                child:
+                                    (state.isPhoneAuth
+                                            ? "Didn't get SMS? Verify via email (${state.linkedEmail}) instead"
+                                            : "Didn't get email? Verify via SMS (${state.linkedPhone}) instead")
+                                        .appText(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: secondaryColor,
+                                          textAlign: TextAlign.start,
+                                        )
+                                        .appPadding(left: 20.r, right: 20.r),
+                              ),
+                            ],
                             const Spacer(),
                             24.spaceH,
                             AppButton(

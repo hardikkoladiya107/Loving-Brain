@@ -10,12 +10,12 @@ void main() {
       final RegisterCubit cubit = RegisterCubit();
       cubit.init();
 
-      cubit.changeProps(emailAddress: '');
+      cubit.changeProps(phoneNumber: '', emailAddress: '');
       await cubit.sendOtp();
 
       expect(
-        cubit.state.emailAddressError,
-        'Please enter your email or mobile number',
+        cubit.state.phoneNumberError,
+        'Please enter your mobile number or email address',
       );
       cubit.close();
     });
@@ -38,12 +38,30 @@ void main() {
         final RegisterCubit cubit = RegisterCubit();
         cubit.init();
 
-        cubit.changeProps(emailAddress: '9876543210');
+        cubit.changeProps(phoneNumber: '9876543210');
         await cubit.sendOtp();
 
-        expect(cubit.state.emailAddress, '+919876543210');
+        expect(cubit.state.phoneNumber, '+919876543210');
         expect(cubit.state.isPhoneAuth, isTrue);
-        expect(cubit.state.emailAddressError, isEmpty);
+        expect(cubit.state.phoneNumberError, isEmpty);
+        cubit.close();
+      },
+    );
+
+    test(
+      'Non-+91 country code flags error that only Indian mobile numbers are allowed',
+      () async {
+        final RegisterCubit cubit = RegisterCubit();
+        cubit.init();
+
+        cubit.changeProps(phoneNumber: '+16505551234');
+        await cubit.sendOtp();
+
+        expect(
+          cubit.state.phoneNumberError,
+          'We only allow Indian mobile numbers (+91) at this time',
+        );
+        expect(cubit.state.isPhoneAuth, isFalse);
         cubit.close();
       },
     );
@@ -54,12 +72,12 @@ void main() {
         final RegisterCubit cubit = RegisterCubit();
         cubit.init();
 
-        cubit.changeProps(emailAddress: '09876543210');
+        cubit.changeProps(phoneNumber: '09876543210');
         await cubit.sendOtp();
 
-        expect(cubit.state.emailAddress, '+919876543210');
+        expect(cubit.state.phoneNumber, '+919876543210');
         expect(cubit.state.isPhoneAuth, isTrue);
-        expect(cubit.state.emailAddressError, isEmpty);
+        expect(cubit.state.phoneNumberError, isEmpty);
         cubit.close();
       },
     );
@@ -70,12 +88,12 @@ void main() {
         final RegisterCubit cubit = RegisterCubit();
         cubit.init();
 
-        cubit.changeProps(emailAddress: '98765');
+        cubit.changeProps(phoneNumber: '98765');
         await cubit.sendOtp();
 
         expect(
-          cubit.state.emailAddressError,
-          'Please enter a valid 10-digit mobile number',
+          cubit.state.phoneNumberError,
+          'Please enter a valid 10-digit Indian mobile number',
         );
         expect(cubit.state.isPhoneAuth, isFalse);
         cubit.close();
@@ -88,12 +106,52 @@ void main() {
         final RegisterCubit cubit = RegisterCubit();
         cubit.init();
 
-        cubit.changeProps(emailAddress: '+919876543210');
+        cubit.changeProps(phoneNumber: '+919876543210');
         await cubit.sendOtp();
 
-        expect(cubit.state.emailAddress, '+919876543210');
+        expect(cubit.state.phoneNumber, '+919876543210');
         expect(cubit.state.isPhoneAuth, isTrue);
+        expect(cubit.state.phoneNumberError, isEmpty);
+        cubit.close();
+      },
+    );
+
+    test(
+      'Both mobile number and email provided: validates both and stores linked values',
+      () async {
+        final RegisterCubit cubit = RegisterCubit();
+        cubit.init();
+
+        cubit.changeProps(
+          phoneNumber: '9976543210',
+          emailAddress: 'parent@example.com',
+        );
+        await cubit.sendOtp();
+
+        expect(cubit.state.phoneNumber, '+919976543210');
+        expect(cubit.state.linkedPhone, '+919976543210');
+        expect(cubit.state.linkedEmail, 'parent@example.com');
+        expect(cubit.state.isPhoneAuth, isTrue);
+        expect(cubit.state.phoneNumberError, isEmpty);
         expect(cubit.state.emailAddressError, isEmpty);
+        cubit.close();
+      },
+    );
+
+    test(
+      'Both provided but email is invalid: halts and flags email error',
+      () async {
+        final RegisterCubit cubit = RegisterCubit();
+        cubit.init();
+
+        cubit.changeProps(
+          phoneNumber: '9976543210',
+          emailAddress: 'invalid-email',
+        );
+        await cubit.sendOtp();
+
+        expect(cubit.state.emailAddressError, isNotEmpty);
+        expect(cubit.state.isPhoneAuth, isFalse);
         cubit.close();
       },
     );
@@ -122,16 +180,20 @@ void main() {
       () async {
         final OtpCubit cubit = OtpCubit();
         cubit.init(
-          destination: '+16505551234',
+          destination: '+919976543210',
           verificationId: 'test_verification_id',
           resendToken: 998877,
           isPhoneAuth: true,
+          linkedEmail: 'parent@example.com',
+          linkedPhone: '+919976543210',
         );
 
         expect(cubit.state.isPhoneAuth, isTrue);
-        expect(cubit.state.destination, '+16505551234');
+        expect(cubit.state.destination, '+919976543210');
         expect(cubit.state.verificationId, 'test_verification_id');
         expect(cubit.state.resendToken, 998877);
+        expect(cubit.state.linkedEmail, 'parent@example.com');
+        expect(cubit.state.linkedPhone, '+919976543210');
 
         // Attempting to verify with 4 or 5 digits in phone mode fails
         cubit.onOtpChanged('1234');

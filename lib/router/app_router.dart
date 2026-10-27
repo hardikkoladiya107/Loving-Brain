@@ -145,6 +145,8 @@ class AppRouter {
                 verificationId: extra['verificationId'] as String?,
                 resendToken: extra['resendToken'] as int?,
                 isPhoneAuth: extra['isPhoneAuth'] as bool? ?? false,
+                linkedEmail: extra['linkedEmail'] as String?,
+                linkedPhone: extra['linkedPhone'] as String?,
               );
             }
             final String? destination = extra as String?;
