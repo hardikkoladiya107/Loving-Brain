@@ -153,7 +153,7 @@ class AppBarGraph extends StatelessWidget {
               child: Column(
                 children: [
                   Assets.icons.icBestDayEver.image(height: height * 0.15),
-                  const SizedBox(height: 4),
+                  4.spaceH,
                 ],
               ),
             ),
