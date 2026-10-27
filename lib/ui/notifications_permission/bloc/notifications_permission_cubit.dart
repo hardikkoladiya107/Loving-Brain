@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/other/preferances.dart';
 
 import 'notifications_permission_state.dart';
@@ -32,7 +33,15 @@ class NotificationsPermissionCubit extends Cubit<NotificationsPermissionState> {
     );
   }
 
-  void grantPermission() {
+  Future<bool> grantPermission() async {
     changeProps(isGranted: true);
+    try {
+      final bool granted =
+          await NotificationUtil.requestNotificationPermission();
+      changeProps(isGranted: granted);
+      return granted;
+    } catch (_) {
+      return true;
+    }
   }
 }

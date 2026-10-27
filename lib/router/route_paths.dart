@@ -27,6 +27,8 @@ class RoutePaths {
   static const String baseScreen = '/base';
   static const String coParentRegister = '/co-parent-register';
   static const String familySnapshot = '/family-snapshot';
+  static const String notificationsPermission = '/permission-notifications';
+  static const String microphonePermission = '/permission-microphone';
 
   static String childProfilePath(
     String userId, {

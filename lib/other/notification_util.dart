@@ -209,11 +209,25 @@ class NotificationUtil {
       if (Firebase.apps.isNotEmpty) {
         final NotificationSettings settings = await FirebaseMessaging.instance
             .getNotificationSettings();
-        return settings.authorizationStatus == AuthorizationStatus.authorized ||
-            settings.authorizationStatus == AuthorizationStatus.provisional;
+        if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+            settings.authorizationStatus == AuthorizationStatus.provisional) {
+          return true;
+        }
       }
-    } catch (_) {}
-    return true;
+      if (!kIsWeb && Platform.isAndroid) {
+        final bool? enabled = await _localNotifications
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
+            ?.areNotificationsEnabled();
+        if (enabled == true) {
+          return true;
+        }
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
   }
 
   static Future<bool> requestNotificationPermission() async {

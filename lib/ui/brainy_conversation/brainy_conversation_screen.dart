@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/core/emergency_detector.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/permission_helper.dart';
 import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
 import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
@@ -278,7 +279,13 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                   ),
                                   IconButton(
                                     visualDensity: VisualDensity.compact,
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      final bool granted =
+                                          await PermissionHelper.ensureMicrophonePermission(
+                                            context,
+                                          );
+                                      if (!granted || !context.mounted) return;
+
                                       final BrainyConversationCubit cubit =
                                           context
                                               .read<BrainyConversationCubit>();

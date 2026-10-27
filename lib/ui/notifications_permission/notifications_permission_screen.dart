@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
-import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/ui/widget/action_consent_screen.dart';
 
 import 'bloc/notifications_permission_cubit.dart';
@@ -36,35 +35,32 @@ class _NotificationsPermissionScreenState
     >(
       listener: (BuildContext context, NotificationsPermissionState state) {},
       builder: (BuildContext context, NotificationsPermissionState state) {
-        final String childName = state.childName;
         return ActionConsentScreen(
           headerImage: Image.asset(
-            Assets.v2.images.imgSprout.path,
-            width: 200.w,
-            height: 200.w,
+            Assets.v2.images.imgBrainyHome.path,
+            width: 140.w,
+            height: 140.w,
             fit: BoxFit.contain,
           ),
-          title: "Would you like to turn on notifications?",
-          subtitle: "Get timely nudges for bedtime routines and insights.",
-          checklist: <String>[
-            "Receive gentle bedtime reminders",
-            "Get notified when a new mentorship summary is ready",
-            "Stay up to date with $childName's changing patterns",
+          title: "Can we send you a nudge?",
+          subtitle: "Only when it's genuinely useful we'd rather send less.",
+          checklist: const <String>[
+            "A reminder as the wind-down window approaches",
+            "A note when your weekly review is ready",
+            "Never a message about a missed day or a broken streak",
           ],
           footerNote: "You can change this any time in Settings.",
           primaryButtonText: "Allow notifications",
           onPrimaryAction: () async {
-            final bool granted =
-                await NotificationUtil.requestNotificationPermission();
+            final bool granted = await context
+                .read<NotificationsPermissionCubit>()
+                .grantPermission();
             if (context.mounted) {
-              context.read<NotificationsPermissionCubit>().changeProps(
-                isGranted: granted,
-              );
-              Navigator.pop(context);
+              Navigator.of(context).pop(granted);
             }
           },
           secondaryButtonText: "Not now",
-          onSecondaryAction: () => Navigator.pop(context),
+          onSecondaryAction: () => Navigator.of(context).pop(false),
         );
       },
     );

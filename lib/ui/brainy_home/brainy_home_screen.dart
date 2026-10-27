@@ -8,6 +8,7 @@ import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
 import 'package:loving_brain/ui/brainy_history/brainy_history_screen.dart';
 import 'package:loving_brain/ui/brainy_saved_guidance/brainy_saved_guidance_screen.dart';
+import 'package:loving_brain/other/permission_helper.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import 'bloc/brainy_home_cubit.dart';
@@ -384,7 +385,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(30),
-                    onTap: () {
+                    onTap: () async {
                       if (hasText) {
                         _openConversation(
                           context,
@@ -392,6 +393,12 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                           topic: state.selectedTopic,
                         );
                       } else {
+                        final bool granted =
+                            await PermissionHelper.ensureMicrophonePermission(
+                              context,
+                            );
+                        if (!granted || !context.mounted) return;
+
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,

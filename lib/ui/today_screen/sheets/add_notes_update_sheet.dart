@@ -11,10 +11,9 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/transcribe_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/ai_repo.dart';
-import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
+import 'package:loving_brain/other/permission_helper.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
@@ -126,20 +125,8 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
 
   Future<bool> _ensurePermission() async {
     try {
-      final bool hasSeenExplainer =
-          preferences.getBool(SharedPreference.micExplainerSeen) ?? false;
-      if (!hasSeenExplainer) {
-        if (mounted) {
-          await Navigator.push<void>(
-            context,
-            MaterialPageRoute<void>(
-              builder: (BuildContext _) => const MicrophonePermissionScreen(),
-            ),
-          );
-        }
-      }
-
-      final bool hasPermission = await _audioRecorder.hasPermission();
+      final bool hasPermission =
+          await PermissionHelper.ensureMicrophonePermission(context);
       if (!hasPermission && mounted) {
         showSnackBar(
           message: "Microphone permission is required to record audio notes.",

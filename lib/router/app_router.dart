@@ -22,6 +22,8 @@ import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/ui/faq/faq_screen.dart';
+import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
+import 'package:loving_brain/ui/notifications_permission/notifications_permission_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
 
 import 'route_paths.dart';
@@ -215,6 +217,16 @@ class AppRouter {
           path: RoutePaths.familySnapshot,
           builder: (BuildContext context, GoRouterState state) =>
               const FamilySnapshotScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.notificationsPermission,
+          builder: (BuildContext context, GoRouterState state) =>
+              const NotificationsPermissionScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.microphonePermission,
+          builder: (BuildContext context, GoRouterState state) =>
+              const MicrophonePermissionScreen(),
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) {

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/other/notification_util.dart';
+import 'package:loving_brain/other/permission_helper.dart';
 
 import 'bloc/notifications_cubit.dart';
 import 'bloc/notifications_state.dart';
@@ -121,7 +121,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             GestureDetector(
                               onTap: () async {
                                 final bool granted =
-                                    await NotificationUtil.requestNotificationPermission();
+                                    await PermissionHelper.ensureNotificationPermission(
+                                      context,
+                                    );
                                 cubit.changeProps(isPermissionDenied: !granted);
                               },
                               child: Container(
@@ -162,7 +164,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 "A nudge when the wind-down window is approaching",
                             timePill: "7:15 PM",
                             value: state.sleepEnabled,
-                            onChanged: (_) => cubit.toggleSleep(),
+                            onChanged: (bool val) async {
+                              if (val) {
+                                final bool granted =
+                                    await PermissionHelper.ensureNotificationPermission(
+                                      context,
+                                    );
+                                if (!granted) {
+                                  cubit.changeProps(isPermissionDenied: true);
+                                  return;
+                                }
+                                cubit.changeProps(isPermissionDenied: false);
+                              }
+                              cubit.toggleSleep();
+                            },
                           ),
                           12.spaceH,
                           _buildToggleCard(
@@ -171,7 +186,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 "One gentle prompt if nothing has been logged",
                             timePill: "8:30 PM",
                             value: state.checkInEnabled,
-                            onChanged: (_) => cubit.toggleCheckIn(),
+                            onChanged: (bool val) async {
+                              if (val) {
+                                final bool granted =
+                                    await PermissionHelper.ensureNotificationPermission(
+                                      context,
+                                    );
+                                if (!granted) {
+                                  cubit.changeProps(isPermissionDenied: true);
+                                  return;
+                                }
+                                cubit.changeProps(isPermissionDenied: false);
+                              }
+                              cubit.toggleCheckIn();
+                            },
                           ),
                           12.spaceH,
                           _buildToggleCard(
@@ -179,14 +207,40 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             subtitle:
                                 "Only when a guide replies or a session changes",
                             value: state.mentorshipEnabled,
-                            onChanged: (_) => cubit.toggleMentorship(),
+                            onChanged: (bool val) async {
+                              if (val) {
+                                final bool granted =
+                                    await PermissionHelper.ensureNotificationPermission(
+                                      context,
+                                    );
+                                if (!granted) {
+                                  cubit.changeProps(isPermissionDenied: true);
+                                  return;
+                                }
+                                cubit.changeProps(isPermissionDenied: false);
+                              }
+                              cubit.toggleMentorship();
+                            },
                           ),
                           12.spaceH,
                           _buildToggleCard(
                             title: "Weekly review",
                             subtitle: "A note when Sunday's review is ready",
                             value: state.weeklyReviewEnabled,
-                            onChanged: (_) => cubit.toggleWeeklyReview(),
+                            onChanged: (bool val) async {
+                              if (val) {
+                                final bool granted =
+                                    await PermissionHelper.ensureNotificationPermission(
+                                      context,
+                                    );
+                                if (!granted) {
+                                  cubit.changeProps(isPermissionDenied: true);
+                                  return;
+                                }
+                                cubit.changeProps(isPermissionDenied: false);
+                              }
+                              cubit.toggleWeeklyReview();
+                            },
                           ),
                           20.spaceH,
                           Container(

@@ -4,8 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/ui/widget/action_consent_screen.dart';
 
-import 'package:loving_brain/other/preferances.dart';
-
 import 'bloc/microphone_permission_cubit.dart';
 import 'bloc/microphone_permission_state.dart';
 
@@ -37,13 +35,13 @@ class _MicrophonePermissionScreenState
         return ActionConsentScreen(
           headerImage: Image.asset(
             Assets.v2.images.imgCuteCloud.path,
-            width: 120.w,
-            height: 120.w,
+            width: 140.w,
+            height: 140.w,
             fit: BoxFit.contain,
           ),
-          title: "Can we use the microphone?",
+          title: "Can we use the\nmicrophone?",
           subtitle:
-              "So you can talk to Brainy and record notes with one hand free.",
+              "So you can talk to Brainy and record notes with\none hand free.",
           checklist: const <String>[
             "Record a quick note without typing",
             "Ask Brainy a question out loud",
@@ -52,16 +50,15 @@ class _MicrophonePermissionScreenState
           footerNote: "You can change this any time in Settings.",
           primaryButtonText: "Allow microphone",
           onPrimaryAction: () async {
-            await preferences.putBool(SharedPreference.micExplainerSeen, true);
+            final bool granted = await context
+                .read<MicrophonePermissionCubit>()
+                .grantPermission();
             if (context.mounted) {
-              await context.read<MicrophonePermissionCubit>().grantPermission();
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
+              Navigator.of(context).pop(granted);
             }
           },
           secondaryButtonText: "Not now",
-          onSecondaryAction: () => Navigator.pop(context),
+          onSecondaryAction: () => Navigator.of(context).pop(false),
         );
       },
     );
