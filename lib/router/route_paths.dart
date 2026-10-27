@@ -11,6 +11,7 @@ class RoutePaths {
   static const String otp = '/otp';
   static const String terms = '/terms';
   static const String privacy = '/privacy';
+  static const String faq = '/faq';
   static const String parentProfile = '/parent-profile';
   static const String childProfile = '/child-profile/:userId';
   static const String base = '/base';

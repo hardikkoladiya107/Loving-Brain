@@ -9,6 +9,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/setting_tile.dart';
 import 'package:loving_brain/ui/widget/warning_box.dart';
+import 'package:loving_brain/ui/faq/faq_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'bloc/help_safety_cubit.dart';
@@ -146,7 +147,12 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                               iconBackgroundColor: const Color(0xFFE8F5E9),
                               title: "FAQs",
                               subtitle: "Sleep, tantrums, sharing and billing",
-                              onTap: () => _launch(state.faqUrl),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const FaqScreen(),
+                                ),
+                              ),
                             ),
                             12.spaceH,
                             SettingTile(

@@ -19,6 +19,7 @@ import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
+import 'package:loving_brain/ui/faq/faq_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
 
 import 'route_paths.dart';
@@ -56,7 +57,8 @@ class AppRouter {
                 location == RoutePaths.familySnapshot ||
                 location == RoutePaths.coParentRegister ||
                 location == RoutePaths.terms ||
-                location == RoutePaths.privacy) {
+                location == RoutePaths.privacy ||
+                location == RoutePaths.faq) {
               return null;
             }
             if (unauthenticatedOnlyRoutes.contains(location) ||
@@ -193,11 +195,22 @@ class AppRouter {
               const BaseScreen(),
         ),
         GoRoute(
+          path: RoutePaths.faq,
+          builder: (BuildContext context, GoRouterState state) =>
+              const FaqScreen(),
+        ),
+        GoRoute(
           path: RoutePaths.familySnapshot,
           builder: (BuildContext context, GoRouterState state) =>
               const FamilySnapshotScreen(),
         ),
       ],
+      errorBuilder: (BuildContext context, GoRouterState state) {
+        if (state.uri.path == '/faq' || state.uri.toString().contains('faq')) {
+          return const FaqScreen();
+        }
+        return const BaseScreen();
+      },
     );
   }
 }
