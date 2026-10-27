@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -136,9 +139,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                                   final int idx = entry.key;
                                   final TimelineEventModel event = entry.value;
                                   return _buildTimelineItem(
-                                    title: event.title,
-                                    subtitle: event.subtitle,
-                                    timestamp: event.timestamp,
+                                    event: event,
                                     isFirst: idx == 0,
                                     isLast:
                                         idx == state.filteredEvents.length - 1,
@@ -211,12 +212,16 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
   }
 
   Widget _buildTimelineItem({
-    required String title,
-    required String subtitle,
-    required DateTime timestamp,
+    required TimelineEventModel event,
     required bool isFirst,
     required bool isLast,
   }) {
+    final bool isQuickNote = event.type == 'quick_note';
+    final bool hasAudio =
+        event.audioLocalPath != null && event.audioLocalPath!.isNotEmpty;
+    final bool hasCustomText =
+        event.subtitle.isNotEmpty && event.subtitle != 'Voice note';
+
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -262,7 +267,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Expanded(
-                      child: title.appText(
+                      child: event.title.appText(
                         fontSize: 16.sp,
                         color: greyColor9,
                         fontWeight: FontWeight.w600,
@@ -271,7 +276,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                     ),
                     8.spaceW,
                     DateFormat('MMM d · h:mm a')
-                        .format(timestamp.toLocal())
+                        .format(event.timestamp.toLocal())
                         .appText(
                           fontSize: 11.sp,
                           color: greyColor6,
@@ -280,13 +285,227 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         ),
                   ],
                 ),
-                4.spaceH,
-                subtitle.appText(
-                  fontSize: 12.sp,
-                  color: greyColor,
-                  textAlign: TextAlign.start,
-                ),
+                if (isQuickNote) ...[
+                  if (hasCustomText) ...[
+                    6.spaceH,
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 10.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF9F7FC),
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: secondaryColor.withValues(alpha: 0.15),
+                          width: 1.w,
+                        ),
+                      ),
+                      child: event.subtitle.appText(
+                        fontSize: 14.sp,
+                        color: darkBlue,
+                        height: 1.45,
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                  if (hasAudio)
+                    TimelineAudioPlayer(
+                      audioPath: event.audioLocalPath!,
+                      durationSeconds: event.audioDurationSeconds,
+                    )
+                  else if (!hasCustomText) ...[
+                    4.spaceH,
+                    event.subtitle.appText(
+                      fontSize: 12.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ] else ...[
+                  4.spaceH,
+                  event.subtitle.appText(
+                    fontSize: 12.sp,
+                    color: greyColor,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
                 28.spaceH,
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TimelineAudioPlayer extends StatefulWidget {
+  final String audioPath;
+  final int? durationSeconds;
+
+  const TimelineAudioPlayer({
+    super.key,
+    required this.audioPath,
+    this.durationSeconds,
+  });
+
+  @override
+  State<TimelineAudioPlayer> createState() => _TimelineAudioPlayerState();
+}
+
+class _TimelineAudioPlayerState extends State<TimelineAudioPlayer> {
+  final AudioPlayer _player = AudioPlayer();
+  bool _isPlaying = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+
+  StreamSubscription<Duration>? _posSub;
+  StreamSubscription<Duration>? _durSub;
+  StreamSubscription<void>? _compSub;
+  StreamSubscription<PlayerState>? _stateSub;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.durationSeconds != null && widget.durationSeconds! > 0) {
+      _duration = Duration(seconds: widget.durationSeconds!);
+    }
+    _posSub = _player.onPositionChanged.listen((Duration p) {
+      if (mounted) {
+        setState(() => _position = p);
+      }
+    });
+    _durSub = _player.onDurationChanged.listen((Duration d) {
+      if (mounted) {
+        setState(() => _duration = d);
+      }
+    });
+    _compSub = _player.onPlayerComplete.listen((_) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _position = Duration.zero;
+        });
+      }
+    });
+    _stateSub = _player.onPlayerStateChanged.listen((PlayerState state) {
+      if (mounted) {
+        setState(() => _isPlaying = state == PlayerState.playing);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _posSub?.cancel();
+    _durSub?.cancel();
+    _compSub?.cancel();
+    _stateSub?.cancel();
+    _player.dispose();
+    super.dispose();
+  }
+
+  String _format(Duration d) {
+    final int minutes = d.inMinutes;
+    final int seconds = d.inSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _toggle() async {
+    try {
+      if (_isPlaying) {
+        await _player.pause();
+      } else {
+        if (widget.audioPath.startsWith('http://') ||
+            widget.audioPath.startsWith('https://')) {
+          await _player.play(UrlSource(widget.audioPath));
+        } else {
+          await _player.play(DeviceFileSource(widget.audioPath));
+        }
+      }
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double maxMs = _duration.inMilliseconds > 0
+        ? _duration.inMilliseconds.toDouble()
+        : 1.0;
+    final double currentMs = _position.inMilliseconds.toDouble().clamp(
+      0.0,
+      maxMs,
+    );
+
+    return Container(
+      margin: EdgeInsets.only(top: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1EEFF),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: secondaryColor.withValues(alpha: 0.25),
+          width: 1.w,
+        ),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _toggle,
+            child: Container(
+              width: 36.w,
+              height: 36.w,
+              decoration: const BoxDecoration(
+                color: secondaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 22.sp,
+              ),
+            ),
+          ),
+          10.spaceW,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    "Voice note".appText(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                      color: darkBlue,
+                    ),
+                    "${_format(_position)} / ${_format(_duration)}".appText(
+                      fontSize: 10.sp,
+                      color: greyColor4,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                ),
+                SliderTheme(
+                  data: SliderThemeData(
+                    trackHeight: 2.5.h,
+                    activeTrackColor: secondaryColor,
+                    inactiveTrackColor: greyColor7,
+                    thumbColor: secondaryColor,
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5.r),
+                    overlayShape: RoundSliderOverlayShape(overlayRadius: 10.r),
+                  ),
+                  child: Slider(
+                    value: currentMs,
+                    min: 0.0,
+                    max: maxMs,
+                    onChanged: (double val) async {
+                      await _player.seek(Duration(milliseconds: val.toInt()));
+                    },
+                  ),
+                ),
               ],
             ),
           ),

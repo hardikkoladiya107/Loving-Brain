@@ -9,6 +9,8 @@ class TimelineEventModel {
     required this.title,
     required this.subtitle,
     this.iconKey,
+    this.audioLocalPath,
+    this.audioDurationSeconds,
   });
 
   final String id;
@@ -17,6 +19,8 @@ class TimelineEventModel {
   final String title;
   final String subtitle;
   final String? iconKey;
+  final String? audioLocalPath;
+  final int? audioDurationSeconds;
 
   static TimelineEventModel fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
@@ -37,6 +41,12 @@ class TimelineEventModel {
       title: _titleFor(type, data),
       subtitle: _subtitleFor(type, data),
       iconKey: type,
+      audioLocalPath: (data['audioLocalPath'] as String?)?.isNotEmpty == true
+          ? (data['audioLocalPath'] as String)
+          : null,
+      audioDurationSeconds: data['audioDurationSeconds'] is int
+          ? data['audioDurationSeconds'] as int
+          : (data['audioDurationSeconds'] as num?)?.toInt(),
     );
   }
 
