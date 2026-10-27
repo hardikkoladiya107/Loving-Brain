@@ -278,6 +278,7 @@ class _AppTextFieldState extends State<AppTextField> {
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
                             hintText: widget.hint,
+                            hintMaxLines: isMultiline ? widget.maxLines : 1,
                             hintStyle:
                                 widget.hintStyle ??
                                 getTextStyle(

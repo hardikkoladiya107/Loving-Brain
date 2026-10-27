@@ -220,91 +220,113 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final double bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final MediaQueryData mediaQuery = MediaQuery.of(context);
+    final double bottomInset = mediaQuery.viewInsets.bottom;
+    final double topSafeArea = mediaQuery.padding.top;
+    final double screenHeight = mediaQuery.size.height;
+
+    // Ensure sheet never penetrates the top status bar / camera cutout when keyboard opens
+    final double availableHeight =
+        screenHeight - topSafeArea - 24.h - bottomInset;
+    final double maxSheetHeight = (bottomInset > 0)
+        ? availableHeight.clamp(200.h, screenHeight - topSafeArea - 24.h)
+        : screenHeight * 0.85;
 
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.85,
-        ),
-        padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 28.h),
+        constraints: BoxConstraints(maxHeight: maxSheetHeight),
+        padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 20.h),
         decoration: BoxDecoration(
           color: const Color(0xFFFEF8F4),
           borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
         ),
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(
-                child: Container(
-                  width: 42.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: greyColor2,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Container(
+                width: 42.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: greyColor2,
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              18.spaceH,
-              'Location & Timezone'.appText(
-                fraunces: true,
-                fontSize: 22,
-                color: greyColor9,
-                textAlign: TextAlign.start,
-              ),
-              6.spaceH,
-              'Type your city and select a suggestion to set your location and timezone.'
-                  .appText(
-                    fontSize: 13,
-                    color: greyColor6,
-                    textAlign: TextAlign.start,
-                  ),
-              16.spaceH,
-              AppTextField(
-                controller: _searchController,
-                title: 'Location & Timezone',
-                hint: 'Search city (e.g. London, Mumbai, New York)',
-                border: Border.all(
-                  color: _validationError != null
-                      ? Colors.red
-                      : (_selectedLocation != null
-                            ? secondaryColor
-                            : greyColor2),
-                  width: _selectedLocation != null ? 1.5 : 1,
+            ),
+            14.spaceH,
+            'Location & Timezone'.appText(
+              fraunces: true,
+              fontSize: 22,
+              color: greyColor9,
+              textAlign: TextAlign.start,
+            ),
+            4.spaceH,
+            'Type your city and select a suggestion to set your location and timezone.'
+                .appText(
+                  fontSize: 13,
+                  color: greyColor6,
+                  textAlign: TextAlign.start,
                 ),
-                error: _validationError,
-                onChanged: _onSearchChanged,
-                suffixIcon: _isSearching
-                    ? SizedBox(
-                        width: 20.r,
-                        height: 20.r,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: primaryColor,
-                        ),
-                      )
-                    : (_selectedLocation != null
-                          ? Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(4.r),
-                                  decoration: const BoxDecoration(
-                                    color: secondaryColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.check_rounded,
-                                    color: Colors.white,
-                                    size: 14.sp,
-                                  ),
+            14.spaceH,
+            AppTextField(
+              controller: _searchController,
+              title: 'SEARCH CITY',
+              hint: 'Search city (e.g. London, Mumbai)',
+              border: Border.all(
+                color: _validationError != null
+                    ? Colors.red
+                    : (_selectedLocation != null ? secondaryColor : greyColor2),
+                width: _selectedLocation != null ? 1.5 : 1,
+              ),
+              error: _validationError,
+              onChanged: _onSearchChanged,
+              suffixIcon: _isSearching
+                  ? SizedBox(
+                      width: 20.r,
+                      height: 20.r,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: primaryColor,
+                      ),
+                    )
+                  : (_selectedLocation != null
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.all(4.r),
+                                decoration: const BoxDecoration(
+                                  color: secondaryColor,
+                                  shape: BoxShape.circle,
                                 ),
-                                6.spaceW,
-                                BaseButton(
+                                child: Icon(
+                                  Icons.check_rounded,
+                                  color: Colors.white,
+                                  size: 14.sp,
+                                ),
+                              ),
+                              6.spaceW,
+                              BaseButton(
+                                onTap: () {
+                                  setState(() {
+                                    _searchController.clear();
+                                    _selectedLocation = null;
+                                    _suggestions = const <LocationDataModel>[];
+                                    _validationError = null;
+                                  });
+                                },
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  color: greyColor4,
+                                  size: 20.sp,
+                                ),
+                              ),
+                            ],
+                          )
+                        : (_searchController.text.isNotEmpty
+                              ? BaseButton(
                                   onTap: () {
                                     setState(() {
                                       _searchController.clear();
@@ -319,180 +341,180 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                                     color: greyColor4,
                                     size: 20.sp,
                                   ),
-                                ),
-                              ],
-                            )
-                          : (_searchController.text.isNotEmpty
-                                ? BaseButton(
-                                    onTap: () {
-                                      setState(() {
-                                        _searchController.clear();
-                                        _selectedLocation = null;
-                                        _suggestions =
-                                            const <LocationDataModel>[];
-                                        _validationError = null;
-                                      });
-                                    },
-                                    child: Icon(
-                                      Icons.close_rounded,
-                                      color: greyColor4,
-                                      size: 20.sp,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.search_rounded,
-                                    color: greyColor4,
-                                    size: 20.sp,
-                                  ))),
-              ),
-              if (_suggestions.isNotEmpty) ...<Widget>[
-                12.spaceH,
-                Container(
-                  constraints: BoxConstraints(maxHeight: 220.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18.r),
-                    border: Border.all(color: greyColor2),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 14,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.symmetric(vertical: 6.h),
-                    itemCount: _suggestions.length,
-                    separatorBuilder: (_, _) => Divider(
-                      height: 1,
-                      color: greyColor2.withValues(alpha: 0.5),
-                    ),
-                    itemBuilder: (BuildContext context, int index) {
-                      final LocationDataModel item = _suggestions[index];
-                      return InkWell(
-                        onTap: () => _selectLocation(item),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 10.h,
+                                )
+                              : Icon(
+                                  Icons.search_rounded,
+                                  color: greyColor4,
+                                  size: 20.sp,
+                                ))),
+            ),
+            12.spaceH,
+            Flexible(
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (_suggestions.isNotEmpty) ...<Widget>[
+                      Container(
+                        constraints: BoxConstraints(maxHeight: 240.h),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18.r),
+                          border: Border.all(color: greyColor2),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.symmetric(vertical: 6.h),
+                          itemCount: _suggestions.length,
+                          separatorBuilder: (_, _) => Divider(
+                            height: 1,
+                            color: greyColor2.withValues(alpha: 0.5),
                           ),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                width: 34.r,
-                                height: 34.r,
-                                decoration: BoxDecoration(
-                                  color: softPeachOrange,
-                                  borderRadius: BorderRadius.circular(10.r),
+                          itemBuilder: (BuildContext context, int index) {
+                            final LocationDataModel item = _suggestions[index];
+                            return InkWell(
+                              onTap: () => _selectLocation(item),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 14.w,
+                                  vertical: 10.h,
                                 ),
-                                child: Icon(
-                                  Icons.location_on_outlined,
-                                  color: primaryColor,
-                                  size: 18.sp,
-                                ),
-                              ),
-                              12.spaceW,
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: <Widget>[
-                                    item.formatted.appText(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: greyColor9,
-                                      textAlign: TextAlign.start,
+                                    Container(
+                                      width: 34.r,
+                                      height: 34.r,
+                                      decoration: BoxDecoration(
+                                        color: softPeachOrange,
+                                        borderRadius: BorderRadius.circular(
+                                          10.r,
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.location_on_outlined,
+                                        color: primaryColor,
+                                        size: 18.sp,
+                                      ),
                                     ),
-                                    2.spaceH,
-                                    item.subtitle.appText(
-                                      fontSize: 11,
-                                      color: greyColor6,
-                                      textAlign: TextAlign.start,
+                                    12.spaceW,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          item.formatted.appText(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: greyColor9,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          2.spaceH,
+                                          item.subtitle.appText(
+                                            fontSize: 11,
+                                            color: greyColor6,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ] else if (!_isSearching &&
-                  _selectedLocation == null &&
-                  _searchController.text.trim().length >= 2) ...<Widget>[
-                10.spaceH,
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: 'No matching cities found. Try another city name.'
-                      .appText(
-                        fontSize: 12,
-                        color: greyColor6,
+                      ),
+                    ] else if (!_isSearching &&
+                        _selectedLocation == null &&
+                        _searchController.text.trim().length >= 2) ...<Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 8.h,
+                        ),
+                        child:
+                            'No matching cities found. Try another city name.'
+                                .appText(
+                                  fontSize: 12,
+                                  color: greyColor6,
+                                  textAlign: TextAlign.start,
+                                ),
+                      ),
+                    ] else ...<Widget>[
+                      'COMMONLY USED'.appText(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: greyColor4,
+                        letterSpacing: 0.8,
                         textAlign: TextAlign.start,
                       ),
+                      10.spaceH,
+                      Wrap(
+                        spacing: 8.w,
+                        runSpacing: 8.h,
+                        children: LocationDataModel.commonlyUsedLocations.map((
+                          LocationDataModel preset,
+                        ) {
+                          final String chipLabel =
+                              '${preset.city} · ${preset.gmtOffset}';
+                          final bool isSelected =
+                              _selectedLocation != null &&
+                              _selectedLocation!.city.toLowerCase() ==
+                                  preset.city.toLowerCase() &&
+                              _selectedLocation!.country.toLowerCase() ==
+                                  preset.country.toLowerCase();
+                          return BaseButton(
+                            onTap: () => _selectLocation(preset),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? secondaryColor.withValues(alpha: 0.12)
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? secondaryColor
+                                      : greyColor2,
+                                  width: isSelected ? 1.5 : 1,
+                                ),
+                              ),
+                              child: chipLabel.appText(
+                                fontSize: 12,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                                color: isSelected ? secondaryColor : greyColor9,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ],
                 ),
-              ],
-              16.spaceH,
-              'COMMONLY USED'.appText(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: greyColor4,
-                letterSpacing: 0.8,
-                textAlign: TextAlign.start,
               ),
-              10.spaceH,
-              Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
-                children: LocationDataModel.commonlyUsedLocations.map((
-                  LocationDataModel preset,
-                ) {
-                  final String chipLabel =
-                      '${preset.city} · ${preset.gmtOffset}';
-                  final bool isSelected =
-                      _selectedLocation != null &&
-                      _selectedLocation!.city.toLowerCase() ==
-                          preset.city.toLowerCase() &&
-                      _selectedLocation!.country.toLowerCase() ==
-                          preset.country.toLowerCase();
-                  return BaseButton(
-                    onTap: () => _selectLocation(preset),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? secondaryColor.withValues(alpha: 0.12)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isSelected ? secondaryColor : greyColor2,
-                          width: isSelected ? 1.5 : 1,
-                        ),
-                      ),
-                      child: chipLabel.appText(
-                        fontSize: 12,
-                        fontWeight: isSelected
-                            ? FontWeight.w700
-                            : FontWeight.w500,
-                        color: isSelected ? secondaryColor : greyColor9,
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-              22.spaceH,
-              AppButton(
-                title: 'Save location',
-                padding: EdgeInsets.zero,
-                onTap: _confirmSelection,
-              ),
-            ],
-          ),
+            ),
+            16.spaceH,
+            AppButton(
+              title: 'Save location',
+              padding: EdgeInsets.zero,
+              onTap: _confirmSelection,
+            ),
+          ],
         ),
       ),
     );
