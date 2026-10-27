@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -165,19 +166,14 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
                   fallbackInitialQuestion.trim().isNotEmpty &&
                   state.messages.isEmpty &&
                   !state.isTyping) {
-                final List<BrainyMessage> pair = _buildFallbackAiCards(
-                  fallbackInitialQuestion,
-                  preferences.getChildModel(),
-                );
                 changeProps(
                   messages: <BrainyMessage>[
                     BrainyMessage(
-                      id: 'fallback_q',
+                      id: 'initial_q',
                       type: MessageType.user,
                       chipTitle: 'You asked',
                       headline: fallbackInitialQuestion,
                     ),
-                    ...pair,
                   ],
                 );
               }
@@ -396,20 +392,23 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     final List<ConnectivityResult> connectivity = await Connectivity()
         .checkConnectivity();
-    if (connectivity.any(
-      (ConnectivityResult c) => c == ConnectivityResult.none,
-    )) {
+    final bool isOffline =
+        connectivity.isEmpty ||
+        connectivity.every(
+          (ConnectivityResult c) => c == ConnectivityResult.none,
+        );
+    if (isOffline) {
       changeProps(
         messages: <BrainyMessage>[
           ...state.messages,
           optimisticUserMsg,
           BrainyMessage(
             id: 'offline_${DateTime.now().millisecondsSinceEpoch}',
-            type: MessageType.aiInfo,
+            type: MessageType.error,
             chipTitle: "You're offline",
             headline: "You're offline right now",
             subtext:
-                'Brainy needs an active internet connection to provide guidance. Please check your network and try again.',
+                'Brainy needs an active internet connection to provide guidance. Please check your network and tap Try again when back online.',
           ),
         ],
         isTyping: false,
@@ -533,20 +532,178 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     );
 
     if (aiCards.isEmpty) {
-      await Future.delayed(const Duration(milliseconds: 900));
-      final String contextualResponse =
-          await AiDataTools.generateContextualResponse(
-            question: displayHeadline,
-            childModel: childModel,
-            topic: state.topic,
-          );
-      aiCards = _parseAiResponseText(contextualResponse);
-      if (aiCards.isEmpty) {
-        aiCards = _buildFallbackAiCards(displayHeadline, childModel);
-      }
+      if (isClosed) return;
+      final BrainyMessage errorCard = BrainyMessage(
+        id: 'retry_${DateTime.now().millisecondsSinceEpoch}',
+        type: MessageType.error,
+        chipTitle: 'Connection issue',
+        headline: "Brainy couldn't connect right now",
+        subtext:
+            "We couldn't reach the AI service. Please check your connection and tap Try again. Nothing you asked has been lost.",
+      );
+      changeProps(
+        messages: <BrainyMessage>[...state.messages, errorCard],
+        isTyping: false,
+      );
+      return;
     }
 
     // Persist AI cards to Firestore so history and conversation stream stay in sync
+    for (int i = 0; i < aiCards.length; i++) {
+      final BrainyMessage card = aiCards[i];
+      await AuthRepo.instance.addChatToConversation(
+        conversationId: convId,
+        request: {
+          'text': card.subtext != null
+              ? '${card.headline}\n${card.subtext}'
+              : card.headline,
+          'chip_title': card.chipTitle,
+          'headline': card.headline,
+          'subtext': card.subtext,
+          'card_type': card.type == MessageType.aiAction
+              ? 'aiAction'
+              : 'aiInfo',
+          'type': 'text',
+          'role': 'assistant',
+          'image_local_path': null,
+          'audio_local_path': null,
+          'image_network_path': '',
+          'audio_network_path': '',
+          'is_saved': false,
+          'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
+            DateTime.now().millisecondsSinceEpoch + (i * 10),
+          ),
+        },
+      );
+    }
+
+    if (isClosed) return;
+    final String uid = userModel?.uid ?? '';
+    if (uid.isEmpty) {
+      changeProps(
+        messages: <BrainyMessage>[...state.messages, ...aiCards],
+        isTyping: false,
+      );
+    } else {
+      changeProps(isTyping: false);
+    }
+  }
+
+  Future<void> retryLastMessage() async {
+    final BrainyMessage? lastUserMsg = state.messages.reversed.firstWhereOrNull(
+      (BrainyMessage m) => m.type == MessageType.user,
+    );
+    if (lastUserMsg == null) return;
+
+    final List<BrainyMessage> cleaned = state.messages
+        .where((BrainyMessage m) => m.type != MessageType.error)
+        .toList();
+
+    changeProps(messages: cleaned, isTyping: true);
+
+    final String convId =
+        state.conversationId ??
+        await _ensureConversationCreated(lastUserMsg.headline);
+
+    final UserModel? userModel = preferences.getUserModel();
+    ChildModel? childModel = preferences.getChildModel();
+    final DocumentReference<Object?>? childRef = userModel?.defaultChild;
+    if (childModel == null && childRef != null) {
+      try {
+        final DocumentSnapshot<Object?> childSnap = await childRef.get();
+        final Object? data = childSnap.data();
+        if (data is Map<String, dynamic>) {
+          childModel = ChildModel.fromJson(data, childSnap.reference);
+        }
+      } catch (_) {}
+    }
+
+    final String liveContext = await AiDataTools.buildLiveContextString(
+      childModel: childModel,
+    );
+
+    final String systemPrompt = BrainAiSystemPrompt.build(
+      childModel: childModel,
+      parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
+      topic: state.topic,
+      liveContextString: liveContext,
+    );
+
+    final List<Map<String, dynamic>> history = <Map<String, dynamic>>[];
+    for (final BrainyMessage msg in cleaned) {
+      if (msg.id == lastUserMsg.id) continue;
+      if (msg.type == MessageType.user) {
+        history.add(<String, dynamic>{'role': 'user', 'content': msg.headline});
+      } else if (msg.type == MessageType.aiInfo ||
+          msg.type == MessageType.aiAction) {
+        final String combinedText =
+            msg.subtext != null && msg.subtext!.isNotEmpty
+            ? '${msg.headline}\n${msg.subtext}'
+            : msg.headline;
+        history.add(<String, dynamic>{
+          'role': 'assistant',
+          'content': combinedText,
+        });
+      }
+    }
+
+    final File? imgFile =
+        (lastUserMsg.imageLocalPath != null &&
+            lastUserMsg.imageLocalPath!.isNotEmpty)
+        ? File(lastUserMsg.imageLocalPath!)
+        : null;
+    final File? audFile =
+        (lastUserMsg.audioLocalPath != null &&
+            lastUserMsg.audioLocalPath!.isNotEmpty)
+        ? File(lastUserMsg.audioLocalPath!)
+        : null;
+
+    List<BrainyMessage> aiCards = <BrainyMessage>[];
+    final ApiResultStatus aiResult = await AiRepo.instance.createResponse(
+      conversationId: convId,
+      messageText: lastUserMsg.headline,
+      imageFile: imgFile,
+      audioFile: audFile,
+      history: history,
+      systemPrompt: systemPrompt,
+    );
+
+    aiResult.whenOrNull(
+      data: (dynamic data) {
+        if (data is Map<String, dynamic>) {
+          final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
+            data,
+          );
+          final List<ConversationItem> outputs = (aiResponseModel.output ?? [])
+              .where((ConversationItem e) => e.type == 'message')
+              .toList();
+          if (outputs.isNotEmpty && (outputs.first.content ?? []).isNotEmpty) {
+            final String rawAiText = outputs.first.content!.first.text ?? '';
+            if (rawAiText.trim().isNotEmpty) {
+              aiCards = _parseAiResponseText(rawAiText);
+            }
+          }
+        }
+      },
+    );
+
+    if (aiCards.isEmpty) {
+      if (isClosed) return;
+      final BrainyMessage errorCard = BrainyMessage(
+        id: 'retry_${DateTime.now().millisecondsSinceEpoch}',
+        type: MessageType.error,
+        chipTitle: 'Connection issue',
+        headline: "Brainy couldn't connect right now",
+        subtext:
+            "We couldn't reach the AI service. Please check your connection and tap Try again. Nothing you asked has been lost.",
+      );
+      changeProps(
+        messages: <BrainyMessage>[...state.messages, errorCard],
+        isTyping: false,
+      );
+      return;
+    }
+
     for (int i = 0; i < aiCards.length; i++) {
       final BrainyMessage card = aiCards[i];
       await AuthRepo.instance.addChatToConversation(
@@ -663,27 +820,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       BrainyMessage(
         id: baseId,
         type: MessageType.aiInfo,
-        chipTitle: 'What may be happening',
+        chipTitle: 'Brainy',
         headline: parsed.$1,
         subtext: parsed.$2,
-        isSaved: isSaved,
-      ),
-      BrainyMessage(
-        id: baseId != null ? '${baseId}_action' : null,
-        type: MessageType.aiAction,
-        chipTitle: 'What to try now',
-        headline: 'Focus on one calm, predictable step today',
-        subtext:
-            'Small, steady interactions help reassure your child and bring rhythm back into balance.',
-        isSaved: isSaved,
-      ),
-      BrainyMessage(
-        id: baseId != null ? '${baseId}_help' : null,
-        type: MessageType.aiInfo,
-        chipTitle: 'When to get help',
-        headline: 'Reach out if challenges persist over 2–3 weeks',
-        subtext:
-            'If difficulties continue despite consistency, consult your pediatrician or care provider for personalized guidance.',
         isSaved: isSaved,
       ),
     ];
@@ -709,195 +848,6 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       return (lines.first, null);
     }
     return (lines.first, lines.sublist(1).join(' '));
-  }
-
-  List<BrainyMessage> _buildFallbackAiCards(
-    String question,
-    ChildModel? child,
-  ) {
-    if (EmergencyDetector.isEmergency(question)) {
-      final String displayNumber =
-          EmergencyDetector.getEmergencyDisplayNumber();
-      return <BrainyMessage>[
-        BrainyMessage(
-          type: MessageType.safetyAlert,
-          chipTitle: 'Immediate Attention',
-          headline: 'Please contact emergency services ($displayNumber)',
-          subtext:
-              'LovingBrain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.',
-        ),
-      ];
-    }
-
-    final String childName = (child?.childName ?? '').trim().isNotEmpty
-        ? child!.childName!.trim()
-        : 'your child';
-    final String lower = question.toLowerCase();
-    final String topic = (state.topic ?? '').toLowerCase();
-
-    final bool isFoodQuery =
-        lower.contains('vegetable') ||
-        lower.contains('food') ||
-        lower.contains('eat') ||
-        lower.contains('eating') ||
-        lower.contains('dinner') ||
-        lower.contains('lunch') ||
-        lower.contains('breakfast') ||
-        lower.contains('snack') ||
-        lower.contains('meal') ||
-        lower.contains('picky') ||
-        lower.contains('feeding');
-
-    if (isFoodQuery) {
-      return [
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'What may be happening',
-          headline: "$childName's taste buds and autonomy are developing",
-          subtext:
-              'Bitter taste receptors are naturally heightened at this age, and selective eating is one of the most common ways toddlers assert control over their bodies.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiAction,
-          chipTitle: 'What to try now',
-          headline: 'Keep mealtimes pressure-free with small portions',
-          subtext:
-              'Serve a tiny, non-intimidating portion of vegetables alongside trusted safe foods. Let $childName decide whether to touch or taste without cajoling or pressure.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'When to get help',
-          headline: 'Consult a professional if growth or sensory issues stall',
-          subtext:
-              'If $childName gags frequently on solids, drops growth percentiles, or completely eliminates whole food groups for more than a month, consult your pediatrician.',
-        ),
-      ];
-    }
-
-    final bool isSleepQuery =
-        lower.contains('nap') ||
-        lower.contains('bedtime') ||
-        lower.contains('sleep') ||
-        lower.contains('wake') ||
-        lower.contains('night');
-
-    final bool isTantrumQuery =
-        lower.contains('tantrum') ||
-        lower.contains('meltdown') ||
-        lower.contains('hitting') ||
-        lower.contains('crying') ||
-        lower.contains('transition');
-
-    final bool isMoodQuery =
-        lower.contains('clingy') ||
-        lower.contains('mood') ||
-        lower.contains('whining') ||
-        lower.contains('cry');
-
-    if (isSleepQuery || (!isTantrumQuery && !isMoodQuery && topic == 'sleep')) {
-      final String bedtimeNote = (child?.usualBedtime ?? '').isNotEmpty
-          ? ' around ${child!.usualBedtime}'
-          : '';
-      return [
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'What may be happening',
-          headline: '$childName may be building overtiredness before bed',
-          subtext:
-              'Shifts in daytime naps or evening stimulation$bedtimeNote can trigger a second wind of cortisol right when sleep pressure should peak.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiAction,
-          chipTitle: 'What to try now',
-          headline: 'Start a quiet wind-down 20–30 minutes earlier',
-          subtext:
-              'Dim the lights, lower voice volume, and repeat the same 2–3 calm bedtime cues so $childName feels safe and ready to rest.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'When to get help',
-          headline: 'Reach out if sleep struggles persist past 2–3 weeks',
-          subtext:
-              'If bedtime resistance lasts over two weeks, or is accompanied by loud snoring, pauses in breathing, or severe daytime exhaustion, discuss it with your pediatrician.',
-        ),
-      ];
-    }
-
-    if (isTantrumQuery || (!isMoodQuery && topic == 'behaviour')) {
-      return [
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'What may be happening',
-          headline: "$childName's nervous system is overloaded",
-          subtext:
-              'Big feelings often spill over during transitions or when hunger and fatigue make self-regulation too hard for a developing brain.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiAction,
-          chipTitle: 'What to try now',
-          headline: 'Connect first, then guide with a 5-minute warning',
-          subtext:
-              'Get down to eye level, validate the feeling in one short sentence ("It is hard to stop playing"), and offer a simple two-choice transition.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'When to get help',
-          headline: 'Seek evaluation if meltdowns become unsafe or extreme',
-          subtext:
-              'If tantrums regularly exceed 45 minutes, involve self-injury, or do not respond to soothing presence over several weeks, seek advice from your pediatrician.',
-        ),
-      ];
-    }
-
-    if (isMoodQuery || topic == 'mood') {
-      return [
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'What may be happening',
-          headline: '$childName is seeking extra co-regulation from you',
-          subtext:
-              'Developmental leaps and new environments often make children check in more closely with their safe base.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiAction,
-          chipTitle: 'What to try now',
-          headline: 'Offer 5 minutes of undivided "fill-the-cup" connection',
-          subtext:
-              'Follow $childName\'s lead in quiet play without questions or corrections before stepping away for routine tasks.',
-        ),
-        BrainyMessage(
-          type: MessageType.aiInfo,
-          chipTitle: 'When to get help',
-          headline: 'Check in if distress becomes persistent or pervasive',
-          subtext:
-              'If heightened clinginess, sadness, or anxiety interferes with basic routines for more than two weeks, consult your child\'s healthcare provider.',
-        ),
-      ];
-    }
-
-    return [
-      BrainyMessage(
-        type: MessageType.aiInfo,
-        chipTitle: 'What may be happening',
-        headline: '$childName is adjusting to daily rhythms',
-        subtext:
-            'Small changes in sleep, energy, or routine can ripple into how $childName responds throughout the day.',
-      ),
-      BrainyMessage(
-        type: MessageType.aiAction,
-        chipTitle: 'What to try now',
-        headline: 'Focus on one predictable anchor today',
-        subtext:
-            'Keep the next meal or bedtime transition calm and unhurried, and notice how $childName responds.',
-      ),
-      BrainyMessage(
-        type: MessageType.aiInfo,
-        chipTitle: 'When to get help',
-        headline: 'Reach out if concerns persist or feel overwhelming',
-        subtext:
-            'If you have ongoing concerns regarding developmental milestones or persistent family distress, connect with your pediatrician or family specialist.',
-      ),
-    ];
   }
 
   Future<void> toggleSaveGuidance(BrainyMessage message, int index) async {

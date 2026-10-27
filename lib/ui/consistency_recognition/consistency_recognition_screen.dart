@@ -40,9 +40,11 @@ class _ConsistencyRecognitionScreenState
       listener: (BuildContext context, ConsistencyRecognitionState state) {},
       builder: (BuildContext context, ConsistencyRecognitionState state) {
         final int days = state.daysCheckedIn;
-        final String headline = days == 5
-            ? "You've shown up five\ndays this week"
-            : "You've shown up $days\ndays this week";
+        final String headline = days == 0
+            ? "Showing up for\nyour family this week"
+            : (days == 5
+                  ? "You've shown up five\ndays this week"
+                  : "You've shown up $days\ndays this week");
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),

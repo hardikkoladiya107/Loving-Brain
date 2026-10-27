@@ -461,7 +461,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Widget _buildConsistencyCard(BuildContext context, JourneyState state) {
-    final int days = state.weeklyInsights?.daysCheckedIn ?? 5;
+    final int days = state.weeklyInsights?.daysCheckedIn ?? 0;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -509,11 +509,14 @@ class _JourneyScreenState extends State<JourneyScreen> {
                     textAlign: TextAlign.start,
                   ),
                   4.spaceH,
-                  "Checked in $days days this week".appText(
-                    fontSize: 12.sp,
-                    color: greyColor,
-                    textAlign: TextAlign.start,
-                  ),
+                  (days > 0
+                          ? "Checked in $days days this week"
+                          : "Showing up for your family")
+                      .appText(
+                        fontSize: 12.sp,
+                        color: greyColor,
+                        textAlign: TextAlign.start,
+                      ),
                 ],
               ),
             ),

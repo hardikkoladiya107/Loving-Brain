@@ -13,6 +13,7 @@ import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
 import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -399,6 +400,11 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
         chipColor = const Color(0xFFD32F2F);
         chipBgColor = const Color(0xFFFFEBEE);
         break;
+      case MessageType.error:
+        icon = Icons.refresh_rounded;
+        chipColor = const Color(0xFFD97706);
+        chipBgColor = const Color(0xFFFEF3C7);
+        break;
     }
 
     return _buildMessageCard(
@@ -464,7 +470,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                 bgColor: chipBgColor,
               ),
               if (msg.type != MessageType.user &&
-                  msg.type != MessageType.safetyAlert)
+                  msg.type != MessageType.safetyAlert &&
+                  msg.type != MessageType.error)
                 InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () => context
@@ -607,6 +614,20 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                     context,
                     MaterialPageRoute(builder: (_) => const HelpSafetyScreen()),
                   );
+                },
+              ),
+            ),
+          ],
+          if (msg.type == MessageType.error) ...[
+            18.spaceH,
+            SizedBox(
+              width: double.infinity,
+              child: AppButton(
+                title: "Try again",
+                backgroundColor: primaryColor,
+                textColor: Colors.white,
+                onTap: () {
+                  context.read<BrainyConversationCubit>().retryLastMessage();
                 },
               ),
             ),

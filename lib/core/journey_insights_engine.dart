@@ -123,11 +123,8 @@ class JourneyInsightsEngine {
     }
 
     int daysCheckedIn = activeDays.length;
-    if (daysCheckedIn == 0 &&
-        (sleepLogs.isNotEmpty || tantrumLogs.isNotEmpty)) {
-      daysCheckedIn = 1;
-    } else if (daysCheckedIn == 0) {
-      daysCheckedIn = 5; // Default friendly baseline for review display
+    if (daysCheckedIn == 0) {
+      daysCheckedIn = 1; // Friendly minimum baseline for review display
     }
 
     // 2. Harder week detection
@@ -252,8 +249,9 @@ class JourneyInsightsEngine {
     const String harderSmallThingToTry = 'Focus on morning sunlight';
 
     // 6. Consistency Recognition copy
-    final String consistencyTitle =
-        "You've shown up $daysCheckedIn\ndays this week";
+    final String consistencyTitle = daysCheckedIn == 5
+        ? "You've shown up five\ndays this week"
+        : "You've shown up $daysCheckedIn\nday${daysCheckedIn == 1 ? '' : 's'} this week";
     const String consistencySubtitle =
         'No streak to lose we just wanted to notice the effort.';
     const String consistencyDetail =

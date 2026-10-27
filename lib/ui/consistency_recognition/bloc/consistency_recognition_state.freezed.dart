@@ -223,7 +223,7 @@ return $default(_that.daysCheckedIn,_that.child,_that.fetchStatus);case _:
 
 
 class _ConsistencyRecognitionState implements ConsistencyRecognitionState {
-  const _ConsistencyRecognitionState({this.daysCheckedIn = 5, this.child, this.fetchStatus = const ApiResultStatus.initial()});
+  const _ConsistencyRecognitionState({this.daysCheckedIn = 0, this.child, this.fetchStatus = const ApiResultStatus.initial()});
   
 
 @override@JsonKey() final  int daysCheckedIn;

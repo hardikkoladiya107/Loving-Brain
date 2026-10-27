@@ -7,7 +7,7 @@ part 'consistency_recognition_state.freezed.dart';
 @freezed
 abstract class ConsistencyRecognitionState with _$ConsistencyRecognitionState {
   const factory ConsistencyRecognitionState({
-    @Default(5) int daysCheckedIn,
+    @Default(0) int daysCheckedIn,
     ChildModel? child,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _ConsistencyRecognitionState;
