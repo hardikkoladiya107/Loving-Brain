@@ -130,8 +130,10 @@ class AuthRepo {
       return ApiResultStatus.data(data: uId);
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -175,8 +177,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -208,8 +212,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -283,7 +289,7 @@ class AuthRepo {
       await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
       return const ApiResultStatus.data(data: "");
-    } on Exception catch (e) {
+    } catch (e) {
       try {
         await GoogleSignInManager.instance.signOut();
       } catch (_) {}
@@ -295,7 +301,9 @@ class AuthRepo {
       } catch (_) {}
       await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
-      return ApiResultStatus.error(error: e);
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -574,10 +582,12 @@ class AuthRepo {
       await preferences.clearUser();
       await preferences.putBool(SharedPreference.isLogin, false);
       return onFirebaseException(e);
-    } on Exception catch (e) {
+    } catch (e) {
       await preferences.clearUser();
       await preferences.putBool(SharedPreference.isLogin, false);
-      return ApiResultStatus.error(error: e);
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -597,8 +607,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -672,9 +684,11 @@ class AuthRepo {
           'Firebase Google Sign-In failed. code=${e.code}, message=${e.message ?? "no_message"}';
       debugPrint(message);
       return ApiResultStatus.error(error: Exception(message));
-    } on Exception catch (e) {
+    } catch (e) {
       debugPrint('Google Sign-In exception in AuthRepo: $e');
-      return ApiResultStatus.error(error: e);
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -803,9 +817,11 @@ class AuthRepo {
       return ApiResultStatus.error(error: Exception(message));
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
+    } catch (e) {
       debugPrint('Apple Sign-In exception in AuthRepo: $e');
-      return ApiResultStatus.error(error: e);
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -829,8 +845,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -856,8 +874,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -884,8 +904,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -908,8 +930,10 @@ class AuthRepo {
       }
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -956,8 +980,10 @@ class AuthRepo {
       return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
       return onFirebaseException(e) as ApiResultStatus<UserModel>;
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -982,8 +1008,10 @@ class AuthRepo {
       return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
       return onFirebaseException(e) as ApiResultStatus<UserModel>;
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 
@@ -1031,8 +1059,10 @@ class AuthRepo {
       return ApiResultStatus.data(data: updatedUser);
     } on FirebaseException catch (e) {
       return onFirebaseException(e) as ApiResultStatus<UserModel>;
-    } on Exception catch (e) {
-      return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
     }
   }
 

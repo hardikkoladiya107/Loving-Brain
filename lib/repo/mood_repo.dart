@@ -44,6 +44,8 @@ class MoodRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -73,6 +75,8 @@ class MoodRepo {
       );
     } on Exception catch (e) {
       return ApiResultStatus.error(error: Exception("Exception: $e"));
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -104,6 +108,8 @@ class MoodRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -133,6 +139,8 @@ class MoodRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -163,6 +171,8 @@ class MoodRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 }

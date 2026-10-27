@@ -379,12 +379,12 @@ class _TimelineAudioPlayerState extends State<TimelineAudioPlayer> {
       if (mounted) {
         setState(() => _position = p);
       }
-    });
+    }, onError: (_) {});
     _durSub = _player.onDurationChanged.listen((Duration d) {
       if (mounted) {
         setState(() => _duration = d);
       }
-    });
+    }, onError: (_) {});
     _compSub = _player.onPlayerComplete.listen((_) {
       if (mounted) {
         setState(() {
@@ -392,12 +392,12 @@ class _TimelineAudioPlayerState extends State<TimelineAudioPlayer> {
           _position = Duration.zero;
         });
       }
-    });
+    }, onError: (_) {});
     _stateSub = _player.onPlayerStateChanged.listen((PlayerState state) {
       if (mounted) {
         setState(() => _isPlaying = state == PlayerState.playing);
       }
-    });
+    }, onError: (_) {});
   }
 
   @override

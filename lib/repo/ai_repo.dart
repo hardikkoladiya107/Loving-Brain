@@ -57,6 +57,8 @@ class AiRepo {
       return ApiResultStatus.data(data: response.data);
     } on DioException catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -78,6 +80,8 @@ class AiRepo {
       return ApiResultStatus.data(data: response.data);
     } on DioException catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -309,11 +313,15 @@ class AiRepo {
         customMetadata: {'picked-file-path': file.path},
       );
       final UploadTask uploadTask = ref.putFile(io.File(file.path), metadata);
-      return ApiResultStatus.data(data: await Future.value(uploadTask));
+      final TaskSnapshot snapshot = await uploadTask;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+      return ApiResultStatus.data(data: downloadUrl);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -332,11 +340,15 @@ class AiRepo {
         customMetadata: {'picked-file-path': file.path},
       );
       final UploadTask uploadTask = ref.putFile(io.File(file.path), metadata);
-      return ApiResultStatus.data(data: await Future.value(uploadTask));
+      final TaskSnapshot snapshot = await uploadTask;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+      return ApiResultStatus.data(data: downloadUrl);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 }

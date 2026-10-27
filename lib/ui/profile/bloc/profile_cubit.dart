@@ -127,23 +127,37 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> selectImage(String? imageLocalPath) async {
     if (imageLocalPath != null) {
       changeProps(uploadFileApiResultStatus: const ApiResultStatus.loading());
-      final ApiResultStatus uploadFileApiResultStatus = await UserRepo.instance
-          .uploadFileToFirebaseStorage(
-            file: File(imageLocalPath),
-            referenceId: state.userModel?.uid,
-          );
-      changeProps(uploadFileApiResultStatus: uploadFileApiResultStatus);
-      uploadFileApiResultStatus.whenOrNull(
-        data: (dynamic data) async {
-          if (data is TaskSnapshot) {
-            final String imageNetworkUrl = await data.ref.getDownloadURL();
-            UserRepo.instance.updateUserToFireStore(
+      try {
+        final ApiResultStatus uploadFileApiResultStatus = await UserRepo
+            .instance
+            .uploadFileToFirebaseStorage(
+              file: File(imageLocalPath),
+              referenceId: state.userModel?.uid,
+            );
+        changeProps(uploadFileApiResultStatus: uploadFileApiResultStatus);
+        if (uploadFileApiResultStatus is Data) {
+          final dynamic data = uploadFileApiResultStatus.data;
+          String? imageNetworkUrl;
+          if (data is String && data.isNotEmpty) {
+            imageNetworkUrl = data;
+          } else if (data is TaskSnapshot) {
+            try {
+              imageNetworkUrl = await data.ref.getDownloadURL();
+            } catch (_) {}
+          }
+          if (imageNetworkUrl != null && imageNetworkUrl.isNotEmpty) {
+            await UserRepo.instance.updateUserToFireStore(
               request: <String, dynamic>{"profile_image": imageNetworkUrl},
             );
           }
-        },
-        error: (Exception error) {},
-      );
+        }
+      } catch (e) {
+        changeProps(
+          uploadFileApiResultStatus: ApiResultStatus.error(
+            error: Exception(e.toString()),
+          ),
+        );
+      }
     }
   }
 }

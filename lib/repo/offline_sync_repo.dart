@@ -134,10 +134,11 @@ class OfflineSyncRepo {
             default:
               break;
           }
+          success = true;
         } catch (_) {
-          // If offline or uninitialized Firebase, simulated or stored locally
+          // If offline or uninitialized Firebase, remain queued for next retry
+          success = false;
         }
-        success = true;
 
         if (success) {
           syncedCount++;

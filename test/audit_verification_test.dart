@@ -1,9 +1,19 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/pending_local_update_model.dart';
+import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/ai_repo.dart';
+import 'package:loving_brain/repo/offline_sync_repo.dart';
+import 'package:loving_brain/repo/sleep_log_repo.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/ui/brainy_conversation/bloc/brainy_conversation_cubit.dart';
 import 'package:loving_brain/ui/brainy_conversation/bloc/brainy_conversation_state.dart';
 import 'package:loving_brain/ui/brainy_home/bloc/brainy_home_cubit.dart';
@@ -14,6 +24,7 @@ import 'package:loving_brain/ui/journey/bloc/journey_cubit.dart';
 import 'package:loving_brain/ui/journey/bloc/journey_state.dart';
 import 'package:loving_brain/ui/microphone_permission/bloc/microphone_permission_cubit.dart';
 import 'package:loving_brain/ui/notifications_permission/bloc/notifications_permission_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -621,6 +632,108 @@ void main() {
         );
         await tester.pump();
         expect(find.text('FloatingBottomNav'), findsNothing);
+      },
+    );
+  });
+
+  group('Audit Verification: End-to-End Error & Exception Handling Robustness', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      await SharedPreference.init();
+      await OfflineSyncRepo.instance.clearQueue();
+    });
+
+    test(
+      'OfflineSyncRepo retains failed offline updates when Firestore throws during sync',
+      () async {
+        final PendingLocalUpdateModel update = PendingLocalUpdateModel.create(
+          clientUpdateId: 'test_sleep_error_01',
+          updateType: 'sleep',
+          timestamp: DateTime.now().toIso8601String(),
+          payload: <String, dynamic>{'test': true},
+        );
+
+        // 1. Queue the update locally
+        final ApiResultStatus<bool> queueRes = await OfflineSyncRepo.instance
+            .queuePendingUpdate(update);
+        expect(queueRes is Data<bool>, isTrue);
+
+        final List<PendingLocalUpdateModel> pendingBefore =
+            await OfflineSyncRepo.instance.getPendingUpdates();
+        expect(pendingBefore.length, equals(1));
+        expect(pendingBefore.first.id, equals('test_sleep_error_01'));
+
+        // 2. Run syncPendingUpdates (Firestore uninitialized / throws)
+        // With our fix, failed items MUST remain in queue and not be erased
+        final ApiResultStatus<int> syncRes = await OfflineSyncRepo.instance
+            .syncPendingUpdates();
+        expect(syncRes is Data<int>, isTrue);
+        expect((syncRes as Data<int>).data, equals(0));
+
+        // 3. Confirm update was retained for future retry (NO DATA LOSS)
+        final List<PendingLocalUpdateModel> pendingAfter = await OfflineSyncRepo
+            .instance
+            .getPendingUpdates();
+        expect(pendingAfter.length, equals(1));
+        expect(pendingAfter.first.id, equals('test_sleep_error_01'));
+      },
+    );
+
+    test(
+      'AiRepo returns ApiResultStatus.error on non-existent files without unhandled crash',
+      () async {
+        final File missingFile = File(
+          '/tmp/non_existent_file_${DateTime.now().millisecondsSinceEpoch}.png',
+        );
+
+        // File does not exist: MultipartFile.fromFile throws FileSystemException
+        // AiRepo catches this and returns ApiResultStatus.error
+        final ApiResultStatus uploadRes = await AiRepo.instance.uploadFile(
+          file: missingFile,
+        );
+        expect(uploadRes is Error, isTrue);
+
+        final ApiResultStatus audioRes = await AiRepo.instance.transcribeAudio(
+          file: missingFile,
+        );
+        expect(audioRes is Error, isTrue);
+      },
+    );
+
+    test(
+      'SleepLogRepo.editSleepLog returns ApiResultStatus.error on invalid inputs',
+      () async {
+        final DateTime now = DateTime.now();
+        // 1. Empty log.id returns error
+        final SleepLogModel logNoId = SleepLogModel(
+          id: '',
+          date: now,
+          bedTime: now,
+          wakeTime: now,
+        );
+        final ApiResultStatus<void> res1 = await SleepLogRepo.instance
+            .editSleepLog(ChildModel(), logNoId);
+        expect(res1 is Error<void>, isTrue);
+
+        // 2. Missing child.reference.id returns error
+        final SleepLogModel logWithId = SleepLogModel(
+          id: 'test_log_id',
+          date: now,
+          bedTime: now,
+          wakeTime: now,
+        );
+        final ApiResultStatus<void> res2 = await SleepLogRepo.instance
+            .editSleepLog(ChildModel(), logWithId);
+        expect(res2 is Error<void>, isTrue);
+      },
+    );
+
+    test(
+      'UserRepo returns ApiResultStatus.error when updateUserToFireStore called with empty uid',
+      () async {
+        final ApiResultStatus res = await UserRepo.instance
+            .updateUserToFireStore(uId: '', request: <String, dynamic>{});
+        expect(res is Error, isTrue);
       },
     );
   });

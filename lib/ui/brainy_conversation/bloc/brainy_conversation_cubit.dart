@@ -24,31 +24,36 @@ import 'brainy_conversation_state.dart';
 
 class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   BrainyConversationCubit() : super(const BrainyConversationState()) {
-    _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen((
-      PlayerState s,
-    ) {
-      if (isClosed) return;
-      final bool playing = s == PlayerState.playing;
-      final bool stopOrComplete =
-          s == PlayerState.completed || s == PlayerState.stopped;
+    _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen(
+      (PlayerState s) {
+        if (isClosed) return;
+        final bool playing = s == PlayerState.playing;
+        final bool stopOrComplete =
+            s == PlayerState.completed || s == PlayerState.stopped;
 
-      if (stopOrComplete) {
-        changeProps(
-          isAudioPlaying: false,
-          clearPlayingMessageId: true,
-          isAttachedAudioPlaying: false,
-          attachedAudioPosition: Duration.zero,
-        );
-      } else if (playing) {
-        if (state.isAttachedAudioPlaying) {
-          changeProps(isAudioPlaying: false, clearPlayingMessageId: true);
+        if (stopOrComplete) {
+          changeProps(
+            isAudioPlaying: false,
+            clearPlayingMessageId: true,
+            isAttachedAudioPlaying: false,
+            attachedAudioPosition: Duration.zero,
+          );
+        } else if (playing) {
+          if (state.isAttachedAudioPlaying) {
+            changeProps(isAudioPlaying: false, clearPlayingMessageId: true);
+          } else {
+            changeProps(isAudioPlaying: true, isAttachedAudioPlaying: false);
+          }
         } else {
-          changeProps(isAudioPlaying: true, isAttachedAudioPlaying: false);
+          changeProps(isAudioPlaying: false, isAttachedAudioPlaying: false);
         }
-      } else {
-        changeProps(isAudioPlaying: false, isAttachedAudioPlaying: false);
-      }
-    });
+      },
+      onError: (_) {
+        if (!isClosed) {
+          changeProps(isAudioPlaying: false, isAttachedAudioPlaying: false);
+        }
+      },
+    );
 
     _positionSubscription = _audioPlayer.onPositionChanged.listen((
       Duration position,
@@ -57,7 +62,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       if (state.isAttachedAudioPlaying) {
         changeProps(attachedAudioPosition: position);
       }
-    });
+    }, onError: (_) {});
 
     _durationSubscription = _audioPlayer.onDurationChanged.listen((
       Duration duration,
@@ -66,7 +71,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       if (state.isAttachedAudioPlaying) {
         changeProps(attachedAudioDuration: duration);
       }
-    });
+    }, onError: (_) {});
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _chatsSubscription;
@@ -1190,49 +1195,68 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       final List<String> uploadedUrls = <String>[];
       for (final String path in allImagePaths) {
         if (path.isNotEmpty && File(path).existsSync()) {
-          final ApiResultStatus uploadedFilePath = await AiRepo.instance
-              .uploadFileToFirebaseStorage(file: File(path), referenceId: uid);
-          uploadedFilePath.whenOrNull(
-            data: (dynamic data) async {
-              if (data is TaskSnapshot) {
-                final String imageNetworkUrl = await data.ref.getDownloadURL();
-                uploadedUrls.add(imageNetworkUrl);
+          try {
+            final ApiResultStatus uploadedFilePath = await AiRepo.instance
+                .uploadFileToFirebaseStorage(
+                  file: File(path),
+                  referenceId: uid,
+                );
+            if (uploadedFilePath is Data) {
+              final dynamic data = uploadedFilePath.data;
+              if (data is String && data.isNotEmpty) {
+                uploadedUrls.add(data);
+              } else if (data is TaskSnapshot) {
+                try {
+                  final String imageNetworkUrl = await data.ref
+                      .getDownloadURL();
+                  uploadedUrls.add(imageNetworkUrl);
+                } catch (_) {}
               }
-            },
-          );
+            }
+          } catch (_) {}
         }
       }
 
       if (uploadedUrls.isNotEmpty) {
-        await AuthRepo.instance.updateChatToConversation(
-          conversationId: convId,
-          chatReferenceId: documentReference.id,
-          request: <String, dynamic>{
-            'image_network_path': uploadedUrls.first,
-            'image_network_paths': uploadedUrls,
-          },
-        );
+        try {
+          await AuthRepo.instance.updateChatToConversation(
+            conversationId: convId,
+            chatReferenceId: documentReference.id,
+            request: <String, dynamic>{
+              'image_network_path': uploadedUrls.first,
+              'image_network_paths': uploadedUrls,
+            },
+          );
+        } catch (_) {}
       }
     }
 
     if (audioLocalPath != null && audioLocalPath.isNotEmpty) {
-      final ApiResultStatus uploadedFilePath = await AiRepo.instance
-          .uploadAudioFileToFirebaseStorage(
-            file: File(audioLocalPath),
-            referenceId: uid,
-          );
-      uploadedFilePath.whenOrNull(
-        data: (dynamic data) async {
-          if (data is TaskSnapshot) {
-            final String audioNetworkUrl = await data.ref.getDownloadURL();
+      try {
+        final ApiResultStatus uploadedFilePath = await AiRepo.instance
+            .uploadAudioFileToFirebaseStorage(
+              file: File(audioLocalPath),
+              referenceId: uid,
+            );
+        if (uploadedFilePath is Data) {
+          final dynamic data = uploadedFilePath.data;
+          String? audioNetworkUrl;
+          if (data is String && data.isNotEmpty) {
+            audioNetworkUrl = data;
+          } else if (data is TaskSnapshot) {
+            try {
+              audioNetworkUrl = await data.ref.getDownloadURL();
+            } catch (_) {}
+          }
+          if (audioNetworkUrl != null && audioNetworkUrl.isNotEmpty) {
             await AuthRepo.instance.updateChatToConversation(
               conversationId: convId,
               chatReferenceId: documentReference.id,
               request: <String, dynamic>{'audio_network_path': audioNetworkUrl},
             );
           }
-        },
-      );
+        }
+      } catch (_) {}
     }
   }
 

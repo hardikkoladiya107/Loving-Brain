@@ -231,6 +231,8 @@ class ChildRepo {
       return ApiResultStatus.error(error: e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -249,6 +251,8 @@ class ChildRepo {
       return ApiResultStatus.error(error: e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 

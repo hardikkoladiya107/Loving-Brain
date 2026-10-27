@@ -18,7 +18,7 @@ class SleepLogRepo {
 
   static SleepLogRepo get instance => _instance;
 
-  final CollectionReference<Map<String, dynamic>> childrenCollection =
+  CollectionReference<Map<String, dynamic>> get childrenCollection =>
       FirebaseFirestore.instance.collection('children');
 
   CollectionReference<Map<String, dynamic>> _childSleepCollection(
@@ -57,16 +57,18 @@ class SleepLogRepo {
           error: Exception('log.id required for edit'),
         );
       }
-      await child.reference?.update(log.toMap());
+      final String? childId = child.reference?.id;
+      if (childId == null || childId.isEmpty) {
+        return ApiResultStatus.error(error: Exception('Child ID required'));
+      }
+      await _childSleepCollection(childId).doc(log.id!).update(log.toMap());
       return ApiResultStatus.data(data: null);
-    } on FirebaseException catch (_) {
+    } on FirebaseException catch (e) {
       return ApiResultStatus.error(
-        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
       );
-    } catch (_) {
-      return ApiResultStatus.error(
-        error: Exception(LocaleKeys.somethingWentWrong.tr()),
-      );
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 

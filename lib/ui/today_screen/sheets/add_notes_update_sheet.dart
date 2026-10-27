@@ -74,7 +74,7 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
           _playbackPosition = p;
         });
       }
-    });
+    }, onError: (_) {});
 
     _durationSubscription = _audioPlayer.onDurationChanged.listen((Duration d) {
       if (mounted) {
@@ -82,7 +82,7 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
           _playbackDuration = d;
         });
       }
-    });
+    }, onError: (_) {});
 
     _playerCompleteSubscription = _audioPlayer.onPlayerComplete.listen((_) {
       if (mounted) {
@@ -91,7 +91,7 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
           _playbackPosition = Duration.zero;
         });
       }
-    });
+    }, onError: (_) {});
 
     _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen((
       PlayerState state,
@@ -101,7 +101,7 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
           _isPlaying = state == PlayerState.playing;
         });
       }
-    });
+    }, onError: (_) {});
   }
 
   @override

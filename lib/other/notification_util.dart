@@ -181,7 +181,7 @@ class NotificationUtil {
           payload: payload,
         );
       }
-    });
+    }, onError: (_) {});
 
     // FCM opened app from background listener
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
@@ -190,7 +190,7 @@ class NotificationUtil {
           message.data['route']?.toString() ??
           '';
       handleNotificationClick(payload);
-    });
+    }, onError: (_) {});
 
     // FCM cold start launch
     final RemoteMessage? initialMessage = await FirebaseMessaging.instance

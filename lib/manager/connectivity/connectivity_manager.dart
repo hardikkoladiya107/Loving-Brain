@@ -26,7 +26,7 @@ class ConnectivityManager {
           showPersistentDialog();
         }
       }
-    });
+    }, onError: (_) {});
     connectivitySubscription = Connectivity().onConnectivityChanged.listen((
       List<ConnectivityResult> result,
     ) {
@@ -37,7 +37,7 @@ class ConnectivityManager {
           hidePersistentDialog();
         }
       }
-    });
+    }, onError: (_) {});
   }
 
   OverlayEntry? _overlayEntry;

@@ -17,9 +17,9 @@ class UserRepo {
   UserRepo._();
 
   static final UserRepo _instance = UserRepo._();
-  final CollectionReference<Map<String, dynamic>> userCollection =
+  CollectionReference<Map<String, dynamic>> get userCollection =>
       FirebaseFirestore.instance.collection('users');
-  final CollectionReference<Map<String, dynamic>> dailyParentingTipsCollection =
+  CollectionReference<Map<String, dynamic>> get dailyParentingTipsCollection =>
       FirebaseFirestore.instance.collection('dailyParentingTips');
 
   factory UserRepo() {
@@ -210,11 +210,15 @@ class UserRepo {
         customMetadata: {'picked-file-path': file.path},
       );
       final UploadTask uploadTask = ref.putFile(io.File(file.path), metadata);
-      return ApiResultStatus.data(data: await Future.value(uploadTask));
+      final TaskSnapshot snapshot = await uploadTask;
+      final String downloadUrl = await snapshot.ref.getDownloadURL();
+      return ApiResultStatus.data(data: downloadUrl);
     } on FirebaseException catch (e) {
       return ApiResultStatus.error(error: e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -237,6 +241,8 @@ class UserRepo {
       return onFirebaseException(e);
     } on Exception catch (e) {
       return ApiResultStatus.error(error: e);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
