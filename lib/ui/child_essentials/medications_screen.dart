@@ -36,85 +36,87 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
           ),
           child: Padding(
             padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    "Add medication".appText(
-                      fontSize: 20.sp,
-                      fraunces: true,
-                      color: greyColor9,
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(dialogContext),
-                      child: Icon(
-                        Icons.close_rounded,
-                        color: greyColor,
-                        size: 24.sp,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      "Add medication".appText(
+                        fontSize: 20.sp,
+                        fraunces: true,
+                        color: greyColor9,
                       ),
-                    ),
-                  ],
-                ),
-                8.spaceH,
-                "Record any regular medication, vitamin, or dose to track."
-                    .appText(
-                      fontSize: 13.sp,
-                      color: greyColor,
-                      textAlign: TextAlign.start,
-                    ),
-                20.spaceH,
-                AppTextField(
-                  controller: textController,
-                  hint: "e.g., Vitamin D3, Inhaler, Amoxicillin...",
-                  onSubmitted: (String val) {
-                    if (val.trim().isNotEmpty) {
-                      context.read<ChildEssentialsCubit>().addMedication(
-                        val.trim(),
-                      );
-                      Navigator.pop(dialogContext);
-                    }
-                  },
-                ),
-                24.spaceH,
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppButton(
-                        height: 48.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Cancel',
-                        backgroundColor: const Color(0xFFF8F5F2),
-                        borderColor: const Color(0xFFE9E2DC),
-                        textColor: greyColor9,
+                      GestureDetector(
                         onTap: () => Navigator.pop(dialogContext),
+                        child: Icon(
+                          Icons.close_rounded,
+                          color: greyColor,
+                          size: 24.sp,
+                        ),
                       ),
-                    ),
-                    12.spaceW,
-                    Expanded(
-                      child: AppButton(
-                        height: 48.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Add',
-                        backgroundColor: primaryColor,
-                        borderColor: primaryColor,
-                        textColor: Colors.white,
-                        onTap: () {
-                          final String val = textController.text.trim();
-                          if (val.isNotEmpty) {
-                            context.read<ChildEssentialsCubit>().addMedication(
-                              val,
-                            );
-                            Navigator.pop(dialogContext);
-                          }
-                        },
+                    ],
+                  ),
+                  8.spaceH,
+                  "Record any regular medication, vitamin, or dose to track."
+                      .appText(
+                        fontSize: 13.sp,
+                        color: greyColor,
+                        textAlign: TextAlign.start,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                  20.spaceH,
+                  AppTextField(
+                    controller: textController,
+                    hint: "e.g., Vitamin D3, Inhaler, Amoxicillin...",
+                    onSubmitted: (String val) {
+                      if (val.trim().isNotEmpty) {
+                        context.read<ChildEssentialsCubit>().addMedication(
+                          val.trim(),
+                        );
+                        Navigator.pop(dialogContext);
+                      }
+                    },
+                  ),
+                  24.spaceH,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          height: 48.h,
+                          padding: EdgeInsets.zero,
+                          title: 'Cancel',
+                          backgroundColor: const Color(0xFFF8F5F2),
+                          borderColor: const Color(0xFFE9E2DC),
+                          textColor: greyColor9,
+                          onTap: () => Navigator.pop(dialogContext),
+                        ),
+                      ),
+                      12.spaceW,
+                      Expanded(
+                        child: AppButton(
+                          height: 48.h,
+                          padding: EdgeInsets.zero,
+                          title: 'Add',
+                          backgroundColor: primaryColor,
+                          borderColor: primaryColor,
+                          textColor: Colors.white,
+                          onTap: () {
+                            final String val = textController.text.trim();
+                            if (val.isNotEmpty) {
+                              context
+                                  .read<ChildEssentialsCubit>()
+                                  .addMedication(val);
+                              Navigator.pop(dialogContext);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -140,70 +142,72 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
           ),
           child: Padding(
             padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 56.w,
-                  height: 56.w,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFFEBEE),
-                    shape: BoxShape.circle,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 56.w,
+                    height: 56.w,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFFEBEE),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      color: Color(0xFFD84315),
+                      size: 28.sp,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.delete_outline_rounded,
-                    color: Color(0xFFD84315),
-                    size: 28.sp,
+                  18.spaceH,
+                  "Remove medication?".appText(
+                    fontSize: 22.sp,
+                    color: greyColor9,
+                    fraunces: true,
                   ),
-                ),
-                18.spaceH,
-                "Remove medication?".appText(
-                  fontSize: 22.sp,
-                  color: greyColor9,
-                  fraunces: true,
-                ),
-                10.spaceH,
-                "Are you sure you want to remove \"$medication\" from your child's medications list?"
-                    .appText(
-                      fontSize: 14.sp,
-                      color: greyColor,
-                      height: 1.4,
-                      textAlign: TextAlign.center,
-                    ),
-                24.spaceH,
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppButton(
-                        height: 48.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Cancel',
-                        backgroundColor: const Color(0xFFF8F5F2),
-                        borderColor: const Color(0xFFE9E2DC),
-                        textColor: greyColor9,
-                        onTap: () => Navigator.pop(dialogContext),
+                  10.spaceH,
+                  "Are you sure you want to remove \"$medication\" from your child's medications list?"
+                      .appText(
+                        fontSize: 14.sp,
+                        color: greyColor,
+                        height: 1.4,
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    12.spaceW,
-                    Expanded(
-                      child: AppButton(
-                        height: 48.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Remove',
-                        backgroundColor: const Color(0xFFE53935),
-                        borderColor: const Color(0xFFE53935),
-                        textColor: Colors.white,
-                        onTap: () {
-                          Navigator.pop(dialogContext);
-                          context.read<ChildEssentialsCubit>().removeMedication(
-                            index,
-                          );
-                        },
+                  24.spaceH,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          height: 48.h,
+                          padding: EdgeInsets.zero,
+                          title: 'Cancel',
+                          backgroundColor: const Color(0xFFF8F5F2),
+                          borderColor: const Color(0xFFE9E2DC),
+                          textColor: greyColor9,
+                          onTap: () => Navigator.pop(dialogContext),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      12.spaceW,
+                      Expanded(
+                        child: AppButton(
+                          height: 48.h,
+                          padding: EdgeInsets.zero,
+                          title: 'Remove',
+                          backgroundColor: const Color(0xFFE53935),
+                          borderColor: const Color(0xFFE53935),
+                          textColor: Colors.white,
+                          onTap: () {
+                            Navigator.pop(dialogContext);
+                            context
+                                .read<ChildEssentialsCubit>()
+                                .removeMedication(index);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

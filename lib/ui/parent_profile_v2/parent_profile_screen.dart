@@ -492,57 +492,77 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
 
     showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (BuildContext sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                "Select preferred language".appText(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: darkBlue,
-                ),
-                16.spaceH,
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: 360.h),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: languages.length,
-                    separatorBuilder: (_, _) => const Divider(height: 1),
-                    itemBuilder: (BuildContext ctx, int index) {
-                      final String lang = languages[index];
-                      final bool isSelected = lang == currentLanguage;
-                      return ListTile(
-                        title: lang.appText(
-                          fontSize: 16.sp,
-                          color: isSelected ? secondaryColor : darkBlue,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.w500,
-                          textAlign: TextAlign.start,
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check, color: secondaryColor)
-                            : null,
-                        onTap: () {
-                          context.read<ParentProfileV2Cubit>().updateField(
-                            language: lang,
-                          );
-                          Navigator.pop(sheetContext);
-                        },
-                      );
-                    },
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.75,
+          ),
+          padding: EdgeInsets.fromLTRB(
+            20.w,
+            12.h,
+            20.w,
+            MediaQuery.of(sheetContext).padding.bottom + 16.h,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: greyColor7,
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
                 ),
-              ],
-            ),
+              ),
+              16.spaceH,
+              "Select preferred language".appText(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: darkBlue,
+              ),
+              12.spaceH,
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: languages.length,
+                  separatorBuilder: (_, _) =>
+                      const Divider(height: 1, color: Color(0xFFF0EBE5)),
+                  itemBuilder: (BuildContext ctx, int index) {
+                    final String lang = languages[index];
+                    final bool isSelected = lang == currentLanguage;
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                      title: lang.appText(
+                        fontSize: 16.sp,
+                        color: isSelected ? secondaryColor : darkBlue,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                        textAlign: TextAlign.start,
+                      ),
+                      trailing: isSelected
+                          ? const Icon(Icons.check, color: secondaryColor)
+                          : null,
+                      onTap: () {
+                        context.read<ParentProfileV2Cubit>().updateField(
+                          language: lang,
+                        );
+                        Navigator.pop(sheetContext);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -604,58 +624,64 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           ),
           child: Padding(
             padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 56.w,
-                  height: 56.w,
-                  decoration: BoxDecoration(
-                    color: iconBgColor,
-                    shape: BoxShape.circle,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 56.w,
+                    height: 56.w,
+                    decoration: BoxDecoration(
+                      color: iconBgColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(icon, color: iconColor, size: 28.sp),
                   ),
-                  child: Icon(icon, color: iconColor, size: 28.sp),
-                ),
-                18.spaceH,
-                title.appText(
-                  fontSize: 22.sp,
-                  color: greyColor9,
-                  fraunces: true,
-                ),
-                10.spaceH,
-                message.appText(fontSize: 14.sp, color: greyColor, height: 1.4),
-                24.spaceH,
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppButton(
-                        height: 48.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Cancel',
-                        backgroundColor: const Color(0xFFF8F5F2),
-                        borderColor: const Color(0xFFE9E2DC),
-                        textColor: greyColor9,
-                        onTap: () => Navigator.pop(dialogContext),
+                  18.spaceH,
+                  title.appText(
+                    fontSize: 22.sp,
+                    color: greyColor9,
+                    fraunces: true,
+                  ),
+                  10.spaceH,
+                  message.appText(
+                    fontSize: 14.sp,
+                    color: greyColor,
+                    height: 1.4,
+                  ),
+                  24.spaceH,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppButton(
+                          height: 48.h,
+                          padding: EdgeInsets.zero,
+                          title: 'Cancel',
+                          backgroundColor: const Color(0xFFF8F5F2),
+                          borderColor: const Color(0xFFE9E2DC),
+                          textColor: greyColor9,
+                          onTap: () => Navigator.pop(dialogContext),
+                        ),
                       ),
-                    ),
-                    12.spaceW,
-                    Expanded(
-                      child: AppButton(
-                        height: 48.h,
-                        padding: EdgeInsets.zero,
-                        title: confirmText,
-                        backgroundColor: confirmColor,
-                        borderColor: confirmColor,
-                        textColor: Colors.white,
-                        onTap: () {
-                          Navigator.pop(dialogContext);
-                          onConfirm();
-                        },
+                      12.spaceW,
+                      Expanded(
+                        child: AppButton(
+                          height: 48.h,
+                          padding: EdgeInsets.zero,
+                          title: confirmText,
+                          backgroundColor: confirmColor,
+                          borderColor: confirmColor,
+                          textColor: Colors.white,
+                          onTap: () {
+                            Navigator.pop(dialogContext);
+                            onConfirm();
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

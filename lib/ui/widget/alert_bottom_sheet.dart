@@ -52,124 +52,126 @@ class AlertBottomSheet extends StatelessWidget {
         top: 12.h,
         bottom: MediaQuery.of(context).padding.bottom + 24.h,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(
-            child: Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE0E0E0),
-                borderRadius: BorderRadius.circular(2.r),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE0E0E0),
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
               ),
             ),
-          ),
-          24.spaceH,
-          Container(
-            padding: EdgeInsets.all(24.w),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFEBEE),
-              borderRadius: BorderRadius.circular(24.r),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(alertPillIcon, color: alertColor, size: 16.sp),
-                      6.spaceW,
-                      alertPillText.appText(
-                        color: alertColor,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ],
-                  ),
-                ),
-                16.spaceH,
-                title.appText(
-                  fontSize: 24.sp,
-                  color: alertColor,
-                  fraunces: true,
-                ),
-                8.spaceH,
-                message.appText(
-                  fontSize: 16.sp,
-                  color: alertColor,
-                  height: 1.4,
-                ),
-              ],
-            ),
-          ),
-          if (cardTitle != null || cardMessage != null) ...[
-            12.spaceH,
+            24.spaceH,
             Container(
               padding: EdgeInsets.all(24.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color(0xFFFFEBEE),
                 borderRadius: BorderRadius.circular(24.r),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (cardTitle != null)
-                    cardTitle!.appText(
-                      fontSize: 20.sp,
-                      color: const Color(0xFF1E293B),
-                      fraunces: true,
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
                     ),
-                  if (cardTitle != null && cardMessage != null) 8.spaceH,
-                  if (cardMessage != null)
-                    cardMessage!.appText(
-                      fontSize: 16.sp,
-                      color: const Color(0xFF64748B),
-                      height: 1.4,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16.r),
                     ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(alertPillIcon, color: alertColor, size: 16.sp),
+                        6.spaceW,
+                        alertPillText.appText(
+                          color: alertColor,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ],
+                    ),
+                  ),
+                  16.spaceH,
+                  title.appText(
+                    fontSize: 24.sp,
+                    color: alertColor,
+                    fraunces: true,
+                  ),
+                  8.spaceH,
+                  message.appText(
+                    fontSize: 16.sp,
+                    color: alertColor,
+                    height: 1.4,
+                  ),
                 ],
               ),
             ),
-          ],
-          24.spaceH,
-          AppButton(title: primaryButtonText, onTap: onPrimaryAction),
-          if (secondaryButtonText != null) ...[
-            12.spaceH,
-            AppButton(
-              title: secondaryButtonText!,
-              backgroundColor: Colors.transparent,
-              textColor: const Color(0xFF1E293B),
-              borderColor: const Color(0xFFE2E8F0),
-              onTap: onSecondaryAction ?? () {},
-            ),
-          ],
-          if (tertiaryButtonText != null) ...[
-            16.spaceH,
-            Center(
-              child: InkWell(
-                onTap: onTertiaryAction ?? () {},
-                child: Padding(
-                  padding: EdgeInsets.all(8.w),
-                  child: tertiaryButtonText!.appText(
-                    fontSize: 16.sp,
-                    color: const Color(0xFF64748B),
-                    fontWeight: FontWeight.w500,
+            if (cardTitle != null || cardMessage != null) ...[
+              12.spaceH,
+              Container(
+                padding: EdgeInsets.all(24.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24.r),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (cardTitle != null)
+                      cardTitle!.appText(
+                        fontSize: 20.sp,
+                        color: const Color(0xFF1E293B),
+                        fraunces: true,
+                      ),
+                    if (cardTitle != null && cardMessage != null) 8.spaceH,
+                    if (cardMessage != null)
+                      cardMessage!.appText(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF64748B),
+                        height: 1.4,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+            24.spaceH,
+            AppButton(title: primaryButtonText, onTap: onPrimaryAction),
+            if (secondaryButtonText != null) ...[
+              12.spaceH,
+              AppButton(
+                title: secondaryButtonText!,
+                backgroundColor: Colors.transparent,
+                textColor: const Color(0xFF1E293B),
+                borderColor: const Color(0xFFE2E8F0),
+                onTap: onSecondaryAction ?? () {},
+              ),
+            ],
+            if (tertiaryButtonText != null) ...[
+              16.spaceH,
+              Center(
+                child: InkWell(
+                  onTap: onTertiaryAction ?? () {},
+                  child: Padding(
+                    padding: EdgeInsets.all(8.w),
+                    child: tertiaryButtonText!.appText(
+                      fontSize: 16.sp,
+                      color: const Color(0xFF64748B),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

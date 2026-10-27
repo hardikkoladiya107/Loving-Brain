@@ -81,181 +81,185 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext sheetContext) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-          ),
-          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: greyColor4,
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                ),
-              ),
-              16.spaceH,
-              "Attach Photos".appText(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: darkBlue,
-                fraunces: true,
-                textAlign: TextAlign.start,
-              ),
-              4.spaceH,
-              "Take a new photo or choose from your gallery".appText(
-                fontSize: 13.sp,
-                color: greyColor6,
-                textAlign: TextAlign.start,
-              ),
-              20.spaceH,
-              InkWell(
-                borderRadius: BorderRadius.circular(16.r),
-                onTap: () async {
-                  Navigator.pop(sheetContext);
-                  try {
-                    final XFile? picked = await _imagePicker.pickImage(
-                      source: ImageSource.camera,
-                      imageQuality: 80,
-                    );
-                    if (picked != null) {
-                      cubit.addSelectedImages(<String>[picked.path]);
-                    }
-                  } catch (_) {}
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFAF9FD),
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: const Color(0xFFECEBFA)),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44.w,
-                        height: 44.w,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFEEEBFF),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.camera_alt_rounded,
-                          color: secondaryColor,
-                          size: 22.sp,
-                        ),
-                      ),
-                      14.spaceW,
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            "Camera".appText(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                              color: darkBlue,
-                              textAlign: TextAlign.start,
-                            ),
-                            2.spaceH,
-                            "Take a new photo using your camera".appText(
-                              fontSize: 12.sp,
-                              color: greyColor6,
-                              textAlign: TextAlign.start,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
+        return SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+            ),
+            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
                         color: greyColor4,
-                        size: 22.sp,
+                        borderRadius: BorderRadius.circular(4.r),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-              12.spaceH,
-              InkWell(
-                borderRadius: BorderRadius.circular(16.r),
-                onTap: () async {
-                  Navigator.pop(sheetContext);
-                  try {
-                    final List<XFile> pickedList = await _imagePicker
-                        .pickMultiImage(imageQuality: 80);
-                    if (pickedList.isNotEmpty) {
-                      final List<String> paths = pickedList
-                          .map((XFile e) => e.path)
-                          .toList();
-                      cubit.addSelectedImages(paths);
-                    }
-                  } catch (_) {}
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 14.h,
+                  16.spaceH,
+                  "Attach Photos".appText(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: darkBlue,
+                    fraunces: true,
+                    textAlign: TextAlign.start,
                   ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFAF9FD),
+                  4.spaceH,
+                  "Take a new photo or choose from your gallery".appText(
+                    fontSize: 13.sp,
+                    color: greyColor6,
+                    textAlign: TextAlign.start,
+                  ),
+                  20.spaceH,
+                  InkWell(
                     borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: const Color(0xFFECEBFA)),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44.w,
-                        height: 44.w,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFFF2EE),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.photo_library_rounded,
-                          color: primaryColor,
-                          size: 22.sp,
-                        ),
+                    onTap: () async {
+                      Navigator.pop(sheetContext);
+                      try {
+                        final XFile? picked = await _imagePicker.pickImage(
+                          source: ImageSource.camera,
+                          imageQuality: 80,
+                        );
+                        if (picked != null) {
+                          cubit.addSelectedImages(<String>[picked.path]);
+                        }
+                      } catch (_) {}
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
                       ),
-                      14.spaceW,
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            "Gallery".appText(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                              color: darkBlue,
-                              textAlign: TextAlign.start,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAF9FD),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: const Color(0xFFECEBFA)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44.w,
+                            height: 44.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFEEEBFF),
+                              shape: BoxShape.circle,
                             ),
-                            2.spaceH,
-                            "Select one or multiple photos from gallery"
-                                .appText(
+                            child: Icon(
+                              Icons.camera_alt_rounded,
+                              color: secondaryColor,
+                              size: 22.sp,
+                            ),
+                          ),
+                          14.spaceW,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                "Camera".appText(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: darkBlue,
+                                  textAlign: TextAlign.start,
+                                ),
+                                2.spaceH,
+                                "Take a new photo using your camera".appText(
                                   fontSize: 12.sp,
                                   color: greyColor6,
                                   textAlign: TextAlign.start,
                                 ),
-                          ],
-                        ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: greyColor4,
+                            size: 22.sp,
+                          ),
+                        ],
                       ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: greyColor4,
-                        size: 22.sp,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  12.spaceH,
+                  InkWell(
+                    borderRadius: BorderRadius.circular(16.r),
+                    onTap: () async {
+                      Navigator.pop(sheetContext);
+                      try {
+                        final List<XFile> pickedList = await _imagePicker
+                            .pickMultiImage(imageQuality: 80);
+                        if (pickedList.isNotEmpty) {
+                          final List<String> paths = pickedList
+                              .map((XFile e) => e.path)
+                              .toList();
+                          cubit.addSelectedImages(paths);
+                        }
+                      } catch (_) {}
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAF9FD),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: const Color(0xFFECEBFA)),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44.w,
+                            height: 44.w,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFFFF2EE),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.photo_library_rounded,
+                              color: primaryColor,
+                              size: 22.sp,
+                            ),
+                          ),
+                          14.spaceW,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                "Gallery".appText(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: darkBlue,
+                                  textAlign: TextAlign.start,
+                                ),
+                                2.spaceH,
+                                "Select one or multiple photos from gallery"
+                                    .appText(
+                                      fontSize: 12.sp,
+                                      color: greyColor6,
+                                      textAlign: TextAlign.start,
+                                    ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: greyColor4,
+                            size: 22.sp,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },

@@ -50,63 +50,65 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 56.w,
-                height: 56.w,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFEBEE),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  color: const Color(0xFFD84315),
-                  size: 28.sp,
-                ),
-              ),
-              18.spaceH,
-              "Delete account?".appText(
-                fontSize: 22.sp,
-                color: greyColor9,
-                fraunces: true,
-              ),
-              10.spaceH,
-              "Are you sure you want to permanently delete your account and all associated data? This action cannot be undone."
-                  .appText(fontSize: 14.sp, color: greyColor, height: 1.4),
-              24.spaceH,
-              Row(
-                children: [
-                  Expanded(
-                    child: AppButton(
-                      height: 48.h,
-                      padding: EdgeInsets.zero,
-                      title: "Cancel",
-                      backgroundColor: const Color(0xFFF8F5F2),
-                      borderColor: const Color(0xFFE9E2DC),
-                      textColor: greyColor9,
-                      onTap: () => Navigator.pop(dialogContext),
-                    ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56.w,
+                  height: 56.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
                   ),
-                  12.spaceW,
-                  Expanded(
-                    child: AppButton(
-                      height: 48.h,
-                      padding: EdgeInsets.zero,
-                      title: "Delete",
-                      backgroundColor: const Color(0xFFD84315),
-                      borderColor: const Color(0xFFD84315),
-                      textColor: Colors.white,
-                      onTap: () {
-                        Navigator.pop(dialogContext);
-                        context.read<PrivacyDataCubit>().deleteAccount();
-                      },
-                    ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: const Color(0xFFD84315),
+                    size: 28.sp,
                   ),
-                ],
-              ),
-            ],
+                ),
+                18.spaceH,
+                "Delete account?".appText(
+                  fontSize: 22.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                "Are you sure you want to permanently delete your account and all associated data? This action cannot be undone."
+                    .appText(fontSize: 14.sp, color: greyColor, height: 1.4),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: "Cancel",
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: "Delete",
+                        backgroundColor: const Color(0xFFD84315),
+                        borderColor: const Color(0xFFD84315),
+                        textColor: Colors.white,
+                        onTap: () {
+                          Navigator.pop(dialogContext);
+                          context.read<PrivacyDataCubit>().deleteAccount();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

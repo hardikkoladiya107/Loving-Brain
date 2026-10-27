@@ -302,72 +302,74 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
                     ),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 56.w,
-                            height: 56.w,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFFF0E5),
-                              shape: BoxShape.circle,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 56.w,
+                              height: 56.w,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFFF0E5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.flag_outlined,
+                                color: primaryColor,
+                                size: 28.sp,
+                              ),
                             ),
-                            child: Icon(
-                              Icons.flag_outlined,
-                              color: primaryColor,
-                              size: 28.sp,
+                            18.spaceH,
+                            'Finish early?'.appText(
+                              fontSize: 22.sp,
+                              color: greyColor9,
+                              fraunces: true,
                             ),
-                          ),
-                          18.spaceH,
-                          'Finish early?'.appText(
-                            fontSize: 22.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                          ),
-                          10.spaceH,
-                          'Are you sure you want to end this recommendation early?'
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor,
-                                height: 1.4,
-                              ),
-                          24.spaceH,
-                          Row(
-                            children: [
-                              Expanded(
-                                child: AppButton(
-                                  height: 48.h,
-                                  padding: EdgeInsets.zero,
-                                  title: 'Cancel',
-                                  backgroundColor: const Color(0xFFF8F5F2),
-                                  borderColor: const Color(0xFFE9E2DC),
-                                  textColor: greyColor9,
-                                  onTap: () => Navigator.pop(ctx),
+                            10.spaceH,
+                            'Are you sure you want to end this recommendation early?'
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor,
+                                  height: 1.4,
                                 ),
-                              ),
-                              12.spaceW,
-                              Expanded(
-                                child: AppButton(
-                                  height: 48.h,
-                                  padding: EdgeInsets.zero,
-                                  title: 'Finish',
-                                  backgroundColor: primaryColor,
-                                  borderColor: primaryColor,
-                                  textColor: Colors.white,
-                                  onTap: () async {
-                                    Navigator.pop(ctx);
-                                    await context
-                                        .read<TryingThisWeekCubit>()
-                                        .finishEarly('Ended early by parent');
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
+                            24.spaceH,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppButton(
+                                    height: 48.h,
+                                    padding: EdgeInsets.zero,
+                                    title: 'Cancel',
+                                    backgroundColor: const Color(0xFFF8F5F2),
+                                    borderColor: const Color(0xFFE9E2DC),
+                                    textColor: greyColor9,
+                                    onTap: () => Navigator.pop(ctx),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                12.spaceW,
+                                Expanded(
+                                  child: AppButton(
+                                    height: 48.h,
+                                    padding: EdgeInsets.zero,
+                                    title: 'Finish',
+                                    backgroundColor: primaryColor,
+                                    borderColor: primaryColor,
+                                    textColor: Colors.white,
+                                    onTap: () async {
+                                      Navigator.pop(ctx);
+                                      await context
+                                          .read<TryingThisWeekCubit>()
+                                          .finishEarly('Ended early by parent');
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

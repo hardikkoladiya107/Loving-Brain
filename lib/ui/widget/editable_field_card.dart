@@ -68,85 +68,90 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _isFocused ? const Color(0xFF673AB7) : Colors.transparent,
-          width: _isFocused ? 1.5 : 0,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: _isFocused ? const Color(0xFF673AB7) : Colors.transparent,
+            width: _isFocused ? 1.5 : 0,
+          ),
         ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                widget.label.appText(
-                  fontSize: 14.sp,
-                  color: greyColor11,
-                  fontWeight: FontWeight.bold,
-                  textAlign: TextAlign.start,
-                ),
-                TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  readOnly: widget.readOnly,
-                  inputFormatters:
-                      widget.inputFormatters ??
-                      (widget.maxLength != null
-                          ? <TextInputFormatter>[
-                              LengthLimitingTextInputFormatter(
-                                widget.maxLength!,
-                              ),
-                            ]
-                          : null),
-                  onTap:
-                      widget.onTap ?? (widget.readOnly ? widget.onEdit : null),
-                  onChanged: widget.onChanged,
-                  style: getTextStyle(
-                    fontSize: 16.sp,
-                    color: greyColor9,
-                    fontWeight: FontWeight.w500,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  widget.label.appText(
+                    fontSize: 14.sp,
+                    color: greyColor11,
+                    fontWeight: FontWeight.bold,
+                    textAlign: TextAlign.start,
                   ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                    hintText:
-                        widget.hintText ??
-                        'Enter ${widget.label.toLowerCase()}',
-                    hintStyle: getTextStyle(
+                  TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    readOnly: widget.readOnly,
+                    inputFormatters:
+                        widget.inputFormatters ??
+                        (widget.maxLength != null
+                            ? <TextInputFormatter>[
+                                LengthLimitingTextInputFormatter(
+                                  widget.maxLength!,
+                                ),
+                              ]
+                            : null),
+                    onTap:
+                        widget.onTap ??
+                        (widget.readOnly ? widget.onEdit : null),
+                    onChanged: widget.onChanged,
+                    style: getTextStyle(
                       fontSize: 16.sp,
-                      color: greyColor4,
-                      fontWeight: FontWeight.w400,
+                      color: greyColor9,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                      hintText:
+                          widget.hintText ??
+                          'Enter ${widget.label.toLowerCase()}',
+                      hintStyle: getTextStyle(
+                        fontSize: 16.sp,
+                        color: greyColor4,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          if (widget.onEdit != null) ...[
-            16.spaceW,
-            InkWell(
-              onTap: () {
-                if (!widget.readOnly) {
-                  _focusNode.requestFocus();
-                }
-                widget.onEdit?.call();
-              },
-              child: Image.asset(
-                Assets.v2.icons.icEditField.path,
-                width: 24.sp,
-                height: 24.sp,
+                ],
               ),
             ),
+            if (widget.onEdit != null) ...[
+              16.spaceW,
+              InkWell(
+                onTap: () {
+                  if (!widget.readOnly) {
+                    _focusNode.requestFocus();
+                  }
+                  widget.onEdit?.call();
+                },
+                child: Image.asset(
+                  Assets.v2.icons.icEditField.path,
+                  width: 24.sp,
+                  height: 24.sp,
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
