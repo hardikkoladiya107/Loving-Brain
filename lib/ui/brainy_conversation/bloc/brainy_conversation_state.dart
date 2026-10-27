@@ -12,6 +12,8 @@ class BrainyMessage {
   final String? subtext;
   final String? imageLocalPath;
   final String? imageNetworkPath;
+  final List<String> imageLocalPaths;
+  final List<String> imageNetworkPaths;
   final String? audioLocalPath;
   final String? audioNetworkPath;
   final bool isSaved;
@@ -24,6 +26,8 @@ class BrainyMessage {
     this.subtext,
     this.imageLocalPath,
     this.imageNetworkPath,
+    this.imageLocalPaths = const [],
+    this.imageNetworkPaths = const [],
     this.audioLocalPath,
     this.audioNetworkPath,
     this.isSaved = false,
@@ -37,6 +41,8 @@ class BrainyMessage {
     String? subtext,
     String? imageLocalPath,
     String? imageNetworkPath,
+    List<String>? imageLocalPaths,
+    List<String>? imageNetworkPaths,
     String? audioLocalPath,
     String? audioNetworkPath,
     bool? isSaved,
@@ -49,6 +55,8 @@ class BrainyMessage {
       subtext: subtext ?? this.subtext,
       imageLocalPath: imageLocalPath ?? this.imageLocalPath,
       imageNetworkPath: imageNetworkPath ?? this.imageNetworkPath,
+      imageLocalPaths: imageLocalPaths ?? this.imageLocalPaths,
+      imageNetworkPaths: imageNetworkPaths ?? this.imageNetworkPaths,
       audioLocalPath: audioLocalPath ?? this.audioLocalPath,
       audioNetworkPath: audioNetworkPath ?? this.audioNetworkPath,
       isSaved: isSaved ?? this.isSaved,
@@ -64,6 +72,11 @@ abstract class BrainyConversationState with _$BrainyConversationState {
     String? conversationId,
     String? topic,
     String? selectedImagePath,
+    @Default([]) List<String> selectedImagePaths,
+    String? attachedAudioPath,
+    @Default(false) bool isAttachedAudioPlaying,
+    @Default(Duration.zero) Duration attachedAudioPosition,
+    @Default(Duration.zero) Duration attachedAudioDuration,
     String? playingMessageId,
     @Default(false) bool isAudioPlaying,
   }) = _BrainyConversationState;

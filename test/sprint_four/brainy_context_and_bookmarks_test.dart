@@ -177,5 +177,69 @@ void main() {
         cubit.close();
       },
     );
+
+    test(
+      'BrainyConversationCubit multi-image management supports cumulative addition, removal at index, and clearing',
+      () async {
+        final BrainyConversationCubit cubit = BrainyConversationCubit();
+        await cubit.init();
+
+        expect(cubit.state.selectedImagePaths, isEmpty);
+        expect(cubit.state.selectedImagePath, isNull);
+
+        cubit.addSelectedImages(<String>['/path/1.png', '/path/2.png']);
+        expect(cubit.state.selectedImagePaths, <String>[
+          '/path/1.png',
+          '/path/2.png',
+        ]);
+        expect(cubit.state.selectedImagePath, '/path/1.png');
+
+        // Cumulative addition: user already added multiple images and adds again
+        cubit.addSelectedImages(<String>['/path/3.png']);
+        expect(cubit.state.selectedImagePaths, <String>[
+          '/path/1.png',
+          '/path/2.png',
+          '/path/3.png',
+        ]);
+
+        // Remove item at index 1
+        cubit.removeSelectedImageAt(1);
+        expect(cubit.state.selectedImagePaths, <String>[
+          '/path/1.png',
+          '/path/3.png',
+        ]);
+
+        // Clear all images
+        cubit.clearSelectedImages();
+        expect(cubit.state.selectedImagePaths, isEmpty);
+        expect(cubit.state.selectedImagePath, isNull);
+
+        await cubit.close();
+      },
+    );
+
+    test(
+      'BrainyConversationCubit attached audio allows attaching, seeking, and removing before sending',
+      () async {
+        final BrainyConversationCubit cubit = BrainyConversationCubit();
+        await cubit.init();
+
+        expect(cubit.state.attachedAudioPath, isNull);
+        expect(cubit.state.isAttachedAudioPlaying, isFalse);
+
+        await cubit.attachAudio('/tmp/test_note.m4a');
+        expect(cubit.state.attachedAudioPath, '/tmp/test_note.m4a');
+        expect(cubit.state.isAttachedAudioPlaying, isFalse);
+
+        await cubit.seekAttachedAudio(const Duration(seconds: 4));
+        expect(cubit.state.attachedAudioPosition, const Duration(seconds: 4));
+
+        await cubit.removeAttachedAudio();
+        expect(cubit.state.attachedAudioPath, isNull);
+        expect(cubit.state.attachedAudioPosition, Duration.zero);
+
+        await cubit.close();
+      },
+    );
   });
 }

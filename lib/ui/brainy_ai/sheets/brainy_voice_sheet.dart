@@ -13,9 +13,15 @@ import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.d
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 class BrainyVoiceSheet extends StatefulWidget {
-  const BrainyVoiceSheet({super.key, this.topic, this.onSendAudio});
+  const BrainyVoiceSheet({
+    super.key,
+    this.topic,
+    this.actionButtonTitle,
+    this.onSendAudio,
+  });
 
   final String? topic;
+  final String? actionButtonTitle;
   final void Function(File? audioFile, String transcriptText)? onSendAudio;
 
   @override
@@ -168,7 +174,12 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                     Expanded(
                       child: AppButton(
                         height: 48,
-                        title: state.isProcessing ? "Sending..." : "Send",
+                        title: state.isProcessing
+                            ? "Processing..."
+                            : (widget.actionButtonTitle ??
+                                  (widget.onSendAudio != null
+                                      ? "Attach Note"
+                                      : "Send")),
                         onTap: state.isProcessing
                             ? null
                             : () async {

@@ -103,6 +103,7 @@ class AiRepo {
     required String conversationId,
     required String messageText,
     File? imageFile,
+    List<File>? imageFiles,
     File? audioFile,
     List<Map<String, dynamic>>? history,
     String? systemPrompt,
@@ -142,30 +143,40 @@ class AiRepo {
         messages.addAll(history);
       }
 
-      // Format current user message (with image if present)
-      if (imageFile != null && await imageFile.exists()) {
-        try {
-          final List<int> imageBytes = await imageFile.readAsBytes();
-          final String base64Image = base64Encode(imageBytes);
-          final String extension = imageFile.path.split('.').last.toLowerCase();
-          final String mimeType = extension == 'png'
-              ? 'image/png'
-              : 'image/jpeg';
-          messages.add(<String, dynamic>{
-            "role": "user",
-            "content": <dynamic>[
-              <String, dynamic>{"type": "text", "text": finalText},
-              <String, dynamic>{
+      // Collect all images (both individual imageFile and imageFiles list)
+      final List<File> effectiveImages = <File>[];
+      if (imageFiles != null && imageFiles.isNotEmpty) {
+        effectiveImages.addAll(imageFiles);
+      } else if (imageFile != null) {
+        effectiveImages.add(imageFile);
+      }
+
+      // Format current user message (with images if present)
+      if (effectiveImages.isNotEmpty) {
+        final List<dynamic> content = <dynamic>[
+          <String, dynamic>{"type": "text", "text": finalText},
+        ];
+
+        for (final File img in effectiveImages) {
+          if (await img.exists()) {
+            try {
+              final List<int> imageBytes = await img.readAsBytes();
+              final String base64Image = base64Encode(imageBytes);
+              final String extension = img.path.split('.').last.toLowerCase();
+              final String mimeType = extension == 'png'
+                  ? 'image/png'
+                  : 'image/jpeg';
+              content.add(<String, dynamic>{
                 "type": "image_url",
                 "image_url": <String, dynamic>{
                   "url": "data:$mimeType;base64,$base64Image",
                 },
-              },
-            ],
-          });
-        } catch (_) {
-          messages.add(<String, dynamic>{"role": "user", "content": finalText});
+              });
+            } catch (_) {}
+          }
         }
+
+        messages.add(<String, dynamic>{"role": "user", "content": content});
       } else {
         messages.add(<String, dynamic>{"role": "user", "content": finalText});
       }

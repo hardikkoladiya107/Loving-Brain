@@ -31,16 +31,48 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       final bool playing = s == PlayerState.playing;
       final bool stopOrComplete =
           s == PlayerState.completed || s == PlayerState.stopped;
-      changeProps(
-        isAudioPlaying: playing,
-        playingMessageId: stopOrComplete ? null : state.playingMessageId,
-        clearPlayingMessageId: stopOrComplete,
-      );
+
+      if (stopOrComplete) {
+        changeProps(
+          isAudioPlaying: false,
+          clearPlayingMessageId: true,
+          isAttachedAudioPlaying: false,
+          attachedAudioPosition: Duration.zero,
+        );
+      } else if (playing) {
+        if (state.isAttachedAudioPlaying) {
+          changeProps(isAudioPlaying: false, clearPlayingMessageId: true);
+        } else {
+          changeProps(isAudioPlaying: true, isAttachedAudioPlaying: false);
+        }
+      } else {
+        changeProps(isAudioPlaying: false, isAttachedAudioPlaying: false);
+      }
+    });
+
+    _positionSubscription = _audioPlayer.onPositionChanged.listen((
+      Duration position,
+    ) {
+      if (isClosed) return;
+      if (state.isAttachedAudioPlaying) {
+        changeProps(attachedAudioPosition: position);
+      }
+    });
+
+    _durationSubscription = _audioPlayer.onDurationChanged.listen((
+      Duration duration,
+    ) {
+      if (isClosed) return;
+      if (state.isAttachedAudioPlaying) {
+        changeProps(attachedAudioDuration: duration);
+      }
     });
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _chatsSubscription;
   StreamSubscription<PlayerState>? _playerStateSubscription;
+  StreamSubscription<Duration>? _positionSubscription;
+  StreamSubscription<Duration>? _durationSubscription;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   void changeProps({
@@ -50,10 +82,21 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     String? topic,
     String? selectedImagePath,
     bool clearSelectedImage = false,
+    List<String>? selectedImagePaths,
+    bool clearSelectedImages = false,
+    String? attachedAudioPath,
+    bool clearAttachedAudio = false,
+    bool? isAttachedAudioPlaying,
+    Duration? attachedAudioPosition,
+    Duration? attachedAudioDuration,
     String? playingMessageId,
     bool clearPlayingMessageId = false,
     bool? isAudioPlaying,
   }) {
+    final List<String> updatedImagePaths = clearSelectedImages
+        ? <String>[]
+        : (selectedImagePaths ?? state.selectedImagePaths);
+
     emit(
       state.copyWith(
         messages: messages ?? state.messages,
@@ -62,7 +105,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         topic: topic ?? state.topic,
         selectedImagePath: clearSelectedImage
             ? null
-            : (selectedImagePath ?? state.selectedImagePath),
+            : (selectedImagePath ??
+                  (updatedImagePaths.isNotEmpty
+                      ? updatedImagePaths.first
+                      : null)),
+        selectedImagePaths: updatedImagePaths,
+        attachedAudioPath: clearAttachedAudio
+            ? null
+            : (attachedAudioPath ?? state.attachedAudioPath),
+        isAttachedAudioPlaying:
+            isAttachedAudioPlaying ?? state.isAttachedAudioPlaying,
+        attachedAudioPosition:
+            attachedAudioPosition ?? state.attachedAudioPosition,
+        attachedAudioDuration:
+            attachedAudioDuration ?? state.attachedAudioDuration,
         playingMessageId: clearPlayingMessageId
             ? null
             : (playingMessageId ?? state.playingMessageId),
@@ -136,11 +192,110 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
   void selectImage(String path) {
     if (path.trim().isEmpty) return;
-    changeProps(selectedImagePath: path);
+    addSelectedImages(<String>[path]);
+  }
+
+  void addSelectedImages(List<String> paths) {
+    if (paths.isEmpty) return;
+    final List<String> current = List<String>.from(state.selectedImagePaths);
+    for (final String path in paths) {
+      if (path.trim().isNotEmpty && !current.contains(path)) {
+        current.add(path);
+      }
+    }
+    changeProps(
+      selectedImagePaths: current,
+      selectedImagePath: current.isNotEmpty ? current.first : null,
+    );
+  }
+
+  void removeSelectedImageAt(int index) {
+    if (index < 0 || index >= state.selectedImagePaths.length) return;
+    final List<String> current = List<String>.from(state.selectedImagePaths);
+    current.removeAt(index);
+    changeProps(
+      selectedImagePaths: current,
+      selectedImagePath: current.isNotEmpty ? current.first : null,
+      clearSelectedImage: current.isEmpty,
+    );
   }
 
   void removeSelectedImage() {
-    changeProps(clearSelectedImage: true);
+    clearSelectedImages();
+  }
+
+  void clearSelectedImages() {
+    changeProps(clearSelectedImages: true, clearSelectedImage: true);
+  }
+
+  Future<void> attachAudio(String path) async {
+    if (path.trim().isEmpty) return;
+    if (state.isAttachedAudioPlaying) {
+      try {
+        await _audioPlayer.stop();
+      } catch (_) {}
+    }
+    changeProps(
+      attachedAudioPath: path,
+      isAttachedAudioPlaying: false,
+      attachedAudioPosition: Duration.zero,
+      attachedAudioDuration: Duration.zero,
+    );
+  }
+
+  Future<void> removeAttachedAudio() async {
+    if (state.isAttachedAudioPlaying) {
+      try {
+        await _audioPlayer.stop().timeout(const Duration(milliseconds: 200));
+      } catch (_) {}
+    }
+    changeProps(
+      clearAttachedAudio: true,
+      isAttachedAudioPlaying: false,
+      attachedAudioPosition: Duration.zero,
+      attachedAudioDuration: Duration.zero,
+    );
+  }
+
+  Future<void> togglePlayAttachedAudio() async {
+    final String? path = state.attachedAudioPath;
+    if (path == null || path.isEmpty) return;
+
+    if (state.isAttachedAudioPlaying) {
+      changeProps(isAttachedAudioPlaying: false);
+      try {
+        await _audioPlayer.pause().timeout(const Duration(milliseconds: 200));
+      } catch (_) {}
+      return;
+    }
+
+    changeProps(
+      clearPlayingMessageId: true,
+      isAudioPlaying: false,
+      isAttachedAudioPlaying: true,
+    );
+    try {
+      await _audioPlayer.stop().timeout(const Duration(milliseconds: 200));
+      if (File(path).existsSync()) {
+        await _audioPlayer
+            .play(DeviceFileSource(path))
+            .timeout(const Duration(milliseconds: 200));
+      }
+    } catch (_) {
+      if (!isClosed) {
+        changeProps(isAttachedAudioPlaying: false);
+      }
+    }
+  }
+
+  Future<void> seekAttachedAudio(Duration position) async {
+    if (state.attachedAudioPath == null) return;
+    changeProps(attachedAudioPosition: position);
+    try {
+      await _audioPlayer
+          .seek(position)
+          .timeout(const Duration(milliseconds: 200));
+    } catch (_) {}
   }
 
   void _listenToConversation(
@@ -202,6 +357,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     final String? cardType = data['card_type']?.toString();
     final String? imageLocalPath = data['image_local_path']?.toString();
     final String? imageNetworkPath = data['image_network_path']?.toString();
+    final List<String> imageLocalPaths =
+        (data['image_local_paths'] as List<dynamic>?)
+            ?.map((dynamic e) => e.toString())
+            .toList() ??
+        (imageLocalPath != null && imageLocalPath.isNotEmpty
+            ? <String>[imageLocalPath]
+            : <String>[]);
+    final List<String> imageNetworkPaths =
+        (data['image_network_paths'] as List<dynamic>?)
+            ?.map((dynamic e) => e.toString())
+            .toList() ??
+        (imageNetworkPath != null && imageNetworkPath.isNotEmpty
+            ? <String>[imageNetworkPath]
+            : <String>[]);
     final String? audioLocalPath = data['audio_local_path']?.toString();
     final String? audioNetworkPath = data['audio_network_path']?.toString();
     final bool isSaved = data['is_saved'] == true;
@@ -233,6 +402,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           subtext: data['subtext']?.toString(),
           imageLocalPath: imageLocalPath,
           imageNetworkPath: imageNetworkPath,
+          imageLocalPaths: imageLocalPaths,
+          imageNetworkPaths: imageNetworkPaths,
           audioLocalPath: audioLocalPath,
           audioNetworkPath: audioNetworkPath,
           isSaved: isSaved,
@@ -255,6 +426,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           headline: text,
           imageLocalPath: imageLocalPath,
           imageNetworkPath: imageNetworkPath,
+          imageLocalPaths: imageLocalPaths,
+          imageNetworkPaths: imageNetworkPaths,
           audioLocalPath: audioLocalPath,
           audioNetworkPath: audioNetworkPath,
           isSaved: isSaved,
@@ -301,26 +474,57 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     return convId;
   }
 
-  Future<void> sendMessage(String text, {File? audioFile}) async {
+  Future<void> sendMessage(
+    String text, {
+    File? audioFile,
+    List<File>? imageFiles,
+  }) async {
     final String cleanText = text.trim();
-    final File? imageFile =
-        (state.selectedImagePath != null && state.selectedImagePath!.isNotEmpty)
-        ? File(state.selectedImagePath!)
-        : null;
+    final File? effectiveAudioFile =
+        audioFile ??
+        (state.attachedAudioPath != null && state.attachedAudioPath!.isNotEmpty
+            ? File(state.attachedAudioPath!)
+            : null);
 
-    if (cleanText.isEmpty && audioFile == null && imageFile == null) return;
+    final List<File> effectiveImageFiles = <File>[];
+    if (imageFiles != null && imageFiles.isNotEmpty) {
+      effectiveImageFiles.addAll(imageFiles);
+    } else if (state.selectedImagePaths.isNotEmpty) {
+      for (final String path in state.selectedImagePaths) {
+        if (path.isNotEmpty && File(path).existsSync()) {
+          effectiveImageFiles.add(File(path));
+        }
+      }
+    } else if (state.selectedImagePath != null &&
+        state.selectedImagePath!.isNotEmpty) {
+      final File f = File(state.selectedImagePath!);
+      if (f.existsSync()) effectiveImageFiles.add(f);
+    }
+
+    if (cleanText.isEmpty &&
+        effectiveAudioFile == null &&
+        effectiveImageFiles.isEmpty) {
+      return;
+    }
 
     final String displayHeadline = cleanText.isNotEmpty
         ? cleanText
-        : (audioFile != null ? 'Voice note' : 'Shared a photo');
+        : (effectiveAudioFile != null
+              ? 'Voice note'
+              : (effectiveImageFiles.length > 1
+                    ? 'Shared ${effectiveImageFiles.length} photos'
+                    : 'Shared a photo'));
 
     final BrainyMessage optimisticUserMsg = BrainyMessage(
       id: 'local_${DateTime.now().millisecondsSinceEpoch}',
       type: MessageType.user,
-      chipTitle: audioFile != null ? 'Voice note' : 'You asked',
+      chipTitle: effectiveAudioFile != null ? 'Voice note' : 'You asked',
       headline: displayHeadline,
-      imageLocalPath: imageFile?.path,
-      audioLocalPath: audioFile?.path,
+      imageLocalPath: effectiveImageFiles.isNotEmpty
+          ? effectiveImageFiles.first.path
+          : null,
+      imageLocalPaths: effectiveImageFiles.map((File f) => f.path).toList(),
+      audioLocalPath: effectiveAudioFile?.path,
     );
 
     if (EmergencyDetector.isEmergency(displayHeadline) ||
@@ -344,6 +548,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         ],
         isTyping: false,
         clearSelectedImage: true,
+        clearSelectedImages: true,
+        clearAttachedAudio: true,
+        isAttachedAudioPlaying: false,
       );
 
       final String convId = await _ensureConversationCreated(displayHeadline);
@@ -358,9 +565,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           'card_type': 'user',
           'type': 'input_text',
           'role': 'user',
-          'image_local_path': imageFile?.path,
-          'audio_local_path': audioFile?.path,
+          'image_local_path': effectiveImageFiles.isNotEmpty
+              ? effectiveImageFiles.first.path
+              : null,
+          'image_local_paths': effectiveImageFiles
+              .map((File f) => f.path)
+              .toList(),
+          'audio_local_path': effectiveAudioFile?.path,
           'image_network_path': '',
+          'image_network_paths': <String>[],
           'audio_network_path': '',
           'is_saved': false,
           'time_stamp': Timestamp.now(),
@@ -378,8 +591,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           'type': 'text',
           'role': 'assistant',
           'image_local_path': null,
+          'image_local_paths': <String>[],
           'audio_local_path': null,
           'image_network_path': '',
+          'image_network_paths': <String>[],
           'audio_network_path': '',
           'is_saved': false,
           'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
@@ -413,6 +628,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         ],
         isTyping: false,
         clearSelectedImage: true,
+        clearSelectedImages: true,
+        clearAttachedAudio: true,
+        isAttachedAudioPlaying: false,
       );
       return;
     }
@@ -421,6 +639,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       messages: [...state.messages, optimisticUserMsg],
       isTyping: true,
       clearSelectedImage: true,
+      clearSelectedImages: true,
+      clearAttachedAudio: true,
+      isAttachedAudioPlaying: false,
     );
 
     final String convId = await _ensureConversationCreated(displayHeadline);
@@ -437,9 +658,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             'card_type': 'user',
             'type': 'input_text',
             'role': 'user',
-            'image_local_path': imageFile?.path,
-            'audio_local_path': audioFile?.path,
+            'image_local_path': effectiveImageFiles.isNotEmpty
+                ? effectiveImageFiles.first.path
+                : null,
+            'image_local_paths': effectiveImageFiles
+                .map((File f) => f.path)
+                .toList(),
+            'audio_local_path': effectiveAudioFile?.path,
             'image_network_path': '',
+            'image_network_paths': <String>[],
             'audio_network_path': '',
             'is_saved': false,
             'time_stamp': Timestamp.now(),
@@ -452,8 +679,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           _uploadToFirebaseStorage(
             convId: convId,
             documentReference: data,
-            imageLocalPath: imageFile?.path,
-            audioLocalPath: audioFile?.path,
+            imageLocalPaths: effectiveImageFiles
+                .map((File f) => f.path)
+                .toList(),
+            audioLocalPath: effectiveAudioFile?.path,
           );
         }
       },
@@ -506,8 +735,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     final ApiResultStatus aiResult = await AiRepo.instance.createResponse(
       conversationId: convId,
       messageText: displayHeadline,
-      imageFile: imageFile,
-      audioFile: audioFile,
+      imageFiles: effectiveImageFiles,
+      audioFile: effectiveAudioFile,
       history: history,
       systemPrompt: systemPrompt,
     );
@@ -902,6 +1131,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }
 
   Future<void> togglePlayAudio(BrainyMessage message) async {
+    if (state.isAttachedAudioPlaying) {
+      try {
+        await _audioPlayer.stop();
+      } catch (_) {}
+      changeProps(isAttachedAudioPlaying: false);
+    }
+
     final String msgKey = message.id ?? message.headline;
     if (state.playingMessageId == msgKey && state.isAudioPlaying) {
       await _audioPlayer.pause();
@@ -935,27 +1171,44 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     required String convId,
     required DocumentReference<Object?> documentReference,
     String? imageLocalPath,
+    List<String>? imageLocalPaths,
     String? audioLocalPath,
   }) async {
     final String? uid = preferences.getUserModel()?.uid;
-    if (imageLocalPath != null && imageLocalPath.isNotEmpty) {
-      final ApiResultStatus uploadedFilePath = await AiRepo.instance
-          .uploadFileToFirebaseStorage(
-            file: File(imageLocalPath),
-            referenceId: uid,
+    final List<String> allImagePaths = <String>[];
+    if (imageLocalPaths != null && imageLocalPaths.isNotEmpty) {
+      allImagePaths.addAll(imageLocalPaths);
+    } else if (imageLocalPath != null && imageLocalPath.isNotEmpty) {
+      allImagePaths.add(imageLocalPath);
+    }
+
+    if (allImagePaths.isNotEmpty) {
+      final List<String> uploadedUrls = <String>[];
+      for (final String path in allImagePaths) {
+        if (path.isNotEmpty && File(path).existsSync()) {
+          final ApiResultStatus uploadedFilePath = await AiRepo.instance
+              .uploadFileToFirebaseStorage(file: File(path), referenceId: uid);
+          uploadedFilePath.whenOrNull(
+            data: (dynamic data) async {
+              if (data is TaskSnapshot) {
+                final String imageNetworkUrl = await data.ref.getDownloadURL();
+                uploadedUrls.add(imageNetworkUrl);
+              }
+            },
           );
-      uploadedFilePath.whenOrNull(
-        data: (dynamic data) async {
-          if (data is TaskSnapshot) {
-            final String imageNetworkUrl = await data.ref.getDownloadURL();
-            await AuthRepo.instance.updateChatToConversation(
-              conversationId: convId,
-              chatReferenceId: documentReference.id,
-              request: <String, dynamic>{'image_network_path': imageNetworkUrl},
-            );
-          }
-        },
-      );
+        }
+      }
+
+      if (uploadedUrls.isNotEmpty) {
+        await AuthRepo.instance.updateChatToConversation(
+          conversationId: convId,
+          chatReferenceId: documentReference.id,
+          request: <String, dynamic>{
+            'image_network_path': uploadedUrls.first,
+            'image_network_paths': uploadedUrls,
+          },
+        );
+      }
     }
 
     if (audioLocalPath != null && audioLocalPath.isNotEmpty) {
@@ -983,6 +1236,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   Future<void> close() async {
     await _chatsSubscription?.cancel();
     await _playerStateSubscription?.cancel();
+    await _positionSubscription?.cancel();
+    await _durationSubscription?.cancel();
     await _audioPlayer.dispose();
     return super.close();
   }

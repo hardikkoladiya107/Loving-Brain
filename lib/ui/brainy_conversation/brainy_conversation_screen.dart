@@ -65,16 +65,190 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage(BuildContext context) async {
-    try {
-      final XFile? picked = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-      );
-      if (picked != null && context.mounted) {
-        context.read<BrainyConversationCubit>().selectImage(picked.path);
-      }
-    } catch (_) {}
+  Future<void> _showImageSourcePicker(BuildContext context) async {
+    final BrainyConversationCubit cubit = context
+        .read<BrainyConversationCubit>();
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext sheetContext) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+          ),
+          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 32.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: greyColor4,
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                ),
+              ),
+              16.spaceH,
+              "Attach Photos".appText(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: darkBlue,
+                fraunces: true,
+              ),
+              4.spaceH,
+              "Take a new photo or choose from your gallery".appText(
+                fontSize: 13.sp,
+                color: greyColor6,
+              ),
+              20.spaceH,
+              InkWell(
+                borderRadius: BorderRadius.circular(16.r),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  try {
+                    final XFile? picked = await _imagePicker.pickImage(
+                      source: ImageSource.camera,
+                      imageQuality: 80,
+                    );
+                    if (picked != null) {
+                      cubit.addSelectedImages(<String>[picked.path]);
+                    }
+                  } catch (_) {}
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF9FD),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: const Color(0xFFECEBFA)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFEEEBFF),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.camera_alt_rounded,
+                          color: secondaryColor,
+                          size: 22.sp,
+                        ),
+                      ),
+                      14.spaceW,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            "Camera".appText(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: darkBlue,
+                            ),
+                            2.spaceH,
+                            "Take a new photo using your camera".appText(
+                              fontSize: 12.sp,
+                              color: greyColor6,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: greyColor4,
+                        size: 22.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              12.spaceH,
+              InkWell(
+                borderRadius: BorderRadius.circular(16.r),
+                onTap: () async {
+                  Navigator.pop(sheetContext);
+                  try {
+                    final List<XFile> pickedList = await _imagePicker
+                        .pickMultiImage(imageQuality: 80);
+                    if (pickedList.isNotEmpty) {
+                      final List<String> paths = pickedList
+                          .map((XFile e) => e.path)
+                          .toList();
+                      cubit.addSelectedImages(paths);
+                    }
+                  } catch (_) {}
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF9FD),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: const Color(0xFFECEBFA)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44.w,
+                        height: 44.w,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFF2EE),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.photo_library_rounded,
+                          color: primaryColor,
+                          size: 22.sp,
+                        ),
+                      ),
+                      14.spaceW,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            "Gallery".appText(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              color: darkBlue,
+                            ),
+                            2.spaceH,
+                            "Select one or multiple photos from gallery"
+                                .appText(fontSize: 12.sp, color: greyColor6),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: greyColor4,
+                        size: 22.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatAudioDuration(Duration d) {
+    final int minutes = d.inMinutes;
+    final int seconds = d.inSeconds % 60;
+    return '${minutes.toString().padLeft(1, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -197,48 +371,224 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                         },
                       ),
                     ),
-                    if (state.selectedImagePath != null &&
-                        state.selectedImagePath!.isNotEmpty)
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.file(
-                                  File(state.selectedImagePath!),
-                                  height: 76.h,
+                    // Multiple images preview thumbnails
+                    if (state.selectedImagePaths.isNotEmpty)
+                      Container(
+                        height: 76.h,
+                        margin: EdgeInsets.only(
+                          left: 20.w,
+                          right: 20.w,
+                          bottom: 10.h,
+                        ),
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: state.selectedImagePaths.length + 1,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              10.spaceW,
+                          itemBuilder: (BuildContext _, int imgIdx) {
+                            if (imgIdx == state.selectedImagePaths.length) {
+                              return GestureDetector(
+                                onTap: () => _showImageSourcePicker(context),
+                                child: Container(
                                   width: 76.h,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Positioned(
-                                right: 4,
-                                top: 4,
-                                child: GestureDetector(
-                                  onTap: () => context
-                                      .read<BrainyConversationCubit>()
-                                      .removeSelectedImage(),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: const BoxDecoration(
-                                      color: Colors.black54,
-                                      shape: BoxShape.circle,
+                                  height: 76.h,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    border: Border.all(
+                                      color: const Color(0xFFE5E7EB),
+                                      width: 1.5.w,
                                     ),
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 14.sp,
-                                      color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.add_photo_alternate_outlined,
+                                        color: secondaryColor,
+                                        size: 22.sp,
+                                      ),
+                                      4.spaceH,
+                                      "Add".appText(
+                                        fontSize: 11.sp,
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final String imagePath =
+                                state.selectedImagePaths[imgIdx];
+                            return Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: Image.file(
+                                    File(imagePath),
+                                    height: 76.h,
+                                    width: 76.h,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 4.r,
+                                  top: 4.r,
+                                  child: GestureDetector(
+                                    onTap: () => context
+                                        .read<BrainyConversationCubit>()
+                                        .removeSelectedImageAt(imgIdx),
+                                    child: Container(
+                                      padding: EdgeInsets.all(4.r),
+                                      decoration: const BoxDecoration(
+                                        color: Colors.black54,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 13.sp,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            );
+                          },
                         ),
                       ),
+
+                    // Attached audio note preview widget
+                    if (state.attachedAudioPath != null &&
+                        state.attachedAudioPath!.isNotEmpty)
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: 20.w,
+                          right: 20.w,
+                          bottom: 10.h,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 10.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF9F6FE),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: const Color(0xFFE9E3FC),
+                            width: 1.w,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.03),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => context
+                                  .read<BrainyConversationCubit>()
+                                  .togglePlayAttachedAudio(),
+                              child: Container(
+                                width: 38.w,
+                                height: 38.w,
+                                decoration: const BoxDecoration(
+                                  color: secondaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  state.isAttachedAudioPlaying
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  color: Colors.white,
+                                  size: 22.sp,
+                                ),
+                              ),
+                            ),
+                            12.spaceW,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      "Voice Note".appText(
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: darkBlue,
+                                      ),
+                                      _formatAudioDuration(
+                                        state.isAttachedAudioPlaying ||
+                                                state.attachedAudioPosition >
+                                                    Duration.zero
+                                            ? state.attachedAudioPosition
+                                            : state.attachedAudioDuration,
+                                      ).appText(
+                                        fontSize: 11.sp,
+                                        color: greyColor6,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ],
+                                  ),
+                                  6.spaceH,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4.r),
+                                    child: LinearProgressIndicator(
+                                      value:
+                                          (state
+                                                  .attachedAudioDuration
+                                                  .inMilliseconds >
+                                              0)
+                                          ? (state
+                                                        .attachedAudioPosition
+                                                        .inMilliseconds /
+                                                    state
+                                                        .attachedAudioDuration
+                                                        .inMilliseconds)
+                                                .clamp(0.0, 1.0)
+                                          : (state.isAttachedAudioPlaying
+                                                ? null
+                                                : 0.0),
+                                      backgroundColor: const Color(0xFFE2DCF8),
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                            secondaryColor,
+                                          ),
+                                      minHeight: 4.h,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            8.spaceW,
+                            IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(
+                                minWidth: 32.w,
+                                minHeight: 32.w,
+                              ),
+                              icon: Icon(
+                                Icons.delete_outline_rounded,
+                                color: redColor,
+                                size: 20.sp,
+                              ),
+                              onPressed: () => context
+                                  .read<BrainyConversationCubit>()
+                                  .removeAttachedAudio(),
+                            ),
+                          ],
+                        ),
+                      ),
+
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: 20.w,
@@ -270,7 +620,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                 children: [
                                   IconButton(
                                     visualDensity: VisualDensity.compact,
-                                    onPressed: () => _pickImage(context),
+                                    onPressed: () =>
+                                        _showImageSourcePicker(context),
                                     icon: Icon(
                                       Icons.image_outlined,
                                       color: greyColor4,
@@ -295,11 +646,17 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                         backgroundColor: Colors.transparent,
                                         builder: (_) => BrainyVoiceSheet(
                                           topic: state.topic,
+                                          actionButtonTitle: "Attach Note",
                                           onSendAudio: (audioFile, text) {
-                                            cubit.sendMessage(
-                                              text,
-                                              audioFile: audioFile,
-                                            );
+                                            if (audioFile != null) {
+                                              cubit.attachAudio(audioFile.path);
+                                            }
+                                            if (text.trim().isNotEmpty &&
+                                                _controller.text
+                                                    .trim()
+                                                    .isEmpty) {
+                                              _controller.text = text.trim();
+                                            }
                                           },
                                         ),
                                       );
@@ -444,12 +801,21 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     required String headline,
     String? subtext,
   }) {
-    final bool hasLocalImage =
-        msg.imageLocalPath != null &&
-        msg.imageLocalPath!.isNotEmpty &&
-        File(msg.imageLocalPath!).existsSync();
-    final bool hasNetworkImage =
-        msg.imageNetworkPath != null && msg.imageNetworkPath!.isNotEmpty;
+    final List<String> localImages = msg.imageLocalPaths.isNotEmpty
+        ? msg.imageLocalPaths
+              .where((String p) => p.isNotEmpty && File(p).existsSync())
+              .toList()
+        : (msg.imageLocalPath != null &&
+                  msg.imageLocalPath!.isNotEmpty &&
+                  File(msg.imageLocalPath!).existsSync()
+              ? <String>[msg.imageLocalPath!]
+              : <String>[]);
+    final List<String> networkImages = msg.imageNetworkPaths.isNotEmpty
+        ? msg.imageNetworkPaths.where((String p) => p.isNotEmpty).toList()
+        : (msg.imageNetworkPath != null && msg.imageNetworkPath!.isNotEmpty
+              ? <String>[msg.imageNetworkPath!]
+              : <String>[]);
+    final bool hasImages = localImages.isNotEmpty || networkImages.isNotEmpty;
     final bool hasAudio =
         (msg.audioLocalPath != null && msg.audioLocalPath!.isNotEmpty) ||
         (msg.audioNetworkPath != null && msg.audioNetworkPath!.isNotEmpty);
@@ -505,23 +871,57 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
             ],
           ),
           16.spaceH,
-          if (hasLocalImage || hasNetworkImage) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: hasLocalImage
-                  ? Image.file(
-                      File(msg.imageLocalPath!),
-                      height: 160.h,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.network(
-                      msg.imageNetworkPath!,
-                      height: 160.h,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-            ),
+          if (hasImages) ...[
+            if (localImages.length == 1)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16.r),
+                child: Image.file(
+                  File(localImages.first),
+                  height: 160.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else if (networkImages.length == 1 && localImages.isEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16.r),
+                child: Image.network(
+                  networkImages.first,
+                  height: 160.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              )
+            else
+              SizedBox(
+                height: 110.h,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: localImages.isNotEmpty
+                      ? localImages.length
+                      : networkImages.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      8.spaceW,
+                  itemBuilder: (BuildContext _, int imgIdx) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(14.r),
+                      child: localImages.isNotEmpty
+                          ? Image.file(
+                              File(localImages[imgIdx]),
+                              height: 110.h,
+                              width: 110.h,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.network(
+                              networkImages[imgIdx],
+                              height: 110.h,
+                              width: 110.h,
+                              fit: BoxFit.cover,
+                            ),
+                    );
+                  },
+                ),
+              ),
             12.spaceH,
           ],
           if (hasAudio) ...[
