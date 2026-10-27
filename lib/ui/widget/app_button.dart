@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 
 import '../../other/app_color.dart';
@@ -18,6 +20,7 @@ class AppButton extends StatelessWidget {
     this.padding = const EdgeInsets.only(left: 16, right: 16),
     this.isLoading = false,
     this.loaderColor,
+    this.loaderSize,
   });
 
   final String? title;
@@ -31,6 +34,7 @@ class AppButton extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final bool isLoading;
   final Color? loaderColor;
+  final double? loaderSize;
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +51,9 @@ class AppButton extends StatelessWidget {
           ),
           child: isLoading
               ? Center(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: loaderColor ?? textColor ?? Colors.white,
-                      strokeWidth: 2,
-                    ),
+                  child: SpinKitThreeBounce(
+                    color: loaderColor ?? textColor ?? Colors.white,
+                    size: loaderSize ?? 24.r,
                   ),
                 )
               : widget ??
