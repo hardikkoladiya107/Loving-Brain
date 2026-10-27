@@ -5,6 +5,8 @@ class QuickNoteModel {
   final String? id;
   final DocumentReference? ref;
   final String note;
+  final String? audioLocalPath;
+  final int? audioDurationSeconds;
   final DateTime timestamp;
   final String? userId;
   final String? childId;
@@ -14,6 +16,8 @@ class QuickNoteModel {
     this.id,
     this.ref,
     required this.note,
+    this.audioLocalPath,
+    this.audioDurationSeconds,
     required this.timestamp,
     this.userId,
     this.childId,
@@ -22,6 +26,9 @@ class QuickNoteModel {
 
   Map<String, dynamic> toMap() => {
     'note': note,
+    if (audioLocalPath != null) 'audioLocalPath': audioLocalPath,
+    if (audioDurationSeconds != null)
+      'audioDurationSeconds': audioDurationSeconds,
     'timestamp': Timestamp.fromDate(timestamp.toUtc()),
     'userId': userId,
     'childId': childId,
@@ -63,6 +70,10 @@ class QuickNoteModel {
       id: id,
       ref: ref,
       note: (map['note'] as String?) ?? '',
+      audioLocalPath: map['audioLocalPath'] as String?,
+      audioDurationSeconds: map['audioDurationSeconds'] is int
+          ? map['audioDurationSeconds'] as int
+          : (map['audioDurationSeconds'] as num?)?.toInt(),
       timestamp: parsedTime,
       userId: map['userId'] as String?,
       childId: map['childId'] as String?,

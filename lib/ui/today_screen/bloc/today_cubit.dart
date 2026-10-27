@@ -663,8 +663,15 @@ class TodayCubit extends Cubit<TodayState> {
 
   void triggerNotesUpdateErrors() => changeProps(showNotesUpdateErrors: true);
 
-  Future<void> saveQuickNote() async {
-    if (state.quickNoteText.trim().isEmpty) {
+  Future<void> saveQuickNote({
+    String? audioLocalPath,
+    int? audioDurationSeconds,
+  }) async {
+    final bool hasText = state.quickNoteText.trim().isNotEmpty;
+    final bool hasAudio =
+        audioLocalPath != null && audioLocalPath.trim().isNotEmpty;
+
+    if (!hasText && !hasAudio) {
       triggerNotesUpdateErrors();
       return;
     }
@@ -675,8 +682,14 @@ class TodayCubit extends Cubit<TodayState> {
     changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final DateTime now = DateTime.now();
+    final String resolvedText = hasText
+        ? state.quickNoteText.trim()
+        : 'Voice note';
+
     final QuickNoteModel log = QuickNoteModel(
-      note: state.quickNoteText.trim(),
+      note: resolvedText,
+      audioLocalPath: hasAudio ? audioLocalPath.trim() : null,
+      audioDurationSeconds: hasAudio ? audioDurationSeconds : null,
       timestamp: now,
       userId: userUid,
       childId: childId,

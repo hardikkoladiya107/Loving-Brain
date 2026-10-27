@@ -341,7 +341,10 @@ class TodayLogRepo {
         'type': 'quick_note',
         'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
         'title': LocaleKeys.noteSaved.tr(),
-        'subtitle': log.note.trim(),
+        'subtitle': log.note.trim().isNotEmpty ? log.note.trim() : 'Voice note',
+        if (log.audioLocalPath != null) 'audioLocalPath': log.audioLocalPath,
+        if (log.audioDurationSeconds != null)
+          'audioDurationSeconds': log.audioDurationSeconds,
         'createdAt': FieldValue.serverTimestamp(),
         'userId': log.userId,
         'childId': childId,

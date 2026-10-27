@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,27 +43,88 @@ class AddNotesUpdateSheet extends StatefulWidget {
 class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
   late final TextEditingController _textController;
   final AudioRecorder _audioRecorder = AudioRecorder();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  StreamSubscription<Duration>? _positionSubscription;
+  StreamSubscription<Duration>? _durationSubscription;
+  StreamSubscription<void>? _playerCompleteSubscription;
+  StreamSubscription<PlayerState>? _playerStateSubscription;
+
+  Timer? _recordTimer;
+  int _recordElapsedSeconds = 0;
+
   bool _isRecording = false;
   bool _isTranscribing = false;
-  String? _recordingPath;
-  DateTime? _recordingStartTime;
+  String? _currentRecordingPath;
+
+  // Recorded audio playback state
+  String? _recordedAudioPath;
+  Duration _playbackPosition = Duration.zero;
+  Duration _playbackDuration = Duration.zero;
+  bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
     final String initialText = context.read<TodayCubit>().state.quickNoteText;
     _textController = TextEditingController(text: initialText);
+
+    _positionSubscription = _audioPlayer.onPositionChanged.listen((Duration p) {
+      if (mounted) {
+        setState(() {
+          _playbackPosition = p;
+        });
+      }
+    });
+
+    _durationSubscription = _audioPlayer.onDurationChanged.listen((Duration d) {
+      if (mounted) {
+        setState(() {
+          _playbackDuration = d;
+        });
+      }
+    });
+
+    _playerCompleteSubscription = _audioPlayer.onPlayerComplete.listen((_) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = false;
+          _playbackPosition = Duration.zero;
+        });
+      }
+    });
+
+    _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen((
+      PlayerState state,
+    ) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = state == PlayerState.playing;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
-    _textController.dispose();
+    _recordTimer?.cancel();
+    _positionSubscription?.cancel();
+    _durationSubscription?.cancel();
+    _playerCompleteSubscription?.cancel();
+    _playerStateSubscription?.cancel();
+    _audioPlayer.dispose();
     _audioRecorder.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
-  Future<void> _startRecording() async {
-    if (_isRecording || _isTranscribing) return;
+  String _formatDuration(Duration d) {
+    final int minutes = d.inMinutes;
+    final int seconds = d.inSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<bool> _ensurePermission() async {
     try {
       final bool hasSeenExplainer =
           preferences.getBool(SharedPreference.micExplainerSeen) ?? false;
@@ -74,29 +137,52 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
             ),
           );
         }
-        return;
       }
 
       final bool hasPermission = await _audioRecorder.hasPermission();
-      if (!hasPermission) {
-        if (mounted) {
-          await Navigator.push<void>(
-            context,
-            MaterialPageRoute<void>(
-              builder: (BuildContext _) => const MicrophonePermissionScreen(),
-            ),
-          );
-        }
-        return;
+      if (!hasPermission && mounted) {
+        showSnackBar(
+          message: "Microphone permission is required to record audio notes.",
+          type: SnackBarType.ERROR,
+        );
       }
+      return hasPermission;
+    } catch (_) {
+      return false;
+    }
+  }
 
-      final Directory dir = await getTemporaryDirectory();
+  Future<void> _startRecording() async {
+    if (_isRecording || _isTranscribing) return;
+
+    if (_isPlaying) {
+      await _audioPlayer.stop();
+    }
+
+    final bool permissionGranted = await _ensurePermission();
+    if (!permissionGranted) return;
+
+    try {
+      final Directory dir = await getApplicationDocumentsDirectory();
       final String path =
           '${dir.path}/quick_note_${DateTime.now().millisecondsSinceEpoch}.m4a';
-      _recordingPath = path;
-      _recordingStartTime = DateTime.now();
+      _currentRecordingPath = path;
+      _recordElapsedSeconds = 0;
 
-      await _audioRecorder.start(const RecordConfig(), path: path);
+      await _audioRecorder.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc),
+        path: path,
+      );
+
+      _recordTimer?.cancel();
+      _recordTimer = Timer.periodic(const Duration(seconds: 1), (Timer _) {
+        if (mounted) {
+          setState(() {
+            _recordElapsedSeconds++;
+          });
+        }
+      });
+
       if (mounted) {
         setState(() {
           _isRecording = true;
@@ -112,69 +198,85 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
     }
   }
 
-  Future<void> _stopRecordingAndTranscribe() async {
+  Future<void> _stopRecording() async {
     if (!_isRecording) return;
-    try {
-      final DateTime? startTime = _recordingStartTime;
-      final int elapsedMs = startTime != null
-          ? DateTime.now().difference(startTime).inMilliseconds
-          : 0;
+    _recordTimer?.cancel();
 
-      final String? path = await _audioRecorder.stop();
+    final int recordedSecs = _recordElapsedSeconds;
+    final String? path = await _audioRecorder.stop();
+    final String targetPath = path ?? _currentRecordingPath ?? '';
+
+    if (mounted) {
+      setState(() {
+        _isRecording = false;
+      });
+    }
+
+    if (recordedSecs < 1) {
+      if (mounted) {
+        showSnackBar(
+          message: "Recording too short. Hold or tap to record.",
+          type: SnackBarType.None,
+        );
+      }
+      return;
+    }
+
+    if (targetPath.isNotEmpty && File(targetPath).existsSync()) {
       if (mounted) {
         setState(() {
-          _isRecording = false;
-          _isTranscribing = true;
+          _recordedAudioPath = targetPath;
+          _playbackPosition = Duration.zero;
+          _playbackDuration = Duration(seconds: recordedSecs);
         });
       }
 
-      // Ignore accidental micro-taps (< 500ms)
-      if (elapsedMs < 500) {
-        if (mounted) {
+      try {
+        await _audioPlayer.setSource(DeviceFileSource(targetPath));
+        final Duration? duration = await _audioPlayer.getDuration();
+        if (duration != null && duration.inSeconds > 0 && mounted) {
           setState(() {
-            _isTranscribing = false;
+            _playbackDuration = duration;
           });
         }
-        return;
-      }
+      } catch (_) {}
 
-      final String targetPath = path ?? _recordingPath ?? '';
-      if (targetPath.isNotEmpty) {
-        final File file = File(targetPath);
-        if (await file.exists()) {
-          final ApiResultStatus result = await AiRepo.instance
-              .transcribeAudio(file: file)
-              .timeout(const Duration(seconds: 15));
-          result.whenOrNull(
-            data: (dynamic data) {
-              final TranscribeModel model = TranscribeModel.fromJson(data);
-              final String? recognized = model.text?.trim();
-              if (recognized != null && recognized.isNotEmpty) {
-                final String current = _textController.text.trim();
-                final String combined = current.isEmpty
-                    ? recognized
-                    : '$current $recognized';
-                _textController.text = combined;
-                _textController.selection = TextSelection.fromPosition(
-                  TextPosition(offset: combined.length),
-                );
-                if (mounted) {
-                  context.read<TodayCubit>().setQuickNoteText(combined);
-                }
-              }
-            },
-            error: (Exception _) {
-              if (mounted) {
-                showSnackBar(
-                  message: "Could not transcribe audio. Please type your note.",
-                  type: SnackBarType.ERROR,
-                );
-              }
-            },
-          );
-        }
+      _transcribeInBackground(targetPath);
+    }
+  }
+
+  Future<void> _transcribeInBackground(String audioPath) async {
+    if (mounted) {
+      setState(() {
+        _isTranscribing = true;
+      });
+    }
+    try {
+      final File file = File(audioPath);
+      if (await file.exists()) {
+        final ApiResultStatus result = await AiRepo.instance
+            .transcribeAudio(file: file)
+            .timeout(const Duration(seconds: 10));
+        result.whenOrNull(
+          data: (dynamic data) {
+            final TranscribeModel model = TranscribeModel.fromJson(data);
+            final String? recognized = model.text?.trim();
+            if (recognized != null && recognized.isNotEmpty && mounted) {
+              final String current = _textController.text.trim();
+              final String combined = current.isEmpty
+                  ? recognized
+                  : '$current $recognized';
+              _textController.text = combined;
+              _textController.selection = TextSelection.fromPosition(
+                TextPosition(offset: combined.length),
+              );
+              context.read<TodayCubit>().setQuickNoteText(combined);
+            }
+          },
+        );
       }
     } catch (_) {
+      // Background transcription failure does not affect audio saving
     } finally {
       if (mounted) {
         setState(() {
@@ -182,6 +284,261 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
         });
       }
     }
+  }
+
+  Future<void> _togglePlayback() async {
+    if (_recordedAudioPath == null) return;
+    try {
+      if (_isPlaying) {
+        await _audioPlayer.pause();
+      } else {
+        await _audioPlayer.play(DeviceFileSource(_recordedAudioPath!));
+      }
+    } catch (_) {
+      if (mounted) {
+        showSnackBar(
+          message: "Could not play audio file.",
+          type: SnackBarType.ERROR,
+        );
+      }
+    }
+  }
+
+  Future<void> _seekAudio(Duration position) async {
+    try {
+      await _audioPlayer.seek(position);
+    } catch (_) {}
+  }
+
+  Future<void> _deleteRecording() async {
+    try {
+      await _audioPlayer.stop();
+      if (_recordedAudioPath != null) {
+        final File file = File(_recordedAudioPath!);
+        if (await file.exists()) {
+          await file.delete();
+        }
+      }
+    } catch (_) {}
+
+    if (mounted) {
+      setState(() {
+        _recordedAudioPath = null;
+        _isPlaying = false;
+        _playbackPosition = Duration.zero;
+        _playbackDuration = Duration.zero;
+        _recordElapsedSeconds = 0;
+      });
+    }
+  }
+
+  Widget _buildAudioRecorderSection() {
+    return Center(
+      child: Column(
+        children: [
+          GestureDetector(
+            onLongPressStart: (_) => _startRecording(),
+            onLongPressEnd: (_) => _stopRecording(),
+            onTap: () {
+              if (_isRecording) {
+                _stopRecording();
+              } else {
+                _startRecording();
+              }
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              padding: EdgeInsets.all(18.w),
+              decoration: BoxDecoration(
+                color: _isRecording ? primaryColor : indigoLight,
+                shape: BoxShape.circle,
+                boxShadow: _isRecording
+                    ? [
+                        BoxShadow(
+                          color: primaryColor.withValues(alpha: 0.4),
+                          blurRadius: 14.r,
+                          spreadRadius: 3.r,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Icon(
+                _isRecording ? Icons.stop_rounded : Icons.mic_rounded,
+                color: _isRecording ? Colors.white : secondaryColor,
+                size: 32.sp,
+              ),
+            ),
+          ),
+          10.spaceH,
+          if (_isRecording) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                6.spaceW,
+                _formatDuration(
+                  Duration(seconds: _recordElapsedSeconds),
+                ).appText(
+                  color: primaryColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+              ],
+            ),
+            4.spaceH,
+            "Tap or release to finish".appText(
+              color: primaryColor,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ] else ...[
+            "Tap or hold to record voice note".appText(
+              color: greyColor,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.normal,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAudioPlayerCard() {
+    final double maxMs = _playbackDuration.inMilliseconds > 0
+        ? _playbackDuration.inMilliseconds.toDouble()
+        : 1.0;
+    final double currentMs = _playbackPosition.inMilliseconds.toDouble().clamp(
+      0.0,
+      maxMs,
+    );
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9F7FC),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(
+          color: secondaryColor.withValues(alpha: 0.25),
+          width: 1.w,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: _togglePlayback,
+                child: Container(
+                  width: 44.w,
+                  height: 44.w,
+                  decoration: const BoxDecoration(
+                    color: secondaryColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    color: Colors.white,
+                    size: 26.sp,
+                  ),
+                ),
+              ),
+              12.spaceW,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        "Voice note".appText(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: darkBlue,
+                        ),
+                        "${_formatDuration(_playbackPosition)} / ${_formatDuration(_playbackDuration)}"
+                            .appText(
+                              fontSize: 11.sp,
+                              color: greyColor4,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ],
+                    ),
+                    SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 3.h,
+                        activeTrackColor: secondaryColor,
+                        inactiveTrackColor: greyColor7,
+                        thumbColor: secondaryColor,
+                        thumbShape: RoundSliderThumbShape(
+                          enabledThumbRadius: 6.r,
+                        ),
+                        overlayShape: RoundSliderOverlayShape(
+                          overlayRadius: 12.r,
+                        ),
+                      ),
+                      child: Slider(
+                        value: currentMs,
+                        min: 0.0,
+                        max: maxMs,
+                        onChanged: (double val) {
+                          _seekAudio(Duration(milliseconds: val.toInt()));
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              6.spaceW,
+              GestureDetector(
+                onTap: _deleteRecording,
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.redAccent,
+                    size: 20.sp,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (_isTranscribing) ...[
+            6.spaceH,
+            Row(
+              children: [
+                SizedBox(
+                  width: 12.sp,
+                  height: 12.sp,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 1.8,
+                    color: secondaryColor,
+                  ),
+                ),
+                8.spaceW,
+                "Transcribing audio to text...".appText(
+                  fontSize: 11.sp,
+                  color: secondaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   @override
@@ -205,8 +562,11 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
         );
       },
       builder: (BuildContext context, TodayState state) {
+        final bool hasAudio =
+            _recordedAudioPath != null && _recordedAudioPath!.isNotEmpty;
+        final bool hasText = _textController.text.trim().isNotEmpty;
         final bool isError =
-            state.showNotesUpdateErrors && _textController.text.trim().isEmpty;
+            state.showNotesUpdateErrors && !hasText && !hasAudio;
 
         return Padding(
           padding: EdgeInsets.only(
@@ -282,88 +642,55 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
                     ),
                   ),
                 ),
-                32.spaceH,
-                Center(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onLongPressStart: (_) => _startRecording(),
-                        onLongPressEnd: (_) => _stopRecordingAndTranscribe(),
-                        onTap: () {
-                          if (_isRecording) {
-                            _stopRecordingAndTranscribe();
-                          } else {
-                            _startRecording();
-                          }
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(
-                            color: _isRecording ? primaryColor : indigoLight,
-                            shape: BoxShape.circle,
-                            boxShadow: _isRecording
-                                ? [
-                                    BoxShadow(
-                                      color: primaryColor.withValues(
-                                        alpha: 0.4,
-                                      ),
-                                      blurRadius: 12.r,
-                                      spreadRadius: 2.r,
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                          child: _isTranscribing
-                              ? SizedBox(
-                                  width: 32.sp,
-                                  height: 32.sp,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 2.5,
-                                    color: secondaryColor,
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.mic,
-                                  color: _isRecording
-                                      ? Colors.white
-                                      : secondaryColor,
-                                  size: 32.sp,
-                                ),
-                        ),
-                      ),
-                      8.spaceH,
-                      (_isTranscribing
-                              ? "Transcribing audio..."
-                              : _isRecording
-                              ? "Recording... (Release to finish)"
-                              : "Hold to record")
-                          .appText(
-                            color: _isRecording ? primaryColor : greyColor,
-                            fontSize: 12.sp,
-                            fontWeight: _isRecording
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                    ],
-                  ),
-                ),
+                24.spaceH,
+                if (hasAudio)
+                  _buildAudioPlayerCard()
+                else
+                  _buildAudioRecorderSection(),
                 32.spaceH,
                 AppButton(
                   isLoading: state.isLoading,
                   title: "Save note",
-                  onTap: () {
+                  onTap: () async {
                     final String text = _textController.text.trim();
-                    if (text.isEmpty) {
+                    final bool hasTypedText = text.isNotEmpty;
+                    final bool hasAttachedAudio =
+                        _recordedAudioPath != null &&
+                        _recordedAudioPath!.isNotEmpty;
+
+                    if (!hasTypedText && !hasAttachedAudio) {
                       context.read<TodayCubit>().triggerNotesUpdateErrors();
                       showSnackBar(
-                        message: "Please type or record a note first.",
+                        message: "Please write a note or record audio first.",
                         type: SnackBarType.None,
                       );
-                    } else {
-                      context.read<TodayCubit>().setQuickNoteText(text);
-                      context.read<TodayCubit>().saveQuickNote();
+                      return;
                     }
+
+                    final TodayCubit cubit = context.read<TodayCubit>();
+
+                    if (_isPlaying) {
+                      await _audioPlayer.stop();
+                    }
+
+                    if (!mounted) return;
+
+                    if (hasTypedText) {
+                      cubit.setQuickNoteText(text);
+                    }
+
+                    final int durationSec = _playbackDuration.inSeconds > 0
+                        ? _playbackDuration.inSeconds
+                        : _recordElapsedSeconds;
+
+                    await cubit.saveQuickNote(
+                      audioLocalPath: hasAttachedAudio
+                          ? _recordedAudioPath
+                          : null,
+                      audioDurationSeconds: hasAttachedAudio
+                          ? durationSec
+                          : null,
+                    );
                   },
                   backgroundColor: primaryColor,
                   textColor: Colors.white,

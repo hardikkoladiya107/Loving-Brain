@@ -153,6 +153,32 @@ void main() {
       expect(parsed.childId, equals('child_ira'));
     });
 
+    test('QuickNoteModel serializes and deserializes audio metadata', () {
+      final DateTime now = DateTime(2026, 10, 13, 16, 45);
+      final QuickNoteModel model = QuickNoteModel(
+        id: 'note_audio_1',
+        note: 'Voice note',
+        audioLocalPath: '/data/audio/quick_note_123.m4a',
+        audioDurationSeconds: 15,
+        timestamp: now,
+        userId: 'user_123',
+        childId: 'child_ira',
+        createdAt: now,
+      );
+
+      final Map<String, dynamic> map = model.toMap();
+      expect(map['audioLocalPath'], equals('/data/audio/quick_note_123.m4a'));
+      expect(map['audioDurationSeconds'], equals(15));
+
+      final QuickNoteModel parsed = QuickNoteModel.fromMap(
+        map,
+        id: 'note_audio_1',
+      );
+      expect(parsed.audioLocalPath, equals('/data/audio/quick_note_123.m4a'));
+      expect(parsed.audioDurationSeconds, equals(15));
+      expect(parsed.note, equals('Voice note'));
+    });
+
     test('TodayLogRepo.parseTimeString parses 12h AM/PM strings correctly', () {
       final DateTime base = DateTime(2026, 10, 13);
       final DateTime dtMorning = TodayLogRepo.parseTimeString(
@@ -323,6 +349,17 @@ void main() {
         await cubit.saveQuickNote();
         expect(cubit.state.showNotesUpdateErrors, isTrue);
         expect(cubit.state.isLoading, isFalse);
+      },
+    );
+
+    test(
+      'saveQuickNote does not trigger error when audio is provided',
+      () async {
+        await cubit.saveQuickNote(
+          audioLocalPath: '/tmp/note_test.m4a',
+          audioDurationSeconds: 8,
+        );
+        expect(cubit.state.showNotesUpdateErrors, isFalse);
       },
     );
   });
