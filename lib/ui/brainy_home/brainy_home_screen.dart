@@ -306,6 +306,8 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                     _buildTopBar(context),
                     Expanded(
                       child: ListView(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         children: [
                           16.spaceH,
@@ -382,7 +384,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                               child: _buildSuggestedCard(context, state, q),
                             ),
                           ),
-                          120.spaceH,
+                          24.spaceH,
                         ],
                       ),
                     ),
@@ -547,6 +549,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
 
   Widget _buildBottomInputAndNav(BuildContext context, BrainyHomeState state) {
     final bool hasText = state.chatText.trim().isNotEmpty;
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -555,7 +558,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
             right: 20.w,
             left: 20.w,
             top: 0.h,
-            bottom: 16.h,
+            bottom: isKeyboardOpen ? 8.h : 16.h,
           ),
           child: Row(
             children: [
@@ -683,9 +686,10 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
             ],
           ),
         ),
-        SizedBox(
-          height: 90.h,
-        ), // padding so it floats above the actual base_screen navigation bar
+        if (!isKeyboardOpen)
+          SizedBox(
+            height: 90.h,
+          ), // padding so it floats above the actual base_screen navigation bar
       ],
     );
   }

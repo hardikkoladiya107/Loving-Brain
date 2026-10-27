@@ -1584,7 +1584,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         orElse: () => false,
                       ),
                     ),
-                    32.spaceH,
+                    (MediaQuery.of(context).viewInsets.bottom > 0 ? 8.h : 24.h)
+                        .spaceH,
                   ],
                 ),
               ),

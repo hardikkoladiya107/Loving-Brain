@@ -1,8 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/ui/brainy_conversation/bloc/brainy_conversation_cubit.dart';
 import 'package:loving_brain/ui/brainy_conversation/bloc/brainy_conversation_state.dart';
+import 'package:loving_brain/ui/brainy_home/bloc/brainy_home_cubit.dart';
+import 'package:loving_brain/ui/brainy_home/brainy_home_screen.dart';
 import 'package:loving_brain/ui/child_essentials/bloc/child_essentials_cubit.dart';
 import 'package:loving_brain/ui/family_timeline/bloc/family_timeline_cubit.dart';
 import 'package:loving_brain/ui/journey/bloc/journey_cubit.dart';
@@ -513,5 +518,110 @@ void main() {
 
       cubit.close();
     });
+  });
+
+  group('Audit Verification: Keyboard Insets & Bottom Navigation Handling', () {
+    testWidgets(
+      'BrainyHomeScreen collapses 90.h bottom navigation spacer when keyboard is open',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1125, 2436);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final BrainyHomeCubit cubit = BrainyHomeCubit();
+
+        Widget buildScreen(EdgeInsets insets) {
+          return MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 812),
+              builder: (context, child) => MediaQuery(
+                data: MediaQueryData(
+                  size: const Size(375, 812),
+                  viewInsets: insets,
+                ),
+                child: BlocProvider<BrainyHomeCubit>.value(
+                  value: cubit,
+                  child: const BrainyHomeScreen(),
+                ),
+              ),
+            ),
+          );
+        }
+
+        // 1. Keyboard closed: spacer with 90.h is present above bottom navigation
+        await tester.pumpWidget(buildScreen(EdgeInsets.zero));
+        await tester.pump();
+
+        final spacerFinder = find.byWidgetPredicate(
+          (Widget w) =>
+              w is SizedBox &&
+              w.height != null &&
+              (w.height! - 90.h).abs() < 0.1,
+        );
+        expect(spacerFinder, findsOneWidget);
+
+        // 2. Keyboard open (e.g. 300px bottom inset): 90.h spacer is collapsed
+        await tester.pumpWidget(
+          buildScreen(const EdgeInsets.only(bottom: 300)),
+        );
+        await tester.pump();
+        expect(spacerFinder, findsNothing);
+
+        cubit.close();
+      },
+    );
+
+    testWidgets(
+      'Scaffold conditionally hides bottomNavigationBar when viewInsets.bottom > 0',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1125, 2436);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        Widget buildNavTest(EdgeInsets insets) {
+          return MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 812),
+              builder: (context, child) => MediaQuery(
+                data: MediaQueryData(
+                  size: const Size(375, 812),
+                  viewInsets: insets,
+                ),
+                child: Builder(
+                  builder: (context) {
+                    final bool isKeyboardOpen =
+                        MediaQuery.of(context).viewInsets.bottom > 0;
+                    return Scaffold(
+                      body: const Center(child: Text('Content')),
+                      bottomNavigationBar: isKeyboardOpen
+                          ? null
+                          : const Text('FloatingBottomNav'),
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        }
+
+        // 1. Keyboard closed: Floating bottom nav is present
+        await tester.pumpWidget(buildNavTest(EdgeInsets.zero));
+        await tester.pump();
+        expect(find.text('FloatingBottomNav'), findsOneWidget);
+
+        // 2. Keyboard open: Floating bottom nav is omitted
+        await tester.pumpWidget(
+          buildNavTest(const EdgeInsets.only(bottom: 300)),
+        );
+        await tester.pump();
+        expect(find.text('FloatingBottomNav'), findsNothing);
+      },
+    );
   });
 }

@@ -92,6 +92,8 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
               Positioned.fill(
                 child: SafeArea(
                   child: ListView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 80.h),
                     children: [
@@ -254,38 +256,46 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
               ),
             ],
           ),
-          bottomNavigationBar: Container(
-            padding: EdgeInsets.only(
-              top: 12.h,
-              bottom: 20.h,
-              left: 20.w,
-              right: 20.w,
-            ),
-            decoration: const BoxDecoration(color: Color(0xffFEF2EA)),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppButton(
-                  title: "Save reflection",
-                  onTap: () {
-                    context.read<AfterReflectionCubit>().saveReflection();
-                  },
-                  backgroundColor: primaryColor,
-                  textColor: Colors.white,
+          bottomNavigationBar: Builder(
+            builder: (BuildContext barContext) {
+              final bool isKeyboardOpen =
+                  MediaQuery.of(barContext).viewInsets.bottom > 0;
+              return Container(
+                padding: EdgeInsets.only(
+                  top: 12.h,
+                  bottom: isKeyboardOpen
+                      ? 8.h
+                      : (12.h + MediaQuery.of(barContext).padding.bottom),
+                  left: 20.w,
+                  right: 20.w,
                 ),
-                16.spaceH,
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: "Skip".appText(
-                    fontSize: 16.sp,
-                    color: greyColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+                decoration: const BoxDecoration(color: Color(0xffFEF2EA)),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      title: "Save reflection",
+                      onTap: () {
+                        context.read<AfterReflectionCubit>().saveReflection();
+                      },
+                      backgroundColor: primaryColor,
+                      textColor: Colors.white,
+                    ),
+                    16.spaceH,
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: "Skip".appText(
+                        fontSize: 16.sp,
+                        color: greyColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         );
       },

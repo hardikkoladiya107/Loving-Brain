@@ -457,6 +457,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                     Expanded(
                       child: ListView.separated(
                         controller: _scrollController,
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
                         padding: EdgeInsets.symmetric(
                           horizontal: 20.w,
                           vertical: 16.h,
@@ -660,143 +662,160 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                         ),
                       ),
 
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: 20.w,
-                        right: 20.w,
-                        top: 4.h,
-                        bottom: 16.h,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: AppTextField(
-                              controller: _controller,
-                              hint: "Ask Brainy...",
-                              tfType: TFTYPE.FILLED,
-                              filled: true,
-                              fillColor: Colors.white,
-                              borderRadius: BorderRadius.circular(27.r),
-                              height: 54.h,
-                              maxLines: 4,
-                              minLines: 1,
-                              textAlignVertical: TextAlignVertical.center,
-                              rowCrossAxisAlignment: CrossAxisAlignment.center,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(500),
-                              ],
-                              contentPadding: EdgeInsets.only(
-                                left: 20.w,
-                                right: 6.w,
-                                top: 0,
-                                bottom: 0,
-                              ),
-                              suffixIcon: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.zero,
-                                    constraints: BoxConstraints(
-                                      minWidth: 32.w,
-                                      minHeight: 32.w,
-                                    ),
-                                    onPressed: () =>
-                                        _showImageSourcePicker(context),
-                                    icon: Icon(
-                                      Icons.image_outlined,
-                                      color: greyColor4,
-                                      size: 20.sp,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.zero,
-                                    constraints: BoxConstraints(
-                                      minWidth: 32.w,
-                                      minHeight: 32.w,
-                                    ),
-                                    onPressed: () async {
-                                      final bool granted =
-                                          await PermissionHelper.ensureMicrophonePermission(
-                                            context,
-                                          );
-                                      if (!granted || !context.mounted) return;
-
-                                      final BrainyConversationCubit cubit =
-                                          context
-                                              .read<BrainyConversationCubit>();
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        backgroundColor: Colors.transparent,
-                                        builder: (_) => BrainyVoiceSheet(
-                                          topic: state.topic,
-                                          actionButtonTitle: "Attach Note",
-                                          onSendAudio: (audioFile, text) {
-                                            if (audioFile != null) {
-                                              cubit.attachAudio(audioFile.path);
-                                            }
-                                            if (text.trim().isNotEmpty &&
-                                                _controller.text
-                                                    .trim()
-                                                    .isEmpty) {
-                                              _controller.text = text.trim();
-                                            }
-                                          },
-                                        ),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      Icons.mic_none_rounded,
-                                      color: greyColor4,
-                                      size: 20.sp,
-                                    ),
-                                  ),
-                                  6.spaceW,
-                                ],
-                              ),
-                              onSubmitted: (val) {
-                                context
-                                    .read<BrainyConversationCubit>()
-                                    .sendMessage(val);
-                                _controller.clear();
-                                _scrollToBottom();
-                              },
-                            ),
+                    Builder(
+                      builder: (BuildContext composerCtx) {
+                        final bool isKeyboardOpen =
+                            MediaQuery.of(composerCtx).viewInsets.bottom > 0;
+                        final double bottomPadding = isKeyboardOpen
+                            ? 8.h
+                            : (12.h +
+                                  MediaQuery.of(composerCtx).padding.bottom);
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: 20.w,
+                            right: 20.w,
+                            top: 4.h,
+                            bottom: bottomPadding,
                           ),
-                          12.spaceW,
-                          Material(
-                            color: Colors.transparent,
-                            child: Ink(
-                              decoration: const BoxDecoration(
-                                color: secondaryColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(27.r),
-                                onTap: () {
-                                  context
-                                      .read<BrainyConversationCubit>()
-                                      .sendMessage(_controller.text);
-                                  _controller.clear();
-                                  _scrollToBottom();
-                                },
-                                child: SizedBox(
-                                  width: 54.h,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: AppTextField(
+                                  controller: _controller,
+                                  hint: "Ask Brainy...",
+                                  tfType: TFTYPE.FILLED,
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  borderRadius: BorderRadius.circular(27.r),
                                   height: 54.h,
-                                  child: Icon(
-                                    Icons.send,
-                                    color: Colors.white,
-                                    size: 22.sp,
+                                  maxLines: 4,
+                                  minLines: 1,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  rowCrossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(500),
+                                  ],
+                                  contentPadding: EdgeInsets.only(
+                                    left: 20.w,
+                                    right: 6.w,
+                                    top: 0,
+                                    bottom: 0,
+                                  ),
+                                  suffixIcon: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: EdgeInsets.zero,
+                                        constraints: BoxConstraints(
+                                          minWidth: 32.w,
+                                          minHeight: 32.w,
+                                        ),
+                                        onPressed: () =>
+                                            _showImageSourcePicker(context),
+                                        icon: Icon(
+                                          Icons.image_outlined,
+                                          color: greyColor4,
+                                          size: 20.sp,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: EdgeInsets.zero,
+                                        constraints: BoxConstraints(
+                                          minWidth: 32.w,
+                                          minHeight: 32.w,
+                                        ),
+                                        onPressed: () async {
+                                          final bool granted =
+                                              await PermissionHelper.ensureMicrophonePermission(
+                                                context,
+                                              );
+                                          if (!granted || !context.mounted) {
+                                            return;
+                                          }
+
+                                          final BrainyConversationCubit
+                                          cubit = context
+                                              .read<BrainyConversationCubit>();
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.transparent,
+                                            builder: (_) => BrainyVoiceSheet(
+                                              topic: state.topic,
+                                              actionButtonTitle: "Attach Note",
+                                              onSendAudio: (audioFile, text) {
+                                                if (audioFile != null) {
+                                                  cubit.attachAudio(
+                                                    audioFile.path,
+                                                  );
+                                                }
+                                                if (text.trim().isNotEmpty &&
+                                                    _controller.text
+                                                        .trim()
+                                                        .isEmpty) {
+                                                  _controller.text = text
+                                                      .trim();
+                                                }
+                                              },
+                                            ),
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.mic_none_rounded,
+                                          color: greyColor4,
+                                          size: 20.sp,
+                                        ),
+                                      ),
+                                      6.spaceW,
+                                    ],
+                                  ),
+                                  onSubmitted: (val) {
+                                    context
+                                        .read<BrainyConversationCubit>()
+                                        .sendMessage(val);
+                                    _controller.clear();
+                                    _scrollToBottom();
+                                  },
+                                ),
+                              ),
+                              12.spaceW,
+                              Material(
+                                color: Colors.transparent,
+                                child: Ink(
+                                  decoration: const BoxDecoration(
+                                    color: secondaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(27.r),
+                                    onTap: () {
+                                      context
+                                          .read<BrainyConversationCubit>()
+                                          .sendMessage(_controller.text);
+                                      _controller.clear();
+                                      _scrollToBottom();
+                                    },
+                                    child: SizedBox(
+                                      width: 54.h,
+                                      height: 54.h,
+                                      child: Icon(
+                                        Icons.send,
+                                        color: Colors.white,
+                                        size: 22.sp,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),

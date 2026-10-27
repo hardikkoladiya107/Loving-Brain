@@ -38,6 +38,7 @@ class _BaseScreenState extends State<BaseScreen> {
           // Lets tab bodies paint under the nav slot; removes the full-width white
           // â€œplateâ€ behind the pillâ€™s transparent margins (Scaffold Material is full-screen).
           extendBody: true,
+          resizeToAvoidBottomInset: false,
           body: IndexedStack(
             index: state.bottomNavigationIndex,
             children: const [
@@ -46,7 +47,9 @@ class _BaseScreenState extends State<BaseScreen> {
               JourneyScreen(),
             ],
           ),
-          bottomNavigationBar: _floatingBottomNavigation(context, state),
+          bottomNavigationBar: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null
+              : _floatingBottomNavigation(context, state),
         );
       },
     );

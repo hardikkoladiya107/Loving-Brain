@@ -222,89 +222,159 @@ class _AppTextFieldState extends State<AppTextField> {
                   12.spaceW,
                 ],
                 Expanded(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      if (hasTitle) ...<Widget>[
-                        Text(
-                          widget.titleUppercase
-                              ? widget.title!.toUpperCase()
-                              : widget.title!,
-                          style:
-                              widget.titleStyle ??
-                              getTextStyle(
-                                fontSize: (widget.titleFontSize ?? 11).sp,
-                                fontWeight: FontWeight.w600,
-                                color: widget.titleColor ?? greyColor4,
-                                letterSpacing: 0.8,
+                  child: hasTitle
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              widget.titleUppercase
+                                  ? widget.title!.toUpperCase()
+                                  : widget.title!,
+                              style:
+                                  widget.titleStyle ??
+                                  getTextStyle(
+                                    fontSize: (widget.titleFontSize ?? 11).sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: widget.titleColor ?? greyColor4,
+                                    letterSpacing: 0.8,
+                                  ),
+                              textAlign: TextAlign.start,
+                            ),
+                            4.spaceH,
+                            Theme(
+                              data: Theme.of(context).copyWith(
+                                textSelectionTheme: TextSelectionThemeData(
+                                  cursorColor: primaryColor,
+                                  selectionColor: primaryColor.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                  selectionHandleColor: primaryColor,
+                                ),
                               ),
-                          textAlign: TextAlign.start,
-                        ),
-                        4.spaceH,
-                      ],
-                      Theme(
-                        data: Theme.of(context).copyWith(
-                          textSelectionTheme: TextSelectionThemeData(
-                            cursorColor: primaryColor,
-                            selectionColor: primaryColor.withValues(alpha: 0.5),
-                            selectionHandleColor: primaryColor,
+                              child: TextField(
+                                focusNode: _effectiveFocusNode,
+                                textAlignVertical:
+                                    widget.textAlignVertical ??
+                                    ((widget.minLines != null &&
+                                            widget.minLines! > 1)
+                                        ? TextAlignVertical.top
+                                        : TextAlignVertical.center),
+                                readOnly: widget.readOnly ?? false,
+                                enabled: !(widget.readOnly ?? false),
+                                keyboardType: widget.keyboardType,
+                                controller: widget.controller,
+                                maxLines: widget.obscureText
+                                    ? 1
+                                    : widget.maxLines,
+                                minLines: widget.obscureText
+                                    ? 1
+                                    : widget.minLines,
+                                obscureText: widget.obscureText,
+                                onChanged: widget.onChanged,
+                                onSubmitted: widget.onSubmitted,
+                                onTap: () {
+                                  if (widget.onFieldTap != null) {
+                                    widget.onFieldTap!();
+                                  }
+                                },
+                                style:
+                                    widget.style ??
+                                    getTextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: greyColor9,
+                                    ),
+                                inputFormatters: widget.inputFormatters,
+                                cursorColor: primaryColor,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  hintText: widget.hint,
+                                  hintMaxLines: isMultiline
+                                      ? widget.maxLines
+                                      : 1,
+                                  hintStyle:
+                                      widget.hintStyle ??
+                                      getTextStyle(
+                                        fontSize: 16.sp,
+                                        color: greyColor4,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                  filled: false,
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Theme(
+                          data: Theme.of(context).copyWith(
+                            textSelectionTheme: TextSelectionThemeData(
+                              cursorColor: primaryColor,
+                              selectionColor: primaryColor.withValues(
+                                alpha: 0.5,
+                              ),
+                              selectionHandleColor: primaryColor,
+                            ),
                           ),
-                        ),
-                        child: TextField(
-                          focusNode: _effectiveFocusNode,
-                          textAlignVertical:
-                              widget.textAlignVertical ??
-                              ((widget.minLines != null && widget.minLines! > 1)
-                                  ? TextAlignVertical.top
-                                  : TextAlignVertical.center),
-                          readOnly: widget.readOnly ?? false,
-                          enabled: !(widget.readOnly ?? false),
-                          keyboardType: widget.keyboardType,
-                          controller: widget.controller,
-                          maxLines: widget.obscureText ? 1 : widget.maxLines,
-                          minLines: widget.obscureText ? 1 : widget.minLines,
-                          obscureText: widget.obscureText,
-                          onChanged: widget.onChanged,
-                          onSubmitted: widget.onSubmitted,
-                          onTap: () {
-                            if (widget.onFieldTap != null) {
-                              widget.onFieldTap!();
-                            }
-                          },
-                          style:
-                              widget.style ??
-                              getTextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                                color: greyColor9,
-                              ),
-                          inputFormatters: widget.inputFormatters,
-                          cursorColor: primaryColor,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                            hintText: widget.hint,
-                            hintMaxLines: isMultiline ? widget.maxLines : 1,
-                            hintStyle:
-                                widget.hintStyle ??
+                          child: TextField(
+                            focusNode: _effectiveFocusNode,
+                            textAlignVertical:
+                                widget.textAlignVertical ??
+                                ((widget.minLines != null &&
+                                        widget.minLines! > 1)
+                                    ? TextAlignVertical.top
+                                    : TextAlignVertical.center),
+                            readOnly: widget.readOnly ?? false,
+                            enabled: !(widget.readOnly ?? false),
+                            keyboardType: widget.keyboardType,
+                            controller: widget.controller,
+                            maxLines: widget.obscureText ? 1 : widget.maxLines,
+                            minLines: widget.obscureText ? 1 : widget.minLines,
+                            obscureText: widget.obscureText,
+                            onChanged: widget.onChanged,
+                            onSubmitted: widget.onSubmitted,
+                            onTap: () {
+                              if (widget.onFieldTap != null) {
+                                widget.onFieldTap!();
+                              }
+                            },
+                            style:
+                                widget.style ??
                                 getTextStyle(
                                   fontSize: 16.sp,
-                                  color: greyColor4,
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: FontWeight.w500,
+                                  color: greyColor9,
                                 ),
-                            filled: false,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
+                            inputFormatters: widget.inputFormatters,
+                            cursorColor: primaryColor,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              contentPadding: EdgeInsets.zero,
+                              hintText: widget.hint,
+                              hintMaxLines: isMultiline ? widget.maxLines : 1,
+                              hintStyle:
+                                  widget.hintStyle ??
+                                  getTextStyle(
+                                    fontSize: 16.sp,
+                                    color: greyColor4,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                              filled: false,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
                 ),
                 if (trailingIcon != null) ...<Widget>[10.spaceW, trailingIcon],
               ],
