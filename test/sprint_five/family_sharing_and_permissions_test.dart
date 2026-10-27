@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
+import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/child_essentials/bloc/child_essentials_cubit.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_cubit.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_state.dart';
@@ -9,6 +12,7 @@ import 'package:loving_brain/ui/invite_pending/bloc/invite_pending_cubit.dart';
 import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
 import 'package:loving_brain/ui/shared_child_summary/bloc/shared_child_summary_cubit.dart';
 import 'package:loving_brain/ui/shared_child_summary/bloc/shared_child_summary_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -139,19 +143,66 @@ void main() {
         cubit.selectRole('Nanny');
         expect(cubit.state.selectedRole, 'Nanny');
 
-        cubit.updateEmailOrPhone('');
+        // Empty email validation
+        cubit.updateEmail('');
         final bool failedResult = await cubit.sendInvite();
         expect(failedResult, isFalse);
         expect(cubit.state.sendStatus, isA<Error>());
+        expect(cubit.state.emailError, isNotEmpty);
 
-        cubit.updateEmailOrPhone('nanny@example.com');
+        // Invalid format email validation
+        cubit.updateEmail('invalid-email-address');
+        final bool invalidFormatResult = await cubit.sendInvite();
+        expect(invalidFormatResult, isFalse);
+        expect(cubit.state.sendStatus, isA<Error>());
+        expect(cubit.state.emailError, isNotEmpty);
+
+        // Valid caregiver email succeeds
+        cubit.updateEmail('nanny@example.com');
         final bool successResult = await cubit.sendInvite();
         expect(successResult, isTrue);
         expect(cubit.state.sendStatus, isA<Data>());
+        expect(cubit.state.emailError, isEmpty);
 
         cubit.close();
       },
     );
+
+    test('InviteCaregiverCubit prevents self-invitation', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        'user': json.encode(
+          UserModel(
+            email: 'hardikkoladiya107@gmail.com',
+          ).toJson(forConvert: true),
+        ),
+      });
+      await SharedPreference.init();
+
+      final InviteCaregiverCubit cubit = InviteCaregiverCubit();
+      cubit.init();
+
+      // Exact match check
+      expect(cubit.isSelfEmail('hardikkoladiya107@gmail.com'), isTrue);
+
+      // Case-insensitivity and whitespace trim check
+      expect(cubit.isSelfEmail('  HardikKoladiya107@GMAIL.com '), isTrue);
+
+      // Different email is not self
+      expect(cubit.isSelfEmail('caregiver@example.com'), isFalse);
+
+      // Attempting to send invite to own email address must fail
+      cubit.updateEmail('hardikkoladiya107@gmail.com');
+      final bool selfInviteResult = await cubit.sendInvite();
+      expect(selfInviteResult, isFalse);
+      expect(cubit.state.sendStatus, isA<Error>());
+      expect(cubit.state.emailError, isNotEmpty);
+
+      // Typing a different email clears the error
+      cubit.updateEmail('nanny@example.com');
+      expect(cubit.state.emailError, isEmpty);
+
+      cubit.close();
+    });
 
     test(
       'InvitePendingCubit manages expiry and allows resend / cancellation',

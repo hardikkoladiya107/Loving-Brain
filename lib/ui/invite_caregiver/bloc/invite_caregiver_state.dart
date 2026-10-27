@@ -5,12 +5,17 @@ part 'invite_caregiver_state.freezed.dart';
 
 @freezed
 abstract class InviteCaregiverState with _$InviteCaregiverState {
+  const InviteCaregiverState._();
+
   const factory InviteCaregiverState({
     @Default('Grandparent') String selectedRole,
     @Default('your child') String childName,
-    @Default('') String emailOrPhone,
+    @Default('') String email,
+    @Default('') String emailError,
     @Default(false) bool isSending,
     @Default('') String createdInvitationId,
     @Default(ApiResultStatus.initial()) ApiResultStatus sendStatus,
   }) = _InviteCaregiverState;
+
+  String get emailOrPhone => email;
 }

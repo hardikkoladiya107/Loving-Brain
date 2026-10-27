@@ -558,5 +558,7 @@
   "moodLogSaved": "Mood check-in saved.",
   "healthLogSaved": "Health update saved.",
   "noteSaved": "Quick note saved.",
-  "pleaseSelectChildFirst": "Please select a child profile first."
+  "pleaseSelectChildFirst": "Please select a child profile first.",
+  "cannotInviteYourselfCaregiver": "You cannot invite your own email address."
 }
+

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InviteCaregiverState {
 
- String get selectedRole; String get childName; String get emailOrPhone; bool get isSending; String get createdInvitationId; ApiResultStatus<dynamic> get sendStatus;
+ String get selectedRole; String get childName; String get email; String get emailError; bool get isSending; String get createdInvitationId; ApiResultStatus<dynamic> get sendStatus;
 /// Create a copy of InviteCaregiverState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $InviteCaregiverStateCopyWith<InviteCaregiverState> get copyWith => _$InviteCare
 @override
 bool operator ==(Object other) {
   final _this = this as InviteCaregiverState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InviteCaregiverState&&(identical(other.selectedRole, _this.selectedRole) || other.selectedRole == _this.selectedRole)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.emailOrPhone, _this.emailOrPhone) || other.emailOrPhone == _this.emailOrPhone)&&(identical(other.isSending, _this.isSending) || other.isSending == _this.isSending)&&(identical(other.createdInvitationId, _this.createdInvitationId) || other.createdInvitationId == _this.createdInvitationId)&&(identical(other.sendStatus, _this.sendStatus) || other.sendStatus == _this.sendStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InviteCaregiverState&&(identical(other.selectedRole, _this.selectedRole) || other.selectedRole == _this.selectedRole)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.emailError, _this.emailError) || other.emailError == _this.emailError)&&(identical(other.isSending, _this.isSending) || other.isSending == _this.isSending)&&(identical(other.createdInvitationId, _this.createdInvitationId) || other.createdInvitationId == _this.createdInvitationId)&&(identical(other.sendStatus, _this.sendStatus) || other.sendStatus == _this.sendStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as InviteCaregiverState;
-  return Object.hash(runtimeType,_this.selectedRole,_this.childName,_this.emailOrPhone,_this.isSending,_this.createdInvitationId,_this.sendStatus);
+  return Object.hash(runtimeType,_this.selectedRole,_this.childName,_this.email,_this.emailError,_this.isSending,_this.createdInvitationId,_this.sendStatus);
 }
 
 @override
 String toString() {
   final _this = this as InviteCaregiverState;
-  return 'InviteCaregiverState(selectedRole: ${_this.selectedRole}, childName: ${_this.childName}, emailOrPhone: ${_this.emailOrPhone}, isSending: ${_this.isSending}, createdInvitationId: ${_this.createdInvitationId}, sendStatus: ${_this.sendStatus})';
+  return 'InviteCaregiverState(selectedRole: ${_this.selectedRole}, childName: ${_this.childName}, email: ${_this.email}, emailError: ${_this.emailError}, isSending: ${_this.isSending}, createdInvitationId: ${_this.createdInvitationId}, sendStatus: ${_this.sendStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $InviteCaregiverStateCopyWith<$Res>  {
   factory $InviteCaregiverStateCopyWith(InviteCaregiverState value, $Res Function(InviteCaregiverState) _then) = _$InviteCaregiverStateCopyWithImpl;
 @useResult
 $Res call({
- String selectedRole, String childName, String emailOrPhone, bool isSending, String createdInvitationId, ApiResultStatus<dynamic> sendStatus
+ String selectedRole, String childName, String email, String emailError, bool isSending, String createdInvitationId, ApiResultStatus<dynamic> sendStatus
 });
 
 
@@ -68,11 +68,12 @@ class _$InviteCaregiverStateCopyWithImpl<$Res>
 
 /// Create a copy of InviteCaregiverState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? selectedRole = null,Object? childName = null,Object? emailOrPhone = null,Object? isSending = null,Object? createdInvitationId = null,Object? sendStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? selectedRole = null,Object? childName = null,Object? email = null,Object? emailError = null,Object? isSending = null,Object? createdInvitationId = null,Object? sendStatus = null,}) {
   return _then(InviteCaregiverState(
 selectedRole: null == selectedRole ? _self.selectedRole : selectedRole // ignore: cast_nullable_to_non_nullable
 as String,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
-as String,emailOrPhone: null == emailOrPhone ? _self.emailOrPhone : emailOrPhone // ignore: cast_nullable_to_non_nullable
+as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,emailError: null == emailError ? _self.emailError : emailError // ignore: cast_nullable_to_non_nullable
 as String,isSending: null == isSending ? _self.isSending : isSending // ignore: cast_nullable_to_non_nullable
 as bool,createdInvitationId: null == createdInvitationId ? _self.createdInvitationId : createdInvitationId // ignore: cast_nullable_to_non_nullable
 as String,sendStatus: null == sendStatus ? _self.sendStatus : sendStatus // ignore: cast_nullable_to_non_nullable
@@ -170,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedRole,  String childName,  String emailOrPhone,  bool isSending,  String createdInvitationId,  ApiResultStatus<dynamic> sendStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String selectedRole,  String childName,  String email,  String emailError,  bool isSending,  String createdInvitationId,  ApiResultStatus<dynamic> sendStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _InviteCaregiverState() when $default != null:
-return $default(_that.selectedRole,_that.childName,_that.emailOrPhone,_that.isSending,_that.createdInvitationId,_that.sendStatus);case _:
+return $default(_that.selectedRole,_that.childName,_that.email,_that.emailError,_that.isSending,_that.createdInvitationId,_that.sendStatus);case _:
   return orElse();
 
 }
@@ -191,10 +192,10 @@ return $default(_that.selectedRole,_that.childName,_that.emailOrPhone,_that.isSe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedRole,  String childName,  String emailOrPhone,  bool isSending,  String createdInvitationId,  ApiResultStatus<dynamic> sendStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String selectedRole,  String childName,  String email,  String emailError,  bool isSending,  String createdInvitationId,  ApiResultStatus<dynamic> sendStatus)  $default,) {final _that = this;
 switch (_that) {
 case _InviteCaregiverState():
-return $default(_that.selectedRole,_that.childName,_that.emailOrPhone,_that.isSending,_that.createdInvitationId,_that.sendStatus);case _:
+return $default(_that.selectedRole,_that.childName,_that.email,_that.emailError,_that.isSending,_that.createdInvitationId,_that.sendStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -211,10 +212,10 @@ return $default(_that.selectedRole,_that.childName,_that.emailOrPhone,_that.isSe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedRole,  String childName,  String emailOrPhone,  bool isSending,  String createdInvitationId,  ApiResultStatus<dynamic> sendStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String selectedRole,  String childName,  String email,  String emailError,  bool isSending,  String createdInvitationId,  ApiResultStatus<dynamic> sendStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _InviteCaregiverState() when $default != null:
-return $default(_that.selectedRole,_that.childName,_that.emailOrPhone,_that.isSending,_that.createdInvitationId,_that.sendStatus);case _:
+return $default(_that.selectedRole,_that.childName,_that.email,_that.emailError,_that.isSending,_that.createdInvitationId,_that.sendStatus);case _:
   return null;
 
 }
@@ -225,13 +226,14 @@ return $default(_that.selectedRole,_that.childName,_that.emailOrPhone,_that.isSe
 /// @nodoc
 
 
-class _InviteCaregiverState implements InviteCaregiverState {
-  const _InviteCaregiverState({this.selectedRole = 'Grandparent', this.childName = 'your child', this.emailOrPhone = '', this.isSending = false, this.createdInvitationId = '', this.sendStatus = const ApiResultStatus.initial()});
+class _InviteCaregiverState extends InviteCaregiverState {
+  const _InviteCaregiverState({this.selectedRole = 'Grandparent', this.childName = 'your child', this.email = '', this.emailError = '', this.isSending = false, this.createdInvitationId = '', this.sendStatus = const ApiResultStatus.initial()}): super._();
   
 
 @override@JsonKey() final  String selectedRole;
 @override@JsonKey() final  String childName;
-@override@JsonKey() final  String emailOrPhone;
+@override@JsonKey() final  String email;
+@override@JsonKey() final  String emailError;
 @override@JsonKey() final  bool isSending;
 @override@JsonKey() final  String createdInvitationId;
 @override@JsonKey() final  ApiResultStatus<dynamic> sendStatus;
@@ -246,18 +248,18 @@ _$InviteCaregiverStateCopyWith<_InviteCaregiverState> get copyWith => __$InviteC
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InviteCaregiverState&&(identical(other.selectedRole, selectedRole) || other.selectedRole == selectedRole)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.emailOrPhone, emailOrPhone) || other.emailOrPhone == emailOrPhone)&&(identical(other.isSending, isSending) || other.isSending == isSending)&&(identical(other.createdInvitationId, createdInvitationId) || other.createdInvitationId == createdInvitationId)&&(identical(other.sendStatus, sendStatus) || other.sendStatus == sendStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InviteCaregiverState&&(identical(other.selectedRole, selectedRole) || other.selectedRole == selectedRole)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.email, email) || other.email == email)&&(identical(other.emailError, emailError) || other.emailError == emailError)&&(identical(other.isSending, isSending) || other.isSending == isSending)&&(identical(other.createdInvitationId, createdInvitationId) || other.createdInvitationId == createdInvitationId)&&(identical(other.sendStatus, sendStatus) || other.sendStatus == sendStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,selectedRole,childName,emailOrPhone,isSending,createdInvitationId,sendStatus);
+    return Object.hash(runtimeType,selectedRole,childName,email,emailError,isSending,createdInvitationId,sendStatus);
 }
 
 @override
 String toString() {
-    return 'InviteCaregiverState(selectedRole: $selectedRole, childName: $childName, emailOrPhone: $emailOrPhone, isSending: $isSending, createdInvitationId: $createdInvitationId, sendStatus: $sendStatus)';
+    return 'InviteCaregiverState(selectedRole: $selectedRole, childName: $childName, email: $email, emailError: $emailError, isSending: $isSending, createdInvitationId: $createdInvitationId, sendStatus: $sendStatus)';
 }
 
 
@@ -268,7 +270,7 @@ abstract mixin class _$InviteCaregiverStateCopyWith<$Res> implements $InviteCare
   factory _$InviteCaregiverStateCopyWith(_InviteCaregiverState value, $Res Function(_InviteCaregiverState) _then) = __$InviteCaregiverStateCopyWithImpl;
 @override @useResult
 $Res call({
- String selectedRole, String childName, String emailOrPhone, bool isSending, String createdInvitationId, ApiResultStatus<dynamic> sendStatus
+ String selectedRole, String childName, String email, String emailError, bool isSending, String createdInvitationId, ApiResultStatus<dynamic> sendStatus
 });
 
 
@@ -285,11 +287,12 @@ class __$InviteCaregiverStateCopyWithImpl<$Res>
 
 /// Create a copy of InviteCaregiverState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? selectedRole = null,Object? childName = null,Object? emailOrPhone = null,Object? isSending = null,Object? createdInvitationId = null,Object? sendStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? selectedRole = null,Object? childName = null,Object? email = null,Object? emailError = null,Object? isSending = null,Object? createdInvitationId = null,Object? sendStatus = null,}) {
   return _then(_InviteCaregiverState(
 selectedRole: null == selectedRole ? _self.selectedRole : selectedRole // ignore: cast_nullable_to_non_nullable
 as String,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
-as String,emailOrPhone: null == emailOrPhone ? _self.emailOrPhone : emailOrPhone // ignore: cast_nullable_to_non_nullable
+as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,emailError: null == emailError ? _self.emailError : emailError // ignore: cast_nullable_to_non_nullable
 as String,isSending: null == isSending ? _self.isSending : isSending // ignore: cast_nullable_to_non_nullable
 as bool,createdInvitationId: null == createdInvitationId ? _self.createdInvitationId : createdInvitationId // ignore: cast_nullable_to_non_nullable
 as String,sendStatus: null == sendStatus ? _self.sendStatus : sendStatus // ignore: cast_nullable_to_non_nullable

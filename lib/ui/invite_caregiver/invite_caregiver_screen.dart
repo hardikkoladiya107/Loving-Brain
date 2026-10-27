@@ -57,7 +57,7 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
               MaterialPageRoute(
                 builder: (_) => InvitePendingScreen(
                   invitationId: state.createdInvitationId,
-                  recipientEmail: state.emailOrPhone.trim(),
+                  recipientEmail: state.email.trim(),
                   role: state.selectedRole,
                   childName: state.childName,
                 ),
@@ -172,7 +172,9 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: secondaryColor,
+                                color: state.emailError.isNotEmpty
+                                    ? redColor
+                                    : secondaryColor,
                                 width: 1.w,
                               ),
                             ),
@@ -183,16 +185,22 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      "EMAIL OR PHONE".appText(
+                                      "EMAIL".appText(
                                         fontSize: 12.sp,
-                                        color: greyColor11,
+                                        color: state.emailError.isNotEmpty
+                                            ? redColor
+                                            : greyColor11,
                                         fontWeight: FontWeight.bold,
                                       ),
                                       4.spaceH,
                                       TextField(
                                         controller: _emailController,
+                                        keyboardType:
+                                            TextInputType.emailAddress,
+                                        autocorrect: false,
+                                        enableSuggestions: false,
                                         onChanged: (String val) {
-                                          cubit.updateEmailOrPhone(val);
+                                          cubit.updateEmail(val);
                                         },
                                         style: getTextStyle(
                                           fontSize: 16.sp,
@@ -203,8 +211,7 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                                           isDense: true,
                                           contentPadding: EdgeInsets.zero,
                                           border: InputBorder.none,
-                                          hintText:
-                                              "e.g. name@example.com or phone",
+                                          hintText: "e.g. name@example.com",
                                           hintStyle: getTextStyle(
                                             fontSize: 16.sp,
                                             color: greyColor4,
@@ -215,7 +222,9 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                                     ],
                                   ),
                                 ),
-                                if (state.emailOrPhone.trim().isNotEmpty)
+                                if (state.email.trim().isNotEmpty &&
+                                    state.email.trim().isValidEmail &&
+                                    !cubit.isSelfEmail(state.email.trim()))
                                   Container(
                                     padding: EdgeInsets.all(3.r),
                                     decoration: const BoxDecoration(
@@ -231,6 +240,17 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                               ],
                             ),
                           ),
+                          if (state.emailError.isNotEmpty) ...[
+                            6.spaceH,
+                            Padding(
+                              padding: EdgeInsets.only(left: 4.w),
+                              child: state.emailError.appText(
+                                fontSize: 12.sp,
+                                color: redColor,
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                          ],
                           24.spaceH,
                           "THEIR RELATIONSHIP TO ${state.childName.toUpperCase()}"
                               .appText(

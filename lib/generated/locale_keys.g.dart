@@ -614,4 +614,5 @@ abstract class LocaleKeys {
   static const healthLogSaved = 'healthLogSaved';
   static const noteSaved = 'noteSaved';
   static const pleaseSelectChildFirst = 'pleaseSelectChildFirst';
+  static const cannotInviteYourselfCaregiver = 'cannotInviteYourselfCaregiver';
 }

@@ -1,6 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
@@ -22,7 +26,8 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
     changeProps(
       childName: cName,
       selectedRole: 'Grandparent',
-      emailOrPhone: '',
+      email: '',
+      emailError: '',
       isSending: false,
       sendStatus: const ApiResultStatus.initial(),
     );
@@ -31,7 +36,8 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
   void changeProps({
     String? selectedRole,
     String? childName,
-    String? emailOrPhone,
+    String? email,
+    String? emailError,
     bool? isSending,
     String? createdInvitationId,
     ApiResultStatus? sendStatus,
@@ -40,7 +46,8 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
       state.copyWith(
         selectedRole: selectedRole ?? state.selectedRole,
         childName: childName ?? state.childName,
-        emailOrPhone: emailOrPhone ?? state.emailOrPhone,
+        email: email ?? state.email,
+        emailError: emailError ?? state.emailError,
         isSending: isSending ?? state.isSending,
         createdInvitationId: createdInvitationId ?? state.createdInvitationId,
         sendStatus: sendStatus ?? ApiResultStatus.initial(),
@@ -49,29 +56,80 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
   }
 
   void selectRole(String role) => changeProps(selectedRole: role);
-  void updateEmailOrPhone(String val) => changeProps(emailOrPhone: val);
+
+  void updateEmail(String val) {
+    if (state.emailError.isNotEmpty) {
+      changeProps(email: val, emailError: '');
+    } else {
+      changeProps(email: val);
+    }
+  }
+
+  void updateEmailOrPhone(String val) => updateEmail(val);
+
+  bool isSelfEmail(String inputEmail) {
+    final String clean = inputEmail.trim().toLowerCase();
+    if (clean.isEmpty) {
+      return false;
+    }
+
+    final UserModel? user = preferences.getUserModel();
+    final String? userEmail = user?.email?.trim().toLowerCase();
+    if (userEmail != null && userEmail.isNotEmpty && userEmail == clean) {
+      return true;
+    }
+
+    final String? parentEmail = user?.parentEmail?.trim().toLowerCase();
+    if (parentEmail != null && parentEmail.isNotEmpty && parentEmail == clean) {
+      return true;
+    }
+
+    try {
+      final String? authEmail = FirebaseAuth.instance.currentUser?.email
+          ?.trim()
+          .toLowerCase();
+      if (authEmail != null && authEmail.isNotEmpty && authEmail == clean) {
+        return true;
+      }
+    } catch (_) {}
+
+    return false;
+  }
 
   Future<bool> sendInvite() async {
-    final String cleanRecipient = state.emailOrPhone.trim();
+    final String cleanRecipient = state.email.trim();
     if (cleanRecipient.isEmpty) {
+      final String errorMsg = LocaleKeys.pleaseEnterEmailAddress.tr();
       changeProps(
-        sendStatus: ApiResultStatus.error(
-          error: Exception('Please enter an email address'),
-        ),
+        emailError: errorMsg,
+        sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),
       );
       return false;
     }
 
     if (!cleanRecipient.isValidEmail) {
+      final String errorMsg = LocaleKeys.pleaseEnterValidEmail.tr();
       changeProps(
-        sendStatus: ApiResultStatus.error(
-          error: Exception('Please enter a valid email address'),
-        ),
+        emailError: errorMsg,
+        sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),
       );
       return false;
     }
 
-    changeProps(isSending: true, sendStatus: const ApiResultStatus.loading());
+    if (isSelfEmail(cleanRecipient)) {
+      final String errorMsg = LocaleKeys.cannotInviteYourselfCaregiver.tr();
+      changeProps(
+        emailError: errorMsg,
+        sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),
+      );
+      return false;
+    }
+
+    changeProps(
+      emailError: '',
+      isSending: true,
+      sendStatus: const ApiResultStatus.loading(),
+    );
 
     final String fromEmail =
         preferences.getUserModel()?.email ?? 'parent@lovingbrain.com';
