@@ -422,6 +422,7 @@ class _OtpDigitBox extends StatelessWidget {
           enabled: enabled,
           obscureText: obscureText,
           keyboardType: TextInputType.number,
+          autofillHints: const <String>[AutofillHints.oneTimeCode],
           textAlign: TextAlign.center,
           textAlignVertical: TextAlignVertical.center,
           style: textStyle,
