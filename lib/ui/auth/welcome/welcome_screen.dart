@@ -18,16 +18,19 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(Assets.v2.images.imgWelcomeBg.path),
+    return Scaffold(
+      backgroundColor: const Color(0xFFFEF8F4),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF8F4),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage(Assets.v2.images.imgWelcomeBg.path),
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: SafeArea(
+        child: SafeArea(
           child: Column(
             children: [
               32.spaceH,

@@ -77,21 +77,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
               );
         }
 
-        return PopScope(
-          canPop: true,
-          onPopInvokedWithResult: (bool didPop, Object? result) {
-            context.read<RegisterCubit>().init();
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(Assets.v2.images.imgBg.path),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (bool didPop, Object? result) {
+              context.read<RegisterCubit>().init();
+            },
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF8F4),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(Assets.v2.images.imgBg.path),
+                ),
               ),
-            ),
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: SafeArea(
+              child: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return SingleChildScrollView(

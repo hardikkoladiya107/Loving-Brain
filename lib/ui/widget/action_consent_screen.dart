@@ -30,6 +30,7 @@ class ActionConsentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFEF8F4),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -39,6 +40,7 @@ class ActionConsentScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
+          color: Color(0xFFFEF8F4),
           gradient: RadialGradient(
             center: Alignment.topLeft,
             radius: 1.5,

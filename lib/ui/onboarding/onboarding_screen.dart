@@ -1509,24 +1509,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         );
       },
       builder: (BuildContext context, OnboardingState state) {
-        return PopScope(
-          canPop: false,
-          onPopInvokedWithResult: (bool didPop, Object? result) {
-            if (didPop) {
-              return;
-            }
-            _onBackTap(state);
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage(Assets.v2.images.imgBg.path),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (bool didPop, Object? result) {
+              if (didPop) {
+                return;
+              }
+              _onBackTap(state);
+            },
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF8F4),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage(Assets.v2.images.imgBg.path),
+                ),
               ),
-            ),
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: SafeArea(
+              child: SafeArea(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

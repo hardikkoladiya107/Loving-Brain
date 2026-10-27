@@ -22,6 +22,7 @@ class _SucessScreenState extends State<SucessScreen> {
     final double width = context.width;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFEF8F4),
       body: Stack(
         children: [
           _background(),

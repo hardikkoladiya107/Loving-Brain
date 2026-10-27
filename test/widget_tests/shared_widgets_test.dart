@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
@@ -64,10 +65,10 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(SpinKitThreeBounce), findsOneWidget);
         expect(find.text('Submit Form'), findsNothing);
 
-        await tester.tap(find.byType(CircularProgressIndicator));
+        await tester.tap(find.byType(SpinKitThreeBounce));
         await tester.pump(const Duration(milliseconds: 100));
 
         expect(tapped, isFalse);

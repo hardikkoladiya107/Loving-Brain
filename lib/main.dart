@@ -111,6 +111,13 @@ class _MyAppState extends State<MyApp> {
           title: LocaleKeys.appName.tr(),
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            scaffoldBackgroundColor: const Color(0xFFFEF8F4),
+            canvasColor: const Color(0xFFFEF8F4),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: primaryColor,
+              surface: const Color(0xFFFEF8F4),
+              brightness: Brightness.light,
+            ),
             fontFamily: GoogleFonts.quicksand().fontFamily,
             inputDecorationTheme: InputDecorationTheme(
               hintStyle: getTextStyle(
@@ -125,13 +132,16 @@ class _MyAppState extends State<MyApp> {
           locale: context.locale,
           builder: (BuildContext context, Widget? child) {
             final Widget easyLoadingChild = EasyLoading.init()(context, child);
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(
-                textScaler: MediaQuery.textScalerOf(
-                  context,
-                ).clamp(minScaleFactor: 0.85, maxScaleFactor: 1.35),
+            return ColoredBox(
+              color: const Color(0xFFFEF8F4),
+              child: MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  textScaler: MediaQuery.textScalerOf(
+                    context,
+                  ).clamp(minScaleFactor: 0.85, maxScaleFactor: 1.35),
+                ),
+                child: easyLoadingChild,
               ),
-              child: easyLoadingChild,
             );
           },
         ),
