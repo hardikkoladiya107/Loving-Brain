@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/auth/register/bloc/register_state.dart';
 
@@ -33,6 +34,9 @@ class RegisterCubit extends Cubit<RegisterState> {
     bool? isAuthSubmitting,
     int? currentStep,
     bool? isEmailChecking,
+    bool? isPhoneAuth,
+    String? phoneVerificationId,
+    int? phoneResendToken,
     String? submittingMethod,
   }) {
     if (submittingMethod != null) {
@@ -58,6 +62,9 @@ class RegisterCubit extends Cubit<RegisterState> {
         isAuthSubmitting: isAuthSubmitting ?? state.isAuthSubmitting,
         currentStep: currentStep ?? state.currentStep,
         isEmailChecking: isEmailChecking ?? state.isEmailChecking,
+        isPhoneAuth: isPhoneAuth ?? state.isPhoneAuth,
+        phoneVerificationId: phoneVerificationId ?? state.phoneVerificationId,
+        phoneResendToken: phoneResendToken ?? state.phoneResendToken,
       ),
     );
   }
@@ -178,37 +185,100 @@ class RegisterCubit extends Cubit<RegisterState> {
       isAuthSubmitting: false,
       currentStep: 0,
       isEmailChecking: false,
+      isPhoneAuth: false,
+      phoneVerificationId: '',
+      phoneResendToken: null,
       submittingMethod: '',
     );
   }
 
   Future<void> sendOtp() async {
-    final String email = state.emailAddress.trim();
-    if (email.isEmpty) {
-      changeProps(emailAddressError: LocaleKeys.pleaseEnterEmailAddress.tr());
+    final String input = state.emailAddress.trim();
+    if (input.isEmpty) {
+      changeProps(
+        emailAddressError: 'Please enter your email or mobile number',
+      );
       return;
     }
-    if (!email.isValidEmail) {
-      changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
-      return;
+
+    final bool isEmail = input.contains('@');
+    if (isEmail) {
+      if (!input.isValidEmail) {
+        changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
+        return;
+      }
+
+      changeProps(
+        emailAddressError: '',
+        apiResultStatus: const ApiResultStatus.loading(),
+        isAuthSubmitting: true,
+        submittingMethod: 'email',
+        isPhoneAuth: false,
+        phoneVerificationId: '',
+        phoneResendToken: null,
+      );
+
+      final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
+        email: input,
+      );
+
+      changeProps(
+        apiResultStatus: apiResult,
+        isAuthSubmitting: false,
+        submittingMethod: '',
+      );
+    } else {
+      // Mobile Number validation and Firebase Phone Auth
+      final String cleanPhone = input.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+      if (!cleanPhone.startsWith('+')) {
+        changeProps(
+          emailAddressError:
+              'Please include country code with "+" (e.g. +1 555 123 4567 or +91...)',
+        );
+        return;
+      }
+
+      final RegExp phoneRegex = RegExp(r'^\+[0-9]{7,15}$');
+      if (!phoneRegex.hasMatch(cleanPhone)) {
+        changeProps(emailAddressError: 'Please enter a valid phone number');
+        return;
+      }
+
+      changeProps(
+        emailAddressError: '',
+        apiResultStatus: const ApiResultStatus.loading(),
+        isAuthSubmitting: true,
+        submittingMethod: 'phone',
+        isPhoneAuth: true,
+      );
+
+      await AuthRepo.instance.sendPhoneOtp(
+        phoneNumber: cleanPhone,
+        onCodeSent: (String verificationId, int? resendToken) {
+          changeProps(
+            phoneVerificationId: verificationId,
+            phoneResendToken: resendToken,
+            apiResultStatus: const ApiResultStatus.data(data: true),
+            isAuthSubmitting: false,
+            submittingMethod: '',
+          );
+        },
+        onError: (Exception error) {
+          changeProps(
+            apiResultStatus: ApiResultStatus.error(error: error),
+            isAuthSubmitting: false,
+            submittingMethod: '',
+          );
+        },
+        onAutoVerified: (UserModel userModel) {
+          changeProps(
+            apiResultStatus: ApiResultStatus.data(data: userModel.toJson()),
+            isAuthSubmitting: false,
+            submittingMethod: '',
+          );
+        },
+      );
     }
-
-    changeProps(
-      emailAddressError: '',
-      apiResultStatus: ApiResultStatus.loading(),
-      isAuthSubmitting: true,
-      submittingMethod: 'email',
-    );
-
-    final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
-      email: email,
-    );
-
-    changeProps(
-      apiResultStatus: apiResult,
-      isAuthSubmitting: false,
-      submittingMethod: '',
-    );
   }
 
   Future<void> googleAuthenticate() async {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../model/api_result_status.dart';
+import '../../../../model/user_model.dart';
 import '../../../../repo/auth_repo.dart';
 import 'otp_state.dart';
 
@@ -11,11 +12,19 @@ class OtpCubit extends Cubit<OtpState> {
   Timer? _resendTimer;
   Timer? _lockoutTimer;
 
-  void init({String? destination}) {
+  void init({
+    String? destination,
+    String? verificationId,
+    int? resendToken,
+    bool isPhoneAuth = false,
+  }) {
     emit(const OtpState());
-    if (destination != null && destination.isNotEmpty) {
-      changeProps(destination: destination);
-    }
+    changeProps(
+      destination: destination ?? '',
+      verificationId: verificationId ?? '',
+      resendToken: resendToken,
+      isPhoneAuth: isPhoneAuth,
+    );
     startResendTimer();
   }
 
@@ -57,6 +66,9 @@ class OtpCubit extends Cubit<OtpState> {
     int? resendCountdown,
     bool? canResend,
     String? destination,
+    String? verificationId,
+    int? resendToken,
+    bool? isPhoneAuth,
     int? failedAttempts,
     bool? isLocked,
     int? lockoutSeconds,
@@ -71,6 +83,9 @@ class OtpCubit extends Cubit<OtpState> {
         resendCountdown: resendCountdown ?? state.resendCountdown,
         canResend: canResend ?? state.canResend,
         destination: destination ?? state.destination,
+        verificationId: verificationId ?? state.verificationId,
+        resendToken: resendToken ?? state.resendToken,
+        isPhoneAuth: isPhoneAuth ?? state.isPhoneAuth,
         failedAttempts: failedAttempts ?? state.failedAttempts,
         isLocked: isLocked ?? state.isLocked,
         lockoutSeconds: lockoutSeconds ?? state.lockoutSeconds,
@@ -94,12 +109,35 @@ class OtpCubit extends Cubit<OtpState> {
       otpError: '',
     );
     try {
-      final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
-        email: state.destination,
-      );
-      changeProps(resendStatus: apiResult);
-      if (apiResult is Data) {
-        startResendTimer();
+      if (state.isPhoneAuth) {
+        await AuthRepo.instance.sendPhoneOtp(
+          phoneNumber: state.destination,
+          forceResendingToken: state.resendToken,
+          onCodeSent: (String newVerificationId, int? newResendToken) {
+            changeProps(
+              verificationId: newVerificationId,
+              resendToken: newResendToken,
+              resendStatus: const ApiResultStatus.data(data: true),
+            );
+            startResendTimer();
+          },
+          onError: (Exception error) {
+            changeProps(resendStatus: ApiResultStatus.error(error: error));
+          },
+          onAutoVerified: (UserModel userModel) {
+            changeProps(
+              verifyStatus: ApiResultStatus.data(data: userModel.toJson()),
+            );
+          },
+        );
+      } else {
+        final ApiResultStatus apiResult = await AuthRepo.instance.sendEmailOtp(
+          email: state.destination,
+        );
+        changeProps(resendStatus: apiResult);
+        if (apiResult is Data) {
+          startResendTimer();
+        }
       }
     } catch (e) {
       changeProps(
@@ -122,8 +160,11 @@ class OtpCubit extends Cubit<OtpState> {
       changeProps(otpError: 'Please enter verification code');
       return;
     }
-    if (code.length < 4) {
-      changeProps(otpError: 'Please enter 4-digit verification code');
+    final int requiredLength = state.isPhoneAuth ? 6 : 4;
+    if (code.length < requiredLength) {
+      changeProps(
+        otpError: 'Please enter $requiredLength-digit verification code',
+      );
       return;
     }
 
@@ -133,10 +174,16 @@ class OtpCubit extends Cubit<OtpState> {
       otpError: '',
     );
     try {
-      final ApiResultStatus apiResult = await AuthRepo.instance.verifyEmailOtp(
-        email: state.destination,
-        otpCode: code,
-      );
+      final ApiResultStatus apiResult = state.isPhoneAuth
+          ? await AuthRepo.instance.verifyPhoneOtp(
+              verificationId: state.verificationId,
+              smsCode: code,
+              phoneNumber: state.destination,
+            )
+          : await AuthRepo.instance.verifyEmailOtp(
+              email: state.destination,
+              otpCode: code,
+            );
 
       if (apiResult is Data) {
         changeProps(

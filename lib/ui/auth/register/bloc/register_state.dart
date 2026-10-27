@@ -22,5 +22,8 @@ abstract class RegisterState with _$RegisterState {
     /// 0 = email step, 1 = password step
     @Default(0) int currentStep,
     @Default(false) bool isEmailChecking,
+    @Default(false) bool isPhoneAuth,
+    @Default('') String phoneVerificationId,
+    @Default(null) int? phoneResendToken,
   }) = _RegisterState;
 }

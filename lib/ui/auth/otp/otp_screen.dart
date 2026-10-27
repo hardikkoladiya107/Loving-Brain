@@ -24,9 +24,18 @@ import 'bloc/otp_cubit.dart';
 import 'bloc/otp_state.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key, this.destination});
+  const OtpScreen({
+    super.key,
+    this.destination,
+    this.verificationId,
+    this.resendToken,
+    this.isPhoneAuth = false,
+  });
 
   final String? destination;
+  final String? verificationId;
+  final int? resendToken;
+  final bool isPhoneAuth;
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -38,7 +47,12 @@ class _OtpScreenState extends State<OtpScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
-      context.read<OtpCubit>().init(destination: widget.destination);
+      context.read<OtpCubit>().init(
+        destination: widget.destination,
+        verificationId: widget.verificationId,
+        resendToken: widget.resendToken,
+        isPhoneAuth: widget.isPhoneAuth,
+      );
     });
   }
 
@@ -146,9 +160,10 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       },
       builder: (BuildContext context, OtpState state) {
+        final int codeLength = state.isPhoneAuth ? 6 : 4;
         final String subtitle = state.destination.isNotEmpty
-            ? "We’ve sent a 4 digit verification code to ${state.destination}."
-            : "We’ve sent a 4 digit verification code to your email.";
+            ? "We’ve sent a $codeLength digit verification code to ${state.destination}."
+            : "We’ve sent a $codeLength digit verification code.";
 
         return Container(
           decoration: BoxDecoration(
@@ -196,12 +211,19 @@ class _OtpScreenState extends State<OtpScreen> {
                                 .appPadding(left: 20.r, right: 20.r),
                             28.spaceH,
                             AppOtpField(
-                              length: 4,
+                              length: codeLength,
+                              boxWidth: state.isPhoneAuth ? 44.w : null,
+                              boxHeight: state.isPhoneAuth ? 52.h : null,
+                              spacing: state.isPhoneAuth ? 8.w : null,
                               value: state.otpCode,
                               hasError: state.otpError.isNotEmpty,
                               activeBorderColor: secondaryColor,
                               onChanged: (String value) {
                                 context.read<OtpCubit>().onOtpChanged(value);
+                              },
+                              onCompleted: (String value) {
+                                context.read<OtpCubit>().onOtpChanged(value);
+                                context.read<OtpCubit>().verifyOtp();
                               },
                             ).appPadding(left: 20.r, right: 20.r),
                             if (state.otpError.isNotEmpty) ...<Widget>[

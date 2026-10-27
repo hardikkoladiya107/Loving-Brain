@@ -138,7 +138,16 @@ class AppRouter {
         GoRoute(
           path: RoutePaths.otp,
           builder: (BuildContext context, GoRouterState state) {
-            final String? destination = state.extra as String?;
+            final dynamic extra = state.extra;
+            if (extra is Map<String, dynamic>) {
+              return OtpScreen(
+                destination: extra['destination'] as String?,
+                verificationId: extra['verificationId'] as String?,
+                resendToken: extra['resendToken'] as int?,
+                isPhoneAuth: extra['isPhoneAuth'] as bool? ?? false,
+              );
+            }
+            final String? destination = extra as String?;
             return OtpScreen(destination: destination);
           },
         ),

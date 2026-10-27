@@ -94,8 +94,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 .appPadding(left: 20.r, right: 20.r),
                             21.spaceH,
                             AppTextField(
-                              title: "Email",
-                              hint: "Enter email",
+                              title: "Email or Mobile Number",
+                              hint: "Enter email or mobile number",
                               keyboardType: TextInputType.emailAddress,
                               onChanged: (val) {
                                 context.read<RegisterCubit>().changeProps(
@@ -256,11 +256,23 @@ class _RegisterScreenState extends State<RegisterScreen>
                 router.go(RoutePaths.onboarding);
               }
             } else {
-              final String email = state.emailAddress.trim();
+              final String destination = state.emailAddress.trim();
+              final bool isPhone = state.isPhoneAuth;
+              final String verificationId = state.phoneVerificationId;
+              final int? resendToken = state.phoneResendToken;
+
               context.read<RegisterCubit>().changeProps(
                 apiResultStatus: const ApiResultStatus.initial(),
               );
-              context.push(RoutePaths.otp, extra: email);
+              context.push(
+                RoutePaths.otp,
+                extra: <String, dynamic>{
+                  'destination': destination,
+                  'verificationId': verificationId,
+                  'resendToken': resendToken,
+                  'isPhoneAuth': isPhone,
+                },
+              );
             }
           },
           error: (error) {
