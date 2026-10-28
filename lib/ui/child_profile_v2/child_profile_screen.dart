@@ -326,14 +326,17 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
   }
 
   Widget _buildBottomActions(BuildContext context) {
+    final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Positioned(
       bottom: 0,
       left: 0,
       right: 0,
       child: Container(
         padding: EdgeInsets.only(
-          top: 40.h,
-          bottom: 40.h,
+          top: isKeyboardOpen ? 10.h : 24.h,
+          bottom: isKeyboardOpen
+              ? 10.h
+              : (20.h + MediaQuery.of(context).padding.bottom),
           left: 20.w,
           right: 20.w,
         ),

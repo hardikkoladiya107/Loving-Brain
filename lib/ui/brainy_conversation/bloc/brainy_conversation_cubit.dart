@@ -98,6 +98,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     bool clearPlayingMessageId = false,
     bool? isAudioPlaying,
   }) {
+    if (isClosed) return;
+
     final List<String> updatedImagePaths = clearSelectedImages
         ? <String>[]
         : (selectedImagePaths ?? state.selectedImagePaths);
@@ -132,25 +134,57 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     );
   }
 
+  void clearDraft() {
+    if (isClosed) return;
+    _chatsSubscription?.cancel();
+    _chatsSubscription = null;
+    if (state.isAudioPlaying || state.isAttachedAudioPlaying) {
+      try {
+        _audioPlayer.stop().catchError((_) {});
+      } catch (_) {}
+    }
+    changeProps(
+      isTyping: false,
+      clearSelectedImage: true,
+      clearSelectedImages: true,
+      clearAttachedAudio: true,
+      isAttachedAudioPlaying: false,
+      attachedAudioPosition: Duration.zero,
+      attachedAudioDuration: Duration.zero,
+      isAudioPlaying: false,
+      clearPlayingMessageId: true,
+    );
+  }
+
   Future<void> init({
     String? conversationId,
     String? initialChat,
     File? initialAudioFile,
     String? topic,
   }) async {
+    clearDraft();
     final String effectiveTopic = (topic ?? '').trim().isNotEmpty
         ? topic!.trim()
         : 'Sleep';
 
-    changeProps(conversationId: conversationId, topic: effectiveTopic);
-
     if (conversationId != null && conversationId.isNotEmpty) {
+      if (conversationId != state.conversationId) {
+        changeProps(
+          conversationId: conversationId,
+          topic: effectiveTopic,
+          messages: <BrainyMessage>[],
+        );
+      } else {
+        changeProps(conversationId: conversationId, topic: effectiveTopic);
+      }
       _listenToConversation(
         conversationId,
         fallbackInitialQuestion: initialChat,
       );
       return;
     }
+
+    changeProps(conversationId: conversationId, topic: effectiveTopic);
 
     if ((initialChat != null && initialChat.trim().isNotEmpty) ||
         initialAudioFile != null) {

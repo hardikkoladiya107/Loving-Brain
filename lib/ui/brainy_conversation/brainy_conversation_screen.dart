@@ -46,6 +46,24 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _imagePicker = ImagePicker();
+  late BrainyConversationCubit _cubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _cubit = context.read<BrainyConversationCubit>();
+  }
+
+  void _clearDraft() {
+    _controller.clear();
+    _cubit.clearDraft();
+  }
+
+  void _onBack() {
+    FocusScope.of(context).unfocus();
+    _clearDraft();
+    Navigator.pop(context);
+  }
 
   @override
   void initState() {
@@ -68,6 +86,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
 
   @override
   void dispose() {
+    _clearDraft();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -400,431 +419,445 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
           });
         }
       },
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150,
-                top: -150,
-                child: Container(
-                  width: 400,
-                  height: 400,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
+      builder: (BuildContext context, BrainyConversationState state) {
+        return PopScope(
+          canPop: true,
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            if (didPop) {
+              _clearDraft();
+            }
+          },
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150,
+                  top: -150,
+                  child: Container(
+                    width: 400,
+                    height: 400,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(24),
-                              onTap: () => Navigator.pop(context),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Icon(
-                                  Icons.arrow_back,
-                                  color: darkBlue,
-                                  size: 24.sp,
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Ink(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(24.r),
+                                onTap: _onBack,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.r),
+                                  child: Icon(
+                                    Icons.arrow_back,
+                                    color: darkBlue,
+                                    size: 24.sp,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        controller: _scrollController,
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 16.h,
-                        ),
-                        itemCount:
-                            state.messages.length + (state.isTyping ? 1 : 0),
-                        separatorBuilder: (_, _) => 16.spaceH,
-                        itemBuilder: (context, index) {
-                          if (index == state.messages.length) {
-                            return _buildTypingIndicator();
-                          }
-                          final BrainyMessage msg = state.messages[index];
-                          return _buildMessageCardFromData(
-                            context,
-                            state,
-                            msg,
-                            index,
-                          );
-                        },
-                      ),
-                    ),
-                    // Multiple images preview thumbnails
-                    if (state.selectedImagePaths.isNotEmpty)
-                      Container(
-                        height: 72.h,
-                        margin: EdgeInsets.only(
-                          left: 20.w,
-                          right: 20.w,
-                          bottom: 4.h,
-                        ),
+                      Expanded(
                         child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: state.selectedImagePaths.length,
-                          separatorBuilder: (BuildContext context, int index) =>
-                              10.spaceW,
-                          itemBuilder: (BuildContext _, int imgIdx) {
-                            final String imagePath =
-                                state.selectedImagePaths[imgIdx];
-                            return Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  child: Image.file(
-                                    File(imagePath),
-                                    height: 72.h,
-                                    width: 72.h,
-                                    fit: BoxFit.cover,
+                          controller: _scrollController,
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 16.h,
+                          ),
+                          itemCount:
+                              state.messages.length + (state.isTyping ? 1 : 0),
+                          separatorBuilder: (_, _) => 16.spaceH,
+                          itemBuilder: (context, index) {
+                            if (index == state.messages.length) {
+                              return _buildTypingIndicator();
+                            }
+                            final BrainyMessage msg = state.messages[index];
+                            return _buildMessageCardFromData(
+                              context,
+                              state,
+                              msg,
+                              index,
+                            );
+                          },
+                        ),
+                      ),
+                      // Multiple images preview thumbnails
+                      if (state.selectedImagePaths.isNotEmpty)
+                        Container(
+                          height: 72.h,
+                          margin: EdgeInsets.only(
+                            left: 20.w,
+                            right: 20.w,
+                            bottom: 4.h,
+                          ),
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: state.selectedImagePaths.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) => 10.spaceW,
+                            itemBuilder: (BuildContext _, int imgIdx) {
+                              final String imagePath =
+                                  state.selectedImagePaths[imgIdx];
+                              return Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: Image.file(
+                                      File(imagePath),
+                                      height: 72.h,
+                                      width: 72.h,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 4.r,
+                                    top: 4.r,
+                                    child: GestureDetector(
+                                      onTap: () => context
+                                          .read<BrainyConversationCubit>()
+                                          .removeSelectedImageAt(imgIdx),
+                                      child: Container(
+                                        padding: EdgeInsets.all(4.r),
+                                        decoration: const BoxDecoration(
+                                          color: Colors.black54,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.close,
+                                          size: 13.sp,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+
+                      // Attached audio note preview widget
+                      if (state.attachedAudioPath != null &&
+                          state.attachedAudioPath!.isNotEmpty)
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 20.w,
+                            right: 20.w,
+                            bottom: 4.h,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 10.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF9F6FE),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: const Color(0xFFE9E3FC),
+                              width: 1.w,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.03),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () => context
+                                    .read<BrainyConversationCubit>()
+                                    .togglePlayAttachedAudio(),
+                                child: Container(
+                                  width: 38.w,
+                                  height: 38.w,
+                                  decoration: const BoxDecoration(
+                                    color: secondaryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    state.isAttachedAudioPlaying
+                                        ? Icons.pause_rounded
+                                        : Icons.play_arrow_rounded,
+                                    color: Colors.white,
+                                    size: 22.sp,
                                   ),
                                 ),
-                                Positioned(
-                                  right: 4.r,
-                                  top: 4.r,
-                                  child: GestureDetector(
-                                    onTap: () => context
-                                        .read<BrainyConversationCubit>()
-                                        .removeSelectedImageAt(imgIdx),
-                                    child: Container(
-                                      padding: EdgeInsets.all(4.r),
-                                      decoration: const BoxDecoration(
-                                        color: Colors.black54,
-                                        shape: BoxShape.circle,
+                              ),
+                              12.spaceW,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        "Voice Note".appText(
+                                          fontSize: 13.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: darkBlue,
+                                        ),
+                                        _formatAudioDuration(
+                                          state.isAttachedAudioPlaying ||
+                                                  state.attachedAudioPosition >
+                                                      Duration.zero
+                                              ? state.attachedAudioPosition
+                                              : state.attachedAudioDuration,
+                                        ).appText(
+                                          fontSize: 11.sp,
+                                          color: greyColor6,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ],
+                                    ),
+                                    6.spaceH,
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(4.r),
+                                      child: LinearProgressIndicator(
+                                        value:
+                                            (state
+                                                    .attachedAudioDuration
+                                                    .inMilliseconds >
+                                                0)
+                                            ? (state
+                                                          .attachedAudioPosition
+                                                          .inMilliseconds /
+                                                      state
+                                                          .attachedAudioDuration
+                                                          .inMilliseconds)
+                                                  .clamp(0.0, 1.0)
+                                            : (state.isAttachedAudioPlaying
+                                                  ? null
+                                                  : 0.0),
+                                        backgroundColor: const Color(
+                                          0xFFE2DCF8,
+                                        ),
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                              secondaryColor,
+                                            ),
+                                        minHeight: 4.h,
                                       ),
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 13.sp,
-                                        color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              8.spaceW,
+                              IconButton(
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(
+                                  minWidth: 32.w,
+                                  minHeight: 32.w,
+                                ),
+                                icon: Icon(
+                                  Icons.delete_outline_rounded,
+                                  color: redColor,
+                                  size: 20.sp,
+                                ),
+                                onPressed: _confirmDeleteVoiceNote,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      Builder(
+                        builder: (BuildContext composerCtx) {
+                          final bool isKeyboardOpen =
+                              MediaQuery.of(composerCtx).viewInsets.bottom > 0;
+                          final double bottomPadding = isKeyboardOpen
+                              ? 8.h
+                              : (12.h +
+                                    MediaQuery.of(composerCtx).padding.bottom);
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              left: 20.w,
+                              right: 20.w,
+                              top: 4.h,
+                              bottom: bottomPadding,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: AppTextField(
+                                    controller: _controller,
+                                    hint: "Ask Brainy...",
+                                    tfType: TFTYPE.FILLED,
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    borderRadius: BorderRadius.circular(27.r),
+                                    height: 54.h,
+                                    maxLines: 4,
+                                    minLines: 1,
+                                    textAlignVertical: TextAlignVertical.center,
+                                    rowCrossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    inputFormatters: [
+                                      LengthLimitingTextInputFormatter(500),
+                                    ],
+                                    contentPadding: EdgeInsets.only(
+                                      left: 20.w,
+                                      right: 6.w,
+                                      top: 0,
+                                      bottom: 0,
+                                    ),
+                                    suffixIcon: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(
+                                            minWidth: 32.w,
+                                            minHeight: 32.w,
+                                          ),
+                                          onPressed: () =>
+                                              _showImageSourcePicker(context),
+                                          icon: Icon(
+                                            Icons.image_outlined,
+                                            color: greyColor4,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                        IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(
+                                            minWidth: 32.w,
+                                            minHeight: 32.w,
+                                          ),
+                                          onPressed: () async {
+                                            final bool granted =
+                                                await PermissionHelper.ensureMicrophonePermission(
+                                                  context,
+                                                );
+                                            if (!granted || !context.mounted) {
+                                              return;
+                                            }
+
+                                            final BrainyConversationCubit
+                                            cubit = context
+                                                .read<
+                                                  BrainyConversationCubit
+                                                >();
+                                            showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              builder: (_) => BrainyVoiceSheet(
+                                                topic: state.topic,
+                                                actionButtonTitle:
+                                                    "Attach Note",
+                                                onSendAudio: (audioFile, text) {
+                                                  if (audioFile != null) {
+                                                    cubit.attachAudio(
+                                                      audioFile.path,
+                                                    );
+                                                  }
+                                                  if (text.trim().isNotEmpty &&
+                                                      _controller.text
+                                                          .trim()
+                                                          .isEmpty) {
+                                                    _controller.text = text
+                                                        .trim();
+                                                  }
+                                                },
+                                              ),
+                                            );
+                                          },
+                                          icon: Icon(
+                                            Icons.mic_none_rounded,
+                                            color: greyColor4,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                        6.spaceW,
+                                      ],
+                                    ),
+                                    onSubmitted: (val) {
+                                      context
+                                          .read<BrainyConversationCubit>()
+                                          .sendMessage(val);
+                                      _controller.clear();
+                                      _scrollToBottom();
+                                    },
+                                  ),
+                                ),
+                                12.spaceW,
+                                Material(
+                                  color: Colors.transparent,
+                                  child: Ink(
+                                    decoration: const BoxDecoration(
+                                      color: secondaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(27.r),
+                                      onTap: () {
+                                        context
+                                            .read<BrainyConversationCubit>()
+                                            .sendMessage(_controller.text);
+                                        _controller.clear();
+                                        _scrollToBottom();
+                                      },
+                                      child: SizedBox(
+                                        width: 54.h,
+                                        height: 54.h,
+                                        child: Icon(
+                                          Icons.send,
+                                          color: Colors.white,
+                                          size: 22.sp,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ],
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
-
-                    // Attached audio note preview widget
-                    if (state.attachedAudioPath != null &&
-                        state.attachedAudioPath!.isNotEmpty)
-                      Container(
-                        margin: EdgeInsets.only(
-                          left: 20.w,
-                          right: 20.w,
-                          bottom: 4.h,
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 10.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF9F6FE),
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: const Color(0xFFE9E3FC),
-                            width: 1.w,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () => context
-                                  .read<BrainyConversationCubit>()
-                                  .togglePlayAttachedAudio(),
-                              child: Container(
-                                width: 38.w,
-                                height: 38.w,
-                                decoration: const BoxDecoration(
-                                  color: secondaryColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  state.isAttachedAudioPlaying
-                                      ? Icons.pause_rounded
-                                      : Icons.play_arrow_rounded,
-                                  color: Colors.white,
-                                  size: 22.sp,
-                                ),
-                              ),
-                            ),
-                            12.spaceW,
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      "Voice Note".appText(
-                                        fontSize: 13.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: darkBlue,
-                                      ),
-                                      _formatAudioDuration(
-                                        state.isAttachedAudioPlaying ||
-                                                state.attachedAudioPosition >
-                                                    Duration.zero
-                                            ? state.attachedAudioPosition
-                                            : state.attachedAudioDuration,
-                                      ).appText(
-                                        fontSize: 11.sp,
-                                        color: greyColor6,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ],
-                                  ),
-                                  6.spaceH,
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(4.r),
-                                    child: LinearProgressIndicator(
-                                      value:
-                                          (state
-                                                  .attachedAudioDuration
-                                                  .inMilliseconds >
-                                              0)
-                                          ? (state
-                                                        .attachedAudioPosition
-                                                        .inMilliseconds /
-                                                    state
-                                                        .attachedAudioDuration
-                                                        .inMilliseconds)
-                                                .clamp(0.0, 1.0)
-                                          : (state.isAttachedAudioPlaying
-                                                ? null
-                                                : 0.0),
-                                      backgroundColor: const Color(0xFFE2DCF8),
-                                      valueColor:
-                                          const AlwaysStoppedAnimation<Color>(
-                                            secondaryColor,
-                                          ),
-                                      minHeight: 4.h,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            8.spaceW,
-                            IconButton(
-                              visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(
-                                minWidth: 32.w,
-                                minHeight: 32.w,
-                              ),
-                              icon: Icon(
-                                Icons.delete_outline_rounded,
-                                color: redColor,
-                                size: 20.sp,
-                              ),
-                              onPressed: _confirmDeleteVoiceNote,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                    Builder(
-                      builder: (BuildContext composerCtx) {
-                        final bool isKeyboardOpen =
-                            MediaQuery.of(composerCtx).viewInsets.bottom > 0;
-                        final double bottomPadding = isKeyboardOpen
-                            ? 8.h
-                            : (12.h +
-                                  MediaQuery.of(composerCtx).padding.bottom);
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            left: 20.w,
-                            right: 20.w,
-                            top: 4.h,
-                            bottom: bottomPadding,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: AppTextField(
-                                  controller: _controller,
-                                  hint: "Ask Brainy...",
-                                  tfType: TFTYPE.FILLED,
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  borderRadius: BorderRadius.circular(27.r),
-                                  height: 54.h,
-                                  maxLines: 4,
-                                  minLines: 1,
-                                  textAlignVertical: TextAlignVertical.center,
-                                  rowCrossAxisAlignment:
-                                      CrossAxisAlignment.center,
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(500),
-                                  ],
-                                  contentPadding: EdgeInsets.only(
-                                    left: 20.w,
-                                    right: 6.w,
-                                    top: 0,
-                                    bottom: 0,
-                                  ),
-                                  suffixIcon: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      IconButton(
-                                        visualDensity: VisualDensity.compact,
-                                        padding: EdgeInsets.zero,
-                                        constraints: BoxConstraints(
-                                          minWidth: 32.w,
-                                          minHeight: 32.w,
-                                        ),
-                                        onPressed: () =>
-                                            _showImageSourcePicker(context),
-                                        icon: Icon(
-                                          Icons.image_outlined,
-                                          color: greyColor4,
-                                          size: 20.sp,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        visualDensity: VisualDensity.compact,
-                                        padding: EdgeInsets.zero,
-                                        constraints: BoxConstraints(
-                                          minWidth: 32.w,
-                                          minHeight: 32.w,
-                                        ),
-                                        onPressed: () async {
-                                          final bool granted =
-                                              await PermissionHelper.ensureMicrophonePermission(
-                                                context,
-                                              );
-                                          if (!granted || !context.mounted) {
-                                            return;
-                                          }
-
-                                          final BrainyConversationCubit
-                                          cubit = context
-                                              .read<BrainyConversationCubit>();
-                                          showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            backgroundColor: Colors.transparent,
-                                            builder: (_) => BrainyVoiceSheet(
-                                              topic: state.topic,
-                                              actionButtonTitle: "Attach Note",
-                                              onSendAudio: (audioFile, text) {
-                                                if (audioFile != null) {
-                                                  cubit.attachAudio(
-                                                    audioFile.path,
-                                                  );
-                                                }
-                                                if (text.trim().isNotEmpty &&
-                                                    _controller.text
-                                                        .trim()
-                                                        .isEmpty) {
-                                                  _controller.text = text
-                                                      .trim();
-                                                }
-                                              },
-                                            ),
-                                          );
-                                        },
-                                        icon: Icon(
-                                          Icons.mic_none_rounded,
-                                          color: greyColor4,
-                                          size: 20.sp,
-                                        ),
-                                      ),
-                                      6.spaceW,
-                                    ],
-                                  ),
-                                  onSubmitted: (val) {
-                                    context
-                                        .read<BrainyConversationCubit>()
-                                        .sendMessage(val);
-                                    _controller.clear();
-                                    _scrollToBottom();
-                                  },
-                                ),
-                              ),
-                              12.spaceW,
-                              Material(
-                                color: Colors.transparent,
-                                child: Ink(
-                                  decoration: const BoxDecoration(
-                                    color: secondaryColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(27.r),
-                                    onTap: () {
-                                      context
-                                          .read<BrainyConversationCubit>()
-                                          .sendMessage(_controller.text);
-                                      _controller.clear();
-                                      _scrollToBottom();
-                                    },
-                                    child: SizedBox(
-                                      width: 54.h,
-                                      height: 54.h,
-                                      child: Icon(
-                                        Icons.send,
-                                        color: Colors.white,
-                                        size: 22.sp,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

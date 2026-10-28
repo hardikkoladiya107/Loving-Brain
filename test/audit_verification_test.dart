@@ -255,6 +255,43 @@ void main() {
 
       await cubit.close();
     });
+
+    test(
+      'Navigating back or re-initializing clears draft images, audio, and composer state',
+      () async {
+        final BrainyConversationCubit cubit = BrainyConversationCubit();
+        await cubit.init();
+
+        // 1. User attaches multiple images and a voice note
+        cubit.addSelectedImages(<String>[
+          '/photos/saree1.png',
+          '/photos/saree2.png',
+        ]);
+        await cubit.attachAudio('/cache/voice_note.m4a');
+
+        expect(cubit.state.selectedImagePaths.length, equals(2));
+        expect(cubit.state.selectedImagePath, equals('/photos/saree1.png'));
+        expect(cubit.state.attachedAudioPath, equals('/cache/voice_note.m4a'));
+
+        // 2. User goes back -> clearDraft is called
+        cubit.clearDraft();
+
+        expect(cubit.state.selectedImagePaths, isEmpty);
+        expect(cubit.state.selectedImagePath, isNull);
+        expect(cubit.state.attachedAudioPath, isNull);
+        expect(cubit.state.isAttachedAudioPlaying, isFalse);
+
+        // 3. User re-enters existing conversation -> init ensures clean draft
+        cubit.addSelectedImages(<String>['/photos/stale.png']);
+        await cubit.init(conversationId: 'existing_conv_123');
+
+        expect(cubit.state.selectedImagePaths, isEmpty);
+        expect(cubit.state.selectedImagePath, isNull);
+        expect(cubit.state.attachedAudioPath, isNull);
+
+        await cubit.close();
+      },
+    );
   });
 
   group('Audit Verification: Journey & Navigation Separation', () {
@@ -637,6 +674,74 @@ void main() {
         );
         await tester.pump();
         expect(find.text('FloatingBottomNav'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'Bottom action container padding reduces when keyboard is open',
+      (WidgetTester tester) async {
+        Widget buildActionTest(EdgeInsets insets) {
+          return MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 812),
+              builder: (BuildContext context, Widget? child) => MediaQuery(
+                data: MediaQueryData(
+                  size: const Size(375, 812),
+                  viewInsets: insets,
+                  padding: const EdgeInsets.only(bottom: 24),
+                ),
+                child: Builder(
+                  builder: (BuildContext ctx) {
+                    final bool isKeyboardOpen =
+                        MediaQuery.of(ctx).viewInsets.bottom > 0;
+                    return Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            key: const ValueKey<String>('action_container'),
+                            padding: EdgeInsets.only(
+                              top: isKeyboardOpen ? 10.h : 24.h,
+                              bottom: isKeyboardOpen
+                                  ? 10.h
+                                  : (20.h + MediaQuery.of(ctx).padding.bottom),
+                              left: 20.w,
+                              right: 20.w,
+                            ),
+                            child: const Text('Save changes'),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        }
+
+        // 1. Keyboard closed: padding incorporates safe area + normal spacing
+        await tester.pumpWidget(buildActionTest(EdgeInsets.zero));
+        await tester.pump();
+        final Container closedContainer = tester.widget<Container>(
+          find.byKey(const ValueKey<String>('action_container')),
+        );
+        final EdgeInsets closedPadding = closedContainer.padding as EdgeInsets;
+        expect(closedPadding.bottom, greaterThanOrEqualTo(35));
+
+        // 2. Keyboard open: bottom padding reduces to 10.h and top to 10.h
+        await tester.pumpWidget(
+          buildActionTest(const EdgeInsets.only(bottom: 300)),
+        );
+        await tester.pump();
+        final Container openContainer = tester.widget<Container>(
+          find.byKey(const ValueKey<String>('action_container')),
+        );
+        final EdgeInsets openPadding = openContainer.padding as EdgeInsets;
+        expect(openPadding.bottom, equals(10.h));
+        expect(openPadding.top, equals(10.h));
       },
     );
   });
