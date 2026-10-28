@@ -151,7 +151,7 @@ void main() {
         final InviteCaregiverCubit cubit = InviteCaregiverCubit();
         cubit.init();
 
-        expect(cubit.state.selectedRole, 'Grandparent');
+        expect(cubit.state.selectedRole, isEmpty);
 
         cubit.selectRole('Nanny');
         expect(cubit.state.selectedRole, 'Nanny');

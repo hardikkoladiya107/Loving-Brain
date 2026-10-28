@@ -100,10 +100,7 @@ class LocationDataModel {
     final String country = (json['country'] ?? '').toString().trim();
     final String? countryCode = json['country_code']?.toString().trim();
     final String timezone = (json['timezone'] ?? 'UTC').toString().trim();
-    final String gmtOffset =
-        (json['gmt_offset']?.toString().trim().isNotEmpty ?? false)
-        ? json['gmt_offset'].toString().trim()
-        : computeGmtOffset(timezone);
+    final String gmtOffset = computeGmtOffset(timezone);
     final double? latitude = json['latitude'] is num
         ? (json['latitude'] as num).toDouble()
         : double.tryParse(json['latitude']?.toString() ?? '');
@@ -112,7 +109,7 @@ class LocationDataModel {
         : double.tryParse(json['longitude']?.toString() ?? '');
 
     String formatted = (json['formatted'] ?? '').toString().trim();
-    if (formatted.isEmpty) {
+    if (formatted.isEmpty || formatted.contains('GMT')) {
       if (city.isNotEmpty && country.isNotEmpty) {
         formatted = '$city, $country · $gmtOffset';
       } else if (city.isNotEmpty) {
@@ -222,7 +219,27 @@ class LocationDataModel {
     );
   }
 
-  static const List<LocationDataModel> commonlyUsedLocations =
+  static List<LocationDataModel> get commonlyUsedLocations {
+    return _baseCommonlyUsedLocations.map((LocationDataModel base) {
+      final String dynamicOffset = computeGmtOffset(base.timezone);
+      final String formattedText = base.country.isNotEmpty
+          ? '${base.city}, ${base.country} · $dynamicOffset'
+          : '${base.city} · $dynamicOffset';
+      return LocationDataModel(
+        city: base.city,
+        state: base.state,
+        country: base.country,
+        countryCode: base.countryCode,
+        timezone: base.timezone,
+        gmtOffset: dynamicOffset,
+        latitude: base.latitude,
+        longitude: base.longitude,
+        formatted: formattedText,
+      );
+    }).toList();
+  }
+
+  static const List<LocationDataModel> _baseCommonlyUsedLocations =
       <LocationDataModel>[
         LocationDataModel(
           city: 'London',

@@ -529,7 +529,7 @@ class TodayCubit extends Cubit<TodayState> {
     ApiResultStatus<String> result = const ApiResultStatus.initial();
 
     if (hasNight) {
-      final DateTime bedTime = TodayLogRepo.parseTimeString(
+      DateTime bedTime = TodayLogRepo.parseTimeString(
         state.fellAsleepTime!,
         referenceDate: now,
       );
@@ -538,11 +538,45 @@ class TodayCubit extends Cubit<TodayState> {
         referenceDate: now,
       );
 
-      // If wake is earlier or same as bed (e.g. overnight 11:00 PM to 07:00 AM), add 1 day
+      // If wake is earlier or same as bed (e.g. overnight 11:00 PM to 07:00 AM)
       if (!wakeTime.isAfter(bedTime)) {
-        wakeTime = wakeTime.add(const Duration(days: 1));
+        if (wakeTime.isBefore(now)) {
+          // Bedtime was last night, wake was earlier today
+          bedTime = bedTime.subtract(const Duration(days: 1));
+        } else {
+          wakeTime = wakeTime.add(const Duration(days: 1));
+        }
       }
+
+      if (wakeTime.isAfter(now)) {
+        changeProps(
+          isLoading: false,
+          saveStatus: ApiResultStatus.error(
+            error: Exception("Wake time cannot be in the future"),
+          ),
+        );
+        return;
+      }
+
       final int durationMins = wakeTime.difference(bedTime).inMinutes;
+      if (durationMins <= 0) {
+        changeProps(
+          isLoading: false,
+          saveStatus: ApiResultStatus.error(
+            error: Exception("Wake time must be after sleep time"),
+          ),
+        );
+        return;
+      }
+      if (durationMins >= 1440) {
+        changeProps(
+          isLoading: false,
+          saveStatus: ApiResultStatus.error(
+            error: Exception("Sleep duration cannot exceed 24 hours"),
+          ),
+        );
+        return;
+      }
 
       final SleepLogModel nightLog = SleepLogModel(
         id: null,
@@ -552,7 +586,9 @@ class TodayCubit extends Cubit<TodayState> {
         fellAsleepTime: state.fellAsleepTime,
         wokeUpTime: state.wokeUpTime,
         isNightWaking: state.isNightWaking,
-        sleepQualityIndex: state.sleepQualityIndex,
+        sleepQualityIndex: state.sleepQualityIndex >= 0
+            ? state.sleepQualityIndex
+            : 3,
         durationMinutes: durationMins,
         userId: userUid,
         childId: childId,
@@ -575,7 +611,34 @@ class TodayCubit extends Cubit<TodayState> {
       if (!napWake.isAfter(napBed)) {
         napWake = napWake.add(const Duration(days: 1));
       }
+      if (napWake.isAfter(now)) {
+        changeProps(
+          isLoading: false,
+          saveStatus: ApiResultStatus.error(
+            error: Exception("Nap end time cannot be in the future"),
+          ),
+        );
+        return;
+      }
       final int napDurationMins = napWake.difference(napBed).inMinutes;
+      if (napDurationMins <= 0) {
+        changeProps(
+          isLoading: false,
+          saveStatus: ApiResultStatus.error(
+            error: Exception("Nap end time must be after start time"),
+          ),
+        );
+        return;
+      }
+      if (napDurationMins >= 720) {
+        changeProps(
+          isLoading: false,
+          saveStatus: ApiResultStatus.error(
+            error: Exception("Nap duration cannot exceed 12 hours"),
+          ),
+        );
+        return;
+      }
 
       final SleepLogModel napLog = SleepLogModel(
         id: null,
@@ -756,17 +819,17 @@ class TodayCubit extends Cubit<TodayState> {
     changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     final List<String> moodLabels = <String>[
-      'Happy',
-      'Good',
-      'Stable',
-      'Difficult',
-      'Sad',
+      'Very happy',
+      'Content',
+      'Neutral',
+      'Unsettled',
+      'Upset',
     ];
     final String childMoodLabel =
         (state.selectedChildMoodIndex >= 0 &&
             state.selectedChildMoodIndex < moodLabels.length)
         ? moodLabels[state.selectedChildMoodIndex]
-        : 'Normal';
+        : 'Neutral';
 
     final DateTime now = DateTime.now();
     final MoodLogModel log = MoodLogModel(
@@ -931,7 +994,9 @@ class TodayCubit extends Cubit<TodayState> {
             healthLogs: recentHealth,
           );
 
+      final bool hasEnoughHistory = recentTantrums.length >= 3;
       final bool behaviourShifted =
+          hasEnoughHistory &&
           updatedResult.isPushWorthy &&
           (updatedResult.riskLevel != prevResult.riskLevel ||
               updatedResult.windowStart != prevResult.windowStart);
@@ -948,7 +1013,7 @@ class TodayCubit extends Cubit<TodayState> {
         showTantrumUpdateErrors: false,
         didForecastChangeSignificantly: behaviourShifted,
         forecastChangeReason: behaviourShifted
-            ? 'Harder window updated to ${updatedResult.windowStart}–${updatedResult.windowEnd} based on today\'s patterns'
+            ? 'Harder window updated to ${updatedResult.windowStart}–${updatedResult.windowEnd} based on recent patterns'
             : null,
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));

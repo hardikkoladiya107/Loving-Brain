@@ -8,7 +8,7 @@ abstract class InviteCaregiverState with _$InviteCaregiverState {
   const InviteCaregiverState._();
 
   const factory InviteCaregiverState({
-    @Default('Grandparent') String selectedRole,
+    @Default('') String selectedRole,
     @Default('your child') String childName,
     @Default('') String email,
     @Default('') String emailError,

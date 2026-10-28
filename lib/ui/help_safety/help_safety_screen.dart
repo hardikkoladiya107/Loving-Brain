@@ -191,8 +191,12 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                               body:
                                   "LovingBrain can't help in an emergency and isn't monitored.",
                               action: InkWell(
-                                onTap: () =>
-                                    _launch("tel:${state.emergencyPhone}"),
+                                onTap: () {
+                                  final String raw = state.emergencyPhone
+                                      .replaceAll('tel:', '')
+                                      .trim();
+                                  _launch("tel:$raw");
+                                },
                                 borderRadius: BorderRadius.circular(12.r),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
@@ -212,7 +216,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                                         size: 18.sp,
                                       ),
                                       8.spaceW,
-                                      "Call emergency services (${state.emergencyPhone})"
+                                      "Call emergency services (${state.emergencyPhone.replaceAll('tel:', '').trim()})"
                                           .appText(
                                             fontSize: 14.sp,
                                             color: Colors.white,

@@ -9,11 +9,13 @@ class EditableFieldCard extends StatefulWidget {
   final String label;
   final String value;
   final String? hintText;
+  final String? errorText;
   final VoidCallback? onEdit;
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
   final bool readOnly;
   final int? maxLength;
+  final int? maxLines;
   final List<TextInputFormatter>? inputFormatters;
 
   const EditableFieldCard({
@@ -21,11 +23,13 @@ class EditableFieldCard extends StatefulWidget {
     required this.label,
     required this.value,
     this.hintText,
+    this.errorText,
     this.onEdit,
     this.onTap,
     this.onChanged,
     this.readOnly = false,
     this.maxLength,
+    this.maxLines,
     this.inputFormatters,
   });
 
@@ -78,8 +82,14 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: _isFocused ? const Color(0xFF673AB7) : Colors.transparent,
-            width: _isFocused ? 1.5 : 0,
+            color: (widget.errorText != null && widget.errorText!.isNotEmpty)
+                ? Colors.red
+                : (_isFocused ? const Color(0xFF673AB7) : Colors.transparent),
+            width:
+                (widget.errorText != null && widget.errorText!.isNotEmpty) ||
+                    _isFocused
+                ? 1.5
+                : 0,
           ),
         ),
         child: Row(
@@ -91,7 +101,11 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                 children: [
                   widget.label.appText(
                     fontSize: 14.sp,
-                    color: greyColor11,
+                    color:
+                        (widget.errorText != null &&
+                            widget.errorText!.isNotEmpty)
+                        ? Colors.red
+                        : greyColor11,
                     fontWeight: FontWeight.bold,
                     textAlign: TextAlign.start,
                   ),
@@ -99,6 +113,7 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                     controller: _controller,
                     focusNode: _focusNode,
                     readOnly: widget.readOnly,
+                    maxLines: widget.maxLines ?? (widget.readOnly ? null : 1),
                     inputFormatters:
                         widget.inputFormatters ??
                         (widget.maxLength != null
@@ -131,6 +146,16 @@ class _EditableFieldCardState extends State<EditableFieldCard> {
                       ),
                     ),
                   ),
+                  if (widget.errorText != null &&
+                      widget.errorText!.isNotEmpty) ...[
+                    4.spaceH,
+                    widget.errorText!.appText(
+                      fontSize: 12.sp,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
                 ],
               ),
             ),

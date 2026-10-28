@@ -27,6 +27,31 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
   }
 
+  String _formatDisplayTime(String raw) {
+    if (raw.isEmpty) return '9:00 PM';
+    try {
+      if (raw.contains(':')) {
+        final List<String> parts = raw.split(':');
+        final int hour = int.parse(parts[0].trim());
+        final int minute = int.parse(
+          parts[1].replaceAll(RegExp(r'[^0-9]'), '').trim(),
+        );
+        final bool isAlreadyAmPm =
+            raw.toLowerCase().contains('am') ||
+            raw.toLowerCase().contains('pm');
+        if (isAlreadyAmPm) {
+          return raw.trim();
+        }
+        final bool isPm = hour >= 12;
+        final int displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+        final String ampm = isPm ? 'PM' : 'AM';
+        final String minuteStr = minute.toString().padLeft(2, '0');
+        return '$displayHour:$minuteStr $ampm';
+      }
+    } catch (_) {}
+    return raw;
+  }
+
   Future<void> _pickReminderTime(
     BuildContext context, {
     required String currentTime,
@@ -34,9 +59,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }) async {
     TimeOfDay initialTime = const TimeOfDay(hour: 19, minute: 15);
     try {
-      final DateFormat format = DateFormat('h:mm a');
-      final DateTime dt = format.parse(currentTime);
-      initialTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
+      if (currentTime.contains(':')) {
+        final List<String> parts = currentTime.split(':');
+        int hour = int.parse(parts[0].trim());
+        final int minute = int.parse(
+          parts[1].replaceAll(RegExp(r'[^0-9]'), '').trim(),
+        );
+        if (currentTime.toLowerCase().contains('pm') && hour < 12) {
+          hour += 12;
+        } else if (currentTime.toLowerCase().contains('am') && hour == 12) {
+          hour = 0;
+        }
+        initialTime = TimeOfDay(hour: hour, minute: minute);
+      }
     } catch (_) {}
 
     final TimeOfDay? picked = await showTimePicker(
@@ -309,41 +344,149 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 color: const Color(0xFFEDE8E3),
                               ),
                             ),
-                            child: Row(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  padding: EdgeInsets.all(8.r),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFF3E5F5),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.bedtime_outlined,
-                                    size: 20.sp,
-                                    color: const Color(0xFF673AB7),
-                                  ),
-                                ),
-                                12.spaceW,
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      "Quiet Hours Active".appText(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w600,
-                                        color: darkBlue,
-                                        textAlign: TextAlign.start,
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(8.r),
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFF3E5F5),
+                                        shape: BoxShape.circle,
                                       ),
-                                      2.spaceH,
-                                      "9:00 PM – 7:00 AM local time. Only confirmed sessions break through."
-                                          .appText(
-                                            fontSize: 12.sp,
-                                            color: greyColor,
+                                      child: Icon(
+                                        Icons.bedtime_outlined,
+                                        size: 20.sp,
+                                        color: const Color(0xFF673AB7),
+                                      ),
+                                    ),
+                                    12.spaceW,
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          "Quiet Hours Active".appText(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: darkBlue,
                                             textAlign: TextAlign.start,
                                           ),
-                                    ],
-                                  ),
+                                          2.spaceH,
+                                          "${_formatDisplayTime(state.quietHoursStart)} – ${_formatDisplayTime(state.quietHoursEnd)} local time. Only confirmed sessions break through."
+                                              .appText(
+                                                fontSize: 12.sp,
+                                                color: greyColor,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                12.spaceH,
+                                Wrap(
+                                  spacing: 8.w,
+                                  runSpacing: 8.h,
+                                  children: [
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () => _pickReminderTime(
+                                        context,
+                                        currentTime: _formatDisplayTime(
+                                          state.quietHoursStart,
+                                        ),
+                                        onSelected: (String time) =>
+                                            cubit.updateQuietHours(start: time),
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12.w,
+                                          vertical: 6.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF3E5F5),
+                                          borderRadius: BorderRadius.circular(
+                                            20.r,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.access_time,
+                                              size: 14.sp,
+                                              color: const Color(0xFF673AB7),
+                                            ),
+                                            6.spaceW,
+                                            "Start: ${_formatDisplayTime(state.quietHoursStart)}"
+                                                .appText(
+                                                  fontSize: 12.sp,
+                                                  color: const Color(
+                                                    0xFF673AB7,
+                                                  ),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                            6.spaceW,
+                                            Icon(
+                                              Icons.edit_outlined,
+                                              size: 12.sp,
+                                              color: const Color(0xFF673AB7),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () => _pickReminderTime(
+                                        context,
+                                        currentTime: _formatDisplayTime(
+                                          state.quietHoursEnd,
+                                        ),
+                                        onSelected: (String time) =>
+                                            cubit.updateQuietHours(end: time),
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12.w,
+                                          vertical: 6.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFF3E5F5),
+                                          borderRadius: BorderRadius.circular(
+                                            20.r,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.access_time,
+                                              size: 14.sp,
+                                              color: const Color(0xFF673AB7),
+                                            ),
+                                            6.spaceW,
+                                            "End: ${_formatDisplayTime(state.quietHoursEnd)}"
+                                                .appText(
+                                                  fontSize: 12.sp,
+                                                  color: const Color(
+                                                    0xFF673AB7,
+                                                  ),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                            6.spaceW,
+                                            Icon(
+                                              Icons.edit_outlined,
+                                              size: 12.sp,
+                                              color: const Color(0xFF673AB7),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

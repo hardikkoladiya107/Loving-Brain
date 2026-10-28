@@ -247,7 +247,14 @@ class _OtpScreenState extends State<OtpScreen> {
                                   .appPadding(left: 20.r, right: 20.r),
                             ],
                             16.spaceH,
-                            if (state.canResend)
+                            if (state.isLocked)
+                              "Locked for ${state.lockoutSeconds}s"
+                                  .appText(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w600,
+                                  )
+                                  .appPadding(left: 20.r, right: 20.r)
+                            else if (state.canResend)
                               BaseButton(
                                 onTap: () =>
                                     context.read<OtpCubit>().resendOtp(),

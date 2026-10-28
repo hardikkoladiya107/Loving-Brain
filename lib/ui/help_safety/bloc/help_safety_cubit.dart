@@ -13,9 +13,30 @@ class HelpSafetyCubit extends Cubit<HelpSafetyState> {
   void init() {
     final UserModel? user = preferences.getUserModel();
     final String location = (user?.location ?? '').toLowerCase();
-    final String emergency = (location.contains('india') || location == 'in')
-        ? 'tel:112'
-        : 'tel:911';
+    String emergency = '911';
+
+    if (location.contains('dubai') ||
+        location.contains('uae') ||
+        location.contains('emirates')) {
+      emergency = '999';
+    } else if (location.contains('uk') ||
+        location.contains('united kingdom') ||
+        location.contains('london') ||
+        location.contains('britain')) {
+      emergency = '999';
+    } else if (location.contains('india') || location == 'in') {
+      emergency = '112';
+    } else if (location.contains('australia') ||
+        location.contains('sydney') ||
+        location.contains('melbourne')) {
+      emergency = '000';
+    } else if (location.contains('europe') ||
+        location.contains('france') ||
+        location.contains('germany') ||
+        location.contains('spain') ||
+        location.contains('italy')) {
+      emergency = '112';
+    }
 
     emit(HelpSafetyState(emergencyPhone: emergency));
   }

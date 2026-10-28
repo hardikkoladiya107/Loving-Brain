@@ -82,9 +82,17 @@ class AppRouter {
             }
           }
         } else {
-          if (location == RoutePaths.base ||
-              location == RoutePaths.onboarding ||
-              location == RoutePaths.familySnapshot) {
+          const Set<String> publicRoutes = <String>{
+            RoutePaths.welcome,
+            RoutePaths.login,
+            RoutePaths.register,
+            RoutePaths.otp,
+            RoutePaths.terms,
+            RoutePaths.privacy,
+            RoutePaths.faq,
+            RoutePaths.coParentRegister,
+          };
+          if (!publicRoutes.contains(location)) {
             return RoutePaths.welcome;
           }
         }
@@ -271,6 +279,13 @@ class AppRouter {
       errorBuilder: (BuildContext context, GoRouterState state) {
         if (state.uri.path == '/faq' || state.uri.toString().contains('faq')) {
           return const FaqScreen();
+        }
+        final UserModel? userModel = preferences.getUserModel();
+        final bool isLoggedIn =
+            (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+            (userModel?.uid?.trim().isNotEmpty ?? false);
+        if (!isLoggedIn) {
+          return const WelcomeScreen();
         }
         return const BaseScreen();
       },

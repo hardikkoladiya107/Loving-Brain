@@ -4,8 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 /// Screen displayed upon successful action completion.
@@ -135,7 +138,15 @@ class _SuccessScreenState extends State<SuccessScreen> {
     return AppButton(
       title: LocaleKeys.done.tr(),
       onTap: () {
-        context.pop();
+        final UserModel? user = preferences.getUserModel();
+        final bool isLoggedIn =
+            (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+            (user?.uid?.trim().isNotEmpty ?? false);
+        if (isLoggedIn) {
+          context.go(RoutePaths.base);
+        } else {
+          context.pop();
+        }
       },
       backgroundColor: primaryColor,
       textColor: Colors.white,

@@ -91,10 +91,14 @@ class AlertBottomSheet extends StatelessWidget {
                       children: [
                         Icon(alertPillIcon, color: alertColor, size: 16.sp),
                         6.spaceW,
-                        alertPillText.appText(
-                          color: alertColor,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
+                        Flexible(
+                          child: alertPillText.appText(
+                            color: alertColor,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
@@ -217,6 +221,7 @@ class AlertBottomSheet extends StatelessWidget {
     String? title,
     String? message,
     String? primaryButtonText,
+    String? tertiaryButtonText,
   }) {
     showModalBottomSheet<void>(
       context: context,
@@ -228,7 +233,7 @@ class AlertBottomSheet extends StatelessWidget {
         title: title ?? "Please contact a health professional",
         message:
             message ??
-            "A fever with reduced drinking in a child this age is something a clinician should look at. LovingBrain can't assess symptoms.",
+            "A fever with reduced drinking in a child this age is something a clinician should look at. LovingBrain cannot assess symptoms.",
         primaryButtonText: primaryButtonText ?? "Call emergency services",
         onPrimaryAction: () {
           Navigator.pop(ctx);
@@ -239,7 +244,7 @@ class AlertBottomSheet extends StatelessWidget {
           Navigator.pop(ctx);
           onReadSafety?.call();
         },
-        tertiaryButtonText: "Not now go back to Brainy",
+        tertiaryButtonText: tertiaryButtonText ?? "Not now, go back",
         onTertiaryAction: () => Navigator.pop(ctx),
       ),
     );

@@ -72,7 +72,7 @@ void main() {
         expect(find.text('M'), findsOneWidget);
         expect(find.text('W'), findsOneWidget);
         expect(find.text('F'), findsOneWidget);
-        expect(find.byIcon(Icons.check), findsNWidgets(7));
+        expect(find.byIcon(Icons.check), findsNothing);
       },
     );
   });

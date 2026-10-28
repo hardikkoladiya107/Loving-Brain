@@ -31,54 +31,111 @@ void main() {
 
       expect(result.dateRangeLabel, contains('Sunday 17 May'));
       expect(result.dateRangeLabel, contains('Saturday 23 May'));
-      expect(result.daysCheckedIn, greaterThanOrEqualTo(1));
+      expect(result.daysCheckedIn, equals(0));
       expect(result.isHarderWeek, isFalse);
       expect(result.positiveTitle, isNotEmpty);
       expect(result.difficultyTitle, isNotEmpty);
-      expect(
-        result.patternTitle,
-        contains('Maya sleeps better after active days'),
-      );
-      expect(result.recommendedChange, 'An earlier, shorter afternoon nap');
+      expect(result.patternTitle, contains('Patterns in progress'));
+      expect(result.recommendedChange, 'Keep logging daily check-ins');
     });
 
-    test('detects harder week when travel health issue is logged', () {
-      final HealthLogModel travelLog = HealthLogModel(
-        issues: <String>['Travel', 'Jetlag'],
-        notes: 'Family trip away from home',
-        timestamp: DateTime(2026, 5, 18, 14, 0),
-      );
+    test(
+      'detects harder week when travel health issue is logged with sufficient week data',
+      () {
+        final HealthLogModel travelLog = HealthLogModel(
+          issues: <String>['Travel', 'Jetlag'],
+          notes: 'Family trip away from home',
+          timestamp: DateTime(2026, 5, 18, 14, 0),
+        );
+        final List<SleepLogModel> baseLogs = <SleepLogModel>[
+          SleepLogModel(
+            id: 's1',
+            date: DateTime(2026, 5, 17),
+            bedTime: DateTime(2026, 5, 17, 20, 0),
+            wakeTime: DateTime(2026, 5, 18, 7, 0),
+          ),
+          SleepLogModel(
+            id: 's2',
+            date: DateTime(2026, 5, 18),
+            bedTime: DateTime(2026, 5, 18, 20, 0),
+            wakeTime: DateTime(2026, 5, 19, 7, 0),
+          ),
+          SleepLogModel(
+            id: 's3',
+            date: DateTime(2026, 5, 19),
+            bedTime: DateTime(2026, 5, 19, 20, 0),
+            wakeTime: DateTime(2026, 5, 20, 7, 0),
+          ),
+          SleepLogModel(
+            id: 's4',
+            date: DateTime(2026, 5, 20),
+            bedTime: DateTime(2026, 5, 20, 20, 0),
+            wakeTime: DateTime(2026, 5, 21, 7, 0),
+          ),
+        ];
 
-      final WeeklyInsightsResult result = JourneyInsightsEngine.calculate(
-        referenceDate: refSunday,
-        child: sampleChild,
-        healthLogs: <HealthLogModel>[travelLog],
-      );
+        final WeeklyInsightsResult result = JourneyInsightsEngine.calculate(
+          referenceDate: refSunday,
+          child: sampleChild,
+          sleepLogs: baseLogs,
+          healthLogs: <HealthLogModel>[travelLog],
+        );
 
-      expect(result.isHarderWeek, isTrue);
-      expect(result.harderHeadline, 'This week was harder');
-      expect(
-        result.harderExplanation,
-        contains('Travel disrupted the routine'),
-      );
-    });
+        expect(result.isHarderWeek, isTrue);
+        expect(result.harderHeadline, 'This week was harder');
+        expect(
+          result.harderExplanation,
+          contains('Travel disrupted the routine'),
+        );
+      },
+    );
 
-    test('detects harder week when illness is logged in health issue', () {
-      final HealthLogModel illnessLog = HealthLogModel(
-        issues: <String>['Fever', 'Illness'],
-        notes: 'Low energy and high temperature',
-        timestamp: DateTime(2026, 5, 19, 10, 0),
-      );
+    test(
+      'detects harder week when illness is logged in health issue with sufficient week data',
+      () {
+        final HealthLogModel illnessLog = HealthLogModel(
+          issues: <String>['Fever', 'Illness'],
+          notes: 'Low energy and high temperature',
+          timestamp: DateTime(2026, 5, 19, 10, 0),
+        );
+        final List<SleepLogModel> baseLogs = <SleepLogModel>[
+          SleepLogModel(
+            id: 's1',
+            date: DateTime(2026, 5, 17),
+            bedTime: DateTime(2026, 5, 17, 20, 0),
+            wakeTime: DateTime(2026, 5, 18, 7, 0),
+          ),
+          SleepLogModel(
+            id: 's2',
+            date: DateTime(2026, 5, 18),
+            bedTime: DateTime(2026, 5, 18, 20, 0),
+            wakeTime: DateTime(2026, 5, 19, 7, 0),
+          ),
+          SleepLogModel(
+            id: 's3',
+            date: DateTime(2026, 5, 19),
+            bedTime: DateTime(2026, 5, 19, 20, 0),
+            wakeTime: DateTime(2026, 5, 20, 7, 0),
+          ),
+          SleepLogModel(
+            id: 's4',
+            date: DateTime(2026, 5, 20),
+            bedTime: DateTime(2026, 5, 20, 20, 0),
+            wakeTime: DateTime(2026, 5, 21, 7, 0),
+          ),
+        ];
 
-      final WeeklyInsightsResult result = JourneyInsightsEngine.calculate(
-        referenceDate: refSunday,
-        child: sampleChild,
-        healthLogs: <HealthLogModel>[illnessLog],
-      );
+        final WeeklyInsightsResult result = JourneyInsightsEngine.calculate(
+          referenceDate: refSunday,
+          child: sampleChild,
+          sleepLogs: baseLogs,
+          healthLogs: <HealthLogModel>[illnessLog],
+        );
 
-      expect(result.isHarderWeek, isTrue);
-      expect(result.harderExplanation, contains('Illness disrupted sleep'));
-    });
+        expect(result.isHarderWeek, isTrue);
+        expect(result.harderExplanation, contains('Illness disrupted sleep'));
+      },
+    );
 
     test('detects harder week when multiple late bedtimes occur', () {
       final List<SleepLogModel> lateLogs = <SleepLogModel>[
@@ -99,6 +156,12 @@ void main() {
           date: DateTime(2026, 5, 19),
           bedTime: DateTime(2026, 5, 19, 22, 0),
           wakeTime: DateTime(2026, 5, 20, 7, 0),
+        ),
+        SleepLogModel(
+          id: '4',
+          date: DateTime(2026, 5, 20),
+          bedTime: DateTime(2026, 5, 20, 22, 15),
+          wakeTime: DateTime(2026, 5, 21, 7, 0),
         ),
       ];
 

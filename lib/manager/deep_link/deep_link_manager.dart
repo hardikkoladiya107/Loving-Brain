@@ -240,6 +240,13 @@ class DeepLinkManager {
     final BuildContext? ctx = navigatorKey.currentContext;
     if (ctx != null && ctx.mounted) {
       showSnackBar(message: message, type: SnackBarType.ERROR);
+      final UserModel? loggedUser = preferences.getUserModel();
+      final bool isLoggedIn =
+          (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+          (loggedUser?.uid?.trim().isNotEmpty ?? false);
+      if (!isLoggedIn) {
+        GoRouter.of(ctx).go(RoutePaths.welcome);
+      }
     }
   }
 

@@ -67,6 +67,24 @@ void main() {
     );
 
     test(
+      'Phone numbers starting with 1-5 are rejected as invalid Indian mobile numbers',
+      () async {
+        final RegisterCubit cubit = RegisterCubit();
+        cubit.init();
+
+        cubit.changeProps(phoneNumber: '1234567890');
+        await cubit.sendOtp();
+
+        expect(
+          cubit.state.phoneNumberError,
+          'Please enter a valid 10-digit Indian mobile number',
+        );
+        expect(cubit.state.isPhoneAuth, isFalse);
+        cubit.close();
+      },
+    );
+
+    test(
       '11-digit phone with leading 0 strips 0 and automatically adds +91',
       () async {
         final RegisterCubit cubit = RegisterCubit();

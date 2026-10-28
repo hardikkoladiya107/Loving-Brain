@@ -111,88 +111,101 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
       isExporting: true,
       exportStatus: const ApiResultStatus.loading(),
     );
-    final UserModel? user = preferences.getUserModel();
-    final String uid = user?.uid ?? 'local_user';
+    try {
+      final UserModel? user = preferences.getUserModel();
+      final String uid = user?.uid ?? 'local_user';
 
-    final ApiResultStatus<Map<String, dynamic>> result = await OfflineSyncRepo
-        .instance
-        .exportUserData(userId: uid);
+      final ApiResultStatus<Map<String, dynamic>> result = await OfflineSyncRepo
+          .instance
+          .exportUserData(userId: uid);
 
-    if (result is Data<Map<String, dynamic>>) {
-      final String jsonStr = const JsonEncoder.withIndent(
-        '  ',
-      ).convert(result.data);
-      final String nowStamp = DateFormat(
-        'yyyyMMdd_HHmmss',
-      ).format(DateTime.now());
-      final String fileName = 'loving_brain_backup_$nowStamp.json';
-
-      if (saveToFileManager) {
-        changeProps(exportStatus: const ApiResultStatus.initial());
+      if (result is Data<Map<String, dynamic>>) {
+        String jsonStr;
         try {
-          final Uint8List bytes = Uint8List.fromList(utf8.encode(jsonStr));
-          final Uri? outputUri = await FilePicker.saveFile(
-            dialogTitle: 'Save LovingBrain Data Backup',
-            fileName: fileName,
-            bytes: bytes,
-            mimeType: 'application/json',
+          const JsonEncoder encoder = JsonEncoder.withIndent(
+            '  ',
+            OfflineSyncRepo.sanitizeForJson,
+          );
+          jsonStr = encoder.convert(result.data);
+        } catch (_) {
+          jsonStr = json.encode(OfflineSyncRepo.sanitizeForJson(result.data));
+        }
+
+        final String nowStamp = DateFormat(
+          'yyyyMMdd_HHmmss',
+        ).format(DateTime.now());
+        final String fileName = 'loving_brain_backup_$nowStamp.json';
+
+        if (saveToFileManager) {
+          try {
+            final Uint8List bytes = Uint8List.fromList(utf8.encode(jsonStr));
+            final Uri? outputUri = await FilePicker.saveFile(
+              dialogTitle: 'Save LovingBrain Data Backup',
+              fileName: fileName,
+              bytes: bytes,
+              mimeType: 'application/json',
+            );
+
+            if (outputUri != null) {
+              final String savedPath = outputUri.path.isNotEmpty
+                  ? outputUri.path
+                  : outputUri.toString();
+              changeProps(
+                isExporting: false,
+                exportStatus: ApiResultStatus.data(data: result.data),
+                exportedData: result.data,
+                lastExportedPath: savedPath,
+              );
+              return;
+            } else {
+              // User cancelled file picker
+              changeProps(
+                isExporting: false,
+                exportStatus: const ApiResultStatus.initial(),
+              );
+              return;
+            }
+          } catch (pickerErr) {
+            // FilePicker saveFile failed (e.g., unsupported platform/channel) - fallback to Share
+          }
+        }
+
+        // Share fallback / default flow
+        try {
+          final Directory tempDir = await getTemporaryDirectory();
+          final File file = File('${tempDir.path}/$fileName');
+          await file.writeAsString(jsonStr);
+
+          await SharePlus.instance.share(
+            ShareParams(
+              files: <XFile>[XFile(file.path, mimeType: 'application/json')],
+              subject: 'LovingBrain Data Export',
+              text:
+                  'Here is your LovingBrain personal data export in standard JSON format.',
+            ),
           );
 
-          if (outputUri != null) {
-            final String savedPath = outputUri.path.isNotEmpty
-                ? outputUri.path
-                : outputUri.toString();
-            changeProps(
-              isExporting: false,
-              exportStatus: ApiResultStatus.data(data: result.data),
-              exportedData: result.data,
-              lastExportedPath: savedPath,
-            );
-            return;
-          } else {
-            // User cancelled file picker
-            changeProps(
-              isExporting: false,
-              exportStatus: const ApiResultStatus.initial(),
-            );
-            return;
-          }
-        } catch (_) {
-          // If native saveFile fails, gracefully continue to share fallback
+          changeProps(
+            isExporting: false,
+            exportStatus: ApiResultStatus.data(data: result.data),
+            exportedData: result.data,
+            lastExportedPath: file.path,
+          );
+        } catch (shareErr) {
+          changeProps(
+            isExporting: false,
+            exportStatus: ApiResultStatus.data(data: result.data),
+            exportedData: result.data,
+          );
         }
+      } else if (result is Error<Map<String, dynamic>>) {
+        changeProps(isExporting: false, exportStatus: result);
       }
-
-      // Default share fallback
-      try {
-        final Directory tempDir = await getTemporaryDirectory();
-        final File file = File('${tempDir.path}/$fileName');
-        await file.writeAsString(jsonStr);
-
-        await SharePlus.instance.share(
-          ShareParams(
-            files: <XFile>[XFile(file.path, mimeType: 'application/json')],
-            subject: 'LovingBrain Data Export',
-            text:
-                'Here is your LovingBrain personal data export in standard JSON format.',
-          ),
-        );
-
-        changeProps(
-          isExporting: false,
-          exportStatus: ApiResultStatus.data(data: result.data),
-          exportedData: result.data,
-          lastExportedPath: file.path,
-        );
-      } catch (e) {
-        // If native sharing fails (e.g. headless unit tests or missing channel), data export itself succeeded
-        changeProps(
-          isExporting: false,
-          exportStatus: ApiResultStatus.data(data: result.data),
-          exportedData: result.data,
-        );
-      }
-    } else if (result is Error<Map<String, dynamic>>) {
-      changeProps(isExporting: false, exportStatus: result);
+    } catch (e) {
+      changeProps(
+        isExporting: false,
+        exportStatus: ApiResultStatus.error(error: Exception(e.toString())),
+      );
     }
   }
 

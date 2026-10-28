@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$RequestSessionState {
 
- GuideProfileModel? get guide; String get childName; String get mainConcern; String get childAge; String get preferredDays; String get preferredLanguage; bool get shareSummary; bool get isSubmitting; ApiResultStatus<dynamic> get saveStatus;
+ GuideProfileModel? get guide; String get childName; String get mainConcern; String get mainConcernError; String get childAge; String get preferredDays; String get preferredLanguage; bool get shareSummary; bool get isSubmitting; ApiResultStatus<dynamic> get saveStatus;
 /// Create a copy of RequestSessionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $RequestSessionStateCopyWith<RequestSessionState> get copyWith => _$RequestSessi
 @override
 bool operator ==(Object other) {
   final _this = this as RequestSessionState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestSessionState&&(identical(other.guide, _this.guide) || other.guide == _this.guide)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.mainConcern, _this.mainConcern) || other.mainConcern == _this.mainConcern)&&(identical(other.childAge, _this.childAge) || other.childAge == _this.childAge)&&(identical(other.preferredDays, _this.preferredDays) || other.preferredDays == _this.preferredDays)&&(identical(other.preferredLanguage, _this.preferredLanguage) || other.preferredLanguage == _this.preferredLanguage)&&(identical(other.shareSummary, _this.shareSummary) || other.shareSummary == _this.shareSummary)&&(identical(other.isSubmitting, _this.isSubmitting) || other.isSubmitting == _this.isSubmitting)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is RequestSessionState&&(identical(other.guide, _this.guide) || other.guide == _this.guide)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.mainConcern, _this.mainConcern) || other.mainConcern == _this.mainConcern)&&(identical(other.mainConcernError, _this.mainConcernError) || other.mainConcernError == _this.mainConcernError)&&(identical(other.childAge, _this.childAge) || other.childAge == _this.childAge)&&(identical(other.preferredDays, _this.preferredDays) || other.preferredDays == _this.preferredDays)&&(identical(other.preferredLanguage, _this.preferredLanguage) || other.preferredLanguage == _this.preferredLanguage)&&(identical(other.shareSummary, _this.shareSummary) || other.shareSummary == _this.shareSummary)&&(identical(other.isSubmitting, _this.isSubmitting) || other.isSubmitting == _this.isSubmitting)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as RequestSessionState;
-  return Object.hash(runtimeType,_this.guide,_this.childName,_this.mainConcern,_this.childAge,_this.preferredDays,_this.preferredLanguage,_this.shareSummary,_this.isSubmitting,_this.saveStatus);
+  return Object.hash(runtimeType,_this.guide,_this.childName,_this.mainConcern,_this.mainConcernError,_this.childAge,_this.preferredDays,_this.preferredLanguage,_this.shareSummary,_this.isSubmitting,_this.saveStatus);
 }
 
 @override
 String toString() {
   final _this = this as RequestSessionState;
-  return 'RequestSessionState(guide: ${_this.guide}, childName: ${_this.childName}, mainConcern: ${_this.mainConcern}, childAge: ${_this.childAge}, preferredDays: ${_this.preferredDays}, preferredLanguage: ${_this.preferredLanguage}, shareSummary: ${_this.shareSummary}, isSubmitting: ${_this.isSubmitting}, saveStatus: ${_this.saveStatus})';
+  return 'RequestSessionState(guide: ${_this.guide}, childName: ${_this.childName}, mainConcern: ${_this.mainConcern}, mainConcernError: ${_this.mainConcernError}, childAge: ${_this.childAge}, preferredDays: ${_this.preferredDays}, preferredLanguage: ${_this.preferredLanguage}, shareSummary: ${_this.shareSummary}, isSubmitting: ${_this.isSubmitting}, saveStatus: ${_this.saveStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $RequestSessionStateCopyWith<$Res>  {
   factory $RequestSessionStateCopyWith(RequestSessionState value, $Res Function(RequestSessionState) _then) = _$RequestSessionStateCopyWithImpl;
 @useResult
 $Res call({
- GuideProfileModel? guide, String childName, String mainConcern, String childAge, String preferredDays, String preferredLanguage, bool shareSummary, bool isSubmitting, ApiResultStatus<dynamic> saveStatus
+ GuideProfileModel? guide, String childName, String mainConcern, String mainConcernError, String childAge, String preferredDays, String preferredLanguage, bool shareSummary, bool isSubmitting, ApiResultStatus<dynamic> saveStatus
 });
 
 
@@ -68,11 +68,12 @@ class _$RequestSessionStateCopyWithImpl<$Res>
 
 /// Create a copy of RequestSessionState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? guide = freezed,Object? childName = null,Object? mainConcern = null,Object? childAge = null,Object? preferredDays = null,Object? preferredLanguage = null,Object? shareSummary = null,Object? isSubmitting = null,Object? saveStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? guide = freezed,Object? childName = null,Object? mainConcern = null,Object? mainConcernError = null,Object? childAge = null,Object? preferredDays = null,Object? preferredLanguage = null,Object? shareSummary = null,Object? isSubmitting = null,Object? saveStatus = null,}) {
   return _then(RequestSessionState(
 guide: freezed == guide ? _self.guide : guide // ignore: cast_nullable_to_non_nullable
 as GuideProfileModel?,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,mainConcern: null == mainConcern ? _self.mainConcern : mainConcern // ignore: cast_nullable_to_non_nullable
+as String,mainConcernError: null == mainConcernError ? _self.mainConcernError : mainConcernError // ignore: cast_nullable_to_non_nullable
 as String,childAge: null == childAge ? _self.childAge : childAge // ignore: cast_nullable_to_non_nullable
 as String,preferredDays: null == preferredDays ? _self.preferredDays : preferredDays // ignore: cast_nullable_to_non_nullable
 as String,preferredLanguage: null == preferredLanguage ? _self.preferredLanguage : preferredLanguage // ignore: cast_nullable_to_non_nullable
@@ -173,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GuideProfileModel? guide,  String childName,  String mainConcern,  String childAge,  String preferredDays,  String preferredLanguage,  bool shareSummary,  bool isSubmitting,  ApiResultStatus<dynamic> saveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( GuideProfileModel? guide,  String childName,  String mainConcern,  String mainConcernError,  String childAge,  String preferredDays,  String preferredLanguage,  bool shareSummary,  bool isSubmitting,  ApiResultStatus<dynamic> saveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _RequestSessionState() when $default != null:
-return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_that.preferredDays,_that.preferredLanguage,_that.shareSummary,_that.isSubmitting,_that.saveStatus);case _:
+return $default(_that.guide,_that.childName,_that.mainConcern,_that.mainConcernError,_that.childAge,_that.preferredDays,_that.preferredLanguage,_that.shareSummary,_that.isSubmitting,_that.saveStatus);case _:
   return orElse();
 
 }
@@ -194,10 +195,10 @@ return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GuideProfileModel? guide,  String childName,  String mainConcern,  String childAge,  String preferredDays,  String preferredLanguage,  bool shareSummary,  bool isSubmitting,  ApiResultStatus<dynamic> saveStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( GuideProfileModel? guide,  String childName,  String mainConcern,  String mainConcernError,  String childAge,  String preferredDays,  String preferredLanguage,  bool shareSummary,  bool isSubmitting,  ApiResultStatus<dynamic> saveStatus)  $default,) {final _that = this;
 switch (_that) {
 case _RequestSessionState():
-return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_that.preferredDays,_that.preferredLanguage,_that.shareSummary,_that.isSubmitting,_that.saveStatus);case _:
+return $default(_that.guide,_that.childName,_that.mainConcern,_that.mainConcernError,_that.childAge,_that.preferredDays,_that.preferredLanguage,_that.shareSummary,_that.isSubmitting,_that.saveStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -214,10 +215,10 @@ return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GuideProfileModel? guide,  String childName,  String mainConcern,  String childAge,  String preferredDays,  String preferredLanguage,  bool shareSummary,  bool isSubmitting,  ApiResultStatus<dynamic> saveStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( GuideProfileModel? guide,  String childName,  String mainConcern,  String mainConcernError,  String childAge,  String preferredDays,  String preferredLanguage,  bool shareSummary,  bool isSubmitting,  ApiResultStatus<dynamic> saveStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _RequestSessionState() when $default != null:
-return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_that.preferredDays,_that.preferredLanguage,_that.shareSummary,_that.isSubmitting,_that.saveStatus);case _:
+return $default(_that.guide,_that.childName,_that.mainConcern,_that.mainConcernError,_that.childAge,_that.preferredDays,_that.preferredLanguage,_that.shareSummary,_that.isSubmitting,_that.saveStatus);case _:
   return null;
 
 }
@@ -229,12 +230,13 @@ return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_th
 
 
 class _RequestSessionState implements RequestSessionState {
-  const _RequestSessionState({this.guide, this.childName = 'your child', this.mainConcern = '', this.childAge = '17 months', this.preferredDays = 'Weekday evenings after 8 PM', this.preferredLanguage = 'English', this.shareSummary = false, this.isSubmitting = false, this.saveStatus = const ApiResultStatus.initial()});
+  const _RequestSessionState({this.guide, this.childName = 'your child', this.mainConcern = '', this.mainConcernError = '', this.childAge = '17 months', this.preferredDays = '', this.preferredLanguage = '', this.shareSummary = false, this.isSubmitting = false, this.saveStatus = const ApiResultStatus.initial()});
   
 
 @override final  GuideProfileModel? guide;
 @override@JsonKey() final  String childName;
 @override@JsonKey() final  String mainConcern;
+@override@JsonKey() final  String mainConcernError;
 @override@JsonKey() final  String childAge;
 @override@JsonKey() final  String preferredDays;
 @override@JsonKey() final  String preferredLanguage;
@@ -252,18 +254,18 @@ _$RequestSessionStateCopyWith<_RequestSessionState> get copyWith => __$RequestSe
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestSessionState&&(identical(other.guide, guide) || other.guide == guide)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.mainConcern, mainConcern) || other.mainConcern == mainConcern)&&(identical(other.childAge, childAge) || other.childAge == childAge)&&(identical(other.preferredDays, preferredDays) || other.preferredDays == preferredDays)&&(identical(other.preferredLanguage, preferredLanguage) || other.preferredLanguage == preferredLanguage)&&(identical(other.shareSummary, shareSummary) || other.shareSummary == shareSummary)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _RequestSessionState&&(identical(other.guide, guide) || other.guide == guide)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.mainConcern, mainConcern) || other.mainConcern == mainConcern)&&(identical(other.mainConcernError, mainConcernError) || other.mainConcernError == mainConcernError)&&(identical(other.childAge, childAge) || other.childAge == childAge)&&(identical(other.preferredDays, preferredDays) || other.preferredDays == preferredDays)&&(identical(other.preferredLanguage, preferredLanguage) || other.preferredLanguage == preferredLanguage)&&(identical(other.shareSummary, shareSummary) || other.shareSummary == shareSummary)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,guide,childName,mainConcern,childAge,preferredDays,preferredLanguage,shareSummary,isSubmitting,saveStatus);
+    return Object.hash(runtimeType,guide,childName,mainConcern,mainConcernError,childAge,preferredDays,preferredLanguage,shareSummary,isSubmitting,saveStatus);
 }
 
 @override
 String toString() {
-    return 'RequestSessionState(guide: $guide, childName: $childName, mainConcern: $mainConcern, childAge: $childAge, preferredDays: $preferredDays, preferredLanguage: $preferredLanguage, shareSummary: $shareSummary, isSubmitting: $isSubmitting, saveStatus: $saveStatus)';
+    return 'RequestSessionState(guide: $guide, childName: $childName, mainConcern: $mainConcern, mainConcernError: $mainConcernError, childAge: $childAge, preferredDays: $preferredDays, preferredLanguage: $preferredLanguage, shareSummary: $shareSummary, isSubmitting: $isSubmitting, saveStatus: $saveStatus)';
 }
 
 
@@ -274,7 +276,7 @@ abstract mixin class _$RequestSessionStateCopyWith<$Res> implements $RequestSess
   factory _$RequestSessionStateCopyWith(_RequestSessionState value, $Res Function(_RequestSessionState) _then) = __$RequestSessionStateCopyWithImpl;
 @override @useResult
 $Res call({
- GuideProfileModel? guide, String childName, String mainConcern, String childAge, String preferredDays, String preferredLanguage, bool shareSummary, bool isSubmitting, ApiResultStatus<dynamic> saveStatus
+ GuideProfileModel? guide, String childName, String mainConcern, String mainConcernError, String childAge, String preferredDays, String preferredLanguage, bool shareSummary, bool isSubmitting, ApiResultStatus<dynamic> saveStatus
 });
 
 
@@ -291,11 +293,12 @@ class __$RequestSessionStateCopyWithImpl<$Res>
 
 /// Create a copy of RequestSessionState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? guide = freezed,Object? childName = null,Object? mainConcern = null,Object? childAge = null,Object? preferredDays = null,Object? preferredLanguage = null,Object? shareSummary = null,Object? isSubmitting = null,Object? saveStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? guide = freezed,Object? childName = null,Object? mainConcern = null,Object? mainConcernError = null,Object? childAge = null,Object? preferredDays = null,Object? preferredLanguage = null,Object? shareSummary = null,Object? isSubmitting = null,Object? saveStatus = null,}) {
   return _then(_RequestSessionState(
 guide: freezed == guide ? _self.guide : guide // ignore: cast_nullable_to_non_nullable
 as GuideProfileModel?,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,mainConcern: null == mainConcern ? _self.mainConcern : mainConcern // ignore: cast_nullable_to_non_nullable
+as String,mainConcernError: null == mainConcernError ? _self.mainConcernError : mainConcernError // ignore: cast_nullable_to_non_nullable
 as String,childAge: null == childAge ? _self.childAge : childAge // ignore: cast_nullable_to_non_nullable
 as String,preferredDays: null == preferredDays ? _self.preferredDays : preferredDays // ignore: cast_nullable_to_non_nullable
 as String,preferredLanguage: null == preferredLanguage ? _self.preferredLanguage : preferredLanguage // ignore: cast_nullable_to_non_nullable

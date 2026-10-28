@@ -216,7 +216,7 @@ return $default(_that.selectedTopic,_that.parentName,_that.childName,_that.chatT
 
 
 class _BrainyHomeState implements BrainyHomeState {
-  const _BrainyHomeState({this.selectedTopic = 'Behaviour', this.parentName = 'Parent', this.childName = 'your child', this.chatText = '',  List<String> suggestedQuestions = const ['Why is bedtime harder lately?', 'What can I try tonight?']}): _suggestedQuestions = suggestedQuestions;
+  const _BrainyHomeState({this.selectedTopic = '', this.parentName = 'Parent', this.childName = 'your child', this.chatText = '',  List<String> suggestedQuestions = const ['Why is bedtime harder lately?', 'What can I try tonight?']}): _suggestedQuestions = suggestedQuestions;
   
 
 @override@JsonKey() final  String selectedTopic;

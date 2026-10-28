@@ -67,13 +67,24 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
             final String role = item['role'] as String? ?? 'Co-Parent';
             final String name = toEmail.split('@').first;
             int daysRemaining = 14;
-            if (item['expires_at'] != null) {
+            final DateTime now = DateTime.now();
+            if (item['created_at'] != null) {
+              final DateTime? created = DateTime.tryParse(
+                item['created_at'].toString(),
+              );
+              if (created != null) {
+                final int daysPassed = now.difference(created).inDays;
+                daysRemaining = (14 - daysPassed).clamp(0, 14);
+              }
+            } else if (item['expires_at'] != null) {
               final DateTime? expires = DateTime.tryParse(
                 item['expires_at'].toString(),
               );
               if (expires != null) {
-                daysRemaining = expires.difference(DateTime.now()).inDays;
+                daysRemaining = (expires.difference(now).inMinutes / 1440.0)
+                    .ceil();
                 if (daysRemaining < 0) daysRemaining = 0;
+                if (daysRemaining > 14) daysRemaining = 14;
               }
             }
             pending.add(

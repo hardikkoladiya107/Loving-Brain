@@ -15,10 +15,14 @@ class ForecastDaysRow extends StatelessWidget {
     final List<String> days = <String>['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     final SleepForecastState state = context.watch<SleepForecastCubit>().state;
 
+    final int todayIndex = (DateTime.now().weekday - 1) % 7;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(days.length, (int index) {
         final bool isSelected = state.selectedDayIndex == index;
+        final bool hasLog = state.loggedDays.contains(index);
+        final bool isToday = todayIndex == index;
         return GestureDetector(
           onTap: () {
             context.read<SleepForecastCubit>().selectDay(index);
@@ -27,7 +31,7 @@ class ForecastDaysRow extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const SleepPatternScreen(),
+                builder: (BuildContext context) => const SleepPatternScreen(),
               ),
             );
           },
@@ -36,21 +40,35 @@ class ForecastDaysRow extends StatelessWidget {
               days[index].appText(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.black : Colors.grey,
+                color: isSelected
+                    ? primaryColor
+                    : (isToday ? darkBlue : Colors.grey),
               ),
               SizedBox(height: 8.h),
               Container(
                 width: 30.w,
                 height: 30.w,
                 decoration: BoxDecoration(
-                  color: isSelected ? primaryColor : indigoLight,
-                  borderRadius: BorderRadius.circular(6),
+                  color: isSelected
+                      ? primaryColor
+                      : (hasLog ? indigoLight : Colors.transparent),
+                  borderRadius: BorderRadius.circular(6.r),
+                  border: Border.all(
+                    color: isSelected
+                        ? primaryColor
+                        : (isToday
+                              ? primaryColor.withValues(alpha: 0.5)
+                              : const Color(0xFFEDE8E3)),
+                    width: 1.w,
+                  ),
                 ),
-                child: Icon(
-                  Icons.check,
-                  size: 16.sp,
-                  color: isSelected ? Colors.white : secondaryColor,
-                ),
+                child: hasLog
+                    ? Icon(
+                        Icons.check,
+                        size: 16.sp,
+                        color: isSelected ? Colors.white : secondaryColor,
+                      )
+                    : null,
               ),
             ],
           ),

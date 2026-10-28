@@ -8,7 +8,7 @@ class ChooseSupportAreaCubit extends Cubit<ChooseSupportAreaState> {
   ChooseSupportAreaCubit() : super(const ChooseSupportAreaState());
 
   void init({String? initialArea}) {
-    int index = 0;
+    int index = -1;
     if (initialArea != null && initialArea.trim().isNotEmpty) {
       final String clean = initialArea.toLowerCase().trim();
       final int found = state.areas.indexWhere(

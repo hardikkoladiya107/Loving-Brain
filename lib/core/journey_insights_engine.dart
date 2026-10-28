@@ -118,58 +118,55 @@ class JourneyInsightsEngine {
     for (final QuickNoteModel q in quickNotes) {
       recordDay(q.timestamp);
     }
-    for (final TimelineEventModel e in timelineEvents) {
-      recordDay(e.timestamp);
-    }
 
-    int daysCheckedIn = activeDays.length;
-    if (daysCheckedIn == 0) {
-      daysCheckedIn = 1; // Friendly minimum baseline for review display
-    }
+    final int daysCheckedIn = activeDays.length;
+    final bool hasEnoughWeeklyData = activeDays.length >= 4;
 
-    // 2. Harder week detection
+    // 2. Harder week detection (only evaluated when at least 4 active days exist)
     bool isHarderWeek = false;
     String harderReason = 'Travel or disruption shifted the routine.';
 
-    // Check health logs in the week
-    for (final HealthLogModel h in healthLogs) {
-      if (!h.timestamp.isBefore(sunday)) {
-        final String combined = '${h.issues.join(' ')} ${h.notes}'
-            .toLowerCase();
-        if (combined.contains('travel') ||
-            combined.contains('trip') ||
-            combined.contains('flight') ||
-            combined.contains('hotel')) {
-          isHarderWeek = true;
-          harderReason =
-              "Travel disrupted the routine. That's expected, and it isn't a setback — routines take a few days to settle again.";
-          break;
-        }
-        if (combined.contains('sick') ||
-            combined.contains('illness') ||
-            combined.contains('fever') ||
-            combined.contains('teething')) {
-          isHarderWeek = true;
-          harderReason =
-              "Illness disrupted sleep this week. That's completely expected — rest and comfort matter most right now.";
-          break;
-        }
-      }
-    }
-
-    // Check quick notes in the week
-    if (!isHarderWeek) {
-      for (final QuickNoteModel q in quickNotes) {
-        if (!q.timestamp.isBefore(sunday)) {
-          final String noteText = q.note.toLowerCase();
-          if (noteText.contains('travel') ||
-              noteText.contains('holiday') ||
-              noteText.contains('hard week') ||
-              noteText.contains('sick')) {
+    if (hasEnoughWeeklyData) {
+      // Check health logs in the week
+      for (final HealthLogModel h in healthLogs) {
+        if (!h.timestamp.isBefore(sunday)) {
+          final String combined = '${h.issues.join(' ')} ${h.notes}'
+              .toLowerCase();
+          if (combined.contains('travel') ||
+              combined.contains('trip') ||
+              combined.contains('flight') ||
+              combined.contains('hotel')) {
             isHarderWeek = true;
             harderReason =
-                "A disruption changed the daily rhythm this week. Routines usually need a few quiet days to settle back in.";
+                "Travel disrupted the routine. That's expected, and it isn't a setback — routines take a few days to settle again.";
             break;
+          }
+          if (combined.contains('sick') ||
+              combined.contains('illness') ||
+              combined.contains('fever') ||
+              combined.contains('teething')) {
+            isHarderWeek = true;
+            harderReason =
+                "Illness disrupted sleep this week. That's completely expected — rest and comfort matter most right now.";
+            break;
+          }
+        }
+      }
+
+      // Check quick notes in the week
+      if (!isHarderWeek) {
+        for (final QuickNoteModel q in quickNotes) {
+          if (!q.timestamp.isBefore(sunday)) {
+            final String noteText = q.note.toLowerCase();
+            if (noteText.contains('travel') ||
+                noteText.contains('holiday') ||
+                noteText.contains('hard week') ||
+                noteText.contains('sick')) {
+              isHarderWeek = true;
+              harderReason =
+                  "A disruption changed the daily rhythm this week. Routines usually need a few quiet days to settle back in.";
+              break;
+            }
           }
         }
       }
@@ -184,7 +181,7 @@ class JourneyInsightsEngine {
         )
         .toList();
 
-    if (!isHarderWeek && weekSleepLogs.length >= 3) {
+    if (!isHarderWeek && hasEnoughWeeklyData && weekSleepLogs.length >= 3) {
       final int lateNights = weekSleepLogs
           .where((SleepLogModel s) => s.bedTime.hour >= 21)
           .length;
@@ -205,40 +202,59 @@ class JourneyInsightsEngine {
         : ((child?.childGender?.toLowerCase() == 'male') ? 'He' : 'She');
 
     // 4. Determine Weekly Review items
-    final bool isLearning =
-        sleepLogs.length < 2 &&
-        tantrumLogs.isEmpty &&
-        timelineEvents.length < 3;
+    final bool isLearning = !hasEnoughWeeklyData;
 
-    String positiveTitle = 'Bedtime resistance eased twice this week';
-    String positiveDetail =
-        'Settling took about 12 minutes on Tuesday and Friday, down from 20.';
+    String positiveTitle;
+    String positiveDetail;
+    String difficultyTitle;
+    String difficultyDetail;
+    String patternTitle;
+    String patternDetail;
 
-    String difficultyTitle = 'Naps are still inconsistent';
-    String difficultyDetail =
-        'Four of seven ended early. This is the one to keep watching.';
+    if (isLearning) {
+      positiveTitle = 'Gathering baseline rhythm';
+      positiveDetail = daysCheckedIn == 0
+          ? 'Check in daily to begin learning $subject\'s unique weekly patterns.'
+          : 'Checked in $daysCheckedIn day${daysCheckedIn == 1 ? '' : 's'} so far. Patterns emerge after several days of logs.';
+      difficultyTitle = 'Learning sleep rhythms';
+      difficultyDetail =
+          'We need a few more days of check-ins to spot what is challenging.';
+      patternTitle = 'Patterns in progress';
+      patternDetail =
+          'Loving Brain learns your child\'s rhythm from real logs over time.';
+    } else {
+      positiveTitle = 'Bedtime resistance eased this week';
+      positiveDetail =
+          'Settling routines were more predictable on consistent days.';
+      difficultyTitle = 'Naps are still settling';
+      difficultyDetail =
+          'Afternoon rest is variable. This is the one to keep watching.';
+      patternTitle = '$subject sleeps better after active days';
+      patternDetail =
+          'Days with daytime active play resulted in easier bedtimes.';
 
-    String patternTitle = '$subject sleeps better after active days';
-    String patternDetail =
-        'Days with outdoor park time resulted in fewer night wakings.';
+      if (weekSleepLogs.length >= 4) {
+        final int quietNights = weekSleepLogs
+            .where((SleepLogModel s) => !s.isNightWaking)
+            .length;
+        if (quietNights >= 3) {
+          positiveTitle = 'Bedtime held steady for $quietNights nights';
+          positiveDetail =
+              'Consistent wind-down helped bedtime start reliably inside the target window.';
+        }
+      }
+    }
 
-    final String recommendedChange = 'An earlier, shorter afternoon nap';
-    final String observeTarget = 'Evening mood and how easily bedtime goes';
+    final String recommendedChange = isLearning
+        ? 'Keep logging daily check-ins'
+        : 'An earlier, shorter afternoon nap';
+    final String observeTarget = isLearning
+        ? 'Notice wake windows and energy levels'
+        : 'Evening mood and how easily bedtime goes';
 
     // Format next review date (Saturday 7 days ahead)
     final DateTime reviewDate = saturday;
     final String reviewDateLabel = DateFormat('EEEE d MMMM').format(reviewDate);
-
-    if (weekSleepLogs.length >= 4) {
-      final int quietNights = weekSleepLogs
-          .where((SleepLogModel s) => !s.isNightWaking)
-          .length;
-      if (quietNights >= 3) {
-        positiveTitle = 'Bedtime held steady for $quietNights nights';
-        positiveDetail =
-            'Consistent wind-down helped bedtime start reliably inside the target window.';
-      }
-    }
 
     // 5. Harder week copy
     const String harderHeadline = 'This week was harder';
@@ -249,13 +265,18 @@ class JourneyInsightsEngine {
     const String harderSmallThingToTry = 'Focus on morning sunlight';
 
     // 6. Consistency Recognition copy
-    final String consistencyTitle = daysCheckedIn == 5
-        ? "You've shown up five\ndays this week"
-        : "You've shown up $daysCheckedIn\nday${daysCheckedIn == 1 ? '' : 's'} this week";
+    final String consistencyTitle = daysCheckedIn == 0
+        ? "Starting your family\njourney"
+        : (daysCheckedIn == 1
+              ? "You've checked in 1\nday this week"
+              : (daysCheckedIn == 5
+                    ? "You've shown up five\ndays this week"
+                    : "You've checked in $daysCheckedIn\ndays this week"));
     const String consistencySubtitle =
         'No streak to lose we just wanted to notice the effort.';
-    const String consistencyDetail =
-        "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too.";
+    final String consistencyDetail = daysCheckedIn < 4
+        ? "Small, regular check-ins are what let us spot patterns. After 4 days, weekly reviews appear."
+        : "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too.";
 
     return WeeklyInsightsResult(
       weekStart: sunday,

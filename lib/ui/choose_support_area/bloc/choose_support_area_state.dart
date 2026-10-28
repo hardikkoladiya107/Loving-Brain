@@ -5,7 +5,7 @@ part 'choose_support_area_state.freezed.dart';
 @freezed
 abstract class ChooseSupportAreaState with _$ChooseSupportAreaState {
   const factory ChooseSupportAreaState({
-    @Default(0) int selectedIndex,
+    @Default(-1) int selectedIndex,
     @Default(<String>[
       'Sleep',
       'Behaviour',

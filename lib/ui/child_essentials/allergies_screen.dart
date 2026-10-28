@@ -22,103 +22,267 @@ class AllergiesScreen extends StatefulWidget {
 class _AllergiesScreenState extends State<AllergiesScreen> {
   Future<void> _showAddAllergyDialog(BuildContext context) async {
     final TextEditingController textController = TextEditingController();
+    String? localError;
 
     await showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (BuildContext dialogContext) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return StatefulBuilder(
+          builder: (BuildContext ctx, StateSetter setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      "Add allergy".appText(
-                        fontSize: 20.sp,
-                        fraunces: true,
-                        color: greyColor9,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          "Add allergy".appText(
+                            fontSize: 20.sp,
+                            fraunces: true,
+                            color: greyColor9,
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(dialogContext),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: greyColor,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ],
                       ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(dialogContext),
-                        child: Icon(
-                          Icons.close_rounded,
-                          color: greyColor,
-                          size: 24.sp,
+                      8.spaceH,
+                      "Record any allergy, sensitivity, or reaction to avoid."
+                          .appText(
+                            fontSize: 13.sp,
+                            color: greyColor,
+                            textAlign: TextAlign.start,
+                          ),
+                      20.spaceH,
+                      AppTextField(
+                        controller: textController,
+                        hint: "e.g., Peanuts, Dairy, Penicillin...",
+                        onChanged: (_) {
+                          if (localError != null) {
+                            setState(() => localError = null);
+                          }
+                        },
+                        onSubmitted: (String val) {
+                          if (val.trim().isNotEmpty) {
+                            context.read<ChildEssentialsCubit>().addAllergy(
+                              val.trim(),
+                            );
+                            Navigator.pop(dialogContext);
+                          } else {
+                            setState(
+                              () => localError = "Please enter an allergy name",
+                            );
+                          }
+                        },
+                      ),
+                      if (localError != null) ...[
+                        6.spaceH,
+                        localError!.appText(
+                          fontSize: 12.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
                         ),
+                      ],
+                      24.spaceH,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Cancel',
+                              backgroundColor: const Color(0xFFF8F5F2),
+                              borderColor: const Color(0xFFE9E2DC),
+                              textColor: greyColor9,
+                              onTap: () => Navigator.pop(dialogContext),
+                            ),
+                          ),
+                          12.spaceW,
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Add',
+                              backgroundColor: primaryColor,
+                              borderColor: primaryColor,
+                              textColor: Colors.white,
+                              onTap: () {
+                                final String val = textController.text.trim();
+                                if (val.isNotEmpty) {
+                                  context
+                                      .read<ChildEssentialsCubit>()
+                                      .addAllergy(val);
+                                  Navigator.pop(dialogContext);
+                                } else {
+                                  setState(
+                                    () => localError =
+                                        "Please enter an allergy name",
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  8.spaceH,
-                  "Record any allergy, sensitivity, or reaction to avoid."
-                      .appText(
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEditAllergyDialog(
+    BuildContext context,
+    int index,
+    String currentName,
+  ) async {
+    final TextEditingController textController = TextEditingController(
+      text: currentName,
+    );
+    String? localError;
+
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (BuildContext ctx, StateSetter setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          "Edit allergy".appText(
+                            fontSize: 20.sp,
+                            fraunces: true,
+                            color: greyColor9,
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(dialogContext),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: greyColor,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                      8.spaceH,
+                      "Update allergy or sensitivity detail.".appText(
                         fontSize: 13.sp,
                         color: greyColor,
                         textAlign: TextAlign.start,
                       ),
-                  20.spaceH,
-                  AppTextField(
-                    controller: textController,
-                    hint: "e.g., Peanuts, Dairy, Penicillin...",
-                    onSubmitted: (String val) {
-                      if (val.trim().isNotEmpty) {
-                        context.read<ChildEssentialsCubit>().addAllergy(
-                          val.trim(),
-                        );
-                        Navigator.pop(dialogContext);
-                      }
-                    },
-                  ),
-                  24.spaceH,
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppButton(
-                          height: 48.h,
-                          padding: EdgeInsets.zero,
-                          title: 'Cancel',
-                          backgroundColor: const Color(0xFFF8F5F2),
-                          borderColor: const Color(0xFFE9E2DC),
-                          textColor: greyColor9,
-                          onTap: () => Navigator.pop(dialogContext),
-                        ),
+                      20.spaceH,
+                      AppTextField(
+                        controller: textController,
+                        hint: "e.g., Peanuts, Dairy, Penicillin...",
+                        onChanged: (_) {
+                          if (localError != null) {
+                            setState(() => localError = null);
+                          }
+                        },
+                        onSubmitted: (String val) {
+                          if (val.trim().isNotEmpty) {
+                            context.read<ChildEssentialsCubit>().updateAllergy(
+                              index,
+                              val.trim(),
+                            );
+                            Navigator.pop(dialogContext);
+                          } else {
+                            setState(
+                              () => localError = "Please enter an allergy name",
+                            );
+                          }
+                        },
                       ),
-                      12.spaceW,
-                      Expanded(
-                        child: AppButton(
-                          height: 48.h,
-                          padding: EdgeInsets.zero,
-                          title: 'Add',
-                          backgroundColor: primaryColor,
-                          borderColor: primaryColor,
-                          textColor: Colors.white,
-                          onTap: () {
-                            final String val = textController.text.trim();
-                            if (val.isNotEmpty) {
-                              context.read<ChildEssentialsCubit>().addAllergy(
-                                val,
-                              );
-                              Navigator.pop(dialogContext);
-                            }
-                          },
+                      if (localError != null) ...[
+                        6.spaceH,
+                        localError!.appText(
+                          fontSize: 12.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
                         ),
+                      ],
+                      24.spaceH,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Cancel',
+                              backgroundColor: const Color(0xFFF8F5F2),
+                              borderColor: const Color(0xFFE9E2DC),
+                              textColor: greyColor9,
+                              onTap: () => Navigator.pop(dialogContext),
+                            ),
+                          ),
+                          12.spaceW,
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Save',
+                              backgroundColor: primaryColor,
+                              borderColor: primaryColor,
+                              textColor: Colors.white,
+                              onTap: () {
+                                final String val = textController.text.trim();
+                                if (val.isNotEmpty) {
+                                  context
+                                      .read<ChildEssentialsCubit>()
+                                      .updateAllergy(index, val);
+                                  Navigator.pop(dialogContext);
+                                } else {
+                                  setState(
+                                    () => localError =
+                                        "Please enter an allergy name",
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -355,62 +519,87 @@ class _AllergiesScreenState extends State<AllergiesScreen> {
                             ) {
                               final int index = entry.key;
                               final String allergy = entry.value;
-                              return Container(
-                                margin: EdgeInsets.only(bottom: 12.h),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 14.h,
+                              return GestureDetector(
+                                onTap: () => _showEditAllergyDialog(
+                                  context,
+                                  index,
+                                  allergy,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 40.w,
-                                      height: 40.w,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFFCE4EC),
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
+                                behavior: HitTestBehavior.opaque,
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 12.h),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 14.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 40.w,
+                                        height: 40.w,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFFCE4EC),
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Image.asset(
+                                            Assets.v2.icons.icAllergies.path,
+                                            width: 20.sp,
+                                            height: 20.sp,
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
                                       ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          Assets.v2.icons.icAllergies.path,
-                                          width: 20.sp,
-                                          height: 20.sp,
-                                          fit: BoxFit.contain,
+                                      14.spaceW,
+                                      Expanded(
+                                        child: allergy.appText(
+                                          fontSize: 16.sp,
+                                          color: greyColor9,
+                                          fontWeight: FontWeight.w500,
+                                          textAlign: TextAlign.start,
                                         ),
                                       ),
-                                    ),
-                                    14.spaceW,
-                                    Expanded(
-                                      child: allergy.appText(
-                                        fontSize: 16.sp,
-                                        color: greyColor9,
-                                        fontWeight: FontWeight.w500,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => _confirmDeleteAllergy(
-                                        context,
-                                        index,
-                                        allergy,
-                                      ),
-                                      behavior: HitTestBehavior.opaque,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(6.r),
-                                        child: Icon(
-                                          Icons.delete_outline_rounded,
-                                          color: Colors.redAccent,
-                                          size: 22.sp,
+                                      GestureDetector(
+                                        onTap: () => _showEditAllergyDialog(
+                                          context,
+                                          index,
+                                          allergy,
+                                        ),
+                                        behavior: HitTestBehavior.opaque,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(6.r),
+                                          child: Icon(
+                                            Icons.edit_outlined,
+                                            color: greyColor,
+                                            size: 20.sp,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      8.spaceW,
+                                      GestureDetector(
+                                        onTap: () => _confirmDeleteAllergy(
+                                          context,
+                                          index,
+                                          allergy,
+                                        ),
+                                        behavior: HitTestBehavior.opaque,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(6.r),
+                                          child: Icon(
+                                            Icons.delete_outline_rounded,
+                                            color: Colors.redAccent,
+                                            size: 22.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             }),

@@ -5,6 +5,7 @@ import 'bloc/today_cubit.dart';
 import 'bloc/today_state.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_behaviour_sheet.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
@@ -17,6 +18,9 @@ import 'package:loving_brain/ui/today_screen/widgets/main_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/nice_work_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
 import 'package:loving_brain/ui/today_screen/widgets/still_learning_patterns_card.dart';
+import 'dart:async';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:loving_brain/ui/widget/offline_banner.dart';
 // Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -29,12 +33,45 @@ class TodayScreen extends StatefulWidget {
 }
 
 class _TodayScreenState extends State<TodayScreen> {
+  bool _isOffline = false;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TodayCubit>().init();
     });
+
+    Connectivity().checkConnectivity().then((List<ConnectivityResult> results) {
+      if (!mounted) return;
+      setState(() {
+        _isOffline =
+            results.isEmpty ||
+            results.every(
+              (ConnectivityResult r) => r == ConnectivityResult.none,
+            );
+      });
+    });
+
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) {
+      if (!mounted) return;
+      setState(() {
+        _isOffline =
+            results.isEmpty ||
+            results.every(
+              (ConnectivityResult r) => r == ConnectivityResult.none,
+            );
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -78,6 +115,10 @@ class _TodayScreenState extends State<TodayScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const TodayHeader(),
+                        if (_isOffline) ...[
+                          16.spaceH,
+                          const OfflineBanner(isVisible: true),
+                        ],
                         SizedBox(height: 24.h),
                         if (state.mode == TodayMode.normal) ...[
                           const MainCard(),

@@ -42,34 +42,14 @@ class SleepHeader extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 16,
-          right: 16,
-          child: Container(
-            height: 150,
-            width: MediaQuery.of(context).size.width / 3,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.contain,
-                image: AssetImage(cloudImagePath),
-              ),
-            ),
+          bottom: 12.h,
+          right: 12.w,
+          child: SizedBox(
+            height: 120.h,
+            width: 105.w,
+            child: Image.asset(cloudImagePath, fit: BoxFit.contain),
           ),
         ),
-        // Positioned(
-        //   top: 40.h,
-        //   left: 16.w,
-        //   child: InkWell(
-        //     onTap: () => Navigator.pop(context),
-        //     child: Container(
-        //       padding: const EdgeInsets.all(8),
-        //       decoration: const BoxDecoration(
-        //         color: Colors.white,
-        //         shape: BoxShape.circle,
-        //       ),
-        //       child: Icon(Icons.arrow_back, color: darkBlue, size: 24.sp),
-        //     ),
-        //   ),
-        // ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -133,17 +113,27 @@ class SleepHeader extends StatelessWidget {
               bgColor: Colors.white,
             ),
             16.spaceH,
-            timeText.appText(
-              fontSize: 28.sp,
-              fontWeight: FontWeight.w400,
-              color: Colors.white,
-              fraunces: true,
-              textAlign: TextAlign.start,
-            ),
-            estimateText.appText(
-              fontSize: 14.sp,
-              color: greyColor2,
-              textAlign: TextAlign.start,
+            Padding(
+              padding: EdgeInsets.only(right: 110.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  timeText.appText(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white,
+                    fraunces: true,
+                    textAlign: TextAlign.start,
+                  ),
+                  4.spaceH,
+                  estimateText.appText(
+                    fontSize: 13.sp,
+                    color: greyColor2,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
             ),
           ],
         ).appPadding(all: 16),

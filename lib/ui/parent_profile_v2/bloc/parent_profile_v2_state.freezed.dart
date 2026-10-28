@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ParentProfileV2State {
 
- UserModel? get user; String get name; String get relationship; String get dob; String get gender; String get language; String get location; ApiResultStatus<dynamic> get saveStatus; ApiResultStatus<dynamic> get logoutStatus; ApiResultStatus<dynamic> get deleteAccountStatus;
+ UserModel? get user; String get name; String get nameError; bool get isEdited; String get relationship; String get dob; String get gender; String get language; String get location; ApiResultStatus<dynamic> get saveStatus; ApiResultStatus<dynamic> get logoutStatus; ApiResultStatus<dynamic> get deleteAccountStatus;
 /// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ParentProfileV2StateCopyWith<ParentProfileV2State> get copyWith => _$ParentProf
 @override
 bool operator ==(Object other) {
   final _this = this as ParentProfileV2State;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParentProfileV2State&&(identical(other.user, _this.user) || other.user == _this.user)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.relationship, _this.relationship) || other.relationship == _this.relationship)&&(identical(other.dob, _this.dob) || other.dob == _this.dob)&&(identical(other.gender, _this.gender) || other.gender == _this.gender)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus)&&(identical(other.logoutStatus, _this.logoutStatus) || other.logoutStatus == _this.logoutStatus)&&(identical(other.deleteAccountStatus, _this.deleteAccountStatus) || other.deleteAccountStatus == _this.deleteAccountStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ParentProfileV2State&&(identical(other.user, _this.user) || other.user == _this.user)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.nameError, _this.nameError) || other.nameError == _this.nameError)&&(identical(other.isEdited, _this.isEdited) || other.isEdited == _this.isEdited)&&(identical(other.relationship, _this.relationship) || other.relationship == _this.relationship)&&(identical(other.dob, _this.dob) || other.dob == _this.dob)&&(identical(other.gender, _this.gender) || other.gender == _this.gender)&&(identical(other.language, _this.language) || other.language == _this.language)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus)&&(identical(other.logoutStatus, _this.logoutStatus) || other.logoutStatus == _this.logoutStatus)&&(identical(other.deleteAccountStatus, _this.deleteAccountStatus) || other.deleteAccountStatus == _this.deleteAccountStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ParentProfileV2State;
-  return Object.hash(runtimeType,_this.user,_this.name,_this.relationship,_this.dob,_this.gender,_this.language,_this.location,_this.saveStatus,_this.logoutStatus,_this.deleteAccountStatus);
+  return Object.hash(runtimeType,_this.user,_this.name,_this.nameError,_this.isEdited,_this.relationship,_this.dob,_this.gender,_this.language,_this.location,_this.saveStatus,_this.logoutStatus,_this.deleteAccountStatus);
 }
 
 @override
 String toString() {
   final _this = this as ParentProfileV2State;
-  return 'ParentProfileV2State(user: ${_this.user}, name: ${_this.name}, relationship: ${_this.relationship}, dob: ${_this.dob}, gender: ${_this.gender}, language: ${_this.language}, location: ${_this.location}, saveStatus: ${_this.saveStatus}, logoutStatus: ${_this.logoutStatus}, deleteAccountStatus: ${_this.deleteAccountStatus})';
+  return 'ParentProfileV2State(user: ${_this.user}, name: ${_this.name}, nameError: ${_this.nameError}, isEdited: ${_this.isEdited}, relationship: ${_this.relationship}, dob: ${_this.dob}, gender: ${_this.gender}, language: ${_this.language}, location: ${_this.location}, saveStatus: ${_this.saveStatus}, logoutStatus: ${_this.logoutStatus}, deleteAccountStatus: ${_this.deleteAccountStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ParentProfileV2StateCopyWith<$Res>  {
   factory $ParentProfileV2StateCopyWith(ParentProfileV2State value, $Res Function(ParentProfileV2State) _then) = _$ParentProfileV2StateCopyWithImpl;
 @useResult
 $Res call({
- UserModel? user, String name, String relationship, String dob, String gender, String language, String location, ApiResultStatus<dynamic> saveStatus, ApiResultStatus<dynamic> logoutStatus, ApiResultStatus<dynamic> deleteAccountStatus
+ UserModel? user, String name, String nameError, bool isEdited, String relationship, String dob, String gender, String language, String location, ApiResultStatus<dynamic> saveStatus, ApiResultStatus<dynamic> logoutStatus, ApiResultStatus<dynamic> deleteAccountStatus
 });
 
 
@@ -68,11 +68,13 @@ class _$ParentProfileV2StateCopyWithImpl<$Res>
 
 /// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? user = freezed,Object? name = null,Object? relationship = null,Object? dob = null,Object? gender = null,Object? language = null,Object? location = null,Object? saveStatus = null,Object? logoutStatus = null,Object? deleteAccountStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? user = freezed,Object? name = null,Object? nameError = null,Object? isEdited = null,Object? relationship = null,Object? dob = null,Object? gender = null,Object? language = null,Object? location = null,Object? saveStatus = null,Object? logoutStatus = null,Object? deleteAccountStatus = null,}) {
   return _then(ParentProfileV2State(
 user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserModel?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,relationship: null == relationship ? _self.relationship : relationship // ignore: cast_nullable_to_non_nullable
+as String,nameError: null == nameError ? _self.nameError : nameError // ignore: cast_nullable_to_non_nullable
+as String,isEdited: null == isEdited ? _self.isEdited : isEdited // ignore: cast_nullable_to_non_nullable
+as bool,relationship: null == relationship ? _self.relationship : relationship // ignore: cast_nullable_to_non_nullable
 as String,dob: null == dob ? _self.dob : dob // ignore: cast_nullable_to_non_nullable
 as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
@@ -192,10 +194,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String nameError,  bool isEdited,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State() when $default != null:
-return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
+return $default(_that.user,_that.name,_that.nameError,_that.isEdited,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
   return orElse();
 
 }
@@ -213,10 +215,10 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( UserModel? user,  String name,  String nameError,  bool isEdited,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State():
-return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
+return $default(_that.user,_that.name,_that.nameError,_that.isEdited,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -233,10 +235,10 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? user,  String name,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( UserModel? user,  String name,  String nameError,  bool isEdited,  String relationship,  String dob,  String gender,  String language,  String location,  ApiResultStatus<dynamic> saveStatus,  ApiResultStatus<dynamic> logoutStatus,  ApiResultStatus<dynamic> deleteAccountStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ParentProfileV2State() when $default != null:
-return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
+return $default(_that.user,_that.name,_that.nameError,_that.isEdited,_that.relationship,_that.dob,_that.gender,_that.language,_that.location,_that.saveStatus,_that.logoutStatus,_that.deleteAccountStatus);case _:
   return null;
 
 }
@@ -248,11 +250,13 @@ return $default(_that.user,_that.name,_that.relationship,_that.dob,_that.gender,
 
 
 class _ParentProfileV2State implements ParentProfileV2State {
-  const _ParentProfileV2State({this.user, this.name = '', this.relationship = '', this.dob = '', this.gender = '', this.language = '', this.location = '', this.saveStatus = const ApiResultStatus.initial(), this.logoutStatus = const ApiResultStatus.initial(), this.deleteAccountStatus = const ApiResultStatus.initial()});
+  const _ParentProfileV2State({this.user, this.name = '', this.nameError = '', this.isEdited = false, this.relationship = '', this.dob = '', this.gender = '', this.language = '', this.location = '', this.saveStatus = const ApiResultStatus.initial(), this.logoutStatus = const ApiResultStatus.initial(), this.deleteAccountStatus = const ApiResultStatus.initial()});
   
 
 @override final  UserModel? user;
 @override@JsonKey() final  String name;
+@override@JsonKey() final  String nameError;
+@override@JsonKey() final  bool isEdited;
 @override@JsonKey() final  String relationship;
 @override@JsonKey() final  String dob;
 @override@JsonKey() final  String gender;
@@ -272,18 +276,18 @@ _$ParentProfileV2StateCopyWith<_ParentProfileV2State> get copyWith => __$ParentP
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ParentProfileV2State&&(identical(other.user, user) || other.user == user)&&(identical(other.name, name) || other.name == name)&&(identical(other.relationship, relationship) || other.relationship == relationship)&&(identical(other.dob, dob) || other.dob == dob)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.language, language) || other.language == language)&&(identical(other.location, location) || other.location == location)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus)&&(identical(other.logoutStatus, logoutStatus) || other.logoutStatus == logoutStatus)&&(identical(other.deleteAccountStatus, deleteAccountStatus) || other.deleteAccountStatus == deleteAccountStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ParentProfileV2State&&(identical(other.user, user) || other.user == user)&&(identical(other.name, name) || other.name == name)&&(identical(other.nameError, nameError) || other.nameError == nameError)&&(identical(other.isEdited, isEdited) || other.isEdited == isEdited)&&(identical(other.relationship, relationship) || other.relationship == relationship)&&(identical(other.dob, dob) || other.dob == dob)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.language, language) || other.language == language)&&(identical(other.location, location) || other.location == location)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus)&&(identical(other.logoutStatus, logoutStatus) || other.logoutStatus == logoutStatus)&&(identical(other.deleteAccountStatus, deleteAccountStatus) || other.deleteAccountStatus == deleteAccountStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,user,name,relationship,dob,gender,language,location,saveStatus,logoutStatus,deleteAccountStatus);
+    return Object.hash(runtimeType,user,name,nameError,isEdited,relationship,dob,gender,language,location,saveStatus,logoutStatus,deleteAccountStatus);
 }
 
 @override
 String toString() {
-    return 'ParentProfileV2State(user: $user, name: $name, relationship: $relationship, dob: $dob, gender: $gender, language: $language, location: $location, saveStatus: $saveStatus, logoutStatus: $logoutStatus, deleteAccountStatus: $deleteAccountStatus)';
+    return 'ParentProfileV2State(user: $user, name: $name, nameError: $nameError, isEdited: $isEdited, relationship: $relationship, dob: $dob, gender: $gender, language: $language, location: $location, saveStatus: $saveStatus, logoutStatus: $logoutStatus, deleteAccountStatus: $deleteAccountStatus)';
 }
 
 
@@ -294,7 +298,7 @@ abstract mixin class _$ParentProfileV2StateCopyWith<$Res> implements $ParentProf
   factory _$ParentProfileV2StateCopyWith(_ParentProfileV2State value, $Res Function(_ParentProfileV2State) _then) = __$ParentProfileV2StateCopyWithImpl;
 @override @useResult
 $Res call({
- UserModel? user, String name, String relationship, String dob, String gender, String language, String location, ApiResultStatus<dynamic> saveStatus, ApiResultStatus<dynamic> logoutStatus, ApiResultStatus<dynamic> deleteAccountStatus
+ UserModel? user, String name, String nameError, bool isEdited, String relationship, String dob, String gender, String language, String location, ApiResultStatus<dynamic> saveStatus, ApiResultStatus<dynamic> logoutStatus, ApiResultStatus<dynamic> deleteAccountStatus
 });
 
 
@@ -311,11 +315,13 @@ class __$ParentProfileV2StateCopyWithImpl<$Res>
 
 /// Create a copy of ParentProfileV2State
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? user = freezed,Object? name = null,Object? relationship = null,Object? dob = null,Object? gender = null,Object? language = null,Object? location = null,Object? saveStatus = null,Object? logoutStatus = null,Object? deleteAccountStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? user = freezed,Object? name = null,Object? nameError = null,Object? isEdited = null,Object? relationship = null,Object? dob = null,Object? gender = null,Object? language = null,Object? location = null,Object? saveStatus = null,Object? logoutStatus = null,Object? deleteAccountStatus = null,}) {
   return _then(_ParentProfileV2State(
 user: freezed == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserModel?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,relationship: null == relationship ? _self.relationship : relationship // ignore: cast_nullable_to_non_nullable
+as String,nameError: null == nameError ? _self.nameError : nameError // ignore: cast_nullable_to_non_nullable
+as String,isEdited: null == isEdited ? _self.isEdited : isEdited // ignore: cast_nullable_to_non_nullable
+as bool,relationship: null == relationship ? _self.relationship : relationship // ignore: cast_nullable_to_non_nullable
 as String,dob: null == dob ? _self.dob : dob // ignore: cast_nullable_to_non_nullable
 as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
 as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable

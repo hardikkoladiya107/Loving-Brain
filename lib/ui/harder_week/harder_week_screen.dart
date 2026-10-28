@@ -217,7 +217,7 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: primaryColor, width: 1),
+        border: Border.all(color: greyColor.withValues(alpha: 0.15), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,6 +236,14 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
             textAlign: TextAlign.start,
             height: 1.2,
           ),
+          8.spaceH,
+          "A small daily shift to help reset sleep timing naturally without pressure."
+              .appText(
+                fontSize: 14.sp,
+                color: greyColor,
+                textAlign: TextAlign.start,
+                height: 1.4,
+              ),
         ],
       ),
     );

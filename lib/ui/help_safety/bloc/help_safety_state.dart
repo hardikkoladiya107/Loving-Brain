@@ -11,7 +11,7 @@ abstract class HelpSafetyState with _$HelpSafetyState {
     @Default(false) bool isLoading,
     @Default('support@lovingbrain.com') String supportEmail,
     @Default('https://lovingbrain.com/faq') String faqUrl,
-    @Default('tel:911') String emergencyPhone,
+    @Default('911') String emergencyPhone,
     @Default(ApiResultStatus.initial()) ApiResultStatus actionStatus,
   }) = _HelpSafetyState;
 }

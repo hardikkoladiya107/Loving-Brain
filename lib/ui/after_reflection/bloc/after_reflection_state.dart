@@ -10,8 +10,9 @@ abstract class AfterReflectionState with _$AfterReflectionState {
     @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
     @Default('') String beforeEvent,
     @Default('') String durationText,
-    @Default(0.5) double intensityValue,
-    @Default('Holding close') String selectedHelped,
-    @Default('Tired') String selectedFeeling,
+    @Default(0.0) double intensityValue,
+    @Default('') String selectedHelped,
+    @Default('') String selectedFeeling,
+    @Default(false) bool showErrors,
   }) = _AfterReflectionState;
 }

@@ -227,7 +227,7 @@ return $default(_that.selectedRole,_that.childName,_that.email,_that.emailError,
 
 
 class _InviteCaregiverState extends InviteCaregiverState {
-  const _InviteCaregiverState({this.selectedRole = 'Grandparent', this.childName = 'your child', this.email = '', this.emailError = '', this.isSending = false, this.createdInvitationId = '', this.sendStatus = const ApiResultStatus.initial()}): super._();
+  const _InviteCaregiverState({this.selectedRole = '', this.childName = 'your child', this.email = '', this.emailError = '', this.isSending = false, this.createdInvitationId = '', this.sendStatus = const ApiResultStatus.initial()}): super._();
   
 
 @override@JsonKey() final  String selectedRole;

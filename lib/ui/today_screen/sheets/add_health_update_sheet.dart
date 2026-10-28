@@ -43,12 +43,19 @@ class AddHealthUpdateSheet extends StatelessWidget {
     return BlocConsumer<TodayCubit, TodayState>(
       listener: (BuildContext context, TodayState state) {
         state.saveStatus.whenOrNull(
-          data: (_) {
+          data: (dynamic data) {
             Navigator.pop(context);
-            showSnackBar(
-              message: LocaleKeys.healthLogSaved.tr(),
-              type: SnackBarType.SUCCESS,
-            );
+            if (data == 'offline_queued') {
+              showSnackBar(
+                message: "Saved offline. Will sync when reconnected.",
+                type: SnackBarType.SUCCESS,
+              );
+            } else {
+              showSnackBar(
+                message: LocaleKeys.healthLogSaved.tr(),
+                type: SnackBarType.SUCCESS,
+              );
+            }
           },
           error: (Exception error) {
             showSnackBar(
@@ -128,6 +135,15 @@ class AddHealthUpdateSheet extends StatelessWidget {
                     );
                   }),
                 ),
+                if (isError) ...[
+                  8.spaceH,
+                  "Please select at least one health observation".appText(
+                    fontSize: 12.sp,
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
                 24.spaceH,
                 Container(
                   decoration: BoxDecoration(
@@ -299,6 +315,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
                             ),
                           );
                         },
+                        tertiaryButtonText: "Not now, return to Health update",
                       );
                       return;
                     }

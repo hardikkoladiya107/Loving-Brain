@@ -6,6 +6,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -429,11 +430,29 @@ class CoParentRepo {
 
       final Map<String, dynamic> userUpdate = <String, dynamic>{
         'children': FieldValue.arrayUnion(childRefs),
+        'is_onboarding_completed': true,
       };
       if (!hasDefaultChild && childRefs.isNotEmpty) {
         userUpdate['default_child'] = childRefs.first;
       }
       await userCollection.doc(parentUid).update(userUpdate);
+
+      // Cache the shared child model locally so the co-parent lands immediately on their child's Today
+      if (childRefs.isNotEmpty) {
+        try {
+          final DocumentSnapshot<Map<String, dynamic>> childDoc =
+              await (childRefs.first as DocumentReference<Map<String, dynamic>>)
+                  .get();
+          final Map<String, dynamic>? childData = childDoc.data();
+          if (childDoc.exists && childData != null) {
+            final ChildModel sharedChild = ChildModel.fromJson(
+              childData,
+              childDoc.reference,
+            );
+            await preferences.saveChildModel(sharedChild);
+          }
+        } catch (_) {}
+      }
 
       // Step 2b — link partners and set active logger (inviter logs, acceptor views).
       final String? inviterEmail = invitationModel.fromParent?.trim();
@@ -462,6 +481,7 @@ class CoParentRepo {
       final Map<String, dynamic>? freshData = freshDoc.data();
       if (freshDoc.exists && freshData != null) {
         freshData['uid'] = parentUid;
+        freshData['is_onboarding_completed'] = true;
         final UserModel updatedUser = UserModel.fromJson(freshData);
         await preferences.saveUserModel(updatedUser);
       }

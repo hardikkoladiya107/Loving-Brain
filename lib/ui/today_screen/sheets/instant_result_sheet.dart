@@ -11,6 +11,7 @@ void showInstantResultSheet(
   String? reason,
   String? action,
   String? actionSubtitle,
+  VoidCallback? onActionTap,
 }) {
   showModalBottomSheet<void>(
     context: context,
@@ -25,6 +26,7 @@ void showInstantResultSheet(
       reason: reason,
       action: action,
       actionSubtitle: actionSubtitle,
+      onActionTap: onActionTap,
     ),
   );
 }
@@ -34,6 +36,7 @@ class InstantResultSheet extends StatelessWidget {
   final String? reason;
   final String? action;
   final String? actionSubtitle;
+  final VoidCallback? onActionTap;
 
   const InstantResultSheet({
     super.key,
@@ -41,6 +44,7 @@ class InstantResultSheet extends StatelessWidget {
     this.reason,
     this.action,
     this.actionSubtitle,
+    this.onActionTap,
   });
 
   @override
@@ -109,41 +113,61 @@ class InstantResultSheet extends StatelessWidget {
               ),
             ),
             12.spaceH,
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF767676).withAlpha(16),
-                    spreadRadius: 16,
-                    blurRadius: 12,
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const InfoChip(
-                    iconData: Icons.stars_rounded,
-                    chipTitle: "Action",
-                  ),
-                  10.spaceH,
-                  SizedBox(width: 12.h),
-                  resolvedAction.appText(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                    textAlign: TextAlign.start,
-                  ),
-                  resolvedActionSubtitle.appText(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    textAlign: TextAlign.start,
-                    color: greyColor6,
-                  ),
-                  6.spaceH,
-                ],
+            InkWell(
+              onTap: onActionTap != null
+                  ? () {
+                      Navigator.pop(context);
+                      onActionTap!();
+                    }
+                  : null,
+              borderRadius: BorderRadius.circular(20.r),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF767676).withAlpha(16),
+                      spreadRadius: 16,
+                      blurRadius: 12,
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.all(16.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const InfoChip(
+                          iconData: Icons.stars_rounded,
+                          chipTitle: "Action",
+                        ),
+                        if (onActionTap != null)
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: primaryColor,
+                            size: 24.sp,
+                          ),
+                      ],
+                    ),
+                    10.spaceH,
+                    resolvedAction.appText(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                      textAlign: TextAlign.start,
+                    ),
+                    6.spaceH,
+                    resolvedActionSubtitle.appText(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      textAlign: TextAlign.start,
+                      color: greyColor6,
+                    ),
+                    6.spaceH,
+                  ],
+                ),
               ),
             ),
             20.spaceH,

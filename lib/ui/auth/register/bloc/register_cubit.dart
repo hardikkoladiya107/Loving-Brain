@@ -217,7 +217,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     if (rawPhone.isEmpty && rawEmail.isEmpty) {
       changeProps(
         phoneNumberError: 'Please enter your mobile number or email address',
-        emailAddressError: 'Please enter your email or mobile number',
+        emailAddressError: 'Please enter your mobile number or email address',
       );
       return;
     }
@@ -229,7 +229,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         cleanPhone = cleanPhone.substring(1);
       }
 
-      // Validate country code — only Indian (+91) supported
+      // Validate country code — only Indian (+91) supported, mobile numbers start 6-9
       if (cleanPhone.startsWith('+')) {
         if (!cleanPhone.startsWith('+91')) {
           changeProps(
@@ -239,7 +239,7 @@ class RegisterCubit extends Cubit<RegisterState> {
           return;
         }
         final String digits = cleanPhone.substring(3);
-        if (digits.length != 10 || !RegExp(r'^\d{10}$').hasMatch(digits)) {
+        if (digits.length != 10 || !RegExp(r'^[6-9]\d{9}$').hasMatch(digits)) {
           changeProps(
             phoneNumberError:
                 'Please enter a valid 10-digit Indian mobile number',
@@ -249,10 +249,10 @@ class RegisterCubit extends Cubit<RegisterState> {
       } else {
         if (cleanPhone.startsWith('91') &&
             cleanPhone.length == 12 &&
-            RegExp(r'^\d{12}$').hasMatch(cleanPhone)) {
+            RegExp(r'^91[6-9]\d{9}$').hasMatch(cleanPhone)) {
           cleanPhone = '+$cleanPhone';
         } else if (cleanPhone.length == 10 &&
-            RegExp(r'^\d{10}$').hasMatch(cleanPhone)) {
+            RegExp(r'^[6-9]\d{9}$').hasMatch(cleanPhone)) {
           // Auto-add +91 as requested
           cleanPhone = '+91$cleanPhone';
         } else {
@@ -269,7 +269,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     if (rawEmail.isNotEmpty) {
       cleanEmail = rawEmail.toLowerCase();
       if (!cleanEmail.isValidEmail) {
-        changeProps(emailAddressError: LocaleKeys.pleaseEnterValidEmail.tr());
+        changeProps(emailAddressError: 'Please enter a valid email address');
         return;
       }
     }

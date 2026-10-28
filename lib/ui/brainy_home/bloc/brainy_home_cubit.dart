@@ -71,8 +71,12 @@ class BrainyHomeCubit extends Cubit<BrainyHomeState> {
     changeProps(
       parentName: pName,
       childName: cName,
-      suggestedQuestions:
-          _topicQuestions[state.selectedTopic] ?? _topicQuestions['Behaviour']!,
+      selectedTopic: '',
+      suggestedQuestions: const <String>[
+        'Why is bedtime harder lately?',
+        'What can I try tonight?',
+        'How to handle evening meltdowns?',
+      ],
     );
 
     if (user?.uid != null && user!.uid!.isNotEmpty) {
@@ -101,11 +105,26 @@ class BrainyHomeCubit extends Cubit<BrainyHomeState> {
   }
 
   void setTopic(String topic) {
-    changeProps(
-      selectedTopic: topic,
-      suggestedQuestions:
-          _topicQuestions[topic] ?? _topicQuestions['Behaviour']!,
-    );
+    if (state.selectedTopic == topic) {
+      changeProps(
+        selectedTopic: '',
+        suggestedQuestions: const <String>[
+          'Why is bedtime harder lately?',
+          'What can I try tonight?',
+          'How to handle evening meltdowns?',
+        ],
+      );
+    } else {
+      changeProps(
+        selectedTopic: topic,
+        suggestedQuestions:
+            _topicQuestions[topic] ??
+            const <String>[
+              'Why is bedtime harder lately?',
+              'What can I try tonight?',
+            ],
+      );
+    }
   }
 
   void updateChatText(String value) {

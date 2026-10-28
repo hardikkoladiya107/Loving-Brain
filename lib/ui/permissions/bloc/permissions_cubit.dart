@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 
 import 'permissions_state.dart';
@@ -161,6 +162,27 @@ class PermissionsCubit extends Cubit<PermissionsState> {
             .doc(email)
             .delete();
       } catch (_) {}
+    }
+
+    final UserModel? user = preferences.getUserModel();
+    if (user != null && user.uid != null) {
+      final String? partnerId = user.partnerUserId;
+      try {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update(<String, dynamic>{'partner_user_id': FieldValue.delete()});
+        if (partnerId != null && partnerId.isNotEmpty) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(partnerId)
+              .update(<String, dynamic>{
+                'partner_user_id': FieldValue.delete(),
+              });
+        }
+      } catch (_) {}
+      final UserModel updatedUser = user.copyWith(partnerUserId: null);
+      await preferences.saveUserModel(updatedUser);
     }
 
     changeProps(

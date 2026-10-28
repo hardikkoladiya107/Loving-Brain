@@ -319,7 +319,7 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
             ),
             16.spaceH,
             BaseButton(
-              onTap: () => cubit.cancelInvite(),
+              onTap: () => _showCancelInviteDialog(context, cubit),
               child: "Cancel invite".appText(
                 fontSize: 16.sp,
                 color: greyColor,
@@ -329,6 +329,89 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showCancelInviteDialog(BuildContext context, InvitePendingCubit cubit) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 52.w,
+                  height: 52.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.cancel_outlined,
+                    color: const Color(0xFFD84315),
+                    size: 26.sp,
+                  ),
+                ),
+                16.spaceH,
+                "Cancel invite?".appText(
+                  fontSize: 20.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                8.spaceH,
+                "Are you sure you want to cancel this pending invitation? The invite link will no longer work."
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.center,
+                      height: 1.4,
+                    ),
+                20.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 44.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Keep invite',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 44.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel invite',
+                        backgroundColor: const Color(0xFFD84315),
+                        borderColor: const Color(0xFFD84315),
+                        textColor: Colors.white,
+                        onTap: () {
+                          Navigator.pop(dialogContext);
+                          cubit.cancelInvite();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

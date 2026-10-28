@@ -198,7 +198,7 @@ void main() {
         final HelpSafetyCubit cubit = HelpSafetyCubit();
         cubit.init();
 
-        expect(cubit.state.emergencyPhone, 'tel:911');
+        expect(cubit.state.emergencyPhone, '911');
         expect(cubit.state.supportEmail, 'support@lovingbrain.com');
         expect(cubit.state.faqUrl, contains('lovingbrain.com'));
 

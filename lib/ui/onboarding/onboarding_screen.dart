@@ -191,7 +191,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           // Main Headline
-          "What brings you to\nLovingBrain?"
+          "What brings you to\nLoving Brain?"
               .appText2(
                 fontSize: 26,
                 textAlign: TextAlign.start,
@@ -523,13 +523,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _pickChildDob(BuildContext context) async {
     final OnboardingCubit cubit = context.read<OnboardingCubit>();
     final DateTime now = DateTime.now();
-    final DateTime rawInitial = cubit.state.childDob ?? now;
-    final DateTime initialDate = rawInitial.isAfter(now) ? now : rawInitial;
+    final DateTime maxPast = now.subtract(const Duration(days: 1));
+    final DateTime defaultInitial = DateTime(now.year - 2, now.month, now.day);
+    final DateTime rawInitial = cubit.state.childDob ?? defaultInitial;
+    final DateTime initialDate = rawInitial.isAfter(maxPast)
+        ? maxPast
+        : rawInitial;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(2015),
-      lastDate: now,
+      firstDate: DateTime(2010),
+      lastDate: maxPast,
       builder: (BuildContext ctx, Widget? child) {
         return Theme(
           data: Theme.of(ctx).copyWith(

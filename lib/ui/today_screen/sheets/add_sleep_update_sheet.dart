@@ -123,23 +123,30 @@ class AddSleepUpdateSheet extends StatelessWidget {
         }
 
         state.saveStatus.whenOrNull(
-          data: (_) {
+          data: (dynamic data) {
             Navigator.pop(context);
-            if (state.didForecastChangeSignificantly) {
-              showInstantResultSheet(
-                context,
-                title: "Sleep update recorded",
-                reason: state.forecastChangeReason.isNotEmpty
-                    ? state.forecastChangeReason
-                    : "Today's sleep timing has updated tonight's settling window by 15+ minutes.",
-                action: "Check updated sleep plan",
-                actionSubtitle: "Wind-down timing reflects latest rest data.",
+            if (data == 'offline_queued') {
+              showSnackBar(
+                message: "Saved offline. Will sync when reconnected.",
+                type: SnackBarType.SUCCESS,
+              );
+            } else {
+              if (state.didForecastChangeSignificantly) {
+                showInstantResultSheet(
+                  context,
+                  title: "Sleep update recorded",
+                  reason: state.forecastChangeReason.isNotEmpty
+                      ? state.forecastChangeReason
+                      : "Today's sleep timing has updated tonight's settling window by 15+ minutes.",
+                  action: "Check updated sleep plan",
+                  actionSubtitle: "Wind-down timing reflects latest rest data.",
+                );
+              }
+              showSnackBar(
+                message: LocaleKeys.sleepLogSaved.tr(),
+                type: SnackBarType.SUCCESS,
               );
             }
-            showSnackBar(
-              message: LocaleKeys.sleepLogSaved.tr(),
-              type: SnackBarType.SUCCESS,
-            );
           },
           error: (Exception error) {
             showSnackBar(
@@ -151,14 +158,12 @@ class AddSleepUpdateSheet extends StatelessWidget {
       },
       builder: (BuildContext context, TodayState state) {
         String? napTimeStr;
-        if (state.fellAsleepTime != null && state.wokeUpTime != null) {
-          napTimeStr = "${state.fellAsleepTime} \u2013 ${state.wokeUpTime}";
-        } else if (state.fellAsleepTime != null) {
-          napTimeStr = "${state.fellAsleepTime} \u2013 HH:MM AM";
-        } else if (state.wokeUpTime != null) {
-          napTimeStr = "HH:MM AM \u2013 ${state.wokeUpTime}";
-        } else if (state.napStartTime != null && state.napEndTime != null) {
+        if (state.napStartTime != null && state.napEndTime != null) {
           napTimeStr = "${state.napStartTime} \u2013 ${state.napEndTime}";
+        } else if (state.napStartTime != null) {
+          napTimeStr = "${state.napStartTime} \u2013 HH:MM";
+        } else if (state.napEndTime != null) {
+          napTimeStr = "HH:MM \u2013 ${state.napEndTime}";
         }
 
         return Padding(
@@ -197,6 +202,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 ),
                 24.spaceH,
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _buildTimeInput(
@@ -205,6 +211,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                         isError:
                             state.showSleepUpdateErrors &&
                             state.fellAsleepTime == null,
+                        errorText: "Required",
                         onTap: () => _pickTime(context, false),
                       ),
                     ),
@@ -216,6 +223,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                         isError:
                             state.showSleepUpdateErrors &&
                             state.wokeUpTime == null,
+                        errorText: "Required",
                         onTap: () => _pickTime(context, true),
                       ),
                     ),
@@ -225,10 +233,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 _buildTimeInput(
                   label: "NAP STARTED & ENDED",
                   time: napTimeStr,
-                  isError:
-                      state.showSleepUpdateErrors &&
-                      (state.fellAsleepTime == null ||
-                          state.wokeUpTime == null),
+                  isError: false,
                   isEditable: false,
                   onTap: null,
                   dummyText: "HH:MM AM - HH:MM PM",
@@ -269,7 +274,9 @@ class AddSleepUpdateSheet extends StatelessWidget {
                         margin: EdgeInsets.only(right: 12.w),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: index <= state.sleepQualityIndex
+                          color:
+                              (state.sleepQualityIndex >= 0 &&
+                                  index <= state.sleepQualityIndex)
                               ? secondaryColor
                               : greyColor11,
                         ),
@@ -305,47 +312,63 @@ class AddSleepUpdateSheet extends StatelessWidget {
     required String label,
     required String? time,
     required bool isError,
+    String? errorText,
     bool isEditable = true,
     VoidCallback? onTap,
     String dummyText = "HH:MM AM",
   }) {
-    return GestureDetector(
-      onTap: isEditable ? onTap : null,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: isError ? Colors.red : greyColor12),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: isEditable ? onTap : null,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: isError ? Colors.red : greyColor12),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: label.appText(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w800,
-                    color: greyColor,
-                    letterSpacing: 1.2,
-                    textAlign: TextAlign.start,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: label.appText(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w800,
+                        color: isError ? Colors.red : greyColor,
+                        letterSpacing: 1.2,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    if (isError)
+                      Icon(Icons.error, color: Colors.red, size: 16.sp),
+                  ],
                 ),
-                if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
+                4.spaceH,
+                (time ?? dummyText).appText(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: time == null ? greyColor4 : blackTextColor,
+                  textAlign: TextAlign.start,
+                ),
               ],
             ),
-            4.spaceH,
-            (time ?? dummyText).appText(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: time == null ? greyColor4 : blackTextColor,
-              textAlign: TextAlign.start,
-            ),
-          ],
+          ),
         ),
-      ),
+        if (isError) ...[
+          4.spaceH,
+          (errorText ?? "Please select time").appText(
+            fontSize: 12.sp,
+            color: Colors.red,
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.start,
+          ),
+        ],
+      ],
     );
   }
 }

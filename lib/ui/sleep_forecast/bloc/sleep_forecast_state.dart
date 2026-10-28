@@ -20,6 +20,7 @@ abstract class SleepForecastState with _$SleepForecastState {
     @Default(2) int confidenceDots,
     @Default([]) List<TonightPlanStep> planSteps,
     @Default(false) bool hasRealLogs,
+    @Default([]) List<int> loggedDays,
     String? healthCaveat,
   }) = _SleepForecastState;
 }

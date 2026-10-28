@@ -270,17 +270,19 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                               _buildRoleChip(context, state, "Other"),
                             ],
                           ),
-                          24.spaceH,
-                          InfoBox(
-                            backgroundColor: softPeachOrange,
-                            textColor: primaryColor,
-                            iconColor: primaryColor,
-                            iconData: Icons.info,
-                            body: "",
-                            title: state.selectedRole == "Grandparent"
-                                ? "Grandparents start with sleep and plans only. You can change exactly what they see in Permissions before or after they join."
-                                : "Selected role starts with tailored permissions. You can change exactly what they see in Permissions before or after they join.",
-                          ),
+                          if (state.selectedRole.isNotEmpty) ...[
+                            24.spaceH,
+                            InfoBox(
+                              backgroundColor: softPeachOrange,
+                              textColor: primaryColor,
+                              iconColor: primaryColor,
+                              iconData: Icons.info,
+                              body: "",
+                              title: state.selectedRole == "Grandparent"
+                                  ? "Grandparents start with sleep and plans only. You can change exactly what they see in Permissions before or after they join."
+                                  : "${state.selectedRole} starts with tailored permissions. You can change exactly what they see in Permissions before or after they join.",
+                            ),
+                          ],
                           12.spaceH,
                           InfoBox.white(
                             title: "What they won't see",

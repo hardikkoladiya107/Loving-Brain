@@ -9,6 +9,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
@@ -78,24 +79,37 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     return BlocConsumer<TodayCubit, TodayState>(
       listener: (BuildContext context, TodayState state) {
         state.saveStatus.whenOrNull(
-          data: (_) {
+          data: (dynamic data) {
             Navigator.pop(context);
-            if (state.didForecastChangeSignificantly) {
-              showInstantResultSheet(
-                context,
-                title: "Tantrum update logged",
-                reason: state.forecastChangeReason.isNotEmpty
-                    ? state.forecastChangeReason
-                    : "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
-                action: "Explore Calm Plan",
-                actionSubtitle:
-                    "Proven responses ready for upcoming challenging windows.",
+            if (data == 'offline_queued') {
+              showSnackBar(
+                message: "Saved offline. Will sync when reconnected.",
+                type: SnackBarType.SUCCESS,
+              );
+            } else {
+              if (state.didForecastChangeSignificantly) {
+                showInstantResultSheet(
+                  context,
+                  title: "Tantrum update logged",
+                  reason: state.forecastChangeReason.isNotEmpty
+                      ? state.forecastChangeReason
+                      : "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
+                  action: "Explore Calm Plan",
+                  actionSubtitle:
+                      "Proven responses ready for upcoming challenging windows.",
+                  onActionTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CalmPlanScreen()),
+                    );
+                  },
+                );
+              }
+              showSnackBar(
+                message: LocaleKeys.tantrumLogSaved.tr(),
+                type: SnackBarType.SUCCESS,
               );
             }
-            showSnackBar(
-              message: LocaleKeys.tantrumLogSaved.tr(),
-              type: SnackBarType.SUCCESS,
-            );
           },
           error: (Exception error) {
             showSnackBar(
@@ -241,11 +255,21 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                           );
                         }),
                       ),
+                      if (isTriggersError) ...[
+                        6.spaceH,
+                        "Please select at least one trigger".appText(
+                          fontSize: 12.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
                       24.spaceH,
                       _buildTextInput(
                         label: "WHAT HELPED",
-                        hint: "Holding her close",
+                        hint: "Holding them close",
                         isError: isWhatHelpedError,
+                        errorText: "Please describe what helped",
                         icon: Icons.description_outlined,
                         onChanged: (String val) => context
                             .read<TodayCubit>()
@@ -291,64 +315,81 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     required String label,
     required String hint,
     required bool isError,
+    String? errorText,
     required void Function(String) onChanged,
     IconData? icon,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: isError ? Colors.red : greyColor12),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: isError ? Colors.red : greyColor12),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: label.appText(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                  color: greyColor,
-                  letterSpacing: 1.2,
-                  textAlign: TextAlign.start,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: label.appText(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isError ? Colors.red : greyColor,
+                      letterSpacing: 1.2,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  if (isError)
+                    Icon(Icons.error, color: Colors.red, size: 16.sp),
+                ],
               ),
-              if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
+              4.spaceH,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      onChanged: onChanged,
+                      style: getTextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: greyColor9,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: hint,
+                        hintStyle: getTextStyle(
+                          fontSize: 16.sp,
+                          color: greyColor4,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ),
+                  if (icon != null)
+                    Icon(icon, color: primaryColor, size: 20.sp),
+                ],
+              ),
             ],
           ),
+        ),
+        if (isError) ...[
           4.spaceH,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: TextField(
-                  onChanged: onChanged,
-                  style: getTextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                    color: greyColor9,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: hint,
-                    hintStyle: getTextStyle(
-                      fontSize: 16.sp,
-                      color: greyColor4,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    border: InputBorder.none,
-                    isDense: true,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-              if (icon != null) Icon(icon, color: primaryColor, size: 20.sp),
-            ],
+          (errorText ?? "This field is required").appText(
+            fontSize: 12.sp,
+            color: Colors.red,
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.start,
           ),
         ],
-      ),
+      ],
     );
   }
 
@@ -357,54 +398,70 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
     required String label,
     required String? time,
     required bool isError,
+    String? errorText,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: isError ? Colors.red : greyColor12),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: isError ? Colors.red : greyColor12),
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: label.appText(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                    color: greyColor,
-                    letterSpacing: 1.2,
-                    textAlign: TextAlign.start,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: label.appText(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                        color: isError ? Colors.red : greyColor,
+                        letterSpacing: 1.2,
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                    if (isError)
+                      Icon(Icons.error, color: Colors.red, size: 16.sp),
+                  ],
                 ),
-                if (isError) Icon(Icons.error, color: Colors.red, size: 16.sp),
+                4.spaceH,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    (time ?? "05:20 PM").appText(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: time == null ? greyColor4 : greyColor9,
+                    ),
+                    Icon(
+                      Icons.access_time_filled,
+                      color: primaryColor,
+                      size: 20.sp,
+                    ),
+                  ],
+                ),
               ],
             ),
-            4.spaceH,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                (time ?? "05:20 PM").appText(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: time == null ? greyColor4 : greyColor9,
-                ),
-                Icon(
-                  Icons.access_time_filled,
-                  color: primaryColor,
-                  size: 20.sp,
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
-      ),
+        if (isError) ...[
+          4.spaceH,
+          (errorText ?? "Please select an approximate time").appText(
+            fontSize: 12.sp,
+            color: Colors.red,
+            fontWeight: FontWeight.w500,
+            textAlign: TextAlign.start,
+          ),
+        ],
+      ],
     );
   }
 }

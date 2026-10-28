@@ -19,6 +19,8 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
   void changeProps({
     UserModel? user,
     String? name,
+    String? nameError,
+    bool? isEdited,
     String? relationship,
     String? dob,
     String? gender,
@@ -32,6 +34,8 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
       state.copyWith(
         user: user ?? state.user,
         name: name ?? state.name,
+        nameError: nameError ?? state.nameError,
+        isEdited: isEdited ?? state.isEdited,
         relationship: relationship ?? state.relationship,
         dob: dob ?? state.dob,
         gender: gender ?? state.gender,
@@ -74,6 +78,8 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
     changeProps(
       user: user,
       name: user.parentName ?? user.displayName ?? '',
+      nameError: '',
+      isEdited: false,
       relationship:
           user.relationshipToChild ?? child?.relationshipToChild ?? '',
       gender: user.parentGender ?? '',
@@ -103,8 +109,11 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
     if (location != null && _locationData?.formatted != location) {
       _locationData = LocationDataModel.tryParse(location);
     }
+    final String nextName = name ?? state.name;
     changeProps(
-      name: name ?? state.name,
+      name: nextName,
+      nameError: nextName.trim().isNotEmpty ? '' : state.nameError,
+      isEdited: true,
       relationship: relationship ?? state.relationship,
       dob: dob ?? state.dob,
       gender: gender ?? state.gender,
@@ -118,6 +127,7 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
     final String trimmedName = state.name.trim();
     if (trimmedName.isEmpty) {
       changeProps(
+        nameError: 'Please enter your name',
         saveStatus: ApiResultStatus.error(
           error: Exception('Please enter your name'),
         ),
@@ -178,6 +188,8 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
             : null;
         changeProps(
           user: newModel ?? user,
+          isEdited: false,
+          nameError: '',
           saveStatus: const ApiResultStatus.data(
             data: "Profile saved successfully",
           ),

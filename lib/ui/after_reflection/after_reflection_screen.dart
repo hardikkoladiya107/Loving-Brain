@@ -136,7 +136,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                       _buildInputField(
                         controller: _beforeController,
                         label: "WHAT HAPPENED BEFORE",
-                        hint: "E.g. She was asked to put her shoes on",
+                        hint: "E.g. Asked to put shoes on or transition",
                         onChanged: (String v) => context
                             .read<AfterReflectionCubit>()
                             .setBeforeEvent(v),
@@ -385,7 +385,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20.r),
-          onTap: () => onSelect(label),
+          onTap: () => onSelect(isSelected ? '' : label),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             child: label.appText(

@@ -143,6 +143,7 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
                       SessionField(
                         label: "MAIN CONCERN",
                         initialValue: state.mainConcern,
+                        errorText: state.mainConcernError,
                         onChanged: cubit.updateMainConcern,
                         autoFocus: true,
                       ),
@@ -281,6 +282,7 @@ class SessionField extends StatefulWidget {
   final String initialValue;
   final ValueChanged<String> onChanged;
   final bool autoFocus;
+  final String? errorText;
 
   const SessionField({
     super.key,
@@ -288,6 +290,7 @@ class SessionField extends StatefulWidget {
     required this.initialValue,
     required this.onChanged,
     this.autoFocus = false,
+    this.errorText,
   });
 
   @override
@@ -334,7 +337,9 @@ class _SessionFieldState extends State<SessionField> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isValid = _controller.text.trim().isNotEmpty;
+    final bool hasError =
+        widget.errorText != null && widget.errorText!.isNotEmpty;
+    final bool isValid = _controller.text.trim().isNotEmpty && !hasError;
     return GestureDetector(
       onTap: () => _focusNode.requestFocus(),
       child: Container(
@@ -349,8 +354,10 @@ class _SessionFieldState extends State<SessionField> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: _isFocused ? primaryColor : Colors.transparent,
-            width: 1.5.w,
+            color: hasError
+                ? Colors.red
+                : (_isFocused ? primaryColor : Colors.transparent),
+            width: hasError || _isFocused ? 1.5.w : 0,
           ),
         ),
         child: Row(
@@ -363,7 +370,9 @@ class _SessionFieldState extends State<SessionField> {
                 children: [
                   widget.label.appText(
                     fontSize: 12.sp,
-                    color: greyColor9.withValues(alpha: 0.5),
+                    color: hasError
+                        ? Colors.red
+                        : greyColor9.withValues(alpha: 0.5),
                     fontWeight: FontWeight.w700,
                   ),
                   TextField(
@@ -392,11 +401,22 @@ class _SessionFieldState extends State<SessionField> {
                       ),
                     ),
                   ),
+                  if (hasError) ...[
+                    4.spaceH,
+                    widget.errorText!.appText(
+                      fontSize: 12.sp,
+                      color: Colors.red,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
                 ],
               ),
             ),
             if (isValid)
               Icon(Icons.check_circle, color: primaryColor, size: 24.sp)
+            else if (hasError)
+              Icon(Icons.error_outline, color: Colors.red, size: 24.sp)
             else
               SizedBox(width: 24.sp, height: 24.sp),
           ],

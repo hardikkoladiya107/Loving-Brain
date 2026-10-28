@@ -5,7 +5,7 @@ part 'brainy_home_state.freezed.dart';
 @freezed
 abstract class BrainyHomeState with _$BrainyHomeState {
   const factory BrainyHomeState({
-    @Default('Behaviour') String selectedTopic,
+    @Default('') String selectedTopic,
     @Default('Parent') String parentName,
     @Default('your child') String childName,
     @Default('') String chatText,

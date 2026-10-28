@@ -619,12 +619,19 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
     return BlocConsumer<TodayCubit, TodayState>(
       listener: (BuildContext context, TodayState state) {
         state.saveStatus.whenOrNull(
-          data: (_) {
+          data: (dynamic data) {
             Navigator.pop(context);
-            showSnackBar(
-              message: LocaleKeys.noteSaved.tr(),
-              type: SnackBarType.SUCCESS,
-            );
+            if (data == 'offline_queued') {
+              showSnackBar(
+                message: "Saved offline. Will sync when reconnected.",
+                type: SnackBarType.SUCCESS,
+              );
+            } else {
+              showSnackBar(
+                message: LocaleKeys.noteSaved.tr(),
+                type: SnackBarType.SUCCESS,
+              );
+            }
           },
           error: (Exception error) {
             showSnackBar(
@@ -715,6 +722,15 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
                     ),
                   ),
                 ),
+                if (isError) ...[
+                  6.spaceH,
+                  "Please enter a note or record voice".appText(
+                    fontSize: 12.sp,
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
                 24.spaceH,
                 if (hasAudio)
                   _buildAudioPlayerCard()

@@ -29,6 +29,7 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
     int? confidenceDots,
     List<TonightPlanStep>? planSteps,
     bool? hasRealLogs,
+    List<int>? loggedDays,
     String? healthCaveat,
   }) {
     emit(
@@ -47,6 +48,7 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
         confidenceDots: confidenceDots ?? state.confidenceDots,
         planSteps: planSteps ?? state.planSteps,
         hasRealLogs: hasRealLogs ?? state.hasRealLogs,
+        loggedDays: loggedDays ?? state.loggedDays,
         healthCaveat: healthCaveat ?? state.healthCaveat,
       ),
     );
@@ -108,8 +110,29 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
       todayHealthLog: todayHealthLog,
     );
 
+    final DateTime now = DateTime.now();
+    final int todayWeekdayIndex = (now.weekday - 1) % 7;
+    final DateTime monday = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: todayWeekdayIndex));
+    final List<int> loggedWeekdays = <int>[];
+    for (final SleepLogModel log in sleepLogs) {
+      final DateTime logDay = DateTime(
+        log.date.year,
+        log.date.month,
+        log.date.day,
+      );
+      final int diff = logDay.difference(monday).inDays;
+      if (diff >= 0 && diff < 7 && !loggedWeekdays.contains(diff)) {
+        loggedWeekdays.add(diff);
+      }
+    }
+
     changeProps(
       isLoading: false,
+      selectedDayIndex: todayWeekdayIndex,
       parentName: pName,
       childName: cName,
       timeOfDayGreeting: greeting,
@@ -122,6 +145,7 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
       confidenceDots: forecast.confidenceDots,
       planSteps: forecast.planSteps,
       hasRealLogs: forecast.hasPersonalLogs,
+      loggedDays: loggedWeekdays,
       healthCaveat: forecast.healthCaveat,
     );
   }

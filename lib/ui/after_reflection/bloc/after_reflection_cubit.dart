@@ -23,6 +23,7 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
     double? intensityValue,
     String? selectedHelped,
     String? selectedFeeling,
+    bool? showErrors,
   }) {
     emit(
       state.copyWith(
@@ -33,17 +34,37 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
         intensityValue: intensityValue ?? state.intensityValue,
         selectedHelped: selectedHelped ?? state.selectedHelped,
         selectedFeeling: selectedFeeling ?? state.selectedFeeling,
+        showErrors: showErrors ?? state.showErrors,
       ),
     );
   }
 
-  void setBeforeEvent(String value) => changeProps(beforeEvent: value);
+  void setBeforeEvent(String value) =>
+      changeProps(beforeEvent: value, showErrors: false);
   void setDuration(String value) => changeProps(durationText: value);
   void setIntensity(double value) => changeProps(intensityValue: value);
-  void setHelped(String value) => changeProps(selectedHelped: value);
-  void setFeeling(String value) => changeProps(selectedFeeling: value);
+  void setHelped(String value) =>
+      changeProps(selectedHelped: value, showErrors: false);
+  void setFeeling(String value) =>
+      changeProps(selectedFeeling: value, showErrors: false);
 
   Future<bool> saveReflection() async {
+    final bool hasInput =
+        state.beforeEvent.trim().isNotEmpty ||
+        state.selectedHelped.trim().isNotEmpty ||
+        state.selectedFeeling.trim().isNotEmpty ||
+        state.durationText.trim().isNotEmpty;
+
+    if (!hasInput) {
+      changeProps(
+        showErrors: true,
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Please add details or select what helped.'),
+        ),
+      );
+      return false;
+    }
+
     changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
     try {
@@ -55,18 +76,20 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
 
       final String eventDesc = state.beforeEvent.trim().isNotEmpty
           ? state.beforeEvent.trim()
-          : 'Difficult moment';
-      final String trigger = state.beforeEvent.trim().isNotEmpty
-          ? state.beforeEvent.trim()
-          : 'Transition';
+          : (state.selectedHelped.isNotEmpty
+                ? 'Calm reflection · Helped: ${state.selectedHelped}'
+                : 'Calm reflection');
+      final List<String> triggers = state.beforeEvent.trim().isNotEmpty
+          ? <String>[state.beforeEvent.trim()]
+          : <String>[];
 
       final TantrumLogModel log = TantrumLogModel(
         whatHappened: eventDesc,
         time: DateFormat('h:mm a').format(DateTime.now()),
         timestamp: DateTime.now(),
-        intensity: state.intensityValue,
-        triggers: <String>[trigger],
-        whatHelped: state.selectedHelped,
+        intensity: state.intensityValue > 0 ? state.intensityValue : 0.5,
+        triggers: triggers,
+        whatHelped: state.selectedHelped.isNotEmpty ? state.selectedHelped : '',
         childId: childId.isNotEmpty ? childId : null,
       );
 

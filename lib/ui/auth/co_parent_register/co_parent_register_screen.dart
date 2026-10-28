@@ -56,9 +56,8 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
           loading: () => EasyLoading.show(),
           data: (data) {
             EasyLoading.dismiss();
-            // Navigate main screen location to parent profile and overlay Success Screen via GoRouter
             if (!mounted) return;
-            context.go(RoutePaths.parentProfile);
+            context.go(RoutePaths.base);
             context.push(
               RoutePaths.successScreen,
               extra: LocaleKeys.coParentSuccessText.tr(),

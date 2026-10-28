@@ -278,10 +278,33 @@ class OfflineSyncRepo {
         exportData['quick_notes'] = <dynamic>[];
       }
 
-      return ApiResultStatus.data(data: exportData);
+      return ApiResultStatus.data(
+        data: Map<String, dynamic>.from(sanitizeForJson(exportData) as Map),
+      );
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
+  }
+
+  /// Sanitizes Firestore and complex objects (Timestamp, DocumentReference) into JSON-encodable types.
+  static dynamic sanitizeForJson(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) {
+      return value.toDate().toIso8601String();
+    } else if (value is DateTime) {
+      return value.toIso8601String();
+    } else if (value is DocumentReference) {
+      return value.path;
+    } else if (value is Map) {
+      final Map<String, dynamic> result = <String, dynamic>{};
+      value.forEach((dynamic k, dynamic v) {
+        result[k.toString()] = sanitizeForJson(v);
+      });
+      return result;
+    } else if (value is List) {
+      return value.map(sanitizeForJson).toList();
+    }
+    return value;
   }
 
   /// Imports and restores a LovingBrain backup JSON payload into the app.

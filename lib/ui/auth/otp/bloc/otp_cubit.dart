@@ -50,13 +50,23 @@ class OtpCubit extends Cubit<OtpState> {
 
   void _startLockoutTimer() {
     _lockoutTimer?.cancel();
-    changeProps(lockoutSeconds: 120, isLocked: true);
+    _resendTimer?.cancel();
+    changeProps(
+      lockoutSeconds: 120,
+      isLocked: true,
+      canResend: false,
+      otpCode: '',
+    );
     _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
       if (state.lockoutSeconds <= 1) {
         timer.cancel();
         changeProps(isLocked: false, lockoutSeconds: 0, failedAttempts: 0);
       } else {
-        changeProps(lockoutSeconds: state.lockoutSeconds - 1, isLocked: true);
+        changeProps(
+          lockoutSeconds: state.lockoutSeconds - 1,
+          isLocked: true,
+          canResend: false,
+        );
       }
     });
   }
@@ -266,6 +276,8 @@ class OtpCubit extends Cubit<OtpState> {
             failedAttempts: attempts,
             isLocked: true,
             lockoutSeconds: 120,
+            canResend: false,
+            otpCode: '',
             otpError:
                 'Too many incorrect attempts (5/5). Locked for 2 minutes. Please request a new code.',
             verifyStatus: apiResult,
@@ -274,6 +286,7 @@ class OtpCubit extends Cubit<OtpState> {
         } else {
           changeProps(
             failedAttempts: attempts,
+            otpCode: '',
             otpError: 'Invalid verification code ($attempts/5 attempts)',
             verifyStatus: apiResult,
             isSubmitting: false,
@@ -288,6 +301,8 @@ class OtpCubit extends Cubit<OtpState> {
           failedAttempts: attempts,
           isLocked: true,
           lockoutSeconds: 120,
+          canResend: false,
+          otpCode: '',
           otpError:
               'Too many incorrect attempts (5/5). Locked for 2 minutes. Please request a new code.',
           verifyStatus: ApiResultStatus.error(error: Exception(e.toString())),
@@ -296,6 +311,7 @@ class OtpCubit extends Cubit<OtpState> {
       } else {
         changeProps(
           failedAttempts: attempts,
+          otpCode: '',
           otpError: 'Invalid verification code ($attempts/5 attempts)',
           verifyStatus: ApiResultStatus.error(error: Exception(e.toString())),
           isSubmitting: false,

@@ -60,7 +60,7 @@ abstract class TodayState with _$TodayState {
 
     // Sleep Add-ons
     @Default(false) bool isNightWaking,
-    @Default(3) int sleepQualityIndex,
+    @Default(-1) int sleepQualityIndex,
 
     // Notes
     @Default('') String quickNoteText,

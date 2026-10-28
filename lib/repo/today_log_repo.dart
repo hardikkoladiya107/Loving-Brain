@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
@@ -23,6 +24,19 @@ class TodayLogRepo {
   static final TodayLogRepo _instance = TodayLogRepo._();
   factory TodayLogRepo() => _instance;
   static TodayLogRepo get instance => _instance;
+
+  Future<bool> _isOffline() async {
+    try {
+      final List<ConnectivityResult> connectivity = await Connectivity()
+          .checkConnectivity();
+      return connectivity.isEmpty ||
+          connectivity.every(
+            (ConnectivityResult c) => c == ConnectivityResult.none,
+          );
+    } catch (_) {
+      return false;
+    }
+  }
 
   CollectionReference<Map<String, dynamic>> get _childrenCollection =>
       FirebaseFirestore.instance.collection('children');
@@ -93,28 +107,45 @@ class TodayLogRepo {
         );
       }
 
+      if (await _isOffline()) {
+        await OfflineSyncRepo.instance.queuePendingUpdate(
+          PendingLocalUpdateModel.create(
+            clientUpdateId: 'sleep_${DateTime.now().millisecondsSinceEpoch}',
+            updateType: 'sleep',
+            timestamp: DateTime.now().toIso8601String(),
+            payload: log.toMap(),
+          ),
+        );
+        return const ApiResultStatus.data(data: 'offline_queued');
+      }
+
       final DocumentReference<Map<String, dynamic>> docRef =
           await _childrenCollection
               .doc(childId)
               .collection('sleep_logs')
-              .add(log.toMap());
+              .add(log.toMap())
+              .timeout(const Duration(seconds: 4));
 
       // Also record to child timeline events for unified journey view
       final int durationMins =
           log.durationMinutes ?? log.wakeTime.difference(log.bedTime).inMinutes;
       final String qualityText = '${log.sleepQualityIndex + 1}/5';
 
-      await _childrenCollection.doc(childId).collection('events').add({
-        'type': 'sleep_log',
-        'timestamp': Timestamp.fromDate(log.wakeTime.toUtc()),
-        'title': LocaleKeys.sleepLogSaved.tr(),
-        'subtitle':
-            '${TimelineEventModel.formatSleepDuration(durationMins)} • Quality: $qualityText${log.isNightWaking ? " • Night waking" : ""}',
-        'createdAt': FieldValue.serverTimestamp(),
-        'userId': log.userId,
-        'childId': childId,
-        'sleepLogId': docRef.id,
-      });
+      await _childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add({
+            'type': 'sleep_log',
+            'timestamp': Timestamp.fromDate(log.wakeTime.toUtc()),
+            'title': 'Sleep update',
+            'subtitle':
+                '${TimelineEventModel.formatSleepDuration(durationMins)} • Quality: $qualityText${log.isNightWaking ? " • Night waking" : ""}',
+            'createdAt': FieldValue.serverTimestamp(),
+            'userId': log.userId,
+            'childId': childId,
+            'sleepLogId': docRef.id,
+          })
+          .timeout(const Duration(seconds: 4));
 
       return ApiResultStatus.data(data: docRef.id);
     } catch (e) {
@@ -126,7 +157,7 @@ class TodayLogRepo {
           payload: log.toMap(),
         ),
       );
-      return ApiResultStatus.error(error: Exception(e.toString()));
+      return const ApiResultStatus.data(data: 'offline_queued');
     }
   }
 
@@ -169,44 +200,65 @@ class TodayLogRepo {
         );
       }
 
+      if (await _isOffline()) {
+        await OfflineSyncRepo.instance.queuePendingUpdate(
+          PendingLocalUpdateModel.create(
+            clientUpdateId: 'tantrum_${DateTime.now().millisecondsSinceEpoch}',
+            updateType: 'tantrum',
+            timestamp: DateTime.now().toIso8601String(),
+            payload: log.toMap(),
+          ),
+        );
+        return const ApiResultStatus.data(data: 'offline_queued');
+      }
+
       // Save to structured tantrum_logs collection
       final DocumentReference<Map<String, dynamic>> docRef =
           await _childrenCollection
               .doc(childId)
               .collection('tantrum_logs')
-              .add(log.toMap());
+              .add(log.toMap())
+              .timeout(const Duration(seconds: 4));
 
       // Save compatible entry in behaviours collection for older screens
       try {
-        await _childrenCollection.doc(childId).collection('behaviours').add({
-          'behaviour': log.whatHappened,
-          'note':
-              'Triggers: ${log.triggers.join(", ")} | Helped: ${log.whatHelped}',
-          'time_stamp': Timestamp.fromDate(log.timestamp.toUtc()),
-          'intensity': log.intensity,
-          'triggers': log.triggers,
-          'whatHelped': log.whatHelped,
-          'userId': log.userId,
-          'childId': childId,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
+        await _childrenCollection
+            .doc(childId)
+            .collection('behaviours')
+            .add({
+              'behaviour': log.whatHappened,
+              'note':
+                  'Triggers: ${log.triggers.join(", ")} | Helped: ${log.whatHelped}',
+              'time_stamp': Timestamp.fromDate(log.timestamp.toUtc()),
+              'intensity': log.intensity,
+              'triggers': log.triggers,
+              'whatHelped': log.whatHelped,
+              'userId': log.userId,
+              'childId': childId,
+              'createdAt': FieldValue.serverTimestamp(),
+            })
+            .timeout(const Duration(seconds: 4));
       } catch (_) {}
 
       // Write to unified events timeline
       final String triggersStr = log.triggers.isNotEmpty
           ? ' (${log.triggers.join(", ")})'
           : '';
-      await _childrenCollection.doc(childId).collection('events').add({
-        'type': 'tantrum_log',
-        'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
-        'title': LocaleKeys.tantrumLogSaved.tr(),
-        'subtitle':
-            '${log.whatHappened}$triggersStr • Helped: ${log.whatHelped}',
-        'createdAt': FieldValue.serverTimestamp(),
-        'userId': log.userId,
-        'childId': childId,
-        'tantrumLogId': docRef.id,
-      });
+      await _childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add({
+            'type': 'tantrum_log',
+            'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
+            'title': 'Tantrum update',
+            'subtitle':
+                '${log.whatHappened}$triggersStr • Helped: ${log.whatHelped}',
+            'createdAt': FieldValue.serverTimestamp(),
+            'userId': log.userId,
+            'childId': childId,
+            'tantrumLogId': docRef.id,
+          })
+          .timeout(const Duration(seconds: 4));
 
       return ApiResultStatus.data(data: docRef.id);
     } catch (e) {
@@ -218,7 +270,7 @@ class TodayLogRepo {
           payload: log.toMap(),
         ),
       );
-      return ApiResultStatus.error(error: Exception(e.toString()));
+      return const ApiResultStatus.data(data: 'offline_queued');
     }
   }
 
@@ -237,12 +289,25 @@ class TodayLogRepo {
         );
       }
 
+      if (await _isOffline()) {
+        await OfflineSyncRepo.instance.queuePendingUpdate(
+          PendingLocalUpdateModel.create(
+            clientUpdateId: 'mood_${DateTime.now().millisecondsSinceEpoch}',
+            updateType: 'mood',
+            timestamp: DateTime.now().toIso8601String(),
+            payload: log.toMap(),
+          ),
+        );
+        return const ApiResultStatus.data(data: 'offline_queued');
+      }
+
       // Save under child's mood_logs collection
       final DocumentReference<Map<String, dynamic>> docRef =
           await _childrenCollection
               .doc(childId)
               .collection('mood_logs')
-              .add(log.toMap());
+              .add(log.toMap())
+              .timeout(const Duration(seconds: 4));
 
       // Also sync to user's daily mood collection if userId is provided
       final String uid =
@@ -257,7 +322,8 @@ class TodayLogRepo {
               .doc(uid)
               .collection('mood')
               .doc(dateKey)
-              .set(log.toMap(), SetOptions(merge: true));
+              .set(log.toMap(), SetOptions(merge: true))
+              .timeout(const Duration(seconds: 4));
         } catch (_) {}
       }
 
@@ -265,16 +331,20 @@ class TodayLogRepo {
       final String parentPart = log.parentMood.isNotEmpty
           ? ' • Parent: ${log.parentMood}'
           : '';
-      await _childrenCollection.doc(childId).collection('events').add({
-        'type': 'mood_log',
-        'timestamp': Timestamp.fromDate(log.logTime.toUtc()),
-        'title': LocaleKeys.moodLogSaved.tr(),
-        'subtitle': 'Child: ${log.childMood}$parentPart',
-        'createdAt': FieldValue.serverTimestamp(),
-        'userId': uid,
-        'childId': childId,
-        'moodLogId': docRef.id,
-      });
+      await _childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add({
+            'type': 'mood_log',
+            'timestamp': Timestamp.fromDate(log.logTime.toUtc()),
+            'title': 'Mood check-in',
+            'subtitle': 'Child: ${log.childMood}$parentPart',
+            'createdAt': FieldValue.serverTimestamp(),
+            'userId': uid,
+            'childId': childId,
+            'moodLogId': docRef.id,
+          })
+          .timeout(const Duration(seconds: 4));
 
       return ApiResultStatus.data(data: docRef.id);
     } catch (e) {
@@ -286,7 +356,7 @@ class TodayLogRepo {
           payload: log.toMap(),
         ),
       );
-      return ApiResultStatus.error(error: Exception(e.toString()));
+      return const ApiResultStatus.data(data: 'offline_queued');
     }
   }
 
@@ -305,26 +375,43 @@ class TodayLogRepo {
         );
       }
 
+      if (await _isOffline()) {
+        await OfflineSyncRepo.instance.queuePendingUpdate(
+          PendingLocalUpdateModel.create(
+            clientUpdateId: 'health_${DateTime.now().millisecondsSinceEpoch}',
+            updateType: 'health',
+            timestamp: DateTime.now().toIso8601String(),
+            payload: log.toMap(),
+          ),
+        );
+        return const ApiResultStatus.data(data: 'offline_queued');
+      }
+
       final DocumentReference<Map<String, dynamic>> docRef =
           await _childrenCollection
               .doc(childId)
               .collection('health_logs')
-              .add(log.toMap());
+              .add(log.toMap())
+              .timeout(const Duration(seconds: 4));
 
       // Write to unified events timeline
       final String notesPart = log.notes.trim().isNotEmpty
           ? ' • ${log.notes.trim()}'
           : '';
-      await _childrenCollection.doc(childId).collection('events').add({
-        'type': 'health_log',
-        'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
-        'title': LocaleKeys.healthLogSaved.tr(),
-        'subtitle': '${log.issues.join(", ")}$notesPart',
-        'createdAt': FieldValue.serverTimestamp(),
-        'userId': log.userId,
-        'childId': childId,
-        'healthLogId': docRef.id,
-      });
+      await _childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add({
+            'type': 'health_log',
+            'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
+            'title': 'Health update',
+            'subtitle': '${log.issues.join(", ")}$notesPart',
+            'createdAt': FieldValue.serverTimestamp(),
+            'userId': log.userId,
+            'childId': childId,
+            'healthLogId': docRef.id,
+          })
+          .timeout(const Duration(seconds: 4));
 
       return ApiResultStatus.data(data: docRef.id);
     } catch (e) {
@@ -336,7 +423,7 @@ class TodayLogRepo {
           payload: log.toMap(),
         ),
       );
-      return ApiResultStatus.error(error: Exception(e.toString()));
+      return const ApiResultStatus.data(data: 'offline_queued');
     }
   }
 
@@ -355,26 +442,46 @@ class TodayLogRepo {
         );
       }
 
+      if (await _isOffline()) {
+        await OfflineSyncRepo.instance.queuePendingUpdate(
+          PendingLocalUpdateModel.create(
+            clientUpdateId: 'note_${DateTime.now().millisecondsSinceEpoch}',
+            updateType: 'note',
+            timestamp: DateTime.now().toIso8601String(),
+            payload: log.toMap(),
+          ),
+        );
+        return const ApiResultStatus.data(data: 'offline_queued');
+      }
+
       final DocumentReference<Map<String, dynamic>> docRef =
           await _childrenCollection
               .doc(childId)
               .collection('quick_notes')
-              .add(log.toMap());
+              .add(log.toMap())
+              .timeout(const Duration(seconds: 4));
 
       // Write to unified events timeline
-      await _childrenCollection.doc(childId).collection('events').add({
-        'type': 'quick_note',
-        'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
-        'title': LocaleKeys.noteSaved.tr(),
-        'subtitle': log.note.trim().isNotEmpty ? log.note.trim() : 'Voice note',
-        if (log.audioLocalPath != null) 'audioLocalPath': log.audioLocalPath,
-        if (log.audioDurationSeconds != null)
-          'audioDurationSeconds': log.audioDurationSeconds,
-        'createdAt': FieldValue.serverTimestamp(),
-        'userId': log.userId,
-        'childId': childId,
-        'noteId': docRef.id,
-      });
+      await _childrenCollection
+          .doc(childId)
+          .collection('events')
+          .add({
+            'type': 'quick_note',
+            'timestamp': Timestamp.fromDate(log.timestamp.toUtc()),
+            'title': 'Quick note',
+            'subtitle': log.note.trim().isNotEmpty
+                ? log.note.trim()
+                : 'Voice note',
+            if (log.audioLocalPath != null)
+              'audioLocalPath': log.audioLocalPath,
+            if (log.audioDurationSeconds != null)
+              'audioDurationSeconds': log.audioDurationSeconds,
+            'createdAt': FieldValue.serverTimestamp(),
+            'userId': log.userId,
+            'childId': childId,
+            'noteId': docRef.id,
+          })
+          .timeout(const Duration(seconds: 4));
 
       return ApiResultStatus.data(data: docRef.id);
     } catch (e) {
@@ -386,7 +493,7 @@ class TodayLogRepo {
           payload: log.toMap(),
         ),
       );
-      return ApiResultStatus.error(error: Exception(e.toString()));
+      return const ApiResultStatus.data(data: 'offline_queued');
     }
   }
 

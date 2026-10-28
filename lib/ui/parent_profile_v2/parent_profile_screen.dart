@@ -62,10 +62,16 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           loading: () => EasyLoading.show(),
           data: (_) {
             EasyLoading.dismiss();
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
+            }
             context.go(RoutePaths.welcome);
           },
           error: (Exception exception) {
             EasyLoading.dismiss();
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
+            }
             context.go(RoutePaths.welcome);
           },
         );
@@ -74,6 +80,9 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           loading: () => EasyLoading.show(),
           data: (_) {
             EasyLoading.dismiss();
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
+            }
             context.go(RoutePaths.welcome);
           },
           error: (Exception exception) {
@@ -293,6 +302,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                           EditableFieldCard(
                             label: "YOUR NAME",
                             value: state.name,
+                            errorText: state.nameError,
                             maxLength: 50,
                             onChanged: (v) => cubit.updateField(name: v),
                             onEdit: () {},
@@ -426,14 +436,14 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                               );
                             },
                           ),
-                          220.spaceH,
+                          if (state.isEdited) 120.spaceH else 40.spaceH,
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              _buildBottomActions(context),
+              if (state.isEdited) _buildBottomActions(context),
             ],
           ),
         );

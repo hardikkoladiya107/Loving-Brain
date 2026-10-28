@@ -102,6 +102,15 @@ class ChildEssentialsCubit extends Cubit<ChildEssentialsState> {
     _persistEssentials(allergies: list, medications: state.medications);
   }
 
+  void updateAllergy(int index, String newName) {
+    final String trimmed = newName.trim();
+    if (trimmed.isEmpty || index < 0 || index >= state.allergies.length) return;
+    final List<String> list = List<String>.from(state.allergies);
+    list[index] = trimmed;
+    changeProps(allergies: list);
+    _persistEssentials(allergies: list, medications: state.medications);
+  }
+
   void addMedication(String item) {
     final String trimmed = item.trim();
     if (trimmed.isEmpty) return;
@@ -112,6 +121,16 @@ class ChildEssentialsCubit extends Cubit<ChildEssentialsState> {
     }
     final List<String> list = List<String>.from(state.medications)
       ..add(trimmed);
+    changeProps(medications: list);
+    _persistEssentials(allergies: state.allergies, medications: list);
+  }
+
+  void updateMedication(int index, String newName) {
+    final String trimmed = newName.trim();
+    if (trimmed.isEmpty || index < 0 || index >= state.medications.length)
+      return;
+    final List<String> list = List<String>.from(state.medications);
+    list[index] = trimmed;
     changeProps(medications: list);
     _persistEssentials(allergies: state.allergies, medications: list);
   }

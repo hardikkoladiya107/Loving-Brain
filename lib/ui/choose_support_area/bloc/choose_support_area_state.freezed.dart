@@ -213,7 +213,7 @@ return $default(_that.selectedIndex,_that.areas);case _:
 
 
 class _ChooseSupportAreaState implements ChooseSupportAreaState {
-  const _ChooseSupportAreaState({this.selectedIndex = 0,  List<String> areas = const <String>['Sleep', 'Behaviour', 'Parent Wellbeing', 'Co-parenting', 'General Parenting']}): _areas = areas;
+  const _ChooseSupportAreaState({this.selectedIndex = -1,  List<String> areas = const <String>['Sleep', 'Behaviour', 'Parent Wellbeing', 'Co-parenting', 'General Parenting']}): _areas = areas;
   
 
 @override@JsonKey() final  int selectedIndex;

@@ -228,19 +228,6 @@ class AuthRepo {
       final String uid = currentUser?.uid ?? userModel?.uid ?? '';
       final String? email = userModel?.email ?? currentUser?.email;
 
-      // If the authentication session is older than 5 minutes, Firebase Auth requires
-      // recent login to delete the user. Guard against wiping data when re-auth will be needed.
-      if (currentUser != null && currentUser.metadata.lastSignInTime != null) {
-        final DateTime lastSignIn = currentUser.metadata.lastSignInTime!;
-        if (DateTime.now().difference(lastSignIn).inMinutes > 5) {
-          return ApiResultStatus.error(
-            error: Exception(
-              'For security, please sign out and sign in again before deleting your account.',
-            ),
-          );
-        }
-      }
-
       if (uid.isNotEmpty) {
         try {
           await _deleteAllUserData(

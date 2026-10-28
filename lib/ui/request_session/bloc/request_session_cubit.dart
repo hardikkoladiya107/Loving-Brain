@@ -39,6 +39,7 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
     GuideProfileModel? guide,
     String? childName,
     String? mainConcern,
+    String? mainConcernError,
     String? childAge,
     String? preferredDays,
     String? preferredLanguage,
@@ -51,6 +52,7 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
         guide: guide ?? state.guide,
         childName: childName ?? state.childName,
         mainConcern: mainConcern ?? state.mainConcern,
+        mainConcernError: mainConcernError ?? state.mainConcernError,
         childAge: childAge ?? state.childAge,
         preferredDays: preferredDays ?? state.preferredDays,
         preferredLanguage: preferredLanguage ?? state.preferredLanguage,
@@ -61,7 +63,8 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
     );
   }
 
-  void updateMainConcern(String val) => changeProps(mainConcern: val);
+  void updateMainConcern(String val) =>
+      changeProps(mainConcern: val, mainConcernError: '');
   void updateChildAge(String val) => changeProps(childAge: val);
   void updatePreferredDays(String val) => changeProps(preferredDays: val);
   void updatePreferredLanguage(String val) =>
@@ -73,6 +76,7 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
     if (concern.isEmpty) {
       changeProps(
         isSubmitting: false,
+        mainConcernError: 'Please describe your main concern',
         saveStatus: ApiResultStatus.error(
           error: Exception('Please describe your main concern'),
         ),

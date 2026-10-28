@@ -45,44 +45,54 @@ class _FamilySnapshotScreenState extends State<FamilySnapshotScreen> {
                 ),
               ),
               SafeArea(
-                child: ListView(
+                child: Column(
                   children: [
-                    260.spaceH,
-                    "Here’s your\nfamily snapshot".appText(
-                      textStyle: getTextStyle(
-                        fraunces: true,
-                        fontSize: 30,
-                        height: 1.1,
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          140.spaceH,
+                          "Here’s your\nfamily snapshot".appText(
+                            textStyle: getTextStyle(
+                              fraunces: true,
+                              fontSize: 30,
+                              height: 1.1,
+                            ),
+                          ),
+                          10.spaceH,
+                          "Based on what you’ve told us about ${state.childName}."
+                              .appText(color: greyColor),
+                          16.spaceH,
+                          AppCard(
+                            chipTitle: "What we noticed",
+                            title: state.whatWeNoticed,
+                            subtitle:
+                                "We’ll shape your calm routines and daytime rhythms around this window.",
+                          ),
+                          16.spaceH,
+                          AppCard(
+                            chipTitle: "Try this first",
+                            title: state.tryThisFirst,
+                            subtitle:
+                                "Small consistent shifts help bedtime and routines feel predictable.",
+                          ),
+                          20.spaceH,
+                        ],
                       ),
                     ),
-                    10.spaceH,
-                    "Based on what you’ve told us about ${state.childName}."
-                        .appText(color: greyColor),
-                    16.spaceH,
-                    AppCard(
-                      chipTitle: "What we noticed",
-                      title: state.whatWeNoticed,
-                      subtitle:
-                          "We’ll shape your calm routines and daytime rhythms around this window.",
+                    Container(
+                      color: Colors.transparent,
+                      padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 16.h),
+                      child: AppButton(
+                        onTap: () {
+                          preferences.putBool(SharedPreference.isLogin, true);
+                          context.go(RoutePaths.base);
+                        },
+                        title: "Go to Today",
+                      ),
                     ),
-                    16.spaceH,
-                    AppCard(
-                      chipTitle: "Try this first",
-                      title: state.tryThisFirst,
-                      subtitle:
-                          "Small consistent shifts help bedtime and routines feel predictable.",
-                    ),
-                    24.spaceH,
-                    AppButton(
-                      onTap: () {
-                        preferences.putBool(SharedPreference.isLogin, true);
-                        context.go(RoutePaths.base);
-                      },
-                      title: "Go to Today",
-                    ),
-                    32.spaceH,
                   ],
-                ).appPadding(left: 20.r, right: 20.r),
+                ),
               ),
             ],
           ),

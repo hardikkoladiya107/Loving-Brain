@@ -25,7 +25,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
 
     changeProps(
       childName: cName,
-      selectedRole: 'Grandparent',
+      selectedRole: '',
       email: '',
       emailError: '',
       isSending: false,
@@ -118,6 +118,15 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
 
     if (isSelfEmail(cleanRecipient)) {
       final String errorMsg = LocaleKeys.cannotInviteYourselfCaregiver.tr();
+      changeProps(
+        emailError: errorMsg,
+        sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),
+      );
+      return false;
+    }
+
+    if (state.selectedRole.trim().isEmpty) {
+      final String errorMsg = "Please select a relationship role.";
       changeProps(
         emailError: errorMsg,
         sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),

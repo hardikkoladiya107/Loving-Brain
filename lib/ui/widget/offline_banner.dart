@@ -4,8 +4,9 @@ import 'package:loving_brain/other/app_extentions.dart';
 
 class OfflineBanner extends StatelessWidget {
   final bool isVisible;
+  final EdgeInsetsGeometry? margin;
 
-  const OfflineBanner({super.key, this.isVisible = true});
+  const OfflineBanner({super.key, this.isVisible = true, this.margin});
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +14,8 @@ class OfflineBanner extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 8.h,
-        left: 16.w,
-        right: 16.w,
-        bottom: 8.h,
-      ),
+      margin:
+          margin ?? EdgeInsets.only(top: 8.h, left: 0, right: 0, bottom: 8.h),
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
       decoration: BoxDecoration(
         color: const Color(0xFFFFEBEE), // Light red/pink

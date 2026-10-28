@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/location_data_model.dart';
@@ -23,14 +22,12 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     final String initialParentName =
         (parentName != null && parentName.isNotEmpty) ? parentName : '';
     _locationData = user?.locationData;
-    final DateTime today = DateTime.now();
-    final String todayFormatted = DateFormat('d MMMM yyyy').format(today);
 
     final Map<String, dynamic>? draft = preferences.getOnboardingDraft();
     if (draft != null) {
       final int savedPage = (draft['currentPage'] as num?)?.toInt() ?? 0;
       final String? savedDob = draft['dateOfBirth'] as String?;
-      DateTime dob = today;
+      DateTime? dob;
       if (draft['childDob'] != null) {
         try {
           dob = DateTime.parse(draft['childDob'] as String);
@@ -52,7 +49,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
               (draft['isMoreThanOneSelected'] as bool?) ?? false,
           successGoal: (draft['successGoal'] as String?) ?? '',
           childName: (draft['childName'] as String?) ?? '',
-          dateOfBirth: savedDob ?? todayFormatted,
+          dateOfBirth: savedDob ?? '',
           childDob: dob,
           childGender: (draft['childGender'] as String?) ?? '',
           usualWakeTime: (draft['usualWakeTime'] as String?) ?? '',
@@ -74,8 +71,8 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       OnboardingState(
         parentName: initialParentName,
         location: user?.location ?? '',
-        childDob: today,
-        dateOfBirth: todayFormatted,
+        childDob: null,
+        dateOfBirth: '',
       ),
     );
   }
@@ -249,8 +246,13 @@ class OnboardingCubit extends Cubit<OnboardingState> {
           changeProps(childNameError: "Please enter child's name");
           isValid = false;
         }
-        if (state.dateOfBirth.isEmpty) {
+        if (state.dateOfBirth.isEmpty || state.childDob == null) {
           changeProps(dateOfBirthError: "Please select date of birth");
+          isValid = false;
+        } else if (state.childDob!.isAfter(
+          DateTime.now().subtract(const Duration(days: 1)),
+        )) {
+          changeProps(dateOfBirthError: "Date of birth must be in the past");
           isValid = false;
         }
         if (state.childGender.isEmpty) {

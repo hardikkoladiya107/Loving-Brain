@@ -9,6 +9,8 @@ abstract class ParentProfileV2State with _$ParentProfileV2State {
   const factory ParentProfileV2State({
     UserModel? user,
     @Default('') String name,
+    @Default('') String nameError,
+    @Default(false) bool isEdited,
     @Default('') String relationship,
     @Default('') String dob,
     @Default('') String gender,

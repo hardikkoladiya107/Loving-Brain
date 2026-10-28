@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/guide_profile/guide_profile_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
@@ -280,12 +281,19 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
         child: AppButton(
           title: "Continue",
           onTap: () {
-            final String selectedTitle = (state.selectedIndex < _options.length)
-                ? _options[state.selectedIndex]["title"] as String
-                : "Sleep guidance";
+            if (state.selectedIndex < 0 ||
+                state.selectedIndex >= _options.length) {
+              showSnackBar(
+                message: "Please choose an area of support to continue",
+                type: SnackBarType.ERROR,
+              );
+              return;
+            }
+            final String selectedTitle =
+                _options[state.selectedIndex]["title"] as String;
             Navigator.push(
               context,
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (_) => GuideProfileScreen(supportArea: selectedTitle),
               ),
             );

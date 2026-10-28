@@ -154,7 +154,11 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                         caregiverRole: c.role,
                                       ),
                                     ),
-                                  );
+                                  ).then((_) {
+                                    if (context.mounted) {
+                                      context.read<FamilyMenuCubit>().init();
+                                    }
+                                  });
                                 },
                               ),
                             );

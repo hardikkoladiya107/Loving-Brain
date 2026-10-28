@@ -225,7 +225,7 @@ return $default(_that.isLoading,_that.supportEmail,_that.faqUrl,_that.emergencyP
 
 
 class _HelpSafetyState implements HelpSafetyState {
-  const _HelpSafetyState({this.isLoading = false, this.supportEmail = 'support@lovingbrain.com', this.faqUrl = 'https://lovingbrain.com/faq', this.emergencyPhone = 'tel:911', this.actionStatus = const ApiResultStatus.initial()});
+  const _HelpSafetyState({this.isLoading = false, this.supportEmail = 'support@lovingbrain.com', this.faqUrl = 'https://lovingbrain.com/faq', this.emergencyPhone = '911', this.actionStatus = const ApiResultStatus.initial()});
   
 
 @override@JsonKey() final  bool isLoading;

@@ -22,103 +22,269 @@ class MedicationsScreen extends StatefulWidget {
 class _MedicationsScreenState extends State<MedicationsScreen> {
   Future<void> _showAddMedicationDialog(BuildContext context) async {
     final TextEditingController textController = TextEditingController();
+    String? localError;
 
     await showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (BuildContext dialogContext) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.r),
-          ),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      "Add medication".appText(
-                        fontSize: 20.sp,
-                        fraunces: true,
-                        color: greyColor9,
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(dialogContext),
-                        child: Icon(
-                          Icons.close_rounded,
-                          color: greyColor,
-                          size: 24.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                  8.spaceH,
-                  "Record any regular medication, vitamin, or dose to track."
-                      .appText(
-                        fontSize: 13.sp,
-                        color: greyColor,
-                        textAlign: TextAlign.start,
-                      ),
-                  20.spaceH,
-                  AppTextField(
-                    controller: textController,
-                    hint: "e.g., Vitamin D3, Inhaler, Amoxicillin...",
-                    onSubmitted: (String val) {
-                      if (val.trim().isNotEmpty) {
-                        context.read<ChildEssentialsCubit>().addMedication(
-                          val.trim(),
-                        );
-                        Navigator.pop(dialogContext);
-                      }
-                    },
-                  ),
-                  24.spaceH,
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppButton(
-                          height: 48.h,
-                          padding: EdgeInsets.zero,
-                          title: 'Cancel',
-                          backgroundColor: const Color(0xFFF8F5F2),
-                          borderColor: const Color(0xFFE9E2DC),
-                          textColor: greyColor9,
-                          onTap: () => Navigator.pop(dialogContext),
-                        ),
-                      ),
-                      12.spaceW,
-                      Expanded(
-                        child: AppButton(
-                          height: 48.h,
-                          padding: EdgeInsets.zero,
-                          title: 'Add',
-                          backgroundColor: primaryColor,
-                          borderColor: primaryColor,
-                          textColor: Colors.white,
-                          onTap: () {
-                            final String val = textController.text.trim();
-                            if (val.isNotEmpty) {
-                              context
-                                  .read<ChildEssentialsCubit>()
-                                  .addMedication(val);
-                              Navigator.pop(dialogContext);
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+        return StatefulBuilder(
+          builder: (BuildContext ctx, StateSetter setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.r),
               ),
-            ),
-          ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          "Add medication".appText(
+                            fontSize: 20.sp,
+                            fraunces: true,
+                            color: greyColor9,
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(dialogContext),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: greyColor,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                      8.spaceH,
+                      "Record any regular medication, vitamin, or dose to track."
+                          .appText(
+                            fontSize: 13.sp,
+                            color: greyColor,
+                            textAlign: TextAlign.start,
+                          ),
+                      20.spaceH,
+                      AppTextField(
+                        controller: textController,
+                        hint: "e.g., Vitamin D3, Inhaler, Amoxicillin...",
+                        onChanged: (_) {
+                          if (localError != null) {
+                            setState(() => localError = null);
+                          }
+                        },
+                        onSubmitted: (String val) {
+                          if (val.trim().isNotEmpty) {
+                            context.read<ChildEssentialsCubit>().addMedication(
+                              val.trim(),
+                            );
+                            Navigator.pop(dialogContext);
+                          } else {
+                            setState(
+                              () =>
+                                  localError = "Please enter a medication name",
+                            );
+                          }
+                        },
+                      ),
+                      if (localError != null) ...[
+                        6.spaceH,
+                        localError!.appText(
+                          fontSize: 12.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ],
+                      24.spaceH,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Cancel',
+                              backgroundColor: const Color(0xFFF8F5F2),
+                              borderColor: const Color(0xFFE9E2DC),
+                              textColor: greyColor9,
+                              onTap: () => Navigator.pop(dialogContext),
+                            ),
+                          ),
+                          12.spaceW,
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Add',
+                              backgroundColor: primaryColor,
+                              borderColor: primaryColor,
+                              textColor: Colors.white,
+                              onTap: () {
+                                final String val = textController.text.trim();
+                                if (val.isNotEmpty) {
+                                  context
+                                      .read<ChildEssentialsCubit>()
+                                      .addMedication(val);
+                                  Navigator.pop(dialogContext);
+                                } else {
+                                  setState(
+                                    () => localError =
+                                        "Please enter a medication name",
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEditMedicationDialog(
+    BuildContext context,
+    int index,
+    String currentName,
+  ) async {
+    final TextEditingController textController = TextEditingController(
+      text: currentName,
+    );
+    String? localError;
+
+    await showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (BuildContext ctx, StateSetter setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.transparent,
+              insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          "Edit medication".appText(
+                            fontSize: 20.sp,
+                            fraunces: true,
+                            color: greyColor9,
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(dialogContext),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: greyColor,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                      8.spaceH,
+                      "Update regular medication, vitamin, or dose to track."
+                          .appText(
+                            fontSize: 13.sp,
+                            color: greyColor,
+                            textAlign: TextAlign.start,
+                          ),
+                      20.spaceH,
+                      AppTextField(
+                        controller: textController,
+                        hint: "e.g., Vitamin D3, Inhaler, Amoxicillin...",
+                        onChanged: (_) {
+                          if (localError != null) {
+                            setState(() => localError = null);
+                          }
+                        },
+                        onSubmitted: (String val) {
+                          if (val.trim().isNotEmpty) {
+                            context
+                                .read<ChildEssentialsCubit>()
+                                .updateMedication(index, val.trim());
+                            Navigator.pop(dialogContext);
+                          } else {
+                            setState(
+                              () =>
+                                  localError = "Please enter a medication name",
+                            );
+                          }
+                        },
+                      ),
+                      if (localError != null) ...[
+                        6.spaceH,
+                        localError!.appText(
+                          fontSize: 12.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ],
+                      24.spaceH,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Cancel',
+                              backgroundColor: const Color(0xFFF8F5F2),
+                              borderColor: const Color(0xFFE9E2DC),
+                              textColor: greyColor9,
+                              onTap: () => Navigator.pop(dialogContext),
+                            ),
+                          ),
+                          12.spaceW,
+                          Expanded(
+                            child: AppButton(
+                              height: 48.h,
+                              padding: EdgeInsets.zero,
+                              title: 'Save',
+                              backgroundColor: primaryColor,
+                              borderColor: primaryColor,
+                              textColor: Colors.white,
+                              onTap: () {
+                                final String val = textController.text.trim();
+                                if (val.isNotEmpty) {
+                                  context
+                                      .read<ChildEssentialsCubit>()
+                                      .updateMedication(index, val);
+                                  Navigator.pop(dialogContext);
+                                } else {
+                                  setState(
+                                    () => localError =
+                                        "Please enter a medication name",
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -355,62 +521,87 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                             ) {
                               final int index = entry.key;
                               final String medication = entry.value;
-                              return Container(
-                                margin: EdgeInsets.only(bottom: 12.h),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 14.h,
+                              return GestureDetector(
+                                onTap: () => _showEditMedicationDialog(
+                                  context,
+                                  index,
+                                  medication,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 40.w,
-                                      height: 40.w,
-                                      decoration: BoxDecoration(
-                                        color: orangeLightColor,
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
+                                behavior: HitTestBehavior.opaque,
+                                child: Container(
+                                  margin: EdgeInsets.only(bottom: 12.h),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 14.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 40.w,
+                                        height: 40.w,
+                                        decoration: BoxDecoration(
+                                          color: orangeLightColor,
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Image.asset(
+                                            Assets.v2.icons.icMedications.path,
+                                            width: 20.sp,
+                                            height: 20.sp,
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
                                       ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          Assets.v2.icons.icMedications.path,
-                                          width: 20.sp,
-                                          height: 20.sp,
-                                          fit: BoxFit.contain,
+                                      14.spaceW,
+                                      Expanded(
+                                        child: medication.appText(
+                                          fontSize: 16.sp,
+                                          color: greyColor9,
+                                          fontWeight: FontWeight.w500,
+                                          textAlign: TextAlign.start,
                                         ),
                                       ),
-                                    ),
-                                    14.spaceW,
-                                    Expanded(
-                                      child: medication.appText(
-                                        fontSize: 16.sp,
-                                        color: greyColor9,
-                                        fontWeight: FontWeight.w500,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => _confirmDeleteMedication(
-                                        context,
-                                        index,
-                                        medication,
-                                      ),
-                                      behavior: HitTestBehavior.opaque,
-                                      child: Padding(
-                                        padding: EdgeInsets.all(6.r),
-                                        child: Icon(
-                                          Icons.delete_outline_rounded,
-                                          color: Colors.redAccent,
-                                          size: 22.sp,
+                                      GestureDetector(
+                                        onTap: () => _showEditMedicationDialog(
+                                          context,
+                                          index,
+                                          medication,
+                                        ),
+                                        behavior: HitTestBehavior.opaque,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(6.r),
+                                          child: Icon(
+                                            Icons.edit_outlined,
+                                            color: greyColor,
+                                            size: 20.sp,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      8.spaceW,
+                                      GestureDetector(
+                                        onTap: () => _confirmDeleteMedication(
+                                          context,
+                                          index,
+                                          medication,
+                                        ),
+                                        behavior: HitTestBehavior.opaque,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(6.r),
+                                          child: Icon(
+                                            Icons.delete_outline_rounded,
+                                            color: Colors.redAccent,
+                                            size: 22.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             }),

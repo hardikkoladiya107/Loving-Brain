@@ -75,6 +75,20 @@ class TimelineEventModel {
     });
   }
 
+  static String _cleanTitle(String? raw, String fallback) {
+    if (raw == null || raw.trim().isEmpty) return fallback;
+    final String trimmed = raw.trim();
+    if (trimmed.toLowerCase().contains('saved')) {
+      if (trimmed.toLowerCase().contains('sleep')) return 'Sleep update';
+      if (trimmed.toLowerCase().contains('tantrum')) return 'Tantrum update';
+      if (trimmed.toLowerCase().contains('mood')) return 'Mood check-in';
+      if (trimmed.toLowerCase().contains('health')) return 'Health update';
+      if (trimmed.toLowerCase().contains('note')) return 'Quick note';
+      return fallback;
+    }
+    return trimmed;
+  }
+
   static String _titleFor(String type, Map<String, dynamic> data) {
     switch (type) {
       case 'smart_moment':
@@ -90,19 +104,19 @@ class TimelineEventModel {
       case 'state_update':
         return 'State check-in';
       case 'milestone':
-        return (data['title'] as String?) ?? 'Milestone saved';
+        return _cleanTitle(data['title'] as String?, 'Milestone');
       case 'sleep_log':
-        return (data['title'] as String?) ?? 'Sleep check-in';
+        return _cleanTitle(data['title'] as String?, 'Sleep update');
       case 'tantrum_log':
-        return (data['title'] as String?) ?? 'Tantrum note';
+        return _cleanTitle(data['title'] as String?, 'Tantrum update');
       case 'mood_log':
-        return (data['title'] as String?) ?? 'Mood check-in';
+        return _cleanTitle(data['title'] as String?, 'Mood check-in');
       case 'health_log':
-        return (data['title'] as String?) ?? 'Health update';
+        return _cleanTitle(data['title'] as String?, 'Health update');
       case 'quick_note':
-        return (data['title'] as String?) ?? 'Quick note';
+        return _cleanTitle(data['title'] as String?, 'Quick note');
       default:
-        return (data['title'] as String?) ?? 'Activity';
+        return _cleanTitle(data['title'] as String?, 'Activity');
     }
   }
 
