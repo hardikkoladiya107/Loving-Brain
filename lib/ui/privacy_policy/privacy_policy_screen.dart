@@ -95,9 +95,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         children: <Widget>[
           WebViewWidget(controller: _controller),
           if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(color: primaryColor),
-            ),
+            const Center(child: CircularProgressIndicator(color: primaryColor)),
           if (_hasError)
             Center(
               child: Padding(
@@ -120,10 +118,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       textAlign: TextAlign.center,
                     ),
                     24.spaceH,
-                    AppButton(
-                      title: "Retry",
-                      onTap: _loadContent,
-                    ),
+                    AppButton(title: "Retry", onTap: _loadContent),
                   ],
                 ),
               ),
