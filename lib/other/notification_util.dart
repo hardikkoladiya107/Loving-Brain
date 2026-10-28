@@ -68,14 +68,14 @@ class NotificationUtil {
       return RoutePaths.sessionConfirmation;
     }
 
-    // V2 Waitlist or general mentorship availability
+    // V2 Waitlist or general mentorship availability -> Mentorship Landing (Screen 43)
     if (clean == 'waitlist_availability' || clean == 'mentorship') {
-      return RoutePaths.base;
+      return RoutePaths.mentorshipLanding;
     }
 
-    // Quick check-in prompt -> Today screen dashboard
+    // Quick check-in prompt -> Quick Update (Screen 22 / AddBehaviourSheet)
     if (clean == 'gentle_check_in' || clean == 'quick_update') {
-      return RoutePaths.base;
+      return RoutePaths.quickUpdate;
     }
 
     if (clean == 'energy_bridge' || clean.startsWith('energy_bridge:')) {

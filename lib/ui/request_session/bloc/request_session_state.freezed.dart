@@ -229,7 +229,7 @@ return $default(_that.guide,_that.childName,_that.mainConcern,_that.childAge,_th
 
 
 class _RequestSessionState implements RequestSessionState {
-  const _RequestSessionState({this.guide, this.childName = 'your child', this.mainConcern = '', this.childAge = '17 months', this.preferredDays = 'Weekday evenings after 8 PM', this.preferredLanguage = 'English', this.shareSummary = true, this.isSubmitting = false, this.saveStatus = const ApiResultStatus.initial()});
+  const _RequestSessionState({this.guide, this.childName = 'your child', this.mainConcern = '', this.childAge = '17 months', this.preferredDays = 'Weekday evenings after 8 PM', this.preferredLanguage = 'English', this.shareSummary = false, this.isSubmitting = false, this.saveStatus = const ApiResultStatus.initial()});
   
 
 @override final  GuideProfileModel? guide;

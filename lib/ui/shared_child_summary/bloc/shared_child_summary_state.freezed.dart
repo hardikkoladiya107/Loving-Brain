@@ -229,7 +229,7 @@ return $default(_that.isLoading,_that.childName,_that.partnerName,_that.todaysPl
 
 
 class _SharedChildSummaryState implements SharedChildSummaryState {
-  const _SharedChildSummaryState({this.isLoading = false, this.childName = 'your child', this.partnerName = 'Co-Parent', this.todaysPlanTitle = 'Wind-down at 7:30 PM', this.todaysPlanSubtitle = 'Sleep window 7:45 – 8:15 PM.',  List<HandoverLogItem> recentUpdates = const <HandoverLogItem>[HandoverLogItem(authorName: 'Co-Parent', isPartner: true, actionDescription: 'logged a nap', timeAgo: '3h ago'), HandoverLogItem(authorName: 'You', isPartner: false, actionDescription: 'logged bedtime', timeAgo: 'yesterday')], this.activeWeeklyFocus = 'Move bedtime 15 minutes earlier and protect calm wind-down.', this.handoverNote = 'Both seeing the same picture. Health notes and private reflections remain private by default.', this.fetchStatus = const ApiResultStatus.initial()}): _recentUpdates = recentUpdates;
+  const _SharedChildSummaryState({this.isLoading = false, this.childName = 'your child', this.partnerName = 'Co-Parent', this.todaysPlanTitle = 'Wind-down at 7:30 PM', this.todaysPlanSubtitle = 'Sleep window 7:45 – 8:15 PM.',  List<HandoverLogItem> recentUpdates = const <HandoverLogItem>[], this.activeWeeklyFocus = 'Move bedtime 15 minutes earlier and protect calm wind-down.', this.handoverNote = 'Both seeing the same picture. Health notes and private reflections remain private by default.', this.fetchStatus = const ApiResultStatus.initial()}): _recentUpdates = recentUpdates;
   
 
 @override@JsonKey() final  bool isLoading;

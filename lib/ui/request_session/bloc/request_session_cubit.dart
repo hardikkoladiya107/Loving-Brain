@@ -110,14 +110,11 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
         .createMentorshipRequest(request);
 
     if (res is Data<MentorshipRequestModel>) {
-      // Schedule 24h & 1h session reminders per V2 notification types 5 & 7
-      final DateTime estimatedSessionTime = DateTime.now().add(
-        const Duration(days: 2),
-      );
-      V2NotificationScheduler.scheduleMentorshipReminders(
+      // Immediate booking status event notification (Doc 03 §2 Type 6)
+      V2NotificationScheduler.notifyMentorshipBookingEvent(
         sessionId: request.id,
-        sessionTime: estimatedSessionTime,
         mentorName: state.guide?.name ?? 'Your mentor',
+        statusText: 'requested',
       );
 
       changeProps(isSubmitting: false, saveStatus: res);

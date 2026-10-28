@@ -48,6 +48,8 @@ abstract class NotificationPreferencesModel
         return sleepReminders;
       case 'check_in':
       case 'gentle_check_in':
+      case 'calm':
+      case 'calm_heads_up':
         return checkInReminders;
       case 'mentorship':
       case 'session':

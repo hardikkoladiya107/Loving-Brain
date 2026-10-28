@@ -7,6 +7,7 @@ import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 
 import 'calm_heads_up_state.dart';
@@ -16,6 +17,14 @@ class CalmHeadsUpCubit extends Cubit<CalmHeadsUpState> {
 
   void init({ChildModel? childModel}) {
     emit(const CalmHeadsUpState());
+    final ChildModel? child = childModel ?? preferences.getChildModel();
+    final String childId =
+        child?.reference?.id ??
+        TodayLogRepo.instance.resolveActiveChildId() ??
+        '';
+    if (childId.isNotEmpty) {
+      V2NotificationScheduler.cancelCalmHeadsUp(childId);
+    }
     _loadBehaviourForecast(childModel);
   }
 
@@ -118,5 +127,28 @@ class CalmHeadsUpCubit extends Cubit<CalmHeadsUpState> {
       contributingSignals: forecast.contributingSignals,
       healthCaveat: forecast.healthCaveat,
     );
+
+    // Schedule Calm Heads-Up if behaviour signals indicate a push-worthy risk window (Doc 03 §3)
+    if (forecast.isPushWorthy && childId.isNotEmpty) {
+      try {
+        final DateTime now = DateTime.now();
+        final DateTime startDt = TodayLogRepo.parseTimeString(
+          forecast.windowStart,
+          referenceDate: now,
+        );
+        final DateTime endDt = TodayLogRepo.parseTimeString(
+          forecast.windowEnd,
+          referenceDate: now,
+        );
+        if (startDt.isAfter(now)) {
+          await V2NotificationScheduler.scheduleCalmHeadsUp(
+            childId: childId,
+            childName: forecast.childName,
+            windowStart: startDt,
+            windowEnd: endDt,
+          );
+        }
+      } catch (_) {}
+    }
   }
 }

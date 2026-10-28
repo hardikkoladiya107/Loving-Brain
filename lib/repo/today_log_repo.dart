@@ -129,6 +129,30 @@ class TodayLogRepo {
     }
   }
 
+  Future<ApiResultStatus<bool>> updateSleepLog({
+    required String childId,
+    required String logId,
+    required SleepLogModel log,
+  }) async {
+    try {
+      if (childId.trim().isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.pleaseSelectChildFirst.tr()),
+        );
+      }
+
+      await _childrenCollection
+          .doc(childId)
+          .collection('sleep_logs')
+          .doc(logId)
+          .update(log.toMap());
+
+      return const ApiResultStatus.data(data: true);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
   // =========================================================================
   // 2. TANTRUM / MELTDOWN LOG
   // =========================================================================

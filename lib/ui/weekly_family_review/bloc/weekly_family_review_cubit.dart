@@ -9,6 +9,7 @@ import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/repo/experiment_repo.dart';
 import 'package:loving_brain/repo/sleep_log_repo.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
@@ -110,6 +111,16 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
       activeExperiment: activeExperiment,
       fetchStatus: const ApiResultStatus.data(data: null),
     );
+
+    // Schedule Sunday 9:00 AM weekly review notification (Doc 03 §5)
+    final DateTime now = DateTime.now();
+    DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
+    int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
+    if (daysUntilSunday == 0 && now.hour >= 9) {
+      daysUntilSunday = 7;
+    }
+    nextSunday = nextSunday.add(Duration(days: daysUntilSunday));
+    await V2NotificationScheduler.scheduleWeeklyReview(sundayDate: nextSunday);
   }
 
   Future<void> startRecommendedExperiment() async {

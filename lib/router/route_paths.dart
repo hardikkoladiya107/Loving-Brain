@@ -33,6 +33,8 @@ class RoutePaths {
   static const String calmPlan = '/calm-plan';
   static const String weeklyReview = '/weekly-review';
   static const String sessionConfirmation = '/session-confirmation';
+  static const String quickUpdate = '/quick-update';
+  static const String mentorshipLanding = '/mentorship-landing';
 
   static String childProfilePath(
     String userId, {

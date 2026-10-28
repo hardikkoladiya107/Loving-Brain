@@ -26,7 +26,9 @@ import 'package:loving_brain/ui/microphone_permission/microphone_permission_scre
 import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
 import 'package:loving_brain/ui/notifications_permission/notifications_permission_screen.dart';
 import 'package:loving_brain/ui/session_request_confirmation/session_request_confirmation_screen.dart';
+import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_behaviour_sheet.dart';
 import 'package:loving_brain/ui/tonights_plan/tonights_plan_screen.dart';
 import 'package:loving_brain/ui/weekly_family_review/weekly_family_review_screen.dart';
 
@@ -251,6 +253,19 @@ class AppRouter {
           path: RoutePaths.sessionConfirmation,
           builder: (BuildContext context, GoRouterState state) =>
               const SessionRequestConfirmationScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.quickUpdate,
+          builder: (BuildContext context, GoRouterState state) =>
+              const Scaffold(
+                backgroundColor: Color(0xFFF7F7F7),
+                body: SafeArea(child: AddBehaviourSheet()),
+              ),
+        ),
+        GoRoute(
+          path: RoutePaths.mentorshipLanding,
+          builder: (BuildContext context, GoRouterState state) =>
+              const MentorshipLandingScreen(),
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) {

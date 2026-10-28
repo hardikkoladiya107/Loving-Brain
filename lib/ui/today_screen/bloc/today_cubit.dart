@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
 import 'package:loving_brain/core/energy_bridge_sleep_calculator.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -312,6 +313,66 @@ class TodayCubit extends Cubit<TodayState> {
       hasSleepLogs: forecast.hasPersonalLogs,
       hasMultiDayPatterns: hasMultiDayPatterns,
     );
+
+    // Schedule Sleep Window notification if confidence >= moderate (Doc 03 §1)
+    if (childId.isNotEmpty &&
+        (forecast.confidenceTier == ConfidenceTier.moderate ||
+            forecast.confidenceTier == ConfidenceTier.high)) {
+      DateTime? windDownStart;
+      if (forecast.planSteps.isNotEmpty) {
+        windDownStart = forecast.planSteps.first.scheduledTime;
+      } else {
+        windDownStart = forecast.bedtimeEstimateDateTime.subtract(
+          const Duration(minutes: 30),
+        );
+      }
+      if (windDownStart.isAfter(DateTime.now())) {
+        await V2NotificationScheduler.scheduleSleepWindow(
+          childId: childId,
+          childName: child?.childName ?? state.childName,
+          windDownStart: windDownStart,
+        );
+      }
+    }
+
+    // Schedule Gentle Check-In at 8:30 PM if no logs today (Doc 03 §4)
+    if (childId.isNotEmpty) {
+      final DateTime now = DateTime.now();
+      final DateTime checkInTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        20,
+        30,
+      );
+      if (checkInTime.isAfter(now)) {
+        final bool hasLogsToday =
+            sleepLogs.any(
+              (SleepLogModel l) =>
+                  l.date.year == now.year &&
+                  l.date.month == now.month &&
+                  l.date.day == now.day,
+            ) ||
+            (todayHealthLog != null) ||
+            hasTantrumToday;
+        await V2NotificationScheduler.scheduleGentleCheckIn(
+          childId: childId,
+          checkInTime: checkInTime,
+          hasLogsToday: hasLogsToday,
+        );
+      }
+
+      // Schedule Weekly Review notification for next Sunday 9:00 AM (Doc 03 §5)
+      DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
+      int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
+      if (daysUntilSunday == 0 && now.hour >= 9) {
+        daysUntilSunday = 7;
+      }
+      nextSunday = nextSunday.add(Duration(days: daysUntilSunday));
+      await V2NotificationScheduler.scheduleWeeklyReview(
+        sundayDate: nextSunday,
+      );
+    }
   }
 
   // Helper to obtain the active child ID safely
@@ -565,6 +626,7 @@ class TodayCubit extends Cubit<TodayState> {
 
       // Cancel pending sleep window reminder since parent logged sleep (Doc 03 §1, Doc 06 §8)
       await V2NotificationScheduler.cancelSleepWindow(childId);
+      await V2NotificationScheduler.cancelGentleCheckIn(childId);
 
       // If estimate changed materially (>=15 min), notify parent (Doc 03 §2)
       if (changedSignificantly && state.bedtimeEstimate != '--:--') {
@@ -591,6 +653,78 @@ class TodayCubit extends Cubit<TodayState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
+      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
+    }
+  }
+
+  /// Updates an overlapping sleep log instead of inserting a duplicate entry (QA Audit X1).
+  Future<void> updateDuplicateSleepLog() async {
+    final SleepLogModel? dup = state.duplicateSleepLogDetected;
+    if (dup == null || dup.id == null) {
+      await saveSleepLog(forceSave: true);
+      return;
+    }
+
+    final String childId = _resolveTargetChildId();
+    final String userUid = _resolveUserUid();
+    final DateTime now = DateTime.now();
+
+    final String fellAsleep = state.fellAsleepTime ?? state.napStartTime ?? '';
+    final String wokeUp = state.wokeUpTime ?? state.napEndTime ?? '';
+    final DateTime bedTime = TodayLogRepo.parseTimeString(
+      fellAsleep,
+      referenceDate: now,
+    );
+    DateTime wakeTime = TodayLogRepo.parseTimeString(
+      wokeUp,
+      referenceDate: now,
+    );
+    if (wakeTime.isBefore(bedTime)) {
+      wakeTime = wakeTime.add(const Duration(days: 1));
+    }
+
+    final SleepLogModel updated = SleepLogModel(
+      id: dup.id,
+      ref: dup.ref,
+      date: dup.date,
+      bedTime: bedTime,
+      wakeTime: wakeTime,
+      fellAsleepTime: fellAsleep,
+      wokeUpTime: wokeUp,
+      isNightWaking: state.isNightWaking,
+      sleepQualityIndex: state.sleepQualityIndex,
+      durationMinutes: wakeTime.difference(bedTime).inMinutes,
+      userId: userUid,
+      childId: childId,
+      createdAt: dup.createdAt,
+    );
+
+    changeProps(
+      isLoading: true,
+      saveStatus: const ApiResultStatus.loading(),
+      clearDuplicateSleep: true,
+    );
+
+    final ApiResultStatus<bool> result = await TodayLogRepo.instance
+        .updateSleepLog(childId: childId, logId: dup.id!, log: updated);
+
+    if (result is Data<bool>) {
+      await V2NotificationScheduler.cancelSleepWindow(childId);
+      await V2NotificationScheduler.cancelGentleCheckIn(childId);
+      changeProps(
+        isLoading: false,
+        isSuccess: true,
+        saveStatus: const ApiResultStatus.data(data: 'updated'),
+        clearSleepInputs: true,
+        clearDuplicateSleep: true,
+        isNightWaking: false,
+        sleepQualityIndex: 3,
+        showSleepUpdateErrors: false,
+        didForecastChangeSignificantly: false,
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      changeProps(isSuccess: false);
+    } else {
       changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
   }
@@ -645,6 +779,7 @@ class TodayCubit extends Cubit<TodayState> {
         .addMoodLog(childId: childId, log: log);
 
     if (result is Data<String>) {
+      await V2NotificationScheduler.cancelGentleCheckIn(childId);
       changeProps(
         isLoading: false,
         isSuccess: true,
@@ -734,6 +869,19 @@ class TodayCubit extends Cubit<TodayState> {
         .addTantrumLog(childId: childId, log: log);
 
     if (result is Data<String>) {
+      await V2NotificationScheduler.cancelGentleCheckIn(childId);
+      // Recalculate behaviour risk with the new tantrum log to determine if risk changed significantly
+      final ChildModel? activeChild = preferences.getChildModel();
+      final BehaviourForecastResult behaviourResult =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: activeChild,
+            tantrumLogs: <TantrumLogModel>[log],
+            sleepLogs: const <SleepLogModel>[],
+            moodLogs: const <MoodLogModel>[],
+            healthLogs: const <HealthLogModel>[],
+          );
+      final bool behaviourShifted = behaviourResult.isPushWorthy;
+
       changeProps(
         isLoading: false,
         isSuccess: true,
@@ -744,11 +892,21 @@ class TodayCubit extends Cubit<TodayState> {
         selectedTantrumTriggers: <String>[],
         tantrumWhatHelped: '',
         showTantrumUpdateErrors: false,
+        didForecastChangeSignificantly: behaviourShifted,
+        forecastChangeReason: behaviourShifted
+            ? 'Harder window updated based on recent tantrum'
+            : null,
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
     } else if (result is Error<String>) {
-      changeProps(isLoading: false, isSuccess: false, saveStatus: result);
+      changeProps(
+        isLoading: false,
+        isSuccess: false,
+        saveStatus: result,
+        didForecastChangeSignificantly: false,
+        forecastChangeReason: null,
+      );
     }
   }
 
@@ -796,6 +954,7 @@ class TodayCubit extends Cubit<TodayState> {
         .addHealthLog(childId: childId, log: log);
 
     if (result is Data<String>) {
+      await V2NotificationScheduler.cancelGentleCheckIn(childId);
       changeProps(
         isLoading: false,
         isSuccess: true,
@@ -858,6 +1017,7 @@ class TodayCubit extends Cubit<TodayState> {
         .addQuickNote(childId: childId, log: log);
 
     if (result is Data<String>) {
+      await V2NotificationScheduler.cancelGentleCheckIn(childId);
       changeProps(
         isLoading: false,
         isSuccess: true,

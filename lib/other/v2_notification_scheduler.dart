@@ -94,7 +94,6 @@ class V2NotificationScheduler {
       payload: 'sleep_window',
       scheduledDate: notifyTime,
     );
-    recordDelivery();
     return true;
   }
 
@@ -156,7 +155,6 @@ class V2NotificationScheduler {
       payload: 'calm_heads_up',
       scheduledDate: notifyTime,
     );
-    recordDelivery();
     return true;
   }
 
@@ -188,7 +186,6 @@ class V2NotificationScheduler {
       payload: 'gentle_check_in',
       scheduledDate: checkInTime,
     );
-    recordDelivery();
     return true;
   }
 
@@ -216,7 +213,6 @@ class V2NotificationScheduler {
       payload: 'weekly_review',
       scheduledDate: sundayDate,
     );
-    recordDelivery();
     return true;
   }
 
@@ -226,6 +222,15 @@ class V2NotificationScheduler {
     required String mentorName,
     required String statusText,
   }) async {
+    final DateTime now = DateTime.now();
+    if (!canSendNotification(
+      type: 'mentorship',
+      targetTime: now,
+      isMentorshipException: true,
+    )) {
+      return false;
+    }
+
     final int id = notificationId(idPrefixMentorshipBooking, sessionId);
     await NotificationUtil.showLocalNotification(
       id: id,
@@ -233,6 +238,7 @@ class V2NotificationScheduler {
       body: 'Your session with $mentorName is $statusText.',
       payload: 'mentorship_booking',
     );
+    recordDelivery();
     return true;
   }
 
@@ -246,7 +252,12 @@ class V2NotificationScheduler {
     final DateTime t1h = sessionTime.subtract(const Duration(hours: 1));
     final DateTime now = DateTime.now();
 
-    if (t24h.isAfter(now)) {
+    if (t24h.isAfter(now) &&
+        canSendNotification(
+          type: 'mentorship',
+          targetTime: t24h,
+          isMentorshipException: true,
+        )) {
       await NotificationUtil.scheduleNotification(
         id: notificationId(idPrefixMentorshipReminder24h, sessionId),
         title: 'LovingBrain · Mentorship Tomorrow',
@@ -257,7 +268,12 @@ class V2NotificationScheduler {
       );
     }
 
-    if (t1h.isAfter(now)) {
+    if (t1h.isAfter(now) &&
+        canSendNotification(
+          type: 'mentorship',
+          targetTime: t1h,
+          isMentorshipException: true,
+        )) {
       await NotificationUtil.scheduleNotification(
         id: notificationId(idPrefixMentorshipReminder1h, sessionId),
         title: 'LovingBrain · Mentorship in 1 Hour',
@@ -282,6 +298,15 @@ class V2NotificationScheduler {
     required String mentorId,
     required String mentorName,
   }) async {
+    final DateTime now = DateTime.now();
+    if (!canSendNotification(
+      type: 'mentorship',
+      targetTime: now,
+      isMentorshipException: true,
+    )) {
+      return false;
+    }
+
     final int id = notificationId(idPrefixWaitlistAvailability, mentorId);
     await NotificationUtil.showLocalNotification(
       id: id,
@@ -289,6 +314,7 @@ class V2NotificationScheduler {
       body: 'A mentor slot with $mentorName has opened this week.',
       payload: 'waitlist_availability',
     );
+    recordDelivery();
     return true;
   }
 }

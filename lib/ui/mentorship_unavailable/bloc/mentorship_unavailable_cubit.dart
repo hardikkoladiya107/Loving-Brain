@@ -34,7 +34,6 @@ class MentorshipUnavailableCubit extends Cubit<MentorshipUnavailableState> {
   }) async {
     changeProps(
       isLoading: true,
-      isWaitlistJoined: true,
       waitlistStatus: const ApiResultStatus.loading(),
     );
 
@@ -52,7 +51,7 @@ class MentorshipUnavailableCubit extends Cubit<MentorshipUnavailableState> {
 
     changeProps(
       isLoading: false,
-      isWaitlistJoined: true,
+      isWaitlistJoined: result is Data<bool>,
       waitlistStatus: result,
     );
   }

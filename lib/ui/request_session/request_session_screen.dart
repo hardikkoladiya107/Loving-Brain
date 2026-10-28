@@ -10,6 +10,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/session_request_confirmation/session_request_confirmation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'bloc/request_session_cubit.dart';
 import 'bloc/request_session_state.dart';
@@ -250,10 +251,23 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
                     },
             ),
             16.spaceH,
-            "Or schedule directly via your guide's calendar link".appText(
-              fontSize: 14.sp,
-              color: greyColor,
-              fontWeight: FontWeight.w500,
+            InkWell(
+              onTap: () async {
+                final String? rawUrl = state.guide?.calendarUrl;
+                if (rawUrl != null && rawUrl.isNotEmpty) {
+                  final Uri? uri = Uri.tryParse(rawUrl);
+                  if (uri != null) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
+                }
+              },
+              child: "Or schedule directly via your guide's calendar link"
+                  .appText(
+                    fontSize: 14.sp,
+                    color: primaryColor,
+                    fontWeight: FontWeight.w600,
+                    textDecoration: TextDecoration.underline,
+                  ),
             ),
           ],
         ),

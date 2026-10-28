@@ -99,11 +99,21 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(dialogContext);
-                    context.read<TodayCubit>().saveSleepLog(forceSave: true);
+                    context.read<TodayCubit>().updateDuplicateSleepLog();
                   },
-                  child: "Save anyway".appText(
+                  child: "Edit existing".appText(
                     color: primaryColor,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    context.read<TodayCubit>().saveSleepLog(forceSave: true);
+                  },
+                  child: "Save as separate".appText(
+                    color: greyColor8,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],

@@ -51,7 +51,10 @@ service cloud.firestore {
 
     // Shared family events
     match /shared_event/{id} {
-      allow read, write: if isSignedIn();
+      allow read, write: if isSignedIn() &&
+        (resource == null || 
+         resource.data.userId == request.auth.uid || 
+         (resource.data.childId != null && isLinkedParent(resource.data.childId)));
     }
 
     // Behaviour category definitions
@@ -73,28 +76,48 @@ service cloud.firestore {
 
     // Mentorship & milestones
     match /milestones/{id} {
-      allow read, write: if isSignedIn();
+      allow read, write: if isSignedIn() &&
+        (resource == null || 
+         resource.data.userId == request.auth.uid || 
+         (resource.data.childId != null && isLinkedParent(resource.data.childId)));
       match /{allChildren=**} {
-        allow read, write: if isSignedIn();
+        allow read, write: if isSignedIn() &&
+          (resource == null || 
+           resource.data.userId == request.auth.uid || 
+           (resource.data.childId != null && isLinkedParent(resource.data.childId)));
       }
     }
 
     match /mentorship_requests/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || resource.data.parent_id == request.auth.uid || request.resource.data.parent_id == request.auth.uid);
+        (resource == null || 
+         resource.data.userId == request.auth.uid || 
+         resource.data.parent_id == request.auth.uid || 
+         request.resource.data.userId == request.auth.uid ||
+         request.resource.data.parent_id == request.auth.uid);
     }
 
     match /mentorship_waitlist/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || resource.data.user_id == request.auth.uid || request.resource.data.user_id == request.auth.uid);
+        (resource == null || 
+         resource.data.userId == request.auth.uid || 
+         resource.data.user_id == request.auth.uid || 
+         request.resource.data.userId == request.auth.uid ||
+         request.resource.data.user_id == request.auth.uid);
     }
 
     match /enrolled_programs/{id} {
-      allow read, write: if isSignedIn();
+      allow read, write: if isSignedIn() &&
+        (resource == null || 
+         resource.data.userId == request.auth.uid || 
+         (resource.data.childId != null && isLinkedParent(resource.data.childId)));
     }
 
     match /post_session_plans/{id} {
-      allow read, write: if isSignedIn();
+      allow read, write: if isSignedIn() &&
+        (resource == null || 
+         resource.data.userId == request.auth.uid || 
+         (resource.data.childId != null && isLinkedParent(resource.data.childId)));
     }
   }
 }

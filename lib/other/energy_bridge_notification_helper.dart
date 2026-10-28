@@ -16,20 +16,10 @@ class EnergyBridgeNotificationHelper {
     required int durationMinutes,
     String? childName,
   }) async {
-    final DateTime triggerTime = DateTime.now().add(
-      Duration(minutes: durationMinutes),
-    );
-    final String name = (childName ?? '').trim().isEmpty
-        ? 'your child'
-        : childName!.trim();
-    await NotificationUtil.scheduleNotification(
-      id: notificationIdForChild(childId),
-      title: 'LovingBrain',
-      body:
-          'Time to slow things down — $name has been in high energy for $durationMinutes minutes',
-      payload: 'energy_bridge:$childId',
-      scheduledDate: triggerTime,
-    );
+    // Deprecated in V2: Predictive notifications are managed exclusively via
+    // V2NotificationScheduler which respects daily caps (max 3), quiet hours (9 PM-7 AM),
+    // and requires moderate or high confidence.
+    return;
   }
 
   static Future<void> cancelForChild(String childId) async {

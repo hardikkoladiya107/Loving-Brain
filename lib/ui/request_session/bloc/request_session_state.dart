@@ -13,7 +13,7 @@ abstract class RequestSessionState with _$RequestSessionState {
     @Default('17 months') String childAge,
     @Default('Weekday evenings after 8 PM') String preferredDays,
     @Default('English') String preferredLanguage,
-    @Default(true) bool shareSummary,
+    @Default(false) bool shareSummary,
     @Default(false) bool isSubmitting,
     @Default(ApiResultStatus.initial()) ApiResultStatus saveStatus,
   }) = _RequestSessionState;
