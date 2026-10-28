@@ -12,6 +12,7 @@ import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/setting_tile.dart';
 import 'package:loving_brain/ui/widget/status_pill.dart';
 import 'package:loving_brain/ui/widget/warning_box.dart';
@@ -295,6 +296,337 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
     );
   }
 
+  void _showExportConfirmationSheet(BuildContext context) {
+    final PrivacyDataCubit cubit = context.read<PrivacyDataCubit>();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+      ),
+      builder: (BuildContext sheetContext) {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 24.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: greyColor7,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+              20.spaceH,
+              Row(
+                children: [
+                  Container(
+                    width: 48.w,
+                    height: 48.w,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF0E5),
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Icon(
+                      Icons.file_download_outlined,
+                      color: primaryColor,
+                      size: 26.sp,
+                    ),
+                  ),
+                  14.spaceW,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        "Export your data".appText(
+                          fontSize: 20.sp,
+                          color: greyColor9,
+                          fraunces: true,
+                        ),
+                        4.spaceH,
+                        "GDPR & CCPA Data Portability".appText(
+                          fontSize: 12.sp,
+                          color: greyColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              18.spaceH,
+              "Download a complete, machine-readable backup of your family's records. You can save this anywhere on your device file manager, Google Drive, or iCloud."
+                  .appText(fontSize: 14.sp, color: greyColor, height: 1.45),
+              16.spaceH,
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF8F4),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: const Color(0xFFF3ECE6)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _exportDetailRow(
+                      icon: Icons.data_object_rounded,
+                      title: "File Format",
+                      value: "Standard structured JSON (.json)",
+                    ),
+                    12.spaceH,
+                    _exportDetailRow(
+                      icon: Icons.checklist_rounded,
+                      title: "Contents Included",
+                      value:
+                          "Child baseline profile, sleep logs, mood, tantrum records, health notes, and routines.",
+                    ),
+                    12.spaceH,
+                    _exportDetailRow(
+                      icon: Icons.shield_outlined,
+                      title: "Privacy & Storage",
+                      value:
+                          "Exported securely on-device. Save anywhere via file manager or share via apps.",
+                    ),
+                  ],
+                ),
+              ),
+              22.spaceH,
+              AppButton(
+                title: "Save to File Manager",
+                widget: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.folder_open_rounded,
+                      size: 20.sp,
+                      color: Colors.white,
+                    ),
+                    8.spaceW,
+                    "Save to File Manager".appText(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  cubit.exportData(saveToFileManager: true);
+                },
+              ),
+              10.spaceH,
+              AppButton(
+                title: "Share or Send Export",
+                backgroundColor: Colors.white,
+                borderColor: greyColor.withValues(alpha: 0.25),
+                widget: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.share_outlined, size: 20.sp, color: greyColor9),
+                    8.spaceW,
+                    "Share / Send File".appText(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: greyColor9,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  cubit.exportData(saveToFileManager: false);
+                },
+              ),
+              8.spaceH,
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(sheetContext),
+                  child: "Cancel".appText(
+                    fontSize: 14.sp,
+                    color: greyColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showImportConfirmationSheet(BuildContext context) {
+    final PrivacyDataCubit cubit = context.read<PrivacyDataCubit>();
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
+      ),
+      builder: (BuildContext sheetContext) {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 24.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: greyColor7,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
+              20.spaceH,
+              Row(
+                children: [
+                  Container(
+                    width: 48.w,
+                    height: 48.w,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF3F2FE),
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    child: Icon(
+                      Icons.file_upload_outlined,
+                      color: const Color(0xFF665FCE),
+                      size: 26.sp,
+                    ),
+                  ),
+                  14.spaceW,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        "Import backup data".appText(
+                          fontSize: 20.sp,
+                          color: greyColor9,
+                          fraunces: true,
+                        ),
+                        4.spaceH,
+                        "Restore from LovingBrain JSON".appText(
+                          fontSize: 12.sp,
+                          color: greyColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              18.spaceH,
+              "Select a previously exported LovingBrain (.json) backup file from your device or cloud folder to restore child routines and logs."
+                  .appText(fontSize: 14.sp, color: greyColor, height: 1.45),
+              16.spaceH,
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFBFBFD),
+                  borderRadius: BorderRadius.circular(16.r),
+                  border: Border.all(color: const Color(0xFFECEBFA)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _exportDetailRow(
+                      icon: Icons.merge_type_rounded,
+                      title: "Safe Record Merging",
+                      value:
+                          "Logs and child profile will be safely imported. Existing logs are preserved.",
+                    ),
+                    12.spaceH,
+                    _exportDetailRow(
+                      icon: Icons.description_outlined,
+                      title: "Expected Format",
+                      value:
+                          "A valid .json export file produced by LovingBrain.",
+                    ),
+                  ],
+                ),
+              ),
+              22.spaceH,
+              AppButton(
+                title: "Select Backup from Files",
+                backgroundColor: const Color(0xFF665FCE),
+                widget: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.folder_open_rounded,
+                      size: 20.sp,
+                      color: Colors.white,
+                    ),
+                    8.spaceW,
+                    "Select Backup File".appText(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  cubit.importDataFromFile();
+                },
+              ),
+              10.spaceH,
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(sheetContext),
+                  child: "Cancel".appText(
+                    fontSize: 14.sp,
+                    color: greyColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _exportDetailRow({
+    required IconData icon,
+    required String title,
+    required String value,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18.sp, color: darkBlue),
+        10.spaceW,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title.appText(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+                color: greyColor9,
+              ),
+              3.spaceH,
+              value.appText(fontSize: 12.sp, color: greyColor, height: 1.35),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PrivacyDataCubit, PrivacyDataState>(
@@ -318,11 +650,33 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
         );
 
         state.exportStatus.whenOrNull(
-          loading: () => EasyLoading.show(status: 'Exporting data...'),
+          initial: () => EasyLoading.dismiss(),
+          loading: () => EasyLoading.show(status: 'Generating export...'),
           data: (_) {
             EasyLoading.dismiss();
+            final String note = state.lastExportedPath != null
+                ? "Data exported successfully! Saved to ${state.lastExportedPath!.split('/').last}"
+                : "Your data has been exported successfully.";
+            showSnackBar(message: note, type: SnackBarType.SUCCESS);
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
             showSnackBar(
-              message: "Your data has been exported successfully.",
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+
+        state.importStatus.whenOrNull(
+          initial: () => EasyLoading.dismiss(),
+          loading: () => EasyLoading.show(status: 'Restoring backup data...'),
+          data: (dynamic data) {
+            EasyLoading.dismiss();
+            final int count = (data is int) ? data : state.importedCount;
+            showSnackBar(
+              message:
+                  "Backup restored successfully! ($count records imported)",
               type: SnackBarType.SUCCESS,
             );
           },
@@ -490,12 +844,10 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                 ? "${state.pendingOfflineUpdatesCount} updates waiting to sync"
                                 : "All data is up to date",
                             trailing: state.isSyncing
-                                ? SizedBox(
-                                    width: 18.w,
-                                    height: 18.w,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
+                                ? const AppLoadingIndicator(
+                                    centered: false,
+                                    size: 14,
+                                    color: Color(0xFF665FCE),
                                   )
                                 : null,
                             onTap: () => _showOfflineSyncSheet(context),
@@ -544,8 +896,47 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                             backgroundColor: Colors.white,
                             textColor: greyColor9,
                             borderColor: greyColor.withValues(alpha: 0.2),
-                            onTap: () =>
-                                context.read<PrivacyDataCubit>().exportData(),
+                            widget: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.file_download_outlined,
+                                  size: 20.sp,
+                                  color: greyColor9,
+                                ),
+                                8.spaceW,
+                                "Export my data".appText(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: greyColor9,
+                                ),
+                              ],
+                            ),
+                            onTap: () => _showExportConfirmationSheet(context),
+                          ),
+                          12.spaceH,
+                          AppButton(
+                            title: "Import data",
+                            backgroundColor: Colors.white,
+                            textColor: greyColor9,
+                            borderColor: greyColor.withValues(alpha: 0.2),
+                            widget: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.file_upload_outlined,
+                                  size: 20.sp,
+                                  color: greyColor9,
+                                ),
+                                8.spaceW,
+                                "Import data".appText(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: greyColor9,
+                                ),
+                              ],
+                            ),
+                            onTap: () => _showImportConfirmationSheet(context),
                           ),
                           24.spaceH,
                           WarningBox(

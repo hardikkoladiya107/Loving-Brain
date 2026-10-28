@@ -7,6 +7,7 @@ import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -283,13 +284,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
               error: _validationError,
               onChanged: _onSearchChanged,
               suffixIcon: _isSearching
-                  ? SizedBox(
-                      width: 20.r,
-                      height: 20.r,
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: primaryColor,
-                      ),
+                  ? const AppLoadingIndicator(
+                      centered: false,
+                      size: 16,
+                      color: primaryColor,
                     )
                   : (_selectedLocation != null
                         ? Row(

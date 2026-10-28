@@ -16,7 +16,12 @@ abstract class PrivacyDataState with _$PrivacyDataState {
     @Default('') String lastSyncedTime,
     @Default(ApiResultStatus.initial()) ApiResultStatus syncStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus exportStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus importStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus deleteStatus,
+    @Default(false) bool isExporting,
+    @Default(false) bool isImporting,
+    @Default(0) int importedCount,
+    String? lastExportedPath,
     Map<String, dynamic>? exportedData,
   }) = _PrivacyDataState;
 }

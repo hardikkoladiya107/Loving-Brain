@@ -8,6 +8,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 
 import 'bloc/tonights_plan_cubit.dart';
 import 'bloc/tonights_plan_state.dart';
@@ -44,9 +45,7 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
             body: state.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: primaryColor),
-                  )
+                ? const AppLoadingIndicator()
                 : Column(
                     children: [
                       Expanded(

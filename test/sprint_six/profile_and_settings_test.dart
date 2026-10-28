@@ -5,6 +5,7 @@ import 'package:loving_brain/model/notification_preferences_model.dart';
 import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/help_safety/bloc/help_safety_cubit.dart';
 import 'package:loving_brain/ui/notifications/bloc/notifications_cubit.dart';
+import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/privacy_data/bloc/privacy_data_cubit.dart';
 
@@ -159,6 +160,33 @@ void main() {
         expect(cubit.state.exportedData!['format_version'], '2.0');
 
         cubit.close();
+      },
+    );
+
+    test(
+      'OfflineSyncRepo importUserData merges records successfully',
+      () async {
+        final Map<String, dynamic> mockBackup = <String, dynamic>{
+          'app': 'LovingBrain',
+          'export_version': '2.0',
+          'child_profile': <String, dynamic>{
+            'childName': 'Test Kid',
+            'childAge': '2 years',
+          },
+          'sleep_logs': <dynamic>[
+            <String, dynamic>{'wakeTime': '07:00 AM', 'bedTime': '08:00 PM'},
+          ],
+          'tantrum_logs': <dynamic>[
+            <String, dynamic>{'intensity': 'Medium', 'trigger': 'Transition'},
+          ],
+        };
+
+        final ApiResultStatus<int> res = await OfflineSyncRepo.instance
+            .importUserData(payload: mockBackup);
+
+        expect(res, isA<Data<int>>());
+        final int imported = (res as Data<int>).data;
+        expect(imported, greaterThanOrEqualTo(1));
       },
     );
   });

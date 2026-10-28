@@ -15,6 +15,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/co_parent_register/bloc/co_parent_register_cubit.dart';
 import 'package:loving_brain/ui/auth/co_parent_register/bloc/co_parent_register_state.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -546,13 +547,10 @@ class _CoParentRegisterScreenState extends State<CoParentRegisterScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (submitting)
-              SizedBox(
-                height: 20.r,
-                width: 20.r,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  color: Colors.white,
-                ),
+              const AppLoadingIndicator(
+                centered: false,
+                size: 20,
+                color: Colors.white,
               ).appPadding(top: 14.h, bottom: 14.h)
             else
               Row(

@@ -8,6 +8,7 @@ import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_details_card.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 
 import 'bloc/sleep_forecast_cubit.dart';
 import 'bloc/sleep_forecast_state.dart';
@@ -40,9 +41,7 @@ class _SleepForecastScreenState extends State<SleepForecastScreen> {
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
             body: state.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: primaryColor),
-                  )
+                ? const AppLoadingIndicator()
                 : ListView(
                     padding: EdgeInsets.zero,
                     children: [

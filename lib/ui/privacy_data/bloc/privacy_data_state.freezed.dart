@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PrivacyDataState {
 
- String get childName; bool get isDeletingAccount; bool get isAccountDeleted; int get pendingOfflineUpdatesCount; bool get isSyncing; String get lastSyncedTime; ApiResultStatus<dynamic> get syncStatus; ApiResultStatus<dynamic> get exportStatus; ApiResultStatus<dynamic> get deleteStatus; Map<String, dynamic>? get exportedData;
+ String get childName; bool get isDeletingAccount; bool get isAccountDeleted; int get pendingOfflineUpdatesCount; bool get isSyncing; String get lastSyncedTime; ApiResultStatus<dynamic> get syncStatus; ApiResultStatus<dynamic> get exportStatus; ApiResultStatus<dynamic> get importStatus; ApiResultStatus<dynamic> get deleteStatus; bool get isExporting; bool get isImporting; int get importedCount; String? get lastExportedPath; Map<String, dynamic>? get exportedData;
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $PrivacyDataStateCopyWith<PrivacyDataState> get copyWith => _$PrivacyDataStateCo
 @override
 bool operator ==(Object other) {
   final _this = this as PrivacyDataState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PrivacyDataState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isDeletingAccount, _this.isDeletingAccount) || other.isDeletingAccount == _this.isDeletingAccount)&&(identical(other.isAccountDeleted, _this.isAccountDeleted) || other.isAccountDeleted == _this.isAccountDeleted)&&(identical(other.pendingOfflineUpdatesCount, _this.pendingOfflineUpdatesCount) || other.pendingOfflineUpdatesCount == _this.pendingOfflineUpdatesCount)&&(identical(other.isSyncing, _this.isSyncing) || other.isSyncing == _this.isSyncing)&&(identical(other.lastSyncedTime, _this.lastSyncedTime) || other.lastSyncedTime == _this.lastSyncedTime)&&(identical(other.syncStatus, _this.syncStatus) || other.syncStatus == _this.syncStatus)&&(identical(other.exportStatus, _this.exportStatus) || other.exportStatus == _this.exportStatus)&&(identical(other.deleteStatus, _this.deleteStatus) || other.deleteStatus == _this.deleteStatus)&&const DeepCollectionEquality().equals(other.exportedData, _this.exportedData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PrivacyDataState&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isDeletingAccount, _this.isDeletingAccount) || other.isDeletingAccount == _this.isDeletingAccount)&&(identical(other.isAccountDeleted, _this.isAccountDeleted) || other.isAccountDeleted == _this.isAccountDeleted)&&(identical(other.pendingOfflineUpdatesCount, _this.pendingOfflineUpdatesCount) || other.pendingOfflineUpdatesCount == _this.pendingOfflineUpdatesCount)&&(identical(other.isSyncing, _this.isSyncing) || other.isSyncing == _this.isSyncing)&&(identical(other.lastSyncedTime, _this.lastSyncedTime) || other.lastSyncedTime == _this.lastSyncedTime)&&(identical(other.syncStatus, _this.syncStatus) || other.syncStatus == _this.syncStatus)&&(identical(other.exportStatus, _this.exportStatus) || other.exportStatus == _this.exportStatus)&&(identical(other.importStatus, _this.importStatus) || other.importStatus == _this.importStatus)&&(identical(other.deleteStatus, _this.deleteStatus) || other.deleteStatus == _this.deleteStatus)&&(identical(other.isExporting, _this.isExporting) || other.isExporting == _this.isExporting)&&(identical(other.isImporting, _this.isImporting) || other.isImporting == _this.isImporting)&&(identical(other.importedCount, _this.importedCount) || other.importedCount == _this.importedCount)&&(identical(other.lastExportedPath, _this.lastExportedPath) || other.lastExportedPath == _this.lastExportedPath)&&const DeepCollectionEquality().equals(other.exportedData, _this.exportedData));
 }
 
 
 @override
 int get hashCode {
   final _this = this as PrivacyDataState;
-  return Object.hash(runtimeType,_this.childName,_this.isDeletingAccount,_this.isAccountDeleted,_this.pendingOfflineUpdatesCount,_this.isSyncing,_this.lastSyncedTime,_this.syncStatus,_this.exportStatus,_this.deleteStatus,const DeepCollectionEquality().hash(_this.exportedData));
+  return Object.hash(runtimeType,_this.childName,_this.isDeletingAccount,_this.isAccountDeleted,_this.pendingOfflineUpdatesCount,_this.isSyncing,_this.lastSyncedTime,_this.syncStatus,_this.exportStatus,_this.importStatus,_this.deleteStatus,_this.isExporting,_this.isImporting,_this.importedCount,_this.lastExportedPath,const DeepCollectionEquality().hash(_this.exportedData));
 }
 
 @override
 String toString() {
   final _this = this as PrivacyDataState;
-  return 'PrivacyDataState(childName: ${_this.childName}, isDeletingAccount: ${_this.isDeletingAccount}, isAccountDeleted: ${_this.isAccountDeleted}, pendingOfflineUpdatesCount: ${_this.pendingOfflineUpdatesCount}, isSyncing: ${_this.isSyncing}, lastSyncedTime: ${_this.lastSyncedTime}, syncStatus: ${_this.syncStatus}, exportStatus: ${_this.exportStatus}, deleteStatus: ${_this.deleteStatus}, exportedData: ${_this.exportedData})';
+  return 'PrivacyDataState(childName: ${_this.childName}, isDeletingAccount: ${_this.isDeletingAccount}, isAccountDeleted: ${_this.isAccountDeleted}, pendingOfflineUpdatesCount: ${_this.pendingOfflineUpdatesCount}, isSyncing: ${_this.isSyncing}, lastSyncedTime: ${_this.lastSyncedTime}, syncStatus: ${_this.syncStatus}, exportStatus: ${_this.exportStatus}, importStatus: ${_this.importStatus}, deleteStatus: ${_this.deleteStatus}, isExporting: ${_this.isExporting}, isImporting: ${_this.isImporting}, importedCount: ${_this.importedCount}, lastExportedPath: ${_this.lastExportedPath}, exportedData: ${_this.exportedData})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $PrivacyDataStateCopyWith<$Res>  {
   factory $PrivacyDataStateCopyWith(PrivacyDataState value, $Res Function(PrivacyDataState) _then) = _$PrivacyDataStateCopyWithImpl;
 @useResult
 $Res call({
- String childName, bool isDeletingAccount, bool isAccountDeleted, int pendingOfflineUpdatesCount, bool isSyncing, String lastSyncedTime, ApiResultStatus<dynamic> syncStatus, ApiResultStatus<dynamic> exportStatus, ApiResultStatus<dynamic> deleteStatus, Map<String, dynamic>? exportedData
+ String childName, bool isDeletingAccount, bool isAccountDeleted, int pendingOfflineUpdatesCount, bool isSyncing, String lastSyncedTime, ApiResultStatus<dynamic> syncStatus, ApiResultStatus<dynamic> exportStatus, ApiResultStatus<dynamic> importStatus, ApiResultStatus<dynamic> deleteStatus, bool isExporting, bool isImporting, int importedCount, String? lastExportedPath, Map<String, dynamic>? exportedData
 });
 
 
-$ApiResultStatusCopyWith<dynamic, $Res> get syncStatus;$ApiResultStatusCopyWith<dynamic, $Res> get exportStatus;$ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus;
+$ApiResultStatusCopyWith<dynamic, $Res> get syncStatus;$ApiResultStatusCopyWith<dynamic, $Res> get exportStatus;$ApiResultStatusCopyWith<dynamic, $Res> get importStatus;$ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus;
 
 }
 /// @nodoc
@@ -68,7 +68,7 @@ class _$PrivacyDataStateCopyWithImpl<$Res>
 
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? pendingOfflineUpdatesCount = null,Object? isSyncing = null,Object? lastSyncedTime = null,Object? syncStatus = null,Object? exportStatus = null,Object? deleteStatus = null,Object? exportedData = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? pendingOfflineUpdatesCount = null,Object? isSyncing = null,Object? lastSyncedTime = null,Object? syncStatus = null,Object? exportStatus = null,Object? importStatus = null,Object? deleteStatus = null,Object? isExporting = null,Object? isImporting = null,Object? importedCount = null,Object? lastExportedPath = freezed,Object? exportedData = freezed,}) {
   return _then(PrivacyDataState(
 childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,isDeletingAccount: null == isDeletingAccount ? _self.isDeletingAccount : isDeletingAccount // ignore: cast_nullable_to_non_nullable
@@ -78,8 +78,13 @@ as int,isSyncing: null == isSyncing ? _self.isSyncing : isSyncing // ignore: cas
 as bool,lastSyncedTime: null == lastSyncedTime ? _self.lastSyncedTime : lastSyncedTime // ignore: cast_nullable_to_non_nullable
 as String,syncStatus: null == syncStatus ? _self.syncStatus : syncStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,exportStatus: null == exportStatus ? _self.exportStatus : exportStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,importStatus: null == importStatus ? _self.importStatus : importStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,deleteStatus: null == deleteStatus ? _self.deleteStatus : deleteStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<dynamic>,exportedData: freezed == exportedData ? _self.exportedData : exportedData // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isExporting: null == isExporting ? _self.isExporting : isExporting // ignore: cast_nullable_to_non_nullable
+as bool,isImporting: null == isImporting ? _self.isImporting : isImporting // ignore: cast_nullable_to_non_nullable
+as bool,importedCount: null == importedCount ? _self.importedCount : importedCount // ignore: cast_nullable_to_non_nullable
+as int,lastExportedPath: freezed == lastExportedPath ? _self.lastExportedPath : lastExportedPath // ignore: cast_nullable_to_non_nullable
+as String?,exportedData: freezed == exportedData ? _self.exportedData : exportedData // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>?,
   ));
 }
@@ -100,6 +105,15 @@ $ApiResultStatusCopyWith<dynamic, $Res> get exportStatus {
   
   return $ApiResultStatusCopyWith<dynamic, $Res>(_self.exportStatus, (value) {
     return _then(_self.copyWith(exportStatus: value));
+  });
+}/// Create a copy of PrivacyDataState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get importStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.importStatus, (value) {
+    return _then(_self.copyWith(importStatus: value));
   });
 }/// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
@@ -192,10 +206,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  int pendingOfflineUpdatesCount,  bool isSyncing,  String lastSyncedTime,  ApiResultStatus<dynamic> syncStatus,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> deleteStatus,  Map<String, dynamic>? exportedData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  int pendingOfflineUpdatesCount,  bool isSyncing,  String lastSyncedTime,  ApiResultStatus<dynamic> syncStatus,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> importStatus,  ApiResultStatus<dynamic> deleteStatus,  bool isExporting,  bool isImporting,  int importedCount,  String? lastExportedPath,  Map<String, dynamic>? exportedData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PrivacyDataState() when $default != null:
-return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.pendingOfflineUpdatesCount,_that.isSyncing,_that.lastSyncedTime,_that.syncStatus,_that.exportStatus,_that.deleteStatus,_that.exportedData);case _:
+return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.pendingOfflineUpdatesCount,_that.isSyncing,_that.lastSyncedTime,_that.syncStatus,_that.exportStatus,_that.importStatus,_that.deleteStatus,_that.isExporting,_that.isImporting,_that.importedCount,_that.lastExportedPath,_that.exportedData);case _:
   return orElse();
 
 }
@@ -213,10 +227,10 @@ return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  int pendingOfflineUpdatesCount,  bool isSyncing,  String lastSyncedTime,  ApiResultStatus<dynamic> syncStatus,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> deleteStatus,  Map<String, dynamic>? exportedData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  int pendingOfflineUpdatesCount,  bool isSyncing,  String lastSyncedTime,  ApiResultStatus<dynamic> syncStatus,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> importStatus,  ApiResultStatus<dynamic> deleteStatus,  bool isExporting,  bool isImporting,  int importedCount,  String? lastExportedPath,  Map<String, dynamic>? exportedData)  $default,) {final _that = this;
 switch (_that) {
 case _PrivacyDataState():
-return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.pendingOfflineUpdatesCount,_that.isSyncing,_that.lastSyncedTime,_that.syncStatus,_that.exportStatus,_that.deleteStatus,_that.exportedData);case _:
+return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.pendingOfflineUpdatesCount,_that.isSyncing,_that.lastSyncedTime,_that.syncStatus,_that.exportStatus,_that.importStatus,_that.deleteStatus,_that.isExporting,_that.isImporting,_that.importedCount,_that.lastExportedPath,_that.exportedData);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -233,10 +247,10 @@ return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  int pendingOfflineUpdatesCount,  bool isSyncing,  String lastSyncedTime,  ApiResultStatus<dynamic> syncStatus,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> deleteStatus,  Map<String, dynamic>? exportedData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String childName,  bool isDeletingAccount,  bool isAccountDeleted,  int pendingOfflineUpdatesCount,  bool isSyncing,  String lastSyncedTime,  ApiResultStatus<dynamic> syncStatus,  ApiResultStatus<dynamic> exportStatus,  ApiResultStatus<dynamic> importStatus,  ApiResultStatus<dynamic> deleteStatus,  bool isExporting,  bool isImporting,  int importedCount,  String? lastExportedPath,  Map<String, dynamic>? exportedData)?  $default,) {final _that = this;
 switch (_that) {
 case _PrivacyDataState() when $default != null:
-return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.pendingOfflineUpdatesCount,_that.isSyncing,_that.lastSyncedTime,_that.syncStatus,_that.exportStatus,_that.deleteStatus,_that.exportedData);case _:
+return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_that.pendingOfflineUpdatesCount,_that.isSyncing,_that.lastSyncedTime,_that.syncStatus,_that.exportStatus,_that.importStatus,_that.deleteStatus,_that.isExporting,_that.isImporting,_that.importedCount,_that.lastExportedPath,_that.exportedData);case _:
   return null;
 
 }
@@ -248,7 +262,7 @@ return $default(_that.childName,_that.isDeletingAccount,_that.isAccountDeleted,_
 
 
 class _PrivacyDataState implements PrivacyDataState {
-  const _PrivacyDataState({this.childName = 'your child', this.isDeletingAccount = false, this.isAccountDeleted = false, this.pendingOfflineUpdatesCount = 0, this.isSyncing = false, this.lastSyncedTime = '', this.syncStatus = const ApiResultStatus.initial(), this.exportStatus = const ApiResultStatus.initial(), this.deleteStatus = const ApiResultStatus.initial(),  Map<String, dynamic>? exportedData}): _exportedData = exportedData;
+  const _PrivacyDataState({this.childName = 'your child', this.isDeletingAccount = false, this.isAccountDeleted = false, this.pendingOfflineUpdatesCount = 0, this.isSyncing = false, this.lastSyncedTime = '', this.syncStatus = const ApiResultStatus.initial(), this.exportStatus = const ApiResultStatus.initial(), this.importStatus = const ApiResultStatus.initial(), this.deleteStatus = const ApiResultStatus.initial(), this.isExporting = false, this.isImporting = false, this.importedCount = 0, this.lastExportedPath,  Map<String, dynamic>? exportedData}): _exportedData = exportedData;
   
 
 @override@JsonKey() final  String childName;
@@ -259,7 +273,12 @@ class _PrivacyDataState implements PrivacyDataState {
 @override@JsonKey() final  String lastSyncedTime;
 @override@JsonKey() final  ApiResultStatus<dynamic> syncStatus;
 @override@JsonKey() final  ApiResultStatus<dynamic> exportStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> importStatus;
 @override@JsonKey() final  ApiResultStatus<dynamic> deleteStatus;
+@override@JsonKey() final  bool isExporting;
+@override@JsonKey() final  bool isImporting;
+@override@JsonKey() final  int importedCount;
+@override final  String? lastExportedPath;
  final  Map<String, dynamic>? _exportedData;
 @override Map<String, dynamic>? get exportedData {
   final value = _exportedData;
@@ -280,18 +299,18 @@ _$PrivacyDataStateCopyWith<_PrivacyDataState> get copyWith => __$PrivacyDataStat
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PrivacyDataState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isDeletingAccount, isDeletingAccount) || other.isDeletingAccount == isDeletingAccount)&&(identical(other.isAccountDeleted, isAccountDeleted) || other.isAccountDeleted == isAccountDeleted)&&(identical(other.pendingOfflineUpdatesCount, pendingOfflineUpdatesCount) || other.pendingOfflineUpdatesCount == pendingOfflineUpdatesCount)&&(identical(other.isSyncing, isSyncing) || other.isSyncing == isSyncing)&&(identical(other.lastSyncedTime, lastSyncedTime) || other.lastSyncedTime == lastSyncedTime)&&(identical(other.syncStatus, syncStatus) || other.syncStatus == syncStatus)&&(identical(other.exportStatus, exportStatus) || other.exportStatus == exportStatus)&&(identical(other.deleteStatus, deleteStatus) || other.deleteStatus == deleteStatus)&&const DeepCollectionEquality().equals(other.exportedData, _exportedData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PrivacyDataState&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isDeletingAccount, isDeletingAccount) || other.isDeletingAccount == isDeletingAccount)&&(identical(other.isAccountDeleted, isAccountDeleted) || other.isAccountDeleted == isAccountDeleted)&&(identical(other.pendingOfflineUpdatesCount, pendingOfflineUpdatesCount) || other.pendingOfflineUpdatesCount == pendingOfflineUpdatesCount)&&(identical(other.isSyncing, isSyncing) || other.isSyncing == isSyncing)&&(identical(other.lastSyncedTime, lastSyncedTime) || other.lastSyncedTime == lastSyncedTime)&&(identical(other.syncStatus, syncStatus) || other.syncStatus == syncStatus)&&(identical(other.exportStatus, exportStatus) || other.exportStatus == exportStatus)&&(identical(other.importStatus, importStatus) || other.importStatus == importStatus)&&(identical(other.deleteStatus, deleteStatus) || other.deleteStatus == deleteStatus)&&(identical(other.isExporting, isExporting) || other.isExporting == isExporting)&&(identical(other.isImporting, isImporting) || other.isImporting == isImporting)&&(identical(other.importedCount, importedCount) || other.importedCount == importedCount)&&(identical(other.lastExportedPath, lastExportedPath) || other.lastExportedPath == lastExportedPath)&&const DeepCollectionEquality().equals(other.exportedData, _exportedData));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,childName,isDeletingAccount,isAccountDeleted,pendingOfflineUpdatesCount,isSyncing,lastSyncedTime,syncStatus,exportStatus,deleteStatus,const DeepCollectionEquality().hash(_exportedData));
+    return Object.hash(runtimeType,childName,isDeletingAccount,isAccountDeleted,pendingOfflineUpdatesCount,isSyncing,lastSyncedTime,syncStatus,exportStatus,importStatus,deleteStatus,isExporting,isImporting,importedCount,lastExportedPath,const DeepCollectionEquality().hash(_exportedData));
 }
 
 @override
 String toString() {
-    return 'PrivacyDataState(childName: $childName, isDeletingAccount: $isDeletingAccount, isAccountDeleted: $isAccountDeleted, pendingOfflineUpdatesCount: $pendingOfflineUpdatesCount, isSyncing: $isSyncing, lastSyncedTime: $lastSyncedTime, syncStatus: $syncStatus, exportStatus: $exportStatus, deleteStatus: $deleteStatus, exportedData: $exportedData)';
+    return 'PrivacyDataState(childName: $childName, isDeletingAccount: $isDeletingAccount, isAccountDeleted: $isAccountDeleted, pendingOfflineUpdatesCount: $pendingOfflineUpdatesCount, isSyncing: $isSyncing, lastSyncedTime: $lastSyncedTime, syncStatus: $syncStatus, exportStatus: $exportStatus, importStatus: $importStatus, deleteStatus: $deleteStatus, isExporting: $isExporting, isImporting: $isImporting, importedCount: $importedCount, lastExportedPath: $lastExportedPath, exportedData: $exportedData)';
 }
 
 
@@ -302,11 +321,11 @@ abstract mixin class _$PrivacyDataStateCopyWith<$Res> implements $PrivacyDataSta
   factory _$PrivacyDataStateCopyWith(_PrivacyDataState value, $Res Function(_PrivacyDataState) _then) = __$PrivacyDataStateCopyWithImpl;
 @override @useResult
 $Res call({
- String childName, bool isDeletingAccount, bool isAccountDeleted, int pendingOfflineUpdatesCount, bool isSyncing, String lastSyncedTime, ApiResultStatus<dynamic> syncStatus, ApiResultStatus<dynamic> exportStatus, ApiResultStatus<dynamic> deleteStatus, Map<String, dynamic>? exportedData
+ String childName, bool isDeletingAccount, bool isAccountDeleted, int pendingOfflineUpdatesCount, bool isSyncing, String lastSyncedTime, ApiResultStatus<dynamic> syncStatus, ApiResultStatus<dynamic> exportStatus, ApiResultStatus<dynamic> importStatus, ApiResultStatus<dynamic> deleteStatus, bool isExporting, bool isImporting, int importedCount, String? lastExportedPath, Map<String, dynamic>? exportedData
 });
 
 
-@override $ApiResultStatusCopyWith<dynamic, $Res> get syncStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get exportStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus;
+@override $ApiResultStatusCopyWith<dynamic, $Res> get syncStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get exportStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get importStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get deleteStatus;
 
 }
 /// @nodoc
@@ -319,7 +338,7 @@ class __$PrivacyDataStateCopyWithImpl<$Res>
 
 /// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? pendingOfflineUpdatesCount = null,Object? isSyncing = null,Object? lastSyncedTime = null,Object? syncStatus = null,Object? exportStatus = null,Object? deleteStatus = null,Object? exportedData = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? childName = null,Object? isDeletingAccount = null,Object? isAccountDeleted = null,Object? pendingOfflineUpdatesCount = null,Object? isSyncing = null,Object? lastSyncedTime = null,Object? syncStatus = null,Object? exportStatus = null,Object? importStatus = null,Object? deleteStatus = null,Object? isExporting = null,Object? isImporting = null,Object? importedCount = null,Object? lastExportedPath = freezed,Object? exportedData = freezed,}) {
   return _then(_PrivacyDataState(
 childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
 as String,isDeletingAccount: null == isDeletingAccount ? _self.isDeletingAccount : isDeletingAccount // ignore: cast_nullable_to_non_nullable
@@ -329,8 +348,13 @@ as int,isSyncing: null == isSyncing ? _self.isSyncing : isSyncing // ignore: cas
 as bool,lastSyncedTime: null == lastSyncedTime ? _self.lastSyncedTime : lastSyncedTime // ignore: cast_nullable_to_non_nullable
 as String,syncStatus: null == syncStatus ? _self.syncStatus : syncStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,exportStatus: null == exportStatus ? _self.exportStatus : exportStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,importStatus: null == importStatus ? _self.importStatus : importStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,deleteStatus: null == deleteStatus ? _self.deleteStatus : deleteStatus // ignore: cast_nullable_to_non_nullable
-as ApiResultStatus<dynamic>,exportedData: freezed == exportedData ? _self._exportedData : exportedData // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,isExporting: null == isExporting ? _self.isExporting : isExporting // ignore: cast_nullable_to_non_nullable
+as bool,isImporting: null == isImporting ? _self.isImporting : isImporting // ignore: cast_nullable_to_non_nullable
+as bool,importedCount: null == importedCount ? _self.importedCount : importedCount // ignore: cast_nullable_to_non_nullable
+as int,lastExportedPath: freezed == lastExportedPath ? _self.lastExportedPath : lastExportedPath // ignore: cast_nullable_to_non_nullable
+as String?,exportedData: freezed == exportedData ? _self._exportedData : exportedData // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>?,
   ));
 }
@@ -352,6 +376,15 @@ $ApiResultStatusCopyWith<dynamic, $Res> get exportStatus {
   
   return $ApiResultStatusCopyWith<dynamic, $Res>(_self.exportStatus, (value) {
     return _then(_self.copyWith(exportStatus: value));
+  });
+}/// Create a copy of PrivacyDataState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get importStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.importStatus, (value) {
+    return _then(_self.copyWith(importStatus: value));
   });
 }/// Create a copy of PrivacyDataState
 /// with the given fields replaced by the non-null parameter values.

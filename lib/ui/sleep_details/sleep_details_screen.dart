@@ -9,6 +9,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:loving_brain/ui/tonights_plan/tonights_plan_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/sleep_header.dart';
 
 import 'bloc/sleep_details_cubit.dart';
@@ -42,9 +43,7 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
             body: state.isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(color: primaryColor),
-                  )
+                ? const AppLoadingIndicator()
                 : ListView(
                     padding: EdgeInsets.zero,
                     physics: const AlwaysScrollableScrollPhysics(),

@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
+
 void main() {
   test('AgeUtils computes age in months from dob', () {
     final DateTime dob = DateTime.now().subtract(const Duration(days: 90));
@@ -29,6 +31,25 @@ void main() {
                   onTap: () {},
                 ),
               ),
+            );
+          },
+        ),
+      );
+
+      expect(find.byType(SpinKitThreeBounce), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'AppLoadingIndicator renders SpinKitThreeBounce with zero CircularProgressIndicator',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(375, 812),
+          builder: (BuildContext context, Widget? child) {
+            return const MaterialApp(
+              home: Scaffold(body: AppLoadingIndicator()),
             );
           },
         ),

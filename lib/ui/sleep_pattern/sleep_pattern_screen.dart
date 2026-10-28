@@ -8,6 +8,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import 'bloc/sleep_pattern_cubit.dart';
@@ -38,9 +39,7 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
           body: state.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(color: primaryColor),
-                )
+              ? const AppLoadingIndicator()
               : Stack(
                   children: [
                     ListView(

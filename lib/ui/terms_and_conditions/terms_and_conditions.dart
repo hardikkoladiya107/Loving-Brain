@@ -6,6 +6,7 @@ import 'package:loving_brain/manager/subscription_manager/subscription_utils.dar
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -97,10 +98,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       body: Stack(
         children: <Widget>[
           WebViewWidget(controller: _controller),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(color: secondaryColor),
-            ),
+          if (_isLoading) const AppLoadingIndicator(),
           if (_hasError)
             Center(
               child: Padding(

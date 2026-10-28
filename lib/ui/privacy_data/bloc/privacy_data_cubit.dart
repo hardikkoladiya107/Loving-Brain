@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -40,7 +42,8 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
   }
 
   Future<void> _checkPendingUpdates() async {
-    final pending = await OfflineSyncRepo.instance.getPendingUpdates();
+    final List<dynamic> pending = await OfflineSyncRepo.instance
+        .getPendingUpdates();
     if (isClosed) return;
     changeProps(pendingOfflineUpdatesCount: pending.length);
   }
@@ -54,7 +57,12 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
     String? lastSyncedTime,
     ApiResultStatus? syncStatus,
     ApiResultStatus? exportStatus,
+    ApiResultStatus? importStatus,
     ApiResultStatus? deleteStatus,
+    bool? isExporting,
+    bool? isImporting,
+    int? importedCount,
+    String? lastExportedPath,
     Map<String, dynamic>? exportedData,
   }) {
     emit(
@@ -68,7 +76,12 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         lastSyncedTime: lastSyncedTime ?? state.lastSyncedTime,
         syncStatus: syncStatus ?? ApiResultStatus.initial(),
         exportStatus: exportStatus ?? ApiResultStatus.initial(),
+        importStatus: importStatus ?? ApiResultStatus.initial(),
         deleteStatus: deleteStatus ?? ApiResultStatus.initial(),
+        isExporting: isExporting ?? state.isExporting,
+        isImporting: isImporting ?? state.isImporting,
+        importedCount: importedCount ?? state.importedCount,
+        lastExportedPath: lastExportedPath ?? state.lastExportedPath,
         exportedData: exportedData ?? state.exportedData,
       ),
     );
@@ -80,7 +93,8 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
     await Future<void>.delayed(const Duration(milliseconds: 600));
     final ApiResultStatus<int> res = await OfflineSyncRepo.instance
         .syncPendingUpdates();
-    final pending = await OfflineSyncRepo.instance.getPendingUpdates();
+    final List<dynamic> pending = await OfflineSyncRepo.instance
+        .getPendingUpdates();
     final String nowFormatted = DateFormat('h:mm a').format(DateTime.now());
     await preferences.putString('last_offline_sync_time', nowFormatted);
     if (isClosed) return;
@@ -92,8 +106,11 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
     );
   }
 
-  Future<void> exportData() async {
-    changeProps(exportStatus: const ApiResultStatus.loading());
+  Future<void> exportData({bool saveToFileManager = false}) async {
+    changeProps(
+      isExporting: true,
+      exportStatus: const ApiResultStatus.loading(),
+    );
     final UserModel? user = preferences.getUserModel();
     final String uid = user?.uid ?? 'local_user';
 
@@ -102,18 +119,52 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
         .exportUserData(userId: uid);
 
     if (result is Data<Map<String, dynamic>>) {
-      changeProps(
-        exportStatus: ApiResultStatus.data(data: result.data),
-        exportedData: result.data,
-      );
+      final String jsonStr = const JsonEncoder.withIndent(
+        '  ',
+      ).convert(result.data);
+      final String nowStamp = DateFormat(
+        'yyyyMMdd_HHmmss',
+      ).format(DateTime.now());
+      final String fileName = 'loving_brain_backup_$nowStamp.json';
 
+      if (saveToFileManager) {
+        changeProps(exportStatus: const ApiResultStatus.initial());
+        try {
+          final Uint8List bytes = Uint8List.fromList(utf8.encode(jsonStr));
+          final Uri? outputUri = await FilePicker.saveFile(
+            dialogTitle: 'Save LovingBrain Data Backup',
+            fileName: fileName,
+            bytes: bytes,
+            mimeType: 'application/json',
+          );
+
+          if (outputUri != null) {
+            final String savedPath = outputUri.path.isNotEmpty
+                ? outputUri.path
+                : outputUri.toString();
+            changeProps(
+              isExporting: false,
+              exportStatus: ApiResultStatus.data(data: result.data),
+              exportedData: result.data,
+              lastExportedPath: savedPath,
+            );
+            return;
+          } else {
+            // User cancelled file picker
+            changeProps(
+              isExporting: false,
+              exportStatus: const ApiResultStatus.initial(),
+            );
+            return;
+          }
+        } catch (_) {
+          // If native saveFile fails, gracefully continue to share fallback
+        }
+      }
+
+      // Default share fallback
       try {
         final Directory tempDir = await getTemporaryDirectory();
-        final String jsonStr = const JsonEncoder.withIndent(
-          '  ',
-        ).convert(result.data);
-        final String fileName =
-            'loving_brain_data_export_${DateTime.now().millisecondsSinceEpoch}.json';
         final File file = File('${tempDir.path}/$fileName');
         await file.writeAsString(jsonStr);
 
@@ -121,14 +172,108 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
           ShareParams(
             files: <XFile>[XFile(file.path, mimeType: 'application/json')],
             subject: 'LovingBrain Data Export',
-            text: 'Here is your exported data from LovingBrain.',
+            text:
+                'Here is your LovingBrain personal data export in standard JSON format.',
           ),
         );
+
+        changeProps(
+          isExporting: false,
+          exportStatus: ApiResultStatus.data(data: result.data),
+          exportedData: result.data,
+          lastExportedPath: file.path,
+        );
       } catch (e) {
-        // Native share / path_provider fallback in headless/test environments
+        // If native sharing fails (e.g. headless unit tests or missing channel), data export itself succeeded
+        changeProps(
+          isExporting: false,
+          exportStatus: ApiResultStatus.data(data: result.data),
+          exportedData: result.data,
+        );
       }
     } else if (result is Error<Map<String, dynamic>>) {
-      changeProps(exportStatus: result);
+      changeProps(isExporting: false, exportStatus: result);
+    }
+  }
+
+  Future<void> importDataFromFile() async {
+    try {
+      final List<PlatformFile> picked = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: <String>['json'],
+      );
+
+      if (picked.isEmpty) {
+        // User cancelled file picking
+        changeProps(
+          isImporting: false,
+          importStatus: const ApiResultStatus.initial(),
+        );
+        return;
+      }
+
+      changeProps(
+        isImporting: true,
+        importStatus: const ApiResultStatus.loading(),
+      );
+
+      final PlatformFile platformFile = picked.first;
+      final String jsonString = await platformFile.xFile.readAsString();
+
+      final dynamic decoded = json.decode(jsonString);
+      if (decoded is! Map<String, dynamic>) {
+        changeProps(
+          isImporting: false,
+          importStatus: ApiResultStatus.error(
+            error: Exception('The selected file is not a valid JSON document.'),
+          ),
+        );
+        return;
+      }
+
+      if (!decoded.containsKey('child_profile') &&
+          !decoded.containsKey('user_profile') &&
+          !decoded.containsKey('sleep_logs') &&
+          !decoded.containsKey('app')) {
+        changeProps(
+          isImporting: false,
+          importStatus: ApiResultStatus.error(
+            error: Exception(
+              'Selected file does not contain LovingBrain backup data.',
+            ),
+          ),
+        );
+        return;
+      }
+
+      final ApiResultStatus<int> res = await OfflineSyncRepo.instance
+          .importUserData(payload: decoded);
+
+      if (res is Data<int>) {
+        final ChildModel? child = preferences.getChildModel();
+        final String cName =
+            (child?.childName != null && child!.childName!.trim().isNotEmpty)
+            ? child.childName!.trim()
+            : state.childName;
+
+        changeProps(
+          isImporting: false,
+          childName: cName,
+          importedCount: res.data,
+          importStatus: res,
+        );
+      } else if (res is Error<int>) {
+        changeProps(isImporting: false, importStatus: res);
+      }
+    } catch (e) {
+      changeProps(
+        isImporting: false,
+        importStatus: ApiResultStatus.error(
+          error: Exception(
+            'Failed to import backup: ${e.toString().replaceAll("Exception: ", "")}',
+          ),
+        ),
+      );
     }
   }
 

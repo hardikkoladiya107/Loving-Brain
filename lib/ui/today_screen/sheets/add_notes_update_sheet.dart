@@ -15,6 +15,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/ai_repo.dart';
 import 'package:loving_brain/other/permission_helper.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
@@ -594,13 +595,10 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
             6.spaceH,
             Row(
               children: [
-                SizedBox(
-                  width: 12.sp,
-                  height: 12.sp,
-                  child: const CircularProgressIndicator(
-                    strokeWidth: 1.8,
-                    color: secondaryColor,
-                  ),
+                const AppLoadingIndicator(
+                  centered: false,
+                  size: 14,
+                  color: secondaryColor,
                 ),
                 8.spaceW,
                 "Transcribing audio to text...".appText(

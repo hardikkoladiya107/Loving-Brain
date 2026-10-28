@@ -21,6 +21,7 @@ import '../../../gen/assets.gen.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
 import '../../../other/snack_bar.dart';
+import '../../widget/app_loading_indicator.dart';
 import '../../widget/base_button.dart';
 import 'bloc/login_state.dart';
 
@@ -224,13 +225,10 @@ class _LoginScreenState extends State<LoginScreen> {
             Assets.v2.icons.icGoogleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             if (isLoading)
-              SizedBox(
-                height: 20.r,
-                width: 20.r,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: primaryColor,
-                ),
+              const AppLoadingIndicator(
+                centered: false,
+                size: 20,
+                color: primaryColor,
               ).appPadding(top: 14.h, bottom: 14.h)
             else
               LocaleKeys.continueWithGoogle
@@ -275,13 +273,10 @@ class _LoginScreenState extends State<LoginScreen> {
             Assets.v2.icons.icAppleIcon.image(height: 24.w, width: 24.w),
             20.spaceW,
             if (isLoading)
-              SizedBox(
-                height: 20.r,
-                width: 20.r,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: primaryColor,
-                ),
+              const AppLoadingIndicator(
+                centered: false,
+                size: 20,
+                color: primaryColor,
               ).appPadding(top: 14.h, bottom: 14.h)
             else
               LocaleKeys.continueWithApple
@@ -361,13 +356,10 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (isLoading)
-              SizedBox(
-                height: 22.r,
-                width: 22.r,
-                child: const CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  color: Colors.white,
-                ),
+              const AppLoadingIndicator(
+                centered: false,
+                size: 22,
+                color: Colors.white,
               )
             else
               LocaleKeys.login.tr().appText(
