@@ -89,10 +89,23 @@ void main() {
       expect(cubit.state.partnerName, isNotEmpty);
       expect(cubit.state.childName, isNotEmpty);
       expect(cubit.state.todaysPlanTitle, isNotEmpty);
+      // Per V2 QA audit (f2), empty state must be empty rather than showing sample rows
+      expect(cubit.state.recentUpdates, isEmpty);
+
+      cubit.changeProps(
+        recentUpdates: const <HandoverLogItem>[
+          HandoverLogItem(
+            authorName: 'Co-Parent',
+            isPartner: true,
+            actionDescription: 'logged bedtime at 7:35 PM',
+            timeAgo: '20 min ago',
+          ),
+        ],
+      );
       expect(cubit.state.recentUpdates, isNotEmpty);
 
       final HandoverLogItem firstLog = cubit.state.recentUpdates.first;
-      expect(firstLog.authorName, isNotEmpty);
+      expect(firstLog.authorName, 'Co-Parent');
       expect(firstLog.actionDescription, isNotEmpty);
 
       cubit.close();

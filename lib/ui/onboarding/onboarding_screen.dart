@@ -99,6 +99,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (_childNameController.text != cubit.state.childName) {
         _childNameController.text = cubit.state.childName;
       }
+      if (cubit.state.currentPage > 0 && _pageController.hasClients) {
+        _pageController.jumpToPage(cubit.state.currentPage);
+      }
     });
   }
 

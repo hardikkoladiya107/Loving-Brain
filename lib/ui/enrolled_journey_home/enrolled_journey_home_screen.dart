@@ -5,6 +5,7 @@ import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/post_session_plan/post_session_plan_screen.dart';
 import 'package:loving_brain/ui/request_session/request_session_screen.dart';
@@ -180,9 +181,11 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                             subtitle:
                                 "Recorded module · ${program.recordedModuleDuration}",
                             onTap: () {
-                              context
-                                  .read<EnrolledJourneyHomeCubit>()
-                                  .toggleModuleCompleted();
+                              showSnackBar(
+                                message:
+                                    'Audio for this module will be available in an upcoming update.',
+                                type: SnackBarType.None,
+                              );
                             },
                           ),
                           16.spaceH,

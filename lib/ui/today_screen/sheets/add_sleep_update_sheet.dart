@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -71,17 +72,60 @@ class AddSleepUpdateSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<TodayCubit, TodayState>(
       listener: (BuildContext context, TodayState state) {
+        if (state.duplicateSleepLogDetected != null) {
+          final SleepLogModel dup = state.duplicateSleepLogDetected!;
+          showDialog<void>(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext dialogContext) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              title: "Overlapping sleep entry".appText(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              content:
+                  "An existing sleep entry was already logged around ${dup.fellAsleepTime ?? 'this time'} \u2013 ${dup.wokeUpTime ?? ''}. Do you want to add a separate entry anyway?"
+                      .appText(fontSize: 14.sp),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    context.read<TodayCubit>().clearDuplicateSleepAlert();
+                  },
+                  child: "Cancel".appText(color: greyColor4),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    context.read<TodayCubit>().saveSleepLog(forceSave: true);
+                  },
+                  child: "Save anyway".appText(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+
         state.saveStatus.whenOrNull(
           data: (_) {
             Navigator.pop(context);
-            showInstantResultSheet(
-              context,
-              title: "Sleep update recorded",
-              reason:
-                  "Today's sleep timing has been logged to keep tonight's settling window accurate.",
-              action: "Check updated sleep plan",
-              actionSubtitle: "Wind-down timing reflects latest rest data.",
-            );
+            if (state.didForecastChangeSignificantly) {
+              showInstantResultSheet(
+                context,
+                title: "Sleep update recorded",
+                reason: state.forecastChangeReason.isNotEmpty
+                    ? state.forecastChangeReason
+                    : "Today's sleep timing has updated tonight's settling window by 15+ minutes.",
+                action: "Check updated sleep plan",
+                actionSubtitle: "Wind-down timing reflects latest rest data.",
+              );
+            }
             showSnackBar(
               message: LocaleKeys.sleepLogSaved.tr(),
               type: SnackBarType.SUCCESS,

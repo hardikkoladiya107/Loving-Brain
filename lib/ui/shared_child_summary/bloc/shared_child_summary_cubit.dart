@@ -45,29 +45,33 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
         TodayLogRepo.instance.resolveActiveChildId() ??
         '';
 
-    List<HandoverLogItem> updates = state.recentUpdates;
+    List<HandoverLogItem> updates = <HandoverLogItem>[];
     if (childId.isNotEmpty) {
       final ApiResultStatus<List<SleepLogModel>> sleepResult =
           await TodayLogRepo.instance.getRecentSleepLogs(childId, limit: 3);
       if (sleepResult is Data<List<SleepLogModel>> &&
           sleepResult.data.isNotEmpty) {
-        final List<HandoverLogItem> dynamicItems = <HandoverLogItem>[];
-        for (int i = 0; i < sleepResult.data.length && i < 2; i++) {
+        for (int i = 0; i < sleepResult.data.length && i < 3; i++) {
           final SleepLogModel log = sleepResult.data[i];
-          final bool isPartner = i % 2 == 0;
-          dynamicItems.add(
+          final bool isPartner =
+              (log.userId != null &&
+              user?.uid != null &&
+              log.userId != user!.uid);
+          final String authorName = isPartner ? pName : 'You';
+          final DateTime logTimestamp = log.createdAt ?? log.bedTime;
+          final String timeAgo = _formatRelativeTime(logTimestamp);
+          final String action = (log.durationMinutes ?? 0) > 0
+              ? 'logged sleep (${log.durationMinutes}m)'
+              : 'logged bedtime';
+
+          updates.add(
             HandoverLogItem(
-              authorName: isPartner ? pName : 'You',
+              authorName: authorName,
               isPartner: isPartner,
-              actionDescription: (log.durationMinutes ?? 0) > 0
-                  ? 'logged sleep (${log.durationMinutes}m)'
-                  : 'logged bedtime',
-              timeAgo: i == 0 ? 'today' : 'yesterday',
+              actionDescription: action,
+              timeAgo: timeAgo,
             ),
           );
-        }
-        if (dynamicItems.isNotEmpty) {
-          updates = dynamicItems;
         }
       }
     }
@@ -105,5 +109,21 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
       ),
     );
+  }
+
+  String _formatRelativeTime(DateTime? time) {
+    if (time == null) return 'recently';
+    final Duration diff = DateTime.now().difference(time);
+    if (diff.inMinutes < 60) {
+      final int m = diff.inMinutes;
+      return m <= 1 ? 'just now' : '$m min ago';
+    } else if (diff.inHours < 24) {
+      final int h = diff.inHours;
+      return '$h hour${h == 1 ? '' : 's'} ago';
+    } else if (diff.inDays == 1) {
+      return 'yesterday';
+    } else {
+      return '${diff.inDays} days ago';
+    }
   }
 }

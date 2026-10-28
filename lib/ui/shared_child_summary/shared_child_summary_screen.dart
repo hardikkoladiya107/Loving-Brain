@@ -195,6 +195,35 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
   }
 
   Widget _buildUpdatesCard(SharedChildSummaryState state) {
+    if (state.recentUpdates.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(24.r),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            "No updates yet today".appText(
+              fontSize: 22.sp,
+              color: greyColor9,
+              fraunces: true,
+              textAlign: TextAlign.start,
+            ),
+            8.spaceH,
+            "When either parent logs sleep or bedtime, updates will appear here."
+                .appText(
+                  fontSize: 14.sp,
+                  color: greyColor,
+                  textAlign: TextAlign.start,
+                ),
+          ],
+        ),
+      );
+    }
+
     final int count = state.recentUpdates.length;
     final String updateTitle = count == 1
         ? "One sleep update today"

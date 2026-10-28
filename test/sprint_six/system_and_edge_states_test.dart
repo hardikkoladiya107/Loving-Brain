@@ -78,19 +78,22 @@ void main() {
   });
 
   group('Sprint 6 - Screen 71: Mentorship Waitlist', () {
-    test('MentorshipUnavailableCubit transitions when user joins waitlist', () {
-      final MentorshipUnavailableCubit cubit = MentorshipUnavailableCubit();
-      cubit.init();
+    test(
+      'MentorshipUnavailableCubit transitions when user joins waitlist',
+      () async {
+        final MentorshipUnavailableCubit cubit = MentorshipUnavailableCubit();
+        cubit.init();
 
-      expect(cubit.state.isWaitlistJoined, isFalse);
-      expect(cubit.state.waitlistStatus, isA<Initial>());
+        expect(cubit.state.isWaitlistJoined, isFalse);
+        expect(cubit.state.waitlistStatus, isA<Initial>());
 
-      cubit.joinWaitlist();
-      expect(cubit.state.isWaitlistJoined, isTrue);
-      expect(cubit.state.waitlistStatus, isA<Data<dynamic>>());
+        await cubit.joinWaitlist();
+        expect(cubit.state.isWaitlistJoined, isTrue);
+        expect(cubit.state.waitlistStatus, isA<Data<dynamic>>());
 
-      cubit.close();
-    });
+        cubit.close();
+      },
+    );
   });
 
   group('Sprint 6 - Screens 72 & 73: Permission Explainers', () {

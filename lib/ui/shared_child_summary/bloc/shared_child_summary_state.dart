@@ -25,21 +25,7 @@ abstract class SharedChildSummaryState with _$SharedChildSummaryState {
     @Default('Co-Parent') String partnerName,
     @Default('Wind-down at 7:30 PM') String todaysPlanTitle,
     @Default('Sleep window 7:45 – 8:15 PM.') String todaysPlanSubtitle,
-    @Default(<HandoverLogItem>[
-      HandoverLogItem(
-        authorName: 'Co-Parent',
-        isPartner: true,
-        actionDescription: 'logged a nap',
-        timeAgo: '3h ago',
-      ),
-      HandoverLogItem(
-        authorName: 'You',
-        isPartner: false,
-        actionDescription: 'logged bedtime',
-        timeAgo: 'yesterday',
-      ),
-    ])
-    List<HandoverLogItem> recentUpdates,
+    @Default(<HandoverLogItem>[]) List<HandoverLogItem> recentUpdates,
     @Default('Move bedtime 15 minutes earlier and protect calm wind-down.')
     String activeWeeklyFocus,
     @Default(

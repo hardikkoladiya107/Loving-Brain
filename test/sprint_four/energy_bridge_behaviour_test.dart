@@ -25,7 +25,7 @@ void main() {
         expect(result.confidenceDots, 0);
         expect(result.confidenceLabel, 'General guide');
         expect(result.childName, 'Ira');
-        expect(result.headline, 'A harder window may be more likely');
+        expect(result.headline, 'General guide for Ira');
         expect(result.actions.length, 3);
         expect(result.hasPersonalLogs, isFalse);
       },

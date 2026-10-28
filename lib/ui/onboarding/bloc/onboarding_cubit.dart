@@ -25,6 +25,51 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     _locationData = user?.locationData;
     final DateTime today = DateTime.now();
     final String todayFormatted = DateFormat('d MMMM yyyy').format(today);
+
+    final Map<String, dynamic>? draft = preferences.getOnboardingDraft();
+    if (draft != null) {
+      final int savedPage = (draft['currentPage'] as num?)?.toInt() ?? 0;
+      final String? savedDob = draft['dateOfBirth'] as String?;
+      DateTime dob = today;
+      if (draft['childDob'] != null) {
+        try {
+          dob = DateTime.parse(draft['childDob'] as String);
+        } catch (_) {}
+      }
+
+      emit(
+        OnboardingState(
+          currentPage: savedPage,
+          parentName: (draft['parentName'] as String?) ?? initialParentName,
+          parentRole: (draft['parentRole'] as String?) ?? '',
+          preferredLanguage: (draft['preferredLanguage'] as String?) ?? '',
+          location: (draft['location'] as String?) ?? (user?.location ?? ''),
+          primaryConcern: (draft['primaryConcern'] as String?) ?? '',
+          concerns:
+              (draft['concerns'] as List<dynamic>?)?.cast<String>() ??
+              <String>[],
+          isMoreThanOneSelected:
+              (draft['isMoreThanOneSelected'] as bool?) ?? false,
+          successGoal: (draft['successGoal'] as String?) ?? '',
+          childName: (draft['childName'] as String?) ?? '',
+          dateOfBirth: savedDob ?? todayFormatted,
+          childDob: dob,
+          childGender: (draft['childGender'] as String?) ?? '',
+          usualWakeTime: (draft['usualWakeTime'] as String?) ?? '',
+          usualBedtime: (draft['usualBedtime'] as String?) ?? '',
+          usualNaps: (draft['usualNaps'] as num?)?.toInt() ?? 1,
+          nightWakings: (draft['nightWakings'] as String?) ?? '',
+          difficultTimes:
+              (draft['difficultTimes'] as List<dynamic>?)?.cast<String>() ??
+              <String>[],
+          possibleTriggers:
+              (draft['possibleTriggers'] as List<dynamic>?)?.cast<String>() ??
+              <String>[],
+        ),
+      );
+      return;
+    }
+
     emit(
       OnboardingState(
         parentName: initialParentName,
@@ -118,6 +163,31 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         completeStatus: completeStatus ?? const ApiResultStatus.initial(),
       ),
     );
+    _persistDraft(state);
+  }
+
+  void _persistDraft(OnboardingState next) {
+    preferences.saveOnboardingDraft(<String, dynamic>{
+      'currentPage': next.currentPage,
+      'parentName': next.parentName,
+      'parentRole': next.parentRole,
+      'preferredLanguage': next.preferredLanguage,
+      'location': next.location,
+      'primaryConcern': next.primaryConcern,
+      'concerns': next.concerns,
+      'isMoreThanOneSelected': next.isMoreThanOneSelected,
+      'successGoal': next.successGoal,
+      'childName': next.childName,
+      'dateOfBirth': next.dateOfBirth,
+      'childDob': next.childDob?.toIso8601String(),
+      'childGender': next.childGender,
+      'usualWakeTime': next.usualWakeTime,
+      'usualBedtime': next.usualBedtime,
+      'usualNaps': next.usualNaps,
+      'nightWakings': next.nightWakings,
+      'difficultTimes': next.difficultTimes,
+      'possibleTriggers': next.possibleTriggers,
+    });
   }
 
   bool validateCurrentPage() {
@@ -432,6 +502,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       // 3. Sync User & Child models into local SharedPreferences
       await AuthRepo.instance.syncUserAndDefaultChild(uId: user.uid!);
       await preferences.saveDefaultChildModel(childModel);
+      await preferences.clearOnboardingDraft();
 
       changeProps(completeStatus: const ApiResultStatus.data(data: true));
     } catch (e) {

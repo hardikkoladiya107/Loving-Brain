@@ -29,6 +29,10 @@ class RoutePaths {
   static const String familySnapshot = '/family-snapshot';
   static const String notificationsPermission = '/permission-notifications';
   static const String microphonePermission = '/permission-microphone';
+  static const String tonightsPlan = '/tonights-plan';
+  static const String calmPlan = '/calm-plan';
+  static const String weeklyReview = '/weekly-review';
+  static const String sessionConfirmation = '/session-confirmation';
 
   static String childProfilePath(
     String userId, {

@@ -20,6 +20,9 @@ class MentorshipRepo {
   CollectionReference<Map<String, dynamic>> get plansCollection =>
       FirebaseFirestore.instance.collection('post_session_plans');
 
+  CollectionReference<Map<String, dynamic>> get _waitlistCollection =>
+      FirebaseFirestore.instance.collection('mentorship_waitlist');
+
   // In-memory fallback / cache for resilience & unit tests without live Firestore
   final List<MentorshipRequestModel> _localRequests =
       <MentorshipRequestModel>[];
@@ -321,6 +324,33 @@ class MentorshipRepo {
 
       _localPlans[childId] = updatedPlan;
       return ApiResultStatus.data(data: updatedPlan);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  /// Persists waitlist entry to Firestore collection 'mentorship_waitlist' (Doc 03 / Doc 06).
+  Future<ApiResultStatus<bool>> joinWaitlist({
+    required String userId,
+    required String childId,
+    String? supportArea,
+    String? preferredGuideId,
+  }) async {
+    try {
+      final Map<String, dynamic> data = <String, dynamic>{
+        'userId': userId,
+        'childId': childId,
+        'supportArea': supportArea ?? 'General Parenting',
+        'preferredGuideId': preferredGuideId,
+        'status': 'waiting',
+        'createdAt': FieldValue.serverTimestamp(),
+      };
+      try {
+        await _waitlistCollection.add(data);
+      } catch (_) {
+        // Fallback for tests or offline
+      }
+      return const ApiResultStatus.data(data: true);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }

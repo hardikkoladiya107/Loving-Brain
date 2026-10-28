@@ -80,15 +80,18 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
         state.saveStatus.whenOrNull(
           data: (_) {
             Navigator.pop(context);
-            showInstantResultSheet(
-              context,
-              title: "Tantrum update logged",
-              reason:
-                  "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
-              action: "Explore Calm Plan",
-              actionSubtitle:
-                  "Proven responses ready for upcoming challenging windows.",
-            );
+            if (state.didForecastChangeSignificantly) {
+              showInstantResultSheet(
+                context,
+                title: "Tantrum update logged",
+                reason: state.forecastChangeReason.isNotEmpty
+                    ? state.forecastChangeReason
+                    : "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
+                action: "Explore Calm Plan",
+                actionSubtitle:
+                    "Proven responses ready for upcoming challenging windows.",
+              );
+            }
             showSnackBar(
               message: LocaleKeys.tantrumLogSaved.tr(),
               type: SnackBarType.SUCCESS,

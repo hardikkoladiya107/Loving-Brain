@@ -20,10 +20,10 @@ const NOTIFICATION_COPY = {
     BODY: "You have an event coming up.",
     BODY_WITH_TITLE: "Coming up: {{title}}",
   },
-  /** Broadcast to all users (e.g. streak). */
-  STREAK: {
-    TITLE: "Streak update",
-    BODY: "Don't forget to check in today to keep your streak alive!",
+  /** Broadcast announcement update (Doc 03: zero streak or guilt messages allowed). */
+  ANNOUNCEMENT: {
+    TITLE: "LovingBrain Update",
+    BODY: "New guidance is available in your family plan.",
   },
   /** Energy Bridge fired reminder (Sprint 1 + Content Guide). */
   ENERGY_BRIDGE: {

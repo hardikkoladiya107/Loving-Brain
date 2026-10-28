@@ -49,6 +49,11 @@ class BehaviourForecastResult {
   final String? healthCaveat;
   final bool hasPersonalLogs;
 
+  /// Returns true only when at least 2 real signals support a push notification (Doc 03 §3, Doc 04 §4).
+  bool get isPushWorthy =>
+      riskLevel == BehaviourRiskLevel.moderate ||
+      riskLevel == BehaviourRiskLevel.high;
+
   const BehaviourForecastResult({
     required this.riskLevel,
     required this.confidenceTier,
@@ -176,13 +181,16 @@ class EnergyBridgeBehaviourCalculator {
       }
     }
 
-    // Fallback default signals if learning
-    if (signals.isEmpty) {
-      signals.add('sensory load');
-      signals.add('late afternoon transition');
+    // Signal E: Real hunger context (only if recorded in recent logs, Doc 04 §1 & §5)
+    if (tantrumLogs.isNotEmpty) {
+      final TantrumLogModel latestTantrum = tantrumLogs.first;
+      if (now.difference(latestTantrum.timestamp).inHours < 12 &&
+          latestTantrum.triggers.contains('Hunger')) {
+        signals.add('hunger context');
+      }
     }
 
-    // 2. Determine Risk Level
+    // 2. Determine Risk Level (Honest scoring: Doc 04 §4, Doc 03 §3)
     final BehaviourRiskLevel riskLevel;
     if (signals.length >= 3) {
       riskLevel = BehaviourRiskLevel.high;
@@ -239,23 +247,36 @@ class EnergyBridgeBehaviourCalculator {
       }
     }
 
-    // 5. Predict Likely Difficult Window
-    final DateTime targetStart = DateTime(now.year, now.month, now.day, 17, 30);
-    final DateTime targetEnd = DateTime(now.year, now.month, now.day, 19, 0);
+    // 5. Predict Likely Difficult Window dynamically from child patterns
+    final DateTime targetStart = _computeDifficultWindowStart(
+      now: now,
+      tantrumLogs: tantrumLogs,
+      sleepLogs: sleepLogs,
+      diffTimes: diffTimes,
+    );
+    final DateTime targetEnd = targetStart.add(
+      const Duration(hours: 1, minutes: 30),
+    );
     final String windowStart = _timeFormat.format(targetStart);
     final String windowEnd = _timeFormat.format(targetEnd);
 
-    // 6. Dynamic Probabilistic Reason String (V2 master copy)
-    final String signal1 = signals.isNotEmpty ? signals.first : 'tiredness';
+    // 6. Dynamic Probabilistic Reason String & Headline (V2 master copy)
+    final String headline;
     final String reason;
-    if (signals.length > 1 &&
-        signals[0] != signals[1] &&
-        !signals[0].contains(signals[1]) &&
-        !signals[1].contains(signals[0])) {
+    if (signals.length >= 2) {
+      headline = 'A harder window may be more likely';
       reason =
           'Between $windowStart and $windowEnd — ${signals[0]} and ${signals[1]} today.';
+    } else if (signals.length == 1) {
+      headline = 'Still learning $childName\'s pattern';
+      reason =
+          'One context signal noted (${signals.first}), but not enough combined patterns for a predictive heads-up.';
     } else {
-      reason = 'Between $windowStart and $windowEnd — $signal1 today.';
+      headline = hasPersonalLogs
+          ? 'Still learning $childName\'s pattern'
+          : 'General guide for $childName';
+      reason =
+          'Not enough recent updates to identify a harder window today. Log updates when difficult moments happen to personalise.';
     }
 
     // 7. Generate Tailored Calm Plan Actions
@@ -291,7 +312,7 @@ class EnergyBridgeBehaviourCalculator {
       confidenceDots: confidenceDots,
       windowStart: windowStart,
       windowEnd: windowEnd,
-      headline: 'A harder window may be more likely',
+      headline: headline,
       reason: reason,
       contributingSignals: signals,
       actions: actions,
@@ -302,6 +323,71 @@ class EnergyBridgeBehaviourCalculator {
       healthCaveat: healthCaveat,
       hasPersonalLogs: hasPersonalLogs,
     );
+  }
+
+  /// Dynamically computes the difficult window start time based on child logs and onboarding rhythm.
+  static DateTime _computeDifficultWindowStart({
+    required DateTime now,
+    required List<TantrumLogModel> tantrumLogs,
+    required List<SleepLogModel> sleepLogs,
+    required List<String>? diffTimes,
+  }) {
+    // 1. Clustering from repeated tantrum logs
+    if (tantrumLogs.isNotEmpty) {
+      final Map<int, int> hourCounts = <int, int>{};
+      for (final TantrumLogModel log in tantrumLogs) {
+        final int h = log.timestamp.hour;
+        hourCounts[h] = (hourCounts[h] ?? 0) + 1;
+      }
+      int maxHour = -1;
+      int maxCount = 0;
+      hourCounts.forEach((int h, int count) {
+        if (count > maxCount) {
+          maxCount = count;
+          maxHour = h;
+        }
+      });
+      if (maxCount >= 2 && maxHour >= 6 && maxHour <= 22) {
+        return DateTime(now.year, now.month, now.day, maxHour, 0);
+      }
+    }
+
+    // 2. Daytime nap wake time in sleep logs -> wakefulness pressure (~3.5h later)
+    if (sleepLogs.isNotEmpty) {
+      for (final SleepLogModel s in sleepLogs) {
+        final int wakeHour = s.wakeTime.hour;
+        if (wakeHour >= 11 && wakeHour <= 16) {
+          final DateTime predictedPeak = s.wakeTime.add(
+            const Duration(hours: 3, minutes: 30),
+          );
+          return DateTime(
+            now.year,
+            now.month,
+            now.day,
+            predictedPeak.hour,
+            predictedPeak.minute < 30 ? 0 : 30,
+          );
+        }
+      }
+    }
+
+    // 3. Difficult times specified in onboarding
+    if (diffTimes != null && diffTimes.isNotEmpty) {
+      if (diffTimes.contains('Morning')) {
+        return DateTime(now.year, now.month, now.day, 10, 0);
+      } else if (diffTimes.contains('Afternoon')) {
+        return DateTime(now.year, now.month, now.day, 14, 30);
+      } else if (diffTimes.contains('Late afternoon')) {
+        return DateTime(now.year, now.month, now.day, 16, 30);
+      } else if (diffTimes.contains('Evening')) {
+        return DateTime(now.year, now.month, now.day, 18, 0);
+      } else if (diffTimes.contains('Bedtime')) {
+        return DateTime(now.year, now.month, now.day, 19, 0);
+      }
+    }
+
+    // Default baseline afternoon window (5:30 PM)
+    return DateTime(now.year, now.month, now.day, 17, 30);
   }
 
   /// Aggregates historical tantrum logs to construct the Behaviour Pattern summary (Screen 30).

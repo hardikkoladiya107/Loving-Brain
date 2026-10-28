@@ -199,11 +199,11 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
   }
 
   try {
-    // Accept custom title/body from POST body; fall back to streak defaults
+    // Accept custom title/body from POST body; fall back to announcement defaults
     const {title: reqTitle, body: reqBody} = req.body || {};
-    const {TITLE: streakTitle, BODY: streakBody} = NOTIFICATION_COPY.STREAK;
-    const title = (reqTitle && reqTitle.trim()) ? reqTitle.trim() : streakTitle;
-    const body = (reqBody && reqBody.trim()) ? reqBody.trim() : streakBody;
+    const {TITLE: defaultTitle, BODY: defaultBody} = NOTIFICATION_COPY.ANNOUNCEMENT;
+    const title = (reqTitle && reqTitle.trim()) ? reqTitle.trim() : defaultTitle;
+    const body = (reqBody && reqBody.trim()) ? reqBody.trim() : defaultBody;
 
     // Only send to users who have notifications enabled and a valid FCM token
     const usersSnapshot = await admin.firestore()

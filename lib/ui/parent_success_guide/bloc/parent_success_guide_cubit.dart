@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/repo/mentorship_repo.dart';
 
 import 'parent_success_guide_state.dart';
@@ -55,6 +56,13 @@ class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
 
   Future<void> cancelRequest(String requestId) async {
     await MentorshipRepo.instance.cancelMentorshipRequest(requestId);
+    V2NotificationScheduler.cancelMentorshipReminders(requestId);
+    V2NotificationScheduler.notifyMentorshipBookingEvent(
+      sessionId: requestId,
+      mentorName: state.guide?.name ?? 'Your mentor',
+      statusText: 'cancelled',
+    );
+
     final List<MentorshipRequestModel> updated = state.pendingRequests.map((
       MentorshipRequestModel r,
     ) {

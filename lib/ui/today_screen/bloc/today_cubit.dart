@@ -10,6 +10,7 @@ import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
@@ -39,6 +40,10 @@ class TodayCubit extends Cubit<TodayState> {
     String? sleepForecastReason,
     bool? hasSleepLogs,
     bool? hasMultiDayPatterns,
+    bool? didForecastChangeSignificantly,
+    String? forecastChangeReason,
+    SleepLogModel? duplicateSleepLogDetected,
+    bool clearDuplicateSleep = false,
     String? fellAsleepTime,
     String? wokeUpTime,
     String? napStartTime,
@@ -82,6 +87,14 @@ class TodayCubit extends Cubit<TodayState> {
         sleepForecastReason: sleepForecastReason ?? state.sleepForecastReason,
         hasSleepLogs: hasSleepLogs ?? state.hasSleepLogs,
         hasMultiDayPatterns: hasMultiDayPatterns ?? state.hasMultiDayPatterns,
+        didForecastChangeSignificantly:
+            didForecastChangeSignificantly ??
+            state.didForecastChangeSignificantly,
+        forecastChangeReason:
+            forecastChangeReason ?? state.forecastChangeReason,
+        duplicateSleepLogDetected: clearDuplicateSleep
+            ? null
+            : (duplicateSleepLogDetected ?? state.duplicateSleepLogDetected),
         fellAsleepTime: clearSleepInputs
             ? null
             : (fellAsleepTime ?? state.fellAsleepTime),
@@ -359,7 +372,36 @@ class TodayCubit extends Cubit<TodayState> {
 
   void toggleNightWaking(bool val) => changeProps(isNightWaking: val);
 
-  Future<void> saveSleepLog() async {
+  void clearDuplicateSleepAlert() => changeProps(clearDuplicateSleep: true);
+
+  /// Checks if an existing sleep log already covers the proposed interval (Doc 06 §3).
+  Future<SleepLogModel?> findOverlappingSleepLog({
+    required DateTime bedTime,
+    required DateTime wakeTime,
+  }) async {
+    final String childId = _resolveTargetChildId();
+    if (childId.isEmpty) return null;
+    final ApiResultStatus<List<SleepLogModel>> result = await TodayLogRepo
+        .instance
+        .getRecentSleepLogs(childId, limit: 10);
+    if (result is Data<List<SleepLogModel>>) {
+      for (final SleepLogModel log in result.data) {
+        final DateTime startMax = bedTime.isAfter(log.bedTime)
+            ? bedTime
+            : log.bedTime;
+        final DateTime endMin = wakeTime.isBefore(log.wakeTime)
+            ? wakeTime
+            : log.wakeTime;
+        if (endMin.isAfter(startMax) &&
+            endMin.difference(startMax).inMinutes >= 30) {
+          return log;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<void> saveSleepLog({bool forceSave = false}) async {
     final bool hasNight =
         state.fellAsleepTime != null && state.wokeUpTime != null;
     final bool hasNap = state.napStartTime != null && state.napEndTime != null;
@@ -372,9 +414,53 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
 
+    final DateTime now = DateTime.now();
+
+    // Check for duplicate sleep interval if not forced (Doc 06 §3)
+    if (!forceSave) {
+      DateTime checkBed;
+      DateTime checkWake;
+      if (hasNight) {
+        checkBed = TodayLogRepo.parseTimeString(
+          state.fellAsleepTime!,
+          referenceDate: now,
+        );
+        checkWake = TodayLogRepo.parseTimeString(
+          state.wokeUpTime!,
+          referenceDate: now,
+        );
+        if (!checkWake.isAfter(checkBed)) {
+          checkWake = checkWake.add(const Duration(days: 1));
+        }
+      } else {
+        checkBed = TodayLogRepo.parseTimeString(
+          state.napStartTime!,
+          referenceDate: now,
+        );
+        checkWake = TodayLogRepo.parseTimeString(
+          state.napEndTime!,
+          referenceDate: now,
+        );
+        if (!checkWake.isAfter(checkBed)) {
+          checkWake = checkWake.add(const Duration(days: 1));
+        }
+      }
+
+      final SleepLogModel? duplicate = await findOverlappingSleepLog(
+        bedTime: checkBed,
+        wakeTime: checkWake,
+      );
+      if (duplicate != null) {
+        changeProps(duplicateSleepLogDetected: duplicate);
+        return;
+      }
+    }
+
     changeProps(isLoading: true, saveStatus: const ApiResultStatus.loading());
 
-    final DateTime now = DateTime.now();
+    final String prevEstimate = state.bedtimeEstimate;
+    final String prevConfidence = state.confidenceLevel;
+
     ApiResultStatus<String> result = const ApiResultStatus.initial();
 
     if (hasNight) {
@@ -448,16 +534,59 @@ class TodayCubit extends Cubit<TodayState> {
     }
 
     if (result is Data<String>) {
+      await recalculateForecast();
+
+      bool changedSignificantly = false;
+      String changeReason = '';
+
+      if (state.confidenceLevel != prevConfidence &&
+          state.confidenceLevel != 'none') {
+        changedSignificantly = true;
+        changeReason =
+            "Confidence updated to ${state.confidenceLevel} based on latest rest data.";
+      } else if (prevEstimate != '--:--' && state.bedtimeEstimate != '--:--') {
+        try {
+          final DateTime prevDt = TodayLogRepo.parseTimeString(
+            prevEstimate,
+            referenceDate: now,
+          );
+          final DateTime newDt = TodayLogRepo.parseTimeString(
+            state.bedtimeEstimate,
+            referenceDate: now,
+          );
+          final int diffMinutes = newDt.difference(prevDt).inMinutes.abs();
+          if (diffMinutes >= 15) {
+            changedSignificantly = true;
+            changeReason =
+                "Bedtime estimate moved to ${state.bedtimeEstimate} (${diffMinutes}m change).";
+          }
+        } catch (_) {}
+      }
+
+      // Cancel pending sleep window reminder since parent logged sleep (Doc 03 §1, Doc 06 §8)
+      await V2NotificationScheduler.cancelSleepWindow(childId);
+
+      // If estimate changed materially (>=15 min), notify parent (Doc 03 §2)
+      if (changedSignificantly && state.bedtimeEstimate != '--:--') {
+        await V2NotificationScheduler.notifySleepEstimateChanged(
+          childId: childId,
+          childName: state.childName,
+          newBedtime: state.bedtimeEstimate,
+        );
+      }
+
       changeProps(
         isLoading: false,
         isSuccess: true,
         saveStatus: result,
+        didForecastChangeSignificantly: changedSignificantly,
+        forecastChangeReason: changeReason,
         clearSleepInputs: true,
+        clearDuplicateSleep: true,
         isNightWaking: false,
         sleepQualityIndex: 3,
         showSleepUpdateErrors: false,
       );
-      await recalculateForecast();
       // Reset isSuccess flag shortly after
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);

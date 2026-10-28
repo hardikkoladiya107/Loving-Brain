@@ -166,20 +166,26 @@ class EnergyBridgeSleepCalculator {
 
     // 2. Check if any personal logs exist
     if (sleepLogs.isEmpty) {
-      final DateTime defaultBedtime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        20,
-        0,
+      final DateTime defaultBedtime = _resolveBaselineBedtime(
+        now: now,
+        child: child,
+        effectiveAgeMonths: effectiveAgeMonths,
       );
+      final DateFormat timeFormat = DateFormat('h:mm a');
       final String ageLabel = AgeUtils.ageLabelFromMonths(effectiveAgeMonths);
       final String ageQualifier = ageLabel.isNotEmpty ? 'for $ageLabel' : '';
+      final String bedtimeFormatted = timeFormat.format(defaultBedtime);
+      final DateTime windowStartDt = defaultBedtime.subtract(
+        const Duration(minutes: 30),
+      );
+      final DateTime windowEndDt = defaultBedtime.add(
+        const Duration(minutes: 30),
+      );
 
       return SleepForecastResult(
-        windowStart: '07:30 PM',
-        windowEnd: '08:30 PM',
-        bedtimeEstimate: '08:00 PM',
+        windowStart: timeFormat.format(windowStartDt),
+        windowEnd: timeFormat.format(windowEndDt),
+        bedtimeEstimate: bedtimeFormatted,
         bedtimeEstimateDateTime: defaultBedtime,
         confidenceTier: ConfidenceTier.none,
         confidenceLabel: 'Learning',
@@ -187,7 +193,7 @@ class EnergyBridgeSleepCalculator {
         reason:
             "This is a general guide, not $cName's own pattern. One update starts personalising it.",
         subtitle:
-            'Typical $ageQualifier: bedtime around 8 PM. Log a sleep update to personalise.',
+            'Typical $ageQualifier: bedtime around $bedtimeFormatted. Log a sleep update to personalise.',
         childName: cName,
         childAgeMonths: effectiveAgeMonths,
         planSteps: _buildPlanSteps(defaultBedtime),
@@ -313,6 +319,31 @@ class EnergyBridgeSleepCalculator {
       }
     }
 
+    // Inconsistent night routine detection (Doc 04 §2, Doc 06 §3)
+    bool isInconsistentPattern = false;
+    if (sortedLogs.length >= 3) {
+      final List<int> recentBedMinutes = <int>[];
+      for (final SleepLogModel log in sortedLogs.take(5)) {
+        recentBedMinutes.add(log.bedTime.hour * 60 + log.bedTime.minute);
+      }
+      final int minBed = recentBedMinutes.reduce(
+        (int a, int b) => a < b ? a : b,
+      );
+      final int maxBed = recentBedMinutes.reduce(
+        (int a, int b) => a > b ? a : b,
+      );
+      if ((maxBed - minBed) >= 75) {
+        isInconsistentPattern = true;
+        if (confidence == ConfidenceTier.high) {
+          confidence = ConfidenceTier.moderate;
+          confidenceDots = 2;
+        } else if (confidence == ConfidenceTier.moderate) {
+          confidence = ConfidenceTier.low;
+          confidenceDots = 1;
+        }
+      }
+    }
+
     // 7. Calculate window spread based on confidence tier
     int halfSpreadMinutes;
     switch (confidence) {
@@ -326,6 +357,11 @@ class EnergyBridgeSleepCalculator {
       case ConfidenceTier.none:
         halfSpreadMinutes = 30; // 60 min window
         break;
+    }
+
+    // Illness, travel, or scattered sleep widens the window (Doc 04 §2, Doc 06 §3)
+    if (healthCaveat != null || isInconsistentPattern) {
+      halfSpreadMinutes += 15;
     }
 
     final DateTime windowStartTime = targetBedtime.subtract(
@@ -367,6 +403,53 @@ class EnergyBridgeSleepCalculator {
       hasPersonalLogs: true,
       healthCaveat: healthCaveat,
     );
+  }
+
+  /// Resolves the baseline bedtime from child onboarding values or age band norms.
+  static DateTime _resolveBaselineBedtime({
+    required DateTime now,
+    required ChildModel? child,
+    required int effectiveAgeMonths,
+  }) {
+    final String? usualBed = child?.usualBedtime?.trim();
+    if (usualBed != null && usualBed.isNotEmpty) {
+      try {
+        final DateFormat fmt12 = DateFormat('h:mm a');
+        final DateTime parsed = fmt12.parse(usualBed);
+        return DateTime(
+          now.year,
+          now.month,
+          now.day,
+          parsed.hour,
+          parsed.minute,
+        );
+      } catch (_) {
+        try {
+          final DateFormat fmt24 = DateFormat('HH:mm');
+          final DateTime parsed = fmt24.parse(usualBed);
+          return DateTime(
+            now.year,
+            now.month,
+            now.day,
+            parsed.hour,
+            parsed.minute,
+          );
+        } catch (_) {}
+      }
+    }
+
+    // Age band baseline (Doc 04 §2)
+    if (effectiveAgeMonths <= 3) {
+      return DateTime(now.year, now.month, now.day, 20, 30); // 8:30 PM
+    } else if (effectiveAgeMonths <= 11) {
+      return DateTime(now.year, now.month, now.day, 19, 15); // 7:15 PM
+    } else if (effectiveAgeMonths <= 24) {
+      return DateTime(now.year, now.month, now.day, 19, 30); // 7:30 PM
+    } else if (effectiveAgeMonths <= 48) {
+      return DateTime(now.year, now.month, now.day, 19, 45); // 7:45 PM
+    } else {
+      return DateTime(now.year, now.month, now.day, 20, 0); // 8:00 PM
+    }
   }
 
   /// Generates the standard 3-step pre-sleep sequence for Tonight's Plan (Screen 25).

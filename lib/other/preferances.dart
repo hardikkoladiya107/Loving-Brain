@@ -180,4 +180,33 @@ class SharedPreference {
       return null;
     }
   }
+
+  static const String onboardingDraftKey = "onboardingDraft";
+
+  Future<bool?> saveOnboardingDraft(Map<String, dynamic> draft) async {
+    try {
+      return await putString(onboardingDraftKey, json.encode(draft));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Map<String, dynamic>? getOnboardingDraft() {
+    try {
+      if (_preferences == null) return null;
+      final String? str = _preferences!.getString(onboardingDraftKey);
+      if (str == null || str.isEmpty) return null;
+      return json.decode(str) as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> clearOnboardingDraft() async {
+    try {
+      if (_preferences != null) {
+        await _preferences!.remove(onboardingDraftKey);
+      }
+    } catch (_) {}
+  }
 }

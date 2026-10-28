@@ -42,6 +42,42 @@ class NotificationUtil {
       return RoutePaths.base;
     }
     final String clean = payload.trim();
+
+    // V2 Sleep notifications -> Tonight's Plan (Doc 03 §2)
+    if (clean == 'sleep_window' ||
+        clean == 'sleep_estimate_changed' ||
+        clean == 'tonights_plan' ||
+        clean == 'sleep_plan') {
+      return RoutePaths.tonightsPlan;
+    }
+
+    // V2 Behaviour risk notification -> Calm Plan (Doc 03 §2)
+    if (clean == 'calm_heads_up' || clean == 'calm_plan') {
+      return RoutePaths.calmPlan;
+    }
+
+    // V2 Weekly review notification -> Journey / Weekly Review (Doc 03 §2)
+    if (clean == 'weekly_review' || clean == 'weekly_family_review') {
+      return RoutePaths.weeklyReview;
+    }
+
+    // V2 Mentorship session booking & reminders (Doc 03 §2)
+    if (clean == 'mentorship_booking' ||
+        clean == 'mentorship_reminder' ||
+        clean == 'session_confirmation') {
+      return RoutePaths.sessionConfirmation;
+    }
+
+    // V2 Waitlist or general mentorship availability
+    if (clean == 'waitlist_availability' || clean == 'mentorship') {
+      return RoutePaths.base;
+    }
+
+    // Quick check-in prompt -> Today screen dashboard
+    if (clean == 'gentle_check_in' || clean == 'quick_update') {
+      return RoutePaths.base;
+    }
+
     if (clean == 'energy_bridge' || clean.startsWith('energy_bridge:')) {
       return RoutePaths.base;
     }
@@ -283,19 +319,21 @@ class NotificationUtil {
     required String body,
     required String payload,
   }) async {
-    final NotificationDetails platformChannelSpecifics =
-        await _notificationDetails(
-          channelId: channelId,
-          channelName: channelName,
-          channelDesc: channelDesc,
-        );
-    await _localNotifications.show(
-      id: id,
-      title: title,
-      body: body,
-      notificationDetails: platformChannelSpecifics,
-      payload: payload,
-    );
+    try {
+      final NotificationDetails platformChannelSpecifics =
+          await _notificationDetails(
+            channelId: channelId,
+            channelName: channelName,
+            channelDesc: channelDesc,
+          );
+      await _localNotifications.show(
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: platformChannelSpecifics,
+        payload: payload,
+      );
+    } catch (_) {}
   }
 
   static Future<void> scheduleNotification({
@@ -305,25 +343,29 @@ class NotificationUtil {
     required String payload,
     required DateTime scheduledDate,
   }) async {
-    final NotificationDetails platformChannelSpecifics =
-        await _notificationDetails(
-          channelId: channelId,
-          channelName: channelName,
-          channelDesc: channelDesc,
-        );
-    await _localNotifications.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
-      notificationDetails: platformChannelSpecifics,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      payload: payload,
-    );
+    try {
+      final NotificationDetails platformChannelSpecifics =
+          await _notificationDetails(
+            channelId: channelId,
+            channelName: channelName,
+            channelDesc: channelDesc,
+          );
+      await _localNotifications.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+        notificationDetails: platformChannelSpecifics,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        payload: payload,
+      );
+    } catch (_) {}
   }
 
   static Future<void> cancelNotification(int id) async {
-    await _localNotifications.cancel(id: id);
+    try {
+      await _localNotifications.cancel(id: id);
+    } catch (_) {}
   }
 
   static Future<NotificationDetails> _notificationDetails({

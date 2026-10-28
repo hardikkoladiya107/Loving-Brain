@@ -23,8 +23,12 @@ import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/ui/faq/faq_screen.dart';
 import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
+import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
 import 'package:loving_brain/ui/notifications_permission/notifications_permission_screen.dart';
+import 'package:loving_brain/ui/session_request_confirmation/session_request_confirmation_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
+import 'package:loving_brain/ui/tonights_plan/tonights_plan_screen.dart';
+import 'package:loving_brain/ui/weekly_family_review/weekly_family_review_screen.dart';
 
 import 'route_paths.dart';
 
@@ -227,6 +231,26 @@ class AppRouter {
           path: RoutePaths.microphonePermission,
           builder: (BuildContext context, GoRouterState state) =>
               const MicrophonePermissionScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.tonightsPlan,
+          builder: (BuildContext context, GoRouterState state) =>
+              const TonightsPlanScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.calmPlan,
+          builder: (BuildContext context, GoRouterState state) =>
+              const CalmPlanScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.weeklyReview,
+          builder: (BuildContext context, GoRouterState state) =>
+              const WeeklyFamilyReviewScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.sessionConfirmation,
+          builder: (BuildContext context, GoRouterState state) =>
+              const SessionRequestConfirmationScreen(),
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) {

@@ -7,6 +7,9 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/after_reflection/after_reflection_screen.dart';
 import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
+import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/calm_plan_cubit.dart';
@@ -27,6 +30,11 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CalmPlanCubit>().init(forecast: widget.forecast);
+      final ChildModel? child = preferences.getChildModel();
+      final String childId = child?.reference?.id ?? '';
+      if (childId.isNotEmpty) {
+        V2NotificationScheduler.cancelCalmHeadsUp(childId);
+      }
     });
   }
 

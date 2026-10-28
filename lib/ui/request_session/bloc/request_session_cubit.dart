@@ -3,6 +3,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/repo/mentorship_repo.dart';
 
 import 'request_session_state.dart';
@@ -109,6 +110,16 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
         .createMentorshipRequest(request);
 
     if (res is Data<MentorshipRequestModel>) {
+      // Schedule 24h & 1h session reminders per V2 notification types 5 & 7
+      final DateTime estimatedSessionTime = DateTime.now().add(
+        const Duration(days: 2),
+      );
+      V2NotificationScheduler.scheduleMentorshipReminders(
+        sessionId: request.id,
+        sessionTime: estimatedSessionTime,
+        mentorName: state.guide?.name ?? 'Your mentor',
+      );
+
       changeProps(isSubmitting: false, saveStatus: res);
       return true;
     } else {

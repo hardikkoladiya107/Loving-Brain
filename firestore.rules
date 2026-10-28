@@ -31,17 +31,21 @@ service cloud.firestore {
 
     // User profiles & user subcollections
     match /users/{userId} {
-      allow read, write: if isSignedIn();
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
       match /{allChildren=**} {
-        allow read, write: if isSignedIn();
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
       }
     }
 
     // Children & child subcollections (sleep_logs, behaviours, experiments, events)
+    // Only linked parents can read and modify child records (Doc 01 & Doc 06 §7)
     match /children/{childId} {
-      allow read, write: if isSignedIn();
+      allow read: if isLinkedParent(childId);
+      allow create: if isSignedIn();
+      allow update, delete: if isLinkedParent(childId);
       match /{allChildren=**} {
-        allow read, write: if isSignedIn();
+        allow read, write: if isLinkedParent(childId);
       }
     }
 
@@ -76,7 +80,13 @@ service cloud.firestore {
     }
 
     match /mentorship_requests/{id} {
-      allow read, write: if isSignedIn();
+      allow read, write: if isSignedIn() &&
+        (resource == null || resource.data.parent_id == request.auth.uid || request.resource.data.parent_id == request.auth.uid);
+    }
+
+    match /mentorship_waitlist/{id} {
+      allow read, write: if isSignedIn() &&
+        (resource == null || resource.data.user_id == request.auth.uid || request.resource.data.user_id == request.auth.uid);
     }
 
     match /enrolled_programs/{id} {

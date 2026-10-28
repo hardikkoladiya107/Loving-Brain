@@ -51,8 +51,11 @@ class V2NotificationScheduler {
     required DateTime targetTime,
     bool isMentorshipException = false,
   }) {
-    final NotificationPreferencesModel prefs =
-        preferences.getNotificationPreferences();
+    final Map<String, dynamic>? rawPrefs = preferences
+        .getNotificationPreferences();
+    final NotificationPreferencesModel prefs = rawPrefs != null
+        ? NotificationPreferencesModel.fromJson(rawPrefs)
+        : NotificationPreferencesModel.defaultPreferences();
 
     final int count = getDeliveredTodayCount();
     if (!prefs.isNotificationAllowed(type: type, deliveredTodayCount: count)) {
@@ -117,7 +120,8 @@ class V2NotificationScheduler {
     await NotificationUtil.showLocalNotification(
       id: id,
       title: 'LovingBrain · Sleep Plan Updated',
-      body: 'Today\'s rest moved $childName\'s bedtime estimate to $newBedtime.',
+      body:
+          'Today\'s rest moved $childName\'s bedtime estimate to $newBedtime.',
       payload: 'sleep_estimate_changed',
     );
     recordDelivery();
