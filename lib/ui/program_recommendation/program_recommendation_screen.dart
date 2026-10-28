@@ -24,35 +24,35 @@ class _ProgramRecommendationScreenState
       'image': Assets.v2.images.imgSleepRestore01.path,
       'title': "Sleep Restore",
       'subtitle': "6-week guided sleep programme",
-      'price': "From \$2,400",
+      'duration': "6-week guided journey",
       'category': "Sleep",
     },
     {
       'image': Assets.v2.images.imgSleepRestore02.path,
       'title': "Gentle Awakening",
       'subtitle': "4-week guided sleep programme",
-      'price': "From \$1,800",
+      'duration': "4-week guided journey",
       'category': "Sleep",
     },
     {
       'image': Assets.v2.images.imgSleepRestore03.path,
       'title': "Calm Moments",
       'subtitle': "Manage anxiety in toddlers",
-      'price': "From \$3,200",
+      'duration': "6-week guided journey",
       'category': "Anxiety",
     },
     {
       'image': Assets.v2.images.imgSleepRestore04.path,
       'title': "Positive Discipline",
       'subtitle': "Effective parenting strategies",
-      'price': "From \$2,800",
+      'duration': "8-week guided journey",
       'category': "Parenting",
     },
     {
       'image': Assets.v2.images.imgSleepRestore01.path,
       'title': "Tantrum Tamer",
       'subtitle': "Understanding big emotions",
-      'price': "From \$2,000",
+      'duration': "4-week guided journey",
       'category': "Behaviour",
     },
   ];
@@ -95,7 +95,7 @@ class _ProgramRecommendationScreenState
                         prog['image']!,
                         prog['title']!,
                         prog['subtitle']!,
-                        prog['price']!,
+                        prog['duration']!,
                       ),
                     ),
                   ),
@@ -266,7 +266,7 @@ class _ProgramRecommendationScreenState
     String imagePath,
     String title,
     String subtitle,
-    String price,
+    String duration,
   ) {
     return GestureDetector(
       onTap: () {
@@ -316,8 +316,8 @@ class _ProgramRecommendationScreenState
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: price.appText(
-                          fontSize: 14.sp,
+                        child: duration.appText(
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                           color: primaryColor,
                         ),

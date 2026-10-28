@@ -112,15 +112,19 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
       fetchStatus: const ApiResultStatus.data(data: null),
     );
 
-    // Schedule Sunday 9:00 AM weekly review notification (Doc 03 §5)
-    final DateTime now = DateTime.now();
-    DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
-    int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
-    if (daysUntilSunday == 0 && now.hour >= 9) {
-      daysUntilSunday = 7;
+    // Schedule Sunday 9:00 AM weekly review notification only when enough meaningful data exists (Doc 03 §5)
+    if (!insights.isLearning && insights.daysCheckedIn >= 2) {
+      final DateTime now = DateTime.now();
+      DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
+      int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
+      if (daysUntilSunday == 0 && now.hour >= 9) {
+        daysUntilSunday = 7;
+      }
+      nextSunday = nextSunday.add(Duration(days: daysUntilSunday));
+      await V2NotificationScheduler.scheduleWeeklyReview(
+        sundayDate: nextSunday,
+      );
     }
-    nextSunday = nextSunday.add(Duration(days: daysUntilSunday));
-    await V2NotificationScheduler.scheduleWeeklyReview(sundayDate: nextSunday);
   }
 
   Future<void> startRecommendedExperiment() async {

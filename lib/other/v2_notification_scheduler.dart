@@ -9,8 +9,8 @@ import 'package:loving_brain/other/preferances.dart';
 class V2NotificationScheduler {
   V2NotificationScheduler._();
 
-  static const String _deliveredCountKey = 'v2_notifications_delivered_count';
-  static const String _deliveredDateKey = 'v2_notifications_delivered_date';
+  static const String _consecutiveEmptyDaysKey =
+      'v2_consecutive_empty_days_checkin';
 
   /// Stable Notification ID prefixes for each of the 8 notification types
   static const int idPrefixSleepWindow = 100000;
@@ -27,25 +27,77 @@ class V2NotificationScheduler {
     return prefix + (entityId.hashCode.abs() % 99999);
   }
 
+  /// Returns count of notifications planned/delivered on a specific date (Doc 03 §1)
+  static int getCountForDate(DateTime date) {
+    final String dateStr = DateFormat('yyyy-MM-dd').format(date);
+    return preferences.getInt('v2_notif_count_$dateStr') ?? 0;
+  }
+
+  /// Increments the planned/delivered count for a specific date
+  static void incrementCountForDate(DateTime date) {
+    final String dateStr = DateFormat('yyyy-MM-dd').format(date);
+    final int current = getCountForDate(date);
+    preferences.putInt('v2_notif_count_$dateStr', current + 1);
+  }
+
   /// Returns the count of notifications delivered today
   static int getDeliveredTodayCount() {
-    final String todayStr = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final String lastDate = preferences.getString(_deliveredDateKey) ?? '';
-    if (lastDate != todayStr) {
-      preferences.putString(_deliveredDateKey, todayStr);
-      preferences.putInt(_deliveredCountKey, 0);
-      return 0;
-    }
-    return preferences.getInt(_deliveredCountKey) ?? 0;
+    return getCountForDate(DateTime.now());
   }
 
   /// Records that a notification was dispatched
   static void recordDelivery() {
-    final int current = getDeliveredTodayCount();
-    preferences.putInt(_deliveredCountKey, current + 1);
+    incrementCountForDate(DateTime.now());
   }
 
-  /// Checks if a notification can be scheduled/sent according to caps and quiet hours
+  /// Stores sent notification event in history
+  static void recordSent({
+    required String type,
+    required String title,
+    String? payload,
+  }) {
+    try {
+      final List<String> list =
+          preferences.getStringList('v2_notif_sent_log') ?? <String>[];
+      final String entry =
+          '${DateTime.now().toIso8601String()}|$type|$title|${payload ?? ""}';
+      list.add(entry);
+      if (list.length > 100) {
+        list.removeRange(0, list.length - 100);
+      }
+      preferences.putStringList('v2_notif_sent_log', list);
+    } catch (_) {}
+  }
+
+  /// Stores opened notification event in history
+  static void recordOpened(String payload) {
+    try {
+      final List<String> list =
+          preferences.getStringList('v2_notif_opened_log') ?? <String>[];
+      final String entry = '${DateTime.now().toIso8601String()}|$payload';
+      list.add(entry);
+      if (list.length > 100) {
+        list.removeRange(0, list.length - 100);
+      }
+      preferences.putStringList('v2_notif_opened_log', list);
+    } catch (_) {}
+  }
+
+  /// Tracks consecutive empty days without user logs for gentle check-in
+  static int getConsecutiveEmptyDays() {
+    return preferences.getInt(_consecutiveEmptyDaysKey) ?? 0;
+  }
+
+  static void resetConsecutiveEmptyDays() {
+    preferences.putInt(_consecutiveEmptyDaysKey, 0);
+  }
+
+  static void incrementConsecutiveEmptyDays() {
+    final int current = getConsecutiveEmptyDays();
+    preferences.putInt(_consecutiveEmptyDaysKey, current + 1);
+  }
+
+  /// Checks if a notification can be scheduled/sent according to caps and quiet hours on target day
   static bool canSendNotification({
     required String type,
     required DateTime targetTime,
@@ -57,8 +109,11 @@ class V2NotificationScheduler {
         ? NotificationPreferencesModel.fromJson(rawPrefs)
         : NotificationPreferencesModel.defaultPreferences();
 
-    final int count = getDeliveredTodayCount();
-    if (!prefs.isNotificationAllowed(type: type, deliveredTodayCount: count)) {
+    final int countOnTargetDay = getCountForDate(targetTime);
+    if (!prefs.isNotificationAllowed(
+      type: type,
+      deliveredTodayCount: countOnTargetDay,
+    )) {
       return false;
     }
 
@@ -94,6 +149,12 @@ class V2NotificationScheduler {
       payload: 'sleep_window',
       scheduledDate: notifyTime,
     );
+    incrementCountForDate(notifyTime);
+    recordSent(
+      type: 'sleep',
+      title: 'LovingBrain · Sleep Window',
+      payload: 'sleep_window',
+    );
     return true;
   }
 
@@ -124,6 +185,11 @@ class V2NotificationScheduler {
       payload: 'sleep_estimate_changed',
     );
     recordDelivery();
+    recordSent(
+      type: 'sleep',
+      title: 'LovingBrain · Sleep Plan Updated',
+      payload: 'sleep_estimate_changed',
+    );
     return true;
   }
 
@@ -155,6 +221,12 @@ class V2NotificationScheduler {
       payload: 'calm_heads_up',
       scheduledDate: notifyTime,
     );
+    incrementCountForDate(notifyTime);
+    recordSent(
+      type: 'calm',
+      title: 'LovingBrain · Calm Heads-Up',
+      payload: 'calm_heads_up',
+    );
     return true;
   }
 
@@ -165,13 +237,22 @@ class V2NotificationScheduler {
     );
   }
 
-  // 4. Gentle check-in (8:30 PM if no logs today)
+  // 4. Gentle check-in (8:30 PM if no logs today, max 3 consecutive empty days)
   static Future<bool> scheduleGentleCheckIn({
     required String childId,
     required DateTime checkInTime,
     required bool hasLogsToday,
   }) async {
-    if (hasLogsToday) return false;
+    if (hasLogsToday) {
+      resetConsecutiveEmptyDays();
+      return false;
+    }
+
+    // Stop gentle check-in after a short run of 3 empty days without logs (Doc 03 §4)
+    if (getConsecutiveEmptyDays() >= 3) {
+      return false;
+    }
+
     if (checkInTime.isBefore(DateTime.now())) return false;
 
     if (!canSendNotification(type: 'check_in', targetTime: checkInTime)) {
@@ -186,16 +267,24 @@ class V2NotificationScheduler {
       payload: 'gentle_check_in',
       scheduledDate: checkInTime,
     );
+    incrementCountForDate(checkInTime);
+    incrementConsecutiveEmptyDays();
+    recordSent(
+      type: 'check_in',
+      title: 'LovingBrain · Quick Update',
+      payload: 'gentle_check_in',
+    );
     return true;
   }
 
   static Future<void> cancelGentleCheckIn(String childId) async {
+    resetConsecutiveEmptyDays();
     await NotificationUtil.cancelNotification(
       notificationId(idPrefixGentleCheckIn, childId),
     );
   }
 
-  // 5. Weekly review ready (Sunday morning)
+  // 5. Weekly review ready (Sunday morning, 1/week when enough data exists)
   static Future<bool> scheduleWeeklyReview({
     required DateTime sundayDate,
   }) async {
@@ -212,6 +301,12 @@ class V2NotificationScheduler {
       body: 'Your weekly review is ready: one change, one pattern, one focus.',
       payload: 'weekly_review',
       scheduledDate: sundayDate,
+    );
+    incrementCountForDate(sundayDate);
+    recordSent(
+      type: 'weekly_review',
+      title: 'LovingBrain · Weekly Review',
+      payload: 'weekly_review',
     );
     return true;
   }
@@ -239,6 +334,11 @@ class V2NotificationScheduler {
       payload: 'mentorship_booking',
     );
     recordDelivery();
+    recordSent(
+      type: 'mentorship',
+      title: 'LovingBrain · Mentorship',
+      payload: 'mentorship_booking',
+    );
     return true;
   }
 
@@ -266,6 +366,12 @@ class V2NotificationScheduler {
         payload: 'mentorship_reminder',
         scheduledDate: t24h,
       );
+      incrementCountForDate(t24h);
+      recordSent(
+        type: 'mentorship',
+        title: 'LovingBrain · Mentorship Tomorrow',
+        payload: 'mentorship_reminder',
+      );
     }
 
     if (t1h.isAfter(now) &&
@@ -280,6 +386,12 @@ class V2NotificationScheduler {
         body: 'Your mentorship session starts in 1 hour.',
         payload: 'mentorship_reminder',
         scheduledDate: t1h,
+      );
+      incrementCountForDate(t1h);
+      recordSent(
+        type: 'mentorship',
+        title: 'LovingBrain · Mentorship in 1 Hour',
+        payload: 'mentorship_reminder',
       );
     }
   }
@@ -315,6 +427,11 @@ class V2NotificationScheduler {
       payload: 'waitlist_availability',
     );
     recordDelivery();
+    recordSent(
+      type: 'mentorship',
+      title: 'LovingBrain · Mentor Available',
+      payload: 'waitlist_availability',
+    );
     return true;
   }
 }

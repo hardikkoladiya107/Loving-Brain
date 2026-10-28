@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -104,6 +105,7 @@ class NotificationUtil {
   /// Centralized notification click handler for foreground, background, and cold start.
   static void handleNotificationClick(String? payload) {
     if (payload == null) return;
+    V2NotificationScheduler.recordOpened(payload);
     final String targetRoute = resolveRouteForPayload(payload);
 
     final BuildContext? context = navigatorKey.currentContext;

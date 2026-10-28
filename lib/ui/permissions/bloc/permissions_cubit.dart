@@ -1,5 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/caregiver_permissions_model.dart';
+import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/other/preferances.dart';
 
 import 'permissions_state.dart';
 
@@ -11,9 +15,33 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   void init({String? caregiverName, String? role}) {
     final String cleanRole = role ?? 'Partner';
     final bool isGrandparent = cleanRole.toLowerCase() == 'grandparent';
+    final String name = caregiverName ?? 'Caregiver';
+    final String email = name.contains('@')
+        ? name
+        : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test';
+
+    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
+      email,
+    );
+    if (saved != null) {
+      final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
+        saved,
+      );
+      changeProps(
+        caregiverName: p.name ?? name,
+        caregiverRole: p.role,
+        sleepEnabled: p.canViewSleep,
+        behaviourEnabled: p.canViewBehaviour,
+        healthNotesEnabled: p.canViewHealthNotes,
+        plansEnabled: p.canViewPlans,
+        mentorshipEnabled: p.canViewMentorSummaries,
+        saveStatus: const ApiResultStatus.initial(),
+      );
+      return;
+    }
 
     changeProps(
-      caregiverName: caregiverName ?? 'Caregiver',
+      caregiverName: name,
       caregiverRole: cleanRole,
       sleepEnabled: true,
       behaviourEnabled: !isGrandparent,
@@ -62,7 +90,37 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   Future<bool> savePermissions() async {
     changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    final String name = state.caregiverName;
+    final String email = name.contains('@')
+        ? name
+        : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test';
+
+    final CaregiverPermissionsModel permissionsModel =
+        CaregiverPermissionsModel(
+          caregiverEmail: email,
+          name: name,
+          role: state.caregiverRole,
+          canViewSleep: state.sleepEnabled,
+          canViewBehaviour: state.behaviourEnabled,
+          canViewHealthNotes: state.healthNotesEnabled,
+          canViewPlans: state.plansEnabled,
+          canViewMentorSummaries: state.mentorshipEnabled,
+        );
+
+    await preferences.saveCaregiverPermissions(permissionsModel.toMap());
+
+    final ChildModel? child = preferences.getChildModel();
+    final String childId = child?.reference?.id ?? '';
+    if (childId.isNotEmpty) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('children')
+            .doc(childId)
+            .collection('caregiver_permissions')
+            .doc(email)
+            .set(permissionsModel.toMap(), SetOptions(merge: true));
+      } catch (_) {}
+    }
 
     changeProps(
       isSaving: false,
@@ -74,7 +132,36 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   Future<bool> revokeAccess() async {
     changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    final String name = state.caregiverName;
+    final String email = name.contains('@')
+        ? name
+        : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test';
+
+    final CaregiverPermissionsModel revoked = CaregiverPermissionsModel(
+      caregiverEmail: email,
+      name: name,
+      role: state.caregiverRole,
+      canViewSleep: false,
+      canViewBehaviour: false,
+      canViewHealthNotes: false,
+      canViewPlans: false,
+      canViewMentorSummaries: false,
+    );
+
+    await preferences.saveCaregiverPermissions(revoked.toMap());
+
+    final ChildModel? child = preferences.getChildModel();
+    final String childId = child?.reference?.id ?? '';
+    if (childId.isNotEmpty) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('children')
+            .doc(childId)
+            .collection('caregiver_permissions')
+            .doc(email)
+            .delete();
+      } catch (_) {}
+    }
 
     changeProps(
       isSaving: false,

@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/mentorship_repo.dart';
 
 import 'mentorship_landing_state.dart';
 
@@ -14,6 +16,9 @@ class MentorshipLandingCubit extends Cubit<MentorshipLandingState> {
       isAvailable: true,
       fetchStatus: const ApiResultStatus.data(data: null),
     );
+
+    final String userId = preferences.getUserModel()?.uid ?? 'user_local';
+    MentorshipRepo.instance.checkWaitlistSlotAvailability(userId);
   }
 
   void changeProps({
@@ -33,6 +38,11 @@ class MentorshipLandingCubit extends Cubit<MentorshipLandingState> {
   }
 
   void toggleAvailability() {
-    changeProps(isAvailable: !state.isAvailable);
+    final bool nextAvailable = !state.isAvailable;
+    changeProps(isAvailable: nextAvailable);
+    if (nextAvailable) {
+      final String userId = preferences.getUserModel()?.uid ?? 'user_local';
+      MentorshipRepo.instance.checkWaitlistSlotAvailability(userId);
+    }
   }
 }

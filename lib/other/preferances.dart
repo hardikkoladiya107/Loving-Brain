@@ -69,6 +69,31 @@ class SharedPreference {
     }
   }
 
+  List<String>? getStringList(String key) {
+    return _preferences?.getStringList(key);
+  }
+
+  Future<bool?> putStringList(String key, List<String> value) async {
+    return _preferences?.setStringList(key, value);
+  }
+
+  Future<bool?> saveCaregiverPermissions(Map<String, dynamic> map) async {
+    final String email = (map['caregiver_email'] ?? map['caregiverEmail'] ?? '')
+        .toString();
+    if (email.isEmpty) return null;
+    return putString('caregiver_permissions_$email', json.encode(map));
+  }
+
+  Map<String, dynamic>? getCaregiverPermissions(String email) {
+    final String? str = getString('caregiver_permissions_$email');
+    if (str == null || str.isEmpty) return null;
+    try {
+      return json.decode(str) as Map<String, dynamic>?;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<bool?> saveUserModel(UserModel value) async {
     try {
       if (_preferences == null) {

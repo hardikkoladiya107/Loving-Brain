@@ -362,16 +362,20 @@ class TodayCubit extends Cubit<TodayState> {
         );
       }
 
-      // Schedule Weekly Review notification for next Sunday 9:00 AM (Doc 03 §5)
-      DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
-      int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
-      if (daysUntilSunday == 0 && now.hour >= 9) {
-        daysUntilSunday = 7;
+      // Schedule Weekly Review notification for next Sunday 9:00 AM only when enough meaningful data exists (Doc 03 §5)
+      final bool hasMeaningfulWeeklyData =
+          hasMultiDayPatterns || sleepLogs.length >= 2;
+      if (hasMeaningfulWeeklyData) {
+        DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
+        int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
+        if (daysUntilSunday == 0 && now.hour >= 9) {
+          daysUntilSunday = 7;
+        }
+        nextSunday = nextSunday.add(Duration(days: daysUntilSunday));
+        await V2NotificationScheduler.scheduleWeeklyReview(
+          sundayDate: nextSunday,
+        );
       }
-      nextSunday = nextSunday.add(Duration(days: daysUntilSunday));
-      await V2NotificationScheduler.scheduleWeeklyReview(
-        sundayDate: nextSunday,
-      );
     }
   }
 
@@ -870,17 +874,67 @@ class TodayCubit extends Cubit<TodayState> {
 
     if (result is Data<String>) {
       await V2NotificationScheduler.cancelGentleCheckIn(childId);
-      // Recalculate behaviour risk with the new tantrum log to determine if risk changed significantly
+      // Recalculate combined behaviour risk using the same multi-log engine as Calm Heads-Up (Doc 04 §4)
       final ChildModel? activeChild = preferences.getChildModel();
-      final BehaviourForecastResult behaviourResult =
+      List<TantrumLogModel> recentTantrums = <TantrumLogModel>[log];
+      List<SleepLogModel> recentSleep = <SleepLogModel>[];
+      List<MoodLogModel> recentMood = <MoodLogModel>[];
+      List<HealthLogModel> recentHealth = <HealthLogModel>[];
+
+      try {
+        final ApiResultStatus<List<TantrumLogModel>> tRes = await TodayLogRepo
+            .instance
+            .getRecentTantrumLogs(childId);
+        if (tRes is Data<List<TantrumLogModel>>) {
+          recentTantrums = <TantrumLogModel>[
+            log,
+            ...tRes.data.where((TantrumLogModel t) => t.id != result.data),
+          ];
+        }
+        final ApiResultStatus<List<SleepLogModel>> sRes = await TodayLogRepo
+            .instance
+            .getRecentSleepLogs(childId);
+        if (sRes is Data<List<SleepLogModel>>) {
+          recentSleep = sRes.data;
+        }
+        final ApiResultStatus<List<MoodLogModel>> mRes = await TodayLogRepo
+            .instance
+            .getRecentMoodLogs(childId);
+        if (mRes is Data<List<MoodLogModel>>) {
+          recentMood = mRes.data;
+        }
+        final ApiResultStatus<List<HealthLogModel>> hRes = await TodayLogRepo
+            .instance
+            .getRecentHealthLogs(childId);
+        if (hRes is Data<List<HealthLogModel>>) {
+          recentHealth = hRes.data;
+        }
+      } catch (_) {}
+
+      final BehaviourForecastResult prevResult =
           EnergyBridgeBehaviourCalculator.calculate(
             childModel: activeChild,
-            tantrumLogs: <TantrumLogModel>[log],
-            sleepLogs: const <SleepLogModel>[],
-            moodLogs: const <MoodLogModel>[],
-            healthLogs: const <HealthLogModel>[],
+            tantrumLogs: recentTantrums
+                .where((TantrumLogModel t) => t != log)
+                .toList(),
+            sleepLogs: recentSleep,
+            moodLogs: recentMood,
+            healthLogs: recentHealth,
           );
-      final bool behaviourShifted = behaviourResult.isPushWorthy;
+
+      final BehaviourForecastResult updatedResult =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: activeChild,
+            tantrumLogs: recentTantrums,
+            sleepLogs: recentSleep,
+            moodLogs: recentMood,
+            healthLogs: recentHealth,
+          );
+
+      final bool behaviourShifted =
+          updatedResult.isPushWorthy &&
+          (updatedResult.riskLevel != prevResult.riskLevel ||
+              updatedResult.windowStart != prevResult.windowStart);
 
       changeProps(
         isLoading: false,
@@ -894,7 +948,7 @@ class TodayCubit extends Cubit<TodayState> {
         showTantrumUpdateErrors: false,
         didForecastChangeSignificantly: behaviourShifted,
         forecastChangeReason: behaviourShifted
-            ? 'Harder window updated based on recent tantrum'
+            ? 'Harder window updated to ${updatedResult.windowStart}–${updatedResult.windowEnd} based on today\'s patterns'
             : null,
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));

@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
+import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/v2_notification_scheduler.dart';
 
 /// Singleton repository managing Guided Mentorship, Programs, and Session Requests.
 /// Conforms to AGENTS.md §7 (Repository Pattern & ApiResultStatus).
@@ -11,6 +15,33 @@ class MentorshipRepo {
   static final MentorshipRepo _instance = MentorshipRepo._();
   factory MentorshipRepo() => _instance;
   static MentorshipRepo get instance => _instance;
+
+  bool _canCurrentCaregiverViewMentorship() {
+    final UserModel? user = preferences.getUserModel();
+    if (user == null) return true;
+    final String email = user.email ?? '';
+    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
+      email,
+    );
+    if (saved != null) {
+      final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
+        saved,
+      );
+      return p.canViewMentorSummaries;
+    }
+    final String cleanRole = (user.relationshipToChild ?? '')
+        .toLowerCase()
+        .trim();
+    final bool isCaregiverRole =
+        cleanRole == 'caregiver' ||
+        cleanRole == 'grandparent' ||
+        cleanRole == 'nanny' ||
+        cleanRole == 'babysitter';
+    if (isCaregiverRole) {
+      return false;
+    }
+    return true;
+  }
 
   CollectionReference<Map<String, dynamic>> get _requestsCollection =>
       FirebaseFirestore.instance.collection('mentorship_requests');
@@ -163,6 +194,10 @@ class MentorshipRepo {
     String userId,
   ) async {
     try {
+      if (!_canCurrentCaregiverViewMentorship()) {
+        return const ApiResultStatus.data(data: <MentorshipRequestModel>[]);
+      }
+
       final List<MentorshipRequestModel> list = <MentorshipRequestModel>[];
 
       try {
@@ -196,8 +231,10 @@ class MentorshipRepo {
     String requestId,
   ) async {
     try {
+      String guideName = 'Your Guide';
       for (int i = 0; i < _localRequests.length; i++) {
         if (_localRequests[i].id == requestId) {
+          guideName = _localRequests[i].guideName ?? 'Your Guide';
           _localRequests[i] = _localRequests[i].copyWith(
             status: MentorshipRequestStatus.cancelled,
           );
@@ -211,7 +248,61 @@ class MentorshipRepo {
         });
       } catch (_) {}
 
+      // Cancel 24h & 1h reminders and notify cancellation event (Doc 03 / Doc 06)
+      await V2NotificationScheduler.cancelMentorshipReminders(requestId);
+      await V2NotificationScheduler.notifyMentorshipBookingEvent(
+        sessionId: requestId,
+        mentorName: guideName,
+        statusText: 'cancelled',
+      );
+
       return const ApiResultStatus.data(data: true);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  /// Confirms a mentorship session request with an agreed time (Doc 03 / Doc 06).
+  /// Schedules 24-hour and 1-hour reminders and dispatches confirmation push.
+  Future<ApiResultStatus<MentorshipRequestModel>> confirmMentorshipSession({
+    required String requestId,
+    required DateTime confirmedTime,
+  }) async {
+    try {
+      MentorshipRequestModel? updatedRequest;
+      for (int i = 0; i < _localRequests.length; i++) {
+        if (_localRequests[i].id == requestId) {
+          _localRequests[i] = _localRequests[i].copyWith(
+            status: MentorshipRequestStatus.confirmed,
+            confirmedTime: confirmedTime,
+          );
+          updatedRequest = _localRequests[i];
+          break;
+        }
+      }
+
+      try {
+        await _requestsCollection.doc(requestId).update(<String, dynamic>{
+          'status': MentorshipRequestStatus.confirmed.name,
+          'confirmedTime': Timestamp.fromDate(confirmedTime),
+        });
+      } catch (_) {}
+
+      if (updatedRequest != null) {
+        await V2NotificationScheduler.scheduleMentorshipReminders(
+          sessionId: requestId,
+          mentorName: updatedRequest.guideName ?? 'Your Guide',
+          sessionTime: confirmedTime,
+        );
+        await V2NotificationScheduler.notifyMentorshipBookingEvent(
+          sessionId: requestId,
+          mentorName: updatedRequest.guideName ?? 'Your Guide',
+          statusText: 'confirmed',
+        );
+        return ApiResultStatus.data(data: updatedRequest);
+      }
+
+      return ApiResultStatus.error(error: Exception('Request not found'));
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
@@ -222,6 +313,14 @@ class MentorshipRepo {
     String childId,
   ) async {
     try {
+      if (!_canCurrentCaregiverViewMentorship()) {
+        return ApiResultStatus.error(
+          error: Exception(
+            'Caregiver does not have permission to view mentorship programs.',
+          ),
+        );
+      }
+
       if (_localPrograms.containsKey(childId)) {
         return ApiResultStatus.data(data: _localPrograms[childId]!);
       }
@@ -253,6 +352,14 @@ class MentorshipRepo {
     String childId,
   ) async {
     try {
+      if (!_canCurrentCaregiverViewMentorship()) {
+        return ApiResultStatus.error(
+          error: Exception(
+            'Caregiver does not have permission to view post-session plans.',
+          ),
+        );
+      }
+
       if (_localPlans.containsKey(childId)) {
         return ApiResultStatus.data(data: _localPlans[childId]!);
       }
@@ -338,6 +445,13 @@ class MentorshipRepo {
     String? preferredGuideId,
   }) async {
     try {
+      preferences.putString('waitlist_status_$userId', 'waiting');
+      preferences.putString(
+        'waitlist_guide_$userId',
+        preferredGuideId ?? 'guide_elena_01',
+      );
+      preferences.putBool('waitlist_notified_$userId', false);
+
       final Map<String, dynamic> data = <String, dynamic>{
         'userId': userId,
         'childId': childId,
@@ -354,6 +468,28 @@ class MentorshipRepo {
       return const ApiResultStatus.data(data: true);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  /// Checks whether a waiting parent should be notified of an opened slot (Item 7).
+  /// Notifies the parent once when a slot opens.
+  Future<void> checkWaitlistSlotAvailability(String userId) async {
+    final String? status = preferences.getString('waitlist_status_$userId');
+    final bool alreadyNotified =
+        preferences.getBool('waitlist_notified_$userId') ?? false;
+
+    if (status == 'waiting' && !alreadyNotified) {
+      final String guideId =
+          preferences.getString('waitlist_guide_$userId') ?? 'guide_elena_01';
+      final GuideProfileModel guide = getGuideById(guideId);
+      final bool sent =
+          await V2NotificationScheduler.notifyWaitlistSlotAvailable(
+            mentorId: guide.id,
+            mentorName: guide.name,
+          );
+      if (sent) {
+        preferences.putBool('waitlist_notified_$userId', true);
+      }
     }
   }
 }

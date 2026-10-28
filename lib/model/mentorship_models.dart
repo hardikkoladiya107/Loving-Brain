@@ -18,6 +18,7 @@ class MentorshipRequestModel {
   final bool shareRecentSummary;
   final MentorshipRequestStatus status;
   final DateTime createdAt;
+  final DateTime? confirmedTime;
 
   const MentorshipRequestModel({
     required this.id,
@@ -33,6 +34,7 @@ class MentorshipRequestModel {
     this.shareRecentSummary = false,
     this.status = MentorshipRequestStatus.pending,
     required this.createdAt,
+    this.confirmedTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -50,6 +52,9 @@ class MentorshipRequestModel {
       'shareRecentSummary': shareRecentSummary,
       'status': status.name,
       'createdAt': Timestamp.fromDate(createdAt),
+      'confirmedTime': confirmedTime != null
+          ? Timestamp.fromDate(confirmedTime!)
+          : null,
     };
   }
 
@@ -63,6 +68,14 @@ class MentorshipRequestModel {
       parsedDate = rawCreated.toDate();
     } else if (rawCreated is String) {
       parsedDate = DateTime.tryParse(rawCreated) ?? DateTime.now();
+    }
+
+    DateTime? parsedConfirmedTime;
+    final dynamic rawConfirmed = map['confirmedTime'];
+    if (rawConfirmed is Timestamp) {
+      parsedConfirmedTime = rawConfirmed.toDate();
+    } else if (rawConfirmed is String) {
+      parsedConfirmedTime = DateTime.tryParse(rawConfirmed);
     }
 
     MentorshipRequestStatus parsedStatus = MentorshipRequestStatus.pending;
@@ -90,6 +103,7 @@ class MentorshipRequestModel {
       shareRecentSummary: map['shareRecentSummary'] == true,
       status: parsedStatus,
       createdAt: parsedDate,
+      confirmedTime: parsedConfirmedTime,
     );
   }
 
@@ -107,6 +121,7 @@ class MentorshipRequestModel {
     bool? shareRecentSummary,
     MentorshipRequestStatus? status,
     DateTime? createdAt,
+    DateTime? confirmedTime,
   }) {
     return MentorshipRequestModel(
       id: id ?? this.id,
@@ -122,6 +137,7 @@ class MentorshipRequestModel {
       shareRecentSummary: shareRecentSummary ?? this.shareRecentSummary,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      confirmedTime: confirmedTime ?? this.confirmedTime,
     );
   }
 }

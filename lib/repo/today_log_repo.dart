@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
 import 'package:loving_brain/model/mood_log_model.dart';
@@ -456,11 +457,43 @@ class TodayLogRepo {
     }
   }
 
+  /// Resolves caregiver permissions for current user context (Screen 58, Doc 01 §15).
+  bool _canCurrentCaregiverViewHealth() {
+    final UserModel? user = preferences.getUserModel();
+    if (user == null) return true;
+    final String email = user.email ?? '';
+    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
+      email,
+    );
+    if (saved != null) {
+      final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
+        saved,
+      );
+      return p.canViewHealthNotes;
+    }
+    final String cleanRole = (user.relationshipToChild ?? '')
+        .toLowerCase()
+        .trim();
+    final bool isCaregiverRole =
+        cleanRole == 'caregiver' ||
+        cleanRole == 'grandparent' ||
+        cleanRole == 'nanny' ||
+        cleanRole == 'babysitter';
+    if (isCaregiverRole) {
+      return false;
+    }
+    return true;
+  }
+
   Future<ApiResultStatus<List<HealthLogModel>>> getRecentHealthLogs(
     String childId, {
     int limit = 10,
   }) async {
     try {
+      if (!_canCurrentCaregiverViewHealth()) {
+        return const ApiResultStatus.data(data: <HealthLogModel>[]);
+      }
+
       final QuerySnapshot<Map<String, dynamic>> snap = await _childrenCollection
           .doc(childId)
           .collection('health_logs')
@@ -510,9 +543,16 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      final List<TimelineEventModel> list = snap.docs
+      List<TimelineEventModel> list = snap.docs
           .map(TimelineEventModel.fromFirestore)
           .toList();
+
+      if (!_canCurrentCaregiverViewHealth()) {
+        list = list
+            .where((TimelineEventModel e) => e.type != 'health_log')
+            .toList();
+      }
+
       return ApiResultStatus.data(data: list);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
