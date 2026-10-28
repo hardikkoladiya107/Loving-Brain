@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/enrolled_journey_home/enrolled_journey_home_screen.dart';
+import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
 import 'package:loving_brain/ui/parent_success_guide/parent_success_guide_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -174,11 +174,9 @@ class _SessionRequestConfirmationScreenState
             AppButton(
               title: "Back to Journey",
               onTap: () {
-                Navigator.pushAndRemoveUntil(
+                context.read<BaseCubit>().changeProps(bottomNavigationIndex: 2);
+                Navigator.popUntil(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const EnrolledJourneyHomeScreen(),
-                  ),
                   (Route<dynamic> route) => route.isFirst,
                 );
               },

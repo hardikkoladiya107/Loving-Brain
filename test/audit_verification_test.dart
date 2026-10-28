@@ -24,6 +24,12 @@ import 'package:loving_brain/ui/journey/bloc/journey_cubit.dart';
 import 'package:loving_brain/ui/journey/bloc/journey_state.dart';
 import 'package:loving_brain/ui/microphone_permission/bloc/microphone_permission_cubit.dart';
 import 'package:loving_brain/ui/notifications_permission/bloc/notifications_permission_cubit.dart';
+import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
+import 'package:loving_brain/ui/journey/journey_screen.dart';
+import 'package:loving_brain/ui/session_request_confirmation/bloc/session_request_confirmation_cubit.dart';
+import 'package:loving_brain/ui/session_request_confirmation/session_request_confirmation_screen.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -844,6 +850,167 @@ void main() {
         final ApiResultStatus res = await UserRepo.instance
             .updateUserToFireStore(uId: '', request: <String, dynamic>{});
         expect(res is Error, isTrue);
+      },
+    );
+  });
+
+  group('AddTantrumsUpdateSheet UI & Alignment Verification', () {
+    testWidgets(
+      'Renders DraggableScrollableSheet with bold headers and left-aligned Possible Trigger',
+      (WidgetTester tester) async {
+        final TodayCubit cubit = TodayCubit();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 812),
+              builder: (BuildContext context, Widget? child) => Scaffold(
+                body: BlocProvider<TodayCubit>.value(
+                  value: cubit,
+                  child: const AddTantrumsUpdateSheet(),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Verify DraggableScrollableSheet is used and configured properly
+        final Finder sheetFinder = find.byType(DraggableScrollableSheet);
+        expect(sheetFinder, findsOneWidget);
+        final DraggableScrollableSheet sheetWidget = tester
+            .widget<DraggableScrollableSheet>(sheetFinder);
+        expect(sheetWidget.initialChildSize, equals(0.94));
+        expect(sheetWidget.minChildSize, equals(0.4));
+        expect(sheetWidget.maxChildSize, equals(0.96));
+        expect(sheetWidget.expand, isFalse);
+
+        // 2. Verify POSSIBLE TRIGGER is left-aligned with bold weight
+        final Finder triggerTextFinder = find.text('POSSIBLE TRIGGER');
+        expect(triggerTextFinder, findsOneWidget);
+        final Text triggerTextWidget = tester.widget<Text>(triggerTextFinder);
+        expect(triggerTextWidget.textAlign, equals(TextAlign.start));
+        expect(triggerTextWidget.style?.fontWeight, equals(FontWeight.bold));
+
+        // 3. Verify INTENSITY header has bold weight and left alignment
+        final Finder intensityTextFinder = find.text('INTENSITY');
+        expect(intensityTextFinder, findsOneWidget);
+        final Text intensityTextWidget = tester.widget<Text>(
+          intensityTextFinder,
+        );
+        expect(intensityTextWidget.textAlign, equals(TextAlign.start));
+        expect(intensityTextWidget.style?.fontWeight, equals(FontWeight.bold));
+      },
+    );
+  });
+
+  group('Journey Tab: 5 Feature Buttons & Flow Verification', () {
+    testWidgets(
+      'Renders all 5 Journey feature buttons properly with expected titles',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(750, 3000);
+        tester.view.devicePixelRatio = 2.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final JourneyCubit cubit = JourneyCubit();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 1500),
+              builder: (BuildContext context, Widget? child) => Scaffold(
+                body: BlocProvider<JourneyCubit>.value(
+                  value: cubit,
+                  child: const JourneyScreen(),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. 6-Week Sleep Journey
+        expect(find.text('6-Week Sleep Journey'), findsOneWidget);
+
+        // 2. Family timeline
+        expect(find.text('Family timeline'), findsOneWidget);
+
+        // 3. Saved guidance
+        expect(find.text('Saved guidance'), findsOneWidget);
+
+        // 4. Consistency recognition
+        expect(find.text('Consistency recognition'), findsOneWidget);
+
+        // 5. Guided mentorship
+        expect(find.text('Guided mentorship'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'SessionRequestConfirmationScreen Back to Journey button switches to tab index 2 and pops',
+      (WidgetTester tester) async {
+        final BaseCubit baseCubit = BaseCubit();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 812),
+              builder: (BuildContext context, Widget? child) =>
+                  MultiBlocProvider(
+                    providers: [
+                      BlocProvider<BaseCubit>.value(value: baseCubit),
+                      BlocProvider<SessionRequestConfirmationCubit>(
+                        create: (_) => SessionRequestConfirmationCubit(),
+                      ),
+                    ],
+                    child: Navigator(
+                      onGenerateRoute: (RouteSettings settings) {
+                        return MaterialPageRoute<void>(
+                          builder: (BuildContext ctx) => Scaffold(
+                            body: Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    ctx,
+                                    MaterialPageRoute<void>(
+                                      builder: (_) =>
+                                          const SessionRequestConfirmationScreen(
+                                            guideName: 'Dr. Sarah',
+                                          ),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Open Confirmation'),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Open SessionRequestConfirmationScreen
+        await tester.tap(find.text('Open Confirmation'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Request sent'), findsOneWidget);
+        expect(find.text('Back to Journey'), findsOneWidget);
+
+        // Tap "Back to Journey"
+        await tester.tap(find.text('Back to Journey'));
+        await tester.pumpAndSettle();
+
+        // Verify base cubit switched bottom navigation index to 2 (Journey)
+        expect(baseCubit.state.bottomNavigationIndex, equals(2));
+        // Verify it popped back to the root
+        expect(find.text('Open Confirmation'), findsOneWidget);
       },
     );
   });

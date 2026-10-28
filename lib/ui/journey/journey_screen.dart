@@ -385,7 +385,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   'Saved guidance'.appText(
-                    fontSize: 14.sp,
+                    fontSize: 16.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
@@ -432,8 +432,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
               ),
               child: Center(
                 child: Icon(
-                  Icons.timeline,
-                  color: Colors.orangeAccent,
+                  Icons.show_chart_rounded,
+                  color: primaryColor,
                   size: 24.sp,
                 ),
               ),
@@ -444,7 +444,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   'Family timeline'.appText(
-                    fontSize: 14.sp,
+                    fontSize: 16.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
@@ -508,7 +508,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   'Consistency recognition'.appText(
-                    fontSize: 14.sp,
+                    fontSize: 16.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
@@ -559,10 +559,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Center(
-                child: Icon(
-                  Icons.support_agent_rounded,
-                  color: secondaryColor,
-                  size: 24.sp,
+                child: Image.asset(
+                  Assets.v2.icons.icMentorshipBooking.path,
+                  width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
@@ -572,7 +573,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   'Guided mentorship'.appText(
-                    fontSize: 14.sp,
+                    fontSize: 16.sp,
                     color: greyColor9,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
