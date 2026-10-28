@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
@@ -45,12 +46,27 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
     final String childId = child?.reference?.id ?? '';
 
     List<TimelineEventModel> events = <TimelineEventModel>[];
+    int bedtimeShift = 0;
 
     if (childId.isNotEmpty) {
       final ApiResultStatus<List<TimelineEventModel>> result =
           await TodayLogRepo.instance.getTimelineEvents(childId);
       if (result is Data<List<TimelineEventModel>>) {
         events = result.data;
+      }
+
+      final ApiResultStatus<List<SleepLogModel>> sleepResult =
+          await TodayLogRepo.instance.getRecentSleepLogs(childId, limit: 14);
+      if (sleepResult is Data<List<SleepLogModel>> &&
+          sleepResult.data.length >= 2) {
+        final List<SleepLogModel> logs = sleepResult.data;
+        final SleepLogModel latest = logs.first;
+        final SleepLogModel oldest = logs.last;
+        final DateTime latestBt = latest.bedTime;
+        final DateTime oldestBt = oldest.bedTime;
+        final int latestMinutes = latestBt.hour * 60 + latestBt.minute;
+        final int oldestMinutes = oldestBt.hour * 60 + oldestBt.minute;
+        bedtimeShift = (oldestMinutes - latestMinutes).clamp(-120, 120);
       }
     }
 
@@ -80,7 +96,7 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
       filteredEvents: filtered,
       child: child,
       weeksWithLovingBrain: weeks,
-      averageBedtimeShiftMinutes: 0,
+      averageBedtimeShiftMinutes: bedtimeShift,
       fetchStatus: const ApiResultStatus.data(data: null),
     );
   }

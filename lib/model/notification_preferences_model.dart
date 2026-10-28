@@ -22,6 +22,8 @@ abstract class NotificationPreferencesModel
     @Default(true) bool weeklyReview,
     @Default('21:00') String quietHoursStart,
     @Default('07:00') String quietHoursEnd,
+    @Default('7:15 PM') String sleepReminderTime,
+    @Default('8:30 PM') String checkInReminderTime,
     @Default(3) int maxDailyCap,
   }) = _NotificationPreferencesModel;
 

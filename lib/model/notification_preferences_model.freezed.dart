@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NotificationPreferencesModel {
 
- bool get sleepReminders; bool get checkInReminders; bool get mentorshipUpdates; bool get weeklyReview; String get quietHoursStart; String get quietHoursEnd; int get maxDailyCap;
+ bool get sleepReminders; bool get checkInReminders; bool get mentorshipUpdates; bool get weeklyReview; String get quietHoursStart; String get quietHoursEnd; String get sleepReminderTime; String get checkInReminderTime; int get maxDailyCap;
 /// Create a copy of NotificationPreferencesModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $NotificationPreferencesModelCopyWith<NotificationPreferencesModel> get copyWith
 @override
 bool operator ==(Object other) {
   final _this = this as NotificationPreferencesModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationPreferencesModel&&(identical(other.sleepReminders, _this.sleepReminders) || other.sleepReminders == _this.sleepReminders)&&(identical(other.checkInReminders, _this.checkInReminders) || other.checkInReminders == _this.checkInReminders)&&(identical(other.mentorshipUpdates, _this.mentorshipUpdates) || other.mentorshipUpdates == _this.mentorshipUpdates)&&(identical(other.weeklyReview, _this.weeklyReview) || other.weeklyReview == _this.weeklyReview)&&(identical(other.quietHoursStart, _this.quietHoursStart) || other.quietHoursStart == _this.quietHoursStart)&&(identical(other.quietHoursEnd, _this.quietHoursEnd) || other.quietHoursEnd == _this.quietHoursEnd)&&(identical(other.maxDailyCap, _this.maxDailyCap) || other.maxDailyCap == _this.maxDailyCap));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationPreferencesModel&&(identical(other.sleepReminders, _this.sleepReminders) || other.sleepReminders == _this.sleepReminders)&&(identical(other.checkInReminders, _this.checkInReminders) || other.checkInReminders == _this.checkInReminders)&&(identical(other.mentorshipUpdates, _this.mentorshipUpdates) || other.mentorshipUpdates == _this.mentorshipUpdates)&&(identical(other.weeklyReview, _this.weeklyReview) || other.weeklyReview == _this.weeklyReview)&&(identical(other.quietHoursStart, _this.quietHoursStart) || other.quietHoursStart == _this.quietHoursStart)&&(identical(other.quietHoursEnd, _this.quietHoursEnd) || other.quietHoursEnd == _this.quietHoursEnd)&&(identical(other.sleepReminderTime, _this.sleepReminderTime) || other.sleepReminderTime == _this.sleepReminderTime)&&(identical(other.checkInReminderTime, _this.checkInReminderTime) || other.checkInReminderTime == _this.checkInReminderTime)&&(identical(other.maxDailyCap, _this.maxDailyCap) || other.maxDailyCap == _this.maxDailyCap));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as NotificationPreferencesModel;
-  return Object.hash(runtimeType,_this.sleepReminders,_this.checkInReminders,_this.mentorshipUpdates,_this.weeklyReview,_this.quietHoursStart,_this.quietHoursEnd,_this.maxDailyCap);
+  return Object.hash(runtimeType,_this.sleepReminders,_this.checkInReminders,_this.mentorshipUpdates,_this.weeklyReview,_this.quietHoursStart,_this.quietHoursEnd,_this.sleepReminderTime,_this.checkInReminderTime,_this.maxDailyCap);
 }
 
 @override
 String toString() {
   final _this = this as NotificationPreferencesModel;
-  return 'NotificationPreferencesModel(sleepReminders: ${_this.sleepReminders}, checkInReminders: ${_this.checkInReminders}, mentorshipUpdates: ${_this.mentorshipUpdates}, weeklyReview: ${_this.weeklyReview}, quietHoursStart: ${_this.quietHoursStart}, quietHoursEnd: ${_this.quietHoursEnd}, maxDailyCap: ${_this.maxDailyCap})';
+  return 'NotificationPreferencesModel(sleepReminders: ${_this.sleepReminders}, checkInReminders: ${_this.checkInReminders}, mentorshipUpdates: ${_this.mentorshipUpdates}, weeklyReview: ${_this.weeklyReview}, quietHoursStart: ${_this.quietHoursStart}, quietHoursEnd: ${_this.quietHoursEnd}, sleepReminderTime: ${_this.sleepReminderTime}, checkInReminderTime: ${_this.checkInReminderTime}, maxDailyCap: ${_this.maxDailyCap})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $NotificationPreferencesModelCopyWith<$Res>  {
   factory $NotificationPreferencesModelCopyWith(NotificationPreferencesModel value, $Res Function(NotificationPreferencesModel) _then) = _$NotificationPreferencesModelCopyWithImpl;
 @useResult
 $Res call({
- bool sleepReminders, bool checkInReminders, bool mentorshipUpdates, bool weeklyReview, String quietHoursStart, String quietHoursEnd, int maxDailyCap
+ bool sleepReminders, bool checkInReminders, bool mentorshipUpdates, bool weeklyReview, String quietHoursStart, String quietHoursEnd, String sleepReminderTime, String checkInReminderTime, int maxDailyCap
 });
 
 
@@ -71,7 +71,7 @@ class _$NotificationPreferencesModelCopyWithImpl<$Res>
 
 /// Create a copy of NotificationPreferencesModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? sleepReminders = null,Object? checkInReminders = null,Object? mentorshipUpdates = null,Object? weeklyReview = null,Object? quietHoursStart = null,Object? quietHoursEnd = null,Object? maxDailyCap = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? sleepReminders = null,Object? checkInReminders = null,Object? mentorshipUpdates = null,Object? weeklyReview = null,Object? quietHoursStart = null,Object? quietHoursEnd = null,Object? sleepReminderTime = null,Object? checkInReminderTime = null,Object? maxDailyCap = null,}) {
   return _then(NotificationPreferencesModel(
 sleepReminders: null == sleepReminders ? _self.sleepReminders : sleepReminders // ignore: cast_nullable_to_non_nullable
 as bool,checkInReminders: null == checkInReminders ? _self.checkInReminders : checkInReminders // ignore: cast_nullable_to_non_nullable
@@ -79,6 +79,8 @@ as bool,mentorshipUpdates: null == mentorshipUpdates ? _self.mentorshipUpdates :
 as bool,weeklyReview: null == weeklyReview ? _self.weeklyReview : weeklyReview // ignore: cast_nullable_to_non_nullable
 as bool,quietHoursStart: null == quietHoursStart ? _self.quietHoursStart : quietHoursStart // ignore: cast_nullable_to_non_nullable
 as String,quietHoursEnd: null == quietHoursEnd ? _self.quietHoursEnd : quietHoursEnd // ignore: cast_nullable_to_non_nullable
+as String,sleepReminderTime: null == sleepReminderTime ? _self.sleepReminderTime : sleepReminderTime // ignore: cast_nullable_to_non_nullable
+as String,checkInReminderTime: null == checkInReminderTime ? _self.checkInReminderTime : checkInReminderTime // ignore: cast_nullable_to_non_nullable
 as String,maxDailyCap: null == maxDailyCap ? _self.maxDailyCap : maxDailyCap // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -165,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool sleepReminders,  bool checkInReminders,  bool mentorshipUpdates,  bool weeklyReview,  String quietHoursStart,  String quietHoursEnd,  int maxDailyCap)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool sleepReminders,  bool checkInReminders,  bool mentorshipUpdates,  bool weeklyReview,  String quietHoursStart,  String quietHoursEnd,  String sleepReminderTime,  String checkInReminderTime,  int maxDailyCap)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationPreferencesModel() when $default != null:
-return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpdates,_that.weeklyReview,_that.quietHoursStart,_that.quietHoursEnd,_that.maxDailyCap);case _:
+return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpdates,_that.weeklyReview,_that.quietHoursStart,_that.quietHoursEnd,_that.sleepReminderTime,_that.checkInReminderTime,_that.maxDailyCap);case _:
   return orElse();
 
 }
@@ -186,10 +188,10 @@ return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpda
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool sleepReminders,  bool checkInReminders,  bool mentorshipUpdates,  bool weeklyReview,  String quietHoursStart,  String quietHoursEnd,  int maxDailyCap)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool sleepReminders,  bool checkInReminders,  bool mentorshipUpdates,  bool weeklyReview,  String quietHoursStart,  String quietHoursEnd,  String sleepReminderTime,  String checkInReminderTime,  int maxDailyCap)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationPreferencesModel():
-return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpdates,_that.weeklyReview,_that.quietHoursStart,_that.quietHoursEnd,_that.maxDailyCap);case _:
+return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpdates,_that.weeklyReview,_that.quietHoursStart,_that.quietHoursEnd,_that.sleepReminderTime,_that.checkInReminderTime,_that.maxDailyCap);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +208,10 @@ return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpda
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool sleepReminders,  bool checkInReminders,  bool mentorshipUpdates,  bool weeklyReview,  String quietHoursStart,  String quietHoursEnd,  int maxDailyCap)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool sleepReminders,  bool checkInReminders,  bool mentorshipUpdates,  bool weeklyReview,  String quietHoursStart,  String quietHoursEnd,  String sleepReminderTime,  String checkInReminderTime,  int maxDailyCap)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationPreferencesModel() when $default != null:
-return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpdates,_that.weeklyReview,_that.quietHoursStart,_that.quietHoursEnd,_that.maxDailyCap);case _:
+return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpdates,_that.weeklyReview,_that.quietHoursStart,_that.quietHoursEnd,_that.sleepReminderTime,_that.checkInReminderTime,_that.maxDailyCap);case _:
   return null;
 
 }
@@ -221,7 +223,7 @@ return $default(_that.sleepReminders,_that.checkInReminders,_that.mentorshipUpda
 @JsonSerializable()
 
 class _NotificationPreferencesModel extends NotificationPreferencesModel {
-  const _NotificationPreferencesModel({this.sleepReminders = true, this.checkInReminders = true, this.mentorshipUpdates = false, this.weeklyReview = true, this.quietHoursStart = '21:00', this.quietHoursEnd = '07:00', this.maxDailyCap = 3}): super._();
+  const _NotificationPreferencesModel({this.sleepReminders = true, this.checkInReminders = true, this.mentorshipUpdates = false, this.weeklyReview = true, this.quietHoursStart = '21:00', this.quietHoursEnd = '07:00', this.sleepReminderTime = '7:15 PM', this.checkInReminderTime = '8:30 PM', this.maxDailyCap = 3}): super._();
   factory _NotificationPreferencesModel.fromJson(Map<String, dynamic> json) => _$NotificationPreferencesModelFromJson(json);
 
 @override@JsonKey() final  bool sleepReminders;
@@ -230,6 +232,8 @@ class _NotificationPreferencesModel extends NotificationPreferencesModel {
 @override@JsonKey() final  bool weeklyReview;
 @override@JsonKey() final  String quietHoursStart;
 @override@JsonKey() final  String quietHoursEnd;
+@override@JsonKey() final  String sleepReminderTime;
+@override@JsonKey() final  String checkInReminderTime;
 @override@JsonKey() final  int maxDailyCap;
 
 /// Create a copy of NotificationPreferencesModel
@@ -245,18 +249,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationPreferencesModel&&(identical(other.sleepReminders, sleepReminders) || other.sleepReminders == sleepReminders)&&(identical(other.checkInReminders, checkInReminders) || other.checkInReminders == checkInReminders)&&(identical(other.mentorshipUpdates, mentorshipUpdates) || other.mentorshipUpdates == mentorshipUpdates)&&(identical(other.weeklyReview, weeklyReview) || other.weeklyReview == weeklyReview)&&(identical(other.quietHoursStart, quietHoursStart) || other.quietHoursStart == quietHoursStart)&&(identical(other.quietHoursEnd, quietHoursEnd) || other.quietHoursEnd == quietHoursEnd)&&(identical(other.maxDailyCap, maxDailyCap) || other.maxDailyCap == maxDailyCap));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationPreferencesModel&&(identical(other.sleepReminders, sleepReminders) || other.sleepReminders == sleepReminders)&&(identical(other.checkInReminders, checkInReminders) || other.checkInReminders == checkInReminders)&&(identical(other.mentorshipUpdates, mentorshipUpdates) || other.mentorshipUpdates == mentorshipUpdates)&&(identical(other.weeklyReview, weeklyReview) || other.weeklyReview == weeklyReview)&&(identical(other.quietHoursStart, quietHoursStart) || other.quietHoursStart == quietHoursStart)&&(identical(other.quietHoursEnd, quietHoursEnd) || other.quietHoursEnd == quietHoursEnd)&&(identical(other.sleepReminderTime, sleepReminderTime) || other.sleepReminderTime == sleepReminderTime)&&(identical(other.checkInReminderTime, checkInReminderTime) || other.checkInReminderTime == checkInReminderTime)&&(identical(other.maxDailyCap, maxDailyCap) || other.maxDailyCap == maxDailyCap));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,sleepReminders,checkInReminders,mentorshipUpdates,weeklyReview,quietHoursStart,quietHoursEnd,maxDailyCap);
+    return Object.hash(runtimeType,sleepReminders,checkInReminders,mentorshipUpdates,weeklyReview,quietHoursStart,quietHoursEnd,sleepReminderTime,checkInReminderTime,maxDailyCap);
 }
 
 @override
 String toString() {
-    return 'NotificationPreferencesModel(sleepReminders: $sleepReminders, checkInReminders: $checkInReminders, mentorshipUpdates: $mentorshipUpdates, weeklyReview: $weeklyReview, quietHoursStart: $quietHoursStart, quietHoursEnd: $quietHoursEnd, maxDailyCap: $maxDailyCap)';
+    return 'NotificationPreferencesModel(sleepReminders: $sleepReminders, checkInReminders: $checkInReminders, mentorshipUpdates: $mentorshipUpdates, weeklyReview: $weeklyReview, quietHoursStart: $quietHoursStart, quietHoursEnd: $quietHoursEnd, sleepReminderTime: $sleepReminderTime, checkInReminderTime: $checkInReminderTime, maxDailyCap: $maxDailyCap)';
 }
 
 
@@ -267,7 +271,7 @@ abstract mixin class _$NotificationPreferencesModelCopyWith<$Res> implements $No
   factory _$NotificationPreferencesModelCopyWith(_NotificationPreferencesModel value, $Res Function(_NotificationPreferencesModel) _then) = __$NotificationPreferencesModelCopyWithImpl;
 @override @useResult
 $Res call({
- bool sleepReminders, bool checkInReminders, bool mentorshipUpdates, bool weeklyReview, String quietHoursStart, String quietHoursEnd, int maxDailyCap
+ bool sleepReminders, bool checkInReminders, bool mentorshipUpdates, bool weeklyReview, String quietHoursStart, String quietHoursEnd, String sleepReminderTime, String checkInReminderTime, int maxDailyCap
 });
 
 
@@ -284,7 +288,7 @@ class __$NotificationPreferencesModelCopyWithImpl<$Res>
 
 /// Create a copy of NotificationPreferencesModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? sleepReminders = null,Object? checkInReminders = null,Object? mentorshipUpdates = null,Object? weeklyReview = null,Object? quietHoursStart = null,Object? quietHoursEnd = null,Object? maxDailyCap = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? sleepReminders = null,Object? checkInReminders = null,Object? mentorshipUpdates = null,Object? weeklyReview = null,Object? quietHoursStart = null,Object? quietHoursEnd = null,Object? sleepReminderTime = null,Object? checkInReminderTime = null,Object? maxDailyCap = null,}) {
   return _then(_NotificationPreferencesModel(
 sleepReminders: null == sleepReminders ? _self.sleepReminders : sleepReminders // ignore: cast_nullable_to_non_nullable
 as bool,checkInReminders: null == checkInReminders ? _self.checkInReminders : checkInReminders // ignore: cast_nullable_to_non_nullable
@@ -292,6 +296,8 @@ as bool,mentorshipUpdates: null == mentorshipUpdates ? _self.mentorshipUpdates :
 as bool,weeklyReview: null == weeklyReview ? _self.weeklyReview : weeklyReview // ignore: cast_nullable_to_non_nullable
 as bool,quietHoursStart: null == quietHoursStart ? _self.quietHoursStart : quietHoursStart // ignore: cast_nullable_to_non_nullable
 as String,quietHoursEnd: null == quietHoursEnd ? _self.quietHoursEnd : quietHoursEnd // ignore: cast_nullable_to_non_nullable
+as String,sleepReminderTime: null == sleepReminderTime ? _self.sleepReminderTime : sleepReminderTime // ignore: cast_nullable_to_non_nullable
+as String,checkInReminderTime: null == checkInReminderTime ? _self.checkInReminderTime : checkInReminderTime // ignore: cast_nullable_to_non_nullable
 as String,maxDailyCap: null == maxDailyCap ? _self.maxDailyCap : maxDailyCap // ignore: cast_nullable_to_non_nullable
 as int,
   ));

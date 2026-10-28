@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Terms of Use & Conditions | Loving Brain</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #F06D4D;
+            --primary-light: #FFF0E5;
+            --primary-glow: rgba(240, 109, 77, 0.18);
+            --secondary: #665FCE;
+            --secondary-light: #F3F2FF;
+            --secondary-glow: rgba(102, 95, 206, 0.16);
+            --dark-navy: #212E5A;
+            --dark-slate: #2D3142;
+            --body-text: #495057;
+            --muted-text: #717A8A;
+            --bg-paper: #FEF8F4;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(240, 109, 77, 0.12);
+            --card-shadow: 0 16px 40px rgba(33, 46, 90, 0.05);
+            --warning: #D97706;
+            --warning-light: #FEF3E2;
+            --info: #0284C7;
+            --info-light: #E0F2FE;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--body-text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Ambient Glowing Background Blobs */
+        .ambient-blob-1 {
+            position: fixed;
+            top: -120px;
+            left: -100px;
+            width: 440px;
+            height: 440px;
+            background: radial-gradient(circle, var(--secondary-glow) 0%, rgba(254, 248, 244, 0) 70%);
+            border-radius: 50%;
+            filter: blur(65px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-blob-2 {
+            position: fixed;
+            bottom: -100px;
+            right: -80px;
+            width: 460px;
+            height: 460px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, rgba(254, 248, 244, 0) 70%);
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Top Bar & Navigation Header */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(254, 248, 244, 0.88);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 100;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #8A85E6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(102, 95, 206, 0.3);
+        }
+
+        .brand-name {
+            font-family: 'Fraunces', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-navy);
+            letter-spacing: -0.3px;
+        }
+
+        .brand-tag {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .nav-switch {
+            display: flex;
+            background: rgba(33, 46, 90, 0.05);
+            padding: 4px;
+            border-radius: 24px;
+            gap: 4px;
+        }
+
+        .nav-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .nav-pill.active {
+            background: white;
+            color: var(--dark-navy);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-pill:not(.active) {
+            color: var(--muted-text);
+        }
+
+        .nav-pill:not(.active):hover {
+            color: var(--secondary);
+        }
+
+        /* Main Container */
+        .page-container {
+            position: relative;
+            z-index: 1;
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 24px 20px 80px 20px;
+        }
+
+        /* In-App Spacing Helper (for Floating Flutter Back Button) */
+        .webview-header-spacer {
+            height: 48px;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(240, 109, 77, 0.12);
+        }
+
+        .version-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--secondary-light);
+            color: var(--secondary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(102, 95, 206, 0.25);
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(28px, 5vw, 38px);
+            font-weight: 800;
+            color: var(--dark-navy);
+            line-height: 1.25;
+            letter-spacing: -0.6px;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: var(--muted-text);
+            max-width: 620px;
+            margin: 0 auto 10px auto;
+        }
+
+        .effective-date {
+            font-size: 13px;
+            color: var(--muted-text);
+            font-weight: 500;
+        }
+
+        /* Card styling */
+        .content-card {
+            background: var(--card-bg);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            padding: 36px 32px;
+            margin-bottom: 28px;
+        }
+
+        h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-top: 36px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        h2:first-of-type {
+            margin-top: 10px;
+        }
+
+        .h2-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--secondary-light);
+            color: var(--secondary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-slate);
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 15px;
+            color: var(--body-text);
+            margin-bottom: 16px;
+            line-height: 1.75;
+        }
+
+        /* Callout Boxes */
+        .callout-box {
+            border-radius: 20px;
+            padding: 20px 22px;
+            margin: 22px 0;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .callout-box.medical {
+            background: var(--warning-light);
+            border: 1.5px solid rgba(217, 119, 6, 0.3);
+        }
+
+        .callout-box.medical .callout-icon {
+            background: var(--warning);
+            color: white;
+        }
+
+        .callout-box.subscription {
+            background: var(--primary-light);
+            border: 1.5px solid rgba(240, 109, 77, 0.25);
+        }
+
+        .callout-box.subscription .callout-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .callout-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .callout-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-bottom: 4px;
+        }
+
+        .callout-body {
+            font-size: 14px;
+            color: var(--dark-slate);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+            margin: 14px 0 20px 0;
+        }
+
+        li {
+            position: relative;
+            padding-left: 26px;
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: var(--body-text);
+        }
+
+        li::before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            top: 0;
+            color: var(--secondary);
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        li strong {
+            color: var(--dark-navy);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .page-footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--muted-text);
+            font-size: 13px;
+            border-top: 1px solid var(--card-border);
+            margin-top: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 640px) {
+            .top-nav {
+                padding: 10px 14px;
+            }
+            .brand-name {
+                font-size: 16px;
+            }
+            .brand-tag {
+                display: none;
+            }
+            .page-container {
+                padding: 16px 14px 60px 14px;
+            }
+            .content-card {
+                padding: 24px 18px;
+                border-radius: 22px;
+            }
+            .callout-box {
+                padding: 16px;
+                border-radius: 16px;
+                gap: 12px;
+            }
+            .nav-pill {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Hide any injected third-party badges */
+        [data-netlify-badge],
+        .netlify-badge,
+        #netlify-badge,
+        [class*="netlify-badge"],
+        iframe[src*="netlify"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glowing Background Blobs -->
+    <div class="ambient-blob-1"></div>
+    <div class="ambient-blob-2"></div>
+
+    <!-- Top Navigation Header -->
+    <nav class="top-nav">
+        <a href="index.html" class="brand-badge">
+            <div class="brand-icon">♥</div>
+            <span class="brand-name">Loving Brain</span>
+            <span class="brand-tag">V2</span>
+        </a>
+        <div class="nav-switch">
+            <a href="privacy_policy.html" class="nav-pill">Privacy Policy</a>
+            <a href="terms_and_conditions.html" class="nav-pill active">Terms of Use</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <!-- Spacer for mobile WebView floating back icon -->
+        <div class="webview-header-spacer"></div>
+
+        <header class="header-section">
+            <div class="version-badge">Loving Brain V2 · Official User Agreement</div>
+            <h1>Terms & Conditions of Use</h1>
+            <p class="subtitle">Please read these terms carefully before accessing or using the Loving Brain mobile application and services.</p>
+            <div class="effective-date">Last Updated: October 2026 · Effective Immediately</div>
+        </header>
+
+        <!-- Medical & Emergency Boundary Callout -->
+        <div class="callout-box medical">
+            <div class="callout-icon">⚠️</div>
+            <div>
+                <div class="callout-title">Critical Health & Emergency Disclaimer</div>
+                <div class="callout-body">
+                    <strong>Loving Brain is NOT a medical device, pediatric clinic, or emergency response system.</strong> Our Energy Bridge forecasts and Brainy AI coaching are educational wellness tools designed to support everyday parenting. They do NOT replace licensed medical advice, diagnosis, or clinical psychiatric care. In any medical or mental health emergency, immediately dial 911 (or your local emergency services) or visit an emergency room.
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <h2><span class="h2-number">1</span> Agreement to Terms & Eligibility</h2>
+            <p>
+                By downloading, accessing, or subscribing to <strong>Loving Brain</strong> ("App," "Service," "we," "our," or "us"), you agree to be legally bound by these Terms and Conditions of Use ("Terms") and our <a href="privacy_policy.html" style="color: var(--secondary); font-weight: 600;">Privacy Policy</a>.
+            </p>
+            <p>
+                You must be at least 18 years old (or the legal age of majority in your jurisdiction) to create an account and register child profiles. By using the Service, you represent and warrant that you are the parent, legal guardian, or duly authorized caregiver of any child for whom you record information.
+            </p>
+
+            <h2><span class="h2-number">2</span> Non-Clinical Scope & Nature of Advice</h2>
+            <p>
+                Loving Brain combines parent-logged routines (sleep, tantrums, mood, meals) with computational algorithms (the <strong>Energy Bridge</strong>) and conversational guidance (<strong>Brainy AI</strong>) to help parents anticipate settling windows and practice co-regulation.
+            </p>
+            <ul>
+                <li><strong>No Doctor-Patient Relationship:</strong> Using Loving Brain does not establish a doctor-patient, therapy, or clinical advisory relationship.</li>
+                <li><strong>Honest Uncertainty Principle:</strong> Predictions and settling windows are calculated estimates based on user inputs. We do not guarantee specific behavioral or sleep outcomes.</li>
+                <li><strong>Pediatric Consultation:</strong> Always consult your pediatrician or healthcare professional regarding persistent sleep disturbances, fever, physical developmental concerns, or behavioral health issues.</li>
+            </ul>
+
+            <!-- In-App Purchase & Subscription Callout -->
+            <div class="callout-box subscription">
+                <div class="callout-icon">✨</div>
+                <div>
+                    <div class="callout-title">Loving Brain Premium Subscriptions</div>
+                    <div class="callout-body">
+                        Subscriptions automatically renew unless cancelled at least 24 hours prior to the end of the current billing period. Manage or cancel your subscription directly through your Apple ID or Google Play Account settings.
+                    </div>
+                </div>
+            </div>
+
+            <h2><span class="h2-number">3</span> In-App Purchases, Billing & Auto-Renewal</h2>
+            <p>
+                Loving Brain offers free tier access alongside auto-renewing premium subscription plans (e.g., <strong>Monthly Plan</strong> and <strong>Yearly Plan</strong>) granting access to advanced Energy Bridge predictions, unlimited Brainy AI coaching, and multi-caregiver family sharing:
+            </p>
+            <ul>
+                <li><strong>Payment Processing:</strong> Payment is charged to your Apple ID or Google Play Account upon purchase confirmation or after any applicable free trial period ends.</li>
+                <li><strong>Automatic Renewal:</strong> Subscriptions renew automatically at the selected price and duration unless auto-renew is disabled in your App Store / Google Play account settings at least 24 hours before the current period expires.</li>
+                <li><strong>Managing Subscriptions:</strong> You can manage or cancel your subscription at any time via your device's account settings (iOS: Settings → Apple ID → Subscriptions; Android: Google Play → Subscriptions). Uninstalling the app does not cancel your subscription.</li>
+                <li><strong>Refunds:</strong> All purchases and refund requests are governed exclusively by Apple App Store or Google Play Store policies. Loving Brain does not process refunds directly.</li>
+            </ul>
+
+            <h2><span class="h2-number">4</span> User Accounts & Family Sharing Access</h2>
+            <p>
+                As the primary account holder:
+            </p>
+            <ul>
+                <li>You are solely responsible for maintaining the confidentiality of your login credentials and for all activities that occur under your account.</li>
+                <li>You may invite co-parents and trusted caregivers (e.g., nannies, grandparents) into your household. You agree only to invite individuals whom you personally trust with your child’s routine data.</li>
+                <li>You acknowledge that while caregivers can view routine logs, our <strong>Strict Privacy Invariant</strong> logically ensures your personal parent reflections and journal entries remain strictly inaccessible to invited members.</li>
+            </ul>
+
+            <h2><span class="h2-number">5</span> Acceptable Use & Conduct</h2>
+            <p>
+                You agree to use Loving Brain solely for legitimate, non-commercial parenting and caregiving purposes. You expressly agree not to:
+            </p>
+            <ul>
+                <li>Submit unlawful, defamatory, harassing, or abusive content to Brainy AI or support channels.</li>
+                <li>Reverse-engineer, decompile, extract, or attempt to derive the source code or proprietary prediction algorithms of the Energy Bridge engine.</li>
+                <li>Use automated scripts, bots, or scrapers to extract data from our application or infrastructure.</li>
+                <li>Impersonate any person or misrepresent your legal guardianship over a child profile.</li>
+            </ul>
+
+            <h2><span class="h2-number">6</span> Guided Mentorship & Programs</h2>
+            <p>
+                Loving Brain may offer access to structured parenting programs and one-on-one sessions with certified parenting mentors:
+            </p>
+            <ul>
+                <li>Mentorship sessions are designed for educational guidance, routine coaching, and parental support. They do not constitute psychotherapy or medical intervention.</li>
+                <li>Session cancellations or rescheduling must adhere to the notice periods specified in the booking flow.</li>
+            </ul>
+
+            <h2><span class="h2-number">7</span> Intellectual Property Rights</h2>
+            <p>
+                All rights, title, and interest in and to Loving Brain—including the software, designs, illustrations, brand trademarks, calming audio routines, and Energy Bridge computational logic—remain the exclusive intellectual property of Loving Brain and its licensors.
+            </p>
+
+            <h2><span class="h2-number">8</span> Termination & Account Deletion (Screen 62)</h2>
+            <p>
+                You may terminate your agreement with us at any time by permanently deleting your account inside the application under <strong>Profile → Privacy & Data → Delete Account</strong>.
+            </p>
+            <p>
+                Upon account deletion, all child data, routine logs, AI chat records, and caregiver connections will be permanently purged in accordance with our Privacy Policy. We also reserve the right to suspend or terminate accounts that breach these Terms.
+            </p>
+
+            <h2><span class="h2-number">9</span> Disclaimer of Warranties & Limitation of Liability</h2>
+            <p>
+                THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. TO THE MAXIMUM EXTENT PERMITTED BY LAW, LOVING BRAIN DISCLAIMS ALL WARRANTIES, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+            </p>
+            <p>
+                IN NO EVENT SHALL LOVING BRAIN, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING OUT OF YOUR USE OF OR INABILITY TO USE THE SERVICE.
+            </p>
+
+            <h2><span class="h2-number">10</span> Governing Law & Contact</h2>
+            <p>
+                These Terms are governed by and construed in accordance with the laws of the applicable jurisdiction, without regard to conflict of law principles.
+            </p>
+            <p>
+                For legal inquiries, terms clarification, or support requests, please contact:
+            </p>
+            <p style="font-weight: 600; color: var(--secondary);">
+                📧 <a href="mailto:support@lovingbrain.com" style="color: var(--secondary); text-decoration: underline;">support@lovingbrain.com</a>
+            </p>
+        </div>
+
+        <footer class="page-footer">
+            <div class="footer-links">
+                <a href="privacy_policy.html" class="footer-link">Privacy Policy</a>
+                <span>•</span>
+                <a href="terms_and_conditions.html" class="footer-link">Terms of Use</a>
+                <span>•</span>
+                <a href="mailto:support@lovingbrain.com" class="footer-link">Support Contact</a>
+            </div>
+            <p>© 2026 Loving Brain. All rights reserved. Mindful parenting powered by empathy.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

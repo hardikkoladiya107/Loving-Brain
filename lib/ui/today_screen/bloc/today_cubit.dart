@@ -219,6 +219,7 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = child?.reference?.id ?? _resolveTargetChildId();
     List<SleepLogModel> sleepLogs = <SleepLogModel>[];
     HealthLogModel? todayHealthLog;
+    bool hasTantrumToday = false;
 
     if (childId.isNotEmpty) {
       final ApiResultStatus<List<SleepLogModel>> sleepResult =
@@ -241,6 +242,20 @@ class TodayCubit extends Cubit<TodayState> {
           }
         }
       }
+
+      final ApiResultStatus<List<TantrumLogModel>> tantrumResult =
+          await TodayLogRepo.instance.getRecentTantrumLogs(childId, limit: 5);
+      if (tantrumResult is Data<List<TantrumLogModel>>) {
+        final DateTime now = DateTime.now();
+        for (final TantrumLogModel t in tantrumResult.data) {
+          if (t.timestamp.year == now.year &&
+              t.timestamp.month == now.month &&
+              t.timestamp.day == now.day) {
+            hasTantrumToday = true;
+            break;
+          }
+        }
+      }
     }
 
     final SleepForecastResult forecast = EnergyBridgeSleepCalculator.calculate(
@@ -249,12 +264,26 @@ class TodayCubit extends Cubit<TodayState> {
       todayHealthLog: todayHealthLog,
     );
 
-    final TodayMode updatedMode =
-        (!forecast.hasPersonalLogs && state.mode == TodayMode.normal)
+    final bool hasSevereHealthIssue =
+        todayHealthLog != null &&
+        todayHealthLog.issues.any(
+          (String issue) =>
+              issue.toLowerCase().contains("fever") ||
+              issue.toLowerCase().contains("breath") ||
+              issue.toLowerCase().contains("illness"),
+        );
+
+    final bool isOvertiredOrDisrupted =
+        forecast.healthCaveat != null ||
+        forecast.subtitle.contains("nap ran about") ||
+        hasTantrumToday ||
+        hasSevereHealthIssue;
+
+    final TodayMode updatedMode = (!forecast.hasPersonalLogs)
         ? TodayMode.newParent
-        : (forecast.hasPersonalLogs && state.mode == TodayMode.newParent)
-        ? TodayMode.normal
-        : state.mode;
+        : (isOvertiredOrDisrupted
+              ? TodayMode.importantHeadsUp
+              : TodayMode.normal);
 
     final bool hasMultiDayPatterns = sleepLogs.length >= 3;
 

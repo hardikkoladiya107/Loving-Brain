@@ -137,7 +137,7 @@ class _TodayScreenState extends State<TodayScreen> {
                           const HeadsUpCard(),
                           SizedBox(height: 16.h),
                           AppButton(
-                            title: "Play audio",
+                            title: "View support",
                             onTap: () {
                               showViewSupportSheet(context);
                             },

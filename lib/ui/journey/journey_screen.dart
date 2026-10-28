@@ -71,28 +71,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
                     padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 140.h),
                     children: [
                       16.spaceH,
-                      GestureDetector(
-                        onTap: () {
-                          // Tap header to cycle modes for testing
-                          final JourneyCubit jCubit = context
-                              .read<JourneyCubit>();
-                          jCubit.cycleMode();
-                          if (jCubit.state.mode == JourneyMode.normal) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    const ConsistencyRecognitionScreen(),
-                              ),
-                            );
-                          }
-                        },
-                        child: 'Journey'.appText(
-                          fontSize: 28.sp,
-                          color: greyColor9,
-                          fraunces: true,
-                          textAlign: TextAlign.start,
-                        ),
+                      'Journey'.appText(
+                        fontSize: 28.sp,
+                        color: greyColor9,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
                       ),
                       8.spaceH,
                       'How things have been changing for your family.'.appText(

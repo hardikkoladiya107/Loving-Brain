@@ -23,6 +23,8 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         checkInEnabled: model.checkInReminders,
         mentorshipEnabled: model.mentorshipUpdates,
         weeklyReviewEnabled: model.weeklyReview,
+        sleepReminderTime: model.sleepReminderTime,
+        checkInReminderTime: model.checkInReminderTime,
         quietHoursStart: model.quietHoursStart,
         quietHoursEnd: model.quietHoursEnd,
         maxDailyCap: model.maxDailyCap,
@@ -35,6 +37,8 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         checkInEnabled: defaultModel.checkInReminders,
         mentorshipEnabled: defaultModel.mentorshipUpdates,
         weeklyReviewEnabled: defaultModel.weeklyReview,
+        sleepReminderTime: defaultModel.sleepReminderTime,
+        checkInReminderTime: defaultModel.checkInReminderTime,
         quietHoursStart: defaultModel.quietHoursStart,
         quietHoursEnd: defaultModel.quietHoursEnd,
         maxDailyCap: defaultModel.maxDailyCap,
@@ -53,6 +57,8 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     bool? checkInEnabled,
     bool? mentorshipEnabled,
     bool? weeklyReviewEnabled,
+    String? sleepReminderTime,
+    String? checkInReminderTime,
     String? quietHoursStart,
     String? quietHoursEnd,
     int? maxDailyCap,
@@ -65,6 +71,8 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         checkInEnabled: checkInEnabled ?? state.checkInEnabled,
         mentorshipEnabled: mentorshipEnabled ?? state.mentorshipEnabled,
         weeklyReviewEnabled: weeklyReviewEnabled ?? state.weeklyReviewEnabled,
+        sleepReminderTime: sleepReminderTime ?? state.sleepReminderTime,
+        checkInReminderTime: checkInReminderTime ?? state.checkInReminderTime,
         quietHoursStart: quietHoursStart ?? state.quietHoursStart,
         quietHoursEnd: quietHoursEnd ?? state.quietHoursEnd,
         maxDailyCap: maxDailyCap ?? state.maxDailyCap,
@@ -98,6 +106,16 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     await _persist();
   }
 
+  Future<void> updateSleepReminderTime(String time) async {
+    changeProps(sleepReminderTime: time);
+    await _persist();
+  }
+
+  Future<void> updateCheckInReminderTime(String time) async {
+    changeProps(checkInReminderTime: time);
+    await _persist();
+  }
+
   Future<void> updateQuietHours({String? start, String? end}) async {
     changeProps(
       quietHoursStart: start ?? state.quietHoursStart,
@@ -112,6 +130,8 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       checkInReminders: state.checkInEnabled,
       mentorshipUpdates: state.mentorshipEnabled,
       weeklyReview: state.weeklyReviewEnabled,
+      sleepReminderTime: state.sleepReminderTime,
+      checkInReminderTime: state.checkInReminderTime,
       quietHoursStart: state.quietHoursStart,
       quietHoursEnd: state.quietHoursEnd,
       maxDailyCap: state.maxDailyCap,

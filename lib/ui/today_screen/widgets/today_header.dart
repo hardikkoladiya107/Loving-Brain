@@ -87,26 +87,22 @@ class TodayHeader extends StatelessWidget {
           ],
         ),
         SizedBox(height: 16.h),
-        InkWell(
-          onTap: () => context.read<TodayCubit>().toggleMode(),
-          child: Row(
-            children: [
-              Icon(Icons.mood, color: Colors.orange, size: 20.sp),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: "${state.timeOfDayGreeting} ${state.parentName}!"
-                    .appText(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
-                      color: greyColor,
-                      letterSpacing: 1.2,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                    ),
+        Row(
+          children: [
+            Icon(Icons.mood, color: Colors.orange, size: 20.sp),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: "${state.timeOfDayGreeting} ${state.parentName}!".appText(
+                fontWeight: FontWeight.w700,
+                fontSize: 14.sp,
+                color: greyColor,
+                letterSpacing: 1.2,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );

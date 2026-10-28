@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/permission_helper.dart';
@@ -24,6 +25,50 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotificationsCubit>().init();
     });
+  }
+
+  Future<void> _pickReminderTime(
+    BuildContext context, {
+    required String currentTime,
+    required Function(String) onSelected,
+  }) async {
+    TimeOfDay initialTime = const TimeOfDay(hour: 19, minute: 15);
+    try {
+      final DateFormat format = DateFormat('h:mm a');
+      final DateTime dt = format.parse(currentTime);
+      initialTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
+    } catch (_) {}
+
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: primaryColor,
+              onPrimary: Colors.white,
+              surface: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null && context.mounted) {
+      final DateTime now = DateTime.now();
+      final DateTime dt = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        picked.hour,
+        picked.minute,
+      );
+      final String formatted = DateFormat('h:mm a').format(dt);
+      onSelected(formatted);
+    }
   }
 
   @override
@@ -162,7 +207,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             title: "Sleep reminders",
                             subtitle:
                                 "A nudge when the wind-down window is approaching",
-                            timePill: "7:15 PM",
+                            timePill: state.sleepReminderTime,
+                            onTimePillTap: () => _pickReminderTime(
+                              context,
+                              currentTime: state.sleepReminderTime,
+                              onSelected: (String time) =>
+                                  cubit.updateSleepReminderTime(time),
+                            ),
                             value: state.sleepEnabled,
                             onChanged: (bool val) async {
                               if (val) {
@@ -184,7 +235,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             title: "Check-in reminders",
                             subtitle:
                                 "One gentle prompt if nothing has been logged",
-                            timePill: "8:30 PM",
+                            timePill: state.checkInReminderTime,
+                            onTimePillTap: () => _pickReminderTime(
+                              context,
+                              currentTime: state.checkInReminderTime,
+                              onSelected: (String time) =>
+                                  cubit.updateCheckInReminderTime(time),
+                            ),
                             value: state.checkInEnabled,
                             onChanged: (bool val) async {
                               if (val) {
@@ -324,6 +381,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     required String title,
     required String subtitle,
     String? timePill,
+    VoidCallback? onTimePillTap,
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
@@ -360,30 +418,40 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                       if (timePill != null) ...[
                         12.spaceH,
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
-                            vertical: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3E5F5),
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.access_time,
-                                size: 14.sp,
-                                color: const Color(0xFF673AB7),
-                              ),
-                              6.spaceW,
-                              timePill.appText(
-                                fontSize: 12.sp,
-                                color: const Color(0xFF673AB7),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ],
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: onTimePillTap,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF3E5F5),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.access_time,
+                                  size: 14.sp,
+                                  color: const Color(0xFF673AB7),
+                                ),
+                                6.spaceW,
+                                timePill.appText(
+                                  fontSize: 12.sp,
+                                  color: const Color(0xFF673AB7),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                6.spaceW,
+                                Icon(
+                                  Icons.edit_outlined,
+                                  size: 12.sp,
+                                  color: const Color(0xFF673AB7),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],

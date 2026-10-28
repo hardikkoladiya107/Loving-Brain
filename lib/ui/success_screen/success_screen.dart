@@ -1,22 +1,26 @@
 import 'package:easy_localization/easy_localization.dart';
-import '../../generated/locale_keys.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
-class SucessScreen extends StatefulWidget {
-  const SucessScreen({super.key, required this.successText});
+/// Screen displayed upon successful action completion.
+/// Conforms to AGENTS.md §2, §3, and §6.
+class SuccessScreen extends StatefulWidget {
+  const SuccessScreen({super.key, required this.successText});
   final String successText;
 
   @override
-  State<SucessScreen> createState() => _SucessScreenState();
+  State<SuccessScreen> createState() => _SuccessScreenState();
 }
 
-class _SucessScreenState extends State<SucessScreen> {
+typedef SucessScreen = SuccessScreen;
+
+class _SuccessScreenState extends State<SuccessScreen> {
   @override
   Widget build(BuildContext context) {
     final double width = context.width;
@@ -31,7 +35,7 @@ class _SucessScreenState extends State<SucessScreen> {
               children: [
                 _appBar(),
                 Expanded(child: Center(child: _successCard(width))),
-                _doneButton().appPadding(left: 24, right: 24, bottom: 24),
+                _doneButton().appPadding(left: 20.w, right: 20.w, bottom: 24.h),
               ],
             ),
           ),
@@ -41,64 +45,48 @@ class _SucessScreenState extends State<SucessScreen> {
   }
 
   Widget _background() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: <Color>[
-            Color(0xFFF5F1FF),
-            Color(0xFFEAF8FF),
-            Color(0xFFFFF9EE),
-          ],
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          left: -150.w,
+          top: -150.h,
+          child: Container(
+            width: 400.w,
+            height: 400.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                  const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                ],
+                stops: const [0.0, 1.0],
+              ),
+            ),
+          ),
         ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: -70.h,
-            right: -60.w,
-            child: Container(
-              width: 180.w,
-              height: 180.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: primaryColor.withValues(alpha: 0.12),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -80.h,
-            left: -70.w,
-            child: Container(
-              width: 220.w,
-              height: 220.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: yellowButtonColor.withValues(alpha: 0.18),
-              ),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
   Widget _appBar() {
-    return Row(
-      children: <Widget>[
-        BaseButton(
-          child: Assets.icons.icBackIcon.image(
-            height: 36.w,
-            width: 36.w,
-            color: Colors.black.withValues(alpha: 0.82),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+          onTap: () => context.pop(),
+          child: Container(
+            padding: EdgeInsets.all(8.r),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.arrow_back, color: darkBlue, size: 24.sp),
           ),
-          onTap: () {
-            context.pop();
-          },
         ),
-      ],
-    ).appPadding(left: 20, top: 8, right: 20);
+      ),
+    );
   }
 
   Widget _successCard(double width) {
@@ -106,17 +94,13 @@ class _SucessScreenState extends State<SucessScreen> {
       width: width * 0.9,
       padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 26.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30.r),
-        color: Colors.white.withValues(alpha: 0.88),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.92),
-          width: 1.5.w,
-        ),
+        borderRadius: BorderRadius.circular(24.r),
+        color: Colors.white,
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: primaryColor.withValues(alpha: 0.12),
-            blurRadius: 26.r,
-            offset: Offset(0, 12.h),
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20.r,
+            offset: Offset(0, 10.h),
           ),
         ],
       ),
@@ -124,22 +108,21 @@ class _SucessScreenState extends State<SucessScreen> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Assets.images.imgSuccessCartoon.image(
-            width: 180.w,
+            width: 160.w,
             fit: BoxFit.contain,
           ),
-          10.spaceH,
+          16.spaceH,
           LocaleKeys.successMessage.tr().appText(
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-            color: primaryColor,
-            letterSpacing: 0.4,
+            fontSize: 26.sp,
+            fontWeight: FontWeight.bold,
+            color: darkBlue,
+            fraunces: true,
           ),
-          10.spaceH,
+          12.spaceH,
           widget.successText.appText(
-            fontSize: 16,
-            color: const Color(0xFF3A3A3A),
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.2,
+            fontSize: 15.sp,
+            color: greyColor,
+            fontWeight: FontWeight.w500,
             height: 1.5,
             textAlign: TextAlign.center,
           ),
@@ -149,36 +132,13 @@ class _SucessScreenState extends State<SucessScreen> {
   }
 
   Widget _doneButton() {
-    return BaseButton(
+    return AppButton(
+      title: LocaleKeys.done.tr(),
       onTap: () {
         context.pop();
       },
-      child: Container(
-        height: 54.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          gradient: const LinearGradient(
-            colors: <Color>[Color(0xFF9A66DB), Color(0xFF7E4CCF)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: primaryColor.withValues(alpha: 0.32),
-              blurRadius: 14.r,
-              offset: Offset(0, 8.h),
-            ),
-          ],
-        ),
-        child: Center(
-          child: LocaleKeys.done.tr().appText(
-            fontSize: 17,
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.2,
-          ),
-        ),
-      ),
+      backgroundColor: primaryColor,
+      textColor: Colors.white,
     );
   }
 }

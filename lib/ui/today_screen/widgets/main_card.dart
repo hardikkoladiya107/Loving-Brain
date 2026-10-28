@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -13,6 +14,30 @@ import '../bloc/today_state.dart';
 
 class MainCard extends StatelessWidget {
   const MainCard({super.key});
+
+  double _fractionForTime(String? timeStr, {double fallback = 0.5}) {
+    if (timeStr == null || timeStr.trim().isEmpty) return fallback;
+    try {
+      final DateFormat format12 = DateFormat('h:mm a');
+      final DateFormat format12NoPad = DateFormat('hh:mm a');
+      DateTime dt;
+      try {
+        dt = format12.parse(timeStr.trim());
+      } catch (_) {
+        dt = format12NoPad.parse(timeStr.trim());
+      }
+      final int totalMinutes = dt.hour * 60 + dt.minute;
+      const int scaleStartMinutes = 18 * 60; // 6:00 PM
+      const int scaleEndMinutes = 21 * 60; // 9:00 PM
+      const int scaleDuration = scaleEndMinutes - scaleStartMinutes; // 180 mins
+
+      final double fraction =
+          (totalMinutes - scaleStartMinutes) / scaleDuration;
+      return fraction.clamp(0.05, 0.95);
+    } catch (_) {
+      return fallback;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,48 +107,99 @@ class MainCard extends StatelessWidget {
           ],
         ),
         24.spaceH,
-        Stack(
-          alignment: AlignmentGeometry.center,
-          children: [
-            Container(
-              height: 12.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.r),
-                color: secondaryColor.withValues(alpha: 0.2),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final double trackWidth = constraints.maxWidth;
+            final double startFrac = _fractionForTime(
+              state.sleepForecastStart,
+              fallback: 0.35,
+            );
+            final double endFrac = _fractionForTime(
+              state.sleepForecastEnd,
+              fallback: 0.65,
+            );
+            final double bedtimeFrac = _fractionForTime(
+              state.bedtimeEstimate,
+              fallback: 0.5,
+            );
+
+            final double windowLeft = (startFrac * trackWidth).clamp(
+              0.0,
+              trackWidth,
+            );
+            final double windowRight = (endFrac * trackWidth).clamp(
+              windowLeft,
+              trackWidth,
+            );
+            final double windowWidth = (windowRight - windowLeft).clamp(
+              24.w,
+              trackWidth,
+            );
+
+            final double thumbLeft = ((bedtimeFrac * trackWidth) - 20.w).clamp(
+              0.0,
+              trackWidth - 40.w,
+            );
+
+            return SizedBox(
+              height: 40.h,
+              child: Stack(
+                alignment: Alignment.centerLeft,
                 children: [
+                  // Full background track
                   Container(
                     height: 12.h,
-                    width: 100.w,
+                    width: trackWidth,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50.r),
-                      color: secondaryColor,
+                      color: secondaryColor.withValues(alpha: 0.18),
+                    ),
+                  ),
+                  // Active predicted window range
+                  Positioned(
+                    left: windowLeft,
+                    width: windowWidth,
+                    child: Container(
+                      height: 12.h,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50.r),
+                        color: secondaryColor.withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
+                  // Bedtime Estimate Thumb Indicator
+                  Positioned(
+                    left: thumbLeft,
+                    child: Container(
+                      height: 40.w,
+                      width: 40.w,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: secondaryColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x33665FCE),
+                            blurRadius: 8,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Container(
+                          height: 28.w,
+                          width: 28.w,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            Container(
-              height: 40.h,
-              width: 40.w,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: secondaryColor,
-              ),
-              child: Center(
-                child: Container(
-                  height: 30.h,
-                  width: 30.w,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -116,18 +116,11 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                       ),
                     ),
                     24.spaceH,
-                    GestureDetector(
-                      onTap: () {
-                        context
-                            .read<MentorshipLandingCubit>()
-                            .toggleAvailability();
-                      },
-                      child: "Guided mentorship".appText(
-                        fontSize: 28.sp,
-                        color: greyColor9,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
+                    "Guided mentorship".appText(
+                      fontSize: 28.sp,
+                      color: greyColor9,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
                     ),
                     8.spaceH,
                     "Talk to our expert mentors who are deeply trained on LovingBrain methodologies and child psychology."

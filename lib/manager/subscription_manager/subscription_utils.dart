@@ -13,7 +13,7 @@ const String yearly = "com.app.lovingbrain.yearly";
 
 bool isForTest = true;
 
-List<String> kProductIds = [monthlyPlan, yearly];
+final List<String> kProductIds = <String>[monthlyPlan, yearly];
 
 String iosSubscriptionStatusUrl(String transactionID) {
   return isForTest
@@ -21,8 +21,10 @@ String iosSubscriptionStatusUrl(String transactionID) {
       : "https://api.storekit.itunes.apple.com/inApps/v1/transactions/$transactionID?status=1";
 }
 
-const String privacyPolicyUrl = "https://harmonious-moxie-ff5ad6.netlify.app";
-const String termsOfUseWebUrl = "https://chimerical-chimera-ccd130.netlify.app";
+const String privacyPolicyUrl =
+    "https://loving-brain-legal.netlify.app/privacy_policy.html";
+const String termsOfUseWebUrl =
+    "https://loving-brain-legal.netlify.app/terms_and_conditions.html";
 
 class SubsProductDetails {
   final String id;

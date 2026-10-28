@@ -2,12 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Privacy Policy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Privacy Policy | Loving Brain</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #F06D4D;
+            --primary-light: #FFF0E5;
+            --primary-glow: rgba(240, 109, 77, 0.18);
+            --secondary: #665FCE;
+            --secondary-light: #F3F2FF;
+            --secondary-glow: rgba(102, 95, 206, 0.16);
+            --dark-navy: #212E5A;
+            --dark-slate: #2D3142;
+            --body-text: #495057;
+            --muted-text: #717A8A;
+            --bg-paper: #FEF8F4;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-border: rgba(240, 109, 77, 0.12);
+            --card-shadow: 0 16px 40px rgba(33, 46, 90, 0.05);
+            --success: #29985E;
+            --success-light: #E7F6ED;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,232 +34,624 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #FAFAFA 0%, #F0F2F5 100%);
-            color: #333333;
-            line-height: 1.6;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--body-text);
+            line-height: 1.7;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
         }
 
-        /* Abstract Background Elements for Premium Feel */
-        .bg-shape-1 {
+        /* Ambient Glowing Background Blobs */
+        .ambient-blob-1 {
             position: fixed;
-            top: -150px;
-            left: -100px;
-            width: 400px;
-            height: 400px;
-            background: rgba(137, 75, 205, 0.15); /* #894BCD */
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-        }
-
-        .bg-shape-2 {
-            position: fixed;
-            bottom: -150px;
+            top: -120px;
             right: -100px;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 102, 196, 0.12); /* #FF66C4 */
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, rgba(254, 248, 244, 0) 70%);
             border-radius: 50%;
-            filter: blur(100px);
+            filter: blur(60px);
             z-index: 0;
+            pointer-events: none;
         }
 
-        .bg-shape-3 {
+        .ambient-blob-2 {
             position: fixed;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: rgba(82, 113, 255, 0.08); /* #5271FF */
+            bottom: -100px;
+            left: -80px;
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, var(--secondary-glow) 0%, rgba(254, 248, 244, 0) 70%);
             border-radius: 50%;
-            filter: blur(120px);
+            filter: blur(70px);
             z-index: 0;
+            pointer-events: none;
         }
 
-        .container {
+        /* Top Bar & Navigation Header */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(254, 248, 244, 0.88);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 100;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8A65 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(240, 109, 77, 0.3);
+        }
+
+        .brand-name {
+            font-family: 'Fraunces', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-navy);
+            letter-spacing: -0.3px;
+        }
+
+        .brand-tag {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--secondary);
+            background: var(--secondary-light);
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .nav-switch {
+            display: flex;
+            background: rgba(33, 46, 90, 0.05);
+            padding: 4px;
+            border-radius: 24px;
+            gap: 4px;
+        }
+
+        .nav-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .nav-pill.active {
+            background: white;
+            color: var(--dark-navy);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-pill:not(.active) {
+            color: var(--muted-text);
+        }
+
+        .nav-pill:not(.active):hover {
+            color: var(--primary);
+        }
+
+        /* Main Container */
+        .page-container {
             position: relative;
             z-index: 1;
-            max-width: 800px;
-            margin: 120px auto 40px auto;
-            padding: 40px 30px;
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border-radius: 32px;
-            border: 1.5px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+            max-width: 840px;
+            margin: 0 auto;
+            padding: 24px 20px 80px 20px;
         }
 
-        header {
+        /* In-App Spacing Helper (for Floating Flutter Back Button) */
+        .webview-header-spacer {
+            height: 48px;
+        }
+
+        .header-section {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 36px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(240, 109, 77, 0.12);
+        }
+
+        .version-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(240, 109, 77, 0.25);
         }
 
         h1 {
-            font-size: 32px;
+            font-family: 'Fraunces', serif;
+            font-size: clamp(28px, 5vw, 38px);
             font-weight: 800;
-            background: linear-gradient(135deg, #894BCD 0%, #B185DB 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--dark-navy);
+            line-height: 1.25;
+            letter-spacing: -0.6px;
             margin-bottom: 12px;
-            letter-spacing: -0.5px;
         }
 
-        .last-updated {
-            font-size: 14px;
+        .subtitle {
+            font-size: 16px;
+            color: var(--muted-text);
+            max-width: 620px;
+            margin: 0 auto 10px auto;
+        }
+
+        .effective-date {
+            font-size: 13px;
+            color: var(--muted-text);
             font-weight: 500;
-            color: #888888;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+        }
+
+        /* Card styling */
+        .content-card {
+            background: var(--card-bg);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            padding: 36px 32px;
+            margin-bottom: 28px;
         }
 
         h2 {
-            font-size: 20px;
+            font-family: 'Fraunces', serif;
+            font-size: 21px;
             font-weight: 700;
-            color: #1A1A1A;
-            margin-top: 32px;
-            margin-bottom: 16px;
+            color: var(--dark-navy);
+            margin-top: 36px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 12px;
+            letter-spacing: -0.3px;
         }
 
-        h2::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 24px;
-            background: linear-gradient(180deg, #894BCD 0%, #FF66C4 100%);
-            border-radius: 4px;
+        h2:first-of-type {
+            margin-top: 10px;
+        }
+
+        .h2-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-slate);
+            margin-top: 20px;
+            margin-bottom: 8px;
         }
 
         p {
             font-size: 15px;
-            color: #555555;
+            color: var(--body-text);
             margin-bottom: 16px;
-            font-weight: 400;
-            line-height: 1.7;
+            line-height: 1.75;
         }
 
+        /* Callout Boxes */
+        .callout-box {
+            border-radius: 20px;
+            padding: 20px 22px;
+            margin: 22px 0;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .callout-box.invariant {
+            background: var(--secondary-light);
+            border: 1.5px solid rgba(102, 95, 206, 0.25);
+        }
+
+        .callout-box.invariant .callout-icon {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .callout-box.promise {
+            background: var(--primary-light);
+            border: 1.5px solid rgba(240, 109, 77, 0.25);
+        }
+
+        .callout-box.promise .callout-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .callout-box.rights {
+            background: var(--success-light);
+            border: 1.5px solid rgba(41, 152, 94, 0.25);
+        }
+
+        .callout-box.rights .callout-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .callout-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .callout-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--dark-navy);
+            margin-bottom: 4px;
+        }
+
+        .callout-body {
+            font-size: 14px;
+            color: var(--dark-slate);
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* Lists */
         ul {
-            margin-left: 20px;
-            margin-bottom: 20px;
+            list-style: none;
+            margin: 14px 0 20px 0;
         }
 
         li {
-            font-size: 15px;
-            color: #555555;
-            margin-bottom: 10px;
             position: relative;
-            padding-left: 8px;
+            padding-left: 26px;
+            font-size: 15px;
+            margin-bottom: 10px;
+            color: var(--body-text);
         }
 
-        li::marker {
-            color: #894BCD;
+        li::before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            top: 0;
+            color: var(--primary);
+            font-size: 20px;
+            line-height: 1;
         }
 
-        a {
-            color: #5271FF;
+        li strong {
+            color: var(--dark-navy);
+            font-weight: 600;
+        }
+
+        /* Quick Navigation Bar / Jump Pills */
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin: 20px 0 28px 0;
+        }
+
+        .toc-item {
+            background: white;
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark-navy);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .toc-item:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* Footer */
+        .page-footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--muted-text);
+            font-size: 13px;
+            border-top: 1px solid var(--card-border);
+            margin-top: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--secondary);
             text-decoration: none;
             font-weight: 600;
-            transition: color 0.3s ease;
         }
 
-        a:hover {
-            color: #894BCD;
+        .footer-link:hover {
+            color: var(--primary);
+            text-decoration: underline;
         }
 
-        .highlight-box {
-            background: rgba(137, 75, 205, 0.05);
-            border-left: 4px solid #894BCD;
-            padding: 20px;
-            border-radius: 0 16px 16px 0;
-            margin: 24px 0;
-        }
-
-        .highlight-box p {
-            margin-bottom: 0;
-            color: #444;
-            font-weight: 500;
-        }
-
-        hr {
-            border: 0;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.05);
-            margin: 40px 0;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 100px 20px 30px 20px;
-                padding: 30px 20px;
-                border-radius: 24px;
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 640px) {
+            .top-nav {
+                padding: 10px 14px;
             }
-            h1 {
-                font-size: 28px;
+            .brand-name {
+                font-size: 16px;
             }
-            h2 {
-                font-size: 18px;
+            .brand-tag {
+                display: none;
             }
+            .page-container {
+                padding: 16px 14px 60px 14px;
+            }
+            .content-card {
+                padding: 24px 18px;
+                border-radius: 22px;
+            }
+            .callout-box {
+                padding: 16px;
+                border-radius: 16px;
+                gap: 12px;
+            }
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+        /* Hide any injected third-party badges */
+        [data-netlify-badge],
+        .netlify-badge,
+        #netlify-badge,
+        [class*="netlify-badge"],
+        iframe[src*="netlify"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
     </style>
 </head>
 <body>
 
-    <!-- Abstract Background -->
-    <div class="bg-shape-1"></div>
-    <div class="bg-shape-2"></div>
-    <div class="bg-shape-3"></div>
+    <!-- Ambient Ambient Glows -->
+    <div class="ambient-blob-1"></div>
+    <div class="ambient-blob-2"></div>
 
-    <div class="container">
-        <header>
-            <h1>Privacy Policy</h1>
-            <div class="last-updated">Last Updated: October 2023</div>
+    <!-- Top Navigation Header -->
+    <nav class="top-nav">
+        <a href="index.html" class="brand-badge">
+            <div class="brand-icon">♥</div>
+            <span class="brand-name">Loving Brain</span>
+            <span class="brand-tag">V2</span>
+        </a>
+        <div class="nav-switch">
+            <a href="privacy_policy.html" class="nav-pill active">Privacy Policy</a>
+            <a href="terms_and_conditions.html" class="nav-pill">Terms of Use</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <!-- Spacer for mobile WebView floating back icon -->
+        <div class="webview-header-spacer"></div>
+
+        <header class="header-section">
+            <div class="version-badge">Loving Brain V2 · Official Privacy Standard</div>
+            <h1>Privacy & Data Protection</h1>
+            <p class="subtitle">How we safeguard sensitive family routines, emotional reflections, and child developmental milestones.</p>
+            <div class="effective-date">Last Updated: October 2026 · Effective Immediately</div>
         </header>
 
-        <p>Welcome to Loving Brain! Your privacy is of paramount importance to us. This Privacy Policy outlines how we collect, use, and protect your personal information when you use our application and services.</p>
-
-        <div class="highlight-box">
-            <p><strong>Core Principle:</strong> We only collect the data necessary to provide you with the best possible experience. We never sell your personal data to third parties.</p>
+        <!-- Core Privacy Guarantee Callout -->
+        <div class="callout-box promise">
+            <div class="callout-icon">🛡️</div>
+            <div>
+                <div class="callout-title">Zero Data Sale Guarantee</div>
+                <div class="callout-body">
+                    We never sell, broker, or monetize your family's personal information, parenting logs, or child milestones. Your data is used exclusively to power the Loving Brain predictive engine and provide tailored calm routines for your household.
+                </div>
+            </div>
         </div>
 
-        <h2>1. Information We Collect</h2>
-        <p>We collect information to provide better services to all our users. The types of information we collect include:</p>
-        <ul>
-            <li><strong>Personal Information:</strong> Information you provide to us, such as your name, email address, and profile details when you create an account.</li>
-            <li><strong>Usage Data:</strong> Information about how you interact with our app, including features used, time spent, and navigation paths.</li>
-            <li><strong>Device Information:</strong> Data regarding the device you use to access Loving Brain, such as IP address, operating system, and device identifiers.</li>
-        </ul>
+        <div class="content-card">
+            <h2><span class="h2-number">1</span> Introduction & Our Core Philosophy</h2>
+            <p>
+                Welcome to <strong>Loving Brain</strong> ("we," "our," or "us"). Loving Brain is a mindful, AI-assisted parenting and emotional regulation companion designed to bring calm, understanding, and structure into everyday family life. We help parents and caregivers recognize dysregulation cues, forecast circadian sleep settling windows via our <strong>Energy Bridge</strong> intelligence engine, and co-regulate with empathy.
+            </p>
+            <p>
+                We recognize that logging bedtime struggles, tantrum episodes, and raw emotional reflections requires immense vulnerability and absolute trust. This Privacy Policy details the exact types of data we collect, how it is secured, and the stringent privacy invariants we enforce across our systems.
+            </p>
 
-        <h2>2. How We Use Your Information</h2>
-        <p>The information we collect is used in the following ways:</p>
-        <ul>
-            <li>To personalize your experience and deliver content tailored to your needs.</li>
-            <li>To improve our application, identify bugs, and enhance performance.</li>
-            <li>To communicate with you regarding updates, security alerts, and support messages.</li>
-        </ul>
+            <!-- The Strict Reflection Invariant -->
+            <div class="callout-box invariant">
+                <div class="callout-icon">🔒</div>
+                <div>
+                    <div class="callout-title">The Strict Reflection Invariant</div>
+                    <div class="callout-body">
+                        <strong>Parent Reflections and personal journaling notes are strictly private to the authoring parent.</strong> Under NO circumstances are your private reflections or journal notes shared with invited co-parents, grandparents, babysitters, or secondary caregivers.
+                    </div>
+                </div>
+            </div>
 
-        <h2>3. Data Security</h2>
-        <p>We implement robust, industry-standard security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. However, please be aware that no method of transmission over the internet or electronic storage is 100% secure.</p>
+            <h2><span class="h2-number">2</span> Information We Collect</h2>
+            <p>
+                We adhere strictly to the principle of data minimization—only requesting information directly necessary to generate personalized calm insights:
+            </p>
 
-        <h2>4. Your Rights and Choices</h2>
-        <p>You have the right to access, update, or delete your personal information at any time. You can manage your preferences within the app settings. If you wish to permanently delete your account, please contact our support team.</p>
+            <h3>A. Guardian & Household Account Information</h3>
+            <ul>
+                <li><strong>Account Credentials:</strong> Full name, verified email address, authentication provider identifiers, and profile preferences.</li>
+                <li><strong>Family & Caregiver Configuration:</strong> Relationship to child (e.g., Mother, Father, Primary Caregiver), and roles assigned to invited household members.</li>
+            </ul>
 
-        <h2>5. Changes to This Policy</h2>
-        <p>We may update this Privacy Policy periodically to reflect changes in our practices or for other operational, legal, or regulatory reasons. We will notify you of any significant changes through the app.</p>
+            <h3>B. Child Profile Details</h3>
+            <ul>
+                <li><strong>Basic Identification:</strong> Child's first name or nickname, date of birth, age, and optional avatar.</li>
+                <li><strong>Developmental Stage:</strong> Age-based developmental baseline metrics used to calculate biological sleep pressure and settling intervals.</li>
+            </ul>
 
-        <hr>
-        
-        <p style="text-align: center; font-size: 14px; color: #888;">
-            If you have any questions or concerns about this Privacy Policy, please contact us at <a href="mailto:support@lovingbrain.com">support@lovingbrain.com</a>.
-        </p>
+            <h3>C. Real-Time Parenting Logs (Energy Bridge Inputs)</h3>
+            <ul>
+                <li><strong>Sleep Records:</strong> Wake times, nap intervals, bedtime routines, nighttime awakenings, and settling duration.</li>
+                <li><strong>Emotional Dysregulation & Tantrums:</strong> Time of onset, observed triggers, intensity level, calming strategies utilized, and recovery duration.</li>
+                <li><strong>Mood & Well-being Updates:</strong> Quick mood check-ins (e.g., energized, fussy, calm, overtired).</li>
+                <li><strong>Health & Care Updates:</strong> Meal timings, fever/temperature logs, and medication timestamps (used to adjust forecast accuracy).</li>
+            </ul>
+
+            <h3>D. Brainy AI Conversations</h3>
+            <ul>
+                <li><strong>Chat Transcripts:</strong> Questions, context prompts, and parenting queries submitted to our conversational assistant, <strong>Brainy</strong>.</li>
+            </ul>
+
+            <h2><span class="h2-number">3</span> How We Use Your Information</h2>
+            <p>
+                Every data point logged in Loving Brain is purpose-driven and feeds actionable insights for your household:
+            </p>
+            <ul>
+                <li><strong>Circadian Sleep Forecasts:</strong> Computing optimal bedtime settling windows to minimize bedtime resistance.</li>
+                <li><strong>Calm Heads-Up Predictions:</strong> Warning parents proactively when hunger, wakefulness duration, and past patterns indicate a higher probability of meltdowns.</li>
+                <li><strong>Brainy Contextual Guidance:</strong> Enabling Brainy to provide personalized, age-appropriate calming scripts tailored to your child's recent routine.</li>
+                <li><strong>Caregiver Continuity:</strong> Keeping co-parents and babysitters in sync on the child's last meal, medication, or nap without friction.</li>
+            </ul>
+
+            <h2><span class="h2-number">4</span> Artificial Intelligence & Brainy AI Safety</h2>
+            <p>
+                Brainy is an AI parenting assistant built to offer supportive, evidence-based co-regulation frameworks:
+            </p>
+            <ul>
+                <li><strong>Confidential Processing:</strong> AI prompts are transmitted through secure, private API tunnels with strict zero-retention agreements where applicable.</li>
+                <li><strong>No Public Model Training:</strong> Your family’s conversations, reflections, and child logs are <strong>never</strong> used to train public generative AI foundation models.</li>
+                <li><strong>Non-Clinical Coaching Boundary:</strong> Brainy is an educational wellness tool and does not provide diagnostic, clinical, or psychiatric services.</li>
+            </ul>
+
+            <h2><span class="h2-number">5</span> Family Sharing & Granular Permissions</h2>
+            <p>
+                Loving Brain enables parents to invite co-parents and trusted caregivers (e.g., grandparents, babysitters, nannies) into a shared child space:
+            </p>
+            <ul>
+                <li><strong>Shared Routine Timeline:</strong> Caregivers can view routine logs (naps, meals, medicine) to ensure seamless handoffs.</li>
+                <li><strong>Permanent Invariant Isolation:</strong> Caregivers can never view your private reflections, personal parent notes, or billing information.</li>
+                <li><strong>Access Revocation:</strong> The primary account owner can revoke caregiver access instantly at any time from the Family Menu.</li>
+            </ul>
+
+            <h2><span class="h2-number">6</span> Children's Privacy (COPPA & GDPR-K Compliance)</h2>
+            <p>
+                Loving Brain is designed exclusively for use by adult parents and legal guardians. We do not provide an interface for direct use by children under the age of 13 (or under 16 in the EEA/UK), nor do we knowingly collect personal data directly from children.
+            </p>
+            <p>
+                All child information is submitted solely by the parent or legal guardian for the purpose of receiving parenting guidance and routine tracking.
+            </p>
+
+            <h2><span class="h2-number">7</span> Offline-First Architecture & Security</h2>
+            <p>
+                Parenting happens everywhere—including areas with spotty or no internet connection:
+            </p>
+            <ul>
+                <li><strong>Local Offline Storage:</strong> Loving Brain stores logs on your device first, syncing seamlessly to our secure cloud when a connection is restored.</li>
+                <li><strong>Encryption in Transit:</strong> All data transmitted between your device and our servers is protected using TLS 1.3 encryption.</li>
+                <li><strong>Encryption at Rest:</strong> Cloud data is stored on encrypted databases with strict identity and role-based access controls.</li>
+            </ul>
+
+            <!-- Screen 62 Rights Callout -->
+            <div class="callout-box rights">
+                <div class="callout-icon">📋</div>
+                <div>
+                    <div class="callout-title">Your Data Rights (Screen 62 Compliance)</div>
+                    <div class="callout-body">
+                        Directly within the Loving Brain app (Profile → Privacy & Data), you have complete self-service control over your information at all times.
+                    </div>
+                </div>
+            </div>
+
+            <h2><span class="h2-number">8</span> Data Export & Permanent Account Deletion</h2>
+            <p>
+                Under global privacy regulations (including GDPR and CCPA) and our Screen 62 architecture:
+            </p>
+            <ul>
+                <li><strong>Export My Data:</strong> Request a complete, machine-readable export of your family logs, routines, and historical summaries at any time.</li>
+                <li><strong>Permanent Account Deletion:</strong> You can permanently delete your account directly inside the app. Executing account deletion immediately revokes all linked caregiver access, erases all child profiles, and purges all logs, reflections, and chat histories from our production systems.</li>
+            </ul>
+
+            <h2><span class="h2-number">9</span> Policy Updates & Contact</h2>
+            <p>
+                We may update this Privacy Policy from time to time to reflect enhancements to our service. If we make material changes, we will notify you through an in-app notice or via your registered email address before the changes take effect.
+            </p>
+            <p>
+                For questions, data access requests, or privacy inquiries, please contact our Data Protection Team at:
+            </p>
+            <p style="font-weight: 600; color: var(--secondary);">
+                📧 <a href="mailto:support@lovingbrain.com" style="color: var(--secondary); text-decoration: underline;">support@lovingbrain.com</a>
+            </p>
+        </div>
+
+        <footer class="page-footer">
+            <div class="footer-links">
+                <a href="privacy_policy.html" class="footer-link">Privacy Policy</a>
+                <span>•</span>
+                <a href="terms_and_conditions.html" class="footer-link">Terms of Use</a>
+                <span>•</span>
+                <a href="mailto:support@lovingbrain.com" class="footer-link">Support Contact</a>
+            </div>
+            <p>© 2026 Loving Brain. All rights reserved. Mindful parenting powered by empathy.</p>
+        </footer>
     </div>
 
 </body>
