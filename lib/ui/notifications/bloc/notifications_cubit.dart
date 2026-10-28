@@ -3,6 +3,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/notification_preferences_model.dart';
 import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 
 import 'notifications_state.dart';
 
@@ -73,26 +74,26 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     );
   }
 
-  Future<void> toggleSleep() async {
-    final bool updated = !state.sleepEnabled;
+  Future<void> toggleSleep({bool? enabled}) async {
+    final bool updated = enabled ?? !state.sleepEnabled;
     changeProps(sleepEnabled: updated);
     await _persist();
   }
 
-  Future<void> toggleCheckIn() async {
-    final bool updated = !state.checkInEnabled;
+  Future<void> toggleCheckIn({bool? enabled}) async {
+    final bool updated = enabled ?? !state.checkInEnabled;
     changeProps(checkInEnabled: updated);
     await _persist();
   }
 
-  Future<void> toggleMentorship() async {
-    final bool updated = !state.mentorshipEnabled;
+  Future<void> toggleMentorship({bool? enabled}) async {
+    final bool updated = enabled ?? !state.mentorshipEnabled;
     changeProps(mentorshipEnabled: updated);
     await _persist();
   }
 
-  Future<void> toggleWeeklyReview() async {
-    final bool updated = !state.weeklyReviewEnabled;
+  Future<void> toggleWeeklyReview({bool? enabled}) async {
+    final bool updated = enabled ?? !state.weeklyReviewEnabled;
     changeProps(weeklyReviewEnabled: updated);
     await _persist();
   }
@@ -116,6 +117,20 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       maxDailyCap: state.maxDailyCap,
     );
     await preferences.saveNotificationPreferences(model.toJson());
+
+    // Sync to cloud Firestore when authenticated
+    try {
+      final String? uid = preferences.getUserModel()?.uid;
+      if (uid != null && uid.isNotEmpty) {
+        await UserRepo.instance.updateUserToFireStore(
+          uId: uid,
+          request: <String, dynamic>{
+            'notification_preferences': model.toJson(),
+          },
+        );
+      }
+    } catch (_) {}
+
     changeProps(saveStatus: const ApiResultStatus.data(data: null));
   }
 }

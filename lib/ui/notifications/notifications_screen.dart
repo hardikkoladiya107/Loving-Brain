@@ -176,7 +176,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 }
                                 cubit.changeProps(isPermissionDenied: false);
                               }
-                              cubit.toggleSleep();
+                              cubit.toggleSleep(enabled: val);
                             },
                           ),
                           12.spaceH,
@@ -198,7 +198,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 }
                                 cubit.changeProps(isPermissionDenied: false);
                               }
-                              cubit.toggleCheckIn();
+                              cubit.toggleCheckIn(enabled: val);
                             },
                           ),
                           12.spaceH,
@@ -219,7 +219,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 }
                                 cubit.changeProps(isPermissionDenied: false);
                               }
-                              cubit.toggleMentorship();
+                              cubit.toggleMentorship(enabled: val);
                             },
                           ),
                           12.spaceH,
@@ -239,7 +239,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 }
                                 cubit.changeProps(isPermissionDenied: false);
                               }
-                              cubit.toggleWeeklyReview();
+                              cubit.toggleWeeklyReview(enabled: val);
                             },
                           ),
                           20.spaceH,
@@ -327,73 +327,85 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
+    return Material(
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16.r),
+          onTap: () => onChanged(!value),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                title.appText(
-                  fontSize: 16.sp,
-                  color: greyColor9,
-                  fontWeight: FontWeight.w500,
-                  textAlign: TextAlign.start,
-                ),
-                4.spaceH,
-                subtitle.appText(
-                  fontSize: 14.sp,
-                  color: greyColor,
-                  textAlign: TextAlign.start,
-                ),
-                if (timePill != null) ...[
-                  12.spaceH,
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF3E5F5),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.access_time,
-                          size: 14.sp,
-                          color: const Color(0xFF673AB7),
-                        ),
-                        6.spaceW,
-                        timePill.appText(
-                          fontSize: 12.sp,
-                          color: const Color(0xFF673AB7),
-                          fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      title.appText(
+                        fontSize: 16.sp,
+                        color: greyColor9,
+                        fontWeight: FontWeight.w500,
+                        textAlign: TextAlign.start,
+                      ),
+                      4.spaceH,
+                      subtitle.appText(
+                        fontSize: 14.sp,
+                        color: greyColor,
+                        textAlign: TextAlign.start,
+                      ),
+                      if (timePill != null) ...[
+                        12.spaceH,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3E5F5),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                size: 14.sp,
+                                color: const Color(0xFF673AB7),
+                              ),
+                              6.spaceW,
+                              timePill.appText(
+                                fontSize: 12.sp,
+                                color: const Color(0xFF673AB7),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
-                    ),
+                    ],
                   ),
-                ],
+                ),
+                16.spaceW,
+                Switch(
+                  value: value,
+                  onChanged: onChanged,
+                  activeThumbColor: Colors.white,
+                  activeTrackColor: const Color(0xFF673AB7),
+                  inactiveThumbColor: Colors.white,
+                  inactiveTrackColor: greyColor.withValues(alpha: 0.3),
+                  trackOutlineColor: WidgetStateProperty.all(
+                    Colors.transparent,
+                  ),
+                ),
               ],
             ),
           ),
-          16.spaceW,
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: Colors.white,
-            activeTrackColor: const Color(0xFF673AB7),
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: greyColor.withValues(alpha: 0.3),
-          ),
-        ],
+        ),
       ),
     );
   }

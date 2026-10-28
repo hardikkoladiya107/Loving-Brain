@@ -23,6 +23,8 @@ import 'package:loving_brain/ui/family_timeline/bloc/family_timeline_cubit.dart'
 import 'package:loving_brain/ui/journey/bloc/journey_cubit.dart';
 import 'package:loving_brain/ui/journey/bloc/journey_state.dart';
 import 'package:loving_brain/ui/microphone_permission/bloc/microphone_permission_cubit.dart';
+import 'package:loving_brain/ui/notifications/bloc/notifications_cubit.dart';
+import 'package:loving_brain/ui/notifications/notifications_screen.dart';
 import 'package:loving_brain/ui/notifications_permission/bloc/notifications_permission_cubit.dart';
 import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
 import 'package:loving_brain/ui/journey/journey_screen.dart';
@@ -1011,6 +1013,116 @@ void main() {
         expect(baseCubit.state.bottomNavigationIndex, equals(2));
         // Verify it popped back to the root
         expect(find.text('Open Confirmation'), findsOneWidget);
+      },
+    );
+  });
+
+  group('Notifications Screen: 4 Toggle Options & Switch Verification', () {
+    test(
+      'NotificationsCubit toggles preferences cleanly and deterministically',
+      () async {
+        SharedPreferences.setMockInitialValues(<String, Object>{});
+        await SharedPreference.init();
+
+        final NotificationsCubit cubit = NotificationsCubit();
+        cubit.init();
+
+        // Verify defaults
+        expect(cubit.state.sleepEnabled, isTrue);
+        expect(cubit.state.checkInEnabled, isTrue);
+        expect(cubit.state.mentorshipEnabled, isFalse);
+        expect(cubit.state.weeklyReviewEnabled, isTrue);
+
+        // Toggle sleep off
+        await cubit.toggleSleep(enabled: false);
+        expect(cubit.state.sleepEnabled, isFalse);
+
+        // Toggle check-in off
+        await cubit.toggleCheckIn(enabled: false);
+        expect(cubit.state.checkInEnabled, isFalse);
+
+        // Toggle mentorship on
+        await cubit.toggleMentorship(enabled: true);
+        expect(cubit.state.mentorshipEnabled, isTrue);
+
+        // Toggle weekly review off
+        await cubit.toggleWeeklyReview(enabled: false);
+        expect(cubit.state.weeklyReviewEnabled, isFalse);
+
+        // Verify saved in local preferences
+        final Map<String, dynamic>? saved = preferences
+            .getNotificationPreferences();
+        expect(saved, isNotNull);
+        expect(saved?['sleepReminders'], isFalse);
+        expect(saved?['checkInReminders'], isFalse);
+        expect(saved?['mentorshipUpdates'], isTrue);
+        expect(saved?['weeklyReview'], isFalse);
+      },
+    );
+
+    testWidgets(
+      'Renders all 4 options, time pills, quiet hours and supports row tapping',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(750, 3000);
+        tester.view.devicePixelRatio = 2.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        SharedPreferences.setMockInitialValues(<String, Object>{});
+        await SharedPreference.init();
+        await preferences.clearAll();
+
+        final NotificationsCubit cubit = NotificationsCubit();
+        cubit.init();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ScreenUtilInit(
+              designSize: const Size(375, 1500),
+              builder: (BuildContext context, Widget? child) => Scaffold(
+                body: BlocProvider<NotificationsCubit>.value(
+                  value: cubit,
+                  child: const NotificationsScreen(),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // 1. Verify header text
+        expect(find.text('Notifications'), findsOneWidget);
+        expect(find.textContaining('Turn off anything you'), findsOneWidget);
+
+        // 2. Verify all 4 card titles
+        expect(find.text('Sleep reminders'), findsOneWidget);
+        expect(find.text('Check-in reminders'), findsOneWidget);
+        expect(find.text('Mentorship updates'), findsOneWidget);
+        expect(find.text('Weekly review'), findsOneWidget);
+
+        // 3. Verify time pills
+        expect(find.text('7:15 PM'), findsOneWidget);
+        expect(find.text('8:30 PM'), findsOneWidget);
+
+        // 4. Verify Quiet Hours card
+        expect(find.text('Quiet Hours Active'), findsOneWidget);
+        expect(
+          find.text(
+            "We never send streak reminders or messages about missed days.",
+          ),
+          findsOneWidget,
+        );
+
+        // 5. Verify 4 switches exist
+        expect(find.byType(Switch), findsNWidgets(4));
+
+        // 6. Test tapping row toggles the switch
+        expect(cubit.state.weeklyReviewEnabled, isTrue);
+        await tester.tap(find.text('Weekly review'));
+        await tester.pumpAndSettle();
+        expect(cubit.state.weeklyReviewEnabled, isFalse);
       },
     );
   });
