@@ -95,8 +95,9 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                       ? state.forecastChangeReason
                       : "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
                   action: "Explore Calm Plan",
-                  actionSubtitle:
-                      "Proven responses ready for upcoming challenging windows.",
+                  actionSubtitle: state.hasMultiDayPatterns
+                      ? "Proven responses ready for upcoming challenging windows."
+                      : "Strategies to help you stay calm and respond with confidence.",
                   onActionTap: () {
                     Navigator.push(
                       context,

@@ -127,8 +127,9 @@ class ChildEssentialsCubit extends Cubit<ChildEssentialsState> {
 
   void updateMedication(int index, String newName) {
     final String trimmed = newName.trim();
-    if (trimmed.isEmpty || index < 0 || index >= state.medications.length)
+    if (trimmed.isEmpty || index < 0 || index >= state.medications.length) {
       return;
+    }
     final List<String> list = List<String>.from(state.medications);
     list[index] = trimmed;
     changeProps(medications: list);

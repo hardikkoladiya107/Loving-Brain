@@ -302,6 +302,9 @@ class _AppOtpFieldState extends State<AppOtpField> {
     } else if (widget.value != null && widget.value != oldWidget.value) {
       if (widget.value != _currentOtp) {
         _applyStringToControllers(widget.value!);
+        if (widget.value!.isEmpty && _focusNodes.isNotEmpty && widget.enabled) {
+          _focusNodes[0].requestFocus();
+        }
       }
     }
   }
