@@ -154,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               AppTextField(
                                 controller: phoneTextEditingController,
                                 title: "PHONE NUMBER",
-                                hint: "+91 99765 43210",
+                                hint: "Enter mobile number",
                                 keyboardType: TextInputType.phone,
                                 onChanged: (val) {
                                   context.read<RegisterCubit>().changeProps(
@@ -166,15 +166,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ? state.phoneNumberError
                                     : null,
                               ).appPadding(left: 20.r, right: 20.r),
-                              6.spaceH,
-                              "Indian mobile numbers only (+91 auto-added if omitted)"
-                                  .appText(
-                                    fontSize: 11,
-                                    color: greyColor,
-                                    textAlign: TextAlign.start,
-                                  )
-                                  .appPadding(left: 24.r, right: 20.r),
-                              14.spaceH,
+                              16.spaceH,
                               AppTextField(
                                 controller: emailTextEditingController,
                                 title: "EMAIL",
