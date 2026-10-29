@@ -161,35 +161,15 @@ class TodayCubit extends Cubit<TodayState> {
     }
 
     UserModel? user = preferences.getUserModel();
-    ChildModel? child = preferences.getChildModel();
-
-    String initialPName = user?.parentName ?? 'Parent';
-    String initialCName = child?.childName ?? user?.childName ?? 'Child';
-    if (initialPName.trim().isEmpty) initialPName = 'Parent';
-    if (initialCName.trim().isEmpty) initialCName = 'Child';
-
-    String initialChildId =
-        child?.reference?.id ??
-        user?.defaultChild?.id ??
-        TodayLogRepo.instance.resolveActiveChildId() ??
-        '';
-
-    changeProps(
-      isLoading: true,
-      timeOfDayGreeting: greeting,
-      parentName: initialPName.toUpperCase(),
-      childName: initialCName,
-      activeChildId: initialChildId,
-    );
-
     final String? userUid = user?.uid;
+
+    // Sync latest user and default child first to guarantee accurate link status
     if (userUid != null && userUid.isNotEmpty) {
       try {
         final UserModel? freshUser = await AuthRepo.instance
             .syncUserAndDefaultChild(uId: userUid);
         if (freshUser != null) {
           user = freshUser;
-          child = preferences.getChildModel();
         }
       } catch (_) {}
     } else {
@@ -199,23 +179,30 @@ class TodayCubit extends Cubit<TodayState> {
           final DocumentSnapshot<Object?> childSnap = await defChild.get();
           final Object? childData = childSnap.data();
           if (childData is Map<String, dynamic>) {
-            child = ChildModel.fromJson(childData, childSnap.reference);
-            await preferences.saveChildModel(child);
+            final ChildModel c =
+                ChildModel.fromJson(childData, childSnap.reference);
+            await preferences.saveChildModel(c);
           }
         } catch (_) {}
       }
     }
 
+    final ChildModel? child = preferences.getChildModel();
     String pName = user?.parentName ?? 'Parent';
-    String cName = child?.childName ?? user?.childName ?? 'Child';
+    String cName = child?.childName ?? user?.childName ?? '';
     if (pName.trim().isEmpty) pName = 'Parent';
-    if (cName.trim().isEmpty) cName = 'Child';
 
     final String finalChildId =
         child?.reference?.id ??
         user?.defaultChild?.id ??
         TodayLogRepo.instance.resolveActiveChildId() ??
         '';
+
+    if (finalChildId.isEmpty) {
+      cName = '';
+    } else if (cName.trim().isEmpty) {
+      cName = 'Child';
+    }
 
     changeProps(
       isLoading: false,
@@ -225,10 +212,23 @@ class TodayCubit extends Cubit<TodayState> {
       activeChildId: finalChildId,
     );
 
-    // Sync any pending offline quick updates in the background
-    OfflineSyncRepo.instance.syncPendingUpdates();
-
-    await recalculateForecast(childOverride: child);
+    if (finalChildId.isNotEmpty) {
+      // Sync any pending offline quick updates in the background
+      OfflineSyncRepo.instance.syncPendingUpdates();
+      await recalculateForecast(childOverride: child);
+    } else {
+      changeProps(
+        mode: TodayMode.normal,
+        hasAnyLogs: false,
+        hasSleepLogs: false,
+        hasMultiDayPatterns: false,
+        forecastSubtitle: '',
+        sleepForecastStart: '',
+        sleepForecastEnd: '',
+        bedtimeEstimate: '',
+        confidenceLevel: '',
+      );
+    }
   }
 
   /// Dynamically computes Energy Bridge sleep forecast using child profile and recent logs.

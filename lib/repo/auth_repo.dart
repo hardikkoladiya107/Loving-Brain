@@ -1527,11 +1527,7 @@ class AuthRepo {
           uId: user.uid,
           request: <String, dynamic>{
             'uid': user.uid,
-            'display_name':
-                user.displayName ??
-                (cleanEmail.isNotEmpty
-                    ? cleanEmail.split('@').first
-                    : cleanPhone),
+            'display_name': user.displayName ?? 'Parent',
             'email': cleanEmail,
             'phone_number': cleanPhone,
             'is_google_sign_in': false,

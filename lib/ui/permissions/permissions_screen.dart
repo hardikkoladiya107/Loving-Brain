@@ -308,8 +308,9 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           left: 20.w,
           right: 20.w,
         ),
-        decoration: const BoxDecoration(color: Color(0xFFFEF2EA)),
+        decoration: const BoxDecoration(color: Color(0xFFFEF8F4)),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             AppButton(
               title: state.isSaving ? "Saving..." : "Save permissions",

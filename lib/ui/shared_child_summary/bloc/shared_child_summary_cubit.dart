@@ -34,8 +34,10 @@ class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
         final String? partnerParentName = partnerUser?.parentName?.trim();
         if (partnerParentName != null && partnerParentName.isNotEmpty) {
           pName = partnerParentName;
-        } else if (partnerUser?.email?.isNotEmpty == true) {
-          pName = partnerUser!.email!.split('@').first;
+        } else if (partnerUser?.relationshipToChild?.isNotEmpty == true) {
+          pName = partnerUser!.relationshipToChild!;
+        } else {
+          pName = 'Co-parent';
         }
       } catch (_) {}
     }

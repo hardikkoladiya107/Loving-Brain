@@ -29,7 +29,9 @@ class TodayHeader extends StatelessWidget {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const ChildProfileScreen(),
+                      builder: (_) => ChildProfileScreen(
+                        fromManageChildren: state.activeChildId.isEmpty,
+                      ),
                     ),
                   );
                   todayCubit.init();
@@ -54,7 +56,10 @@ class TodayHeader extends StatelessWidget {
                       ),
                       8.spaceW,
                       Flexible(
-                        child: state.childName.appText(
+                        child: (state.childName.isNotEmpty
+                                ? state.childName
+                                : 'Add child')
+                            .appText(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                           maxLines: 1,

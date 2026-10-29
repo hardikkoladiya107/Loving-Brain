@@ -178,8 +178,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
           : ((preferences.getUserModel()?.displayName?.trim().isNotEmpty ==
                     true)
                 ? preferences.getUserModel()!.displayName!.trim()
-                : (preferences.getUserModel()?.email?.split('@').first ??
-                      'Your co-parent'));
+                : 'Your co-parent');
 
       // Dispatch invitation email via Cloud Function (Brevo)
       await CoParentRepo.instance.sendInvitationEmail(

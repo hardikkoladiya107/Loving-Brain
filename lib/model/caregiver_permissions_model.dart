@@ -31,9 +31,9 @@ class CaregiverPermissionsModel {
   String get caregiverName {
     final String? trimmed = name?.trim();
     if (trimmed != null && trimmed.isNotEmpty) return trimmed;
-    return caregiverEmail.contains('@')
-        ? caregiverEmail.split('@').first
-        : caregiverEmail;
+    final String? rTrimmed = role?.trim();
+    if (rTrimmed != null && rTrimmed.isNotEmpty) return rTrimmed;
+    return 'Caregiver';
   }
 
   bool get canViewMentorshipSummaries => canViewMentorSummaries;

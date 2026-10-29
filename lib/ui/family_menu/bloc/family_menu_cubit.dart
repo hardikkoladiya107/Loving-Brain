@@ -26,11 +26,24 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
 
   Future<void> _loadCaregivers() async {
     final UserModel? user = preferences.getUserModel();
-    final ChildModel? child = preferences.getChildModel();
+    ChildModel? child = preferences.getChildModel();
     final List<CaregiverItem> linked = <CaregiverItem>[];
     String? partnerId = user?.partnerUserId?.trim();
 
     final String currentUid = user?.uid ?? '';
+
+    // Refresh child doc from Firestore to ensure real-time parent_reference_ids
+    if (child?.reference != null) {
+      try {
+        final DocumentSnapshot<Map<String, dynamic>> snap =
+            await (child!.reference as DocumentReference<Map<String, dynamic>>)
+                .get();
+        if (snap.exists && snap.data() != null) {
+          child = ChildModel.fromJson(snap.data()!, snap.reference);
+          await preferences.saveChildModel(child);
+        }
+      } catch (_) {}
+    }
 
     // Auto-discover linked co-parents via child parent_reference_ids if partnerUserId is unset
     if ((partnerId == null || partnerId.isEmpty) &&
@@ -58,9 +71,20 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
       } catch (_) {}
 
       final String? partnerName = partnerUser?.parentName?.trim();
-      final String name = (partnerName != null && partnerName.isNotEmpty)
-          ? partnerName
-          : (partnerUser?.email?.split('@').first ?? 'Co-Parent');
+      final String? dispName = partnerUser?.displayName?.trim();
+      final String? rel = partnerUser?.relationshipToChild?.trim();
+      String name = 'Partner';
+      if (partnerName != null && partnerName.isNotEmpty) {
+        name = partnerName;
+      } else if (dispName != null &&
+          dispName.isNotEmpty &&
+          !dispName.contains('@')) {
+        name = dispName;
+      } else if (rel != null && rel.isNotEmpty) {
+        name = rel;
+      } else {
+        name = 'Partner';
+      }
       final String email = partnerUser?.email ?? partnerUser?.parentEmail ?? '';
 
       linked.add(
@@ -87,7 +111,7 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
             final String id = item['id'] as String? ?? '';
             final String toEmail = item['to_parent'] as String? ?? '';
             final String role = item['role'] as String? ?? 'Co-Parent';
-            final String name = toEmail.split('@').first;
+            final String name = role.isNotEmpty ? role : 'Co-Parent';
             int daysRemaining = 14;
             final DateTime now = DateTime.now();
             if (item['created_at'] != null) {

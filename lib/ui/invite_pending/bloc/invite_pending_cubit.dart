@@ -71,8 +71,7 @@ class InvitePendingCubit extends Cubit<InvitePendingState> {
           : ((preferences.getUserModel()?.displayName?.trim().isNotEmpty ==
                     true)
                 ? preferences.getUserModel()!.displayName!.trim()
-                : (preferences.getUserModel()?.email?.split('@').first ??
-                      'Your co-parent'));
+                : 'Your co-parent');
 
       await CoParentRepo.instance.sendInvitationEmail(
         toEmail: recipient,

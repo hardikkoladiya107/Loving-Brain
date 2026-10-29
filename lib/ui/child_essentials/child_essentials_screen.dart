@@ -46,7 +46,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
             (partnerUser?.parentName != null &&
                 partnerUser!.parentName!.trim().isNotEmpty)
             ? partnerUser.parentName!.trim()
-            : (partnerUser?.email?.split('@').first ?? '');
+            : (partnerUser?.relationshipToChild ?? 'Co-parent');
         if (name.isNotEmpty && mounted) {
           setState(() {
             _coParentName = name;

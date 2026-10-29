@@ -20,6 +20,7 @@ import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
 import 'package:loving_brain/ui/today_screen/widgets/still_learning_patterns_card.dart';
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/widget/offline_banner.dart';
 // Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
@@ -120,7 +121,9 @@ class _TodayScreenState extends State<TodayScreen> {
                           const OfflineBanner(isVisible: true),
                         ],
                         SizedBox(height: 24.h),
-                        if (state.mode == TodayMode.normal) ...[
+                        if (state.activeChildId.isEmpty) ...[
+                          _buildNoChildCard(context),
+                        ] else if (state.mode == TodayMode.normal) ...[
                           const MainCard(),
                           SizedBox(height: 24.h),
                           if (state.hasMultiDayPatterns) ...[
@@ -235,6 +238,65 @@ class _TodayScreenState extends State<TodayScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildNoChildCard(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 28.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: const Color(0xFFF3ECE7)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 64.w,
+            height: 64.w,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFF0E5),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.child_care_rounded,
+              color: primaryColor,
+              size: 32.sp,
+            ),
+          ),
+          16.spaceH,
+          "No child profile linked".appText(
+            fontSize: 22.sp,
+            color: greyColor9,
+            fraunces: true,
+          ),
+          10.spaceH,
+          "You are not currently linked to a child. You can create a new child profile to start tracking routines, or ask your partner to send an invite."
+              .appText(
+            fontSize: 14.sp,
+            color: greyColor,
+            textAlign: TextAlign.center,
+            height: 1.4,
+          ),
+          24.spaceH,
+          AppButton(
+            title: "Add child profile",
+            onTap: () async {
+              final TodayCubit cubit = context.read<TodayCubit>();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ChildProfileScreen(
+                    fromManageChildren: true,
+                  ),
+                ),
+              );
+              cubit.init();
+            },
+          ),
+        ],
+      ),
     );
   }
 }

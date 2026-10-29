@@ -444,22 +444,15 @@ class CoParentRepo {
       }
 
       // Step 2 — add child refs to the co-parent user doc (so children appear in their app).
-      final DocumentSnapshot<Map<String, dynamic>> coParentDoc =
-          await userCollection.doc(parentUid).get();
-      final Map<String, dynamic>? coParentData = coParentDoc.data();
-      final bool hasDefaultChild = coParentData?['default_child'] != null;
-
       final Map<String, dynamic> userUpdate = <String, dynamic>{
         'children': FieldValue.arrayUnion(childRefs),
         'is_onboarding_completed': true,
+        if (childRefs.isNotEmpty) 'default_child': childRefs.first,
         if (inviterUid != null && inviterUid.isNotEmpty) ...<String, dynamic>{
           'partner_user_id': inviterUid,
           'is_active_logger': false,
         },
       };
-      if (!hasDefaultChild && childRefs.isNotEmpty) {
-        userUpdate['default_child'] = childRefs.first;
-      }
       await userCollection.doc(parentUid).update(userUpdate);
 
       // Cache the shared child model locally so the co-parent lands immediately on their child's Today
@@ -478,20 +471,6 @@ class CoParentRepo {
             await preferences.saveDefaultChildModel(sharedChild);
           }
         } catch (_) {}
-      }
-
-      // Step 2b — safely update inviter partner link in isolation (rules may restrict)
-      if (inviterUid != null && inviterUid.isNotEmpty) {
-        try {
-          await userCollection.doc(inviterUid).update(<String, dynamic>{
-            'partner_user_id': parentUid,
-            'is_active_logger': true,
-          });
-        } catch (e) {
-          debugPrint(
-            'Note: inviter doc update will be synced on next load: $e',
-          );
-        }
       }
 
       // Step 3 — refresh cached user model for the current session.

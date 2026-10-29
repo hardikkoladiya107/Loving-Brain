@@ -116,6 +116,95 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
     );
   }
 
+  void _showReauthPromptDialog(BuildContext context, String message) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 52.w,
+                  height: 52.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFF0E5),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.security_rounded,
+                    color: primaryColor,
+                    size: 26.sp,
+                  ),
+                ),
+                16.spaceH,
+                "Sign-in required".appText(
+                  fontSize: 20.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                message.appText(
+                  fontSize: 14.sp,
+                  color: greyColor,
+                  height: 1.4,
+                  textAlign: TextAlign.center,
+                ),
+                24.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 48.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Sign out',
+                        backgroundColor: primaryColor,
+                        borderColor: primaryColor,
+                        textColor: Colors.white,
+                        onTap: () async {
+                          Navigator.pop(dialogContext);
+                          await preferences.clearAll();
+                          await preferences.putBool(
+                            SharedPreference.isLogin,
+                            false,
+                          );
+                          if (context.mounted) {
+                            context.go(RoutePaths.welcome);
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _showOfflineSyncSheet(BuildContext context) {
     final PrivacyDataCubit cubit = context.read<PrivacyDataCubit>();
     showModalBottomSheet<void>(
@@ -661,10 +750,18 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
+            final String errorMsg =
+                error.toString().replaceAll('Exception: ', '');
             showSnackBar(
-              message: error.toString().replaceAll('Exception: ', ''),
+              message: errorMsg,
               type: SnackBarType.ERROR,
             );
+            if (errorMsg.toLowerCase().contains('sign out and sign in') ||
+                errorMsg.toLowerCase().contains('sign in again') ||
+                errorMsg.toLowerCase().contains('security') ||
+                errorMsg.toLowerCase().contains('requires-recent-login')) {
+              _showReauthPromptDialog(context, errorMsg);
+            }
           },
         );
 
@@ -682,10 +779,18 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
+            final String errorMsg =
+                error.toString().replaceAll('Exception: ', '');
             showSnackBar(
-              message: error.toString().replaceAll('Exception: ', ''),
+              message: errorMsg,
               type: SnackBarType.ERROR,
             );
+            if (errorMsg.toLowerCase().contains('sign out and sign in') ||
+                errorMsg.toLowerCase().contains('sign in again') ||
+                errorMsg.toLowerCase().contains('security') ||
+                errorMsg.toLowerCase().contains('requires-recent-login')) {
+              _showReauthPromptDialog(context, errorMsg);
+            }
           },
         );
 
@@ -701,10 +806,18 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
+            final String errorMsg =
+                error.toString().replaceAll('Exception: ', '');
             showSnackBar(
-              message: error.toString().replaceAll('Exception: ', ''),
+              message: errorMsg,
               type: SnackBarType.ERROR,
             );
+            if (errorMsg.toLowerCase().contains('sign out and sign in') ||
+                errorMsg.toLowerCase().contains('sign in again') ||
+                errorMsg.toLowerCase().contains('security') ||
+                errorMsg.toLowerCase().contains('requires-recent-login')) {
+              _showReauthPromptDialog(context, errorMsg);
+            }
           },
         );
       },
