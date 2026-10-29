@@ -31,8 +31,8 @@ class CaregiverPermissionsModel {
   String get caregiverName {
     final String? trimmed = name?.trim();
     if (trimmed != null && trimmed.isNotEmpty) return trimmed;
-    final String? rTrimmed = role?.trim();
-    if (rTrimmed != null && rTrimmed.isNotEmpty) return rTrimmed;
+    final String rTrimmed = role.trim();
+    if (rTrimmed.isNotEmpty) return rTrimmed;
     return 'Caregiver';
   }
 

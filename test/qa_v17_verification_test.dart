@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,16 +32,20 @@ void main() {
     testWidgets(
       'TC-N01 / NEW17-1: PermissionsScreen layout uses MainAxisSize.min for bottom actions and does not block body',
       (WidgetTester tester) async {
+        final PermissionsCubit cubit = PermissionsCubit();
         await tester.pumpWidget(
           ScreenUtilInit(
             designSize: const Size(389, 780),
             builder: (BuildContext context, Widget? child) {
-              return const MaterialApp(
-                home: PermissionsScreen(
-                  caregiverName: 'Co-Parent',
-                  caregiverRole: 'Partner',
-                  caregiverId: 'coparent_02',
-                  caregiverEmail: 'coparent@lovingbrain.com',
+              return MaterialApp(
+                home: BlocProvider<PermissionsCubit>.value(
+                  value: cubit,
+                  child: const PermissionsScreen(
+                    caregiverName: 'Co-Parent',
+                    caregiverRole: 'Partner',
+                    caregiverId: 'coparent_02',
+                    caregiverEmail: 'coparent@lovingbrain.com',
+                  ),
                 ),
               );
             },
@@ -116,7 +121,7 @@ void main() {
           uid: 'unlinked_user_01',
           email: 'unlinked@lovingbrain.com',
           parentName: 'Test Parent',
-          children: <dynamic>[],
+          children: <DocumentReference<Object?>>[],
         );
         await preferences.saveUserModel(unlinkedUser);
 
@@ -142,15 +147,21 @@ void main() {
           uid: 'unlinked_user_02',
           email: 'unlinked2@lovingbrain.com',
           parentName: 'Test Parent',
-          children: <dynamic>[],
+          children: <DocumentReference<Object?>>[],
         );
         await preferences.saveUserModel(unlinkedUser);
 
+        final TodayCubit todayCubit = TodayCubit();
         await tester.pumpWidget(
           ScreenUtilInit(
             designSize: const Size(389, 780),
             builder: (BuildContext context, Widget? child) {
-              return const MaterialApp(home: TodayScreen());
+              return MaterialApp(
+                home: BlocProvider<TodayCubit>.value(
+                  value: todayCubit,
+                  child: const TodayScreen(),
+                ),
+              );
             },
           ),
         );
