@@ -205,7 +205,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     (state.pendingOfflineUpdatesCount > 0
-                                            ? "${state.pendingOfflineUpdatesCount} updates waiting to sync"
+                                            ? "${state.pendingOfflineUpdatesCount} ${state.pendingOfflineUpdatesCount == 1 ? 'update' : 'updates'} waiting to sync"
                                             : "All data is up to date")
                                         .appText(
                                           fontSize: 16.sp,
@@ -257,7 +257,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                 ],
                               ),
                               8.spaceH,
-                              "LovingBrain automatically saves all logs, sleep forecasts, and parent notes locally on your device. When your phone reconnects to the internet, pending logs are seamlessly uploaded so nothing typed is ever lost."
+                              "Loving Brain automatically saves all logs, sleep forecasts, and parent notes locally on your device. When your phone reconnects to the internet, pending logs are seamlessly uploaded so nothing typed is ever lost."
                                   .appText(
                                     fontSize: 13.sp,
                                     color: greyColor,
@@ -515,7 +515,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                           fraunces: true,
                         ),
                         4.spaceH,
-                        "Restore from LovingBrain JSON".appText(
+                        "Restore from Loving Brain JSON".appText(
                           fontSize: 12.sp,
                           color: greyColor,
                           fontWeight: FontWeight.w600,
@@ -526,7 +526,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                 ],
               ),
               18.spaceH,
-              "Select a previously exported LovingBrain (.json) backup file from your device or cloud folder to restore child routines and logs."
+              "Select a previously exported Loving Brain (.json) backup file from your device or cloud folder to restore child routines and logs."
                   .appText(fontSize: 14.sp, color: greyColor, height: 1.45),
               16.spaceH,
               Container(
@@ -551,7 +551,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                       icon: Icons.description_outlined,
                       title: "Expected Format",
                       value:
-                          "A valid .json export file produced by LovingBrain.",
+                          "A valid .json export file produced by Loving Brain.",
                     ),
                   ],
                 ),
@@ -820,7 +820,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                                   textAlign: TextAlign.start,
                                 ),
                                 8.spaceH,
-                                "LovingBrain keeps ${state.childName}'s reflections, health notes, and family logs private and secure."
+                                "Loving Brain keeps ${state.childName}'s reflections, health notes, and family logs private and secure."
                                     .appText(
                                       fontSize: 14.sp,
                                       color: greyColor,
@@ -841,7 +841,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                             subtitle: state.isSyncing
                                 ? "Syncing pending updates..."
                                 : state.pendingOfflineUpdatesCount > 0
-                                ? "${state.pendingOfflineUpdatesCount} updates waiting to sync"
+                                ? "${state.pendingOfflineUpdatesCount} ${state.pendingOfflineUpdatesCount == 1 ? 'update' : 'updates'} waiting to sync"
                                 : "All data is up to date",
                             trailing: state.isSyncing
                                 ? const AppLoadingIndicator(
@@ -880,7 +880,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                             ),
                             iconBackgroundColor: const Color(0xFFF0F6FF),
                             title: "Read the full privacy policy",
-                            subtitle: "Updated March 2026",
+                            subtitle: "Updated October 2026",
                             onTap: () {
                               Navigator.push(
                                 context,

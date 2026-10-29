@@ -343,7 +343,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                                           height: 1.2,
                                         ),
                                     12.spaceH,
-                                    "I know ${state.childName}'s age, recent\nsleep and what you're\nworking on."
+                                    "I know ${state.childName}'s age, recent sleep and what you're working on."
                                         .appText(
                                           fontSize: 14.sp,
                                           color: greyColor,
@@ -574,16 +574,13 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                   filled: true,
                   fillColor: Colors.white,
                   borderRadius: BorderRadius.circular(27.r),
-                  height: 54.h,
                   maxLines: 4,
                   minLines: 1,
                   textAlignVertical: TextAlignVertical.center,
                   rowCrossAxisAlignment: CrossAxisAlignment.center,
-                  contentPadding: EdgeInsets.only(
-                    left: 20.w,
-                    right: 6.w,
-                    top: 0,
-                    bottom: 0,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 10.h,
                   ),
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,

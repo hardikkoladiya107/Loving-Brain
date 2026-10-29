@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
@@ -87,6 +89,21 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           },
           error: (Exception exception) {
             EasyLoading.dismiss();
+            bool isUserNull = false;
+            try {
+              isUserNull = FirebaseAuth.instance.currentUser == null;
+            } catch (_) {
+              isUserNull = false;
+            }
+            if (isUserNull) {
+              preferences.clearAll();
+              preferences.putBool(SharedPreference.isLogin, false);
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
+              }
+              context.go(RoutePaths.welcome);
+              return;
+            }
             showSnackBar(
               message: exception.toString().replaceAll('Exception: ', ''),
               type: SnackBarType.ERROR,

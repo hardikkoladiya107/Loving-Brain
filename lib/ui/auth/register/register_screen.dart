@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -166,6 +167,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 title: "PHONE NUMBER",
                                 hint: "Enter mobile number",
                                 keyboardType: TextInputType.phone,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9+]'),
+                                  ),
+                                ],
                                 onChanged: (val) {
                                   context.read<RegisterCubit>().changeProps(
                                     phoneNumber: val,

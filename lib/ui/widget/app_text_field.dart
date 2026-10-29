@@ -199,7 +199,6 @@ class _AppTextFieldState extends State<AppTextField> {
             }
           },
           child: Container(
-            height: widget.height,
             constraints: BoxConstraints(
               minHeight: widget.height ?? (hasTitle ? 72.h : 54.h),
             ),

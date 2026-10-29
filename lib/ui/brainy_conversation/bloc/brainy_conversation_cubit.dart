@@ -580,7 +580,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         chipTitle: 'Immediate Attention',
         headline: 'Please contact emergency services ($displayNumber)',
         subtext:
-            "LovingBrain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.",
+            "Loving Brain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.",
       );
 
       changeProps(

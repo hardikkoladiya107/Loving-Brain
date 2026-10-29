@@ -383,6 +383,8 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
                       child: AppButton(
                         height: 44.h,
                         padding: EdgeInsets.zero,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
+                        fontSize: 13.sp,
                         title: 'Keep invite',
                         backgroundColor: const Color(0xFFF8F5F2),
                         borderColor: const Color(0xFFE9E2DC),
@@ -395,6 +397,8 @@ class _InvitePendingScreenState extends State<InvitePendingScreen> {
                       child: AppButton(
                         height: 44.h,
                         padding: EdgeInsets.zero,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
+                        fontSize: 13.sp,
                         title: 'Cancel invite',
                         backgroundColor: const Color(0xFFD84315),
                         borderColor: const Color(0xFFD84315),

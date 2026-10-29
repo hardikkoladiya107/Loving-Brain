@@ -164,7 +164,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                       child:
                           (state.weeksWithLovingBrain >= 2 &&
                               state.averageBedtimeShiftMinutes > 0)
-                          ? '${state.weeksWithLovingBrain} weeks with LovingBrain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
+                          ? '${state.weeksWithLovingBrain} weeks with Loving Brain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
                                 .appText(
                                   fontSize: 14.sp,
                                   color: greyColor9,

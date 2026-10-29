@@ -42,10 +42,23 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
   }
 
   Future<void> _checkPendingUpdates() async {
+    try {
+      final List<dynamic> currentPending = await OfflineSyncRepo.instance
+          .getPendingUpdates();
+      if (currentPending.isNotEmpty) {
+        await OfflineSyncRepo.instance.syncPendingUpdates();
+      }
+    } catch (_) {}
+
     final List<dynamic> pending = await OfflineSyncRepo.instance
         .getPendingUpdates();
     if (isClosed) return;
-    changeProps(pendingOfflineUpdatesCount: pending.length);
+    final String lastSync =
+        preferences.getString('last_offline_sync_time') ?? '';
+    changeProps(
+      pendingOfflineUpdatesCount: pending.length,
+      lastSyncedTime: lastSync.isNotEmpty ? lastSync : state.lastSyncedTime,
+    );
   }
 
   void changeProps({
@@ -140,7 +153,7 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
           try {
             final Uint8List bytes = Uint8List.fromList(utf8.encode(jsonStr));
             final Uri? outputUri = await FilePicker.saveFile(
-              dialogTitle: 'Save LovingBrain Data Backup',
+              dialogTitle: 'Save Loving Brain Data Backup',
               fileName: fileName,
               bytes: bytes,
               mimeType: 'application/json',
@@ -176,21 +189,30 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
           final File file = File('${tempDir.path}/$fileName');
           await file.writeAsString(jsonStr);
 
-          await SharePlus.instance.share(
+          final ShareResult shareResult = await SharePlus.instance.share(
             ShareParams(
               files: <XFile>[XFile(file.path, mimeType: 'application/json')],
-              subject: 'LovingBrain Data Export',
+              subject: 'Loving Brain Data Export',
               text:
-                  'Here is your LovingBrain personal data export in standard JSON format.',
+                  'Here is your Loving Brain personal data export in standard JSON format.',
             ),
           );
 
-          changeProps(
-            isExporting: false,
-            exportStatus: ApiResultStatus.data(data: result.data),
-            exportedData: result.data,
-            lastExportedPath: file.path,
-          );
+          if (shareResult.status == ShareResultStatus.success) {
+            changeProps(
+              isExporting: false,
+              exportStatus: ApiResultStatus.data(data: result.data),
+              exportedData: result.data,
+              lastExportedPath: file.path,
+            );
+          } else {
+            changeProps(
+              isExporting: false,
+              exportStatus: const ApiResultStatus.initial(),
+              exportedData: result.data,
+              lastExportedPath: file.path,
+            );
+          }
         } catch (shareErr) {
           changeProps(
             isExporting: false,
@@ -252,7 +274,7 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
           isImporting: false,
           importStatus: ApiResultStatus.error(
             error: Exception(
-              'Selected file does not contain LovingBrain backup data.',
+              'Selected file does not contain Loving Brain backup data.',
             ),
           ),
         );

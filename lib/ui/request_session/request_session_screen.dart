@@ -179,7 +179,7 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
                             children: [
                               Expanded(
                                 child:
-                                    "We'll share your recent LovingBrain summary with $guideName so you don't have to explain from scratch. You can turn this off."
+                                    "We'll share your recent Loving Brain summary with $guideName so you don't have to explain from scratch. You can turn this off."
                                         .appText(
                                           fontSize: 14.sp,
                                           color: greyColor9,

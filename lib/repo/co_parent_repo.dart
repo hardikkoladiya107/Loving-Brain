@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dio/dio.dart';
@@ -410,12 +411,13 @@ class CoParentRepo {
       // Step 1 — link each child to the accepting co-parent.
       final List<DocumentReference> childRefs = <DocumentReference>[];
       for (final String childId in childIds) {
-        final ApiResultStatus linkResult = await ChildRepo.instance
-            .addParentReference(childId: childId, parentUid: parentUid);
-        Exception? linkError;
-        linkResult.whenOrNull(error: (Exception error) => linkError = error);
-        if (linkError != null) {
-          return ApiResultStatus.error(error: linkError!);
+        try {
+          await ChildRepo.instance.addParentReference(
+            childId: childId,
+            parentUid: parentUid,
+          );
+        } catch (e) {
+          debugPrint('Error linking child parent reference: $e');
         }
         childRefs.add(
           FirebaseFirestore.instance.collection('children').doc(childId),

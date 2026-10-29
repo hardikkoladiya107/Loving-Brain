@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChildProfileV2State {
 
- ChildModel? get childModel; String get name; String get age; String get conditions; String get dob; DateTime? get childDob; String get concerns; String get location; ApiResultStatus<dynamic> get saveStatus;
+ ChildModel? get childModel; String get name; String get age; String get conditions; String get dob; DateTime? get childDob; String get concerns; String get location; bool get isEdited; ApiResultStatus<dynamic> get saveStatus;
 /// Create a copy of ChildProfileV2State
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ChildProfileV2StateCopyWith<ChildProfileV2State> get copyWith => _$ChildProfile
 @override
 bool operator ==(Object other) {
   final _this = this as ChildProfileV2State;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChildProfileV2State&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.age, _this.age) || other.age == _this.age)&&(identical(other.conditions, _this.conditions) || other.conditions == _this.conditions)&&(identical(other.dob, _this.dob) || other.dob == _this.dob)&&(identical(other.childDob, _this.childDob) || other.childDob == _this.childDob)&&(identical(other.concerns, _this.concerns) || other.concerns == _this.concerns)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChildProfileV2State&&(identical(other.childModel, _this.childModel) || other.childModel == _this.childModel)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.age, _this.age) || other.age == _this.age)&&(identical(other.conditions, _this.conditions) || other.conditions == _this.conditions)&&(identical(other.dob, _this.dob) || other.dob == _this.dob)&&(identical(other.childDob, _this.childDob) || other.childDob == _this.childDob)&&(identical(other.concerns, _this.concerns) || other.concerns == _this.concerns)&&(identical(other.location, _this.location) || other.location == _this.location)&&(identical(other.isEdited, _this.isEdited) || other.isEdited == _this.isEdited)&&(identical(other.saveStatus, _this.saveStatus) || other.saveStatus == _this.saveStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ChildProfileV2State;
-  return Object.hash(runtimeType,_this.childModel,_this.name,_this.age,_this.conditions,_this.dob,_this.childDob,_this.concerns,_this.location,_this.saveStatus);
+  return Object.hash(runtimeType,_this.childModel,_this.name,_this.age,_this.conditions,_this.dob,_this.childDob,_this.concerns,_this.location,_this.isEdited,_this.saveStatus);
 }
 
 @override
 String toString() {
   final _this = this as ChildProfileV2State;
-  return 'ChildProfileV2State(childModel: ${_this.childModel}, name: ${_this.name}, age: ${_this.age}, conditions: ${_this.conditions}, dob: ${_this.dob}, childDob: ${_this.childDob}, concerns: ${_this.concerns}, location: ${_this.location}, saveStatus: ${_this.saveStatus})';
+  return 'ChildProfileV2State(childModel: ${_this.childModel}, name: ${_this.name}, age: ${_this.age}, conditions: ${_this.conditions}, dob: ${_this.dob}, childDob: ${_this.childDob}, concerns: ${_this.concerns}, location: ${_this.location}, isEdited: ${_this.isEdited}, saveStatus: ${_this.saveStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ChildProfileV2StateCopyWith<$Res>  {
   factory $ChildProfileV2StateCopyWith(ChildProfileV2State value, $Res Function(ChildProfileV2State) _then) = _$ChildProfileV2StateCopyWithImpl;
 @useResult
 $Res call({
- ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, ApiResultStatus<dynamic> saveStatus
+ ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, bool isEdited, ApiResultStatus<dynamic> saveStatus
 });
 
 
@@ -68,7 +68,7 @@ class _$ChildProfileV2StateCopyWithImpl<$Res>
 
 /// Create a copy of ChildProfileV2State
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? childModel = freezed,Object? name = null,Object? age = null,Object? conditions = null,Object? dob = null,Object? childDob = freezed,Object? concerns = null,Object? location = null,Object? saveStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? childModel = freezed,Object? name = null,Object? age = null,Object? conditions = null,Object? dob = null,Object? childDob = freezed,Object? concerns = null,Object? location = null,Object? isEdited = null,Object? saveStatus = null,}) {
   return _then(ChildProfileV2State(
 childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,8 @@ as String,dob: null == dob ? _self.dob : dob // ignore: cast_nullable_to_non_nul
 as String,childDob: freezed == childDob ? _self.childDob : childDob // ignore: cast_nullable_to_non_nullable
 as DateTime?,concerns: null == concerns ? _self.concerns : concerns // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
+as String,isEdited: null == isEdited ? _self.isEdited : isEdited // ignore: cast_nullable_to_non_nullable
+as bool,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }
@@ -173,10 +174,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<dynamic> saveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  bool isEdited,  ApiResultStatus<dynamic> saveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ChildProfileV2State() when $default != null:
-return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.saveStatus);case _:
+return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.isEdited,_that.saveStatus);case _:
   return orElse();
 
 }
@@ -194,10 +195,10 @@ return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<dynamic> saveStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  bool isEdited,  ApiResultStatus<dynamic> saveStatus)  $default,) {final _that = this;
 switch (_that) {
 case _ChildProfileV2State():
-return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.saveStatus);case _:
+return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.isEdited,_that.saveStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -214,10 +215,10 @@ return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  ApiResultStatus<dynamic> saveStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ChildModel? childModel,  String name,  String age,  String conditions,  String dob,  DateTime? childDob,  String concerns,  String location,  bool isEdited,  ApiResultStatus<dynamic> saveStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _ChildProfileV2State() when $default != null:
-return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.saveStatus);case _:
+return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob,_that.childDob,_that.concerns,_that.location,_that.isEdited,_that.saveStatus);case _:
   return null;
 
 }
@@ -229,7 +230,7 @@ return $default(_that.childModel,_that.name,_that.age,_that.conditions,_that.dob
 
 
 class _ChildProfileV2State implements ChildProfileV2State {
-  const _ChildProfileV2State({this.childModel, this.name = '', this.age = '', this.conditions = '', this.dob = '', this.childDob, this.concerns = '', this.location = '', this.saveStatus = const ApiResultStatus.initial()});
+  const _ChildProfileV2State({this.childModel, this.name = '', this.age = '', this.conditions = '', this.dob = '', this.childDob, this.concerns = '', this.location = '', this.isEdited = false, this.saveStatus = const ApiResultStatus.initial()});
   
 
 @override final  ChildModel? childModel;
@@ -240,6 +241,7 @@ class _ChildProfileV2State implements ChildProfileV2State {
 @override final  DateTime? childDob;
 @override@JsonKey() final  String concerns;
 @override@JsonKey() final  String location;
+@override@JsonKey() final  bool isEdited;
 @override@JsonKey() final  ApiResultStatus<dynamic> saveStatus;
 
 /// Create a copy of ChildProfileV2State
@@ -252,18 +254,18 @@ _$ChildProfileV2StateCopyWith<_ChildProfileV2State> get copyWith => __$ChildProf
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChildProfileV2State&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.name, name) || other.name == name)&&(identical(other.age, age) || other.age == age)&&(identical(other.conditions, conditions) || other.conditions == conditions)&&(identical(other.dob, dob) || other.dob == dob)&&(identical(other.childDob, childDob) || other.childDob == childDob)&&(identical(other.concerns, concerns) || other.concerns == concerns)&&(identical(other.location, location) || other.location == location)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChildProfileV2State&&(identical(other.childModel, childModel) || other.childModel == childModel)&&(identical(other.name, name) || other.name == name)&&(identical(other.age, age) || other.age == age)&&(identical(other.conditions, conditions) || other.conditions == conditions)&&(identical(other.dob, dob) || other.dob == dob)&&(identical(other.childDob, childDob) || other.childDob == childDob)&&(identical(other.concerns, concerns) || other.concerns == concerns)&&(identical(other.location, location) || other.location == location)&&(identical(other.isEdited, isEdited) || other.isEdited == isEdited)&&(identical(other.saveStatus, saveStatus) || other.saveStatus == saveStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,childModel,name,age,conditions,dob,childDob,concerns,location,saveStatus);
+    return Object.hash(runtimeType,childModel,name,age,conditions,dob,childDob,concerns,location,isEdited,saveStatus);
 }
 
 @override
 String toString() {
-    return 'ChildProfileV2State(childModel: $childModel, name: $name, age: $age, conditions: $conditions, dob: $dob, childDob: $childDob, concerns: $concerns, location: $location, saveStatus: $saveStatus)';
+    return 'ChildProfileV2State(childModel: $childModel, name: $name, age: $age, conditions: $conditions, dob: $dob, childDob: $childDob, concerns: $concerns, location: $location, isEdited: $isEdited, saveStatus: $saveStatus)';
 }
 
 
@@ -274,7 +276,7 @@ abstract mixin class _$ChildProfileV2StateCopyWith<$Res> implements $ChildProfil
   factory _$ChildProfileV2StateCopyWith(_ChildProfileV2State value, $Res Function(_ChildProfileV2State) _then) = __$ChildProfileV2StateCopyWithImpl;
 @override @useResult
 $Res call({
- ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, ApiResultStatus<dynamic> saveStatus
+ ChildModel? childModel, String name, String age, String conditions, String dob, DateTime? childDob, String concerns, String location, bool isEdited, ApiResultStatus<dynamic> saveStatus
 });
 
 
@@ -291,7 +293,7 @@ class __$ChildProfileV2StateCopyWithImpl<$Res>
 
 /// Create a copy of ChildProfileV2State
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? childModel = freezed,Object? name = null,Object? age = null,Object? conditions = null,Object? dob = null,Object? childDob = freezed,Object? concerns = null,Object? location = null,Object? saveStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? childModel = freezed,Object? name = null,Object? age = null,Object? conditions = null,Object? dob = null,Object? childDob = freezed,Object? concerns = null,Object? location = null,Object? isEdited = null,Object? saveStatus = null,}) {
   return _then(_ChildProfileV2State(
 childModel: freezed == childModel ? _self.childModel : childModel // ignore: cast_nullable_to_non_nullable
 as ChildModel?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -301,7 +303,8 @@ as String,dob: null == dob ? _self.dob : dob // ignore: cast_nullable_to_non_nul
 as String,childDob: freezed == childDob ? _self.childDob : childDob // ignore: cast_nullable_to_non_nullable
 as DateTime?,concerns: null == concerns ? _self.concerns : concerns // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
+as String,isEdited: null == isEdited ? _self.isEdited : isEdited // ignore: cast_nullable_to_non_nullable
+as bool,saveStatus: null == saveStatus ? _self.saveStatus : saveStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }

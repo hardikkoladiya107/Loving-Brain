@@ -93,7 +93,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                   title: "Tantrum update logged",
                   reason: state.forecastChangeReason.isNotEmpty
                       ? state.forecastChangeReason
-                      : "Understanding difficult moments helps LovingBrain notice patterns in timing and what helps your child calm down.",
+                      : "Understanding difficult moments helps Loving Brain notice patterns in timing and what helps your child calm down.",
                   action: "Explore Calm Plan",
                   actionSubtitle: state.hasMultiDayPatterns
                       ? "Proven responses ready for upcoming challenging windows."
@@ -437,11 +437,15 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    (time ?? "05:20 PM").appText(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: time == null ? greyColor4 : greyColor9,
+                    Expanded(
+                      child: (time ?? "Select approximate time").appText(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: time == null ? greyColor4 : greyColor9,
+                        textAlign: TextAlign.start,
+                      ),
                     ),
+                    8.spaceW,
                     Icon(
                       Icons.access_time_filled,
                       color: primaryColor,

@@ -223,6 +223,7 @@ class RegisterCubit extends Cubit<RegisterState> {
     }
 
     String cleanPhone = '';
+    String? phoneError;
     if (rawPhone.isNotEmpty) {
       cleanPhone = rawPhone.replaceAll(RegExp(r'[\s\-\(\)]'), '');
       if (cleanPhone.startsWith('0') && cleanPhone.length == 11) {
@@ -232,19 +233,13 @@ class RegisterCubit extends Cubit<RegisterState> {
       // Validate country code — only Indian (+91) supported, mobile numbers start 6-9
       if (cleanPhone.startsWith('+')) {
         if (!cleanPhone.startsWith('+91')) {
-          changeProps(
-            phoneNumberError:
-                'We only allow Indian mobile numbers (+91) at this time',
-          );
-          return;
-        }
-        final String digits = cleanPhone.substring(3);
-        if (digits.length != 10 || !RegExp(r'^[6-9]\d{9}$').hasMatch(digits)) {
-          changeProps(
-            phoneNumberError:
-                'Please enter a valid 10-digit Indian mobile number',
-          );
-          return;
+          phoneError = 'We only allow Indian mobile numbers (+91) at this time';
+        } else {
+          final String digits = cleanPhone.substring(3);
+          if (digits.length != 10 ||
+              !RegExp(r'^[6-9]\d{9}$').hasMatch(digits)) {
+            phoneError = 'Please enter a valid 10-digit Indian mobile number';
+          }
         }
       } else {
         if (cleanPhone.startsWith('91') &&
@@ -256,22 +251,26 @@ class RegisterCubit extends Cubit<RegisterState> {
           // Auto-add +91 as requested
           cleanPhone = '+91$cleanPhone';
         } else {
-          changeProps(
-            phoneNumberError:
-                'Please enter a valid 10-digit Indian mobile number',
-          );
-          return;
+          phoneError = 'Please enter a valid 10-digit Indian mobile number';
         }
       }
     }
 
     String cleanEmail = '';
+    String? emailError;
     if (rawEmail.isNotEmpty) {
       cleanEmail = rawEmail.toLowerCase();
       if (!cleanEmail.isValidEmail) {
-        changeProps(emailAddressError: 'Please enter a valid email address');
-        return;
+        emailError = 'Please enter a valid email address';
       }
+    }
+
+    if (phoneError != null || emailError != null) {
+      changeProps(
+        phoneNumberError: phoneError ?? '',
+        emailAddressError: emailError ?? '',
+      );
+      return;
     }
 
     // Branch 1: User provided phone number (either phone alone or both phone & email)

@@ -233,7 +233,7 @@ class AlertBottomSheet extends StatelessWidget {
         title: title ?? "Please contact a health professional",
         message:
             message ??
-            "A fever with reduced drinking in a child this age is something a clinician should look at. LovingBrain cannot assess symptoms.",
+            "A fever with reduced drinking in a child this age is something a clinician should look at. Loving Brain cannot assess symptoms.",
         primaryButtonText: primaryButtonText ?? "Call emergency services",
         onPrimaryAction: () {
           Navigator.pop(ctx);

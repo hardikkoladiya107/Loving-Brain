@@ -7,7 +7,7 @@ import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_sc
 import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
-void showViewSupportSheet(BuildContext context) {
+void showViewSupportSheet(BuildContext context, {int daysCount = 0}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -15,12 +15,14 @@ void showViewSupportSheet(BuildContext context) {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.7,
     ),
-    builder: (context) => const ViewSupportSheet(),
+    builder: (context) => ViewSupportSheet(daysCount: daysCount),
   );
 }
 
 class ViewSupportSheet extends StatelessWidget {
-  const ViewSupportSheet({super.key});
+  const ViewSupportSheet({super.key, this.daysCount = 0});
+
+  final int daysCount;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +69,9 @@ class ViewSupportSheet extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     SizedBox(height: 8.h),
-                    "Sleep has been inconsistent for 9 days · a guided sleep journey may help you build a more consistent routine."
+                    (daysCount >= 3
+                            ? "Sleep has been inconsistent for $daysCount days · a guided sleep journey may help you build a more consistent routine."
+                            : "A guided sleep journey can help support your child's emerging sleep rhythm and build a calm, consistent routine.")
                         .appText(
                           fontSize: 12.sp,
                           color: greyColor6,

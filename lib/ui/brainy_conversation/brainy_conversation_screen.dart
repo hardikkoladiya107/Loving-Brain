@@ -398,7 +398,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
               alertPillText: "Immediate emergency attention",
               title: "Please contact emergency services immediately",
               message:
-                  "Struggling to breathe or turning blue is an acute medical emergency. LovingBrain cannot assess symptoms or replace emergency medical care.",
+                  "Struggling to breathe or turning blue is an acute medical emergency. Loving Brain cannot assess symptoms or replace emergency medical care.",
               primaryButtonText:
                   "Call emergency services (${EmergencyDetector.getEmergencyDisplayNumber()})",
               onCallEmergency: () async {

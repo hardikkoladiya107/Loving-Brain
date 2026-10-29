@@ -310,14 +310,14 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                             body:
                                 "Changing the date of birth will re-base age guidance from the next day.",
                           ),
-                          120.spaceH,
+                          if (state.isEdited) 120.spaceH else 40.spaceH,
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              _buildBottomActions(context),
+              if (state.isEdited) _buildBottomActions(context),
             ],
           ),
         );

@@ -99,7 +99,23 @@ class LocationDataModel {
     final String? state = json['state']?.toString().trim();
     final String country = (json['country'] ?? '').toString().trim();
     final String? countryCode = json['country_code']?.toString().trim();
-    final String timezone = (json['timezone'] ?? 'UTC').toString().trim();
+    String timezone = (json['timezone'] ?? '').toString().trim();
+    if (timezone.isEmpty || timezone == 'UTC') {
+      if (country.toLowerCase() == 'india' ||
+          countryCode?.toUpperCase() == 'IN' ||
+          city.toLowerCase().contains('thiruvananthapuram') ||
+          city.toLowerCase().contains('mumbai') ||
+          city.toLowerCase().contains('delhi') ||
+          city.toLowerCase().contains('bangalore') ||
+          city.toLowerCase().contains('bengaluru') ||
+          city.toLowerCase().contains('kolkata') ||
+          city.toLowerCase().contains('chennai') ||
+          city.toLowerCase().contains('hyderabad')) {
+        timezone = 'Asia/Kolkata';
+      } else if (timezone.isEmpty) {
+        timezone = 'UTC';
+      }
+    }
     final String gmtOffset = computeGmtOffset(timezone);
     final double? latitude = json['latitude'] is num
         ? (json['latitude'] as num).toDouble()
@@ -201,21 +217,40 @@ class LocationDataModel {
 
     final List<String> parts = trimmed.split('·');
     final String placePart = parts.first.trim();
-    final String gmtPart = parts.length > 1 ? parts.last.trim() : 'GMT+0';
     final List<String> placeTokens = placePart
         .split(',')
         .map((String e) => e.trim())
         .where((String e) => e.isNotEmpty)
         .toList();
     final String city = placeTokens.isNotEmpty ? placeTokens.first : trimmed;
-    final String country = placeTokens.length > 1 ? placeTokens.last : '';
+    String country = placeTokens.length > 1 ? placeTokens.last : '';
+
+    String timezone = 'UTC';
+    if (country.toLowerCase() == 'india' ||
+        placePart.toLowerCase().contains('india') ||
+        trimmed.toLowerCase().contains('india') ||
+        city.toLowerCase().contains('thiruvananthapuram') ||
+        city.toLowerCase().contains('mumbai') ||
+        city.toLowerCase().contains('delhi') ||
+        city.toLowerCase().contains('bangalore') ||
+        city.toLowerCase().contains('bengaluru') ||
+        city.toLowerCase().contains('kolkata') ||
+        city.toLowerCase().contains('chennai') ||
+        city.toLowerCase().contains('hyderabad')) {
+      timezone = 'Asia/Kolkata';
+      if (country.isEmpty) country = 'India';
+    }
+
+    final String gmtOffset = computeGmtOffset(timezone);
+    final String placeLabel = country.isNotEmpty ? '$city, $country' : city;
+    final String formatted = '$placeLabel · $gmtOffset';
 
     return LocationDataModel(
       city: city,
       country: country,
-      timezone: 'UTC',
-      gmtOffset: gmtPart,
-      formatted: trimmed,
+      timezone: timezone,
+      gmtOffset: gmtOffset,
+      formatted: formatted,
     );
   }
 
@@ -306,6 +341,17 @@ class LocationDataModel {
           latitude: 19.07283,
           longitude: 72.88261,
           formatted: 'Mumbai, India · GMT+5:30',
+        ),
+        LocationDataModel(
+          city: 'Thiruvananthapuram',
+          state: 'Kerala',
+          country: 'India',
+          countryCode: 'IN',
+          timezone: 'Asia/Kolkata',
+          gmtOffset: 'GMT+5:30',
+          latitude: 8.5241,
+          longitude: 76.9366,
+          formatted: 'Thiruvananthapuram, India · GMT+5:30',
         ),
         LocationDataModel(
           city: 'Singapore',

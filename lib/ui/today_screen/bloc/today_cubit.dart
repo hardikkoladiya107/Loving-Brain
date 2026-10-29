@@ -41,6 +41,8 @@ class TodayCubit extends Cubit<TodayState> {
     String? sleepForecastReason,
     bool? hasSleepLogs,
     bool? hasMultiDayPatterns,
+    bool? hasAnyLogs,
+    int? loggedDaysCount,
     bool? didForecastChangeSignificantly,
     String? forecastChangeReason,
     SleepLogModel? duplicateSleepLogDetected,
@@ -88,6 +90,8 @@ class TodayCubit extends Cubit<TodayState> {
         sleepForecastReason: sleepForecastReason ?? state.sleepForecastReason,
         hasSleepLogs: hasSleepLogs ?? state.hasSleepLogs,
         hasMultiDayPatterns: hasMultiDayPatterns ?? state.hasMultiDayPatterns,
+        hasAnyLogs: hasAnyLogs ?? state.hasAnyLogs,
+        loggedDaysCount: loggedDaysCount ?? state.loggedDaysCount,
         didForecastChangeSignificantly:
             didForecastChangeSignificantly ??
             state.didForecastChangeSignificantly,
@@ -293,13 +297,27 @@ class TodayCubit extends Cubit<TodayState> {
         hasTantrumToday ||
         hasSevereHealthIssue;
 
-    final TodayMode updatedMode = (!forecast.hasPersonalLogs)
-        ? TodayMode.newParent
-        : (isOvertiredOrDisrupted
-              ? TodayMode.importantHeadsUp
-              : TodayMode.normal);
-
     final bool hasMultiDayPatterns = sleepLogs.length >= 3;
+    final Set<String> loggedDates = <String>{};
+    for (final SleepLogModel log in sleepLogs) {
+      loggedDates.add(
+        '${log.wakeTime.year}-${log.wakeTime.month}-${log.wakeTime.day}',
+      );
+    }
+    final int loggedDaysCount = loggedDates.length;
+
+    final bool hasAnyLogs =
+        sleepLogs.isNotEmpty || hasTantrumToday || todayHealthLog != null;
+
+    final TodayMode updatedMode;
+    if (!forecast.hasPersonalLogs) {
+      updatedMode = TodayMode.newParent;
+    } else if (hasMultiDayPatterns && isOvertiredOrDisrupted) {
+      // Require at least 3 logged sessions before predicting harder evening disruption (BUG-30)
+      updatedMode = TodayMode.importantHeadsUp;
+    } else {
+      updatedMode = TodayMode.normal;
+    }
 
     changeProps(
       mode: updatedMode,
@@ -312,6 +330,8 @@ class TodayCubit extends Cubit<TodayState> {
       sleepForecastReason: forecast.reason,
       hasSleepLogs: forecast.hasPersonalLogs,
       hasMultiDayPatterns: hasMultiDayPatterns,
+      hasAnyLogs: hasAnyLogs,
+      loggedDaysCount: loggedDaysCount,
     );
 
     // Schedule Sleep Window notification if confidence >= moderate (Doc 03 §1)
@@ -413,17 +433,11 @@ class TodayCubit extends Cubit<TodayState> {
 
   void setSleepQuality(int index) => changeProps(sleepQualityIndex: index);
 
-  void setFellAsleepTime(String time) => changeProps(
-    fellAsleepTime: time,
-    napStartTime: time,
-    showSleepUpdateErrors: false,
-  );
+  void setFellAsleepTime(String time) =>
+      changeProps(fellAsleepTime: time, showSleepUpdateErrors: false);
 
-  void setWokeUpTime(String time) => changeProps(
-    wokeUpTime: time,
-    napEndTime: time,
-    showSleepUpdateErrors: false,
-  );
+  void setWokeUpTime(String time) =>
+      changeProps(wokeUpTime: time, showSleepUpdateErrors: false);
 
   void setNapTimes(String? start, String? end) => changeProps(
     napStartTime: start,
@@ -551,6 +565,7 @@ class TodayCubit extends Cubit<TodayState> {
       if (wakeTime.isAfter(now)) {
         changeProps(
           isLoading: false,
+          showSleepUpdateErrors: true,
           saveStatus: ApiResultStatus.error(
             error: Exception("Wake time cannot be in the future"),
           ),
@@ -857,6 +872,7 @@ class TodayCubit extends Cubit<TodayState> {
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
+      await recalculateForecast();
     } else if (result is Error<String>) {
       changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
@@ -1018,6 +1034,7 @@ class TodayCubit extends Cubit<TodayState> {
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
+      await recalculateForecast();
     } else if (result is Error<String>) {
       changeProps(
         isLoading: false,
@@ -1146,6 +1163,7 @@ class TodayCubit extends Cubit<TodayState> {
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);
+      await recalculateForecast();
     } else if (result is Error<String>) {
       changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }

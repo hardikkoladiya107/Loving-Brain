@@ -180,7 +180,10 @@ class _TodayScreenState extends State<TodayScreen> {
                           AppButton(
                             title: "View support",
                             onTap: () {
-                              showViewSupportSheet(context);
+                              showViewSupportSheet(
+                                context,
+                                daysCount: state.loggedDaysCount,
+                              );
                             },
                             backgroundColor: Colors.white,
                             textColor: greyColor9,

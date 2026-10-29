@@ -523,9 +523,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _pickChildDob(BuildContext context) async {
     final OnboardingCubit cubit = context.read<OnboardingCubit>();
     final DateTime now = DateTime.now();
-    final DateTime maxPast = now.subtract(const Duration(days: 1));
-    final DateTime defaultInitial = DateTime(now.year - 2, now.month, now.day);
-    final DateTime rawInitial = cubit.state.childDob ?? defaultInitial;
+    final DateTime maxPast = DateTime(now.year, now.month, now.day);
+    final DateTime rawInitial = cubit.state.childDob ?? maxPast;
     final DateTime initialDate = rawInitial.isAfter(maxPast)
         ? maxPast
         : rawInitial;

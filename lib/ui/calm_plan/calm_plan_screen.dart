@@ -87,6 +87,9 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
               ),
               SafeArea(
                 child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   children: [
                     16.spaceH,

@@ -230,7 +230,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
                           ],
                         ),
                         8.spaceH,
-                        "Breathing difficulties, chest retractions, or unresponsiveness require immediate medical evaluation. LovingBrain cannot assess clinical emergencies."
+                        "Breathing difficulties, chest retractions, or unresponsiveness require immediate medical evaluation. Loving Brain cannot assess clinical emergencies."
                             .appText(
                               color: const Color(0xFFB71C1C),
                               fontSize: 12.sp,
@@ -301,7 +301,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
                         context,
                         title: "Urgent medical attention recommended",
                         message:
-                            "Breathing difficulty or severe symptoms require prompt clinical evaluation. LovingBrain cannot assess medical emergencies.",
+                            "Breathing difficulty or severe symptoms require prompt clinical evaluation. Loving Brain cannot assess medical emergencies.",
                         onCallEmergency: () {
                           launchUrl(
                             Uri.parse(EmergencyDetector.getEmergencyPhone()),

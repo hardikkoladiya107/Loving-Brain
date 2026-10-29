@@ -7,11 +7,17 @@ import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
+
 class AddSleepCard extends StatelessWidget {
   const AddSleepCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final bool hasAnyLogs = context.select<TodayCubit, bool>(
+      (TodayCubit c) => c.state.hasAnyLogs,
+    );
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -35,12 +41,15 @@ class AddSleepCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     SizedBox(height: 8.h),
-                    "Add one update and we’ll start noticing patterns.".appText(
-                      fontSize: 12.sp,
-                      color: greyColor6,
-                      height: 1.4,
-                      textAlign: TextAlign.start,
-                    ),
+                    (hasAnyLogs
+                            ? "Gathering baseline rhythm · keep logging updates so patterns become clearer."
+                            : "Add one update and we’ll start noticing patterns.")
+                        .appText(
+                          fontSize: 12.sp,
+                          color: greyColor6,
+                          height: 1.4,
+                          textAlign: TextAlign.start,
+                        ),
                   ],
                 ),
               ),

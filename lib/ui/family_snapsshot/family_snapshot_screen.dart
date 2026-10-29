@@ -38,10 +38,14 @@ class _FamilySnapshotScreenState extends State<FamilySnapshotScreen> {
           backgroundColor: const Color(0xFFFEF8F4),
           body: Stack(
             children: [
-              Positioned.fill(
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
                 child: Image.asset(
                   Assets.v2.images.imgFamilySnapshotBg.path,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.topCenter,
                 ),
               ),
               SafeArea(
@@ -49,9 +53,12 @@ class _FamilySnapshotScreenState extends State<FamilySnapshotScreen> {
                   children: [
                     Expanded(
                       child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
                         padding: EdgeInsets.symmetric(horizontal: 20.w),
                         children: [
-                          140.spaceH,
+                          270.spaceH,
                           "Here’s your\nfamily snapshot".appText(
                             textStyle: getTextStyle(
                               fraunces: true,

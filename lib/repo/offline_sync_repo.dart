@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/pending_local_update_model.dart';
@@ -10,7 +13,9 @@ import 'package:loving_brain/repo/today_log_repo.dart';
 /// Singleton Repository managing offline resilience, local queueing, and retry sync.
 /// Conforms to AGENTS.md §7 and V2 Spec (04_DATABASE_SCHEMA_AND_OFFLINE_RULES.md).
 class OfflineSyncRepo {
-  OfflineSyncRepo._();
+  OfflineSyncRepo._() {
+    initAutoSyncListener();
+  }
   static final OfflineSyncRepo _instance = OfflineSyncRepo._();
   factory OfflineSyncRepo() => _instance;
   static OfflineSyncRepo get instance => _instance;
@@ -18,6 +23,21 @@ class OfflineSyncRepo {
   static const String _prefKeyPendingUpdates = 'pending_offline_sync_queue';
   final List<PendingLocalUpdateModel> _inMemoryQueue =
       <PendingLocalUpdateModel>[];
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+
+  void initAutoSyncListener() {
+    _connectivitySubscription?.cancel();
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> results,
+    ) async {
+      final bool hasConnection = results.any(
+        (ConnectivityResult r) => r != ConnectivityResult.none,
+      );
+      if (hasConnection) {
+        await syncPendingUpdates();
+      }
+    });
+  }
 
   /// Loads pending updates stored locally in SharedPreferences
   Future<void> loadPersistedQueue() async {
@@ -94,7 +114,9 @@ class OfflineSyncRepo {
     final List<PendingLocalUpdateModel> snapshot =
         List<PendingLocalUpdateModel>.from(_inMemoryQueue);
     final String childId =
-        TodayLogRepo.instance.resolveActiveChildId() ?? 'default_child';
+        TodayLogRepo.instance.resolveActiveChildId() ??
+        preferences.getChildModel()?.reference?.id ??
+        'default_child';
     for (final PendingLocalUpdateModel item in snapshot) {
       try {
         bool success = false;
@@ -149,6 +171,11 @@ class OfflineSyncRepo {
       } catch (_) {
         // Continue attempting others
       }
+    }
+
+    if (syncedCount > 0) {
+      final String nowFormatted = DateFormat('h:mm a').format(DateTime.now());
+      await preferences.putString('last_offline_sync_time', nowFormatted);
     }
 
     return ApiResultStatus.data(data: syncedCount);

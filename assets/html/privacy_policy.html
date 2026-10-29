@@ -77,12 +77,15 @@
             top: 0;
             left: 0;
             width: 100%;
-            background: rgba(254, 248, 244, 0.92);
+            background: rgba(254, 248, 244, 0.96);
             -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--card-border);
             z-index: 100;
-            padding: 14px 20px 14px 76px;
+            padding-top: calc(env(safe-area-inset-top, 24px) + 20px);
+            padding-bottom: 16px;
+            padding-left: 88px;
+            padding-right: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;

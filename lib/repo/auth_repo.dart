@@ -288,6 +288,12 @@ class AuthRepo {
       } catch (_) {}
       await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
+
+      // If the Auth user is gone, consider account deletion successful locally
+      if (FirebaseAuth.instance.currentUser == null) {
+        return const ApiResultStatus.data(data: "");
+      }
+
       return ApiResultStatus.error(
         error: e is Exception ? e : Exception(e.toString()),
       );
@@ -537,11 +543,28 @@ class AuthRepo {
     required String uid,
     required Set<String> childIds,
   }) async {
-    final QuerySnapshot<Map<String, dynamic>> snap =
-        await _sharedEventCollection.where('created_by', isEqualTo: uid).get();
-    for (final DocumentSnapshot<Map<String, dynamic>> d in snap.docs) {
-      await d.reference.delete();
-    }
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snap =
+          await _sharedEventCollection
+              .where('created_by', isEqualTo: uid)
+              .get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d in snap.docs) {
+        try {
+          await d.reference.delete();
+        } catch (_) {}
+      }
+    } catch (_) {}
+
+    try {
+      final QuerySnapshot<Map<String, dynamic>> userSnap =
+          await _sharedEventCollection.where('userId', isEqualTo: uid).get();
+      for (final DocumentSnapshot<Map<String, dynamic>> d in userSnap.docs) {
+        try {
+          await d.reference.delete();
+        } catch (_) {}
+      }
+    } catch (_) {}
+
     for (final String cId in childIds) {
       try {
         final QuerySnapshot<Map<String, dynamic>> childEvents =
@@ -550,7 +573,9 @@ class AuthRepo {
                 .get();
         for (final DocumentSnapshot<Map<String, dynamic>> d
             in childEvents.docs) {
-          await d.reference.delete();
+          try {
+            await d.reference.delete();
+          } catch (_) {}
         }
       } catch (_) {}
     }

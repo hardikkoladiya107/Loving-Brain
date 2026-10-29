@@ -44,7 +44,9 @@ class _ConsistencyRecognitionScreenState
             ? "Showing up for\nyour family this week"
             : (days == 5
                   ? "You've shown up five\ndays this week"
-                  : "You've shown up $days\ndays this week");
+                  : (days == 1
+                        ? "You've shown up 1\nday this week"
+                        : "You've shown up $days\ndays this week"));
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),

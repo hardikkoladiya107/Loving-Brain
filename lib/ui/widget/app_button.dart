@@ -21,6 +21,8 @@ class AppButton extends StatelessWidget {
     this.isLoading = false,
     this.loaderColor,
     this.loaderSize,
+    this.fontSize,
+    this.contentPadding,
   });
 
   final String? title;
@@ -35,6 +37,8 @@ class AppButton extends StatelessWidget {
   final bool isLoading;
   final Color? loaderColor;
   final double? loaderSize;
+  final double? fontSize;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +63,12 @@ class AppButton extends StatelessWidget {
               : widget ??
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding:
+                            contentPadding ??
+                            const EdgeInsets.symmetric(horizontal: 16),
                         child: (title ?? "").appText(
                           color: textColor ?? Colors.white,
-                          fontSize: 16,
+                          fontSize: fontSize ?? 16,
                           fontWeight: FontWeight.w700,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

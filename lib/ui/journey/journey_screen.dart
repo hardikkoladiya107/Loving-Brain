@@ -498,7 +498,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
                   ),
                   4.spaceH,
                   (days > 0
-                          ? "Checked in $days days this week"
+                          ? "Checked in $days ${days == 1 ? 'day' : 'days'} this week"
                           : "Showing up for your family")
                       .appText(
                         fontSize: 12.sp,

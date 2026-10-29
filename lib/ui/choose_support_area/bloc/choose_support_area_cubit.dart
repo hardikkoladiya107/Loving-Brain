@@ -41,7 +41,10 @@ class ChooseSupportAreaCubit extends Cubit<ChooseSupportAreaState> {
   bool _matching = false;
 
   void init({String? initialArea}) {
-    changeProps(selectedIndex: indexForLabel(initialArea));
+    emit(const ChooseSupportAreaState());
+    if (initialArea != null && initialArea.isNotEmpty) {
+      changeProps(selectedIndex: indexForLabel(initialArea));
+    }
   }
 
   void changeProps({

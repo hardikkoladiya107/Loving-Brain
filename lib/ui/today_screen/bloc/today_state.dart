@@ -27,6 +27,8 @@ abstract class TodayState with _$TodayState {
     @Default('') String sleepForecastReason,
     @Default(false) bool hasSleepLogs,
     @Default(false) bool hasMultiDayPatterns,
+    @Default(false) bool hasAnyLogs,
+    @Default(0) int loggedDaysCount,
 
     // Meaningful forecast change tracking (Doc 01 screens 22 & 66, Doc 06 §3)
     @Default(false) bool didForecastChangeSignificantly,

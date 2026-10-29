@@ -165,7 +165,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                               title: "Contact support",
                               subtitle: "Usually answered within a working day",
                               onTap: () => _launch(
-                                "mailto:${state.supportEmail}?subject=LovingBrain Support Request",
+                                "mailto:${state.supportEmail}?subject=Loving Brain Support Request",
                                 copyFallbackText: state.supportEmail,
                               ),
                             ),
@@ -189,7 +189,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                               label: "In an emergency",
                               title: "Contact your local emergency services",
                               body:
-                                  "LovingBrain can't help in an emergency and isn't monitored.",
+                                  "Loving Brain can't help in an emergency and isn't monitored.",
                               action: InkWell(
                                 onTap: () {
                                   final String raw = state.emergencyPhone
@@ -233,7 +233,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                               iconData: Icons.info,
                               iconColor: const Color(0xFFE64A19),
                               body:
-                                  "LovingBrain offers general guidance based on your own updates. It doesn't diagnose anything and doesn't replace professional medical advice.",
+                                  "Loving Brain offers general guidance based on your own updates. It doesn't diagnose anything and doesn't replace professional medical advice.",
                             ),
                             40.spaceH,
                           ],

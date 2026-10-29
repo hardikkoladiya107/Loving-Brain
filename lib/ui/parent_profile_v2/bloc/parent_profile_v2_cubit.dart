@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -49,8 +50,30 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
   }
 
   Future<void> init() async {
-    final UserModel? user = preferences.getUserModel();
+    UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();
+    if (user == null) {
+      try {
+        final String? fbUid = FirebaseAuth.instance.currentUser?.uid;
+        if (fbUid != null && fbUid.isNotEmpty) {
+          user = await AuthRepo.instance.getUserFromUid(uId: fbUid);
+          if (user != null) {
+            await preferences.saveUserModel(user);
+          }
+        }
+        if (user == null && FirebaseAuth.instance.currentUser != null) {
+          final User fbUser = FirebaseAuth.instance.currentUser!;
+          user = UserModel(
+            uid: fbUser.uid,
+            email: fbUser.email,
+            displayName: fbUser.displayName ?? 'Parent',
+          );
+          await preferences.saveUserModel(user);
+        }
+      } catch (_) {
+        // Firebase not initialized in unit/widget test environments
+      }
+    }
     if (user != null) {
       _applyFromUser(user, child);
       final String? uid = user.uid;
@@ -86,9 +109,8 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
       language: (user.preferredLanguage ?? '').isNotEmpty
           ? user.preferredLanguage!
           : 'English',
-      location: (user.location ?? '').isNotEmpty
-          ? user.location!
-          : (child?.location ?? _locationData?.formatted ?? ''),
+      location:
+          _locationData?.formatted ?? (user.location ?? child?.location ?? ''),
       dob: dobStr,
     );
   }

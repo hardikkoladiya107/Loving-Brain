@@ -75,7 +75,10 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
                 ),
               ),
               SafeArea(
-                child: Padding(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +122,7 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
                         12.spaceH,
                         _buildHealthCaveat(state.healthCaveat!),
                       ],
-                      const Spacer(),
+                      32.spaceH,
                       AppButton(
                         title: "Add update",
                         onTap: () {
@@ -128,7 +131,7 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
                         backgroundColor: Colors.white,
                         textColor: greyColor9,
                       ),
-                      16.spaceH,
+                      32.spaceH,
                     ],
                   ),
                 ),

@@ -14,6 +14,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
+import 'package:loving_brain/repo/today_log_repo.dart';
 import 'instant_result_sheet.dart';
 
 Future<void> showAddSleepUpdateSheet(BuildContext context) {
@@ -65,6 +66,33 @@ class AddSleepUpdateSheet extends StatelessWidget {
       } else {
         context.read<TodayCubit>().setFellAsleepTime(formatted);
       }
+    }
+  }
+
+  bool _isWakeTimeInFuture(String? wokeUpTime, String? fellAsleepTime) {
+    if (wokeUpTime == null) return false;
+    final DateTime now = DateTime.now();
+    try {
+      DateTime wake = TodayLogRepo.parseTimeString(
+        wokeUpTime,
+        referenceDate: now,
+      );
+      if (fellAsleepTime != null) {
+        DateTime bed = TodayLogRepo.parseTimeString(
+          fellAsleepTime,
+          referenceDate: now,
+        );
+        if (wake.isBefore(bed)) {
+          if (bed.isAfter(now)) {
+            bed = bed.subtract(const Duration(days: 1));
+          } else {
+            wake = wake.add(const Duration(days: 1));
+          }
+        }
+      }
+      return wake.isAfter(now);
+    } catch (_) {
+      return false;
     }
   }
 
@@ -217,14 +245,27 @@ class AddSleepUpdateSheet extends StatelessWidget {
                     ),
                     12.spaceW,
                     Expanded(
-                      child: _buildTimeInput(
-                        label: "WOKE UP",
-                        time: state.wokeUpTime,
-                        isError:
-                            state.showSleepUpdateErrors &&
-                            state.wokeUpTime == null,
-                        errorText: "Required",
-                        onTap: () => _pickTime(context, true),
+                      child: Builder(
+                        builder: (BuildContext context) {
+                          final bool isWakeFuture = _isWakeTimeInFuture(
+                            state.wokeUpTime,
+                            state.fellAsleepTime,
+                          );
+                          final bool isWakeError =
+                              (state.showSleepUpdateErrors &&
+                                  state.wokeUpTime == null) ||
+                              (state.showSleepUpdateErrors && isWakeFuture);
+                          final String wakeErrorText = isWakeFuture
+                              ? "Wake time cannot be in the future"
+                              : "Required";
+                          return _buildTimeInput(
+                            label: "WOKE UP",
+                            time: state.wokeUpTime,
+                            isError: isWakeError,
+                            errorText: wakeErrorText,
+                            onTap: () => _pickTime(context, true),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -289,8 +330,13 @@ class AddSleepUpdateSheet extends StatelessWidget {
                   isLoading: state.isLoading,
                   title: "Save update",
                   onTap: () {
+                    final bool isWakeFuture = _isWakeTimeInFuture(
+                      state.wokeUpTime,
+                      state.fellAsleepTime,
+                    );
                     if (state.fellAsleepTime == null ||
-                        state.wokeUpTime == null) {
+                        state.wokeUpTime == null ||
+                        isWakeFuture) {
                       context.read<TodayCubit>().triggerSleepUpdateErrors();
                     } else {
                       context.read<TodayCubit>().saveSleepLog();

@@ -123,7 +123,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                       textAlign: TextAlign.start,
                     ),
                     8.spaceH,
-                    "Talk to our expert mentors who are deeply trained on LovingBrain methodologies and child psychology."
+                    "Talk to our expert mentors who are deeply trained on Loving Brain methodologies and child psychology."
                         .appText(
                           fontSize: 16.sp,
                           color: greyColor9,

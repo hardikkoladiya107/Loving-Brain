@@ -26,6 +26,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     DateTime? childDob,
     String? concerns,
     String? location,
+    bool? isEdited,
     ApiResultStatus? saveStatus,
   }) {
     emit(
@@ -38,6 +39,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
         childDob: childDob ?? state.childDob,
         concerns: concerns ?? state.concerns,
         location: location ?? state.location,
+        isEdited: isEdited ?? state.isEdited,
         saveStatus: saveStatus ?? ApiResultStatus.initial(),
       ),
     );
@@ -91,7 +93,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       changeProps(
         childDob: today,
         dob: formatDobWithAge(today, ''),
-        location: user?.location ?? _locationData?.formatted ?? '',
+        location: _locationData?.formatted ?? (user?.location ?? ''),
+        isEdited: false,
       );
       return;
     }
@@ -115,10 +118,11 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
         conditions: (localChild.conditions ?? const <String>[]).join(', '),
         concerns: _extractConcernsText(localChild, null),
         location:
+            _locationData?.formatted ??
             localChild.location ??
             user?.location ??
-            _locationData?.formatted ??
             '',
+        isEdited: false,
       );
     } else if (user != null) {
       _locationData =
@@ -128,7 +132,8 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
         age: user.childAge ?? '',
         childDob: today,
         dob: formatDobWithAge(today, user.childAge ?? ''),
-        location: user.location ?? _locationData?.formatted ?? '',
+        location: _locationData?.formatted ?? user.location ?? '',
+        isEdited: false,
       );
     }
 
@@ -210,6 +215,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       childDob: childDob ?? state.childDob,
       concerns: concerns ?? state.concerns,
       location: location ?? state.location,
+      isEdited: true,
       saveStatus: const ApiResultStatus.initial(),
     );
   }
@@ -221,12 +227,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     );
     final String ageLabel = AgeUtils.ageLabelFromMonths(months);
     final String formatted = formatDobWithAge(picked, ageLabel);
-    changeProps(
-      childDob: picked,
-      age: ageLabel,
-      dob: formatted,
-      saveStatus: const ApiResultStatus.initial(),
-    );
+    updateField(childDob: picked, age: ageLabel, dob: formatted);
   }
 
   Future<void> saveProfile() async {
@@ -323,6 +324,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
             age: computedAge,
             childDob: selectedDob,
             dob: formatDobWithAge(selectedDob, computedAge),
+            isEdited: false,
             saveStatus: const ApiResultStatus.data(
               data: 'Profile saved successfully',
             ),
@@ -354,6 +356,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
             age: computedAge,
             childDob: selectedDob,
             dob: formatDobWithAge(selectedDob, computedAge),
+            isEdited: false,
             saveStatus: const ApiResultStatus.data(
               data: 'Profile saved successfully',
             ),
@@ -363,6 +366,7 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
       }
 
       changeProps(
+        isEdited: false,
         saveStatus: const ApiResultStatus.data(
           data: 'Profile saved successfully',
         ),

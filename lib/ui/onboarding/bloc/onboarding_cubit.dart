@@ -34,6 +34,16 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         } catch (_) {}
       }
 
+      if (draft['location_data'] != null) {
+        try {
+          _locationData = LocationDataModel.fromJson(
+            Map<String, dynamic>.from(draft['location_data'] as Map),
+          );
+        } catch (_) {}
+      } else if (draft['location'] != null) {
+        _locationData = LocationDataModel.tryParse(draft['location']);
+      }
+
       emit(
         OnboardingState(
           currentPage: savedPage,
@@ -170,6 +180,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       'parentRole': next.parentRole,
       'preferredLanguage': next.preferredLanguage,
       'location': next.location,
+      if (_locationData != null) 'location_data': _locationData!.toJson(),
       'primaryConcern': next.primaryConcern,
       'concerns': next.concerns,
       'isMoreThanOneSelected': next.isMoreThanOneSelected,
