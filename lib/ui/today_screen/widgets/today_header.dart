@@ -56,16 +56,17 @@ class TodayHeader extends StatelessWidget {
                       ),
                       8.spaceW,
                       Flexible(
-                        child: (state.childName.isNotEmpty
-                                ? state.childName
-                                : 'Add child')
-                            .appText(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
-                        ),
+                        child:
+                            (state.childName.isNotEmpty
+                                    ? state.childName
+                                    : 'Add child')
+                                .appText(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                ),
                       ),
                     ],
                   ).appPadding(left: 6.w, right: 12.w, top: 4.h, bottom: 4.h),

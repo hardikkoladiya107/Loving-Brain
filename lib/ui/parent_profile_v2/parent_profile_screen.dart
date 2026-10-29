@@ -53,12 +53,11 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
           },
           error: (Exception exception) {
             EasyLoading.dismiss();
-            final String errorMsg =
-                exception.toString().replaceAll('Exception: ', '');
-            showSnackBar(
-              message: errorMsg,
-              type: SnackBarType.ERROR,
+            final String errorMsg = exception.toString().replaceAll(
+              'Exception: ',
+              '',
             );
+            showSnackBar(message: errorMsg, type: SnackBarType.ERROR);
             if (errorMsg.toLowerCase().contains('sign out and sign in') ||
                 errorMsg.toLowerCase().contains('sign in again') ||
                 errorMsg.toLowerCase().contains('security') ||
@@ -112,12 +111,11 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
               context.go(RoutePaths.welcome);
               return;
             }
-            final String errorMsg =
-                exception.toString().replaceAll('Exception: ', '');
-            showSnackBar(
-              message: errorMsg,
-              type: SnackBarType.ERROR,
+            final String errorMsg = exception.toString().replaceAll(
+              'Exception: ',
+              '',
             );
+            showSnackBar(message: errorMsg, type: SnackBarType.ERROR);
             if (errorMsg.toLowerCase().contains('sign out and sign in') ||
                 errorMsg.toLowerCase().contains('sign in again') ||
                 errorMsg.toLowerCase().contains('security') ||

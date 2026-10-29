@@ -751,12 +751,11 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            final String errorMsg =
-                error.toString().replaceAll('Exception: ', '');
-            showSnackBar(
-              message: errorMsg,
-              type: SnackBarType.ERROR,
+            final String errorMsg = error.toString().replaceAll(
+              'Exception: ',
+              '',
             );
+            showSnackBar(message: errorMsg, type: SnackBarType.ERROR);
             if (errorMsg.toLowerCase().contains('sign out and sign in') ||
                 errorMsg.toLowerCase().contains('sign in again') ||
                 errorMsg.toLowerCase().contains('security') ||
@@ -780,12 +779,11 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            final String errorMsg =
-                error.toString().replaceAll('Exception: ', '');
-            showSnackBar(
-              message: errorMsg,
-              type: SnackBarType.ERROR,
+            final String errorMsg = error.toString().replaceAll(
+              'Exception: ',
+              '',
             );
+            showSnackBar(message: errorMsg, type: SnackBarType.ERROR);
             if (errorMsg.toLowerCase().contains('sign out and sign in') ||
                 errorMsg.toLowerCase().contains('sign in again') ||
                 errorMsg.toLowerCase().contains('security') ||
@@ -807,12 +805,11 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
           },
           error: (Exception error) {
             EasyLoading.dismiss();
-            final String errorMsg =
-                error.toString().replaceAll('Exception: ', '');
-            showSnackBar(
-              message: errorMsg,
-              type: SnackBarType.ERROR,
+            final String errorMsg = error.toString().replaceAll(
+              'Exception: ',
+              '',
             );
+            showSnackBar(message: errorMsg, type: SnackBarType.ERROR);
             if (errorMsg.toLowerCase().contains('sign out and sign in') ||
                 errorMsg.toLowerCase().contains('sign in again') ||
                 errorMsg.toLowerCase().contains('security') ||

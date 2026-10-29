@@ -179,8 +179,10 @@ class TodayCubit extends Cubit<TodayState> {
           final DocumentSnapshot<Object?> childSnap = await defChild.get();
           final Object? childData = childSnap.data();
           if (childData is Map<String, dynamic>) {
-            final ChildModel c =
-                ChildModel.fromJson(childData, childSnap.reference);
+            final ChildModel c = ChildModel.fromJson(
+              childData,
+              childSnap.reference,
+            );
             await preferences.saveChildModel(c);
           }
         } catch (_) {}

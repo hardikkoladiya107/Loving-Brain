@@ -328,10 +328,7 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
     try {
       final ApiResultStatus status = await AuthRepo.instance.deleteAccount();
       if (status is Error) {
-        changeProps(
-          isDeletingAccount: false,
-          deleteStatus: status,
-        );
+        changeProps(isDeletingAccount: false, deleteStatus: status);
         return;
       }
       await preferences.clearUser();

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -8,6 +9,7 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_cubit.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_state.dart';
+import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
 import 'package:loving_brain/ui/permissions/permissions_screen.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_state.dart';
@@ -32,7 +34,18 @@ void main() {
     testWidgets(
       'TC-N01 / NEW17-1: PermissionsScreen layout uses MainAxisSize.min for bottom actions and does not block body',
       (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1080, 2400);
+        tester.view.devicePixelRatio = 3.0;
+        addTearDown(() => tester.view.resetPhysicalSize());
+        addTearDown(() => tester.view.resetDevicePixelRatio());
+
         final PermissionsCubit cubit = PermissionsCubit();
+        cubit.init(
+          caregiverName: 'Co-Parent',
+          role: 'Partner',
+          caregiverId: 'coparent_02',
+          caregiverEmail: 'coparent@lovingbrain.com',
+        );
         await tester.pumpWidget(
           ScreenUtilInit(
             designSize: const Size(389, 780),
@@ -53,13 +66,16 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Verify title and toggle cards are visible and not hidden by bottomNavigationBar
         expect(find.text("What Co-Parent can see"), findsOneWidget);
         expect(find.text("Change any of this at any time."), findsOneWidget);
         expect(find.text("Sleep"), findsOneWidget);
         expect(find.text("Behaviour"), findsOneWidget);
         expect(find.text("Health notes"), findsOneWidget);
         expect(find.text("Plans"), findsOneWidget);
+
+        // Scroll down to verify remaining cards
+        await tester.drag(find.byType(ListView), const Offset(0, -300));
+        await tester.pumpAndSettle();
         expect(find.text("Mentorship summaries"), findsOneWidget);
 
         // Verify bottom action buttons are also present and visible

@@ -274,11 +274,11 @@ class _TodayScreenState extends State<TodayScreen> {
           10.spaceH,
           "You are not currently linked to a child. You can create a new child profile to start tracking routines, or ask your partner to send an invite."
               .appText(
-            fontSize: 14.sp,
-            color: greyColor,
-            textAlign: TextAlign.center,
-            height: 1.4,
-          ),
+                fontSize: 14.sp,
+                color: greyColor,
+                textAlign: TextAlign.center,
+                height: 1.4,
+              ),
           24.spaceH,
           AppButton(
             title: "Add child profile",
@@ -287,9 +287,8 @@ class _TodayScreenState extends State<TodayScreen> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const ChildProfileScreen(
-                    fromManageChildren: true,
-                  ),
+                  builder: (_) =>
+                      const ChildProfileScreen(fromManageChildren: true),
                 ),
               );
               cubit.init();
