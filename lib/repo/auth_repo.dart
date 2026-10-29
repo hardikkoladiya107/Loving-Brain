@@ -105,8 +105,8 @@ class AuthRepo {
             await preferences.clearChild();
             await preferences.putString(SharedPreference.child, '');
             final UserModel updatedUser = userModel.copyWith(
-              defaultChild: null,
-              partnerUserId: null,
+              clearDefaultChild: true,
+              clearPartnerUserId: true,
             );
             await preferences.saveUserModel(updatedUser);
             await userCollection
@@ -123,8 +123,8 @@ class AuthRepo {
           await preferences.clearChild();
           await preferences.putString(SharedPreference.child, '');
           final UserModel updatedUser = userModel.copyWith(
-            defaultChild: null,
-            partnerUserId: null,
+            clearDefaultChild: true,
+            clearPartnerUserId: true,
           );
           await preferences.saveUserModel(updatedUser);
           await userCollection

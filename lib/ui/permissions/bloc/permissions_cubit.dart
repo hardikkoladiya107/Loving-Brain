@@ -236,7 +236,7 @@ class PermissionsCubit extends Cubit<PermissionsState> {
           } catch (_) {}
         }
       } catch (_) {}
-      final UserModel updatedUser = user.copyWith(partnerUserId: null);
+      final UserModel updatedUser = user.copyWith(clearPartnerUserId: true);
       await preferences.saveUserModel(updatedUser);
     }
 

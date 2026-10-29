@@ -58,52 +58,59 @@ void main() {
     );
 
     test('TimelineEventModel parses authorName correctly', () {
-      final TimelineEventModel event = TimelineEventModel.fromMap(
-        <String, dynamic>{
-          'type': 'quick_note',
-          'title': 'Quick note',
-          'subtitle': 'Child went down peacefully',
-          'timestamp': DateTime.now().toIso8601String(),
-          'authorName': 'QA Test Parent',
-        },
-        id: 'event_note_01',
-      );
+      final TimelineEventModel event =
+          TimelineEventModel.fromMap(<String, dynamic>{
+            'type': 'quick_note',
+            'title': 'Quick note',
+            'subtitle': 'Child went down peacefully',
+            'timestamp': DateTime.now().toIso8601String(),
+            'authorName': 'QA Test Parent',
+          }, id: 'event_note_01');
 
       expect(event.title, 'Quick note');
       expect(event.authorName, 'QA Test Parent');
     });
 
-    test('DOB default date logic sets initial selection to 2 years ago, not today', () {
-      final DateTime now = DateTime.now();
-      final DateTime defaultToddler = DateTime(now.year - 2, 6, 15);
+    test(
+      'DOB default date logic sets initial selection to 2 years ago, not today',
+      () {
+        final DateTime now = DateTime.now();
+        final DateTime defaultToddler = DateTime(now.year - 2, 6, 15);
 
-      expect(defaultToddler.year, equals(now.year - 2));
-      expect(defaultToddler.isBefore(now), isTrue);
-      // Confirms today (now) is NOT the initial selected date
-      expect(defaultToddler.day == now.day && defaultToddler.month == now.month, isFalse);
-    });
+        expect(defaultToddler.year, equals(now.year - 2));
+        expect(defaultToddler.isBefore(now), isTrue);
+        // Confirms today (now) is NOT the initial selected date
+        expect(
+          defaultToddler.day == now.day && defaultToddler.month == now.month,
+          isFalse,
+        );
+      },
+    );
 
-    test('Caregiver permissions dynamic subtitle reflects toggled permissions', () {
-      final CaregiverPermissionsModel permissions = CaregiverPermissionsModel(
-        caregiverEmail: 'coparent@lovingbrain.com',
-        name: 'Co-Parent',
-        role: 'Partner',
-        canViewSleep: true,
-        canViewBehaviour: true,
-        canViewHealthNotes: true,
-        canViewPlans: true,
-        canViewMentorSummaries: false,
-      );
+    test(
+      'Caregiver permissions dynamic subtitle reflects toggled permissions',
+      () {
+        final CaregiverPermissionsModel permissions = CaregiverPermissionsModel(
+          caregiverEmail: 'coparent@lovingbrain.com',
+          name: 'Co-Parent',
+          role: 'Partner',
+          canViewSleep: true,
+          canViewBehaviour: true,
+          canViewHealthNotes: true,
+          canViewPlans: true,
+          canViewMentorSummaries: false,
+        );
 
-      final List<String> parts = <String>[];
-      if (permissions.canViewSleep) parts.add('sleep');
-      if (permissions.canViewBehaviour) parts.add('behaviour');
-      if (permissions.canViewHealthNotes) parts.add('health');
-      if (permissions.canViewPlans) parts.add('plans');
-      if (permissions.canViewMentorSummaries) parts.add('mentorship');
+        final List<String> parts = <String>[];
+        if (permissions.canViewSleep) parts.add('sleep');
+        if (permissions.canViewBehaviour) parts.add('behaviour');
+        if (permissions.canViewHealthNotes) parts.add('health');
+        if (permissions.canViewPlans) parts.add('plans');
+        if (permissions.canViewMentorSummaries) parts.add('mentorship');
 
-      final String summary = "${permissions.role} · ${parts.join(', ')}";
-      expect(summary, equals('Partner · sleep, behaviour, health, plans'));
-    });
+        final String summary = "${permissions.role} · ${parts.join(', ')}";
+        expect(summary, equals('Partner · sleep, behaviour, health, plans'));
+      },
+    );
   });
 }
