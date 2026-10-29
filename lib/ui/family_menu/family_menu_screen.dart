@@ -130,124 +130,131 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                       ),
                     ),
                     Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Family".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          8.spaceH,
-                          "Everyone here sees the same picture of ${state.childName}."
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor,
-                                textAlign: TextAlign.start,
-                              ),
-                          24.spaceH,
-                          ...state.linkedCaregivers.map((CaregiverItem c) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: PersonCard(
-                                avatar: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFDC21A),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.face,
-                                    size: 30.sp,
-                                    color: Colors.white,
-                                  ),
+                      child: RefreshIndicator(
+                        color: primaryColor,
+                        onRefresh: () async {
+                          context.read<FamilyMenuCubit>().init();
+                        },
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "Family".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            8.spaceH,
+                            "Everyone here sees the same picture of ${state.childName}."
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor,
+                                  textAlign: TextAlign.start,
                                 ),
-                                name: c.name,
-                                subtitle: _buildCaregiverSubtitle(c),
-                                statusPill: StatusPill.linked(),
-                                showChevron: true,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => PermissionsScreen(
-                                        caregiverName: c.name,
-                                        caregiverRole: c.role,
-                                        caregiverId: c.id,
-                                        caregiverEmail: c.email,
-                                      ),
+                            24.spaceH,
+                            ...state.linkedCaregivers.map((CaregiverItem c) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: PersonCard(
+                                  avatar: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFDC21A),
+                                      shape: BoxShape.circle,
                                     ),
-                                  ).then((_) {
-                                    if (context.mounted) {
-                                      context.read<FamilyMenuCubit>().init();
-                                    }
-                                  });
-                                },
-                              ),
-                            );
-                          }),
-                          ...state.pendingInvites.map((CaregiverItem c) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: PersonCard(
-                                avatar: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFDC21A),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.face,
-                                    size: 30.sp,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                name: c.name,
-                                subtitle:
-                                    "${c.role} · ${c.daysRemaining} days left",
-                                statusPill: StatusPill.awaitingResponse(),
-                                showChevron: true,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => InvitePendingScreen(
-                                        invitationId: c.id,
-                                        recipientEmail: c.email.isNotEmpty
-                                            ? c.email
-                                            : c.name,
-                                        role: c.role,
-                                        childName: state.childName,
-                                      ),
+                                    child: Icon(
+                                      Icons.face,
+                                      size: 30.sp,
+                                      color: Colors.white,
                                     ),
-                                  ).then((_) {
-                                    if (context.mounted) {
-                                      context.read<FamilyMenuCubit>().init();
-                                    }
-                                  });
-                                },
-                              ),
-                            );
-                          }),
-                          24.spaceH,
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      const FamilySharingConsentScreen(),
+                                  ),
+                                  name: c.name,
+                                  subtitle: _buildCaregiverSubtitle(c),
+                                  statusPill: StatusPill.linked(),
+                                  showChevron: true,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PermissionsScreen(
+                                          caregiverName: c.name,
+                                          caregiverRole: c.role,
+                                          caregiverId: c.id,
+                                          caregiverEmail: c.email,
+                                        ),
+                                      ),
+                                    ).then((_) {
+                                      if (context.mounted) {
+                                        context.read<FamilyMenuCubit>().init();
+                                      }
+                                    });
+                                  },
                                 ),
                               );
-                            },
-                            child: InfoBox.orange(
-                              title: "How sharing works",
-                              body:
-                                  "You choose what each person sees, and can change it or remove access at any time.",
+                            }),
+                            ...state.pendingInvites.map((CaregiverItem c) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: PersonCard(
+                                  avatar: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFDC21A),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.face,
+                                      size: 30.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  name: c.name,
+                                  subtitle:
+                                      "${c.role} · ${c.daysRemaining} days left",
+                                  statusPill: StatusPill.awaitingResponse(),
+                                  showChevron: true,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => InvitePendingScreen(
+                                          invitationId: c.id,
+                                          recipientEmail: c.email.isNotEmpty
+                                              ? c.email
+                                              : c.name,
+                                          role: c.role,
+                                          childName: state.childName,
+                                        ),
+                                      ),
+                                    ).then((_) {
+                                      if (context.mounted) {
+                                        context.read<FamilyMenuCubit>().init();
+                                      }
+                                    });
+                                  },
+                                ),
+                              );
+                            }),
+                            24.spaceH,
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const FamilySharingConsentScreen(),
+                                  ),
+                                );
+                              },
+                              child: InfoBox.orange(
+                                title: "How sharing works",
+                                body:
+                                    "You choose what each person sees, and can change it or remove access at any time.",
+                              ),
                             ),
-                          ),
-                          140.spaceH,
-                        ],
+                            140.spaceH,
+                          ],
+                        ),
                       ),
                     ),
                   ],
