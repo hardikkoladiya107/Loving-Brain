@@ -15,9 +15,21 @@ class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
   Future<void> init({String? guideId}) async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
-    final GuideProfileModel matched = guideId != null && guideId.isNotEmpty
-        ? MentorshipRepo.instance.getGuideById(guideId)
-        : MentorshipRepo.defaultGuides.first;
+    GuideProfileModel? matched;
+    if (guideId != null && guideId.isNotEmpty) {
+      final ApiResultStatus<GuideProfileModel> guideResult =
+          await MentorshipRepo.instance.getGuideById(guideId);
+      if (guideResult is Data<GuideProfileModel>) {
+        matched = guideResult.data;
+      }
+    } else {
+      final ApiResultStatus<List<GuideProfileModel>> profiles =
+          await MentorshipRepo.instance.getGuideProfiles();
+      if (profiles is Data<List<GuideProfileModel>> &&
+          profiles.data.isNotEmpty) {
+        matched = profiles.data.first;
+      }
+    }
 
     final String userId = preferences.getUserModel()?.uid ?? 'user_local';
     final ApiResultStatus<List<MentorshipRequestModel>> reqResult =
@@ -31,14 +43,20 @@ class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
     changeProps(
       isLoading: false,
       guide: matched,
+      updateGuide: true,
       pendingRequests: requests,
-      fetchStatus: ApiResultStatus.data(data: matched),
+      fetchStatus: matched != null
+          ? ApiResultStatus.data(data: matched)
+          : ApiResultStatus.error(
+              error: Exception('Guide is no longer available'),
+            ),
     );
   }
 
   void changeProps({
     bool? isLoading,
     GuideProfileModel? guide,
+    bool updateGuide = false,
     List<String>? activeGoals,
     List<MentorshipRequestModel>? pendingRequests,
     ApiResultStatus? fetchStatus,
@@ -46,7 +64,7 @@ class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,
-        guide: guide ?? state.guide,
+        guide: updateGuide ? guide : state.guide,
         activeGoals: activeGoals ?? state.activeGoals,
         pendingRequests: pendingRequests ?? state.pendingRequests,
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),

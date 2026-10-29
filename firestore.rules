@@ -10,6 +10,11 @@ service cloud.firestore {
         request.auth.uid in get(/databases/$(database)/documents/children/$(childId)).data.parent_reference_ids;
     }
 
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
     // Energy Bridge: only linked parents can read and update/delete
     match /energy_bridge/{childId} {
       allow read: if isLinkedParent(childId);
@@ -118,6 +123,18 @@ service cloud.firestore {
         (resource == null || 
          resource.data.userId == request.auth.uid || 
          (resource.data.childId != null && isLinkedParent(resource.data.childId)));
+    }
+
+    // Admin marker docs — created in Firebase Console; clients cannot write
+    match /admins/{adminId} {
+      allow read: if isSignedIn() && request.auth.uid == adminId;
+      allow write: if false;
+    }
+
+    // Guide profiles catalogue — parents read; admins write
+    match /guides/{guideId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
     }
   }
 }

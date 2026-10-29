@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/repo/mentorship_repo.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
 import 'package:loving_brain/ui/request_session/request_session_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -41,16 +43,27 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<GuideProfileCubit, GuideProfileState>(
-      listener: (BuildContext context, GuideProfileState state) {},
+      listener: (BuildContext context, GuideProfileState state) {
+        final ApiResultStatus status = state.fetchStatus;
+        if (status is Loging) {
+          EasyLoading.show();
+        } else if (status is Data) {
+          EasyLoading.dismiss();
+        } else if (status is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: status.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+      },
       builder: (BuildContext context, GuideProfileState state) {
-        final GuideProfileModel guide =
-            state.guide ?? MentorshipRepo.defaultGuides.first;
+        final GuideProfileModel? guide = state.guide;
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
           body: Stack(
             children: [
-              // Top glow
               Positioned(
                 left: 0,
                 right: 0,
@@ -70,7 +83,6 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                   ),
                 ),
               ),
-              // Bottom Right Glow
               Positioned(
                 right: -150.w,
                 bottom: 0,
@@ -118,96 +130,112 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                       ),
                     ),
                     Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Guide profile".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.center,
-                          ),
-                          32.spaceH,
-                          Center(
-                            child: Container(
-                              width: 120.w,
-                              height: 120.w,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF4DD0E1), // Teal
-                                shape: BoxShape.circle,
+                      child: guide == null
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: "This guide is no longer available."
+                                    .appText(
+                                      fontSize: 16.sp,
+                                      color: greyColor,
+                                      textAlign: TextAlign.center,
+                                    ),
                               ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.person,
-                                  size: 80.sp,
-                                  color: Colors.white,
+                            )
+                          : ListView(
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              children: [
+                                16.spaceH,
+                                "Guide profile".appText(
+                                  fontSize: 32.sp,
+                                  color: greyColor9,
+                                  fraunces: true,
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                            ),
-                          ),
-                          16.spaceH,
-                          guide.name.appText(
-                            fontSize: 24.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.center,
-                          ),
-                          8.spaceH,
-                          Center(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 6.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFE8F5E9),
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: const Color(0xFF43A047),
-                                    size: 16.sp,
+                                32.spaceH,
+                                Center(
+                                  child: Container(
+                                    width: 120.w,
+                                    height: 120.w,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF4DD0E1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 80.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                  6.spaceW,
-                                  "Verified guide".appText(
-                                    fontSize: 12.sp,
-                                    color: const Color(0xFF43A047),
-                                    fontWeight: FontWeight.w600,
+                                ),
+                                16.spaceH,
+                                guide.name.appText(
+                                  fontSize: 24.sp,
+                                  color: greyColor9,
+                                  fraunces: true,
+                                  textAlign: TextAlign.center,
+                                ),
+                                if (guide.isVerified) ...[
+                                  8.spaceH,
+                                  Center(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 6.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFE8F5E9),
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.check_circle,
+                                            color: const Color(0xFF43A047),
+                                            size: 16.sp,
+                                          ),
+                                          6.spaceW,
+                                          "Verified guide".appText(
+                                            fontSize: 12.sp,
+                                            color: const Color(0xFF43A047),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ],
-                              ),
+                                24.spaceH,
+                                Wrap(
+                                  spacing: 8.w,
+                                  runSpacing: 8.h,
+                                  alignment: WrapAlignment.center,
+                                  children: [
+                                    ...guide.languages.map(
+                                      (String lang) => _buildTag(lang),
+                                    ),
+                                    ...guide.supportAreas.map(
+                                      (String area) => _buildTag(area),
+                                    ),
+                                  ],
+                                ),
+                                32.spaceH,
+                                _buildHowWorksCard(guide),
+                                16.spaceH,
+                                _buildEstimateCard(guide),
+                                140.spaceH,
+                              ],
                             ),
-                          ),
-                          24.spaceH,
-                          Wrap(
-                            spacing: 8.w,
-                            runSpacing: 8.h,
-                            alignment: WrapAlignment.center,
-                            children: [
-                              ...guide.languages.map(
-                                (String lang) => _buildTag(lang),
-                              ),
-                              ...guide.supportAreas.map(
-                                (String area) => _buildTag(area),
-                              ),
-                            ],
-                          ),
-                          32.spaceH,
-                          _buildHowWorksCard(guide),
-                          16.spaceH,
-                          _buildEstimateCard(guide),
-                          140.spaceH,
-                        ],
-                      ),
                     ),
                   ],
                 ),
               ),
-              _buildBottomActions(context, guide),
+              if (guide != null) _buildBottomActions(context, guide),
             ],
           ),
         );
@@ -246,6 +274,10 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
   }
 
   Widget _buildBottomActions(BuildContext context, GuideProfileModel guide) {
+    final bool showSleepReset = guide.supportAreas.any(
+      (String area) => area.toLowerCase().contains('sleep'),
+    );
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -266,29 +298,31 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (_) => RequestSessionScreen(guide: guide),
                   ),
                 );
               },
             ),
-            16.spaceH,
-            BaseButton(
-              child: "View the Sleep Reset programme".appText(
-                fontSize: 14.sp,
-                color: greyColor,
-                fontWeight: FontWeight.w500,
-                textAlign: TextAlign.center,
+            if (showSleepReset) ...[
+              16.spaceH,
+              BaseButton(
+                child: "View the Sleep Reset programme".appText(
+                  fontSize: 14.sp,
+                  color: greyColor,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (_) => const ProgrammeDetailScreen(),
+                    ),
+                  );
+                },
               ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ProgrammeDetailScreen(),
-                  ),
-                );
-              },
-            ),
+            ],
           ],
         ),
       ),

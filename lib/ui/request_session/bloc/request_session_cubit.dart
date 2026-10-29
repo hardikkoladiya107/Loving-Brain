@@ -25,7 +25,8 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
         : '18 months';
 
     changeProps(
-      guide: guide ?? MentorshipRepo.defaultGuides.first,
+      guide: guide,
+      updateGuide: true,
       childName: cName,
       childAge: cAge,
       mainConcern: (initialConcern != null && initialConcern.trim().isNotEmpty)
@@ -37,6 +38,7 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
 
   void changeProps({
     GuideProfileModel? guide,
+    bool updateGuide = false,
     String? childName,
     String? mainConcern,
     String? mainConcernError,
@@ -49,7 +51,7 @@ class RequestSessionCubit extends Cubit<RequestSessionState> {
   }) {
     emit(
       state.copyWith(
-        guide: guide ?? state.guide,
+        guide: updateGuide ? guide : state.guide,
         childName: childName ?? state.childName,
         mainConcern: mainConcern ?? state.mainConcern,
         mainConcernError: mainConcernError ?? state.mainConcernError,

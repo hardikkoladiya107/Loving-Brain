@@ -14,7 +14,9 @@ import 'bloc/mentorship_unavailable_state.dart';
 /// Screen 71: Mentor Service Unavailable / Waitlist.
 /// Conforms to AGENTS.md §5.1, §6.1, and §9.
 class MentorshipUnavailableScreen extends StatefulWidget {
-  const MentorshipUnavailableScreen({super.key});
+  final String? detail;
+
+  const MentorshipUnavailableScreen({super.key, this.detail});
 
   @override
   State<MentorshipUnavailableScreen> createState() =>
@@ -77,6 +79,7 @@ class _MentorshipUnavailableScreenState
                       InfoBox(
                         title: "Fully booked",
                         body:
+                            widget.detail ??
                             "Our sleep guides are booked for the next two weeks. We’ll let you know as soon as something opens up.",
                         backgroundColor: lightYellowColor,
                         textColor: yellowColor1,
@@ -90,7 +93,8 @@ class _MentorshipUnavailableScreenState
                         height: 1.2,
                       ),
                       12.spaceH,
-                      "Our sleep guides are booked for the next two weeks. We'll let you know as soon as something opens up."
+                      (widget.detail ??
+                              "Our sleep guides are booked for the next two weeks. We'll let you know as soon as something opens up.")
                           .appText(
                             fontSize: 16.sp,
                             color: const Color(0xFF64748B),

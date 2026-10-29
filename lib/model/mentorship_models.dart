@@ -153,6 +153,9 @@ class GuideProfileModel {
   final int sessionDurationMinutes;
   final double rating;
   final bool isVerified;
+  final bool isActive;
+  final bool isAvailable;
+  final int sortOrder;
   final String bio;
   final String? calendarUrl;
 
@@ -166,6 +169,9 @@ class GuideProfileModel {
     this.sessionDurationMinutes = 45,
     this.rating = 4.9,
     this.isVerified = true,
+    this.isActive = true,
+    this.isAvailable = true,
+    this.sortOrder = 0,
     required this.bio,
     this.calendarUrl,
   });
@@ -181,17 +187,28 @@ class GuideProfileModel {
       'sessionDurationMinutes': sessionDurationMinutes,
       'rating': rating,
       'isVerified': isVerified,
+      'isActive': isActive,
+      'isAvailable': isAvailable,
+      'sortOrder': sortOrder,
       'bio': bio,
       'calendarUrl': calendarUrl,
     };
   }
 
-  factory GuideProfileModel.fromMap(Map<String, dynamic> map) {
+  factory GuideProfileModel.fromMap(Map<String, dynamic> map, {String? id}) {
+    final int experienceYears = _readInt(map['experienceYears'], 5);
+    final int sessionDurationMinutes = _readInt(
+      map['sessionDurationMinutes'],
+      45,
+    );
+    final double rating = _readDouble(map['rating'], 4.9);
+    final int sortOrder = _readInt(map['sortOrder'], 0);
+
     return GuideProfileModel(
-      id: map['id']?.toString() ?? '',
+      id: id ?? map['id']?.toString() ?? '',
       name: map['name']?.toString() ?? '',
       title: map['title']?.toString() ?? 'Parenting Guide',
-      experienceYears: (map['experienceYears'] as num?)?.toInt() ?? 5,
+      experienceYears: experienceYears,
       languages:
           (map['languages'] as List<dynamic>?)
               ?.map((dynamic e) => e.toString())
@@ -202,13 +219,35 @@ class GuideProfileModel {
               ?.map((dynamic e) => e.toString())
               .toList() ??
           <String>['Sleep'],
-      sessionDurationMinutes:
-          (map['sessionDurationMinutes'] as num?)?.toInt() ?? 45,
-      rating: (map['rating'] as num?)?.toDouble() ?? 4.9,
+      sessionDurationMinutes: sessionDurationMinutes,
+      rating: rating,
       isVerified: map['isVerified'] != false,
+      isActive: map['isActive'] != false,
+      isAvailable: map['isAvailable'] != false,
+      sortOrder: sortOrder,
       bio: map['bio']?.toString() ?? '',
       calendarUrl: map['calendarUrl']?.toString(),
     );
+  }
+
+  static int _readInt(dynamic value, int fallback) {
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value) ?? fallback;
+    }
+    return fallback;
+  }
+
+  static double _readDouble(dynamic value, double fallback) {
+    if (value is num) {
+      return value.toDouble();
+    }
+    if (value is String) {
+      return double.tryParse(value) ?? fallback;
+    }
+    return fallback;
   }
 }
 

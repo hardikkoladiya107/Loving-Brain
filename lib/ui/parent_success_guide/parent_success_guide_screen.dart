@@ -6,7 +6,6 @@ import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/repo/mentorship_repo.dart';
 import 'package:loving_brain/ui/guide_profile/guide_profile_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -42,8 +41,34 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
     return BlocConsumer<ParentSuccessGuideCubit, ParentSuccessGuideState>(
       listener: (BuildContext context, ParentSuccessGuideState state) {},
       builder: (BuildContext context, ParentSuccessGuideState state) {
-        final GuideProfileModel guide =
-            state.guide ?? MentorshipRepo.defaultGuides.first;
+        final GuideProfileModel? guide = state.guide;
+        if (guide == null) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.arrow_back, color: darkBlue),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: "This guide is no longer available.".appText(
+                        fontSize: 16.sp,
+                        color: greyColor,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),

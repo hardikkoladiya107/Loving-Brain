@@ -7,6 +7,14 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/v2_notification_scheduler.dart';
 
+/// Result of matching guides to one support area.
+class GuideAreaMatch {
+  final List<GuideProfileModel> guides;
+  final bool fullyBooked;
+
+  const GuideAreaMatch({required this.guides, required this.fullyBooked});
+}
+
 /// Singleton repository managing Guided Mentorship, Programs, and Session Requests.
 /// Conforms to AGENTS.md §7 (Repository Pattern & ApiResultStatus).
 class MentorshipRepo {
@@ -55,6 +63,9 @@ class MentorshipRepo {
   CollectionReference<Map<String, dynamic>> get _waitlistCollection =>
       FirebaseFirestore.instance.collection('mentorship_waitlist');
 
+  CollectionReference<Map<String, dynamic>> get _guidesCollection =>
+      FirebaseFirestore.instance.collection('guides');
+
   // In-memory fallback / cache for resilience & unit tests without live Firestore
   final List<MentorshipRequestModel> _localRequests =
       <MentorshipRequestModel>[];
@@ -63,7 +74,7 @@ class MentorshipRepo {
   final Map<String, EnrolledProgramModel> _localPrograms =
       <String, EnrolledProgramModel>{};
 
-  /// Vetted guide profiles catalogue per V2 specs (Screen 46).
+  /// Seed payload / test catalogue. Screens load from Firestore after seed.
   static const List<GuideProfileModel> defaultGuides = <GuideProfileModel>[
     GuideProfileModel(
       id: 'guide_elena_01',
@@ -75,6 +86,9 @@ class MentorshipRepo {
       sessionDurationMinutes: 45,
       rating: 4.95,
       isVerified: true,
+      isActive: true,
+      isAvailable: true,
+      sortOrder: 1,
       bio:
           'Specializes in gentle, developmentally-attuned settling routines and helping families recover from chronic sleep fragmentation without harsh methods.',
       calendarUrl: 'https://cal.lovingbrain.com/elena-sleep',
@@ -89,6 +103,9 @@ class MentorshipRepo {
       sessionDurationMinutes: 50,
       rating: 4.9,
       isVerified: true,
+      isActive: true,
+      isAvailable: true,
+      sortOrder: 2,
       bio:
           'Passionate about helping parents decode the root triggers behind big emotional meltdowns and building co-regulation strategies.',
       calendarUrl: 'https://cal.lovingbrain.com/marcus-behaviour',
@@ -107,6 +124,9 @@ class MentorshipRepo {
       sessionDurationMinutes: 45,
       rating: 4.98,
       isVerified: true,
+      isActive: true,
+      isAvailable: true,
+      sortOrder: 3,
       bio:
           'Guides parenting partners and caregivers into unified rhythm alignment, shared expectations, and peaceful handovers.',
       calendarUrl: 'https://cal.lovingbrain.com/priya-family',
@@ -117,56 +137,251 @@ class MentorshipRepo {
   static const List<String> availableSupportAreas = <String>[
     'Sleep',
     'Behaviour',
+    'Eating',
     'Parent Wellbeing',
     'Co-parenting',
     'General Parenting',
   ];
 
-  /// Filters available guides by support area and language.
+  /// Maps Choose Support UI titles to Firestore support-area tags.
+  static String mapSupportAreaLabel(String? label) {
+    if (label == null || label.trim().isEmpty) {
+      return '';
+    }
+    final String clean = label.toLowerCase().trim();
+    if (clean.contains('sleep')) {
+      return 'Sleep';
+    }
+    if (clean.contains('tantrum') || clean.contains('behaviour')) {
+      return 'Behaviour';
+    }
+    if (clean.contains('eating') || clean.contains('nutrition')) {
+      return 'Eating';
+    }
+    if (clean.contains('parental') ||
+        clean.contains('confidence') ||
+        clean.contains('wellbeing') ||
+        clean.contains('well-being')) {
+      return 'Parent Wellbeing';
+    }
+    if (clean.contains('co-parent') || clean.contains('coparent')) {
+      return 'Co-parenting';
+    }
+    if (clean.contains('general')) {
+      return 'General Parenting';
+    }
+    return label.trim();
+  }
+
+  /// Pure filter used by the app and unit tests.
+  /// Prefer language matches when any exist; otherwise keep area matches.
+  static List<GuideProfileModel> filterGuides({
+    required List<GuideProfileModel> guides,
+    String? supportArea,
+    String? language,
+    bool requireAvailable = true,
+  }) {
+    final String mappedArea = mapSupportAreaLabel(supportArea);
+    List<GuideProfileModel> filtered = guides
+        .where((GuideProfileModel g) => g.isActive)
+        .toList();
+
+    if (requireAvailable) {
+      filtered = filtered
+          .where((GuideProfileModel g) => g.isAvailable)
+          .toList();
+    }
+
+    if (mappedArea.isNotEmpty) {
+      final String cleanArea = mappedArea.toLowerCase();
+      filtered = filtered.where((GuideProfileModel g) {
+        return g.supportAreas.any(
+          (String area) => area.toLowerCase() == cleanArea,
+        );
+      }).toList();
+    }
+
+    if (language != null && language.trim().isNotEmpty) {
+      final String cleanLang = language.toLowerCase().trim();
+      final List<GuideProfileModel> languageMatches = filtered
+          .where(
+            (GuideProfileModel g) =>
+                g.languages.any((String l) => l.toLowerCase() == cleanLang),
+          )
+          .toList();
+      if (languageMatches.isNotEmpty) {
+        filtered = languageMatches;
+      }
+    }
+
+    filtered.sort((GuideProfileModel a, GuideProfileModel b) {
+      final int byOrder = a.sortOrder.compareTo(b.sortOrder);
+      if (byOrder != 0) {
+        return byOrder;
+      }
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    return filtered;
+  }
+
+  /// True when active guides exist for the area but every match is booked.
+  static bool hasBookedOnlyGuides({
+    required List<GuideProfileModel> guides,
+    String? supportArea,
+  }) {
+    final List<GuideProfileModel> activeForArea = filterGuides(
+      guides: guides,
+      supportArea: supportArea,
+      requireAvailable: false,
+    );
+    if (activeForArea.isEmpty) {
+      return false;
+    }
+    return activeForArea.every((GuideProfileModel g) => !g.isAvailable);
+  }
+
+  Future<ApiResultStatus<List<GuideProfileModel>>> _fetchAllGuides() async {
+    try {
+      if (Firebase.apps.isEmpty) {
+        return ApiResultStatus.data(
+          data: List<GuideProfileModel>.from(defaultGuides),
+        );
+      }
+      final QuerySnapshot<Map<String, dynamic>> snap = await _guidesCollection
+          .get();
+      final List<GuideProfileModel> guides = snap.docs.map((
+        QueryDocumentSnapshot<Map<String, dynamic>> doc,
+      ) {
+        final Map<String, dynamic> data = Map<String, dynamic>.from(doc.data());
+        data['id'] = doc.id;
+        return GuideProfileModel.fromMap(data, id: doc.id);
+      }).toList();
+      guides.sort((GuideProfileModel a, GuideProfileModel b) {
+        final int byOrder = a.sortOrder.compareTo(b.sortOrder);
+        if (byOrder != 0) {
+          return byOrder;
+        }
+        return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      });
+      return ApiResultStatus.data(data: guides);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
+  /// Loads guides from Firestore and filters by support area and language.
   Future<ApiResultStatus<List<GuideProfileModel>>> getGuideProfiles({
     String? supportArea,
     String? language,
   }) async {
     try {
-      List<GuideProfileModel> guides = List<GuideProfileModel>.from(
-        defaultGuides,
+      final ApiResultStatus<List<GuideProfileModel>> allResult =
+          await _fetchAllGuides();
+      if (allResult is! Data<List<GuideProfileModel>>) {
+        return allResult;
+      }
+
+      final String? preferredLanguage =
+          language ?? preferences.getUserModel()?.preferredLanguage;
+
+      if (hasBookedOnlyGuides(
+        guides: allResult.data,
+        supportArea: supportArea,
+      )) {
+        return const ApiResultStatus.data(data: <GuideProfileModel>[]);
+      }
+
+      final List<GuideProfileModel> filtered = filterGuides(
+        guides: allResult.data,
+        supportArea: supportArea,
+        language: preferredLanguage,
+        requireAvailable: true,
       );
+      return ApiResultStatus.data(data: filtered);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
 
-      if (supportArea != null && supportArea.trim().isNotEmpty) {
-        final String cleanArea = supportArea.toLowerCase().trim();
-        guides = guides.where((GuideProfileModel g) {
-          return g.supportAreas.any(
-            (String a) =>
-                a.toLowerCase().contains(cleanArea) ||
-                cleanArea.contains(a.toLowerCase()),
-          );
-        }).toList();
+  /// One Firestore read: available matches, or fully booked vs none.
+  Future<ApiResultStatus<GuideAreaMatch>> matchSupportArea(
+    String supportArea,
+  ) async {
+    try {
+      final ApiResultStatus<List<GuideProfileModel>> allResult =
+          await _fetchAllGuides();
+      if (allResult is! Data<List<GuideProfileModel>>) {
+        if (allResult is Error<List<GuideProfileModel>>) {
+          return ApiResultStatus.error(error: allResult.error);
+        }
+        return ApiResultStatus.error(error: Exception('Could not load guides'));
       }
 
-      if (language != null && language.trim().isNotEmpty) {
-        final String cleanLang = language.toLowerCase().trim();
-        guides = guides.where((GuideProfileModel g) {
-          return g.languages.any((String l) => l.toLowerCase() == cleanLang);
-        }).toList();
+      final bool fullyBooked = hasBookedOnlyGuides(
+        guides: allResult.data,
+        supportArea: supportArea,
+      );
+      if (fullyBooked) {
+        return const ApiResultStatus.data(
+          data: GuideAreaMatch(
+            guides: <GuideProfileModel>[],
+            fullyBooked: true,
+          ),
+        );
       }
 
+      final String? preferredLanguage = preferences
+          .getUserModel()
+          ?.preferredLanguage;
+      final List<GuideProfileModel> filtered = filterGuides(
+        guides: allResult.data,
+        supportArea: supportArea,
+        language: preferredLanguage,
+        requireAvailable: true,
+      );
       return ApiResultStatus.data(
-        data: guides.isNotEmpty ? guides : defaultGuides,
+        data: GuideAreaMatch(guides: filtered, fullyBooked: false),
       );
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
-  /// Finds guide by ID.
-  GuideProfileModel getGuideById(String guideId) {
+  /// Finds guide by ID from Firestore. Missing id is an error (no Elena fallback).
+  Future<ApiResultStatus<GuideProfileModel>> getGuideById(
+    String guideId,
+  ) async {
     try {
-      return defaultGuides.firstWhere(
-        (GuideProfileModel g) => g.id == guideId,
-        orElse: () => defaultGuides.first,
+      if (guideId.trim().isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception('Guide is no longer available'),
+        );
+      }
+      if (Firebase.apps.isEmpty) {
+        for (final GuideProfileModel g in defaultGuides) {
+          if (g.id == guideId) {
+            return ApiResultStatus.data(data: g);
+          }
+        }
+        return ApiResultStatus.error(
+          error: Exception('Guide is no longer available'),
+        );
+      }
+      final DocumentSnapshot<Map<String, dynamic>> doc = await _guidesCollection
+          .doc(guideId)
+          .get();
+      if (!doc.exists || doc.data() == null) {
+        return ApiResultStatus.error(
+          error: Exception('Guide is no longer available'),
+        );
+      }
+      final Map<String, dynamic> data = Map<String, dynamic>.from(doc.data()!);
+      data['id'] = doc.id;
+      return ApiResultStatus.data(
+        data: GuideProfileModel.fromMap(data, id: doc.id),
       );
-    } catch (_) {
-      return defaultGuides.first;
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
@@ -481,7 +696,13 @@ class MentorshipRepo {
     if (status == 'waiting' && !alreadyNotified) {
       final String guideId =
           preferences.getString('waitlist_guide_$userId') ?? 'guide_elena_01';
-      final GuideProfileModel guide = getGuideById(guideId);
+      final ApiResultStatus<GuideProfileModel> guideResult = await getGuideById(
+        guideId,
+      );
+      if (guideResult is! Data<GuideProfileModel>) {
+        return;
+      }
+      final GuideProfileModel guide = guideResult.data;
       final bool sent =
           await V2NotificationScheduler.notifyWaitlistSlotAvailable(
             mentorId: guide.id,

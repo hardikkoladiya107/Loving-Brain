@@ -14,38 +14,180 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Sprint 5: MentorshipRepo Core Catalogue & Operations', () {
+    test('Seed catalogue contains vetted guides with expected data', () {
+      final List<GuideProfileModel> guides = MentorshipRepo.defaultGuides;
+      expect(guides.length, greaterThanOrEqualTo(3));
+
+      final GuideProfileModel elena = guides.firstWhere(
+        (GuideProfileModel g) => g.id == 'guide_elena_01',
+      );
+      expect(elena.name, 'Elena Rostova');
+      expect(elena.isVerified, isTrue);
+      expect(elena.isActive, isTrue);
+      expect(elena.isAvailable, isTrue);
+      expect(elena.languages, contains('English'));
+      expect(elena.supportAreas, contains('Sleep'));
+    });
+
     test(
-      'Default guides catalogue contains vetted guides with expected data',
+      'GuideProfileModel.fromMap fills missing booleans and bad numbers',
       () {
-        final List<GuideProfileModel> guides = MentorshipRepo.defaultGuides;
-        expect(guides.length, greaterThanOrEqualTo(3));
+        final GuideProfileModel guide =
+            GuideProfileModel.fromMap(<String, dynamic>{
+              'name': 'Test Guide',
+              'bio': 'Bio text',
+              'experienceYears': 'not-a-number',
+              'sessionDurationMinutes': 'abc',
+              'rating': 'xyz',
+              'sortOrder': 'oops',
+            }, id: 'guide_test');
 
-        final GuideProfileModel elena = guides.firstWhere(
-          (GuideProfileModel g) => g.id == 'guide_elena_01',
-        );
-        expect(elena.name, 'Elena Rostova');
-        expect(elena.isVerified, isTrue);
-        expect(elena.languages, contains('English'));
-        expect(elena.supportAreas, contains('Sleep'));
-
-        final GuideProfileModel marcus = MentorshipRepo.instance.getGuideById(
-          'guide_marcus_02',
-        );
-        expect(marcus.name, 'Dr. Marcus Vance');
-        expect(marcus.supportAreas, contains('Behaviour'));
-
-        final GuideProfileModel fallback = MentorshipRepo.instance.getGuideById(
-          'non_existent_id',
-        );
-        expect(fallback.id, 'guide_elena_01');
+        expect(guide.id, 'guide_test');
+        expect(guide.experienceYears, 5);
+        expect(guide.sessionDurationMinutes, 45);
+        expect(guide.rating, 4.9);
+        expect(guide.sortOrder, 0);
+        expect(guide.isActive, isTrue);
+        expect(guide.isAvailable, isTrue);
+        expect(guide.isVerified, isTrue);
       },
     );
+
+    test(
+      'filterGuides maps areas, excludes inactive/booked, keeps sort order',
+      () {
+        final GuideProfileModel seedElena = MentorshipRepo.defaultGuides.first;
+        final GuideProfileModel seedMarcus = MentorshipRepo.defaultGuides[1];
+        final GuideProfileModel inactiveElena = GuideProfileModel(
+          id: seedElena.id,
+          name: seedElena.name,
+          title: seedElena.title,
+          experienceYears: seedElena.experienceYears,
+          languages: seedElena.languages,
+          supportAreas: seedElena.supportAreas,
+          sessionDurationMinutes: seedElena.sessionDurationMinutes,
+          rating: seedElena.rating,
+          isVerified: seedElena.isVerified,
+          isActive: false,
+          isAvailable: seedElena.isAvailable,
+          sortOrder: seedElena.sortOrder,
+          bio: seedElena.bio,
+          calendarUrl: seedElena.calendarUrl,
+        );
+        final GuideProfileModel bookedMarcus = GuideProfileModel(
+          id: seedMarcus.id,
+          name: seedMarcus.name,
+          title: seedMarcus.title,
+          experienceYears: seedMarcus.experienceYears,
+          languages: seedMarcus.languages,
+          supportAreas: seedMarcus.supportAreas,
+          sessionDurationMinutes: seedMarcus.sessionDurationMinutes,
+          rating: seedMarcus.rating,
+          isVerified: seedMarcus.isVerified,
+          isActive: true,
+          isAvailable: false,
+          sortOrder: seedMarcus.sortOrder,
+          bio: seedMarcus.bio,
+          calendarUrl: seedMarcus.calendarUrl,
+        );
+        final GuideProfileModel secondSleep = GuideProfileModel(
+          id: 'guide_sleep_02',
+          name: 'Second Sleep Guide',
+          title: 'Sleep Mentor',
+          experienceYears: 4,
+          languages: <String>['English'],
+          supportAreas: <String>['Sleep'],
+          sortOrder: 0,
+          bio: 'Another sleep guide',
+        );
+        final List<GuideProfileModel> catalogue = <GuideProfileModel>[
+          inactiveElena,
+          bookedMarcus,
+          MentorshipRepo.defaultGuides[2],
+          secondSleep,
+          MentorshipRepo.defaultGuides.first,
+        ];
+
+        final List<GuideProfileModel> sleepGuides = MentorshipRepo.filterGuides(
+          guides: catalogue,
+          supportArea: 'Sleep guidance',
+        );
+        expect(
+          sleepGuides.map((GuideProfileModel g) => g.id).toList(),
+          <String>['guide_sleep_02', 'guide_elena_01'],
+        );
+
+        final List<GuideProfileModel> behaviourGuides =
+            MentorshipRepo.filterGuides(
+              guides: catalogue,
+              supportArea: 'Tantrum & behaviour',
+            );
+        expect(behaviourGuides, isEmpty);
+
+        final List<GuideProfileModel> coParentingGuides =
+            MentorshipRepo.filterGuides(
+              guides: catalogue,
+              supportArea: 'Co-parenting',
+            );
+        expect(coParentingGuides.first.id, 'guide_priya_03');
+
+        final List<GuideProfileModel> eatingGuides =
+            MentorshipRepo.filterGuides(
+              guides: catalogue,
+              supportArea: 'Eating & nutrition',
+            );
+        expect(eatingGuides, isEmpty);
+
+        expect(
+          MentorshipRepo.hasBookedOnlyGuides(
+            guides: catalogue,
+            supportArea: 'Tantrum & behaviour',
+          ),
+          isTrue,
+        );
+      },
+    );
+
+    test(
+      'Language preference prefers matches then falls back to area list',
+      () {
+        final List<GuideProfileModel> englishMatches =
+            MentorshipRepo.filterGuides(
+              guides: MentorshipRepo.defaultGuides,
+              supportArea: 'Sleep guidance',
+              language: 'English',
+            );
+        expect(englishMatches.first.name, 'Elena Rostova');
+
+        final List<GuideProfileModel> fallbackArea =
+            MentorshipRepo.filterGuides(
+              guides: MentorshipRepo.defaultGuides,
+              supportArea: 'Sleep guidance',
+              language: 'French',
+            );
+        expect(fallbackArea.first.name, 'Elena Rostova');
+      },
+    );
+
+    test('getGuideById returns guide or unknown-id error', () async {
+      final ApiResultStatus<GuideProfileModel> marcus = await MentorshipRepo
+          .instance
+          .getGuideById('guide_marcus_02');
+      expect(marcus, isA<Data<GuideProfileModel>>());
+      expect((marcus as Data<GuideProfileModel>).data.name, 'Dr. Marcus Vance');
+
+      final ApiResultStatus<GuideProfileModel> missing = await MentorshipRepo
+          .instance
+          .getGuideById('non_existent_id');
+      expect(missing, isA<Error<GuideProfileModel>>());
+    });
 
     test('Support areas catalogue has expected focus areas', () {
       final List<String> areas = MentorshipRepo.availableSupportAreas;
       expect(areas.length, greaterThanOrEqualTo(4));
       expect(areas, contains('Sleep'));
       expect(areas, contains('Behaviour'));
+      expect(areas, contains('Eating'));
       expect(areas, contains('Co-parenting'));
     });
 
@@ -173,23 +315,128 @@ void main() {
       cubit.close();
     });
 
-    test('GuideProfileCubit matches guide by id or support area correctly', () {
-      final GuideProfileCubit cubit = GuideProfileCubit();
-
-      cubit.init(guideId: 'guide_marcus_02');
-      expect(cubit.state.guide?.name, 'Dr. Marcus Vance');
-
-      cubit.init(supportArea: 'Sleep');
-      expect(cubit.state.guide?.name, 'Elena Rostova');
-
-      cubit.close();
+    test('Choose Support card index matches the visible cards', () {
+      expect(ChooseSupportAreaCubit.indexForLabel('Sleep guidance'), 0);
+      expect(ChooseSupportAreaCubit.indexForLabel('Behaviour'), 1);
+      expect(ChooseSupportAreaCubit.indexForLabel('Tantrum & behaviour'), 1);
+      expect(ChooseSupportAreaCubit.indexForLabel('Eating & nutrition'), 2);
+      expect(ChooseSupportAreaCubit.indexForLabel('Parent Wellbeing'), 3);
+      expect(ChooseSupportAreaCubit.indexForLabel('Parental confidence'), 3);
+      expect(ChooseSupportAreaCubit.indexForLabel('Co-parenting'), 4);
+      expect(ChooseSupportAreaCubit.indexForLabel('General Parenting'), -1);
+      expect(ChooseSupportAreaCubit.optionTitles[3], 'Parental confidence');
+      expect(ChooseSupportAreaCubit.optionTitles[4], 'Co-parenting');
     });
+
+    test(
+      'Support area match is exact and separates booked from empty',
+      () async {
+        final GuideProfileModel generalOnly = GuideProfileModel(
+          id: 'guide_general',
+          name: 'General Only',
+          title: 'General mentor',
+          experienceYears: 3,
+          languages: <String>['English'],
+          supportAreas: <String>['General Parenting'],
+          bio: 'General support',
+        );
+        final List<GuideProfileModel> sleepMatches =
+            MentorshipRepo.filterGuides(
+              guides: <GuideProfileModel>[
+                generalOnly,
+                MentorshipRepo.defaultGuides.first,
+              ],
+              supportArea: 'Sleep guidance',
+            );
+        expect(sleepMatches.map((GuideProfileModel g) => g.id), <String>[
+          'guide_elena_01',
+        ]);
+
+        final GuideProfileModel shortTag = GuideProfileModel(
+          id: 'guide_short',
+          name: 'Short Tag',
+          title: 'Nope',
+          experienceYears: 1,
+          languages: <String>['English'],
+          supportAreas: <String>['a'],
+          bio: 'Should not match Sleep',
+        );
+        expect(
+          MentorshipRepo.filterGuides(
+            guides: <GuideProfileModel>[shortTag],
+            supportArea: 'Sleep',
+          ),
+          isEmpty,
+        );
+
+        final ApiResultStatus<GuideAreaMatch> eating = await MentorshipRepo
+            .instance
+            .matchSupportArea('Eating & nutrition');
+        expect(eating, isA<Data<GuideAreaMatch>>());
+        final GuideAreaMatch eatingMatch =
+            (eating as Data<GuideAreaMatch>).data;
+        expect(eatingMatch.guides, isEmpty);
+        expect(eatingMatch.fullyBooked, isFalse);
+
+        final ApiResultStatus<GuideAreaMatch> sleep = await MentorshipRepo
+            .instance
+            .matchSupportArea('Sleep guidance');
+        expect(sleep, isA<Data<GuideAreaMatch>>());
+        final GuideAreaMatch sleepMatch = (sleep as Data<GuideAreaMatch>).data;
+        expect(sleepMatch.fullyBooked, isFalse);
+        expect(sleepMatch.guides.first.id, 'guide_elena_01');
+      },
+    );
+
+    test('fromMap keeps explicit false flags and numeric strings', () {
+      final GuideProfileModel guide =
+          GuideProfileModel.fromMap(<String, dynamic>{
+            'name': 'Hidden',
+            'bio': 'Hidden bio',
+            'experienceYears': '12',
+            'sessionDurationMinutes': '50',
+            'rating': '4.95',
+            'sortOrder': '2',
+            'isVerified': false,
+            'isActive': false,
+            'isAvailable': false,
+          }, id: 'guide_hidden');
+      expect(guide.experienceYears, 12);
+      expect(guide.sessionDurationMinutes, 50);
+      expect(guide.rating, 4.95);
+      expect(guide.sortOrder, 2);
+      expect(guide.isVerified, isFalse);
+      expect(guide.isActive, isFalse);
+      expect(guide.isAvailable, isFalse);
+    });
+
+    test(
+      'GuideProfileCubit matches guide by id or support area correctly',
+      () async {
+        final GuideProfileCubit cubit = GuideProfileCubit();
+
+        await cubit.init(guideId: 'guide_marcus_02');
+        expect(cubit.state.guide?.name, 'Dr. Marcus Vance');
+
+        await cubit.init(supportArea: 'Sleep');
+        expect(cubit.state.guide?.name, 'Elena Rostova');
+
+        await cubit.init(guideId: 'non_existent_id');
+        expect(cubit.state.guide, isNull);
+        expect(cubit.state.fetchStatus, isA<Error<dynamic>>());
+
+        cubit.close();
+      },
+    );
 
     test(
       'RequestSessionCubit updates input and submits mentorship request',
       () async {
         final RequestSessionCubit cubit = RequestSessionCubit();
-        cubit.init(initialConcern: 'Bedtime refusal');
+        cubit.init(
+          guide: MentorshipRepo.defaultGuides.first,
+          initialConcern: 'Bedtime refusal',
+        );
 
         cubit.updateMainConcern('Difficulty falling asleep after 8 PM');
         cubit.updateChildAge('24 months');

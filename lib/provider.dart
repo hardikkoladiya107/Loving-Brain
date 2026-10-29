@@ -23,6 +23,7 @@ import 'package:loving_brain/ui/family_menu/bloc/family_menu_cubit.dart';
 import 'package:loving_brain/ui/family_sharing_consent/bloc/family_sharing_consent_cubit.dart';
 import 'package:loving_brain/ui/family_snapsshot/bloc/family_snapshot_cubit.dart';
 import 'package:loving_brain/ui/family_timeline/bloc/family_timeline_cubit.dart';
+import 'package:loving_brain/ui/guide_list/bloc/guide_list_cubit.dart';
 import 'package:loving_brain/ui/guide_profile/bloc/guide_profile_cubit.dart';
 import 'package:loving_brain/ui/harder_week/bloc/harder_week_cubit.dart';
 import 'package:loving_brain/ui/help_flow/bloc/help_flow_cubit.dart';
@@ -118,6 +119,9 @@ final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
   ),
   BlocProvider<FamilyTimelineCubit>(
     create: (BuildContext context) => FamilyTimelineCubit(),
+  ),
+  BlocProvider<GuideListCubit>(
+    create: (BuildContext context) => GuideListCubit(),
   ),
   BlocProvider<GuideProfileCubit>(
     create: (BuildContext context) => GuideProfileCubit(),

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/repo/mentorship_repo.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/ui/guide_list/guide_list_screen.dart';
 import 'package:loving_brain/ui/guide_profile/guide_profile_screen.dart';
+import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/choose_support_area_cubit.dart';
@@ -280,7 +285,7 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
         ),
         child: AppButton(
           title: "Continue",
-          onTap: () {
+          onTap: () async {
             if (state.selectedIndex < 0 ||
                 state.selectedIndex >= _options.length) {
               showSnackBar(
@@ -290,11 +295,58 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
               return;
             }
             final String selectedTitle =
-                _options[state.selectedIndex]["title"] as String;
+                _options[state.selectedIndex]['title'] as String;
+            EasyLoading.show();
+            final ApiResultStatus<GuideAreaMatch> result = await context
+                .read<ChooseSupportAreaCubit>()
+                .matchSupportArea(selectedTitle);
+            EasyLoading.dismiss();
+            if (!context.mounted) {
+              return;
+            }
+            if (result is Loging) {
+              return;
+            }
+            if (result is Error<GuideAreaMatch>) {
+              showSnackBar(
+                message: result.error.toString().replaceAll('Exception: ', ''),
+                type: SnackBarType.ERROR,
+              );
+              return;
+            }
+            if (result is! Data<GuideAreaMatch>) {
+              return;
+            }
+            final GuideAreaMatch match = result.data;
+            if (match.guides.isEmpty) {
+              final String detail = match.fullyBooked
+                  ? "Guides for $selectedTitle are fully booked right now. Nothing has been charged."
+                  : "No guides are available for $selectedTitle yet.";
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => MentorshipUnavailableScreen(detail: detail),
+                ),
+              );
+              return;
+            }
+            if (match.guides.length == 1) {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) =>
+                      GuideProfileScreen(guideId: match.guides.first.id),
+                ),
+              );
+              return;
+            }
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                builder: (_) => GuideProfileScreen(supportArea: selectedTitle),
+                builder: (_) => GuideListScreen(
+                  supportArea: selectedTitle,
+                  guides: match.guides,
+                ),
               ),
             );
           },

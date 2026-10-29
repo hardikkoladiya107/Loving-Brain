@@ -10,43 +10,72 @@ import 'guide_profile_state.dart';
 class GuideProfileCubit extends Cubit<GuideProfileState> {
   GuideProfileCubit() : super(const GuideProfileState());
 
-  void init({String? guideId, String? supportArea}) {
+  Future<void> init({String? guideId, String? supportArea}) async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
-    GuideProfileModel matched;
-    if (guideId != null && guideId.isNotEmpty) {
-      matched = MentorshipRepo.instance.getGuideById(guideId);
-    } else {
-      matched = MentorshipRepo.defaultGuides.first;
-      if (supportArea != null && supportArea.isNotEmpty) {
-        final String cleanArea = supportArea.toLowerCase().trim();
-        for (final GuideProfileModel g in MentorshipRepo.defaultGuides) {
-          if (g.supportAreas.any(
-            (String a) => a.toLowerCase().contains(cleanArea),
-          )) {
-            matched = g;
-            break;
-          }
-        }
+    if (guideId != null && guideId.trim().isNotEmpty) {
+      final ApiResultStatus<GuideProfileModel> result = await MentorshipRepo
+          .instance
+          .getGuideById(guideId);
+      if (result is Data<GuideProfileModel>) {
+        changeProps(
+          isLoading: false,
+          guide: result.data,
+          updateGuide: true,
+          fetchStatus: result,
+        );
+      } else {
+        changeProps(
+          isLoading: false,
+          guide: null,
+          updateGuide: true,
+          fetchStatus: result,
+        );
       }
+      return;
     }
 
-    changeProps(
-      isLoading: false,
-      guide: matched,
-      fetchStatus: ApiResultStatus.data(data: matched),
-    );
+    final ApiResultStatus<List<GuideProfileModel>> profiles =
+        await MentorshipRepo.instance.getGuideProfiles(
+          supportArea: supportArea,
+        );
+    if (profiles is Data<List<GuideProfileModel>> && profiles.data.isNotEmpty) {
+      final GuideProfileModel matched = profiles.data.first;
+      changeProps(
+        isLoading: false,
+        guide: matched,
+        updateGuide: true,
+        fetchStatus: ApiResultStatus.data(data: matched),
+      );
+    } else if (profiles is Error<List<GuideProfileModel>>) {
+      changeProps(
+        isLoading: false,
+        guide: null,
+        updateGuide: true,
+        fetchStatus: profiles,
+      );
+    } else {
+      changeProps(
+        isLoading: false,
+        guide: null,
+        updateGuide: true,
+        fetchStatus: ApiResultStatus.error(
+          error: Exception('Guide is no longer available'),
+        ),
+      );
+    }
   }
 
   void changeProps({
     bool? isLoading,
     GuideProfileModel? guide,
+    bool updateGuide = false,
     ApiResultStatus? fetchStatus,
   }) {
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,
-        guide: guide ?? state.guide,
+        guide: updateGuide ? guide : state.guide,
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
       ),
     );
