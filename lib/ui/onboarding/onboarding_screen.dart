@@ -536,6 +536,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       initialDatePickerMode: cubit.state.childDob == null
           ? DatePickerMode.year
           : DatePickerMode.day,
+      initialDatePickerMode:
+          cubit.state.childDob == null ? DatePickerMode.year : DatePickerMode.day,
       builder: (BuildContext ctx, Widget? child) {
         return Theme(
           data: Theme.of(ctx).copyWith(
