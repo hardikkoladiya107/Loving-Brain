@@ -14,7 +14,6 @@ import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/pending_invitation_manager.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/child_repo.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/repo/user_repo.dart';
@@ -145,36 +144,21 @@ class DeepLinkManager {
         );
       }
     } else {
-      // Not logged in — send to login or lightweight co-parent registration.
-      final bool accountExists = await AuthRepo.instance
-          .isAccountExistWithEmail(email: toEmail);
+      // Not logged in — save pending invitation and route to standard passwordless V2 flow.
+      await PendingInvitationManager.save(
+        invitationId: invitationId,
+        invitationEmail: toEmail,
+      );
 
-      if (accountExists) {
-        await PendingInvitationManager.save(
-          invitationId: invitationId,
-          invitationEmail: toEmail,
-        );
-        final BuildContext? ctx = navigatorKey.currentContext;
-        if (ctx != null && ctx.mounted) {
-          GoRouter.of(ctx).go(RoutePaths.login);
-        }
-        _showInfo(
-          LocaleKeys.deepLinkPleaseLoginWithEmail.tr(
-            namedArgs: <String, String>{'email': toEmail},
-          ),
-        );
-      } else {
-        final BuildContext? ctx = navigatorKey.currentContext;
-        if (ctx != null && ctx.mounted) {
-          GoRouter.of(ctx).push(
-            RoutePaths.coParentRegister,
-            extra: <String, String>{
-              'email': toEmail,
-              'invitationId': invitationId,
-            },
-          );
-        }
+      final BuildContext? ctx = navigatorKey.currentContext;
+      if (ctx != null && ctx.mounted) {
+        GoRouter.of(ctx).go(RoutePaths.register);
       }
+      _showInfo(
+        LocaleKeys.deepLinkPleaseLoginWithEmail.tr(
+          namedArgs: <String, String>{'email': toEmail},
+        ),
+      );
     }
   }
 

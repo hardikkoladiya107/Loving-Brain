@@ -43,6 +43,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<RegisterCubit>().init();
+      if (PendingInvitationManager.hasPending()) {
+        final String pendingEmail = PendingInvitationManager.getEmail();
+        if (pendingEmail.isNotEmpty) {
+          emailTextEditingController.text = pendingEmail;
+          context.read<RegisterCubit>().changeProps(
+            emailAddress: pendingEmail,
+            emailAddressError: '',
+          );
+        }
+      }
     });
   }
 

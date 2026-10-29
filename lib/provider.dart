@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/ui/after_reflection/bloc/after_reflection_cubit.dart';
-import 'package:loving_brain/ui/auth/co_parent_register/bloc/co_parent_register_cubit.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/auth/otp/bloc/otp_cubit.dart';
 import 'package:loving_brain/ui/auth/register/bloc/register_cubit.dart';
@@ -101,9 +100,6 @@ final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
   ),
   BlocProvider<ConsistencyRecognitionCubit>(
     create: (BuildContext context) => ConsistencyRecognitionCubit(),
-  ),
-  BlocProvider<CoParentRegisterCubit>(
-    create: (BuildContext context) => CoParentRegisterCubit(),
   ),
   BlocProvider<EnrolledJourneyHomeCubit>(
     create: (BuildContext context) => EnrolledJourneyHomeCubit(),

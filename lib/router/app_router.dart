@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
-import 'package:loving_brain/ui/auth/co_parent_register/co_parent_register_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
 import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
@@ -65,7 +64,6 @@ class AppRouter {
           if (!isOnboarded) {
             if (location == RoutePaths.onboarding ||
                 location == RoutePaths.familySnapshot ||
-                location == RoutePaths.coParentRegister ||
                 location == RoutePaths.terms ||
                 location == RoutePaths.privacy ||
                 location == RoutePaths.faq) {
@@ -90,7 +88,6 @@ class AppRouter {
             RoutePaths.terms,
             RoutePaths.privacy,
             RoutePaths.faq,
-            RoutePaths.coParentRegister,
           };
           if (!publicRoutes.contains(location)) {
             return RoutePaths.welcome;
@@ -128,17 +125,6 @@ class AppRouter {
           path: RoutePaths.helpGuidance,
           builder: (BuildContext context, GoRouterState state) =>
               const HelpGuidanceScreen(),
-        ),
-        GoRoute(
-          path: RoutePaths.coParentRegister,
-          builder: (BuildContext context, GoRouterState state) {
-            final Map<String, dynamic> extra =
-                state.extra as Map<String, dynamic>? ?? {};
-            return CoParentRegisterScreen(
-              email: (extra['email'] as String?) ?? '',
-              invitationId: (extra['invitationId'] as String?) ?? '',
-            );
-          },
         ),
         GoRoute(
           path: RoutePaths.splash,
