@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,14 @@ class PrivacyDataCubit extends Cubit<PrivacyDataState> {
       final List<dynamic> currentPending = await OfflineSyncRepo.instance
           .getPendingUpdates();
       if (currentPending.isNotEmpty) {
-        await OfflineSyncRepo.instance.syncPendingUpdates();
+        final List<ConnectivityResult> connectivity = await Connectivity()
+            .checkConnectivity();
+        final bool isOnline = connectivity.any(
+          (ConnectivityResult r) => r != ConnectivityResult.none,
+        );
+        if (isOnline) {
+          await OfflineSyncRepo.instance.syncPendingUpdates();
+        }
       }
     } catch (_) {}
 

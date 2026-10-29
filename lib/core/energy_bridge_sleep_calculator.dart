@@ -182,6 +182,22 @@ class EnergyBridgeSleepCalculator {
         const Duration(minutes: 30),
       );
 
+      final bool hasFever =
+          todayHealthLog != null &&
+          todayHealthLog.issues.any(
+            (String issue) =>
+                issue.toLowerCase().contains("fever") ||
+                issue.toLowerCase().contains("breath") ||
+                issue.toLowerCase().contains("illness"),
+          );
+
+      final String subtitle = hasFever
+          ? 'Fever logged today. Rest and comfort matter most right now.'
+          : 'Typical $ageQualifier: bedtime around $bedtimeFormatted. Log a sleep update to personalise.';
+      final String reason = hasFever
+          ? 'Health context noted: Rest and comfort matter most right now.'
+          : "This is a general guide, not $cName's own pattern. One update starts personalising it.";
+
       return SleepForecastResult(
         windowStart: timeFormat.format(windowStartDt),
         windowEnd: timeFormat.format(windowEndDt),
@@ -190,14 +206,15 @@ class EnergyBridgeSleepCalculator {
         confidenceTier: ConfidenceTier.none,
         confidenceLabel: 'Learning',
         confidenceDots: 0,
-        reason:
-            "This is a general guide, not $cName's own pattern. One update starts personalising it.",
-        subtitle:
-            'Typical $ageQualifier: bedtime around $bedtimeFormatted. Log a sleep update to personalise.',
+        reason: reason,
+        subtitle: subtitle,
         childName: cName,
         childAgeMonths: effectiveAgeMonths,
         planSteps: _buildPlanSteps(defaultBedtime),
         hasPersonalLogs: false,
+        healthCaveat: hasFever
+            ? 'Health context noted: adjusted because ${todayHealthLog.issues.join(", ")} was logged today.'
+            : null,
       );
     }
 
@@ -273,10 +290,36 @@ class EnergyBridgeSleepCalculator {
     }
 
     // 5. Compute target bedtime estimate
-    // Anchor to today's evening: anchorTime + adjustedWakeWindow
-    DateTime targetBedtime = anchorTime.add(
-      Duration(minutes: adjustedWakeWindow),
-    );
+    DateTime targetBedtime;
+    if (todayNap != null) {
+      targetBedtime = anchorTime.add(Duration(minutes: adjustedWakeWindow));
+    } else {
+      // When no nap has occurred today, estimate bedtime using recent night sleep logs or baseline bedtime
+      final List<SleepLogModel> nightLogs = sortedLogs
+          .where((SleepLogModel l) => !l.isNap)
+          .take(5)
+          .toList();
+      if (nightLogs.isNotEmpty) {
+        int totalMinutes = 0;
+        for (final SleepLogModel l in nightLogs) {
+          totalMinutes += l.bedTime.hour * 60 + l.bedTime.minute;
+        }
+        final int avgMinutes = (totalMinutes / nightLogs.length).round();
+        targetBedtime = DateTime(
+          now.year,
+          now.month,
+          now.day,
+          avgMinutes ~/ 60,
+          avgMinutes % 60,
+        );
+      } else {
+        targetBedtime = _resolveBaselineBedtime(
+          now: now,
+          child: child,
+          effectiveAgeMonths: effectiveAgeMonths,
+        );
+      }
+    }
 
     // Normalize bedtime to be between 6:30 PM and 9:30 PM today
     final DateTime minBedtime = DateTime(now.year, now.month, now.day, 18, 30);

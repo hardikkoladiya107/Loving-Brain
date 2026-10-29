@@ -38,6 +38,8 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isSignedIn();
       allow write: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isSignedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partner_user_id', 'is_active_logger']);
       match /{allChildren=**} {
         allow read, write: if isSignedIn() && request.auth.uid == userId;
       }

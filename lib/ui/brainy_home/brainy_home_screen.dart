@@ -570,6 +570,11 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                 child: AppTextField(
                   controller: _textController,
                   hint: "Ask Brainy anything...",
+                  hintStyle: getTextStyle(
+                    fontSize: 14.sp,
+                    color: greyColor4,
+                    fontWeight: FontWeight.w400,
+                  ),
                   tfType: TFTYPE.FILLED,
                   filled: true,
                   fillColor: Colors.white,

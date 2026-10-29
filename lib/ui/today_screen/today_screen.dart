@@ -134,6 +134,18 @@ class _TodayScreenState extends State<TodayScreen> {
                           ],
                           const ActionGrid(),
                         ] else if (state.mode == TodayMode.newParent) ...[
+                          if (state.forecastSubtitle.toLowerCase().contains(
+                                'fever',
+                              ) ||
+                              state.forecastSubtitle.toLowerCase().contains(
+                                'health',
+                              ) ||
+                              state.forecastSubtitle.toLowerCase().contains(
+                                'rest',
+                              )) ...[
+                            const HeadsUpCard(),
+                            SizedBox(height: 16.h),
+                          ],
                           const AddSleepCard(),
                           SizedBox(height: 16.h),
                           AppButton(

@@ -114,6 +114,7 @@ class TodayLogRepo {
             updateType: 'sleep',
             timestamp: DateTime.now().toIso8601String(),
             payload: log.toMap(),
+            childId: childId,
           ),
         );
         return const ApiResultStatus.data(data: 'offline_queued');
@@ -155,6 +156,7 @@ class TodayLogRepo {
           updateType: 'sleep',
           timestamp: DateTime.now().toIso8601String(),
           payload: log.toMap(),
+          childId: childId,
         ),
       );
       return const ApiResultStatus.data(data: 'offline_queued');
@@ -207,6 +209,7 @@ class TodayLogRepo {
             updateType: 'tantrum',
             timestamp: DateTime.now().toIso8601String(),
             payload: log.toMap(),
+            childId: childId,
           ),
         );
         return const ApiResultStatus.data(data: 'offline_queued');
@@ -268,6 +271,7 @@ class TodayLogRepo {
           updateType: 'tantrum',
           timestamp: DateTime.now().toIso8601String(),
           payload: log.toMap(),
+          childId: childId,
         ),
       );
       return const ApiResultStatus.data(data: 'offline_queued');
@@ -296,6 +300,7 @@ class TodayLogRepo {
             updateType: 'mood',
             timestamp: DateTime.now().toIso8601String(),
             payload: log.toMap(),
+            childId: childId,
           ),
         );
         return const ApiResultStatus.data(data: 'offline_queued');
@@ -354,6 +359,7 @@ class TodayLogRepo {
           updateType: 'mood',
           timestamp: DateTime.now().toIso8601String(),
           payload: log.toMap(),
+          childId: childId,
         ),
       );
       return const ApiResultStatus.data(data: 'offline_queued');
@@ -382,6 +388,7 @@ class TodayLogRepo {
             updateType: 'health',
             timestamp: DateTime.now().toIso8601String(),
             payload: log.toMap(),
+            childId: childId,
           ),
         );
         return const ApiResultStatus.data(data: 'offline_queued');
@@ -421,6 +428,7 @@ class TodayLogRepo {
           updateType: 'health',
           timestamp: DateTime.now().toIso8601String(),
           payload: log.toMap(),
+          childId: childId,
         ),
       );
       return const ApiResultStatus.data(data: 'offline_queued');
@@ -449,6 +457,7 @@ class TodayLogRepo {
             updateType: 'note',
             timestamp: DateTime.now().toIso8601String(),
             payload: log.toMap(),
+            childId: childId,
           ),
         );
         return const ApiResultStatus.data(data: 'offline_queued');
@@ -491,6 +500,7 @@ class TodayLogRepo {
           updateType: 'note',
           timestamp: DateTime.now().toIso8601String(),
           payload: log.toMap(),
+          childId: childId,
         ),
       );
       return const ApiResultStatus.data(data: 'offline_queued');

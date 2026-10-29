@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -90,46 +89,59 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: const Color(0xFFFEF8F4),
-      body: Stack(
-        children: <Widget>[
-          WebViewWidget(controller: _controller),
-          if (_isLoading) const AppLoadingIndicator(),
-          if (_hasError)
-            Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32.w),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Icon(LucideIcons.wifiOff, size: 48.sp, color: greyColor),
-                    16.spaceH,
-                    "Unable to load Privacy Policy".appText(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: darkBlue,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: <Widget>[
+            _appBar().appPadding(
+              top: 8.h,
+              left: 20.w,
+              right: 20.w,
+              bottom: 8.h,
+            ),
+            Expanded(
+              child: Stack(
+                children: <Widget>[
+                  WebViewWidget(controller: _controller),
+                  if (_isLoading) const AppLoadingIndicator(),
+                  if (_hasError)
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32.w),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              LucideIcons.wifiOff,
+                              size: 48.sp,
+                              color: greyColor,
+                            ),
+                            16.spaceH,
+                            "Unable to load Privacy Policy".appText(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: darkBlue,
+                            ),
+                            8.spaceH,
+                            "Please check your connection and try again."
+                                .appText(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: greyColor,
+                                  textAlign: TextAlign.center,
+                                ),
+                            24.spaceH,
+                            AppButton(title: "Retry", onTap: _loadContent),
+                          ],
+                        ),
+                      ),
                     ),
-                    8.spaceH,
-                    "Please check your connection and try again.".appText(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: greyColor,
-                      textAlign: TextAlign.center,
-                    ),
-                    24.spaceH,
-                    AppButton(title: "Retry", onTap: _loadContent),
-                  ],
-                ),
+                ],
               ),
             ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: _appBar().appPadding(top: 10.h, left: 20.w),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -140,24 +152,17 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
       children: <Widget>[
         BaseButton(
           onTap: () => context.pop(),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(
-                padding: EdgeInsets.all(10.w),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.6),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
-                ),
-                child: Icon(
-                  LucideIcons.chevronLeft,
-                  color: Colors.black87,
-                  size: 24.sp,
-                ),
+          child: Container(
+            padding: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: greyColor.withValues(alpha: 0.2),
+                width: 1.5,
               ),
             ),
+            child: Icon(LucideIcons.chevronLeft, color: darkBlue, size: 20.sp),
           ),
         ),
       ],

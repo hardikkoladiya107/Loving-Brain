@@ -7,6 +7,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
@@ -16,6 +17,7 @@ import '../env/env.dart';
 import '../generated/locale_keys.g.dart';
 import '../model/api_result_status.dart';
 import '../model/invitation_model.dart';
+import 'auth_repo.dart';
 import 'child_repo.dart';
 import 'user_repo.dart';
 
@@ -360,9 +362,6 @@ class CoParentRepo {
 
   /// Accepts a co-parent invitation: links shared children, updates the co-parent
   /// user document, then marks the invitation ACCEPTED.
-  ///
-  /// Child/user updates run **before** status changes so a partial failure leaves
-  /// the invitation in REQUESTED state and the co-parent can retry.
   Future<ApiResultStatus> addUserAsCoParent(
     String invitationReferenceId,
   ) async {
@@ -377,24 +376,31 @@ class CoParentRepo {
       }
 
       final InvitationModel invitationModel = InvitationModel.fromJson(data);
-      final UserModel? userModel = preferences.getUserModel();
+      UserModel? userModel = preferences.getUserModel();
+      final String? parentUid =
+          FirebaseAuth.instance.currentUser?.uid ?? userModel?.uid;
+
+      if (parentUid == null || parentUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+
+      // If preferences user is stale or missing, load fresh user
+      if (userModel == null || userModel.uid != parentUid) {
+        userModel = await AuthRepo.instance.getUserFromUid(uId: parentUid);
+      }
 
       final String? validationKey =
           CoParentInvitationHelpers.validateInvitationForAccept(
             invitedEmail: invitationModel.toParent,
-            loggedInEmail: userModel?.email,
+            loggedInEmail:
+                FirebaseAuth.instance.currentUser?.email ?? userModel?.email,
             invitationStatus: invitationModel.status,
           );
       if (validationKey != null) {
         return ApiResultStatus.error(
           error: Exception(_localizedInvitationError(validationKey)),
-        );
-      }
-
-      final String? parentUid = userModel?.uid;
-      if (parentUid == null || parentUid.isEmpty) {
-        return ApiResultStatus.error(
-          error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
 
@@ -424,6 +430,19 @@ class CoParentRepo {
         );
       }
 
+      // Resolve inviter uid if available
+      final String? inviterEmail = invitationModel.fromParent?.trim();
+      String? inviterUid;
+      if (inviterEmail != null && inviterEmail.isNotEmpty) {
+        try {
+          final UserModel? inviterUser = await UserRepo.instance
+              .getUserFromEmail(email: inviterEmail);
+          inviterUid = inviterUser?.uid;
+        } catch (e) {
+          debugPrint('Error resolving inviter user: $e');
+        }
+      }
+
       // Step 2 — add child refs to the co-parent user doc (so children appear in their app).
       final DocumentSnapshot<Map<String, dynamic>> coParentDoc =
           await userCollection.doc(parentUid).get();
@@ -433,6 +452,10 @@ class CoParentRepo {
       final Map<String, dynamic> userUpdate = <String, dynamic>{
         'children': FieldValue.arrayUnion(childRefs),
         'is_onboarding_completed': true,
+        if (inviterUid != null && inviterUid.isNotEmpty) ...<String, dynamic>{
+          'partner_user_id': inviterUid,
+          'is_active_logger': false,
+        },
       };
       if (!hasDefaultChild && childRefs.isNotEmpty) {
         userUpdate['default_child'] = childRefs.first;
@@ -452,28 +475,22 @@ class CoParentRepo {
               childDoc.reference,
             );
             await preferences.saveChildModel(sharedChild);
+            await preferences.saveDefaultChildModel(sharedChild);
           }
         } catch (_) {}
       }
 
-      // Step 2b — link partners and set active logger (inviter logs, acceptor views).
-      final String? inviterEmail = invitationModel.fromParent?.trim();
-      if (inviterEmail != null && inviterEmail.isNotEmpty) {
-        final UserModel? inviterUser = await UserRepo.instance.getUserFromEmail(
-          email: inviterEmail,
-        );
-        final String? inviterUid = inviterUser?.uid;
-        if (inviterUid != null && inviterUid.isNotEmpty) {
-          final WriteBatch partnerBatch = FirebaseFirestore.instance.batch();
-          partnerBatch.update(userCollection.doc(inviterUid), <String, dynamic>{
+      // Step 2b — safely update inviter partner link in isolation (rules may restrict)
+      if (inviterUid != null && inviterUid.isNotEmpty) {
+        try {
+          await userCollection.doc(inviterUid).update(<String, dynamic>{
             'partner_user_id': parentUid,
             'is_active_logger': true,
           });
-          partnerBatch.update(userCollection.doc(parentUid), <String, dynamic>{
-            'partner_user_id': inviterUid,
-            'is_active_logger': false,
-          });
-          await partnerBatch.commit();
+        } catch (e) {
+          debugPrint(
+            'Note: inviter doc update will be synced on next load: $e',
+          );
         }
       }
 
@@ -489,20 +506,26 @@ class CoParentRepo {
       }
 
       // Step 4 — mark invitation accepted only after all linking succeeded.
-      await coParentInvitationCollection.doc(invitationReferenceId).update(
-        <String, dynamic>{'status': CoParentInvitationHelpers.statusAccepted},
-      );
+      await coParentInvitationCollection
+          .doc(invitationReferenceId)
+          .update(<String, dynamic>{
+            'status': CoParentInvitationHelpers.statusAccepted,
+            'accepted_by_uid': parentUid,
+            'accepted_at': DateTime.now().toIso8601String(),
+          });
 
       return ApiResultStatus.data(
         data: invitationModel.copyWith(
           status: CoParentInvitationHelpers.statusAccepted,
         ),
       );
-    } on FirebaseException {
+    } on FirebaseException catch (e) {
+      debugPrint('FirebaseException accepting invitation: ${e.message}');
       return ApiResultStatus.error(
-        error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        error: Exception(e.message ?? LocaleKeys.somethingWentWrong.tr()),
       );
     } catch (e) {
+      debugPrint('Exception accepting invitation: $e');
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),
       );

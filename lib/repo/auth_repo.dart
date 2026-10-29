@@ -220,13 +220,35 @@ class AuthRepo {
   }
 
   /// Deletes all Firestore data for the user, then deletes the Auth account
-  /// (or signs out if re-authentication would be required) and clears local session.
+  /// and clears local session. Requires recent authentication (< 4.5 minutes)
+  /// before deleting any data, ensuring no partial data loss (V14-08).
   Future<ApiResultStatus> deleteAccount() async {
     try {
       final User? currentUser = FirebaseAuth.instance.currentUser;
       final UserModel? userModel = preferences.getUserModel();
       final String uid = currentUser?.uid ?? userModel?.uid ?? '';
       final String? email = userModel?.email ?? currentUser?.email;
+
+      // ── Pre-flight check: ensure session is authenticated and recent ──
+      if (currentUser == null && uid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception('No active user found to delete.'),
+        );
+      }
+
+      if (currentUser != null) {
+        final DateTime? lastSignIn = currentUser.metadata.lastSignInTime;
+        final DateTime now = DateTime.now().toUtc();
+        if (lastSignIn == null ||
+            now.difference(lastSignIn.toUtc()) >
+                const Duration(minutes: 4, seconds: 30)) {
+          return ApiResultStatus.error(
+            error: Exception(
+              'For security, please sign out and sign in again before deleting your account.',
+            ),
+          );
+        }
+      }
 
       if (uid.isNotEmpty) {
         try {

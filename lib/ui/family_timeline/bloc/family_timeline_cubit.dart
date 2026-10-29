@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/pending_local_update_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 import 'family_timeline_state.dart';
 
@@ -24,6 +26,7 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
     int? averageBedtimeShiftMinutes,
     ApiResultStatus? fetchStatus,
   }) {
+    if (isClosed) return;
     emit(
       state.copyWith(
         allEvents: allEvents ?? state.allEvents,
@@ -42,6 +45,10 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
   Future<void> _loadTimeline() async {
     changeProps(fetchStatus: const ApiResultStatus.loading());
 
+    try {
+      await OfflineSyncRepo.instance.syncPendingUpdates();
+    } catch (_) {}
+
     final ChildModel? child = preferences.getChildModel();
     final String childId = child?.reference?.id ?? '';
 
@@ -52,7 +59,7 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
       final ApiResultStatus<List<TimelineEventModel>> result =
           await TodayLogRepo.instance.getTimelineEvents(childId);
       if (result is Data<List<TimelineEventModel>>) {
-        events = result.data;
+        events = List<TimelineEventModel>.from(result.data);
       }
 
       final ApiResultStatus<List<SleepLogModel>> sleepResult =
@@ -69,6 +76,44 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
         bedtimeShift = (oldestMinutes - latestMinutes).clamp(-120, 120);
       }
     }
+
+    // Merge any remaining local pending items so offline notes/logs show immediately
+    try {
+      final List<PendingLocalUpdateModel> pending = await OfflineSyncRepo
+          .instance
+          .getPendingUpdates();
+      for (final PendingLocalUpdateModel p in pending) {
+        if (p.childId == null || p.childId == childId || childId.isEmpty) {
+          final String title = switch (p.type.toLowerCase()) {
+            'note' => 'Quick note',
+            'sleep' => 'Sleep update',
+            'tantrum' || 'behaviour' => 'Tantrum update',
+            'health' => 'Health update',
+            'mood' => 'Mood check-in',
+            _ => 'Update',
+          };
+          final String subtitle =
+              (p.payload['note'] ??
+                      p.payload['whatHappened'] ??
+                      p.payload['subtitle'] ??
+                      'Saved offline (pending sync)')
+                  .toString();
+          events.add(
+            TimelineEventModel(
+              id: p.id,
+              type: p.type,
+              title: title,
+              subtitle: subtitle,
+              timestamp: p.timestamp,
+            ),
+          );
+        }
+      }
+      events.sort(
+        (TimelineEventModel a, TimelineEventModel b) =>
+            b.timestamp.compareTo(a.timestamp),
+      );
+    } catch (_) {}
 
     int weeks = 0;
     if (events.isNotEmpty) {

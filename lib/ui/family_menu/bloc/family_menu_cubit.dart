@@ -26,8 +26,30 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
 
   Future<void> _loadCaregivers() async {
     final UserModel? user = preferences.getUserModel();
+    final ChildModel? child = preferences.getChildModel();
     final List<CaregiverItem> linked = <CaregiverItem>[];
-    final String? partnerId = user?.partnerUserId?.trim();
+    String? partnerId = user?.partnerUserId?.trim();
+
+    final String currentUid = user?.uid ?? '';
+
+    // Auto-discover linked co-parents via child parent_reference_ids if partnerUserId is unset
+    if ((partnerId == null || partnerId.isEmpty) &&
+        child?.parentReferenceIds != null &&
+        child!.parentReferenceIds!.length > 1) {
+      for (final String pid in child.parentReferenceIds!) {
+        if (pid.isNotEmpty && pid != currentUid) {
+          partnerId = pid;
+          // Self-heal partnerUserId on current user document
+          if (currentUid.isNotEmpty) {
+            UserRepo.instance.userCollection
+                .doc(currentUid)
+                .update(<String, dynamic>{'partner_user_id': partnerId})
+                .catchError((_) => null);
+          }
+          break;
+        }
+      }
+    }
 
     if (partnerId != null && partnerId.isNotEmpty) {
       UserModel? partnerUser;

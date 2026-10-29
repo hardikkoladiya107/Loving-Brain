@@ -50,6 +50,9 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
       initialDate: initialDate.isAfter(now) ? now : initialDate,
       firstDate: DateTime(now.year - 18, 1, 1),
       lastDate: now,
+      initialDatePickerMode: currentDob == null
+          ? DatePickerMode.year
+          : DatePickerMode.day,
     );
     if (picked != null) {
       cubit.updateDob(picked);

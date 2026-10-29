@@ -34,6 +34,11 @@ class SleepLogModel {
     this.createdAt,
   });
 
+  bool get isNap {
+    final int dur = durationMinutes ?? wakeTime.difference(bedTime).inMinutes;
+    return wakeTime.hour >= 9 && wakeTime.hour <= 18 && dur <= 240;
+  }
+
   Map<String, dynamic> toMap() => {
     'date': Timestamp.fromDate(DateTime(date.year, date.month, date.day)),
     'bedTime': Timestamp.fromDate(bedTime.toUtc()),

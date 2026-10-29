@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/pending_local_update_model.dart';
+import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
@@ -107,60 +110,297 @@ class OfflineSyncRepo {
   /// Syncs all queued updates when connection is restored (Screen 68).
   Future<ApiResultStatus<int>> syncPendingUpdates() async {
     if (_inMemoryQueue.isEmpty) {
+      await loadPersistedQueue();
+    }
+    if (_inMemoryQueue.isEmpty) {
       return const ApiResultStatus.data(data: 0);
     }
 
     int syncedCount = 0;
     final List<PendingLocalUpdateModel> snapshot =
         List<PendingLocalUpdateModel>.from(_inMemoryQueue);
-    final String childId =
+    final String fallbackChildId =
         TodayLogRepo.instance.resolveActiveChildId() ??
         preferences.getChildModel()?.reference?.id ??
         'default_child';
+
     for (final PendingLocalUpdateModel item in snapshot) {
       try {
+        final String childId =
+            (item.childId != null && item.childId!.isNotEmpty)
+            ? item.childId!
+            : fallbackChildId;
+
         bool success = false;
         try {
           final CollectionReference<Map<String, dynamic>> childrenCollection =
               FirebaseFirestore.instance.collection('children');
+
+          String currentUid = item.payload['userId']?.toString() ?? '';
+          if (currentUid.isEmpty) {
+            try {
+              currentUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+            } catch (_) {}
+          }
+          if (currentUid.isEmpty) {
+            currentUid = preferences.getUserModel()?.uid ?? '';
+          }
+
           switch (item.type.toLowerCase()) {
-            case 'sleep':
+            case 'note':
+              final Map<String, dynamic> firestorePayload =
+                  Map<String, dynamic>.from(item.payload);
+              if (firestorePayload['timestamp'] is String) {
+                firestorePayload['timestamp'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['timestamp'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              firestorePayload['createdAt'] = FieldValue.serverTimestamp();
+
+              final DocumentReference<Map<String, dynamic>> docRef =
+                  await childrenCollection
+                      .doc(childId)
+                      .collection('quick_notes')
+                      .add(firestorePayload)
+                      .timeout(const Duration(seconds: 6));
+
+              final String noteText =
+                  (item.payload['note'] as String?)?.trim() ?? '';
               await childrenCollection
                   .doc(childId)
-                  .collection('sleep_logs')
-                  .add(item.payload);
+                  .collection('events')
+                  .add(<String, dynamic>{
+                    'type': 'quick_note',
+                    'timestamp': Timestamp.fromDate(item.timestamp.toUtc()),
+                    'title': 'Quick note',
+                    'subtitle': noteText.isNotEmpty ? noteText : 'Voice note',
+                    if (item.payload['audioLocalPath'] != null)
+                      'audioLocalPath': item.payload['audioLocalPath'],
+                    if (item.payload['audioDurationSeconds'] != null)
+                      'audioDurationSeconds':
+                          item.payload['audioDurationSeconds'],
+                    'createdAt': FieldValue.serverTimestamp(),
+                    'userId': currentUid,
+                    'childId': childId,
+                    'noteId': docRef.id,
+                  })
+                  .timeout(const Duration(seconds: 6));
+              success = true;
               break;
+
+            case 'sleep':
+              final Map<String, dynamic> firestorePayload =
+                  Map<String, dynamic>.from(item.payload);
+              if (firestorePayload['wakeTime'] is String) {
+                firestorePayload['wakeTime'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['wakeTime'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              if (firestorePayload['bedTime'] is String) {
+                firestorePayload['bedTime'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['bedTime'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              firestorePayload['createdAt'] = FieldValue.serverTimestamp();
+
+              final DocumentReference<Map<String, dynamic>> docRef =
+                  await childrenCollection
+                      .doc(childId)
+                      .collection('sleep_logs')
+                      .add(firestorePayload)
+                      .timeout(const Duration(seconds: 6));
+
+              final DateTime wakeTime = item.payload['wakeTime'] is String
+                  ? DateTime.tryParse(item.payload['wakeTime'] as String) ??
+                        item.timestamp
+                  : item.timestamp;
+              final int durationMins =
+                  (item.payload['durationMinutes'] as num?)?.toInt() ?? 0;
+              final int qualityIdx =
+                  (item.payload['sleepQualityIndex'] as num?)?.toInt() ?? 2;
+              final bool isNightWaking = item.payload['isNightWaking'] == true;
+
+              await childrenCollection
+                  .doc(childId)
+                  .collection('events')
+                  .add(<String, dynamic>{
+                    'type': 'sleep_log',
+                    'timestamp': Timestamp.fromDate(wakeTime.toUtc()),
+                    'title': 'Sleep update',
+                    'subtitle':
+                        '${TimelineEventModel.formatSleepDuration(durationMins)} • Quality: ${qualityIdx + 1}/5${isNightWaking ? " • Night waking" : ""}',
+                    'createdAt': FieldValue.serverTimestamp(),
+                    'userId': currentUid,
+                    'childId': childId,
+                    'sleepLogId': docRef.id,
+                  })
+                  .timeout(const Duration(seconds: 6));
+              success = true;
+              break;
+
             case 'tantrum':
             case 'behaviour':
+              final Map<String, dynamic> firestorePayload =
+                  Map<String, dynamic>.from(item.payload);
+              if (firestorePayload['timestamp'] is String) {
+                firestorePayload['timestamp'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['timestamp'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              firestorePayload['createdAt'] = FieldValue.serverTimestamp();
+
+              final DocumentReference<Map<String, dynamic>> docRef =
+                  await childrenCollection
+                      .doc(childId)
+                      .collection('tantrum_logs')
+                      .add(firestorePayload)
+                      .timeout(const Duration(seconds: 6));
+
+              final String whatHappened =
+                  (item.payload['whatHappened'] as String?)?.trim() ??
+                  'Behaviour check-in';
+              final List<dynamic> triggers =
+                  (item.payload['triggers'] as List<dynamic>?) ?? <dynamic>[];
+              final String triggersStr = triggers.isNotEmpty
+                  ? ' (${triggers.join(", ")})'
+                  : '';
+              final String whatHelped =
+                  (item.payload['whatHelped'] as String?)?.trim() ?? '';
+              final String helpedStr = whatHelped.isNotEmpty
+                  ? ' • Helped: $whatHelped'
+                  : '';
+
               await childrenCollection
                   .doc(childId)
-                  .collection('tantrum_logs')
-                  .add(item.payload);
+                  .collection('events')
+                  .add(<String, dynamic>{
+                    'type': 'tantrum_log',
+                    'timestamp': Timestamp.fromDate(item.timestamp.toUtc()),
+                    'title': 'Tantrum update',
+                    'subtitle': '$whatHappened$triggersStr$helpedStr',
+                    'createdAt': FieldValue.serverTimestamp(),
+                    'userId': currentUid,
+                    'childId': childId,
+                    'tantrumLogId': docRef.id,
+                  })
+                  .timeout(const Duration(seconds: 6));
+              success = true;
               break;
-            case 'mood':
-              await childrenCollection
-                  .doc(childId)
-                  .collection('mood_logs')
-                  .add(item.payload);
-              break;
+
             case 'health':
+              final Map<String, dynamic> firestorePayload =
+                  Map<String, dynamic>.from(item.payload);
+              if (firestorePayload['timestamp'] is String) {
+                firestorePayload['timestamp'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['timestamp'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              firestorePayload['createdAt'] = FieldValue.serverTimestamp();
+
+              final DocumentReference<Map<String, dynamic>> docRef =
+                  await childrenCollection
+                      .doc(childId)
+                      .collection('health_logs')
+                      .add(firestorePayload)
+                      .timeout(const Duration(seconds: 6));
+
+              final List<dynamic> issues =
+                  (item.payload['issues'] as List<dynamic>?) ?? <dynamic>[];
+              final String notes =
+                  (item.payload['notes'] as String?)?.trim() ?? '';
+              final String notesPart = notes.isNotEmpty ? ' • $notes' : '';
+
               await childrenCollection
                   .doc(childId)
-                  .collection('health_logs')
-                  .add(item.payload);
+                  .collection('events')
+                  .add(<String, dynamic>{
+                    'type': 'health_log',
+                    'timestamp': Timestamp.fromDate(item.timestamp.toUtc()),
+                    'title': 'Health update',
+                    'subtitle': '${issues.join(", ")}$notesPart',
+                    'createdAt': FieldValue.serverTimestamp(),
+                    'userId': currentUid,
+                    'childId': childId,
+                    'healthLogId': docRef.id,
+                  })
+                  .timeout(const Duration(seconds: 6));
+              success = true;
               break;
-            case 'note':
+
+            case 'mood':
+              final Map<String, dynamic> firestorePayload =
+                  Map<String, dynamic>.from(item.payload);
+              if (firestorePayload['timestamp'] is String) {
+                firestorePayload['timestamp'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['timestamp'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              if (firestorePayload['logTime'] is String) {
+                firestorePayload['logTime'] = Timestamp.fromDate(
+                  DateTime.tryParse(
+                        firestorePayload['logTime'] as String,
+                      )?.toUtc() ??
+                      item.timestamp.toUtc(),
+                );
+              }
+              firestorePayload['createdAt'] = FieldValue.serverTimestamp();
+
+              final DocumentReference<Map<String, dynamic>> docRef =
+                  await childrenCollection
+                      .doc(childId)
+                      .collection('mood_logs')
+                      .add(firestorePayload)
+                      .timeout(const Duration(seconds: 6));
+
+              final String childMood =
+                  (item.payload['childMood'] as String?) ?? 'Calm';
+              final String parentMood =
+                  (item.payload['parentMood'] as String?) ?? '';
+              final String parentPart = parentMood.isNotEmpty
+                  ? ' • Parent: $parentMood'
+                  : '';
+
               await childrenCollection
                   .doc(childId)
-                  .collection('quick_notes')
-                  .add(item.payload);
+                  .collection('events')
+                  .add(<String, dynamic>{
+                    'type': 'mood_log',
+                    'timestamp': Timestamp.fromDate(item.timestamp.toUtc()),
+                    'title': 'Mood check-in',
+                    'subtitle': 'Child: $childMood$parentPart',
+                    'createdAt': FieldValue.serverTimestamp(),
+                    'userId': currentUid,
+                    'childId': childId,
+                    'moodLogId': docRef.id,
+                  })
+                  .timeout(const Duration(seconds: 6));
+              success = true;
               break;
+
             default:
+              success = true;
               break;
           }
-          success = true;
-        } catch (_) {
-          // If offline or uninitialized Firebase, remain queued for next retry
+        } catch (e) {
+          debugPrint('Error syncing offline item ${item.id}: $e');
           success = false;
         }
 

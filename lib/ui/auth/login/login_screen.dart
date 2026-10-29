@@ -461,10 +461,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loggedInSuccess(Map<String, dynamic> data) async {
-    final UserModel userModel =
-        preferences.getUserModel() ?? UserModel.fromJson(data);
-    final GoRouter router = GoRouter.of(context);
+    final UserModel userModel = UserModel.fromJson(data);
+    await preferences.saveUserModel(userModel);
     if (!mounted) return;
+    final GoRouter router = GoRouter.of(context);
     context.read<LoginCubit>().clearFields();
     if (userModel.uid == null) return;
 

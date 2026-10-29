@@ -205,14 +205,8 @@ class RegisterCubit extends Cubit<RegisterState> {
   }
 
   Future<void> sendOtp() async {
-    String rawPhone = state.phoneNumber.trim();
-    String rawEmail = state.emailAddress.trim();
-
-    // Fallback: if phoneNumber is empty and emailAddress was used for digits (e.g. legacy/tests)
-    if (rawPhone.isEmpty && rawEmail.isNotEmpty && !rawEmail.contains('@')) {
-      rawPhone = rawEmail;
-      rawEmail = '';
-    }
+    final String rawPhone = state.phoneNumber.trim();
+    final String rawEmail = state.emailAddress.trim();
 
     if (rawPhone.isEmpty && rawEmail.isEmpty) {
       changeProps(
@@ -265,7 +259,16 @@ class RegisterCubit extends Cubit<RegisterState> {
       }
     }
 
-    if (phoneError != null || emailError != null) {
+    // Validate whichever field is filled and clear the other field's error (V14-04)
+    if (rawPhone.isEmpty) {
+      phoneError = '';
+    }
+    if (rawEmail.isEmpty) {
+      emailError = '';
+    }
+
+    if ((phoneError != null && phoneError.isNotEmpty) ||
+        (emailError != null && emailError.isNotEmpty)) {
       changeProps(
         phoneNumberError: phoneError ?? '',
         emailAddressError: emailError ?? '',

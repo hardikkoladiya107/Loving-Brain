@@ -179,12 +179,19 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
             height: 1.2,
           ),
           12.spaceH,
-          'Started ${currentDay - 1} days ago · day $currentDay of $totalDays'
-              .appText(
-                fontSize: 12.sp,
-                color: greyColor,
-                textAlign: TextAlign.start,
-              ),
+          () {
+            final int daysAgo = currentDay - 1;
+            final String startLabel = daysAgo <= 0
+                ? 'Started today'
+                : daysAgo == 1
+                ? 'Started 1 day ago'
+                : 'Started $daysAgo days ago';
+            return '$startLabel · day $currentDay of $totalDays'.appText(
+              fontSize: 12.sp,
+              color: greyColor,
+              textAlign: TextAlign.start,
+            );
+          }(),
           16.spaceH,
           ClipRRect(
             borderRadius: BorderRadius.circular(4.r),

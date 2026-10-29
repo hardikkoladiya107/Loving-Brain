@@ -311,8 +311,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
           data: (data) async {
             if (data is Map<String, dynamic> &&
                 (data['uid']?.toString().trim().isNotEmpty ?? false)) {
-              final UserModel userModel =
-                  preferences.getUserModel() ?? UserModel.fromJson(data);
+              final UserModel userModel = UserModel.fromJson(data);
+              await preferences.saveUserModel(userModel);
+              if (!context.mounted) return;
               final GoRouter router = GoRouter.of(context);
               context.read<RegisterCubit>().changeProps(
                 apiResultStatus: const ApiResultStatus.initial(),
