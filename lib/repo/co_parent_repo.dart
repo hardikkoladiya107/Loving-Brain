@@ -511,6 +511,67 @@ class CoParentRepo {
     }
   }
 
+  Future<ApiResultStatus> leaveChildFamily({
+    required String childId,
+    required String userUid,
+  }) async {
+    try {
+      if (childId.isEmpty || userUid.isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception(LocaleKeys.somethingWentWrong.tr()),
+        );
+      }
+      final DocumentReference<Map<String, dynamic>> childRef = FirebaseFirestore
+          .instance
+          .collection('children')
+          .doc(childId);
+      final DocumentSnapshot<Map<String, dynamic>> snap = await childRef.get();
+      final List<dynamic>? parentRefs =
+          snap.data()?['parent_reference_ids'] as List<dynamic>?;
+      if (parentRefs != null &&
+          parentRefs.isNotEmpty &&
+          parentRefs.first == userUid) {
+        return ApiResultStatus.error(
+          error: Exception(
+            'The primary parent cannot leave their own child profile.',
+          ),
+        );
+      }
+
+      await childRef.update(<String, dynamic>{
+        'parent_reference_ids': FieldValue.arrayRemove(<dynamic>[userUid]),
+      });
+
+      await userCollection.doc(userUid).update(<String, dynamic>{
+        'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+        'partner_user_id': FieldValue.delete(),
+      });
+
+      final UserModel? user = preferences.getUserModel();
+      final String email = user?.email ?? '';
+      if (email.isNotEmpty) {
+        try {
+          await childRef
+              .collection('caregiver_permissions')
+              .doc(email)
+              .delete();
+        } catch (_) {}
+      }
+
+      final UserModel? updatedUser = await AuthRepo.instance
+          .syncUserAndDefaultChild(uId: userUid);
+      if (updatedUser != null) {
+        await preferences.saveUserModel(updatedUser);
+      }
+
+      return const ApiResultStatus.data(data: true);
+    } catch (e) {
+      return ApiResultStatus.error(
+        error: e is Exception ? e : Exception(e.toString()),
+      );
+    }
+  }
+
   String _localizedInvitationError(String validationKey) {
     switch (validationKey) {
       case 'deepLinkInvitationInvalidEmail':

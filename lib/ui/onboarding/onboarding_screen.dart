@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
+import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
@@ -1339,9 +1341,168 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 )
                 .appPadding(left: 32.r, right: 20.r),
           ],
+          24.spaceH,
+          Center(
+            child: BaseButton(
+              onTap: () {
+                _showEnterInviteCodeDialog(context);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(color: const Color(0xFFEAE9FD)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.mail_outline_rounded,
+                      size: 18.sp,
+                      color: _accentPurple,
+                    ),
+                    8.spaceW,
+                    "Joining as a co-parent? Enter invite code".appText(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: _accentPurple,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           20.spaceH,
         ],
       ),
+    );
+  }
+
+  void _showEnterInviteCodeDialog(BuildContext context) {
+    final TextEditingController codeController = TextEditingController();
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 48.w,
+                    height: 48.w,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFEAE9FD),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.diversity_1_rounded,
+                      color: _accentPurple,
+                      size: 24.sp,
+                    ),
+                  ),
+                ),
+                16.spaceH,
+                Center(
+                  child: "Enter Invitation Code".appText(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    fraunces: true,
+                    color: greyColor9,
+                  ),
+                ),
+                8.spaceH,
+                "If another parent invited you to care for their child, paste the invite code or link from your email."
+                    .appText(
+                      fontSize: 13.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.center,
+                      height: 1.4,
+                    ),
+                18.spaceH,
+                AppTextField(
+                  controller: codeController,
+                  hint: "e.g. inv_abc123 or invite link",
+                  border: Border.all(color: _accentPurple, width: 1.2),
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                20.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 44.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 44.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Join Family',
+                        backgroundColor: _accentPurple,
+                        textColor: Colors.white,
+                        onTap: () async {
+                          final String rawInput = codeController.text.trim();
+                          if (rawInput.isEmpty) return;
+
+                          String inviteId = rawInput;
+                          if (rawInput.contains('/')) {
+                            inviteId = rawInput.split('/').last.trim();
+                          }
+
+                          Navigator.pop(dialogContext);
+                          EasyLoading.show(status: 'Joining family...');
+
+                          final ApiResultStatus result = await CoParentRepo
+                              .instance
+                              .addUserAsCoParent(inviteId);
+
+                          EasyLoading.dismiss();
+
+                          result.whenOrNull(
+                            data: (_) {
+                              showSnackBar(
+                                message: "Joined family successfully!",
+                                type: SnackBarType.SUCCESS,
+                              );
+                              context.read<OnboardingCubit>().reset();
+                              context.go(RoutePaths.base);
+                            },
+                            error: (Exception err) {
+                              showSnackBar(
+                                message: err.toString().replaceAll(
+                                  'Exception: ',
+                                  '',
+                                ),
+                                type: SnackBarType.ERROR,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

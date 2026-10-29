@@ -32,6 +32,13 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     String? partnerId = user?.partnerUserId?.trim();
 
     final String currentUid = user?.uid ?? '';
+    final String ownerUid =
+        (child?.parentReferenceIds != null &&
+            child!.parentReferenceIds!.isNotEmpty)
+        ? child.parentReferenceIds!.first
+        : currentUid;
+    final bool isCurrentUserOwner =
+        currentUid.isNotEmpty && currentUid == ownerUid;
 
     // Refresh child doc from Firestore to ensure real-time parent_reference_ids
     if (child?.reference != null) {
@@ -87,14 +94,18 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
         name = 'Partner';
       }
       final String email = partnerUser?.email ?? partnerUser?.parentEmail ?? '';
+      final bool isPartnerOwner = partnerId == ownerUid;
 
       linked.add(
         CaregiverItem(
           id: partnerId,
           name: name,
           email: email,
-          role: partnerUser?.relationshipToChild ?? 'Co-Parent',
-          status: 'Linked',
+          role:
+              partnerUser?.relationshipToChild ??
+              (isPartnerOwner ? 'Primary Parent' : 'Co-Parent'),
+          status: isPartnerOwner ? 'Primary Parent' : 'Linked',
+          isOwner: isPartnerOwner,
         ),
       );
     }
@@ -150,26 +161,55 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     }
 
     changeProps(
+      isCurrentUserOwner: isCurrentUserOwner,
       linkedCaregivers: linked,
       pendingInvites: pending,
       fetchStatus: const ApiResultStatus.data(data: null),
     );
   }
 
+  Future<void> leaveFamily() async {
+    final UserModel? user = preferences.getUserModel();
+    final ChildModel? child = preferences.getChildModel();
+    final String currentUid = user?.uid ?? '';
+    final String childId = child?.reference?.id ?? '';
+    if (currentUid.isEmpty || childId.isEmpty) return;
+
+    changeProps(leaveStatus: const ApiResultStatus.loading());
+
+    final ApiResultStatus result = await CoParentRepo.instance.leaveChildFamily(
+      childId: childId,
+      userUid: currentUid,
+    );
+
+    result.whenOrNull(
+      data: (_) {
+        changeProps(leaveStatus: const ApiResultStatus.data(data: true));
+      },
+      error: (Exception err) {
+        changeProps(leaveStatus: ApiResultStatus.error(error: err));
+      },
+    );
+  }
+
   void changeProps({
     bool? isLoading,
     String? childName,
+    bool? isCurrentUserOwner,
     List<CaregiverItem>? linkedCaregivers,
     List<CaregiverItem>? pendingInvites,
     ApiResultStatus? fetchStatus,
+    ApiResultStatus? leaveStatus,
   }) {
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,
         childName: childName ?? state.childName,
+        isCurrentUserOwner: isCurrentUserOwner ?? state.isCurrentUserOwner,
         linkedCaregivers: linkedCaregivers ?? state.linkedCaregivers,
         pendingInvites: pendingInvites ?? state.pendingInvites,
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
+        leaveStatus: leaveStatus ?? ApiResultStatus.initial(),
       ),
     );
   }

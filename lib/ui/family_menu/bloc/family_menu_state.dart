@@ -10,6 +10,7 @@ class CaregiverItem {
   final String role;
   final String status;
   final int daysRemaining;
+  final bool isOwner;
 
   const CaregiverItem({
     required this.id,
@@ -18,6 +19,7 @@ class CaregiverItem {
     required this.role,
     this.status = 'Linked',
     this.daysRemaining = 14,
+    this.isOwner = false,
   });
 }
 
@@ -26,8 +28,10 @@ abstract class FamilyMenuState with _$FamilyMenuState {
   const factory FamilyMenuState({
     @Default(false) bool isLoading,
     @Default('your child') String childName,
+    @Default(true) bool isCurrentUserOwner,
     @Default(<CaregiverItem>[]) List<CaregiverItem> linkedCaregivers,
     @Default(<CaregiverItem>[]) List<CaregiverItem> pendingInvites,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
+    @Default(ApiResultStatus.initial()) ApiResultStatus leaveStatus,
   }) = _FamilyMenuState;
 }

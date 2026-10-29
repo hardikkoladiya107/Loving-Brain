@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FamilyMenuState {
 
- bool get isLoading; String get childName; List<CaregiverItem> get linkedCaregivers; List<CaregiverItem> get pendingInvites; ApiResultStatus<dynamic> get fetchStatus;
+ bool get isLoading; String get childName; bool get isCurrentUserOwner; List<CaregiverItem> get linkedCaregivers; List<CaregiverItem> get pendingInvites; ApiResultStatus<dynamic> get fetchStatus; ApiResultStatus<dynamic> get leaveStatus;
 /// Create a copy of FamilyMenuState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $FamilyMenuStateCopyWith<FamilyMenuState> get copyWith => _$FamilyMenuStateCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as FamilyMenuState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilyMenuState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&const DeepCollectionEquality().equals(other.linkedCaregivers, _this.linkedCaregivers)&&const DeepCollectionEquality().equals(other.pendingInvites, _this.pendingInvites)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilyMenuState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.childName, _this.childName) || other.childName == _this.childName)&&(identical(other.isCurrentUserOwner, _this.isCurrentUserOwner) || other.isCurrentUserOwner == _this.isCurrentUserOwner)&&const DeepCollectionEquality().equals(other.linkedCaregivers, _this.linkedCaregivers)&&const DeepCollectionEquality().equals(other.pendingInvites, _this.pendingInvites)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus)&&(identical(other.leaveStatus, _this.leaveStatus) || other.leaveStatus == _this.leaveStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as FamilyMenuState;
-  return Object.hash(runtimeType,_this.isLoading,_this.childName,const DeepCollectionEquality().hash(_this.linkedCaregivers),const DeepCollectionEquality().hash(_this.pendingInvites),_this.fetchStatus);
+  return Object.hash(runtimeType,_this.isLoading,_this.childName,_this.isCurrentUserOwner,const DeepCollectionEquality().hash(_this.linkedCaregivers),const DeepCollectionEquality().hash(_this.pendingInvites),_this.fetchStatus,_this.leaveStatus);
 }
 
 @override
 String toString() {
   final _this = this as FamilyMenuState;
-  return 'FamilyMenuState(isLoading: ${_this.isLoading}, childName: ${_this.childName}, linkedCaregivers: ${_this.linkedCaregivers}, pendingInvites: ${_this.pendingInvites}, fetchStatus: ${_this.fetchStatus})';
+  return 'FamilyMenuState(isLoading: ${_this.isLoading}, childName: ${_this.childName}, isCurrentUserOwner: ${_this.isCurrentUserOwner}, linkedCaregivers: ${_this.linkedCaregivers}, pendingInvites: ${_this.pendingInvites}, fetchStatus: ${_this.fetchStatus}, leaveStatus: ${_this.leaveStatus})';
 }
 
 
@@ -51,11 +51,11 @@ abstract mixin class $FamilyMenuStateCopyWith<$Res>  {
   factory $FamilyMenuStateCopyWith(FamilyMenuState value, $Res Function(FamilyMenuState) _then) = _$FamilyMenuStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, String childName, List<CaregiverItem> linkedCaregivers, List<CaregiverItem> pendingInvites, ApiResultStatus<dynamic> fetchStatus
+ bool isLoading, String childName, bool isCurrentUserOwner, List<CaregiverItem> linkedCaregivers, List<CaregiverItem> pendingInvites, ApiResultStatus<dynamic> fetchStatus, ApiResultStatus<dynamic> leaveStatus
 });
 
 
-$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+$ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;$ApiResultStatusCopyWith<dynamic, $Res> get leaveStatus;
 
 }
 /// @nodoc
@@ -68,13 +68,15 @@ class _$FamilyMenuStateCopyWithImpl<$Res>
 
 /// Create a copy of FamilyMenuState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? childName = null,Object? linkedCaregivers = null,Object? pendingInvites = null,Object? fetchStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? childName = null,Object? isCurrentUserOwner = null,Object? linkedCaregivers = null,Object? pendingInvites = null,Object? fetchStatus = null,Object? leaveStatus = null,}) {
   return _then(FamilyMenuState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
-as String,linkedCaregivers: null == linkedCaregivers ? _self.linkedCaregivers : linkedCaregivers // ignore: cast_nullable_to_non_nullable
+as String,isCurrentUserOwner: null == isCurrentUserOwner ? _self.isCurrentUserOwner : isCurrentUserOwner // ignore: cast_nullable_to_non_nullable
+as bool,linkedCaregivers: null == linkedCaregivers ? _self.linkedCaregivers : linkedCaregivers // ignore: cast_nullable_to_non_nullable
 as List<CaregiverItem>,pendingInvites: null == pendingInvites ? _self.pendingInvites : pendingInvites // ignore: cast_nullable_to_non_nullable
 as List<CaregiverItem>,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,leaveStatus: null == leaveStatus ? _self.leaveStatus : leaveStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }
@@ -86,6 +88,15 @@ $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
   
   return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
     return _then(_self.copyWith(fetchStatus: value));
+  });
+}/// Create a copy of FamilyMenuState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get leaveStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.leaveStatus, (value) {
+    return _then(_self.copyWith(leaveStatus: value));
   });
 }
 }
@@ -169,10 +180,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  String childName,  List<CaregiverItem> linkedCaregivers,  List<CaregiverItem> pendingInvites,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  String childName,  bool isCurrentUserOwner,  List<CaregiverItem> linkedCaregivers,  List<CaregiverItem> pendingInvites,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> leaveStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FamilyMenuState() when $default != null:
-return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pendingInvites,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.childName,_that.isCurrentUserOwner,_that.linkedCaregivers,_that.pendingInvites,_that.fetchStatus,_that.leaveStatus);case _:
   return orElse();
 
 }
@@ -190,10 +201,10 @@ return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pen
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  String childName,  List<CaregiverItem> linkedCaregivers,  List<CaregiverItem> pendingInvites,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  String childName,  bool isCurrentUserOwner,  List<CaregiverItem> linkedCaregivers,  List<CaregiverItem> pendingInvites,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> leaveStatus)  $default,) {final _that = this;
 switch (_that) {
 case _FamilyMenuState():
-return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pendingInvites,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.childName,_that.isCurrentUserOwner,_that.linkedCaregivers,_that.pendingInvites,_that.fetchStatus,_that.leaveStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -210,10 +221,10 @@ return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pen
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  String childName,  List<CaregiverItem> linkedCaregivers,  List<CaregiverItem> pendingInvites,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  String childName,  bool isCurrentUserOwner,  List<CaregiverItem> linkedCaregivers,  List<CaregiverItem> pendingInvites,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> leaveStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _FamilyMenuState() when $default != null:
-return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pendingInvites,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.childName,_that.isCurrentUserOwner,_that.linkedCaregivers,_that.pendingInvites,_that.fetchStatus,_that.leaveStatus);case _:
   return null;
 
 }
@@ -225,11 +236,12 @@ return $default(_that.isLoading,_that.childName,_that.linkedCaregivers,_that.pen
 
 
 class _FamilyMenuState implements FamilyMenuState {
-  const _FamilyMenuState({this.isLoading = false, this.childName = 'your child',  List<CaregiverItem> linkedCaregivers = const <CaregiverItem>[],  List<CaregiverItem> pendingInvites = const <CaregiverItem>[], this.fetchStatus = const ApiResultStatus.initial()}): _linkedCaregivers = linkedCaregivers,_pendingInvites = pendingInvites;
+  const _FamilyMenuState({this.isLoading = false, this.childName = 'your child', this.isCurrentUserOwner = true,  List<CaregiverItem> linkedCaregivers = const <CaregiverItem>[],  List<CaregiverItem> pendingInvites = const <CaregiverItem>[], this.fetchStatus = const ApiResultStatus.initial(), this.leaveStatus = const ApiResultStatus.initial()}): _linkedCaregivers = linkedCaregivers,_pendingInvites = pendingInvites;
   
 
 @override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  String childName;
+@override@JsonKey() final  bool isCurrentUserOwner;
  final  List<CaregiverItem> _linkedCaregivers;
 @override@JsonKey() List<CaregiverItem> get linkedCaregivers {
   if (_linkedCaregivers is EqualUnmodifiableListView) return _linkedCaregivers;
@@ -245,6 +257,7 @@ class _FamilyMenuState implements FamilyMenuState {
 }
 
 @override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
+@override@JsonKey() final  ApiResultStatus<dynamic> leaveStatus;
 
 /// Create a copy of FamilyMenuState
 /// with the given fields replaced by the non-null parameter values.
@@ -256,18 +269,18 @@ _$FamilyMenuStateCopyWith<_FamilyMenuState> get copyWith => __$FamilyMenuStateCo
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilyMenuState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.childName, childName) || other.childName == childName)&&const DeepCollectionEquality().equals(other.linkedCaregivers, _linkedCaregivers)&&const DeepCollectionEquality().equals(other.pendingInvites, _pendingInvites)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilyMenuState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.childName, childName) || other.childName == childName)&&(identical(other.isCurrentUserOwner, isCurrentUserOwner) || other.isCurrentUserOwner == isCurrentUserOwner)&&const DeepCollectionEquality().equals(other.linkedCaregivers, _linkedCaregivers)&&const DeepCollectionEquality().equals(other.pendingInvites, _pendingInvites)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus)&&(identical(other.leaveStatus, leaveStatus) || other.leaveStatus == leaveStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoading,childName,const DeepCollectionEquality().hash(_linkedCaregivers),const DeepCollectionEquality().hash(_pendingInvites),fetchStatus);
+    return Object.hash(runtimeType,isLoading,childName,isCurrentUserOwner,const DeepCollectionEquality().hash(_linkedCaregivers),const DeepCollectionEquality().hash(_pendingInvites),fetchStatus,leaveStatus);
 }
 
 @override
 String toString() {
-    return 'FamilyMenuState(isLoading: $isLoading, childName: $childName, linkedCaregivers: $linkedCaregivers, pendingInvites: $pendingInvites, fetchStatus: $fetchStatus)';
+    return 'FamilyMenuState(isLoading: $isLoading, childName: $childName, isCurrentUserOwner: $isCurrentUserOwner, linkedCaregivers: $linkedCaregivers, pendingInvites: $pendingInvites, fetchStatus: $fetchStatus, leaveStatus: $leaveStatus)';
 }
 
 
@@ -278,11 +291,11 @@ abstract mixin class _$FamilyMenuStateCopyWith<$Res> implements $FamilyMenuState
   factory _$FamilyMenuStateCopyWith(_FamilyMenuState value, $Res Function(_FamilyMenuState) _then) = __$FamilyMenuStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, String childName, List<CaregiverItem> linkedCaregivers, List<CaregiverItem> pendingInvites, ApiResultStatus<dynamic> fetchStatus
+ bool isLoading, String childName, bool isCurrentUserOwner, List<CaregiverItem> linkedCaregivers, List<CaregiverItem> pendingInvites, ApiResultStatus<dynamic> fetchStatus, ApiResultStatus<dynamic> leaveStatus
 });
 
 
-@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;
+@override $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus;@override $ApiResultStatusCopyWith<dynamic, $Res> get leaveStatus;
 
 }
 /// @nodoc
@@ -295,13 +308,15 @@ class __$FamilyMenuStateCopyWithImpl<$Res>
 
 /// Create a copy of FamilyMenuState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? childName = null,Object? linkedCaregivers = null,Object? pendingInvites = null,Object? fetchStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? childName = null,Object? isCurrentUserOwner = null,Object? linkedCaregivers = null,Object? pendingInvites = null,Object? fetchStatus = null,Object? leaveStatus = null,}) {
   return _then(_FamilyMenuState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,childName: null == childName ? _self.childName : childName // ignore: cast_nullable_to_non_nullable
-as String,linkedCaregivers: null == linkedCaregivers ? _self._linkedCaregivers : linkedCaregivers // ignore: cast_nullable_to_non_nullable
+as String,isCurrentUserOwner: null == isCurrentUserOwner ? _self.isCurrentUserOwner : isCurrentUserOwner // ignore: cast_nullable_to_non_nullable
+as bool,linkedCaregivers: null == linkedCaregivers ? _self._linkedCaregivers : linkedCaregivers // ignore: cast_nullable_to_non_nullable
 as List<CaregiverItem>,pendingInvites: null == pendingInvites ? _self._pendingInvites : pendingInvites // ignore: cast_nullable_to_non_nullable
 as List<CaregiverItem>,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as ApiResultStatus<dynamic>,leaveStatus: null == leaveStatus ? _self.leaveStatus : leaveStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }
@@ -314,6 +329,15 @@ $ApiResultStatusCopyWith<dynamic, $Res> get fetchStatus {
   
   return $ApiResultStatusCopyWith<dynamic, $Res>(_self.fetchStatus, (value) {
     return _then(_self.copyWith(fetchStatus: value));
+  });
+}/// Create a copy of FamilyMenuState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ApiResultStatusCopyWith<dynamic, $Res> get leaveStatus {
+  
+  return $ApiResultStatusCopyWith<dynamic, $Res>(_self.leaveStatus, (value) {
+    return _then(_self.copyWith(leaveStatus: value));
   });
 }
 }

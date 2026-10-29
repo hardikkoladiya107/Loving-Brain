@@ -103,6 +103,23 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   Future<bool> savePermissions() async {
     changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
+    final ChildModel? child = preferences.getChildModel();
+    final String ownerUid =
+        (child?.parentReferenceIds != null &&
+            child!.parentReferenceIds!.isNotEmpty)
+        ? child.parentReferenceIds!.first
+        : '';
+    final String targetId = _caregiverId ?? '';
+    if (ownerUid.isNotEmpty && targetId.isNotEmpty && targetId == ownerUid) {
+      changeProps(
+        isSaving: false,
+        saveStatus: ApiResultStatus.error(
+          error: Exception("Cannot modify the primary parent's access."),
+        ),
+      );
+      return false;
+    }
+
     final String name = state.caregiverName;
     final String email = name.contains('@')
         ? name
@@ -122,7 +139,6 @@ class PermissionsCubit extends Cubit<PermissionsState> {
 
     await preferences.saveCaregiverPermissions(permissionsModel.toMap());
 
-    final ChildModel? child = preferences.getChildModel();
     final String childId = child?.reference?.id ?? '';
     if (childId.isNotEmpty) {
       try {
@@ -145,6 +161,23 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   Future<bool> revokeAccess() async {
     changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
+    final ChildModel? child = preferences.getChildModel();
+    final String ownerUid =
+        (child?.parentReferenceIds != null &&
+            child!.parentReferenceIds!.isNotEmpty)
+        ? child.parentReferenceIds!.first
+        : '';
+    final String targetId = _caregiverId ?? '';
+    if (ownerUid.isNotEmpty && targetId.isNotEmpty && targetId == ownerUid) {
+      changeProps(
+        isSaving: false,
+        saveStatus: ApiResultStatus.error(
+          error: Exception("Cannot revoke the primary parent's access."),
+        ),
+      );
+      return false;
+    }
+
     final String name = state.caregiverName;
     final String email =
         _caregiverEmail ??
@@ -165,7 +198,6 @@ class PermissionsCubit extends Cubit<PermissionsState> {
 
     await preferences.saveCaregiverPermissions(revoked.toMap());
 
-    final ChildModel? child = preferences.getChildModel();
     final String childId = child?.reference?.id ?? '';
     String partnerId =
         _caregiverId ?? preferences.getUserModel()?.partnerUserId ?? '';

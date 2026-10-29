@@ -337,10 +337,17 @@ class ChildRepo {
       final ApiResultStatus<List<ChildModel>> childApiResultStatus =
           await getChildren(childrenIds: ownChildIds);
 
-      final List<ChildModel> children = [];
+      final List<ChildModel> children = <ChildModel>[];
+      final Set<String> seenIds = <String>{};
       childApiResultStatus.whenOrNull(
         data: (List<ChildModel> data) {
-          children.addAll(data);
+          for (final ChildModel c in data) {
+            final String id = c.reference?.id ?? '';
+            if (id.isNotEmpty && !seenIds.contains(id)) {
+              seenIds.add(id);
+              children.add(c);
+            }
+          }
         },
       );
 
@@ -348,7 +355,13 @@ class ChildRepo {
           await getCoChildren(user);
       coChildApiResultStatus.whenOrNull(
         data: (List<ChildModel> data) {
-          children.addAll(data);
+          for (final ChildModel c in data) {
+            final String id = c.reference?.id ?? '';
+            if (id.isNotEmpty && !seenIds.contains(id)) {
+              seenIds.add(id);
+              children.add(c);
+            }
+          }
         },
       );
 

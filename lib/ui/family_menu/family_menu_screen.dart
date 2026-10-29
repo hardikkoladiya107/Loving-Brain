@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/family_sharing_consent/family_sharing_consent_screen.dart';
 import 'package:loving_brain/ui/invite_caregiver/invite_caregiver_screen.dart';
 import 'package:loving_brain/ui/invite_pending/invite_pending_screen.dart';
@@ -59,7 +62,26 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<FamilyMenuCubit, FamilyMenuState>(
-      listener: (BuildContext context, FamilyMenuState state) {},
+      listener: (BuildContext context, FamilyMenuState state) {
+        state.leaveStatus.whenOrNull(
+          loading: () => EasyLoading.show(),
+          data: (dynamic _) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: "You have left the family profile",
+              type: SnackBarType.SUCCESS,
+            );
+            Navigator.pop(context);
+          },
+          error: (Exception error) {
+            EasyLoading.dismiss();
+            showSnackBar(
+              message: error.toString().replaceAll('Exception: ', ''),
+              type: SnackBarType.ERROR,
+            );
+          },
+        );
+      },
       builder: (BuildContext context, FamilyMenuState state) {
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
@@ -159,37 +181,83 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                 padding: EdgeInsets.only(bottom: 12.h),
                                 child: PersonCard(
                                   avatar: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFFDC21A),
+                                    decoration: BoxDecoration(
+                                      color: c.isOwner
+                                          ? const Color(0xFF665FCE)
+                                          : const Color(0xFFFDC21A),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Icon(
-                                      Icons.face,
+                                      c.isOwner
+                                          ? Icons.shield_rounded
+                                          : Icons.face,
                                       size: 30.sp,
                                       color: Colors.white,
                                     ),
                                   ),
                                   name: c.name,
-                                  subtitle: _buildCaregiverSubtitle(c),
-                                  statusPill: StatusPill.linked(),
-                                  showChevron: true,
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => PermissionsScreen(
-                                          caregiverName: c.name,
-                                          caregiverRole: c.role,
-                                          caregiverId: c.id,
-                                          caregiverEmail: c.email,
-                                        ),
-                                      ),
-                                    ).then((_) {
-                                      if (context.mounted) {
-                                        context.read<FamilyMenuCubit>().init();
-                                      }
-                                    });
-                                  },
+                                  subtitle: c.isOwner
+                                      ? "${c.role} · Profile Owner"
+                                      : _buildCaregiverSubtitle(c),
+                                  statusPill: c.isOwner
+                                      ? const StatusPill(
+                                          text: "Primary Parent",
+                                          textColor: Color(0xFF665FCE),
+                                          backgroundColor: Color(0xFFF3F2FE),
+                                        )
+                                      : StatusPill.linked(),
+                                  showChevron: !c.isOwner,
+                                  onTap: c.isOwner
+                                      ? () {
+                                          showDialog<void>(
+                                            context: context,
+                                            builder: (BuildContext dCtx) =>
+                                                AlertDialog(
+                                                  title: "Primary Parent"
+                                                      .appText(
+                                                        fontSize: 18.sp,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: greyColor9,
+                                                      ),
+                                                  content:
+                                                      "${c.name} is the primary parent and creator of this profile. Their permissions cannot be modified."
+                                                          .appText(
+                                                            fontSize: 14.sp,
+                                                            color: greyColor,
+                                                          ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(dCtx),
+                                                      child: "OK".appText(
+                                                        fontSize: 14.sp,
+                                                        color: primaryColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                          );
+                                        }
+                                      : () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => PermissionsScreen(
+                                                caregiverName: c.name,
+                                                caregiverRole: c.role,
+                                                caregiverId: c.id,
+                                                caregiverEmail: c.email,
+                                              ),
+                                            ),
+                                          ).then((_) {
+                                            if (context.mounted) {
+                                              context
+                                                  .read<FamilyMenuCubit>()
+                                                  .init();
+                                            }
+                                          });
+                                        },
                                 ),
                               );
                             }),
@@ -260,7 +328,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                   ],
                 ),
               ),
-              _buildBottomActions(context),
+              _buildBottomActions(context, state),
             ],
           ),
         );
@@ -268,7 +336,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
     );
   }
 
-  Widget _buildBottomActions(BuildContext context) {
+  Widget _buildBottomActions(BuildContext context, FamilyMenuState state) {
     return Positioned(
       bottom: 0,
       left: 0,
@@ -292,26 +360,121 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
             stops: const [0.0, 0.4, 1.0],
           ),
         ),
-        child: AppButton(
-          title: "Invite a caregiver",
-          onTap: () {
-            final bool hasConsented =
-                preferences.getBool(SharedPreference.isFamilyConsentGranted) ??
-                false;
-            final Widget destination = hasConsented
-                ? const InviteCaregiverScreen()
-                : const FamilySharingConsentScreen();
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => destination),
-            ).then((_) {
-              if (context.mounted) {
-                context.read<FamilyMenuCubit>().init();
-              }
-            });
-          },
-        ),
+        child: state.isCurrentUserOwner
+            ? AppButton(
+                title: "Invite a caregiver",
+                onTap: () {
+                  final bool hasConsented =
+                      preferences.getBool(
+                        SharedPreference.isFamilyConsentGranted,
+                      ) ??
+                      false;
+                  final Widget destination = hasConsented
+                      ? const InviteCaregiverScreen()
+                      : const FamilySharingConsentScreen();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => destination),
+                  ).then((_) {
+                    if (context.mounted) {
+                      context.read<FamilyMenuCubit>().init();
+                    }
+                  });
+                },
+              )
+            : AppButton(
+                title: "Leave family",
+                backgroundColor: Colors.white,
+                borderColor: const Color(0xFFD84315),
+                textColor: const Color(0xFFD84315),
+                onTap: () {
+                  _showLeaveConfirmationDialog(context, state);
+                },
+              ),
       ),
+    );
+  }
+
+  void _showLeaveConfirmationDialog(
+    BuildContext context,
+    FamilyMenuState state,
+  ) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 52.w,
+                  height: 52.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.exit_to_app_rounded,
+                    color: const Color(0xFFD84315),
+                    size: 26.sp,
+                  ),
+                ),
+                16.spaceH,
+                "Leave family?".appText(
+                  fontSize: 20.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                8.spaceH,
+                "Are you sure you want to leave ${state.childName}'s profile? You will no longer see or log updates for this child."
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.center,
+                      height: 1.4,
+                    ),
+                20.spaceH,
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        height: 44.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Cancel',
+                        backgroundColor: const Color(0xFFF8F5F2),
+                        borderColor: const Color(0xFFE9E2DC),
+                        textColor: greyColor9,
+                        onTap: () => Navigator.pop(dialogContext),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        height: 44.h,
+                        padding: EdgeInsets.zero,
+                        title: 'Leave',
+                        backgroundColor: const Color(0xFFD84315),
+                        borderColor: const Color(0xFFD84315),
+                        textColor: Colors.white,
+                        onTap: () {
+                          Navigator.pop(dialogContext);
+                          context.read<FamilyMenuCubit>().leaveFamily();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

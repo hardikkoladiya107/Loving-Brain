@@ -6,6 +6,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
+import 'package:loving_brain/ui/today_screen/sheets/child_switcher_sheet.dart';
 
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
@@ -25,16 +26,19 @@ class TodayHeader extends StatelessWidget {
             Flexible(
               child: GestureDetector(
                 onTap: () async {
-                  final TodayCubit todayCubit = context.read<TodayCubit>();
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChildProfileScreen(
-                        fromManageChildren: state.activeChildId.isEmpty,
+                  if (state.activeChildId.isEmpty) {
+                    final TodayCubit todayCubit = context.read<TodayCubit>();
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const ChildProfileScreen(fromManageChildren: true),
                       ),
-                    ),
-                  );
-                  todayCubit.init();
+                    );
+                    todayCubit.init();
+                  } else {
+                    await showChildSwitcherSheet(context);
+                  }
                 },
                 child: Container(
                   constraints: BoxConstraints(minHeight: 40.h),
@@ -68,8 +72,14 @@ class TodayHeader extends StatelessWidget {
                                   textAlign: TextAlign.start,
                                 ),
                       ),
+                      4.spaceW,
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 18.sp,
+                        color: greyColor,
+                      ),
                     ],
-                  ).appPadding(left: 6.w, right: 12.w, top: 4.h, bottom: 4.h),
+                  ).appPadding(left: 6.w, right: 10.w, top: 4.h, bottom: 4.h),
                 ),
               ),
             ),

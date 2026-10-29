@@ -72,6 +72,7 @@ class TodayCubit extends Cubit<TodayState> {
     bool? showNotesUpdateErrors,
     ApiResultStatus? saveStatus,
   }) {
+    if (isClosed) return;
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,
@@ -198,7 +199,9 @@ class TodayCubit extends Cubit<TodayState> {
         child?.reference?.id ??
         user?.defaultChild?.id ??
         TodayLogRepo.instance.resolveActiveChildId() ??
-        '';
+        (child != null && (child.childName?.trim().isNotEmpty ?? false)
+            ? 'local_${child.childName!.trim()}'
+            : '');
 
     if (finalChildId.isEmpty) {
       cName = '';
@@ -231,6 +234,29 @@ class TodayCubit extends Cubit<TodayState> {
         confidenceLevel: '',
       );
     }
+  }
+
+  Future<void> switchActiveChild(ChildModel newChild) async {
+    await preferences.saveChildModel(newChild);
+    await preferences.saveDefaultChildModel(newChild);
+
+    final UserModel? user = preferences.getUserModel();
+    final String? userUid = user?.uid;
+    if (userUid != null && userUid.isNotEmpty && newChild.reference != null) {
+      try {
+        await AuthRepo.instance.updateUserToFireStore(
+          uId: userUid,
+          request: <String, dynamic>{
+            'default_child': newChild.reference,
+            'child_name': newChild.childName ?? '',
+            'child_age': newChild.childAge ?? '',
+          },
+        );
+        await AuthRepo.instance.syncUserAndDefaultChild(uId: userUid);
+      } catch (_) {}
+    }
+
+    init();
   }
 
   /// Dynamically computes Energy Bridge sleep forecast using child profile and recent logs.
