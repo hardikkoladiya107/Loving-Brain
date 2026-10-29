@@ -44,6 +44,45 @@ void main() {
       expect(PendingInvitationManager.getId(), isEmpty);
       expect(PendingInvitationManager.getEmail(), isEmpty);
     });
+
+    test(
+      'matchesEmail is true for the same email ignoring case and spaces',
+      () async {
+        await PendingInvitationManager.save(
+          invitationId: 'inv_match',
+          invitationEmail: 'Partner@Example.com',
+        );
+
+        expect(
+          PendingInvitationManager.matchesEmail('  partner@example.com  '),
+          isTrue,
+        );
+      },
+    );
+
+    test('matchesEmail is false for a different email', () async {
+      await PendingInvitationManager.save(
+        invitationId: 'inv_diff',
+        invitationEmail: 'partner@example.com',
+      );
+
+      expect(
+        PendingInvitationManager.matchesEmail(
+          'abc123@privaterelay.appleid.com',
+        ),
+        isFalse,
+      );
+    });
+
+    test('matchesEmail is false when logged email is empty', () async {
+      await PendingInvitationManager.save(
+        invitationId: 'inv_empty',
+        invitationEmail: 'partner@example.com',
+      );
+
+      expect(PendingInvitationManager.matchesEmail(''), isFalse);
+      expect(PendingInvitationManager.matchesEmail('   '), isFalse);
+    });
   });
 
   group('Unified Auth Cubits Pre-Fill Tests', () {

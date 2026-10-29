@@ -34,7 +34,16 @@ class PendingInvitationManager {
     return getId().isNotEmpty;
   }
 
-  /// Clears stored invitation after successful accept (or email mismatch on login).
+  /// True when [loggedEmail] matches the stored invitation email.
+  static bool matchesEmail(String loggedEmail) {
+    final String pendingEmail = getEmail().trim().toLowerCase();
+    final String normalizedLoggedEmail = loggedEmail.trim().toLowerCase();
+    return pendingEmail.isNotEmpty &&
+        normalizedLoggedEmail.isNotEmpty &&
+        pendingEmail == normalizedLoggedEmail;
+  }
+
+  /// Clears stored invitation after successful accept.
   static Future<void> clear() async {
     await preferences.putString(SharedPreference.pendingInvitationId, '');
     await preferences.putString(SharedPreference.pendingInvitationEmail, '');

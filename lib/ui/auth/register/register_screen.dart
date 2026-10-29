@@ -314,12 +314,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               if (PendingInvitationManager.hasPending()) {
                 final String pendingId = PendingInvitationManager.getId();
-                final String pendingEmail = PendingInvitationManager.getEmail();
                 final String loggedEmail = (userModel.email ?? '')
                     .trim()
                     .toLowerCase();
-                if (loggedEmail.isNotEmpty &&
-                    loggedEmail == pendingEmail.trim().toLowerCase()) {
+                if (PendingInvitationManager.matchesEmail(loggedEmail)) {
                   final ApiResultStatus result = await CoParentRepo.instance
                       .addUserAsCoParent(pendingId);
                   bool invitationSuccess = false;
@@ -344,7 +342,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                   }
                 } else {
-                  await PendingInvitationManager.clear();
+                  showSnackBar(
+                    message: LocaleKeys.coParentInvitationEmailMismatch.tr(),
+                    type: SnackBarType.ERROR,
+                  );
                 }
               } else {
                 final String loggedEmail = (userModel.email ?? '')

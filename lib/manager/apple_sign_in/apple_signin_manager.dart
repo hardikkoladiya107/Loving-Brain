@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AppleSignInResult {
@@ -39,9 +39,16 @@ class AppleSignInManager {
           );
       return AppleSignInResult(credential: credential, rawNonce: rawNonce);
     } on SignInWithAppleAuthorizationException catch (e) {
-      if (e.code == AuthorizationErrorCode.canceled ||
-          e.code == AuthorizationErrorCode.unknown) {
+      if (e.code == AuthorizationErrorCode.canceled) {
         throw Exception('Apple Sign-In cancelled by the user (code=canceled)');
+      }
+      if (e.code == AuthorizationErrorCode.unknown) {
+        debugPrint(
+          'Apple Sign-In unknown error. code=${e.code.name}, message=${e.message}',
+        );
+        throw Exception(
+          'Sign in with Apple could not start. Make sure this iPhone is signed in to iCloud, then try again.',
+        );
       }
       throw Exception('Apple Sign-In failed (${e.code.name}): ${e.message}');
     } on SignInWithAppleException catch (e) {
