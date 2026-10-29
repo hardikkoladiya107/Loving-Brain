@@ -97,11 +97,21 @@ class _OtpScreenState extends State<OtpScreen> {
                 if (invitationSuccess) {
                   await PendingInvitationManager.clear();
                   await preferences.putBool(SharedPreference.isLogin, true);
+                  if (!context.mounted) return;
                   router.push(
                     RoutePaths.successScreen,
                     extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
                   );
                   return;
+                } else {
+                  String errMsg = '';
+                  result.whenOrNull(
+                    error: (Exception err) =>
+                        errMsg = err.toString().replaceAll('Exception: ', ''),
+                  );
+                  if (errMsg.isNotEmpty) {
+                    showSnackBar(message: errMsg, type: SnackBarType.ERROR);
+                  }
                 }
               } else {
                 await PendingInvitationManager.clear();
@@ -120,6 +130,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   result.whenOrNull(data: (_) => invitationSuccess = true);
                   if (invitationSuccess) {
                     await preferences.putBool(SharedPreference.isLogin, true);
+                    if (!context.mounted) return;
                     router.push(
                       RoutePaths.successScreen,
                       extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
@@ -130,6 +141,7 @@ class _OtpScreenState extends State<OtpScreen> {
               }
             }
 
+            if (!context.mounted) return;
             if (!userModel.isOnboardingCompleted) {
               router.go(RoutePaths.onboarding);
             } else {

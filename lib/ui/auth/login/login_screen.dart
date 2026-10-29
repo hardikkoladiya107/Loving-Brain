@@ -44,6 +44,15 @@ class _LoginScreenState extends State<LoginScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       context.read<LoginCubit>().init();
+      if (PendingInvitationManager.hasPending()) {
+        final String pendingEmail = PendingInvitationManager.getEmail();
+        if (pendingEmail.isNotEmpty) {
+          context.read<LoginCubit>().changeProps(
+            emailAddress: pendingEmail,
+            emailAddressError: '',
+          );
+        }
+      }
     });
   }
 
@@ -499,6 +508,27 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         await PendingInvitationManager.clear();
+      }
+    } else {
+      final String loggedEmail = (userModel.email ?? '').trim().toLowerCase();
+      if (loggedEmail.isNotEmpty) {
+        final String? pendingInviteId = await CoParentRepo.instance
+            .checkPendingInvitationForUser(loggedEmail);
+        if (pendingInviteId != null && pendingInviteId.isNotEmpty) {
+          final ApiResultStatus result = await CoParentRepo.instance
+              .addUserAsCoParent(pendingInviteId);
+          bool invitationSuccess = false;
+          result.whenOrNull(data: (_) => invitationSuccess = true);
+          if (invitationSuccess) {
+            await preferences.putBool(SharedPreference.isLogin, true);
+            if (!mounted) return;
+            router.push(
+              RoutePaths.successScreen,
+              extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
+            );
+            return;
+          }
+        }
       }
     }
     // ─────────────────────────────────────────────────────────────────────────

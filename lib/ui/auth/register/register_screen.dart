@@ -327,17 +327,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   if (invitationSuccess) {
                     await PendingInvitationManager.clear();
                     await preferences.putBool(SharedPreference.isLogin, true);
+                    if (!mounted) return;
                     router.push(
                       RoutePaths.successScreen,
                       extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
                     );
                     return;
+                  } else {
+                    String errMsg = '';
+                    result.whenOrNull(
+                      error: (Exception err) =>
+                          errMsg = err.toString().replaceAll('Exception: ', ''),
+                    );
+                    if (errMsg.isNotEmpty) {
+                      showSnackBar(message: errMsg, type: SnackBarType.ERROR);
+                    }
                   }
                 } else {
                   await PendingInvitationManager.clear();
                 }
+              } else {
+                final String loggedEmail = (userModel.email ?? '')
+                    .trim()
+                    .toLowerCase();
+                if (loggedEmail.isNotEmpty) {
+                  final String? pendingInviteId = await CoParentRepo.instance
+                      .checkPendingInvitationForUser(loggedEmail);
+                  if (pendingInviteId != null && pendingInviteId.isNotEmpty) {
+                    final ApiResultStatus result = await CoParentRepo.instance
+                        .addUserAsCoParent(pendingInviteId);
+                    bool invitationSuccess = false;
+                    result.whenOrNull(data: (_) => invitationSuccess = true);
+                    if (invitationSuccess) {
+                      await preferences.putBool(SharedPreference.isLogin, true);
+                      if (!mounted) return;
+                      router.push(
+                        RoutePaths.successScreen,
+                        extra: LocaleKeys.coParentInvitationAcceptedSuccess
+                            .tr(),
+                      );
+                      return;
+                    }
+                  }
+                }
               }
 
+              if (!mounted) return;
               if (userModel.isOnboardingCompleted) {
                 router.go(RoutePaths.base);
               } else {
