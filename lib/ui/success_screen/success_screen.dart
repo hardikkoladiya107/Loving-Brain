@@ -78,7 +78,19 @@ class _SuccessScreenState extends State<SuccessScreen> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: InkWell(
-          onTap: () => context.pop(),
+          onTap: () {
+            final UserModel? user = preferences.getUserModel();
+            final bool isLoggedIn =
+                (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+                (user?.uid?.trim().isNotEmpty ?? false);
+            if (isLoggedIn) {
+              context.go(RoutePaths.base);
+            } else if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(RoutePaths.welcome);
+            }
+          },
           child: Container(
             padding: EdgeInsets.all(8.r),
             decoration: const BoxDecoration(

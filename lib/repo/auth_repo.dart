@@ -104,6 +104,11 @@ class AuthRepo {
             // Caregiver access was removed
             await preferences.clearChild();
             await preferences.putString(SharedPreference.child, '');
+            final UserModel updatedUser = userModel.copyWith(
+              defaultChild: null,
+              partnerUserId: null,
+            );
+            await preferences.saveUserModel(updatedUser);
             await userCollection
                 .doc(uId)
                 .update(<String, dynamic>{
@@ -117,6 +122,11 @@ class AuthRepo {
           // Child was deleted (e.g., inviter deleted account)
           await preferences.clearChild();
           await preferences.putString(SharedPreference.child, '');
+          final UserModel updatedUser = userModel.copyWith(
+            defaultChild: null,
+            partnerUserId: null,
+          );
+          await preferences.saveUserModel(updatedUser);
           await userCollection
               .doc(uId)
               .update(<String, dynamic>{

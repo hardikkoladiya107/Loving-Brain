@@ -134,7 +134,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   if (invitationSuccess) {
                     await preferences.putBool(SharedPreference.isLogin, true);
                     if (!context.mounted) return;
-                    router.push(
+                    router.go(
                       RoutePaths.successScreen,
                       extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
                     );

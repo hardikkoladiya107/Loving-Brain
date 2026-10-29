@@ -167,8 +167,19 @@ class PermissionsCubit extends Cubit<PermissionsState> {
 
     final ChildModel? child = preferences.getChildModel();
     final String childId = child?.reference?.id ?? '';
-    final String partnerId =
+    String partnerId =
         _caregiverId ?? preferences.getUserModel()?.partnerUserId ?? '';
+    if (partnerId.isEmpty &&
+        child != null &&
+        child.parentReferenceIds != null) {
+      final String myUid = preferences.getUserModel()?.uid ?? '';
+      for (final String pid in child.parentReferenceIds!) {
+        if (pid.isNotEmpty && pid != myUid) {
+          partnerId = pid;
+          break;
+        }
+      }
+    }
 
     if (childId.isNotEmpty) {
       try {
@@ -193,18 +204,18 @@ class PermissionsCubit extends Cubit<PermissionsState> {
               });
         } catch (_) {}
       }
+    }
 
-      // Update local child model in preferences
-      if (child != null && child.parentReferenceIds != null) {
-        final List<String> updatedParents = List<String>.from(
-          child.parentReferenceIds!,
-        )..remove(partnerId);
-        final ChildModel updatedChild = child.copyWith(
-          parentReferenceIds: updatedParents,
-        );
-        await preferences.saveChildModel(updatedChild);
-        await preferences.saveDefaultChildModel(updatedChild);
-      }
+    // Update local child model in preferences
+    if (child != null && child.parentReferenceIds != null) {
+      final List<String> updatedParents = List<String>.from(
+        child.parentReferenceIds!,
+      )..remove(partnerId);
+      final ChildModel updatedChild = child.copyWith(
+        parentReferenceIds: updatedParents,
+      );
+      await preferences.saveChildModel(updatedChild);
+      await preferences.saveDefaultChildModel(updatedChild);
     }
 
     final UserModel? user = preferences.getUserModel();

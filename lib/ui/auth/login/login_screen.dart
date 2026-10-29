@@ -490,7 +490,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (invitationSuccess) {
           await preferences.putBool(SharedPreference.isLogin, true);
-          router.push(
+          if (!mounted) return;
+          router.go(
             RoutePaths.successScreen,
             extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
           );
@@ -524,7 +525,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (invitationSuccess) {
             await preferences.putBool(SharedPreference.isLogin, true);
             if (!mounted) return;
-            router.push(
+            router.go(
               RoutePaths.successScreen,
               extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
             );
