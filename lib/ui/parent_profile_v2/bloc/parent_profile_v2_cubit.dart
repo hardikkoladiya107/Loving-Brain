@@ -95,12 +95,23 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
       dobStr = DateFormat('yyyy-MM-dd').format(user.parentDateOfBirth!);
     }
     _locationData =
-        user.locationData ??
-        child?.locationData ??
-        LocationDataModel.tryParse(user.location ?? child?.location);
+        user.locationData ?? LocationDataModel.tryParse(user.location);
+
+    String resolvedName = user.parentName?.trim() ?? '';
+    if (resolvedName.isEmpty) {
+      final String disp = user.displayName?.trim() ?? '';
+      final String emailPrefix =
+          user.email?.split('@').first.trim().toLowerCase() ?? '';
+      if (disp.isNotEmpty &&
+          !disp.contains('@') &&
+          disp.toLowerCase() != emailPrefix) {
+        resolvedName = disp;
+      }
+    }
+
     changeProps(
       user: user,
-      name: user.parentName ?? user.displayName ?? '',
+      name: resolvedName,
       nameError: '',
       isEdited: false,
       relationship:
@@ -109,8 +120,7 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
       language: (user.preferredLanguage ?? '').isNotEmpty
           ? user.preferredLanguage!
           : 'English',
-      location:
-          _locationData?.formatted ?? (user.location ?? child?.location ?? ''),
+      location: _locationData?.formatted ?? user.location ?? '',
       dob: dobStr,
     );
   }

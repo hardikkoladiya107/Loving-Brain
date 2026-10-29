@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -32,6 +33,27 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<FamilyMenuCubit>().init();
     });
+  }
+
+  String _buildCaregiverSubtitle(CaregiverItem c) {
+    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
+      c.email,
+    );
+    if (saved != null) {
+      final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
+        saved,
+      );
+      final List<String> parts = <String>[];
+      if (p.canViewSleep) parts.add('sleep');
+      if (p.canViewBehaviour) parts.add('behaviour');
+      if (p.canViewHealthNotes) parts.add('health');
+      if (p.canViewPlans) parts.add('plans');
+      if (p.canViewMentorSummaries) parts.add('mentorship');
+      if (parts.isNotEmpty) {
+        return "${c.role} · ${parts.join(', ')}";
+      }
+    }
+    return "${c.role} · sleep, behaviour, plans";
   }
 
   @override
@@ -142,7 +164,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                   ),
                                 ),
                                 name: c.name,
-                                subtitle: "${c.role} · sleep, behaviour, plans",
+                                subtitle: _buildCaregiverSubtitle(c),
                                 statusPill: StatusPill.linked(),
                                 showChevron: true,
                                 onTap: () {
@@ -152,6 +174,8 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                       builder: (_) => PermissionsScreen(
                                         caregiverName: c.name,
                                         caregiverRole: c.role,
+                                        caregiverId: c.id,
+                                        caregiverEmail: c.email,
                                       ),
                                     ),
                                   ).then((_) {

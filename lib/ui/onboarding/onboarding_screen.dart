@@ -524,7 +524,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final OnboardingCubit cubit = context.read<OnboardingCubit>();
     final DateTime now = DateTime.now();
     final DateTime maxPast = DateTime(now.year, now.month, now.day);
-    final DateTime rawInitial = cubit.state.childDob ?? maxPast;
+    final DateTime defaultToddler = DateTime(now.year - 2, 6, 15);
+    final DateTime rawInitial = cubit.state.childDob ?? defaultToddler;
     final DateTime initialDate = rawInitial.isAfter(maxPast)
         ? maxPast
         : rawInitial;

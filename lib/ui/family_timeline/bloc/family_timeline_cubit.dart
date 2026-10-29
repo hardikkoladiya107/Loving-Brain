@@ -98,6 +98,10 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
                       p.payload['subtitle'] ??
                       'Saved offline (pending sync)')
                   .toString();
+          final String? author =
+              (p.payload['authorName'] as String?) ??
+              preferences.getUserModel()?.parentName ??
+              preferences.getUserModel()?.displayName;
           events.add(
             TimelineEventModel(
               id: p.id,
@@ -105,6 +109,7 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
               title: title,
               subtitle: subtitle,
               timestamp: p.timestamp,
+              authorName: author,
             ),
           );
         }

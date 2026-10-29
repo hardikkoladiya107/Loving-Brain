@@ -471,6 +471,10 @@ class TodayLogRepo {
               .timeout(const Duration(seconds: 4));
 
       // Write to unified events timeline
+      final String author =
+          preferences.getUserModel()?.parentName?.trim() ??
+          preferences.getUserModel()?.displayName?.trim() ??
+          '';
       await _childrenCollection
           .doc(childId)
           .collection('events')
@@ -481,6 +485,7 @@ class TodayLogRepo {
             'subtitle': log.note.trim().isNotEmpty
                 ? log.note.trim()
                 : 'Voice note',
+            if (author.isNotEmpty) 'authorName': author,
             if (log.audioLocalPath != null)
               'audioLocalPath': log.audioLocalPath,
             if (log.audioDurationSeconds != null)

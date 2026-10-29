@@ -146,12 +146,6 @@ class _TodayScreenState extends State<TodayScreen> {
                             const HeadsUpCard(),
                             SizedBox(height: 16.h),
                           ],
-                          if (state.forecastSubtitle.toLowerCase().contains('fever') ||
-                              state.forecastSubtitle.toLowerCase().contains('health') ||
-                              state.forecastSubtitle.toLowerCase().contains('rest')) ...[
-                            const HeadsUpCard(),
-                            SizedBox(height: 16.h),
-                          ],
                           const AddSleepCard(),
                           SizedBox(height: 16.h),
                           AppButton(

@@ -73,9 +73,11 @@ class _OtpScreenState extends State<OtpScreen> {
           data: (dynamic data) async {
             EasyLoading.dismiss();
             if (data == null) return;
-            final UserModel userModel =
-                preferences.getUserModel() ??
-                UserModel.fromJson(data as Map<String, dynamic>);
+            final UserModel userModel = UserModel.fromJson(
+              data as Map<String, dynamic>,
+            );
+            await preferences.saveUserModel(userModel);
+            if (!context.mounted) return;
             final GoRouter router = GoRouter.of(context);
             context.read<OtpCubit>().changeProps(
               verifyStatus: const ApiResultStatus.initial(),
@@ -96,7 +98,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   await PendingInvitationManager.clear();
                   await preferences.putBool(SharedPreference.isLogin, true);
                   if (!context.mounted) return;
-                  router.push(
+                  router.go(
                     RoutePaths.successScreen,
                     extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
                   );

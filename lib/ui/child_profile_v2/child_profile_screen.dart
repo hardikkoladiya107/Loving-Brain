@@ -44,7 +44,8 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
     DateTime? currentDob,
   ) async {
     final DateTime now = DateTime.now();
-    final DateTime initialDate = currentDob ?? now;
+    final DateTime defaultToddler = DateTime(now.year - 2, 6, 15);
+    final DateTime initialDate = currentDob ?? defaultToddler;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate.isAfter(now) ? now : initialDate,

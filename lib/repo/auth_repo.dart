@@ -90,17 +90,50 @@ class AuthRepo {
         final DocumentSnapshot<Object?> childSnap = await childRef.get();
         final Object? childData = childSnap.data();
         if (childSnap.exists && childData is Map<String, dynamic>) {
-          final ChildModel childModel = ChildModel.fromJson(
-            childData,
-            childRef,
-          );
-          await preferences.saveDefaultChildModel(childModel);
+          final List<dynamic>? pIds =
+              childData['parent_reference_ids'] as List<dynamic>?;
+          final bool isLinked = pIds != null && pIds.contains(uId);
+          if (isLinked) {
+            final ChildModel childModel = ChildModel.fromJson(
+              childData,
+              childRef,
+            );
+            await preferences.saveDefaultChildModel(childModel);
+            await preferences.saveChildModel(childModel);
+          } else {
+            // Caregiver access was removed
+            await preferences.clearChild();
+            await preferences.putString(SharedPreference.child, '');
+            await userCollection
+                .doc(uId)
+                .update(<String, dynamic>{
+                  'default_child': FieldValue.delete(),
+                  'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+                  'partner_user_id': FieldValue.delete(),
+                })
+                .catchError((_) => null);
+          }
+        } else {
+          // Child was deleted (e.g., inviter deleted account)
+          await preferences.clearChild();
+          await preferences.putString(SharedPreference.child, '');
+          await userCollection
+              .doc(uId)
+              .update(<String, dynamic>{
+                'default_child': FieldValue.delete(),
+                'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+                'partner_user_id': FieldValue.delete(),
+              })
+              .catchError((_) => null);
         }
       } else {
+        await preferences.clearChild();
         await preferences.putString(SharedPreference.child, '');
       }
     } catch (e) {
       debugPrint('Failed to sync default child on login: $e');
+      await preferences.clearChild();
+      await preferences.putString(SharedPreference.child, '');
     }
 
     return userModel;
@@ -484,7 +517,8 @@ class AuthRepo {
             .toList() ??
         <String>[];
 
-    if (ids.isEmpty || (ids.length == 1 && ids.first == uid)) {
+    final bool isCreator = ids.isEmpty || ids.first == uid;
+    if (isCreator) {
       final DocumentReference<Map<String, dynamic>> childRef =
           childrenCollection.doc(childId);
       final List<String> childSubcollections = <String>[
@@ -497,6 +531,7 @@ class AuthRepo {
         'health_logs',
         'quick_notes',
         'experiments',
+        'caregiver_permissions',
       ];
       for (final String subName in childSubcollections) {
         try {

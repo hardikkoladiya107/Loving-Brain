@@ -37,6 +37,7 @@ class AppTextField extends StatefulWidget {
     this.maxLines,
     this.minLines,
     this.hintStyle,
+    this.hintMaxLines,
     this.obscureText = false,
     this.showError = true,
     this.onFieldTap,
@@ -57,6 +58,7 @@ class AppTextField extends StatefulWidget {
   final int? minLines;
   final String? hint;
   final TextStyle? hintStyle;
+  final int? hintMaxLines;
   final bool showAddButton;
   final bool showError;
   final bool obscureText;
@@ -291,7 +293,7 @@ class _AppTextFieldState extends State<AppTextField> {
                                   isDense: true,
                                   contentPadding: EdgeInsets.zero,
                                   hintText: widget.hint,
-                                  hintMaxLines: 1,
+                                  hintMaxLines: widget.hintMaxLines ?? 1,
                                   hintStyle:
                                       widget.hintStyle ??
                                       getTextStyle(
@@ -355,7 +357,7 @@ class _AppTextFieldState extends State<AppTextField> {
                               isDense: true,
                               contentPadding: EdgeInsets.zero,
                               hintText: widget.hint,
-                              hintMaxLines: isMultiline ? widget.maxLines : 1,
+                              hintMaxLines: widget.hintMaxLines ?? 1,
                               hintStyle:
                                   widget.hintStyle ??
                                   getTextStyle(

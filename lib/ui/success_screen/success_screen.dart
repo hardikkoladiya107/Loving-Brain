@@ -138,10 +138,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
     return AppButton(
       title: LocaleKeys.done.tr(),
       onTap: () {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
-          return;
-        }
         final UserModel? user = preferences.getUserModel();
         final bool isLoggedIn =
             (preferences.getBool(SharedPreference.isLogin) ?? false) &&

@@ -17,8 +17,16 @@ import 'bloc/permissions_state.dart';
 class PermissionsScreen extends StatefulWidget {
   final String? caregiverName;
   final String? caregiverRole;
+  final String? caregiverId;
+  final String? caregiverEmail;
 
-  const PermissionsScreen({super.key, this.caregiverName, this.caregiverRole});
+  const PermissionsScreen({
+    super.key,
+    this.caregiverName,
+    this.caregiverRole,
+    this.caregiverId,
+    this.caregiverEmail,
+  });
 
   @override
   State<PermissionsScreen> createState() => _PermissionsScreenState();
@@ -32,6 +40,8 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       context.read<PermissionsCubit>().init(
         caregiverName: widget.caregiverName,
         role: widget.caregiverRole,
+        caregiverId: widget.caregiverId,
+        caregiverEmail: widget.caregiverEmail,
       );
     });
   }
@@ -72,6 +82,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
+          bottomNavigationBar: _buildBottomActions(context, state, cubit),
           body: Stack(
             children: [
               // Top Left Glow
@@ -219,14 +230,13 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                               ],
                             ),
                           ),
-                          160.spaceH,
+                          24.spaceH,
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              _buildBottomActions(context, state, cubit),
             ],
           ),
         );
@@ -289,14 +299,12 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     PermissionsState state,
     PermissionsCubit cubit,
   ) {
-    return Positioned(
-      bottom: 0,
-      left: 0,
-      right: 0,
+    return SafeArea(
+      top: false,
       child: Container(
         padding: EdgeInsets.only(
           top: 12.h,
-          bottom: 24.h,
+          bottom: 16.h,
           left: 20.w,
           right: 20.w,
         ),

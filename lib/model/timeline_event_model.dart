@@ -11,6 +11,7 @@ class TimelineEventModel {
     this.iconKey,
     this.audioLocalPath,
     this.audioDurationSeconds,
+    this.authorName,
   });
 
   final String id;
@@ -21,6 +22,7 @@ class TimelineEventModel {
   final String? iconKey;
   final String? audioLocalPath;
   final int? audioDurationSeconds;
+  final String? authorName;
 
   static TimelineEventModel fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
@@ -47,6 +49,8 @@ class TimelineEventModel {
       audioDurationSeconds: data['audioDurationSeconds'] is int
           ? data['audioDurationSeconds'] as int
           : (data['audioDurationSeconds'] as num?)?.toInt(),
+      authorName:
+          (data['authorName'] as String?) ?? (data['userName'] as String?),
     );
   }
 

@@ -269,11 +269,27 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     Expanded(
-                      child: event.title.appText(
-                        fontSize: 16.sp,
-                        color: greyColor9,
-                        fontWeight: FontWeight.w600,
-                        textAlign: TextAlign.start,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          event.title.appText(
+                            fontSize: 16.sp,
+                            color: greyColor9,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start,
+                          ),
+                          if (event.authorName != null &&
+                              event.authorName!.trim().isNotEmpty) ...[
+                            2.spaceH,
+                            "by ${event.authorName!.trim()}".appText(
+                              fontSize: 12.sp,
+                              color: greyColor,
+                              fontWeight: FontWeight.w400,
+                              textAlign: TextAlign.start,
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     8.spaceW,

@@ -13,13 +13,25 @@ import 'permissions_state.dart';
 class PermissionsCubit extends Cubit<PermissionsState> {
   PermissionsCubit() : super(const PermissionsState());
 
-  void init({String? caregiverName, String? role}) {
+  String? _caregiverId;
+  String? _caregiverEmail;
+
+  void init({
+    String? caregiverName,
+    String? role,
+    String? caregiverId,
+    String? caregiverEmail,
+  }) {
+    _caregiverId = caregiverId;
+    _caregiverEmail = caregiverEmail;
     final String cleanRole = role ?? 'Partner';
     final bool isGrandparent = cleanRole.toLowerCase() == 'grandparent';
     final String name = caregiverName ?? 'Caregiver';
-    final String email = name.contains('@')
-        ? name
-        : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test';
+    final String email =
+        caregiverEmail ??
+        (name.contains('@')
+            ? name
+            : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test');
 
     final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
       email,
@@ -134,9 +146,11 @@ class PermissionsCubit extends Cubit<PermissionsState> {
     changeProps(isSaving: true, saveStatus: const ApiResultStatus.loading());
 
     final String name = state.caregiverName;
-    final String email = name.contains('@')
-        ? name
-        : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test';
+    final String email =
+        _caregiverEmail ??
+        (name.contains('@')
+            ? name
+            : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test');
 
     final CaregiverPermissionsModel revoked = CaregiverPermissionsModel(
       caregiverEmail: email,
@@ -153,6 +167,9 @@ class PermissionsCubit extends Cubit<PermissionsState> {
 
     final ChildModel? child = preferences.getChildModel();
     final String childId = child?.reference?.id ?? '';
+    final String partnerId =
+        _caregiverId ?? preferences.getUserModel()?.partnerUserId ?? '';
+
     if (childId.isNotEmpty) {
       try {
         await FirebaseFirestore.instance
@@ -162,23 +179,50 @@ class PermissionsCubit extends Cubit<PermissionsState> {
             .doc(email)
             .delete();
       } catch (_) {}
+
+      // Remove co-parent from child parent_reference_ids so they cannot access child records
+      if (partnerId.isNotEmpty) {
+        try {
+          await FirebaseFirestore.instance
+              .collection('children')
+              .doc(childId)
+              .update(<String, dynamic>{
+                'parent_reference_ids': FieldValue.arrayRemove(<dynamic>[
+                  partnerId,
+                ]),
+              });
+        } catch (_) {}
+      }
+
+      // Update local child model in preferences
+      if (child != null && child.parentReferenceIds != null) {
+        final List<String> updatedParents = List<String>.from(
+          child.parentReferenceIds!,
+        )..remove(partnerId);
+        final ChildModel updatedChild = child.copyWith(
+          parentReferenceIds: updatedParents,
+        );
+        await preferences.saveChildModel(updatedChild);
+        await preferences.saveDefaultChildModel(updatedChild);
+      }
     }
 
     final UserModel? user = preferences.getUserModel();
     if (user != null && user.uid != null) {
-      final String? partnerId = user.partnerUserId;
       try {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .update(<String, dynamic>{'partner_user_id': FieldValue.delete()});
-        if (partnerId != null && partnerId.isNotEmpty) {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(partnerId)
-              .update(<String, dynamic>{
-                'partner_user_id': FieldValue.delete(),
-              });
+        if (partnerId.isNotEmpty) {
+          try {
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(partnerId)
+                .update(<String, dynamic>{
+                  'partner_user_id': FieldValue.delete(),
+                });
+          } catch (_) {}
         }
       } catch (_) {}
       final UserModel updatedUser = user.copyWith(partnerUserId: null);

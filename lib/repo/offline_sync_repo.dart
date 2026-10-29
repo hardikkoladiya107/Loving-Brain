@@ -169,6 +169,10 @@ class OfflineSyncRepo {
 
               final String noteText =
                   (item.payload['note'] as String?)?.trim() ?? '';
+              final String author =
+                  preferences.getUserModel()?.parentName?.trim() ??
+                  preferences.getUserModel()?.displayName?.trim() ??
+                  '';
               await childrenCollection
                   .doc(childId)
                   .collection('events')
@@ -177,6 +181,7 @@ class OfflineSyncRepo {
                     'timestamp': Timestamp.fromDate(item.timestamp.toUtc()),
                     'title': 'Quick note',
                     'subtitle': noteText.isNotEmpty ? noteText : 'Voice note',
+                    if (author.isNotEmpty) 'authorName': author,
                     if (item.payload['audioLocalPath'] != null)
                       'audioLocalPath': item.payload['audioLocalPath'],
                     if (item.payload['audioDurationSeconds'] != null)
