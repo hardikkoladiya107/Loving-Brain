@@ -16,6 +16,7 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
@@ -368,7 +369,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     result.whenOrNull(data: (_) => invitationSuccess = true);
                     if (invitationSuccess) {
                       await preferences.putBool(SharedPreference.isLogin, true);
-                      if (!mounted) return;
+                      if (!context.mounted) return;
                       router.go(
                         RoutePaths.successScreen,
                         extra: LocaleKeys.coParentInvitationAcceptedSuccess
@@ -380,7 +381,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 }
               }
 
-              if (!mounted) return;
+              if (!context.mounted) return;
+              context.read<OnboardingCubit>().reset();
               if (userModel.isOnboardingCompleted) {
                 router.go(RoutePaths.base);
               } else {

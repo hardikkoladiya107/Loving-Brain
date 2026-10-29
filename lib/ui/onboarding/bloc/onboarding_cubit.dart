@@ -16,6 +16,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   LocationDataModel? _locationData;
   LocationDataModel? get locationData => _locationData;
 
+  void reset() {
+    _locationData = null;
+    emit(const OnboardingState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final String? parentName = user?.parentName?.trim();
@@ -23,8 +28,17 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         (parentName != null && parentName.isNotEmpty) ? parentName : '';
     _locationData = user?.locationData;
 
-    final Map<String, dynamic>? draft = preferences.getOnboardingDraft();
+    final Map<String, dynamic>? draft = preferences.getOnboardingDraft(
+      uid: user?.uid,
+    );
     if (draft != null) {
+      final String? draftUid = draft['uid'] as String?;
+      if (draftUid != null && user?.uid != null && draftUid != user!.uid) {
+        preferences.clearOnboardingDraft(uid: user.uid);
+        reset();
+        return;
+      }
+
       final int savedPage = (draft['currentPage'] as num?)?.toInt() ?? 0;
       final String? savedDob = draft['dateOfBirth'] as String?;
       DateTime? dob;
@@ -174,7 +188,13 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void _persistDraft(OnboardingState next) {
+    if (next.completeStatus is Data) {
+      return;
+    }
+    final UserModel? user = preferences.getUserModel();
+    final String? uid = user?.uid;
     preferences.saveOnboardingDraft(<String, dynamic>{
+      'uid': uid,
       'currentPage': next.currentPage,
       'parentName': next.parentName,
       'parentRole': next.parentRole,
@@ -195,7 +215,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       'nightWakings': next.nightWakings,
       'difficultTimes': next.difficultTimes,
       'possibleTriggers': next.possibleTriggers,
-    });
+    }, uid: uid);
   }
 
   bool validateCurrentPage() {
@@ -515,9 +535,12 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       // 3. Sync User & Child models into local SharedPreferences
       await AuthRepo.instance.syncUserAndDefaultChild(uId: user.uid!);
       await preferences.saveDefaultChildModel(childModel);
-      await preferences.clearOnboardingDraft();
+      await preferences.clearOnboardingDraft(uid: user.uid);
 
-      changeProps(completeStatus: const ApiResultStatus.data(data: true));
+      _locationData = null;
+      emit(
+        const OnboardingState(completeStatus: ApiResultStatus.data(data: true)),
+      );
     } catch (e) {
       changeProps(
         completeStatus: ApiResultStatus.error(error: Exception(e.toString())),

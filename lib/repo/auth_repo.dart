@@ -654,14 +654,26 @@ class AuthRepo {
         await GoogleSignInManager.instance.signOut();
       } catch (_) {}
       await FirebaseAuth.instance.signOut();
+      try {
+        await OfflineSyncRepo.instance.clearQueue();
+      } catch (_) {}
+      await preferences.clearOnboardingDraft();
       await preferences.clearUser();
       await preferences.putBool(SharedPreference.isLogin, false);
       return const ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
+      try {
+        await OfflineSyncRepo.instance.clearQueue();
+      } catch (_) {}
+      await preferences.clearOnboardingDraft();
       await preferences.clearUser();
       await preferences.putBool(SharedPreference.isLogin, false);
       return onFirebaseException(e);
     } catch (e) {
+      try {
+        await OfflineSyncRepo.instance.clearQueue();
+      } catch (_) {}
+      await preferences.clearOnboardingDraft();
       await preferences.clearUser();
       await preferences.putBool(SharedPreference.isLogin, false);
       return ApiResultStatus.error(

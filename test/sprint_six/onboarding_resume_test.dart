@@ -76,5 +76,59 @@ void main() {
       await preferences.clearOnboardingDraft();
       expect(preferences.getOnboardingDraft(), isNull);
     });
+
+    test(
+      'Logout and clearUser completely wipe onboarding drafts and prevent cross-account leakage',
+      () async {
+        // User A logs in and fills onboarding up to page 4
+        await preferences.saveOnboardingDraft(<String, dynamic>{
+          'uid': 'user_a',
+          'currentPage': 4,
+          'parentName': 'Parent A',
+          'childName': 'Child A',
+        }, uid: 'user_a');
+
+        expect(preferences.getOnboardingDraft(uid: 'user_a'), isNotNull);
+
+        // User A logs out (clearUser is called)
+        await preferences.clearUser();
+
+        // All onboarding drafts must be completely purged
+        expect(preferences.getOnboardingDraft(uid: 'user_a'), isNull);
+        expect(preferences.getOnboardingDraft(), isNull);
+
+        // When User B logs in, no draft is found
+        expect(preferences.getOnboardingDraft(uid: 'user_b'), isNull);
+
+        // OnboardingCubit initializes cleanly for User B at page 0
+        final OnboardingCubit cubitB = OnboardingCubit();
+        cubitB.init();
+        expect(cubitB.state.currentPage, 0);
+        expect(cubitB.state.childName, isEmpty);
+        expect(cubitB.state.parentName, isEmpty);
+        cubitB.close();
+      },
+    );
+
+    test(
+      'OnboardingCubit rejects draft belonging to a different UID and starts fresh',
+      () async {
+        // Stored draft belongs to user_a
+        await preferences.saveOnboardingDraft(<String, dynamic>{
+          'uid': 'user_a',
+          'currentPage': 5,
+          'parentName': 'Parent A',
+          'childName': 'Child A',
+        });
+
+        // User B is the active user
+        final OnboardingCubit cubit = OnboardingCubit();
+        cubit.init();
+
+        // Cubit must reject user_a's draft and start at page 0
+        expect(cubit.state.currentPage, 0);
+        cubit.close();
+      },
+    );
   });
 }

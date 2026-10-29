@@ -82,17 +82,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    _nameController = TextEditingController(
-      text: context.read<OnboardingCubit>().state.parentName,
-    );
-    _childNameController = TextEditingController(
-      text: context.read<OnboardingCubit>().state.childName,
-    );
+    final OnboardingCubit cubit = context.read<OnboardingCubit>();
+    cubit.init();
+    _nameController = TextEditingController(text: cubit.state.parentName);
+    _childNameController = TextEditingController(text: cubit.state.childName);
 
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
-      final OnboardingCubit cubit = context.read<OnboardingCubit>();
-      cubit.init();
       if (_nameController.text != cubit.state.parentName) {
         _nameController.text = cubit.state.parentName;
       }
@@ -137,6 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     } else if (context.canPop()) {
       context.pop();
     } else {
+      context.read<OnboardingCubit>().reset();
       await AuthRepo.instance.logout();
       if (!mounted) return;
       context.go(RoutePaths.welcome);

@@ -16,6 +16,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/register/bloc/register_cubit.dart';
+import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_otp_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -145,6 +146,7 @@ class _OtpScreenState extends State<OtpScreen> {
             }
 
             if (!context.mounted) return;
+            context.read<OnboardingCubit>().reset();
             if (!userModel.isOnboardingCompleted) {
               router.go(RoutePaths.onboarding);
             } else {

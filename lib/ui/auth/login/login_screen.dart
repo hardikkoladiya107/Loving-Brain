@@ -15,6 +15,7 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
+import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../../gen/assets.gen.dart';
@@ -466,6 +467,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     final GoRouter router = GoRouter.of(context);
     context.read<LoginCubit>().clearFields();
+    context.read<OnboardingCubit>().reset();
     if (userModel.uid == null) return;
 
     // ── Pending co-parent invitation (saved by DeepLinkManager before login) ──

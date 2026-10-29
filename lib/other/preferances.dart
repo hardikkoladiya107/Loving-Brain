@@ -167,7 +167,12 @@ class SharedPreference {
     if (_preferences == null) {
       return false;
     }
+    await clearOnboardingDraft();
     await _preferences?.remove(child);
+    await _preferences?.remove(notificationPreferencesKey);
+    await _preferences?.remove(energyBridgeStartTime);
+    await _preferences?.remove(isHighEnergyActive);
+    await _preferences?.remove(isFamilyConsentGranted);
     return await _preferences?.remove(user) ?? false;
   }
 
@@ -208,29 +213,69 @@ class SharedPreference {
 
   static const String onboardingDraftKey = "onboardingDraft";
 
-  Future<bool?> saveOnboardingDraft(Map<String, dynamic> draft) async {
+  String _getOnboardingDraftKey(String? uid) {
+    if (uid != null && uid.isNotEmpty) {
+      return "${onboardingDraftKey}_$uid";
+    }
+    return onboardingDraftKey;
+  }
+
+  Future<bool?> saveOnboardingDraft(
+    Map<String, dynamic> draft, {
+    String? uid,
+  }) async {
     try {
-      return await putString(onboardingDraftKey, json.encode(draft));
+      final String? targetUid = uid ?? draft['uid'] as String?;
+      final String key = _getOnboardingDraftKey(targetUid);
+      return await putString(key, json.encode(draft));
     } catch (_) {
       return null;
     }
   }
 
-  Map<String, dynamic>? getOnboardingDraft() {
+  Map<String, dynamic>? getOnboardingDraft({String? uid}) {
     try {
       if (_preferences == null) return null;
+      if (uid != null && uid.isNotEmpty) {
+        final String? userScoped = _preferences!.getString(
+          "${onboardingDraftKey}_$uid",
+        );
+        if (userScoped != null && userScoped.isNotEmpty) {
+          final Map<String, dynamic>? decoded =
+              json.decode(userScoped) as Map<String, dynamic>?;
+          return decoded;
+        }
+      }
       final String? str = _preferences!.getString(onboardingDraftKey);
       if (str == null || str.isEmpty) return null;
-      return json.decode(str) as Map<String, dynamic>?;
+      final Map<String, dynamic>? decoded =
+          json.decode(str) as Map<String, dynamic>?;
+      if (decoded != null) {
+        final String? draftUid = decoded['uid'] as String?;
+        if (draftUid != null && uid != null && draftUid != uid) {
+          _preferences!.remove(onboardingDraftKey);
+          return null;
+        }
+      }
+      return decoded;
     } catch (_) {
       return null;
     }
   }
 
-  Future<void> clearOnboardingDraft() async {
+  Future<void> clearOnboardingDraft({String? uid}) async {
     try {
       if (_preferences != null) {
         await _preferences!.remove(onboardingDraftKey);
+        if (uid != null && uid.isNotEmpty) {
+          await _preferences!.remove("${onboardingDraftKey}_$uid");
+        }
+        final Set<String> keys = _preferences!.getKeys();
+        for (final String key in keys) {
+          if (key.startsWith("${onboardingDraftKey}_")) {
+            await _preferences!.remove(key);
+          }
+        }
       }
     } catch (_) {}
   }
