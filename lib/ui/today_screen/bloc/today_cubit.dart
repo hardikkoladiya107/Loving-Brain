@@ -244,6 +244,19 @@ class TodayCubit extends Cubit<TodayState> {
               if (!snap.exists) {
                 await preferences.clearChild();
                 _childDocSubscription?.cancel();
+                try {
+                  final DocumentReference childRef = FirebaseFirestore.instance
+                      .collection('children')
+                      .doc(finalChildId);
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userUid)
+                      .update(<String, dynamic>{
+                    'default_child': FieldValue.delete(),
+                    'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+                    'partner_user_id': FieldValue.delete(),
+                  });
+                } catch (_) {}
                 changeProps(
                   activeChildId: '',
                   childName: '',
@@ -257,6 +270,19 @@ class TodayCubit extends Cubit<TodayState> {
               if (pIds != null && !pIds.contains(userUid)) {
                 await preferences.clearChild();
                 _childDocSubscription?.cancel();
+                try {
+                  final DocumentReference childRef = FirebaseFirestore.instance
+                      .collection('children')
+                      .doc(finalChildId);
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userUid)
+                      .update(<String, dynamic>{
+                    'default_child': FieldValue.delete(),
+                    'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+                    'partner_user_id': FieldValue.delete(),
+                  });
+                } catch (_) {}
                 changeProps(
                   activeChildId: '',
                   childName: '',
@@ -306,7 +332,7 @@ class TodayCubit extends Cubit<TodayState> {
       } catch (_) {}
     }
 
-    init();
+    await init();
   }
 
   /// Dynamically computes Energy Bridge sleep forecast using child profile and recent logs.
