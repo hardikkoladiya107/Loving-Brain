@@ -53,8 +53,6 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
       initialDatePickerMode: currentDob == null
           ? DatePickerMode.year
           : DatePickerMode.day,
-      initialDatePickerMode:
-          currentDob == null ? DatePickerMode.year : DatePickerMode.day,
     );
     if (picked != null) {
       cubit.updateDob(picked);
