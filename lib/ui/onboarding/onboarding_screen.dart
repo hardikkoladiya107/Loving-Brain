@@ -16,6 +16,7 @@ import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -1480,6 +1481,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 message: "Joined family successfully!",
                                 type: SnackBarType.SUCCESS,
                               );
+                              try {
+                                context.read<TodayCubit>().init();
+                              } catch (_) {}
                               context.read<OnboardingCubit>().reset();
                               context.go(RoutePaths.base);
                             },

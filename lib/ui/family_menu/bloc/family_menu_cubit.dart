@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -14,7 +16,11 @@ import 'family_menu_state.dart';
 class FamilyMenuCubit extends Cubit<FamilyMenuState> {
   FamilyMenuCubit() : super(const FamilyMenuState());
 
-  void init() {
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+  _childSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _inviteSubscription;
+
+  Future<void> init() async {
     final ChildModel? child = preferences.getChildModel();
     final String? childName = child?.childName?.trim();
     final String cName = (childName != null && childName.isNotEmpty)
@@ -22,7 +28,45 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
         : 'your child';
 
     changeProps(childName: cName, fetchStatus: const ApiResultStatus.loading());
-    _loadCaregivers();
+    await _loadCaregivers();
+
+    final UserModel? user = preferences.getUserModel();
+    final String? childId = child?.reference?.id;
+    final String? userEmail = user?.email?.trim();
+    _setupStreams(childId, userEmail);
+  }
+
+  void _setupStreams(String? childId, String? userEmail) {
+    _childSubscription?.cancel();
+    _inviteSubscription?.cancel();
+
+    if (childId != null && childId.isNotEmpty) {
+      try {
+        _childSubscription = FirebaseFirestore.instance
+            .collection('children')
+            .doc(childId)
+            .snapshots()
+            .listen((DocumentSnapshot<Map<String, dynamic>> snap) {
+              if (!isClosed) {
+                _loadCaregivers();
+              }
+            }, onError: (_) {});
+      } catch (_) {}
+    }
+
+    if (userEmail != null && userEmail.isNotEmpty) {
+      try {
+        _inviteSubscription = FirebaseFirestore.instance
+            .collection('co-parent-invitation')
+            .where('from_parent', isEqualTo: userEmail)
+            .snapshots()
+            .listen((QuerySnapshot<Map<String, dynamic>> snap) {
+              if (!isClosed) {
+                _loadCaregivers();
+              }
+            }, onError: (_) {});
+      } catch (_) {}
+    }
   }
 
   Future<void> _loadCaregivers() async {
@@ -49,6 +93,27 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
         if (snap.exists && snap.data() != null) {
           child = ChildModel.fromJson(snap.data()!, snap.reference);
           await preferences.saveChildModel(child);
+        }
+      } catch (_) {}
+    }
+
+    final String childId = child?.reference?.id ?? '';
+    if (childId.isNotEmpty) {
+      try {
+        final QuerySnapshot<Map<String, dynamic>> permsSnap =
+            await FirebaseFirestore.instance
+                .collection('children')
+                .doc(childId)
+                .collection('caregiver_permissions')
+                .get();
+        for (final QueryDocumentSnapshot<Map<String, dynamic>> pDoc
+            in permsSnap.docs) {
+          final Map<String, dynamic> data = pDoc.data();
+          await preferences.saveCaregiverPermissions(data);
+          await preferences.putString(
+            'caregiver_permissions_${pDoc.id}',
+            json.encode(data),
+          );
         }
       } catch (_) {}
     }
@@ -81,19 +146,27 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
       final String? partnerName = partnerUser?.parentName?.trim();
       final String? dispName = partnerUser?.displayName?.trim();
       final String? rel = partnerUser?.relationshipToChild?.trim();
+      final String email = partnerUser?.email ?? partnerUser?.parentEmail ?? '';
+      final String emailLocal = email.contains('@')
+          ? email.split('@')[0].toLowerCase()
+          : '';
+
       String name = 'Partner';
-      if (partnerName != null && partnerName.isNotEmpty) {
+      if (partnerName != null &&
+          partnerName.isNotEmpty &&
+          partnerName.toLowerCase() != emailLocal) {
         name = partnerName;
-      } else if (dispName != null &&
-          dispName.isNotEmpty &&
-          !dispName.contains('@')) {
-        name = dispName;
       } else if (rel != null && rel.isNotEmpty) {
         name = rel;
+      } else if (dispName != null &&
+          dispName.isNotEmpty &&
+          !dispName.contains('@') &&
+          dispName.toLowerCase() != emailLocal &&
+          dispName != 'Parent') {
+        name = dispName;
       } else {
-        name = 'Partner';
+        name = rel?.isNotEmpty == true ? rel! : 'Co-Parent';
       }
-      final String email = partnerUser?.email ?? partnerUser?.parentEmail ?? '';
       final bool isPartnerOwner = partnerId == ownerUid;
 
       linked.add(
@@ -192,6 +265,13 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     );
   }
 
+  @override
+  Future<void> close() {
+    _childSubscription?.cancel();
+    _inviteSubscription?.cancel();
+    return super.close();
+  }
+
   void changeProps({
     bool? isLoading,
     String? childName,
@@ -201,6 +281,7 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     ApiResultStatus? fetchStatus,
     ApiResultStatus? leaveStatus,
   }) {
+    if (isClosed) return;
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,

@@ -39,9 +39,10 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
   }
 
   String _buildCaregiverSubtitle(CaregiverItem c) {
-    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
-      c.email,
-    );
+    Map<String, dynamic>? saved = preferences.getCaregiverPermissions(c.email);
+    if (saved == null && c.id.isNotEmpty) {
+      saved = preferences.getCaregiverPermissions(c.id);
+    }
     if (saved != null) {
       final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
         saved,
@@ -155,7 +156,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                       child: RefreshIndicator(
                         color: primaryColor,
                         onRefresh: () async {
-                          context.read<FamilyMenuCubit>().init();
+                          await context.read<FamilyMenuCubit>().init();
                         },
                         child: ListView(
                           physics: const AlwaysScrollableScrollPhysics(),

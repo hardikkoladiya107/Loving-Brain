@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -28,14 +29,17 @@ class PermissionsCubit extends Cubit<PermissionsState> {
     final bool isGrandparent = cleanRole.toLowerCase() == 'grandparent';
     final String name = caregiverName ?? 'Caregiver';
     final String email =
-        caregiverEmail ??
-        (name.contains('@')
-            ? name
-            : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test');
+        (caregiverEmail != null && caregiverEmail.trim().isNotEmpty)
+        ? caregiverEmail.trim()
+        : (name.contains('@')
+              ? name
+              : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test');
 
-    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
-      email,
-    );
+    Map<String, dynamic>? saved = preferences.getCaregiverPermissions(email);
+    if (saved == null && caregiverId != null && caregiverId.isNotEmpty) {
+      saved = preferences.getCaregiverPermissions(caregiverId);
+    }
+
     if (saved != null) {
       final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
         saved,
@@ -50,19 +54,81 @@ class PermissionsCubit extends Cubit<PermissionsState> {
         mentorshipEnabled: p.canViewMentorSummaries,
         saveStatus: const ApiResultStatus.initial(),
       );
-      return;
+    } else {
+      changeProps(
+        caregiverName: name,
+        caregiverRole: cleanRole,
+        sleepEnabled: true,
+        behaviourEnabled: !isGrandparent,
+        healthNotesEnabled: false,
+        plansEnabled: true,
+        mentorshipEnabled: false,
+        saveStatus: const ApiResultStatus.initial(),
+      );
     }
 
-    changeProps(
-      caregiverName: name,
-      caregiverRole: cleanRole,
-      sleepEnabled: true,
-      behaviourEnabled: !isGrandparent,
-      healthNotesEnabled: false,
-      plansEnabled: true,
-      mentorshipEnabled: false,
-      saveStatus: const ApiResultStatus.initial(),
-    );
+    final ChildModel? child = preferences.getChildModel();
+    final String childId = child?.reference?.id ?? '';
+    if (childId.isNotEmpty) {
+      _loadRemotePermissions(
+        childId: childId,
+        email: email,
+        caregiverId: caregiverId,
+        fallbackName: name,
+        fallbackRole: cleanRole,
+      );
+    }
+  }
+
+  Future<void> _loadRemotePermissions({
+    required String childId,
+    required String email,
+    String? caregiverId,
+    required String fallbackName,
+    required String fallbackRole,
+  }) async {
+    try {
+      final CollectionReference<Map<String, dynamic>> col = FirebaseFirestore
+          .instance
+          .collection('children')
+          .doc(childId)
+          .collection('caregiver_permissions');
+
+      DocumentSnapshot<Map<String, dynamic>>? snap;
+      if (email.isNotEmpty) {
+        snap = await col.doc(email).get();
+      }
+      if ((snap == null || !snap.exists) &&
+          caregiverId != null &&
+          caregiverId.isNotEmpty) {
+        snap = await col.doc(caregiverId).get();
+      }
+
+      if (snap != null && snap.exists && snap.data() != null) {
+        final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
+          snap.data()!,
+        );
+        final Map<String, dynamic> pMap = p.toMap();
+        await preferences.saveCaregiverPermissions(pMap);
+        if (caregiverId != null && caregiverId.isNotEmpty) {
+          await preferences.putString(
+            'caregiver_permissions_$caregiverId',
+            json.encode(pMap),
+          );
+        }
+        if (!isClosed) {
+          changeProps(
+            caregiverName: p.name ?? fallbackName,
+            caregiverRole: p.role.isNotEmpty ? p.role : fallbackRole,
+            sleepEnabled: p.canViewSleep,
+            behaviourEnabled: p.canViewBehaviour,
+            healthNotesEnabled: p.canViewHealthNotes,
+            plansEnabled: p.canViewPlans,
+            mentorshipEnabled: p.canViewMentorSummaries,
+          );
+        }
+      }
+    } catch (_) {}
   }
 
   void changeProps({
@@ -121,9 +187,12 @@ class PermissionsCubit extends Cubit<PermissionsState> {
     }
 
     final String name = state.caregiverName;
-    final String email = name.contains('@')
-        ? name
-        : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test';
+    final String email =
+        (_caregiverEmail != null && _caregiverEmail!.trim().isNotEmpty)
+        ? _caregiverEmail!.trim()
+        : (name.contains('@')
+              ? name
+              : '${name.toLowerCase().replaceAll(' ', '')}@lovingbrain.test');
 
     final CaregiverPermissionsModel permissionsModel =
         CaregiverPermissionsModel(
@@ -137,17 +206,37 @@ class PermissionsCubit extends Cubit<PermissionsState> {
           canViewMentorSummaries: state.mentorshipEnabled,
         );
 
-    await preferences.saveCaregiverPermissions(permissionsModel.toMap());
+    final Map<String, dynamic> pMap = permissionsModel.toMap();
+    await preferences.saveCaregiverPermissions(pMap);
+    if (email.isNotEmpty) {
+      await preferences.putString(
+        'caregiver_permissions_$email',
+        json.encode(pMap),
+      );
+    }
+    if (_caregiverId != null && _caregiverId!.isNotEmpty) {
+      await preferences.putString(
+        'caregiver_permissions_$_caregiverId',
+        json.encode(pMap),
+      );
+    }
 
     final String childId = child?.reference?.id ?? '';
     if (childId.isNotEmpty) {
       try {
-        await FirebaseFirestore.instance
+        final CollectionReference<Map<String, dynamic>> col = FirebaseFirestore
+            .instance
             .collection('children')
             .doc(childId)
-            .collection('caregiver_permissions')
-            .doc(email)
-            .set(permissionsModel.toMap(), SetOptions(merge: true));
+            .collection('caregiver_permissions');
+        if (email.isNotEmpty) {
+          await col.doc(email).set(pMap, SetOptions(merge: true));
+        }
+        if (_caregiverId != null &&
+            _caregiverId!.isNotEmpty &&
+            _caregiverId != email) {
+          await col.doc(_caregiverId!).set(pMap, SetOptions(merge: true));
+        }
       } catch (_) {}
     }
 
@@ -215,12 +304,17 @@ class PermissionsCubit extends Cubit<PermissionsState> {
 
     if (childId.isNotEmpty) {
       try {
-        await FirebaseFirestore.instance
+        final CollectionReference<Map<String, dynamic>> col = FirebaseFirestore
+            .instance
             .collection('children')
             .doc(childId)
-            .collection('caregiver_permissions')
-            .doc(email)
-            .delete();
+            .collection('caregiver_permissions');
+        if (email.isNotEmpty) {
+          await col.doc(email).delete();
+        }
+        if (_caregiverId != null && _caregiverId!.isNotEmpty) {
+          await col.doc(_caregiverId!).delete();
+        }
       } catch (_) {}
 
       // Remove co-parent from child parent_reference_ids so they cannot access child records

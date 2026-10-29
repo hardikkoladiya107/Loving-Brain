@@ -20,6 +20,7 @@ import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
 import 'package:loving_brain/ui/today_screen/widgets/still_learning_patterns_card.dart';
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:loving_brain/repo/today_log_repo.dart';
 import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/widget/offline_banner.dart';
 // Import widgets
@@ -137,15 +138,17 @@ class _TodayScreenState extends State<TodayScreen> {
                           ],
                           const ActionGrid(),
                         ] else if (state.mode == TodayMode.newParent) ...[
-                          if (state.forecastSubtitle.toLowerCase().contains(
-                                'fever',
-                              ) ||
-                              state.forecastSubtitle.toLowerCase().contains(
-                                'health',
-                              ) ||
-                              state.forecastSubtitle.toLowerCase().contains(
-                                'rest',
-                              )) ...[
+                          if (TodayLogRepo.instance
+                                  .canCurrentCaregiverViewHealth() &&
+                              (state.forecastSubtitle.toLowerCase().contains(
+                                    'fever',
+                                  ) ||
+                                  state.forecastSubtitle.toLowerCase().contains(
+                                    'health',
+                                  ) ||
+                                  state.forecastSubtitle.toLowerCase().contains(
+                                    'rest',
+                                  ))) ...[
                             const HeadsUpCard(),
                             SizedBox(height: 16.h),
                           ],

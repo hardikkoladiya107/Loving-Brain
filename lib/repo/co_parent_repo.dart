@@ -391,11 +391,23 @@ class CoParentRepo {
         userModel = await AuthRepo.instance.getUserFromUid(uId: parentUid);
       }
 
+      final String? loggedEmail =
+          FirebaseAuth.instance.currentUser?.email ?? userModel?.email;
+
+      // If already accepted by this user (e.g. repeated deep link open or relaunch), succeed immediately
+      if (invitationModel.status == CoParentInvitationHelpers.statusAccepted &&
+          loggedEmail != null &&
+          CoParentInvitationHelpers.emailsMatch(
+            invitationModel.toParent ?? '',
+            loggedEmail,
+          )) {
+        return ApiResultStatus.data(data: invitationModel);
+      }
+
       final String? validationKey =
           CoParentInvitationHelpers.validateInvitationForAccept(
             invitedEmail: invitationModel.toParent,
-            loggedInEmail:
-                FirebaseAuth.instance.currentUser?.email ?? userModel?.email,
+            loggedInEmail: loggedEmail,
             invitationStatus: invitationModel.status,
           );
       if (validationKey != null) {
@@ -454,6 +466,15 @@ class CoParentRepo {
         },
       };
       await userCollection.doc(parentUid).update(userUpdate);
+
+      // Also link partner_user_id on inviter document so inviter immediately discovers the co-parent
+      if (inviterUid != null && inviterUid.isNotEmpty) {
+        try {
+          await userCollection.doc(inviterUid).update(<String, dynamic>{
+            'partner_user_id': parentUid,
+          });
+        } catch (_) {}
+      }
 
       // Cache the shared child model locally so the co-parent lands immediately on their child's Today
       if (childRefs.isNotEmpty) {

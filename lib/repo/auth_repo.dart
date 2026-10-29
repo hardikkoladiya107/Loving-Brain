@@ -117,6 +117,7 @@ class AuthRepo {
                   'partner_user_id': FieldValue.delete(),
                 })
                 .catchError((_) => null);
+            return updatedUser;
           }
         } else {
           // Child was deleted (e.g., inviter deleted account)
@@ -135,6 +136,7 @@ class AuthRepo {
                 'partner_user_id': FieldValue.delete(),
               })
               .catchError((_) => null);
+          return updatedUser;
         }
       } else {
         await preferences.clearChild();
@@ -144,6 +146,27 @@ class AuthRepo {
       debugPrint('Failed to sync default child on login: $e');
       await preferences.clearChild();
       await preferences.putString(SharedPreference.child, '');
+      final DocumentReference? badRef =
+          userModel.defaultChild ??
+          ((userModel.children != null && userModel.children!.isNotEmpty)
+              ? userModel.children!.first
+              : null);
+      if (badRef != null) {
+        await userCollection
+            .doc(uId)
+            .update(<String, dynamic>{
+              'default_child': FieldValue.delete(),
+              'children': FieldValue.arrayRemove(<dynamic>[badRef]),
+              'partner_user_id': FieldValue.delete(),
+            })
+            .catchError((_) => null);
+      }
+      final UserModel cleanedUser = userModel.copyWith(
+        clearDefaultChild: true,
+        clearPartnerUserId: true,
+      );
+      await preferences.saveUserModel(cleanedUser);
+      return cleanedUser;
     }
 
     return userModel;
@@ -1338,8 +1361,7 @@ class AuthRepo {
               uId: credential.user!.uid,
               request: <String, dynamic>{
                 'uid': credential.user!.uid,
-                'display_name':
-                    credential.user!.displayName ?? cleanEmail.split('@')[0],
+                'display_name': credential.user!.displayName ?? 'Parent',
                 'email': cleanEmail,
                 'phone_number': cleanPhone,
                 'is_google_sign_in': false,

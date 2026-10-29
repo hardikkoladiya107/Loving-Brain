@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -18,6 +19,7 @@ import 'package:loving_brain/repo/child_repo.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/repo/user_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:go_router/go_router.dart';
 
 /// Handles universal links for co-parent invitations (`https://www.lovingbrain.com/{id}`).
@@ -211,6 +213,9 @@ class DeepLinkManager {
 
         final BuildContext? ctx = navigatorKey.currentContext;
         if (ctx != null && ctx.mounted) {
+          try {
+            ctx.read<TodayCubit>().init();
+          } catch (_) {}
           GoRouter.of(ctx).push(RoutePaths.successScreen, extra: message);
         }
       },

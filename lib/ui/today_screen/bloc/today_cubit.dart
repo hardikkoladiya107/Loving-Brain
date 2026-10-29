@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
@@ -21,6 +22,15 @@ import 'today_state.dart';
 /// Cubit managing Today tab dashboard state and the 5 Quick Update logging flows.
 class TodayCubit extends Cubit<TodayState> {
   TodayCubit() : super(const TodayState());
+
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+  _childDocSubscription;
+
+  @override
+  Future<void> close() {
+    _childDocSubscription?.cancel();
+    return super.close();
+  }
 
   /// Centralized state emission obeying AGENTS.md rule 4.2.
   /// All ApiResultStatus parameters default to ApiResultStatus.initial() when null.
@@ -195,13 +205,15 @@ class TodayCubit extends Cubit<TodayState> {
     String cName = child?.childName ?? user?.childName ?? '';
     if (pName.trim().isEmpty) pName = 'Parent';
 
-    final String finalChildId =
-        child?.reference?.id ??
-        user?.defaultChild?.id ??
-        TodayLogRepo.instance.resolveActiveChildId() ??
-        (child != null && (child.childName?.trim().isNotEmpty ?? false)
-            ? 'local_${child.childName!.trim()}'
-            : '');
+    final String finalChildId;
+    if (child != null &&
+        ((child.reference != null && child.reference!.id.isNotEmpty) ||
+            (child.childName?.trim().isNotEmpty ?? false))) {
+      finalChildId = child.reference?.id ?? 'local_${child.childName!.trim()}';
+    } else {
+      finalChildId = '';
+      cName = '';
+    }
 
     if (finalChildId.isEmpty) {
       cName = '';
@@ -216,6 +228,44 @@ class TodayCubit extends Cubit<TodayState> {
       childName: cName,
       activeChildId: finalChildId,
     );
+
+    _childDocSubscription?.cancel();
+    if (finalChildId.isNotEmpty &&
+        !finalChildId.startsWith('local_') &&
+        userUid != null &&
+        userUid.isNotEmpty) {
+      try {
+        _childDocSubscription = FirebaseFirestore.instance
+            .collection('children')
+            .doc(finalChildId)
+            .snapshots()
+            .listen((DocumentSnapshot<Map<String, dynamic>> snap) async {
+              if (isClosed) return;
+              if (!snap.exists) {
+                await preferences.clearChild();
+                _childDocSubscription?.cancel();
+                changeProps(
+                  activeChildId: '',
+                  childName: '',
+                  mode: TodayMode.normal,
+                );
+                return;
+              }
+
+              final List<dynamic>? pIds =
+                  snap.data()?['parent_reference_ids'] as List<dynamic>?;
+              if (pIds != null && !pIds.contains(userUid)) {
+                await preferences.clearChild();
+                _childDocSubscription?.cancel();
+                changeProps(
+                  activeChildId: '',
+                  childName: '',
+                  mode: TodayMode.normal,
+                );
+              }
+            }, onError: (_) {});
+      } catch (_) {}
+    }
 
     if (finalChildId.isNotEmpty) {
       // Sync any pending offline quick updates in the background
@@ -274,17 +324,21 @@ class TodayCubit extends Cubit<TodayState> {
         sleepLogs = sleepResult.data;
       }
 
-      final ApiResultStatus<List<HealthLogModel>> healthResult =
-          await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 5);
-      if (healthResult is Data<List<HealthLogModel>>) {
-        final DateTime now = DateTime.now();
-        final List<HealthLogModel> recentHealth = healthResult.data;
-        for (final HealthLogModel h in recentHealth) {
-          if (h.timestamp.year == now.year &&
-              h.timestamp.month == now.month &&
-              h.timestamp.day == now.day) {
-            todayHealthLog = h;
-            break;
+      final bool canViewHealth = TodayLogRepo.instance
+          .canCurrentCaregiverViewHealth();
+      if (canViewHealth) {
+        final ApiResultStatus<List<HealthLogModel>> healthResult =
+            await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 5);
+        if (healthResult is Data<List<HealthLogModel>>) {
+          final DateTime now = DateTime.now();
+          final List<HealthLogModel> recentHealth = healthResult.data;
+          for (final HealthLogModel h in recentHealth) {
+            if (h.timestamp.year == now.year &&
+                h.timestamp.month == now.month &&
+                h.timestamp.day == now.day) {
+              todayHealthLog = h;
+              break;
+            }
           }
         }
       }
@@ -304,13 +358,16 @@ class TodayCubit extends Cubit<TodayState> {
       }
     }
 
+    final bool canViewHealth = TodayLogRepo.instance
+        .canCurrentCaregiverViewHealth();
     final SleepForecastResult forecast = EnergyBridgeSleepCalculator.calculate(
       child: child,
       sleepLogs: sleepLogs,
-      todayHealthLog: todayHealthLog,
+      todayHealthLog: canViewHealth ? todayHealthLog : null,
     );
 
     final bool hasSevereHealthIssue =
+        canViewHealth &&
         todayHealthLog != null &&
         todayHealthLog.issues.any(
           (String issue) =>

@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -9,6 +10,7 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 /// Screen displayed upon successful action completion.
@@ -155,6 +157,9 @@ class _SuccessScreenState extends State<SuccessScreen> {
             (preferences.getBool(SharedPreference.isLogin) ?? false) &&
             (user?.uid?.trim().isNotEmpty ?? false);
         if (isLoggedIn) {
+          try {
+            context.read<TodayCubit>().init();
+          } catch (_) {}
           context.go(RoutePaths.base);
         } else {
           context.go(RoutePaths.welcome);

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/repo/today_log_repo.dart';
 import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -22,17 +23,22 @@ class HeadsUpCard extends StatelessWidget {
     final TodayState state = context.watch<TodayCubit>().state;
     final int nowHour = DateTime.now().hour;
 
+    final bool canViewHealth = TodayLogRepo.instance
+        .canCurrentCaregiverViewHealth();
+    final bool isHealthNote =
+        canViewHealth &&
+        (state.forecastSubtitle.toLowerCase().contains('fever') ||
+            state.forecastSubtitle.toLowerCase().contains('health'));
+
     final String resolvedTitle =
         title ??
-        (state.forecastSubtitle.toLowerCase().contains('fever') ||
-                state.forecastSubtitle.toLowerCase().contains('health')
+        (isHealthNote
             ? "Health check-in noted"
             : "A harder evening may be more likely");
 
     final String resolvedSubtitle =
         subtitle ??
-        (state.forecastSubtitle.toLowerCase().contains('fever') ||
-                state.forecastSubtitle.toLowerCase().contains('health')
+        (isHealthNote
             ? "Symptoms logged today. Rest and comfort matter most right now."
             : (nowHour >= 20
                   ? "Wind-down and rest time tonight."

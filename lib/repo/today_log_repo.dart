@@ -580,31 +580,49 @@ class TodayLogRepo {
   }
 
   /// Resolves caregiver permissions for current user context (Screen 58, Doc 01 §15).
-  bool _canCurrentCaregiverViewHealth() {
+  bool canCurrentCaregiverViewHealth() {
     final UserModel? user = preferences.getUserModel();
-    if (user == null) return true;
-    final String email = user.email ?? '';
-    final Map<String, dynamic>? saved = preferences.getCaregiverPermissions(
-      email,
-    );
+    if (user == null) return false;
+    final ChildModel? child = preferences.getChildModel();
+    final String currentUid = user.uid ?? '';
+
+    // If there is no active child or child has no parent IDs, deny health access
+    if (child == null ||
+        child.parentReferenceIds == null ||
+        child.parentReferenceIds!.isEmpty) {
+      return false;
+    }
+
+    final String ownerUid = child.parentReferenceIds!.first;
+    // Primary parent and creator always has full access to health notes
+    if (currentUid.isNotEmpty && currentUid == ownerUid) {
+      return true;
+    }
+
+    // Unlinked user cannot view health notes
+    if (!child.parentReferenceIds!.contains(currentUid)) {
+      return false;
+    }
+
+    // Secondary caregivers (including Partner): check explicit permissions
+    final String email = user.email?.trim() ?? '';
+    Map<String, dynamic>? saved;
+    if (email.isNotEmpty) {
+      saved = preferences.getCaregiverPermissions(email);
+    }
+    if (saved == null && currentUid.isNotEmpty) {
+      saved = preferences.getCaregiverPermissions(currentUid);
+    }
+
     if (saved != null) {
       final CaregiverPermissionsModel p = CaregiverPermissionsModel.fromMap(
         saved,
       );
       return p.canViewHealthNotes;
     }
-    final String cleanRole = (user.relationshipToChild ?? '')
-        .toLowerCase()
-        .trim();
-    final bool isCaregiverRole =
-        cleanRole == 'caregiver' ||
-        cleanRole == 'grandparent' ||
-        cleanRole == 'nanny' ||
-        cleanRole == 'babysitter';
-    if (isCaregiverRole) {
-      return false;
-    }
-    return true;
+
+    // By default per V2 spec, Health notes are strictly private for secondary caregivers
+    return false;
   }
 
   Future<ApiResultStatus<List<HealthLogModel>>> getRecentHealthLogs(
@@ -612,7 +630,7 @@ class TodayLogRepo {
     int limit = 10,
   }) async {
     try {
-      if (!_canCurrentCaregiverViewHealth()) {
+      if (!canCurrentCaregiverViewHealth()) {
         return const ApiResultStatus.data(data: <HealthLogModel>[]);
       }
 
@@ -669,7 +687,7 @@ class TodayLogRepo {
           .map(TimelineEventModel.fromFirestore)
           .toList();
 
-      if (!_canCurrentCaregiverViewHealth()) {
+      if (!canCurrentCaregiverViewHealth()) {
         list = list
             .where((TimelineEventModel e) => e.type != 'health_log')
             .toList();

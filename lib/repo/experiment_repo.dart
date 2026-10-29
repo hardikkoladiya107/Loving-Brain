@@ -42,13 +42,30 @@ class ExperimentRepo {
               .doc(childId)
               .collection('experiments')
               .where('status', isEqualTo: 'active')
-              .orderBy('createdAt', descending: true)
-              .limit(1)
+              .limit(5)
               .get();
 
           if (snap.docs.isNotEmpty) {
+            final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                List<QueryDocumentSnapshot<Map<String, dynamic>>>.from(
+                  snap.docs,
+                );
+            docs.sort((
+              QueryDocumentSnapshot<Map<String, dynamic>> a,
+              QueryDocumentSnapshot<Map<String, dynamic>> b,
+            ) {
+              final String aCreated =
+                  a.data()['createdAt']?.toString() ??
+                  a.data()['created_at']?.toString() ??
+                  '';
+              final String bCreated =
+                  b.data()['createdAt']?.toString() ??
+                  b.data()['created_at']?.toString() ??
+                  '';
+              return bCreated.compareTo(aCreated);
+            });
             final ActiveExperimentModel model = ActiveExperimentModel.fromDoc(
-              snap.docs.first,
+              docs.first,
             );
             _cachedActiveExperiments[childId] = model;
             return ApiResultStatus.data(data: model);
