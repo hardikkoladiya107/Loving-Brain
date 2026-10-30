@@ -384,7 +384,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
                 in snapshot.docs) {
               mapped.addAll(_mapDocToBrainyMessages(doc.id, doc.data()));
             }
-            changeProps(messages: mapped);
+
+            // Only adopt snapshot messages if we're not actively generating a response
+            // or if the snapshot already contains at least as many messages as local state.
+            // This prevents Firestore from wiping out newly generated cards or optimistic messages.
+            if (!state.isTyping || mapped.length >= state.messages.length) {
+              changeProps(messages: mapped);
+            }
           },
           onError: (_) {
             _chatsSubscription?.cancel();
@@ -820,44 +826,43 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       return;
     }
 
-    // Persist AI cards to Firestore so history and conversation stream stay in sync
-    for (int i = 0; i < aiCards.length; i++) {
-      final BrainyMessage card = aiCards[i];
-      await AuthRepo.instance.addChatToConversation(
-        conversationId: convId,
-        request: {
-          'text': card.subtext != null
-              ? '${card.headline}\n${card.subtext}'
-              : card.headline,
-          'chip_title': card.chipTitle,
-          'headline': card.headline,
-          'subtext': card.subtext,
-          'card_type': card.type == MessageType.aiAction
-              ? 'aiAction'
-              : 'aiInfo',
-          'type': 'text',
-          'role': 'assistant',
-          'image_local_path': null,
-          'audio_local_path': null,
-          'image_network_path': '',
-          'audio_network_path': '',
-          'is_saved': false,
-          'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
-            DateTime.now().millisecondsSinceEpoch + (i * 10),
-          ),
-        },
-      );
-    }
+    // 1. Immediately display the AI cards in the UI and stop the thinking indicator
+    changeProps(
+      messages: <BrainyMessage>[...state.messages, ...aiCards],
+      isTyping: false,
+    );
 
-    if (isClosed) return;
-    final String uid = userModel?.uid ?? '';
-    if (uid.isEmpty) {
-      changeProps(
-        messages: <BrainyMessage>[...state.messages, ...aiCards],
-        isTyping: false,
-      );
-    } else {
-      changeProps(isTyping: false);
+    // 2. Persist AI cards to Firestore in background for permanent history
+    try {
+      for (int i = 0; i < aiCards.length; i++) {
+        final BrainyMessage card = aiCards[i];
+        await AuthRepo.instance.addChatToConversation(
+          conversationId: convId,
+          request: {
+            'text': card.subtext != null && card.subtext!.isNotEmpty
+                ? '${card.headline}\n${card.subtext}'
+                : card.headline,
+            'chip_title': card.chipTitle,
+            'headline': card.headline,
+            'subtext': card.subtext,
+            'card_type': card.type == MessageType.aiAction
+                ? 'aiAction'
+                : 'aiInfo',
+            'type': 'text',
+            'role': 'assistant',
+            'image_local_path': null,
+            'audio_local_path': null,
+            'image_network_path': '',
+            'audio_network_path': '',
+            'is_saved': false,
+            'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
+              DateTime.now().millisecondsSinceEpoch + (i * 10),
+            ),
+          },
+        );
+      }
+    } catch (_) {
+      // Persistence error should not affect the already displayed response
     }
   }
 
@@ -976,43 +981,43 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       return;
     }
 
-    for (int i = 0; i < aiCards.length; i++) {
-      final BrainyMessage card = aiCards[i];
-      await AuthRepo.instance.addChatToConversation(
-        conversationId: convId,
-        request: {
-          'text': card.subtext != null
-              ? '${card.headline}\n${card.subtext}'
-              : card.headline,
-          'chip_title': card.chipTitle,
-          'headline': card.headline,
-          'subtext': card.subtext,
-          'card_type': card.type == MessageType.aiAction
-              ? 'aiAction'
-              : 'aiInfo',
-          'type': 'text',
-          'role': 'assistant',
-          'image_local_path': null,
-          'audio_local_path': null,
-          'image_network_path': '',
-          'audio_network_path': '',
-          'is_saved': false,
-          'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
-            DateTime.now().millisecondsSinceEpoch + (i * 10),
-          ),
-        },
-      );
-    }
+    // 1. Immediately display the AI cards in the UI and stop the thinking indicator
+    changeProps(
+      messages: <BrainyMessage>[...state.messages, ...aiCards],
+      isTyping: false,
+    );
 
-    if (isClosed) return;
-    final String uid = userModel?.uid ?? '';
-    if (uid.isEmpty) {
-      changeProps(
-        messages: <BrainyMessage>[...state.messages, ...aiCards],
-        isTyping: false,
-      );
-    } else {
-      changeProps(isTyping: false);
+    // 2. Persist AI cards to Firestore in background
+    try {
+      for (int i = 0; i < aiCards.length; i++) {
+        final BrainyMessage card = aiCards[i];
+        await AuthRepo.instance.addChatToConversation(
+          conversationId: convId,
+          request: {
+            'text': card.subtext != null && card.subtext!.isNotEmpty
+                ? '${card.headline}\n${card.subtext}'
+                : card.headline,
+            'chip_title': card.chipTitle,
+            'headline': card.headline,
+            'subtext': card.subtext,
+            'card_type': card.type == MessageType.aiAction
+                ? 'aiAction'
+                : 'aiInfo',
+            'type': 'text',
+            'role': 'assistant',
+            'image_local_path': null,
+            'audio_local_path': null,
+            'image_network_path': '',
+            'audio_network_path': '',
+            'is_saved': false,
+            'time_stamp': Timestamp.fromMillisecondsSinceEpoch(
+              DateTime.now().millisecondsSinceEpoch + (i * 10),
+            ),
+          },
+        );
+      }
+    } catch (_) {
+      // Background persistence error should not affect the already displayed response
     }
   }
 
@@ -1022,18 +1027,173 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     bool isSaved = false,
   }) {
     final String cleaned = rawText.trim();
+    if (cleaned.isEmpty) return <BrainyMessage>[];
+
+    // Case 1: Standard '---' delimiter (per V2 App Content Copy Master §7)
     if (cleaned.contains('---')) {
-      final List<String> parts = cleaned.split('---');
-      final (String, String?) part1 = _extractHeadlineAndSubtext(
-        parts[0].trim(),
-      );
-      final (String, String?) part2 = parts.length > 1
-          ? _extractHeadlineAndSubtext(parts[1].trim())
-          : (
-              'Try one gentle step tonight',
-              'Keep your voice low and predictable to help your child settle.',
+      final List<String> rawParts = cleaned
+          .split('---')
+          .map((String s) => s.trim())
+          .where((String s) => s.isNotEmpty)
+          .toList();
+
+      if (rawParts.isNotEmpty) {
+        final (String, String?) part1 = _extractHeadlineAndSubtext(rawParts[0]);
+        final (String, String?) part2 = rawParts.length > 1
+            ? _extractHeadlineAndSubtext(rawParts[1])
+            : (
+                'Try one gentle step tonight',
+                'Keep your voice low and predictable to help your child settle.',
+              );
+
+        final List<BrainyMessage> messages = <BrainyMessage>[
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_info' : null,
+            type: MessageType.aiInfo,
+            chipTitle: 'What may be happening',
+            headline: part1.$1,
+            subtext: part1.$2,
+            isSaved: isSaved,
+          ),
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_action' : null,
+            type: MessageType.aiAction,
+            chipTitle: 'What to try now',
+            headline: part2.$1,
+            subtext: part2.$2,
+            isSaved: isSaved,
+          ),
+        ];
+
+        if (rawParts.length > 2) {
+          final (String, String?) part3 =
+              _extractHeadlineAndSubtext(rawParts[2]);
+          if (part3.$1.trim().isNotEmpty) {
+            messages.add(
+              BrainyMessage(
+                id: baseId != null ? '${baseId}_help' : null,
+                type: MessageType.aiInfo,
+                chipTitle: 'When to get help',
+                headline: part3.$1,
+                subtext: part3.$2,
+                isSaved: isSaved,
+              ),
             );
-      final List<BrainyMessage> messages = <BrainyMessage>[
+          }
+        }
+
+        if (messages.length == 2) {
+          messages.add(
+            BrainyMessage(
+              id: baseId != null ? '${baseId}_help' : null,
+              type: MessageType.aiInfo,
+              chipTitle: 'When to get help',
+              headline: 'Reach out if challenges persist over 2–3 weeks',
+              subtext:
+                  'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
+              isSaved: isSaved,
+            ),
+          );
+        }
+
+        return messages;
+      }
+    }
+
+    // Case 2: Section headers (e.g., "Part 1:", "What may be happening:", "### 1.")
+    final RegExp sectionHeaderRegex = RegExp(
+      r'(?:^|\n+)(?:#{1,4}\s*)?(?:(?:Part\s*[123]|Step\s*[123])[:.]?\s*)?(?:(?:What\s+may\s+be\s+happening|What\s+to\s+try\s+now|When\s+to\s+get\s+help)[:.]?)\s*',
+      caseSensitive: false,
+    );
+
+    if (sectionHeaderRegex.hasMatch(cleaned)) {
+      final List<String> sections = cleaned
+          .split(sectionHeaderRegex)
+          .map((String s) => s.trim())
+          .where((String s) => s.isNotEmpty)
+          .toList();
+
+      if (sections.length >= 2) {
+        final (String, String?) part1 = _extractHeadlineAndSubtext(sections[0]);
+        final (String, String?) part2 = _extractHeadlineAndSubtext(sections[1]);
+        final (String, String?) part3 = sections.length > 2
+            ? _extractHeadlineAndSubtext(sections[2])
+            : (
+                'Reach out if challenges persist over 2–3 weeks',
+                'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
+              );
+
+        return <BrainyMessage>[
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_info' : null,
+            type: MessageType.aiInfo,
+            chipTitle: 'What may be happening',
+            headline: part1.$1,
+            subtext: part1.$2,
+            isSaved: isSaved,
+          ),
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_action' : null,
+            type: MessageType.aiAction,
+            chipTitle: 'What to try now',
+            headline: part2.$1,
+            subtext: part2.$2,
+            isSaved: isSaved,
+          ),
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_help' : null,
+            type: MessageType.aiInfo,
+            chipTitle: 'When to get help',
+            headline: part3.$1,
+            subtext: part3.$2,
+            isSaved: isSaved,
+          ),
+        ];
+      }
+    }
+
+    // Case 3: Casual greetings (Rule 75-76)
+    final bool isCasualGreeting = cleaned.length < 250 &&
+        (cleaned.toLowerCase().startsWith('hi') ||
+            cleaned.toLowerCase().startsWith('hello') ||
+            cleaned.toLowerCase().startsWith('hey') ||
+            cleaned.toLowerCase().startsWith('good morning') ||
+            cleaned.toLowerCase().startsWith('good afternoon') ||
+            cleaned.toLowerCase().startsWith('good evening') ||
+            cleaned.toLowerCase().startsWith('welcome'));
+
+    if (isCasualGreeting) {
+      final (String, String?) parsed = _extractHeadlineAndSubtext(cleaned);
+      return <BrainyMessage>[
+        BrainyMessage(
+          id: baseId,
+          type: MessageType.aiInfo,
+          chipTitle: 'Brainy',
+          headline: parsed.$1,
+          subtext: parsed.$2,
+          isSaved: isSaved,
+        ),
+      ];
+    }
+
+    // Case 4: Multi-paragraph response without explicit delimiters -> Partition into 3-part cards
+    final List<String> paragraphs = cleaned
+        .split(RegExp(r'\n\s*\n'))
+        .map((String s) => s.trim())
+        .where((String s) => s.isNotEmpty)
+        .toList();
+
+    if (paragraphs.length >= 2) {
+      final (String, String?) part1 = _extractHeadlineAndSubtext(paragraphs[0]);
+      final (String, String?) part2 = _extractHeadlineAndSubtext(paragraphs[1]);
+      final (String, String?) part3 = paragraphs.length > 2
+          ? _extractHeadlineAndSubtext(paragraphs.sublist(2).join('\n\n'))
+          : (
+              'Reach out if challenges persist over 2–3 weeks',
+              'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
+            );
+
+      return <BrainyMessage>[
         BrainyMessage(
           id: baseId != null ? '${baseId}_info' : null,
           type: MessageType.aiInfo,
@@ -1050,76 +1210,80 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           subtext: part2.$2,
           isSaved: isSaved,
         ),
+        BrainyMessage(
+          id: baseId != null ? '${baseId}_help' : null,
+          type: MessageType.aiInfo,
+          chipTitle: 'When to get help',
+          headline: part3.$1,
+          subtext: part3.$2,
+          isSaved: isSaved,
+        ),
       ];
-
-      if (parts.length > 2) {
-        final (String, String?) part3 = _extractHeadlineAndSubtext(
-          parts[2].trim(),
-        );
-        if (part3.$1.trim().isNotEmpty) {
-          messages.add(
-            BrainyMessage(
-              id: baseId != null ? '${baseId}_help' : null,
-              type: MessageType.aiInfo,
-              chipTitle: 'When to get help',
-              headline: part3.$1,
-              subtext: part3.$2,
-              isSaved: isSaved,
-            ),
-          );
-        }
-      }
-
-      if (messages.length == 2) {
-        messages.add(
-          BrainyMessage(
-            id: baseId != null ? '${baseId}_help' : null,
-            type: MessageType.aiInfo,
-            chipTitle: 'When to get help',
-            headline: 'Reach out if challenges persist over 2–3 weeks',
-            subtext:
-                'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
-            isSaved: isSaved,
-          ),
-        );
-      }
-
-      return messages;
     }
 
+    // Fallback: Ensure 3-part card structure is always respected
     final (String, String?) parsed = _extractHeadlineAndSubtext(cleaned);
     return <BrainyMessage>[
       BrainyMessage(
-        id: baseId,
+        id: baseId != null ? '${baseId}_info' : null,
         type: MessageType.aiInfo,
-        chipTitle: 'Brainy',
+        chipTitle: 'What may be happening',
         headline: parsed.$1,
         subtext: parsed.$2,
+        isSaved: isSaved,
+      ),
+      BrainyMessage(
+        id: baseId != null ? '${baseId}_action' : null,
+        type: MessageType.aiAction,
+        chipTitle: 'What to try now',
+        headline: 'Focus on predictable, gentle steps',
+        subtext:
+            'Small consistent changes to your routine often help your child settle best over time.',
+        isSaved: isSaved,
+      ),
+      BrainyMessage(
+        id: baseId != null ? '${baseId}_help' : null,
+        type: MessageType.aiInfo,
+        chipTitle: 'When to get help',
+        headline: 'Reach out if challenges persist over 2–3 weeks',
+        subtext:
+            'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
         isSaved: isSaved,
       ),
     ];
   }
 
   (String, String?) _extractHeadlineAndSubtext(String section) {
-    final List<String> lines = section
+    final List<String> rawLines = section
         .split('\n')
-        .map((l) => l.trim().replaceAll(RegExp(r'^[#*-\s]+'), ''))
+        .map((String l) => l.trim())
+        .where((String l) => l.isNotEmpty)
+        .toList();
+
+    final List<String> filteredLines = rawLines
+        .map((String l) => l.replaceAll(RegExp(r'^[#*-\s]+'), '').trim())
         .where(
-          (l) =>
+          (String l) =>
               l.isNotEmpty &&
               !l.toLowerCase().startsWith('what may be happening') &&
               !l.toLowerCase().startsWith('what to try now') &&
-              !l.toLowerCase().startsWith('when to get help'),
+              !l.toLowerCase().startsWith('when to get help') &&
+              !l.toLowerCase().startsWith('part 1') &&
+              !l.toLowerCase().startsWith('part 2') &&
+              !l.toLowerCase().startsWith('part 3') &&
+              !l.toLowerCase().startsWith('step 1') &&
+              !l.toLowerCase().startsWith('step 2') &&
+              !l.toLowerCase().startsWith('step 3'),
         )
         .toList();
 
-    if (lines.isEmpty) {
+    if (filteredLines.isEmpty) {
       return ('A gentle observation', null);
     }
-    if (lines.length == 1) {
-      return (lines.first, null);
+    if (filteredLines.length == 1) {
+      return (filteredLines.first, null);
     }
-    return (lines.first, lines.sublist(1).join(' '));
+    return (filteredLines.first, filteredLines.sublist(1).join(' '));
   }
 
   Future<void> toggleSaveGuidance(BrainyMessage message, int index) async {

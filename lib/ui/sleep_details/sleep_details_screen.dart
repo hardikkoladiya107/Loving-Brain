@@ -3,11 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
-import 'package:loving_brain/ui/tonights_plan/tonights_plan_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/sleep_header.dart';
@@ -38,7 +39,11 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
       listener: (BuildContext context, SleepDetailsState state) {},
       builder: (BuildContext context, SleepDetailsState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          value: SystemUiOverlayStyle.light.copyWith(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+          ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
@@ -49,6 +54,14 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       SleepHeader(
+                        showBackButton: true,
+                        onChildSwitched: () =>
+                            context.read<SleepDetailsCubit>().init(),
+                        onParentProfileReturned: () =>
+                            context.read<SleepDetailsCubit>().init(),
+                        childName: state.childName.isNotEmpty
+                            ? state.childName
+                            : null,
                         titleWidget: "Sleep details".appText(
                           fontSize: 24.sp,
                           color: Colors.white,
@@ -89,14 +102,7 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
                             AppButton(
                               title: "View tonight's plan",
                               onTap: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext routeCtx) =>
-                                        const TonightsPlanScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.tonightsPlan);
                               },
                               backgroundColor: primaryColor,
                               textColor: Colors.white,

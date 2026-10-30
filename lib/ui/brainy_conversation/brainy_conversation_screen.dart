@@ -893,9 +893,15 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
         chipBgColor = orangeLightColor;
         break;
       case MessageType.aiInfo:
-        icon = Icons.info;
-        chipColor = primaryColor;
-        chipBgColor = orangeLightColor;
+        if (msg.chipTitle.toLowerCase().contains('when to get help')) {
+          icon = Icons.health_and_safety_outlined;
+          chipColor = const Color(0xFF665FCE);
+          chipBgColor = const Color(0xFFF3F2FE);
+        } else {
+          icon = Icons.info;
+          chipColor = primaryColor;
+          chipBgColor = orangeLightColor;
+        }
         break;
       case MessageType.aiAction:
         icon = Icons.stars;
@@ -1225,7 +1231,8 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
   Widget _buildDot(int index) {
     final double phase = (_controller.value * 2 * math.pi) - (index * 0.65);
     final double offset = math.sin(phase) * 3.5;
-    final double opacity = 0.45 + 0.55 * ((math.sin(phase) + 1) / 2);
+    final double opacity =
+        (0.45 + 0.55 * ((math.sin(phase) + 1) / 2)).clamp(0.0, 1.0);
     return Transform.translate(
       offset: Offset(0, -offset.clamp(-3.5, 3.5)),
       child: Container(

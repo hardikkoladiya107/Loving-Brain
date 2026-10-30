@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/sleep_pattern/sleep_pattern_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/sleep_forecast_cubit.dart';
 import '../bloc/sleep_forecast_state.dart';
 
@@ -26,14 +25,6 @@ class ForecastDaysRow extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             context.read<SleepForecastCubit>().selectDay(index);
-            // Close bottom sheet and navigate to Sleep Pattern
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => const SleepPatternScreen(),
-              ),
-            );
           },
           child: Column(
             children: [

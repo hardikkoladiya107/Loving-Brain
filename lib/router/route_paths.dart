@@ -34,6 +34,8 @@ class RoutePaths {
   static const String sessionConfirmation = '/session-confirmation';
   static const String quickUpdate = '/quick-update';
   static const String mentorshipLanding = '/mentorship-landing';
+  static const String sleepForecast = '/sleep-forecast';
+  static const String sleepDetails = '/sleep-details';
 
   static String childProfilePath(
     String userId, {

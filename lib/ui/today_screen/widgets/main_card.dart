@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import '../bloc/today_cubit.dart';
@@ -219,13 +220,7 @@ class MainCard extends StatelessWidget {
         AppButton(
           title: "View details",
           onTap: () {
-            showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              useSafeArea: true,
-              builder: (BuildContext sheetContext) =>
-                  const SleepForecastScreen(),
-            );
+            context.push(RoutePaths.sleepForecast);
           },
         ),
       ],

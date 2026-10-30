@@ -17,6 +17,8 @@ import 'package:loving_brain/ui/help_flow/help_problem_selection_screen.dart';
 import 'package:loving_brain/ui/onboarding/onboarding_screen.dart';
 import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
 import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
+import 'package:loving_brain/ui/sleep_details/sleep_details_screen.dart';
+import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
@@ -232,6 +234,16 @@ class AppRouter {
           path: RoutePaths.tonightsPlan,
           builder: (BuildContext context, GoRouterState state) =>
               const TonightsPlanScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.sleepForecast,
+          builder: (BuildContext context, GoRouterState state) =>
+              const SleepForecastScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.sleepDetails,
+          builder: (BuildContext context, GoRouterState state) =>
+              const SleepDetailsScreen(),
         ),
         GoRoute(
           path: RoutePaths.calmPlan,

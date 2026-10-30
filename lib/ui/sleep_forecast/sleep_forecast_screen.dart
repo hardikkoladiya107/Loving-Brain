@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/sleep_details/sleep_details_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_details_card.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_header.dart';
@@ -36,7 +37,11 @@ class _SleepForecastScreenState extends State<SleepForecastScreen> {
       listener: (BuildContext context, SleepForecastState state) {},
       builder: (BuildContext context, SleepForecastState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          value: SystemUiOverlayStyle.light.copyWith(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+          ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
@@ -56,16 +61,7 @@ class _SleepForecastScreenState extends State<SleepForecastScreen> {
                         child: AppButton(
                           title: "View details",
                           onTap: () {
-                            // Pop the Forecast bottom sheet
-                            Navigator.pop(context);
-                            // Open Details as a new bottom sheet
-                            showModalBottomSheet<void>(
-                              context: context,
-                              isScrollControlled: true,
-                              useSafeArea: true,
-                              builder: (BuildContext sheetCtx) =>
-                                  const SleepDetailsScreen(),
-                            );
+                            context.push(RoutePaths.sleepDetails);
                           },
                           backgroundColor: primaryColor,
                           textColor: Colors.white,

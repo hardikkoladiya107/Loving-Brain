@@ -33,9 +33,9 @@ class AiRepo {
 
   final Dio dio = Dio(
     BaseOptions(
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 15),
-      sendTimeout: const Duration(seconds: 15),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 45),
+      sendTimeout: const Duration(seconds: 30),
     ),
   );
 
@@ -185,46 +185,48 @@ class AiRepo {
         messages.add(<String, dynamic>{"role": "user", "content": finalText});
       }
 
-      // First completion call with tools
+      // Call OpenAI Chat Completion with full system prompt & context
       final Response<dynamic> response = await dio.post(
         chatUrl,
         data: <String, dynamic>{
           "model": "gpt-4o",
           "messages": messages,
-          "tools": AiDataTools.openAiTools,
-          "tool_choice": "auto",
+          "temperature": 0.7,
         },
         options: Options(headers: headers),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
         final Map<String, dynamic> responseData =
             response.data as Map<String, dynamic>;
-        final List<dynamic> choices = responseData['choices'] as List<dynamic>;
-        if (choices.isEmpty) {
+        final List<dynamic>? choices =
+            responseData['choices'] as List<dynamic>?;
+        if (choices == null || choices.isEmpty) {
           return ApiResultStatus.error(
-            error: Exception("Empty OpenAI response"),
+            error: Exception("Empty OpenAI response choices"),
           );
         }
 
         final Map<String, dynamic> choice = choices[0] as Map<String, dynamic>;
-        final Map<String, dynamic> message =
-            choice['message'] as Map<String, dynamic>;
+        final Map<String, dynamic>? message =
+            choice['message'] as Map<String, dynamic>?;
         final List<dynamic>? toolCalls =
-            message['tool_calls'] as List<dynamic>?;
+            message?['tool_calls'] as List<dynamic>?;
 
         // If the model requested function calling / tools
         if (toolCalls != null && toolCalls.isNotEmpty) {
           final List<Map<String, dynamic>> conversationWithTools =
               List<Map<String, dynamic>>.from(messages);
-          conversationWithTools.add(message);
+          if (message != null) {
+            conversationWithTools.add(message);
+          }
 
           for (final dynamic call in toolCalls) {
             final Map<String, dynamic> callMap = call as Map<String, dynamic>;
             final String functionName =
-                callMap['function']['name']?.toString() ?? '';
+                callMap['function']?['name']?.toString() ?? '';
             final String argsStr =
-                callMap['function']['arguments']?.toString() ?? '{}';
+                callMap['function']?['arguments']?.toString() ?? '{}';
             Map<String, dynamic> args = <String, dynamic>{};
             try {
               args = jsonDecode(argsStr) as Map<String, dynamic>;
@@ -242,53 +244,73 @@ class AiRepo {
             });
           }
 
+          // Remind model of the 3-part formatting rule in follow-up
+          conversationWithTools.add(<String, dynamic>{
+            'role': 'system',
+            'content':
+                'Now provide your final guidance to the parent based on the data. Remember to format your response into the three clear parts separated by a line containing only "---": Part 1 (What may be happening), Part 2 (What to try now), Part 3 (When to get help).',
+          });
+
           // Follow-up completion after tool execution
           final Response<dynamic> followUp = await dio.post(
             chatUrl,
             data: <String, dynamic>{
               "model": "gpt-4o",
               "messages": conversationWithTools,
+              "temperature": 0.7,
             },
             options: Options(headers: headers),
           );
 
-          if (followUp.statusCode == 200) {
+          if (followUp.statusCode == 200 &&
+              followUp.data is Map<String, dynamic>) {
             final Map<String, dynamic> followUpData =
                 followUp.data as Map<String, dynamic>;
-            final String finalContent =
-                (followUpData['choices']
-                        as List<dynamic>)[0]['message']['content']
-                    as String;
-            return ApiResultStatus.data(
-              data: <String, dynamic>{
-                "output": <Map<String, dynamic>>[
-                  <String, dynamic>{
-                    "type": "message",
-                    "role": "assistant",
-                    "content": <Map<String, dynamic>>[
-                      <String, dynamic>{"type": "text", "text": finalContent},
+            final List<dynamic>? followUpChoices =
+                followUpData['choices'] as List<dynamic>?;
+            if (followUpChoices != null && followUpChoices.isNotEmpty) {
+              final dynamic followUpMsg = followUpChoices[0]['message'];
+              final String finalContent =
+                  followUpMsg?['content']?.toString() ?? '';
+              if (finalContent.trim().isNotEmpty) {
+                return ApiResultStatus.data(
+                  data: <String, dynamic>{
+                    "output": <Map<String, dynamic>>[
+                      <String, dynamic>{
+                        "type": "message",
+                        "role": "assistant",
+                        "content": <Map<String, dynamic>>[
+                          <String, dynamic>{
+                            "type": "text",
+                            "text": finalContent,
+                          },
+                        ],
+                      },
                     ],
                   },
-                ],
-              },
-            );
+                );
+              }
+            }
           }
         }
 
-        final String content = message['content']?.toString() ?? '';
-        return ApiResultStatus.data(
-          data: <String, dynamic>{
-            "output": <Map<String, dynamic>>[
-              <String, dynamic>{
-                "type": "message",
-                "role": "assistant",
-                "content": <Map<String, dynamic>>[
-                  <String, dynamic>{"type": "text", "text": content},
-                ],
-              },
-            ],
-          },
-        );
+        final dynamic contentVal = message?['content'];
+        final String content = contentVal?.toString() ?? '';
+        if (content.trim().isNotEmpty) {
+          return ApiResultStatus.data(
+            data: <String, dynamic>{
+              "output": <Map<String, dynamic>>[
+                <String, dynamic>{
+                  "type": "message",
+                  "role": "assistant",
+                  "content": <Map<String, dynamic>>[
+                    <String, dynamic>{"type": "text", "text": content},
+                  ],
+                },
+              ],
+            },
+          );
+        }
       }
       return ApiResultStatus.error(error: Exception("Failed to get response"));
     } on DioException catch (e) {

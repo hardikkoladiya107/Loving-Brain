@@ -36,10 +36,10 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
       listener: (BuildContext context, TonightsPlanState state) {},
       builder: (BuildContext context, TonightsPlanState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.dark.copyWith(
+          value: SystemUiOverlayStyle.light.copyWith(
             statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
           ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
@@ -131,7 +131,9 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
           ),
         ),
         Positioned(
-          top: 20.h,
+          top: MediaQuery.of(context).padding.top > 0
+              ? MediaQuery.of(context).padding.top + 6.h
+              : 20.h,
           left: 20.w,
           child: InkWell(
             onTap: () => Navigator.pop(context),

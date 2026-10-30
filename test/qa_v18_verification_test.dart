@@ -11,6 +11,12 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_cubit.dart';
 import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
+import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
+import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
+import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
+import 'package:loving_brain/ui/today_screen/sheets/child_switcher_sheet.dart';
+import 'package:loving_brain/ui/widget/base_button.dart';
+import 'package:loving_brain/ui/widget/sleep_header.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -285,6 +291,162 @@ void main() {
         expect(find.text('10:53 pm \u2013 10:53 pm'), findsOneWidget);
 
         await cubit.close();
+      },
+    );
+
+    testWidgets(
+      'SleepForecastScreen renders full screen view with interactive header controls and View details CTA',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(389, 844);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() => tester.view.resetPhysicalSize());
+
+        final ChildModel child = ChildModel(
+          childName: 'K',
+          parentReferenceIds: <String>['test_parent'],
+        );
+        await preferences.saveChildModel(child);
+
+        final SleepForecastCubit cubit = SleepForecastCubit();
+        cubit.changeProps(
+          isLoading: false,
+          childName: 'K',
+          parentName: 'HARDIK',
+          timeOfDayGreeting: 'GOOD MORNING',
+          windowStart: '6:00 pm',
+          windowEnd: '7:00 pm',
+          bedtimeEstimate: '6:30 pm',
+          confidenceLevel: 'Low',
+          reason: 'K woke at 10:55 am from a longer nap.',
+        );
+
+        await tester.pumpWidget(
+          BlocProvider<SleepForecastCubit>.value(
+            value: cubit,
+            child: ScreenUtilInit(
+              designSize: const Size(389, 844),
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: (BuildContext context, Widget? _) {
+                return const MaterialApp(
+                  home: SleepForecastScreen(),
+                );
+              },
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // Verifies header has back button, child chip, and parent avatar
+        expect(find.byType(SleepHeader), findsOneWidget);
+        expect(find.byType(BaseButton), findsAtLeastNWidgets(1));
+        expect(find.text('K'), findsOneWidget);
+        expect(find.byIcon(Icons.face), findsOneWidget);
+
+        // Verifies greeting and forecast info
+        expect(find.text('GOOD MORNING '), findsOneWidget);
+        expect(find.text('HARDIK!'), findsOneWidget);
+        expect(find.text('Next window'), findsOneWidget);
+        expect(find.text('6:00 pm - 7:00 pm'), findsOneWidget);
+
+        // Verifies View details CTA button
+        expect(find.widgetWithText(AppButton, 'View details'), findsOneWidget);
+
+        await cubit.close();
+      },
+    );
+
+    testWidgets(
+      'ForecastDaysRow selects days without popping or dismissing the screen',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(389, 844);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() => tester.view.resetPhysicalSize());
+
+        final SleepForecastCubit cubit = SleepForecastCubit();
+        cubit.changeProps(
+          isLoading: false,
+          selectedDayIndex: 0,
+        );
+
+        await tester.pumpWidget(
+          BlocProvider<SleepForecastCubit>.value(
+            value: cubit,
+            child: ScreenUtilInit(
+              designSize: const Size(389, 844),
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: (BuildContext context, Widget? _) {
+                return const MaterialApp(
+                  home: Scaffold(body: ForecastDaysRow()),
+                );
+              },
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(cubit.state.selectedDayIndex, 0);
+
+        // Tap Wednesday (index 2)
+        await tester.tap(find.text('W'));
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // State changes to selected day without popping
+        expect(cubit.state.selectedDayIndex, 2);
+        expect(find.byType(ForecastDaysRow), findsOneWidget);
+
+        await cubit.close();
+      },
+    );
+
+    testWidgets(
+      'SleepHeader child switcher chip opens ChildSwitcherSheet and back button pops',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(389, 844);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() => tester.view.resetPhysicalSize());
+
+        final ChildModel child = ChildModel(
+          childName: 'Emma',
+          parentReferenceIds: <String>['test_parent'],
+        );
+        await preferences.saveChildModel(child);
+
+        bool backTapped = false;
+        await tester.pumpWidget(
+          ScreenUtilInit(
+            designSize: const Size(389, 844),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (BuildContext context, Widget? _) {
+              return MaterialApp(
+                home: Scaffold(
+                  body: SleepHeader(
+                    showBackButton: true,
+                    onBackTap: () => backTapped = true,
+                    titleWidget: const Text('Header Title'),
+                    chipText: 'Test Chip',
+                    timeText: '7:00 PM',
+                    estimateText: 'Estimate',
+                    cloudImagePath: 'assets/v2/images/img_nori_sleep_forecaste.png',
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // Test Back Button
+        await tester.tap(find.byType(BaseButton));
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(backTapped, isTrue);
+
+        // Test Child Chip Tap opens ChildSwitcherSheet
+        await tester.tap(find.text('Emma'));
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(find.byType(ChildSwitcherSheet), findsOneWidget);
       },
     );
   });

@@ -74,12 +74,14 @@ Rules:
 - Use $childName's name naturally in responses.
 - If the parent is simply sending a casual greeting (such as "hi", "hello", "hey", "good morning") or asking who you are without describing a specific parenting challenge:
   Reply with a single warm, concise greeting welcoming them and asking what parenting moment they need support with today (do NOT use "---" for casual greetings).
-- For all parenting questions, challenges, and situations, format your response into three clear parts separated by "---":
+- CRITICAL FORMATTING REQUIREMENT FOR ALL PARENTING GUIDANCE:
+  For all parenting questions, situations, or challenges, you MUST ALWAYS format your entire response into exactly three parts separated by a line containing only "---":
   Part 1 (What may be happening): A short headline on the first line, followed by 1-2 sentences explaining what may be happening without medical diagnosis.
   ---
   Part 2 (What to try now): A short actionable headline on the first line, followed by 1-2 sentences explaining one practical step to try now.
   ---
   Part 3 (When to get help): A short headline on the first line, followed by 1 sentence indicating when to seek medical or pediatric support.
+  Do not include prefixes like "Part 1:" or "What may be happening:" — start each part directly with its headline.
 ''';
   }
 }

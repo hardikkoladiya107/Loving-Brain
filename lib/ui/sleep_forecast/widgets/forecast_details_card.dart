@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/core/energy_bridge_sleep_calculator.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
 import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_state.dart';
-import 'package:loving_brain/ui/tonights_plan/tonights_plan_screen.dart';
 
 class ForecastDetailsCard extends StatelessWidget {
   const ForecastDetailsCard({super.key});
@@ -92,10 +93,7 @@ class ForecastDetailsCard extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const TonightsPlanScreen()),
-              );
+              context.push(RoutePaths.tonightsPlan);
             },
             child: "TONIGHT’S PLAN".appText(
               color: secondaryColor,
@@ -125,10 +123,7 @@ class ForecastDetailsCard extends StatelessWidget {
   Widget _buildPlanItem(BuildContext context, String title, String subtitle) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const TonightsPlanScreen()),
-        );
+        context.push(RoutePaths.tonightsPlan);
       },
       borderRadius: BorderRadius.circular(16.r),
       child: Container(
