@@ -406,62 +406,47 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
           const Spacer(),
           Row(
             children: [
-              Material(
-                color: Colors.transparent,
-                child: Ink(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(30),
-                    onTap: () {
-                      context.push(RoutePaths.brainyHistory);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      child: "History".appText(
-                        fontSize: 14.sp,
-                        color: greyColor9,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+              _topActionButton(
+                label: 'History',
+                onTap: () {
+                  context.push(RoutePaths.brainyHistory);
+                },
               ),
               8.spaceW,
-              Material(
-                color: Colors.transparent,
-                child: Ink(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(30),
-                    onTap: () {
-                      context.push(RoutePaths.brainySaved);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      child: "Saved".appText(
-                        fontSize: 14.sp,
-                        color: greyColor9,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+              _topActionButton(
+                label: 'Saved',
+                onTap: () {
+                  context.push(RoutePaths.brainySaved);
+                },
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _topActionButton({
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        constraints: BoxConstraints(minHeight: 44.h, minWidth: 72.w),
+        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30.r),
+        ),
+        child: label.appText(
+          fontSize: 14,
+          color: greyColor9,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+        ),
       ),
     );
   }

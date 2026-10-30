@@ -91,10 +91,16 @@ class TodayHeader extends StatelessWidget {
                 await context.push(RoutePaths.parentProfile);
                 todayCubit.init();
               },
-              child: CircleAvatar(
-                radius: 20.r,
-                backgroundColor: primaryColor,
-                child: Icon(Icons.face, size: 20.sp, color: Colors.white),
+              child: SizedBox(
+                width: 48.w,
+                height: 48.w,
+                child: Center(
+                  child: CircleAvatar(
+                    radius: 20.r,
+                    backgroundColor: primaryColor,
+                    child: Icon(Icons.face, size: 20.sp, color: Colors.white),
+                  ),
+                ),
               ),
             ),
           ],

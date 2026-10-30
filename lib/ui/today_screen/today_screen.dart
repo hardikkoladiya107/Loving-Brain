@@ -108,138 +108,151 @@ class _TodayScreenState extends State<TodayScreen> {
               ),
               SafeArea(
                 bottom: false,
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 16.h,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const TodayHeader(),
-                      if (_isOffline) ...[
-                        16.spaceH,
-                        const OfflineBanner(isVisible: true),
-                      ],
-                      SizedBox(height: 24.h),
-                      if (state.isLoading && state.activeChildId.isEmpty) ...[
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 48.h),
-                          child: const Center(child: AppLoadingIndicator()),
-                        ),
-                      ] else if (state.activeChildId.isEmpty) ...[
-                        _buildNoChildCard(context),
-                      ] else if (state.mode == TodayMode.normal) ...[
-                        const MainCard(),
-                        SizedBox(height: 24.h),
-                        if (state.hasMultiDayPatterns) ...[
-                          const NoticedRow(),
-                          SizedBox(height: 24.h),
-                          const NiceWorkCard(),
-                          SizedBox(height: 24.h),
-                        ] else ...[
-                          const StillLearningPatternsCard(),
-                          SizedBox(height: 24.h),
-                        ],
-                        const ActionGrid(),
-                      ] else if (state.mode == TodayMode.newParent) ...[
-                        if (TodayLogRepo.instance
-                                .canCurrentCaregiverViewHealth() &&
-                            (state.forecastSubtitle.toLowerCase().contains(
-                                  'fever',
-                                ) ||
-                                state.forecastSubtitle.toLowerCase().contains(
-                                  'health',
-                                ) ||
-                                state.forecastSubtitle.toLowerCase().contains(
-                                  'rest',
-                                ))) ...[
-                          const HeadsUpCard(),
-                          SizedBox(height: 16.h),
-                        ],
-                        const AddSleepCard(),
-                        SizedBox(height: 16.h),
-                        AppButton(
-                          title: "Add behaviour update",
-                          onTap: () {
-                            showAddTantrumsUpdateSheet(context);
-                          },
-                          backgroundColor: Colors.white,
-                          textColor: greyColor9,
-                        ),
-                        SizedBox(height: 16.h),
-                        AppButton(
-                          title: "Daily quick log",
-                          onTap: () {
-                            showAddBehaviourSheet(context);
-                          },
-                          backgroundColor: Colors.white,
-                          textColor: greyColor9,
-                        ),
-                        SizedBox(height: 24.h),
-                        const ActionGrid(),
-                        SizedBox(height: 16.h),
-                        AppButton(
-                          title: "Ask Brainy",
-                          onTap: () {
-                            context.push(
-                              RoutePaths.brainyConversation,
-                              extra: BrainyEntryContext.gettingStarted(),
-                            );
-                          },
-                          backgroundColor: Colors.transparent,
-                          textColor: greyColor9,
-                        ),
-                      ] else if (state.mode == TodayMode.importantHeadsUp) ...[
-                        const HeadsUpCard(),
-                        SizedBox(height: 16.h),
-                        AppButton(
-                          title: "View support",
-                          onTap: () {
-                            showViewSupportSheet(
-                              context,
-                              daysCount: state.loggedDaysCount,
-                            );
-                          },
-                          backgroundColor: Colors.white,
-                          textColor: greyColor9,
-                        ),
-                        SizedBox(height: 16.h),
-                        AppButton(
-                          title: "Ask Brainy",
-                          onTap: () {
-                            context.push(
-                              RoutePaths.brainyConversation,
-                              extra: BrainyEntryContext.fromHeadsUp(
-                                headline: 'A harder evening may be more likely',
-                                reason: state.forecastSubtitle.isNotEmpty
-                                    ? state.forecastSubtitle
-                                    : (state.sleepForecastReason.isNotEmpty
-                                          ? state.sleepForecastReason
-                                          : 'Recent sleep and behaviour patterns'),
-                                windowStart: state.sleepForecastStart,
-                                windowEnd: state.sleepForecastEnd,
-                                confidenceLabel:
-                                    state.confidenceLevel.isNotEmpty
-                                    ? state.confidenceLevel
-                                    : 'moderate',
-                                childName: state.childName,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 0),
+                      child: const TodayHeader(),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 16.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (_isOffline) ...[
+                              16.spaceH,
+                              const OfflineBanner(isVisible: true),
+                            ],
+                            SizedBox(height: 24.h),
+                            if (state.isLoading &&
+                                state.activeChildId.isEmpty) ...[
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 48.h),
+                                child: const Center(
+                                  child: AppLoadingIndicator(),
+                                ),
                               ),
-                            );
-                          },
-                          backgroundColor: Colors.transparent,
-                          textColor: greyColor9,
+                            ] else if (state.activeChildId.isEmpty) ...[
+                              _buildNoChildCard(context),
+                            ] else if (state.mode == TodayMode.normal) ...[
+                              const MainCard(),
+                              SizedBox(height: 24.h),
+                              if (state.hasMultiDayPatterns) ...[
+                                const NoticedRow(),
+                                SizedBox(height: 24.h),
+                                const NiceWorkCard(),
+                                SizedBox(height: 24.h),
+                              ] else ...[
+                                const StillLearningPatternsCard(),
+                                SizedBox(height: 24.h),
+                              ],
+                              const ActionGrid(),
+                            ] else if (state.mode == TodayMode.newParent) ...[
+                              if (TodayLogRepo.instance
+                                      .canCurrentCaregiverViewHealth() &&
+                                  (state.forecastSubtitle
+                                          .toLowerCase()
+                                          .contains('fever') ||
+                                      state.forecastSubtitle
+                                          .toLowerCase()
+                                          .contains('health') ||
+                                      state.forecastSubtitle
+                                          .toLowerCase()
+                                          .contains('rest'))) ...[
+                                const HeadsUpCard(),
+                                SizedBox(height: 16.h),
+                              ],
+                              const AddSleepCard(),
+                              SizedBox(height: 16.h),
+                              AppButton(
+                                title: "Add behaviour update",
+                                onTap: () {
+                                  showAddTantrumsUpdateSheet(context);
+                                },
+                                backgroundColor: Colors.white,
+                                textColor: greyColor9,
+                              ),
+                              SizedBox(height: 16.h),
+                              AppButton(
+                                title: "Daily quick log",
+                                onTap: () {
+                                  showAddBehaviourSheet(context);
+                                },
+                                backgroundColor: Colors.white,
+                                textColor: greyColor9,
+                              ),
+                              SizedBox(height: 24.h),
+                              const ActionGrid(),
+                              SizedBox(height: 16.h),
+                              AppButton(
+                                title: "Ask Brainy",
+                                onTap: () {
+                                  context.push(
+                                    RoutePaths.brainyConversation,
+                                    extra: BrainyEntryContext.gettingStarted(),
+                                  );
+                                },
+                                backgroundColor: Colors.transparent,
+                                textColor: greyColor9,
+                              ),
+                            ] else if (state.mode ==
+                                TodayMode.importantHeadsUp) ...[
+                              const HeadsUpCard(),
+                              SizedBox(height: 16.h),
+                              AppButton(
+                                title: "View support",
+                                onTap: () {
+                                  showViewSupportSheet(
+                                    context,
+                                    daysCount: state.loggedDaysCount,
+                                  );
+                                },
+                                backgroundColor: Colors.white,
+                                textColor: greyColor9,
+                              ),
+                              SizedBox(height: 16.h),
+                              AppButton(
+                                title: "Ask Brainy",
+                                onTap: () {
+                                  context.push(
+                                    RoutePaths.brainyConversation,
+                                    extra: BrainyEntryContext.fromHeadsUp(
+                                      headline:
+                                          'A harder evening may be more likely',
+                                      reason: state.forecastSubtitle.isNotEmpty
+                                          ? state.forecastSubtitle
+                                          : (state
+                                                    .sleepForecastReason
+                                                    .isNotEmpty
+                                                ? state.sleepForecastReason
+                                                : 'Recent sleep and behaviour patterns'),
+                                      windowStart: state.sleepForecastStart,
+                                      windowEnd: state.sleepForecastEnd,
+                                      confidenceLabel:
+                                          state.confidenceLevel.isNotEmpty
+                                          ? state.confidenceLevel
+                                          : 'moderate',
+                                      childName: state.childName,
+                                    ),
+                                  );
+                                },
+                                backgroundColor: Colors.transparent,
+                                textColor: greyColor9,
+                              ),
+                              if (state.hasMultiDayPatterns) ...[
+                                SizedBox(height: 24.h),
+                                const NoticedRow(),
+                              ],
+                              SizedBox(height: 24.h),
+                              const ActionGrid(),
+                            ],
+                            SizedBox(height: 100.h),
+                          ],
                         ),
-                        if (state.hasMultiDayPatterns) ...[
-                          SizedBox(height: 24.h),
-                          const NoticedRow(),
-                        ],
-                        SizedBox(height: 24.h),
-                        const ActionGrid(),
-                      ],
-                      SizedBox(height: 100.h),
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
