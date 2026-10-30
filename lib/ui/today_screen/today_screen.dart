@@ -89,17 +89,19 @@ class _TodayScreenState extends State<TodayScreen> {
               Positioned(
                 left: -283,
                 top: -283,
-                child: Container(
-                  width: 450,
-                  height: 450,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        cardColor4.withValues(alpha: 0.5),
-                        cardColor4.withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
+                child: IgnorePointer(
+                  child: Container(
+                    width: 450,
+                    height: 450,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          cardColor4.withValues(alpha: 0.5),
+                          cardColor4.withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
                     ),
                   ),
                 ),

@@ -25,6 +25,7 @@ class TodayHeader extends StatelessWidget {
           children: [
             Flexible(
               child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () async {
                   if (state.activeChildId.isEmpty) {
                     final TodayCubit todayCubit = context.read<TodayCubit>();
@@ -84,6 +85,7 @@ class TodayHeader extends StatelessWidget {
             ),
             SizedBox(width: 12.w),
             GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () async {
                 final TodayCubit todayCubit = context.read<TodayCubit>();
                 await context.push(RoutePaths.parentProfile);
