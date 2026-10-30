@@ -10,6 +10,9 @@ class CoParentInvitationHelpers {
   /// Firestore status after the co-parent successfully accepts.
   static const String statusAccepted = 'ACCEPTED';
 
+  /// Firestore status after the invited person declines.
+  static const String statusRejected = 'REJECTED';
+
   /// Base URL embedded in invitation emails (must match Android manifest + iOS entitlements).
   static const String invitationBaseUrl = 'https://www.lovingbrain.com';
 
@@ -111,6 +114,32 @@ class CoParentInvitationHelpers {
         .map((String id) => id.trim())
         .where((String id) => id.isNotEmpty)
         .join(',');
+  }
+
+  /// True when the link must not be opened again.
+  ///
+  /// Accepted, rejected, cancelled, and past [expiresAt] are all closed.
+  /// An empty [status] is left open so a preview that has not loaded yet
+  /// is not treated as expired.
+  static bool isInvitationClosed({
+    required String status,
+    required String expiresAt,
+    DateTime? now,
+  }) {
+    final String normalized = status.trim().toUpperCase();
+    if (normalized.isNotEmpty && normalized != statusRequested) {
+      return true;
+    }
+    final String rawExpiry = expiresAt.trim();
+    if (rawExpiry.isEmpty) {
+      return false;
+    }
+    final DateTime? expires = DateTime.tryParse(rawExpiry);
+    if (expires == null) {
+      return false;
+    }
+    final DateTime current = now ?? DateTime.now();
+    return expires.isBefore(current);
   }
 
   /// Validates whether the current user may accept an invitation.

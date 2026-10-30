@@ -14,6 +14,7 @@ const {
   permissionsForRole,
   buildChildrenCsv,
   nextDefaultChild,
+  inviteOpenBlockReason,
 } = require("./familyAccessHelpers");
 
 const INVITE_COLLECTION = "co-parent-invitation";
@@ -29,6 +30,8 @@ const SENDER_EMAIL = "hardikkoladiya107@gmail.com";
 const SENDER_NAME = "Loving Brain";
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 const INVITE_BASE_URL = "https://www.lovingbrain.com/invite";
+const INVITE_LINK_EXPIRED_MESSAGE =
+  "This invitation link is invalid or has expired.";
 
 const CHILD_SUBCOLLECTIONS = [
   "sleep_logs",
@@ -353,6 +356,9 @@ async function getInvitationPreview(db, invitationId, requesterUid) {
     throw new HttpsError("not-found", "Invitation not found.");
   }
   const data = snap.data() || {};
+  if (inviteOpenBlockReason(data)) {
+    throw new HttpsError("failed-precondition", INVITE_LINK_EXPIRED_MESSAGE);
+  }
   let inviterName = "A parent";
   if (data.from_uid) {
     const fromSnap = await db.collection(USERS_COLLECTION).doc(data.from_uid).get();
@@ -419,16 +425,9 @@ async function acceptInvitation(db, params) {
     ) {
       return {status: STATUS_ACCEPTED, invitationId};
     }
-    throw new HttpsError("failed-precondition", "Invitation already used.");
   }
-  if (invite.status !== STATUS_REQUESTED) {
-    throw new HttpsError("failed-precondition", "Invitation is no longer valid.");
-  }
-  if (invite.expires_at) {
-    const expiresMs = Date.parse(invite.expires_at);
-    if (!Number.isNaN(expiresMs) && expiresMs < Date.now()) {
-      throw new HttpsError("failed-precondition", "Invitation has expired.");
-    }
+  if (inviteOpenBlockReason(invite)) {
+    throw new HttpsError("failed-precondition", INVITE_LINK_EXPIRED_MESSAGE);
   }
 
   const invitedEmail = normalizeEmail(invite.to_parent);
@@ -546,8 +545,8 @@ async function rejectInvitation(db, params) {
   const snap = await inviteRef.get();
   if (!snap.exists) throw new HttpsError("not-found", "Invitation not found.");
   const invite = snap.data() || {};
-  if (invite.status !== STATUS_REQUESTED) {
-    throw new HttpsError("failed-precondition", "Invitation is no longer pending.");
+  if (inviteOpenBlockReason(invite)) {
+    throw new HttpsError("failed-precondition", INVITE_LINK_EXPIRED_MESSAGE);
   }
   const invitedEmail = normalizeEmail(invite.to_parent);
   const loggedEmail = normalizeEmail(userEmail);

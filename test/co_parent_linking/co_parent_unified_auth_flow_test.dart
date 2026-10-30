@@ -74,6 +74,21 @@ void main() {
       );
     });
 
+    test('masked invite email is not used to prefill signup', () async {
+      await PendingInvitationManager.save(
+        invitationId: 'inv_masked',
+        invitationEmail: 'u***@yopmail.com',
+      );
+
+      expect(PendingInvitationManager.hasPending(), isTrue);
+      expect(PendingInvitationManager.getId(), 'inv_masked');
+      expect(PendingInvitationManager.getEmail(), isEmpty);
+      expect(
+        PendingInvitationManager.matchesEmail('usertest11@yopmail.com'),
+        isFalse,
+      );
+    });
+
     test('matchesEmail is false when logged email is empty', () async {
       await PendingInvitationManager.save(
         invitationId: 'inv_empty',

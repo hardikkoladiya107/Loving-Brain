@@ -26,7 +26,11 @@ import 'bloc/onboarding_state.dart';
 import 'widgets/onboarding_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({super.key, this.addAnotherChild = false});
+
+  /// Reuses the child pages (little one, usual day, hardest times)
+  /// for a parent who is already onboarded.
+  final bool addAnotherChild;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -38,6 +42,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   late final TextEditingController _childNameController;
 
   static const int _totalPages = 6;
+  static const int _childFlowStartPage = 3;
   static const Color _accentPurple = Color(0xFF6560CA);
   static const Color _chipSelectedBg = Color(0xFFEAE9FD);
   static const Color _chipUnselectedText = Color(0xFFA1A6AB);
@@ -80,31 +85,46 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     'Not sure yet',
   ];
 
+  late final OnboardingCubit _cubit;
+
+  int get _flowPageCount => widget.addAnotherChild ? 3 : _totalPages;
+
+  int get _firstFlowPage => widget.addAnotherChild ? _childFlowStartPage : 0;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    final OnboardingCubit cubit = context.read<OnboardingCubit>();
-    cubit.init();
-    _nameController = TextEditingController(text: cubit.state.parentName);
-    _childNameController = TextEditingController(text: cubit.state.childName);
+    _cubit = context.read<OnboardingCubit>();
+    if (widget.addAnotherChild) {
+      _cubit.beginAddAnotherChild();
+    } else {
+      _cubit.init();
+    }
+    _nameController = TextEditingController(text: _cubit.state.parentName);
+    _childNameController = TextEditingController(text: _cubit.state.childName);
 
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
-      if (_nameController.text != cubit.state.parentName) {
-        _nameController.text = cubit.state.parentName;
+      if (_nameController.text != _cubit.state.parentName) {
+        _nameController.text = _cubit.state.parentName;
       }
-      if (_childNameController.text != cubit.state.childName) {
-        _childNameController.text = cubit.state.childName;
+      if (_childNameController.text != _cubit.state.childName) {
+        _childNameController.text = _cubit.state.childName;
       }
-      if (cubit.state.currentPage > 0 && _pageController.hasClients) {
-        _pageController.jumpToPage(cubit.state.currentPage);
+      if (!widget.addAnotherChild &&
+          _cubit.state.currentPage > 0 &&
+          _pageController.hasClients) {
+        _pageController.jumpToPage(_cubit.state.currentPage);
       }
     });
   }
 
   @override
   void dispose() {
+    if (widget.addAnotherChild && !_cubit.isClosed) {
+      _cubit.reset();
+    }
     _pageController.dispose();
     _nameController.dispose();
     _childNameController.dispose();
@@ -112,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _onNextTap(OnboardingState state) {
-    final bool isValid = context.read<OnboardingCubit>().validateCurrentPage();
+    final bool isValid = _cubit.validateCurrentPage();
 
     if (!isValid) return;
 
@@ -121,17 +141,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         duration: const Duration(milliseconds: 320),
         curve: Curves.easeOut,
       );
+    } else if (widget.addAnotherChild) {
+      _cubit.addAnotherChild();
     } else {
-      context.read<OnboardingCubit>().completeOnboarding();
+      _cubit.completeOnboarding();
     }
   }
 
   Future<void> _onBackTap(OnboardingState state) async {
-    if (state.currentPage > 0) {
+    if (state.currentPage > _firstFlowPage) {
       _pageController.previousPage(
         duration: const Duration(milliseconds: 320),
         curve: Curves.easeOut,
       );
+    } else if (widget.addAnotherChild) {
+      if (context.canPop()) {
+        context.pop();
+      }
     } else if (context.canPop()) {
       context.pop();
     } else {
@@ -1383,110 +1409,100 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final TextEditingController codeController = TextEditingController();
     showDialog<void>(
       context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (BuildContext dialogContext) {
         return Dialog(
           backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24.r),
           ),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 24.h, 20.w, 20.h),
+            padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 20.h),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 48.w,
-                    height: 48.w,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEAE9FD),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.diversity_1_rounded,
-                      color: _accentPurple,
-                      size: 24.sp,
-                    ),
+              children: <Widget>[
+                Container(
+                  width: 52.w,
+                  height: 52.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF3F2FE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.diversity_1_rounded,
+                    color: _accentPurple,
+                    size: 26.sp,
                   ),
                 ),
                 16.spaceH,
-                Center(
-                  child: "Enter Invitation Code".appText(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    fraunces: true,
-                    color: greyColor9,
-                  ),
+                "Enter Invitation Code".appText(
+                  fontSize: 20.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                  textAlign: TextAlign.center,
                 ),
-                8.spaceH,
+                10.spaceH,
                 "If another parent invited you to care for their child, paste the invite code or link from your email."
                     .appText(
-                      fontSize: 13.sp,
+                      fontSize: 14.sp,
                       color: greyColor,
                       textAlign: TextAlign.center,
                       height: 1.4,
                     ),
-                18.spaceH,
+                20.spaceH,
                 AppTextField(
                   controller: codeController,
                   hint: "e.g. inv_abc123 or invite link",
-                  border: Border.all(color: _accentPurple, width: 1.2),
+                  border: Border.all(color: const Color(0xFFE9E2DC)),
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 20.spaceH,
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppButton(
-                        height: 44.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Cancel',
-                        backgroundColor: const Color(0xFFF8F5F2),
-                        borderColor: const Color(0xFFE9E2DC),
-                        textColor: greyColor9,
-                        onTap: () => Navigator.pop(dialogContext),
-                      ),
-                    ),
-                    12.spaceW,
-                    Expanded(
-                      child: AppButton(
-                        height: 44.h,
-                        padding: EdgeInsets.zero,
-                        title: 'Join Family',
-                        backgroundColor: _accentPurple,
-                        textColor: Colors.white,
-                        onTap: () async {
-                          final String rawInput = codeController.text.trim();
-                          if (rawInput.isEmpty) return;
+                AppButton(
+                  height: 48.h,
+                  padding: EdgeInsets.zero,
+                  title: 'Join Family',
+                  backgroundColor: primaryColor,
+                  borderColor: primaryColor,
+                  textColor: Colors.white,
+                  onTap: () async {
+                    final String rawInput = codeController.text.trim();
+                    if (rawInput.isEmpty) return;
 
-                          String inviteId = rawInput;
-                          if (rawInput.contains('/')) {
-                            inviteId = rawInput.split('/').last.trim();
-                          }
+                    String inviteId = rawInput;
+                    if (rawInput.contains('/')) {
+                      inviteId = rawInput.split('/').last.trim();
+                    }
 
-                          Navigator.pop(dialogContext);
-                          await PendingInvitationManager.save(
-                            invitationId: inviteId,
-                            invitationEmail:
-                                preferences.getUserModel()?.email ?? '',
-                          );
-                          if (!context.mounted) return;
-                          context.push(
-                            RoutePaths.inviteRespond,
-                            extra: <String, dynamic>{'invitationId': inviteId},
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    Navigator.pop(dialogContext);
+                    await PendingInvitationManager.save(
+                      invitationId: inviteId,
+                      invitationEmail: preferences.getUserModel()?.email ?? '',
+                    );
+                    if (!context.mounted) return;
+                    context.push(
+                      RoutePaths.inviteRespond,
+                      extra: <String, dynamic>{'invitationId': inviteId},
+                    );
+                  },
+                ),
+                12.spaceH,
+                AppButton(
+                  height: 48.h,
+                  padding: EdgeInsets.zero,
+                  title: 'Cancel',
+                  backgroundColor: const Color(0xFFF8F5F2),
+                  borderColor: const Color(0xFFE9E2DC),
+                  textColor: greyColor9,
+                  onTap: () => Navigator.pop(dialogContext),
                 ),
               ],
             ),
           ),
         );
       },
-    );
+    ).whenComplete(codeController.dispose);
   }
 
   // ---------------------------------------------------------------------------
@@ -1649,6 +1665,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       listener: (BuildContext context, OnboardingState state) {
         state.completeStatus.whenOrNull(
           data: (dynamic _) {
+            if (widget.addAnotherChild) {
+              if (context.canPop()) {
+                context.pop(true);
+              }
+              return;
+            }
             context.push(RoutePaths.familySnapshot);
           },
           error: (Exception exception) {
@@ -1693,8 +1715,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                     // 6-segment linear progress indicator
                     OnboardingPageIndicator(
-                      totalPages: _totalPages,
-                      currentPage: state.currentPage,
+                      totalPages: _flowPageCount,
+                      currentPage: widget.addAnotherChild
+                          ? state.currentPage - _childFlowStartPage
+                          : state.currentPage,
                       controller: _pageController,
                       activeColor: _accentPurple,
                       onSegmentTap: (int index) {
@@ -1712,16 +1736,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         controller: _pageController,
                         physics: const NeverScrollableScrollPhysics(),
                         onPageChanged: (int index) {
-                          context.read<OnboardingCubit>().onPageChanged(index);
+                          final int page = widget.addAnotherChild
+                              ? index + _childFlowStartPage
+                              : index;
+                          _cubit.onPageChanged(page);
                         },
-                        children: <Widget>[
-                          _buildPage1(state),
-                          _buildPage2(state),
-                          _buildPage3(state),
-                          _buildPage4(state),
-                          _buildPage5(state),
-                          _buildPage6(state),
-                        ],
+                        children: widget.addAnotherChild
+                            ? <Widget>[
+                                _buildPage4(state),
+                                _buildPage5(state),
+                                _buildPage6(state),
+                              ]
+                            : <Widget>[
+                                _buildPage1(state),
+                                _buildPage2(state),
+                                _buildPage3(state),
+                                _buildPage4(state),
+                                _buildPage5(state),
+                                _buildPage6(state),
+                              ],
                       ),
                     ),
 
@@ -1729,7 +1762,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     16.spaceH,
                     AppButton(
                       onTap: () => _onNextTap(state),
-                      title: "Continue",
+                      title:
+                          widget.addAnotherChild &&
+                              state.currentPage >= _totalPages - 1
+                          ? "Add child"
+                          : "Continue",
                       isLoading: state.completeStatus.maybeWhen(
                         loading: () => true,
                         orElse: () => false,

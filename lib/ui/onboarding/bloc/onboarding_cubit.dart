@@ -16,13 +16,34 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   LocationDataModel? _locationData;
   LocationDataModel? get locationData => _locationData;
+  bool _addAnotherChild = false;
 
   void reset() {
+    _addAnotherChild = false;
     _locationData = null;
     emit(const OnboardingState());
   }
 
+  /// Child-only flow for a parent who already finished onboarding.
+  /// Starts on the little-one page and does not touch the onboarding draft.
+  void beginAddAnotherChild() {
+    _addAnotherChild = true;
+    final UserModel? user = preferences.getUserModel();
+    _locationData =
+        user?.locationData ?? LocationDataModel.tryParse(user?.location);
+    emit(
+      OnboardingState(
+        currentPage: 3,
+        parentName: user?.parentName ?? '',
+        parentRole: user?.relationshipToChild ?? '',
+        preferredLanguage: user?.preferredLanguage ?? '',
+        location: _locationData?.formatted ?? (user?.location ?? ''),
+      ),
+    );
+  }
+
   void init() {
+    _addAnotherChild = false;
     final UserModel? user = preferences.getUserModel();
     final String? parentName = user?.parentName?.trim();
     final String initialParentName =
@@ -189,7 +210,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void _persistDraft(OnboardingState next) {
-    if (next.completeStatus is Data) {
+    if (_addAnotherChild || next.completeStatus is Data) {
       return;
     }
     final UserModel? user = preferences.getUserModel();
@@ -463,6 +484,81 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     changeProps(possibleTriggers: updated, possibleTriggersError: "");
   }
 
+  Future<void> addAnotherChild() async {
+    changeProps(completeStatus: const ApiResultStatus.loading());
+    try {
+      final UserModel? user = preferences.getUserModel();
+      if (user == null || user.uid == null) {
+        throw Exception("User not found. Please log in again.");
+      }
+
+      final int ageInMonths = AgeUtils.resolvedAgeInMonths(
+        dob: state.childDob,
+        legacyAgeText: '',
+      );
+      final String computedChildAge = AgeUtils.ageLabelFromMonths(ageInMonths);
+      final LocationDataModel? resolvedLoc =
+          _locationData ?? LocationDataModel.tryParse(state.location);
+      final ChildModel childModel = _buildChildModel(
+        user: user,
+        computedChildAge: computedChildAge,
+        resolvedLoc: resolvedLoc,
+      );
+
+      final ApiResultStatus<UserModel> result = await AuthRepo.instance
+          .addChild(request: childModel.toJson());
+      if (result is Error<UserModel>) {
+        changeProps(completeStatus: result);
+        return;
+      }
+
+      emit(
+        const OnboardingState(completeStatus: ApiResultStatus.data(data: true)),
+      );
+    } catch (e) {
+      changeProps(
+        completeStatus: ApiResultStatus.error(error: Exception(e.toString())),
+      );
+    }
+  }
+
+  ChildModel _buildChildModel({
+    required UserModel user,
+    required String computedChildAge,
+    required LocationDataModel? resolvedLoc,
+    DocumentReference<Object?>? reference,
+  }) {
+    return ChildModel(
+      childName: state.childName.trim().isNotEmpty
+          ? state.childName.trim()
+          : null,
+      childDob: state.childDob,
+      childAge: computedChildAge.isNotEmpty ? computedChildAge : null,
+      childGender: state.childGender.isNotEmpty ? state.childGender : null,
+      relationshipToChild: state.parentRole.isNotEmpty
+          ? state.parentRole
+          : user.relationshipToChild,
+      parentReferenceIds: <String>[user.uid!],
+      primaryParentUid: user.uid,
+      reference: reference,
+      concerns: state.concerns,
+      primaryConcern: state.primaryConcern.isNotEmpty
+          ? state.primaryConcern
+          : (state.concerns.isNotEmpty ? state.concerns.first : null),
+      successGoal: state.successGoal.isNotEmpty ? state.successGoal : null,
+      usualWakeTime: state.usualWakeTime.isNotEmpty
+          ? state.usualWakeTime
+          : null,
+      usualBedtime: state.usualBedtime.isNotEmpty ? state.usualBedtime : null,
+      usualNaps: state.usualNaps.toString(),
+      nightWakings: state.nightWakings.isNotEmpty ? state.nightWakings : null,
+      difficultTimes: state.difficultTimes,
+      possibleTriggers: state.possibleTriggers,
+      location: state.location.isNotEmpty ? state.location : null,
+      locationData: resolvedLoc,
+    );
+  }
+
   Future<void> completeOnboarding() async {
     changeProps(completeStatus: const ApiResultStatus.loading());
     try {
@@ -484,33 +580,11 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       final DocumentReference<Map<String, dynamic>> childDoc = firestore
           .collection('children')
           .doc();
-      final ChildModel childModel = ChildModel(
-        childName: state.childName.trim().isNotEmpty
-            ? state.childName.trim()
-            : null,
-        childDob: state.childDob,
-        childAge: computedChildAge.isNotEmpty ? computedChildAge : null,
-        childGender: state.childGender.isNotEmpty ? state.childGender : null,
-        relationshipToChild: state.parentRole.isNotEmpty
-            ? state.parentRole
-            : null,
-        parentReferenceIds: <String>[user.uid!],
+      final ChildModel childModel = _buildChildModel(
+        user: user,
+        computedChildAge: computedChildAge,
+        resolvedLoc: resolvedLoc,
         reference: childDoc,
-        concerns: state.concerns,
-        primaryConcern: state.primaryConcern.isNotEmpty
-            ? state.primaryConcern
-            : (state.concerns.isNotEmpty ? state.concerns.first : null),
-        successGoal: state.successGoal.isNotEmpty ? state.successGoal : null,
-        usualWakeTime: state.usualWakeTime.isNotEmpty
-            ? state.usualWakeTime
-            : null,
-        usualBedtime: state.usualBedtime.isNotEmpty ? state.usualBedtime : null,
-        usualNaps: state.usualNaps.toString(),
-        nightWakings: state.nightWakings.isNotEmpty ? state.nightWakings : null,
-        difficultTimes: state.difficultTimes,
-        possibleTriggers: state.possibleTriggers,
-        location: state.location.isNotEmpty ? state.location : null,
-        locationData: resolvedLoc,
       );
       final Map<String, dynamic> childJson = childModel.toJson();
       childJson['primary_parent_uid'] = user.uid!;

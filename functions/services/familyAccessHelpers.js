@@ -134,6 +134,26 @@ function validateCreateInvite(input) {
 }
 
 /**
+ * Why an invite link must not be opened again.
+ * Accepted, rejected, cancelled, and past `expires_at` all count as expired.
+ * @param {object|null|undefined} invite
+ * @param {number} [nowMs]
+ * @return {string|null}
+ */
+function inviteOpenBlockReason(invite, nowMs) {
+  if (!invite) return "not-found";
+  const status = String(invite.status || "");
+  if (status !== "REQUESTED") return "expired";
+  if (invite.expires_at) {
+    const expiresMs = Date.parse(invite.expires_at);
+    if (!Number.isNaN(expiresMs) && expiresMs < (nowMs || Date.now())) {
+      return "expired";
+    }
+  }
+  return null;
+}
+
+/**
  * Validates accept-invite preconditions (pure).
  * @param {object} invite
  * @param {object} opts
@@ -228,6 +248,7 @@ module.exports = {
   buildChildrenCsv,
   nextDefaultChild,
   validateCreateInvite,
+  inviteOpenBlockReason,
   validateAcceptInvite,
   validateUnlinkCaregiver,
   parentIdsAfterAccept,

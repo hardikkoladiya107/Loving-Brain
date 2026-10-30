@@ -153,6 +153,47 @@ void main() {
     });
   });
 
+  group('CoParentInvitationHelpers.isInvitationClosed', () {
+    test('accepted and rejected invites are closed', () {
+      expect(
+        CoParentInvitationHelpers.isInvitationClosed(
+          status: CoParentInvitationHelpers.statusAccepted,
+          expiresAt: '',
+        ),
+        isTrue,
+      );
+      expect(
+        CoParentInvitationHelpers.isInvitationClosed(
+          status: CoParentInvitationHelpers.statusRejected,
+          expiresAt: '',
+        ),
+        isTrue,
+      );
+    });
+
+    test('pending invite past its expiry is closed', () {
+      expect(
+        CoParentInvitationHelpers.isInvitationClosed(
+          status: CoParentInvitationHelpers.statusRequested,
+          expiresAt: '2020-01-01T00:00:00.000Z',
+          now: DateTime.utc(2024, 1, 1),
+        ),
+        isTrue,
+      );
+    });
+
+    test('pending invite that has not expired stays open', () {
+      expect(
+        CoParentInvitationHelpers.isInvitationClosed(
+          status: CoParentInvitationHelpers.statusRequested,
+          expiresAt: '2099-01-01T00:00:00.000Z',
+          now: DateTime.utc(2024, 1, 1),
+        ),
+        isFalse,
+      );
+    });
+  });
+
   group('CoParentInvitationHelpers.validateInvitationForAccept', () {
     test('returns null for valid pending invitation', () {
       expect(

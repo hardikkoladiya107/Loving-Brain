@@ -9,6 +9,7 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/add_child/add_child_screen.dart';
 import 'package:loving_brain/ui/add_child/bloc/add_child_cubit.dart';
+import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/today_screen/sheets/child_switcher_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -105,14 +106,13 @@ void main() {
 
   group('AddChildScreen Widget Rendering Tests', () {
     testWidgets(
-      'Renders all fields, headers, suggested concerns, and Add child CTA',
+      'Reuses the onboarding child pages, starting with the little one',
       (WidgetTester tester) async {
         tester.view.physicalSize = const Size(389, 844);
         tester.view.devicePixelRatio = 1.0;
         addTearDown(() => tester.view.resetPhysicalSize());
 
-        final AddChildCubit cubit = AddChildCubit();
-        cubit.init();
+        final OnboardingCubit cubit = OnboardingCubit();
 
         await tester.pumpWidget(
           ScreenUtilInit(
@@ -120,7 +120,7 @@ void main() {
             minTextAdapt: true,
             splitScreenMode: true,
             builder: (BuildContext context, Widget? _) {
-              return BlocProvider<AddChildCubit>.value(
+              return BlocProvider<OnboardingCubit>.value(
                 value: cubit,
                 child: const MaterialApp(home: AddChildScreen()),
               );
@@ -130,16 +130,12 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 100));
 
-        expect(find.text('Add another child'), findsOneWidget);
+        expect(find.textContaining('little one'), findsOneWidget);
         expect(find.text("CHILD'S NAME"), findsOneWidget);
-        expect(find.text("DATE OF BIRTH"), findsOneWidget);
-        expect(find.text("COMMON ROUTINES & CONCERNS"), findsOneWidget);
-        expect(find.text("Bedtime resistance"), findsOneWidget);
-        expect(find.text("Night wakings"), findsOneWidget);
-        expect(find.text("LOCATION / TIME ZONE"), findsOneWidget);
-        expect(find.widgetWithText(AppButton, "Add child"), findsOneWidget);
-
-        cubit.close();
+        expect(find.text('DATE OF BIRTH'), findsOneWidget);
+        expect(find.text('GENDER'), findsOneWidget);
+        expect(find.widgetWithText(AppButton, 'Continue'), findsOneWidget);
+        expect(find.text('COMMON ROUTINES & CONCERNS'), findsNothing);
       },
     );
 

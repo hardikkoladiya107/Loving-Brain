@@ -8,6 +8,9 @@ class PendingInvitationManager {
   PendingInvitationManager._();
 
   /// Stores invitation id + invited email in SharedPreferences for post-login accept.
+  ///
+  /// A privacy-masked address such as `u***@yopmail.com` is not a real email,
+  /// so it is stored as empty and never used to prefill login or signup.
   static Future<void> save({
     required String invitationId,
     required String invitationEmail,
@@ -18,7 +21,7 @@ class PendingInvitationManager {
     );
     await preferences.putString(
       SharedPreference.pendingInvitationEmail,
-      invitationEmail,
+      _usableEmail(invitationEmail),
     );
   }
 
@@ -27,7 +30,18 @@ class PendingInvitationManager {
   }
 
   static String getEmail() {
-    return preferences.getString(SharedPreference.pendingInvitationEmail) ?? '';
+    final String stored =
+        preferences.getString(SharedPreference.pendingInvitationEmail) ?? '';
+    return _usableEmail(stored);
+  }
+
+  /// Drops masked preview addresses so they cannot be typed into a form.
+  static String _usableEmail(String email) {
+    final String trimmed = email.trim();
+    if (trimmed.contains('*')) {
+      return '';
+    }
+    return trimmed;
   }
 
   static bool hasPending() {

@@ -196,8 +196,17 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                                         controller: _emailController,
                                         keyboardType:
                                             TextInputType.emailAddress,
+                                        textCapitalization:
+                                            TextCapitalization.none,
                                         autocorrect: false,
-                                        enableSuggestions: false,
+                                        enableSuggestions: true,
+                                        autofillHints: const <String>[
+                                          AutofillHints.email,
+                                        ],
+                                        smartDashesType:
+                                            SmartDashesType.disabled,
+                                        smartQuotesType:
+                                            SmartQuotesType.disabled,
                                         onChanged: (String val) {
                                           cubit.updateEmail(val);
                                         },

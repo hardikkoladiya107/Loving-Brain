@@ -1,5 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
 
 import 'invite_respond_state.dart';
@@ -61,6 +64,21 @@ class InviteRespondCubit extends Cubit<InviteRespondState> {
     result.whenOrNull(
       data: (dynamic data) {
         if (data is Map) {
+          final String status = data['status']?.toString() ?? '';
+          final String expiresAt = data['expiresAt']?.toString() ?? '';
+          if (CoParentInvitationHelpers.isInvitationClosed(
+            status: status,
+            expiresAt: expiresAt,
+          )) {
+            changeProps(
+              isLoadingPreview: false,
+              status: status,
+              previewStatus: ApiResultStatus.error(
+                error: Exception(LocaleKeys.deepLinkInvitationInvalid.tr()),
+              ),
+            );
+            return;
+          }
           final List<dynamic> names = data['childNames'] is List
               ? data['childNames'] as List<dynamic>
               : <dynamic>[];

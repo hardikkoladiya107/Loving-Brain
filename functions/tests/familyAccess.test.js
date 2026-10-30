@@ -98,6 +98,31 @@ test("duplicate invite for same email and overlapping child is rejected", () => 
   assert.equal(err, "duplicate-invite");
 });
 
+test("accepted or rejected invite cannot be opened again", () => {
+  assert.equal(
+      familyAccess.inviteOpenBlockReason({status: "ACCEPTED"}),
+      "expired",
+  );
+  assert.equal(
+      familyAccess.inviteOpenBlockReason({status: "REJECTED"}),
+      "expired",
+  );
+  assert.equal(
+      familyAccess.inviteOpenBlockReason({
+        status: "REQUESTED",
+        expires_at: "2020-01-01T00:00:00.000Z",
+      }, Date.parse("2024-01-01")),
+      "expired",
+  );
+  assert.equal(
+      familyAccess.inviteOpenBlockReason({
+        status: "REQUESTED",
+        expires_at: "2099-01-01T00:00:00.000Z",
+      }, Date.parse("2024-01-01")),
+      null,
+  );
+});
+
 test("expired invite cannot be accepted", () => {
   const err = familyAccess.validateAcceptInvite(
       {

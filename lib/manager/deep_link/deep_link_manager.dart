@@ -77,16 +77,18 @@ class DeepLinkManager {
         .getInvitationPreview(invitationId: invitationId);
 
     String invitedEmail = '';
+    String maskedEmail = '';
+    String inviteStatus = '';
+    String expiresAt = '';
     bool previewOk = false;
     previewResult.whenOrNull(
       data: (dynamic data) {
         if (data is Map) {
           previewOk = true;
           invitedEmail = (data['toParent']?.toString() ?? '').trim();
-          if (invitedEmail.isEmpty) {
-            invitedEmail = (data['invitedEmailMasked']?.toString() ?? '')
-                .trim();
-          }
+          maskedEmail = (data['invitedEmailMasked']?.toString() ?? '').trim();
+          inviteStatus = (data['status']?.toString() ?? '').trim();
+          expiresAt = (data['expiresAt']?.toString() ?? '').trim();
         }
       },
       error: (Exception error) {
@@ -94,6 +96,15 @@ class DeepLinkManager {
       },
     );
     if (!previewOk) {
+      return;
+    }
+
+    if (CoParentInvitationHelpers.isInvitationClosed(
+      status: inviteStatus,
+      expiresAt: expiresAt,
+    )) {
+      await PendingInvitationManager.clear();
+      _showError(LocaleKeys.deepLinkInvitationInvalid.tr());
       return;
     }
 
@@ -143,9 +154,12 @@ class DeepLinkManager {
     if (ctx != null && ctx.mounted) {
       GoRouter.of(ctx).go(RoutePaths.register);
     }
+    final String messageEmail = invitedEmail.isNotEmpty
+        ? invitedEmail
+        : maskedEmail;
     _showInfo(
       LocaleKeys.deepLinkPleaseLoginWithEmail.tr(
-        namedArgs: <String, String>{'email': invitedEmail},
+        namedArgs: <String, String>{'email': messageEmail},
       ),
     );
   }
