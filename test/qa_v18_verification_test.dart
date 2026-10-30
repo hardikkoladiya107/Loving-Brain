@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/model/child_model.dart';
@@ -9,6 +12,7 @@ import 'package:loving_brain/repo/today_log_repo.dart';
 import 'package:loving_brain/ui/family_menu/bloc/family_menu_cubit.dart';
 import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -236,6 +240,51 @@ void main() {
         expect(todayCubit.state.activeChildId, '');
 
         await todayCubit.close();
+      },
+    );
+
+    testWidgets(
+      'Sleep update sheet auto-updates NAP STARTED & ENDED when fell asleep and woke up times are set',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(389, 844);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() => tester.view.resetPhysicalSize());
+
+        final TodayCubit cubit = TodayCubit();
+
+        await tester.pumpWidget(
+          BlocProvider<TodayCubit>.value(
+            value: cubit,
+            child: ScreenUtilInit(
+              designSize: const Size(389, 844),
+              minTextAdapt: true,
+              splitScreenMode: true,
+              builder: (BuildContext context, Widget? _) {
+                return const MaterialApp(
+                  home: Scaffold(body: AddSleepUpdateSheet()),
+                );
+              },
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // Initially placeholder is visible
+        expect(find.text('HH:MM AM - HH:MM PM'), findsOneWidget);
+
+        // Set fell asleep time
+        cubit.setFellAsleepTime('10:53 pm');
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(find.text('10:53 pm \u2013 HH:MM'), findsOneWidget);
+
+        // Set woke up time
+        cubit.setWokeUpTime('10:53 pm');
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(find.text('10:53 pm \u2013 10:53 pm'), findsOneWidget);
+
+        await cubit.close();
       },
     );
   });

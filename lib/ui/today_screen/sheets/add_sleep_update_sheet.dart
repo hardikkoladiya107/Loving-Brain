@@ -186,12 +186,14 @@ class AddSleepUpdateSheet extends StatelessWidget {
       },
       builder: (BuildContext context, TodayState state) {
         String? napTimeStr;
-        if (state.napStartTime != null && state.napEndTime != null) {
-          napTimeStr = "${state.napStartTime} \u2013 ${state.napEndTime}";
-        } else if (state.napStartTime != null) {
-          napTimeStr = "${state.napStartTime} \u2013 HH:MM";
-        } else if (state.napEndTime != null) {
-          napTimeStr = "HH:MM \u2013 ${state.napEndTime}";
+        final String? start = state.fellAsleepTime ?? state.napStartTime;
+        final String? end = state.wokeUpTime ?? state.napEndTime;
+        if (start != null && end != null) {
+          napTimeStr = "$start \u2013 $end";
+        } else if (start != null) {
+          napTimeStr = "$start \u2013 HH:MM";
+        } else if (end != null) {
+          napTimeStr = "HH:MM \u2013 $end";
         }
 
         return Padding(

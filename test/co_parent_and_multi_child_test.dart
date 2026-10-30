@@ -165,5 +165,45 @@ void main() {
         expect(find.byType(Dialog), findsNothing);
       },
     );
+
+    testWidgets(
+      'ChildSwitcherSheet renders Edit active child profile as AppButton with edit icon',
+      (WidgetTester tester) async {
+        final ChildModel child = ChildModel(
+          childName: 'Johnny',
+          childAge: '2 years',
+          parentReferenceIds: <String>['test_uid'],
+        );
+        await preferences.saveChildModel(child);
+
+        tester.view.physicalSize = const Size(389, 844);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() => tester.view.resetPhysicalSize());
+
+        await tester.pumpWidget(
+          ScreenUtilInit(
+            designSize: const Size(389, 844),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (BuildContext context, Widget? _) {
+              return const MaterialApp(
+                home: Scaffold(body: ChildSwitcherSheet()),
+              );
+            },
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(find.text('Switch child profile'), findsOneWidget);
+        expect(find.text('Edit active child profile'), findsOneWidget);
+        expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
+        expect(
+          find.widgetWithText(AppButton, 'Edit active child profile'),
+          findsOneWidget,
+        );
+        expect(find.byType(TextButton), findsNothing);
+      },
+    );
   });
 }

@@ -254,10 +254,12 @@ void main() {
 
       cubit.setFellAsleepTime('01:30 PM');
       expect(cubit.state.fellAsleepTime, equals('01:30 PM'));
+      expect(cubit.state.napStartTime, equals('01:30 PM'));
       expect(cubit.state.showSleepUpdateErrors, isFalse);
 
       cubit.setWokeUpTime('03:00 PM');
       expect(cubit.state.wokeUpTime, equals('03:00 PM'));
+      expect(cubit.state.napEndTime, equals('03:00 PM'));
 
       cubit.toggleNightWaking(true);
       expect(cubit.state.isNightWaking, isTrue);

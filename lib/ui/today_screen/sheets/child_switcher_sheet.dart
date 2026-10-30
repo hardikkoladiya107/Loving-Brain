@@ -47,34 +47,57 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
   Future<void> _loadChildren() async {
     final UserModel? user = preferences.getUserModel();
     if (user == null) {
-      if (mounted) setState(() => _isLoading = false);
-      return;
-    }
-
-    final ApiResultStatus<List<ChildModel>> result = await ChildRepo.instance
-        .getAllChildren(user);
-
-    if (!mounted) return;
-
-    final List<ChildModel> loaded = <ChildModel>[];
-    result.whenOrNull(
-      data: (List<ChildModel> data) {
-        loaded.addAll(data);
-      },
-    );
-
-    // If repo returns empty but we have an active child in preferences, include it
-    if (loaded.isEmpty) {
+      final List<ChildModel> loaded = <ChildModel>[];
       final ChildModel? activeChild = preferences.getChildModel();
       if (activeChild != null) {
         loaded.add(activeChild);
       }
+      if (mounted) {
+        setState(() {
+          _children = loaded;
+          _isLoading = false;
+        });
+      }
+      return;
     }
 
-    setState(() {
-      _children = loaded;
-      _isLoading = false;
-    });
+    try {
+      final ApiResultStatus<List<ChildModel>> result = await ChildRepo.instance
+          .getAllChildren(user);
+
+      if (!mounted) return;
+
+      final List<ChildModel> loaded = <ChildModel>[];
+      result.whenOrNull(
+        data: (List<ChildModel> data) {
+          loaded.addAll(data);
+        },
+      );
+
+      // If repo returns empty but we have an active child in preferences, include it
+      if (loaded.isEmpty) {
+        final ChildModel? activeChild = preferences.getChildModel();
+        if (activeChild != null) {
+          loaded.add(activeChild);
+        }
+      }
+
+      setState(() {
+        _children = loaded;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      final List<ChildModel> loaded = <ChildModel>[];
+      final ChildModel? activeChild = preferences.getChildModel();
+      if (activeChild != null) {
+        loaded.add(activeChild);
+      }
+      setState(() {
+        _children = loaded;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -273,6 +296,7 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                 textColor: greyColor9,
                 widget: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(
                       Icons.add_circle_outline_rounded,
@@ -280,10 +304,14 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                       color: primaryColor,
                     ),
                     8.spaceW,
-                    "+ Add another child".appText(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w700,
-                      color: greyColor9,
+                    Flexible(
+                      child: "+ Add another child".appText(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w700,
+                        color: greyColor9,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -311,6 +339,7 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                   textColor: greyColor9,
                   widget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Icon(
                         Icons.edit_outlined,
@@ -318,10 +347,14 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                         color: primaryColor,
                       ),
                       8.spaceW,
-                      "Edit active child profile".appText(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
-                        color: greyColor9,
+                      Flexible(
+                        child: "Edit active child profile".appText(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w700,
+                          color: greyColor9,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
