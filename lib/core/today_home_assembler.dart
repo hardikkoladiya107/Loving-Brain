@@ -116,7 +116,8 @@ class TodayHomeSnapshot {
   }
 
   factory TodayHomeSnapshot.fromCacheMap(Map<String, dynamic> map) {
-    final String modeName = (map['mode'] as String?) ?? TodayMode.newParent.name;
+    final String modeName =
+        (map['mode'] as String?) ?? TodayMode.newParent.name;
     final TodayMode mode = TodayMode.values.firstWhere(
       (TodayMode m) => m.name == modeName,
       orElse: () => TodayMode.newParent,
@@ -198,9 +199,7 @@ class TodayHomeAssembler {
         todayHealthLog != null;
 
     final bool showHealthHeadsUp = _isNotableHealth(todayHealthLog);
-    final String healthTitle = showHealthHeadsUp
-        ? 'Health check-in noted'
-        : '';
+    final String healthTitle = showHealthHeadsUp ? 'Health check-in noted' : '';
     final String healthSubtitle = showHealthHeadsUp
         ? 'Symptoms logged today. Rest and comfort matter most right now.'
         : '';
@@ -268,16 +267,12 @@ class TodayHomeAssembler {
       healthHeadsUpTitle: healthTitle,
       healthHeadsUpSubtitle: healthSubtitle,
       showBehaviourHeadsUp: showBehaviourHeadsUp,
-      headsUpHeadline: showBehaviourHeadsUp
-          ? behaviourForecast.headline
-          : '',
+      headsUpHeadline: showBehaviourHeadsUp ? behaviourForecast.headline : '',
       headsUpReason: showBehaviourHeadsUp ? behaviourForecast.reason : '',
       headsUpWindowStart: showBehaviourHeadsUp
           ? behaviourForecast.windowStart
           : '',
-      headsUpWindowEnd: showBehaviourHeadsUp
-          ? behaviourForecast.windowEnd
-          : '',
+      headsUpWindowEnd: showBehaviourHeadsUp ? behaviourForecast.windowEnd : '',
       showNiceWork: niceWork.show,
       niceWorkTitle: niceWork.title,
       niceWorkSubtitle: niceWork.subtitle,
@@ -335,26 +330,16 @@ class TodayHomeAssembler {
     required bool hasMultiDayPatterns,
   }) {
     if (!hasMultiDayPatterns) {
-      return const _NiceWorkResult(
-        show: false,
-        title: '',
-        subtitle: '',
-      );
+      return const _NiceWorkResult(show: false, title: '', subtitle: '');
     }
 
     final List<SleepLogModel> nights =
-        sleepLogs.where((SleepLogModel l) => !l.isNap).toList()
-          ..sort(
-            (SleepLogModel a, SleepLogModel b) =>
-                b.bedTime.compareTo(a.bedTime),
-          );
+        sleepLogs.where((SleepLogModel l) => !l.isNap).toList()..sort(
+          (SleepLogModel a, SleepLogModel b) => b.bedTime.compareTo(a.bedTime),
+        );
 
     if (nights.length < 3) {
-      return const _NiceWorkResult(
-        show: false,
-        title: '',
-        subtitle: '',
-      );
+      return const _NiceWorkResult(show: false, title: '', subtitle: '');
     }
 
     final int targetMinutes = _resolveUsualBedtimeMinutes(
@@ -392,11 +377,7 @@ class TodayHomeAssembler {
     }
 
     if (streak < 3) {
-      return const _NiceWorkResult(
-        show: false,
-        title: '',
-        subtitle: '',
-      );
+      return const _NiceWorkResult(show: false, title: '', subtitle: '');
     }
 
     return const _NiceWorkResult(
@@ -425,11 +406,12 @@ class TodayHomeAssembler {
       }
     }
 
-    final List<int> minutes = nights
-        .take(7)
-        .map((SleepLogModel n) => n.bedTime.hour * 60 + n.bedTime.minute)
-        .toList()
-      ..sort();
+    final List<int> minutes =
+        nights
+            .take(7)
+            .map((SleepLogModel n) => n.bedTime.hour * 60 + n.bedTime.minute)
+            .toList()
+          ..sort();
     if (minutes.isEmpty) {
       return 19 * 60 + 30;
     }
@@ -513,8 +495,7 @@ class TodayHomeAssembler {
     int total = 0;
     for (final SleepLogModel log in logs) {
       total +=
-          log.durationMinutes ??
-          log.wakeTime.difference(log.bedTime).inMinutes;
+          log.durationMinutes ?? log.wakeTime.difference(log.bedTime).inMinutes;
     }
     return total / logs.length;
   }
@@ -535,8 +516,9 @@ class TodayHomeAssembler {
       }
     }
 
-    final List<SleepLogModel> nights =
-        sleepLogs.where((SleepLogModel l) => !l.isNap).toList();
+    final List<SleepLogModel> nights = sleepLogs
+        .where((SleepLogModel l) => !l.isNap)
+        .toList();
     if (nights.length < 3) {
       return const _SupportResult(show: false, inconsistentDays: 0);
     }
@@ -598,10 +580,7 @@ class _NoticedResult {
 }
 
 class _SupportResult {
-  const _SupportResult({
-    required this.show,
-    required this.inconsistentDays,
-  });
+  const _SupportResult({required this.show, required this.inconsistentDays});
 
   final bool show;
   final int inconsistentDays;

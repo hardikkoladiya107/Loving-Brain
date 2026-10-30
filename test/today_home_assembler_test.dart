@@ -38,10 +38,7 @@ void main() {
     );
   }
 
-  SleepLogModel nap({
-    required DateTime start,
-    required DateTime end,
-  }) {
+  SleepLogModel nap({required DateTime start, required DateTime end}) {
     return SleepLogModel(
       id: 'nap-${start.millisecondsSinceEpoch}',
       date: DateTime(start.year, start.month, start.day),
@@ -76,7 +73,7 @@ void main() {
     final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
       child: child(),
       sleepLogs: <SleepLogModel>[],
-      referenceTime: now,
+      referenceNow: now,
     );
     final BehaviourForecastResult behaviour =
         EnergyBridgeBehaviourCalculator.calculate(
@@ -94,7 +91,7 @@ void main() {
       behaviourForecast: behaviour,
       sleepLogs: <SleepLogModel>[],
       tantrumLogs: <TantrumLogModel>[],
-      referenceTime: now,
+      referenceNow: now,
     );
 
     expect(snapshot.mode, TodayMode.newParent);
@@ -126,7 +123,7 @@ void main() {
     final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
       child: child(),
       sleepLogs: sleeps,
-      referenceTime: now,
+      referenceNow: now,
     );
     final BehaviourForecastResult behaviour =
         EnergyBridgeBehaviourCalculator.calculate(
@@ -144,7 +141,7 @@ void main() {
       behaviourForecast: behaviour,
       sleepLogs: sleeps,
       tantrumLogs: tantrums,
-      referenceTime: now,
+      referenceNow: now,
     );
 
     expect(snapshot.hasSleepLogs, isTrue);
@@ -152,60 +149,63 @@ void main() {
     expect(snapshot.showBehaviourHeadsUp, isFalse);
   });
 
-  test('teething with three sleep days does not become harder-evening heads-up', () {
-    final List<SleepLogModel> sleeps = <SleepLogModel>[
-      night(
-        bed: DateTime(2026, 10, 28, 19, 30),
-        wake: DateTime(2026, 10, 29, 6, 30),
-      ),
-      night(
-        bed: DateTime(2026, 10, 29, 19, 30),
-        wake: DateTime(2026, 10, 30, 6, 30),
-      ),
-      night(
-        bed: DateTime(2026, 10, 27, 19, 30),
-        wake: DateTime(2026, 10, 28, 6, 30),
-      ),
-    ];
-    final HealthLogModel health = HealthLogModel(
-      issues: <String>['Teething'],
-      notes: 'Sore gums',
-      timestamp: now,
-      userId: 'u1',
-      childId: 'c1',
-      createdAt: now,
-    );
+  test(
+    'teething with three sleep days does not become harder-evening heads-up',
+    () {
+      final List<SleepLogModel> sleeps = <SleepLogModel>[
+        night(
+          bed: DateTime(2026, 10, 28, 19, 30),
+          wake: DateTime(2026, 10, 29, 6, 30),
+        ),
+        night(
+          bed: DateTime(2026, 10, 29, 19, 30),
+          wake: DateTime(2026, 10, 30, 6, 30),
+        ),
+        night(
+          bed: DateTime(2026, 10, 27, 19, 30),
+          wake: DateTime(2026, 10, 28, 6, 30),
+        ),
+      ];
+      final HealthLogModel health = HealthLogModel(
+        issues: <String>['Teething'],
+        notes: 'Sore gums',
+        timestamp: now,
+        userId: 'u1',
+        childId: 'c1',
+        createdAt: now,
+      );
 
-    final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
-      child: child(),
-      sleepLogs: sleeps,
-      todayHealthLog: health,
-      referenceTime: now,
-    );
-    final BehaviourForecastResult behaviour =
-        EnergyBridgeBehaviourCalculator.calculate(
-          childModel: child(),
-          tantrumLogs: <TantrumLogModel>[],
-          sleepLogs: sleeps,
-          moodLogs: const [],
-          healthLogs: <HealthLogModel>[health],
-          referenceTime: now,
-        );
+      final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
+        child: child(),
+        sleepLogs: sleeps,
+        todayHealthLog: health,
+        referenceNow: now,
+      );
+      final BehaviourForecastResult behaviour =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: child(),
+            tantrumLogs: <TantrumLogModel>[],
+            sleepLogs: sleeps,
+            moodLogs: const [],
+            healthLogs: <HealthLogModel>[health],
+            referenceTime: now,
+          );
 
-    final TodayHomeSnapshot snapshot = TodayHomeAssembler.assemble(
-      child: child(),
-      sleepForecast: sleep,
-      behaviourForecast: behaviour,
-      sleepLogs: sleeps,
-      tantrumLogs: <TantrumLogModel>[],
-      todayHealthLog: health,
-      referenceTime: now,
-    );
+      final TodayHomeSnapshot snapshot = TodayHomeAssembler.assemble(
+        child: child(),
+        sleepForecast: sleep,
+        behaviourForecast: behaviour,
+        sleepLogs: sleeps,
+        tantrumLogs: <TantrumLogModel>[],
+        todayHealthLog: health,
+        referenceNow: now,
+      );
 
-    expect(snapshot.showBehaviourHeadsUp, isFalse);
-    expect(snapshot.showHealthHeadsUp, isFalse);
-    expect(snapshot.mode, TodayMode.normal);
-  });
+      expect(snapshot.showBehaviourHeadsUp, isFalse);
+      expect(snapshot.showHealthHeadsUp, isFalse);
+      expect(snapshot.mode, TodayMode.normal);
+    },
+  );
 
   test('fever health note shows health card on learning home', () {
     final HealthLogModel health = HealthLogModel(
@@ -220,7 +220,7 @@ void main() {
       child: child(),
       sleepLogs: <SleepLogModel>[],
       todayHealthLog: health,
-      referenceTime: now,
+      referenceNow: now,
     );
     final BehaviourForecastResult behaviour =
         EnergyBridgeBehaviourCalculator.calculate(
@@ -239,7 +239,7 @@ void main() {
       sleepLogs: <SleepLogModel>[],
       tantrumLogs: <TantrumLogModel>[],
       todayHealthLog: health,
-      referenceTime: now,
+      referenceNow: now,
     );
 
     expect(snapshot.mode, TodayMode.newParent);
@@ -266,7 +266,7 @@ void main() {
     final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
       child: child(),
       sleepLogs: sleeps,
-      referenceTime: now,
+      referenceNow: now,
     );
     final BehaviourForecastResult behaviour =
         EnergyBridgeBehaviourCalculator.calculate(
@@ -284,7 +284,7 @@ void main() {
       behaviourForecast: behaviour,
       sleepLogs: sleeps,
       tantrumLogs: <TantrumLogModel>[],
-      referenceTime: now,
+      referenceNow: now,
     );
 
     expect(snapshot.hasMultiDayPatterns, isTrue);
@@ -327,7 +327,7 @@ void main() {
     final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
       child: child(),
       sleepLogs: sleeps,
-      referenceTime: now,
+      referenceNow: now,
     );
     final BehaviourForecastResult behaviour =
         EnergyBridgeBehaviourCalculator.calculate(
@@ -345,74 +345,74 @@ void main() {
       behaviourForecast: behaviour,
       sleepLogs: sleeps,
       tantrumLogs: <TantrumLogModel>[],
-      referenceTime: now,
+      referenceNow: now,
     );
 
     expect(snapshot.showNoticed, isTrue);
     expect(snapshot.noticedTitle.toLowerCase(), contains('shorter'));
-    expect(
-      snapshot.noticedDestination,
-      TodayNoticedDestination.sleepPattern,
-    );
+    expect(snapshot.noticedDestination, TodayNoticedDestination.sleepPattern);
   });
 
-  test('support offer appears for inconsistent bedtimes and respects dismissal', () {
-    final List<SleepLogModel> sleeps = <SleepLogModel>[
-      night(
-        bed: DateTime(2026, 10, 26, 18, 30),
-        wake: DateTime(2026, 10, 27, 6, 0),
-      ),
-      night(
-        bed: DateTime(2026, 10, 27, 20, 45),
-        wake: DateTime(2026, 10, 28, 7, 0),
-      ),
-      night(
-        bed: DateTime(2026, 10, 28, 19, 0),
-        wake: DateTime(2026, 10, 29, 6, 30),
-      ),
-      night(
-        bed: DateTime(2026, 10, 29, 21, 0),
-        wake: DateTime(2026, 10, 30, 7, 30),
-      ),
-    ];
+  test(
+    'support offer appears for inconsistent bedtimes and respects dismissal',
+    () {
+      final List<SleepLogModel> sleeps = <SleepLogModel>[
+        night(
+          bed: DateTime(2026, 10, 26, 18, 30),
+          wake: DateTime(2026, 10, 27, 6, 0),
+        ),
+        night(
+          bed: DateTime(2026, 10, 27, 20, 45),
+          wake: DateTime(2026, 10, 28, 7, 0),
+        ),
+        night(
+          bed: DateTime(2026, 10, 28, 19, 0),
+          wake: DateTime(2026, 10, 29, 6, 30),
+        ),
+        night(
+          bed: DateTime(2026, 10, 29, 21, 0),
+          wake: DateTime(2026, 10, 30, 7, 30),
+        ),
+      ];
 
-    final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
-      child: child(),
-      sleepLogs: sleeps,
-      referenceTime: now,
-    );
-    final BehaviourForecastResult behaviour =
-        EnergyBridgeBehaviourCalculator.calculate(
-          childModel: child(),
-          tantrumLogs: <TantrumLogModel>[],
-          sleepLogs: sleeps,
-          moodLogs: const [],
-          healthLogs: const [],
-          referenceTime: now,
-        );
+      final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
+        child: child(),
+        sleepLogs: sleeps,
+        referenceNow: now,
+      );
+      final BehaviourForecastResult behaviour =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: child(),
+            tantrumLogs: <TantrumLogModel>[],
+            sleepLogs: sleeps,
+            moodLogs: const [],
+            healthLogs: const [],
+            referenceTime: now,
+          );
 
-    final TodayHomeSnapshot open = TodayHomeAssembler.assemble(
-      child: child(),
-      sleepForecast: sleep,
-      behaviourForecast: behaviour,
-      sleepLogs: sleeps,
-      tantrumLogs: <TantrumLogModel>[],
-      referenceTime: now,
-    );
-    expect(open.showSupportOffer, isTrue);
-    expect(open.supportInconsistentDays, greaterThanOrEqualTo(3));
+      final TodayHomeSnapshot open = TodayHomeAssembler.assemble(
+        child: child(),
+        sleepForecast: sleep,
+        behaviourForecast: behaviour,
+        sleepLogs: sleeps,
+        tantrumLogs: <TantrumLogModel>[],
+        referenceNow: now,
+      );
+      expect(open.showSupportOffer, isTrue);
+      expect(open.supportInconsistentDays, greaterThanOrEqualTo(3));
 
-    final TodayHomeSnapshot dismissed = TodayHomeAssembler.assemble(
-      child: child(),
-      sleepForecast: sleep,
-      behaviourForecast: behaviour,
-      sleepLogs: sleeps,
-      tantrumLogs: <TantrumLogModel>[],
-      supportDismissedAt: now.subtract(const Duration(days: 1)),
-      referenceTime: now,
-    );
-    expect(dismissed.showSupportOffer, isFalse);
-  });
+      final TodayHomeSnapshot dismissed = TodayHomeAssembler.assemble(
+        child: child(),
+        sleepForecast: sleep,
+        behaviourForecast: behaviour,
+        sleepLogs: sleeps,
+        tantrumLogs: <TantrumLogModel>[],
+        supportDismissedAt: now.subtract(const Duration(days: 1)),
+        referenceNow: now,
+      );
+      expect(dismissed.showSupportOffer, isFalse);
+    },
+  );
 
   test('cache round-trip preserves assembled home fields', () {
     final TodayHomeSnapshot original = TodayHomeSnapshot(
