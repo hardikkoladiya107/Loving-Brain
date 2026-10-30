@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -33,157 +34,171 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
     return BlocConsumer<FamilyTimelineCubit, FamilyTimelineState>(
       listener: (BuildContext context, FamilyTimelineState state) {},
       builder: (BuildContext context, FamilyTimelineState state) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150,
-                top: -150,
-                child: Container(
-                  width: 400.w,
-                  height: 400.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150,
+                  top: -150,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  children: [
-                    16.spaceH,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Ink(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(24.r),
-                            onTap: () {
-                              if (Navigator.canPop(context)) {
-                                Navigator.pop(context);
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
+                SafeArea(
+                  bottom: false,
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    children: [
+                      16.spaceH,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Ink(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(24.r),
+                              onTap: () {
+                                if (Navigator.canPop(context)) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: darkBlue,
+                                  size: 24.sp,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    24.spaceH,
-                    'Family timeline'.appText(
-                      fontSize: 28.sp,
-                      color: greyColor9,
-                      fraunces: true,
-                      textAlign: TextAlign.start,
-                    ),
-                    24.spaceH,
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildFilterChip('All', state),
-                          8.spaceW,
-                          _buildFilterChip('Sleep', state),
-                          8.spaceW,
-                          _buildFilterChip('Behaviour', state),
-                          8.spaceW,
-                          _buildFilterChip('Notes', state),
-                          8.spaceW,
-                          _buildFilterChip('Mentorship', state),
-                        ],
+                      24.spaceH,
+                      'Family timeline'.appText(
+                        fontSize: 28.sp,
+                        color: greyColor9,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
                       ),
-                    ),
-                    24.spaceH,
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 24.w,
-                        vertical: 28.h,
+                      24.spaceH,
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildFilterChip('All', state),
+                            8.spaceW,
+                            _buildFilterChip('Sleep', state),
+                            8.spaceW,
+                            _buildFilterChip('Behaviour', state),
+                            8.spaceW,
+                            _buildFilterChip('Notes', state),
+                            8.spaceW,
+                            _buildFilterChip('Mentorship', state),
+                          ],
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(24.r),
-                      ),
-                      child: state.filteredEvents.isEmpty
-                          ? Center(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 32.h),
-                                child: 'No events found for this filter.'
-                                    .appText(fontSize: 14.sp, color: greyColor),
-                              ),
-                            )
-                          : Column(
-                              children: [
-                                ...state.filteredEvents.asMap().entries.map((
-                                  MapEntry<int, TimelineEventModel> entry,
-                                ) {
-                                  final int idx = entry.key;
-                                  final TimelineEventModel event = entry.value;
-                                  return _buildTimelineItem(
-                                    event: event,
-                                    isFirst: idx == 0,
-                                    isLast:
-                                        idx == state.filteredEvents.length - 1,
-                                  );
-                                }),
-                              ],
-                            ),
-                    ),
-                    24.spaceH,
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 20.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: orangeLightColor,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child:
-                          (state.weeksWithLovingBrain >= 2 &&
-                              state.averageBedtimeShiftMinutes > 0)
-                          ? '${state.weeksWithLovingBrain} weeks with Loving Brain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                  height: 1.4,
-                                )
-                          : 'Keep logging check-ins to see long-term bedtime and rhythm patterns emerge.'
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                  height: 1.4,
+                      24.spaceH,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 28.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        child: state.filteredEvents.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 32.h),
+                                  child: 'No events found for this filter.'
+                                      .appText(
+                                        fontSize: 14.sp,
+                                        color: greyColor,
+                                      ),
                                 ),
-                    ),
-                    120.spaceH,
-                  ],
+                              )
+                            : Column(
+                                children: [
+                                  ...state.filteredEvents.asMap().entries.map((
+                                    MapEntry<int, TimelineEventModel> entry,
+                                  ) {
+                                    final int idx = entry.key;
+                                    final TimelineEventModel event =
+                                        entry.value;
+                                    return _buildTimelineItem(
+                                      event: event,
+                                      isFirst: idx == 0,
+                                      isLast:
+                                          idx ==
+                                          state.filteredEvents.length - 1,
+                                    );
+                                  }),
+                                ],
+                              ),
+                      ),
+                      24.spaceH,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 20.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: orangeLightColor,
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child:
+                            (state.weeksWithLovingBrain >= 2 &&
+                                state.averageBedtimeShiftMinutes > 0)
+                            ? '${state.weeksWithLovingBrain} weeks with Loving Brain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
+                                  .appText(
+                                    fontSize: 14.sp,
+                                    color: greyColor9,
+                                    textAlign: TextAlign.start,
+                                    height: 1.4,
+                                  )
+                            : 'Keep logging check-ins to see long-term bedtime and rhythm patterns emerge.'
+                                  .appText(
+                                    fontSize: 14.sp,
+                                    color: greyColor9,
+                                    textAlign: TextAlign.start,
+                                    height: 1.4,
+                                  ),
+                      ),
+                      120.spaceH,
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

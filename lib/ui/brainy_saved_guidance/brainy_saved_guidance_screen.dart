@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -30,138 +31,149 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
     return BlocConsumer<BrainySavedGuidanceCubit, BrainySavedGuidanceState>(
       listener: (BuildContext context, BrainySavedGuidanceState state) {},
       builder: (BuildContext context, BrainySavedGuidanceState state) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SafeArea(
-                child: ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  children: [
-                    16.spaceH,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Ink(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(24.r),
-                            onTap: () => Navigator.pop(context),
-                            child: Padding(
-                              padding: EdgeInsets.all(8.r),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
+                SafeArea(
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    children: [
+                      16.spaceH,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Ink(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(24.r),
+                              onTap: () => Navigator.pop(context),
+                              child: Padding(
+                                padding: EdgeInsets.all(8.r),
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  color: darkBlue,
+                                  size: 24.sp,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    32.spaceH,
-                    "Saved Guidance".appText(
-                      fontSize: 28.sp,
-                      color: darkBlue,
-                      fraunces: true,
-                      textAlign: TextAlign.start,
-                    ),
-                    if (state.sleepItems.isEmpty &&
-                        state.behaviourItems.isEmpty &&
-                        state.parentWellbeingItems.isEmpty) ...[
                       32.spaceH,
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.all(28.r),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24.r),
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(
-                              Icons.bookmark_border_rounded,
-                              size: 48.sp,
-                              color: primaryColor,
-                            ),
-                            16.spaceH,
-                            "No saved guidance yet".appText(
-                              fontSize: 18.sp,
-                              color: darkBlue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            8.spaceH,
-                            "Tap the bookmark icon on any Brainy answer to save it here for quick reference."
-                                .appText(
-                                  fontSize: 13.sp,
-                                  color: greyColor,
-                                  textAlign: TextAlign.center,
-                                  height: 1.4,
-                                ),
-                          ],
-                        ),
+                      "Saved Guidance".appText(
+                        fontSize: 28.sp,
+                        color: darkBlue,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
                       ),
-                    ],
-                    if (state.sleepItems.isNotEmpty) ...[
+                      if (state.sleepItems.isEmpty &&
+                          state.behaviourItems.isEmpty &&
+                          state.parentWellbeingItems.isEmpty) ...[
+                        32.spaceH,
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(28.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.bookmark_border_rounded,
+                                size: 48.sp,
+                                color: primaryColor,
+                              ),
+                              16.spaceH,
+                              "No saved guidance yet".appText(
+                                fontSize: 18.sp,
+                                color: darkBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              8.spaceH,
+                              "Tap the bookmark icon on any Brainy answer to save it here for quick reference."
+                                  .appText(
+                                    fontSize: 13.sp,
+                                    color: greyColor,
+                                    textAlign: TextAlign.center,
+                                    height: 1.4,
+                                  ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      if (state.sleepItems.isNotEmpty) ...[
+                        32.spaceH,
+                        _buildSectionTitle("SLEEP"),
+                        12.spaceH,
+                        ...state.sleepItems.map((BrainySavedItem item) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: _buildGuidanceItem(context, item: item),
+                          );
+                        }),
+                      ],
+                      if (state.behaviourItems.isNotEmpty) ...[
+                        32.spaceH,
+                        _buildSectionTitle("BEHAVIOUR", color: greyColor11),
+                        12.spaceH,
+                        ...state.behaviourItems.map((BrainySavedItem item) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: _buildGuidanceItem(context, item: item),
+                          );
+                        }),
+                      ],
+                      if (state.parentWellbeingItems.isNotEmpty) ...[
+                        32.spaceH,
+                        _buildSectionTitle("PARENT WELLBEING"),
+                        12.spaceH,
+                        ...state.parentWellbeingItems.map((
+                          BrainySavedItem item,
+                        ) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 8.h),
+                            child: _buildGuidanceItem(context, item: item),
+                          );
+                        }),
+                      ],
                       32.spaceH,
-                      _buildSectionTitle("SLEEP"),
-                      12.spaceH,
-                      ...state.sleepItems.map((BrainySavedItem item) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(context, item: item),
-                        );
-                      }),
                     ],
-                    if (state.behaviourItems.isNotEmpty) ...[
-                      32.spaceH,
-                      _buildSectionTitle("BEHAVIOUR", color: greyColor11),
-                      12.spaceH,
-                      ...state.behaviourItems.map((BrainySavedItem item) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(context, item: item),
-                        );
-                      }),
-                    ],
-                    if (state.parentWellbeingItems.isNotEmpty) ...[
-                      32.spaceH,
-                      _buildSectionTitle("PARENT WELLBEING"),
-                      12.spaceH,
-                      ...state.parentWellbeingItems.map((BrainySavedItem item) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: _buildGuidanceItem(context, item: item),
-                        );
-                      }),
-                    ],
-                    32.spaceH,
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

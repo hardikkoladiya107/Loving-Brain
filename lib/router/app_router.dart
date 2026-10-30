@@ -22,6 +22,7 @@ import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
+import 'package:loving_brain/ui/consistency_recognition/consistency_recognition_screen.dart';
 import 'package:loving_brain/ui/faq/faq_screen.dart';
 import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
 import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
@@ -272,6 +273,15 @@ class AppRouter {
           path: RoutePaths.mentorshipLanding,
           builder: (BuildContext context, GoRouterState state) =>
               const MentorshipLandingScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.consistencyRecognition,
+          builder: (BuildContext context, GoRouterState state) {
+            final int? days = int.tryParse(
+              state.uri.queryParameters['days'] ?? '',
+            );
+            return ConsistencyRecognitionScreen(initialDaysCheckedIn: days);
+          },
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -77,100 +78,109 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
     return BlocConsumer<ChooseSupportAreaCubit, ChooseSupportAreaState>(
       listener: (BuildContext context, ChooseSupportAreaState state) {},
       builder: (BuildContext context, ChooseSupportAreaState state) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: EdgeInsets.all(8.r),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "What kind of support?".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          8.spaceH,
-                          "Pick the one closest to what you need right now."
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor9,
-                                textAlign: TextAlign.start,
-                              ),
-                          24.spaceH,
-                          ...List.generate(_options.length, (int index) {
-                            final Map<String, dynamic> item = _options[index];
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: _buildOptionCard(
-                                context: context,
-                                index: index,
-                                iconPath: item["icon"] as String,
-                                bgColor: item["bg"] as Color,
-                                title: item["title"] as String,
-                                subtitle: item["subtitle"] as String,
-                                isSelected: index == state.selectedIndex,
-                              ),
-                            );
-                          }),
-                          140.spaceH,
-                        ],
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "What kind of support?".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            8.spaceH,
+                            "Pick the one closest to what you need right now."
+                                .appText(
+                                  fontSize: 14.sp,
+                                  color: greyColor9,
+                                  textAlign: TextAlign.start,
+                                ),
+                            24.spaceH,
+                            ...List.generate(_options.length, (int index) {
+                              final Map<String, dynamic> item = _options[index];
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: _buildOptionCard(
+                                  context: context,
+                                  index: index,
+                                  iconPath: item["icon"] as String,
+                                  bgColor: item["bg"] as Color,
+                                  title: item["title"] as String,
+                                  subtitle: item["subtitle"] as String,
+                                  isSelected: index == state.selectedIndex,
+                                ),
+                              );
+                            }),
+                            140.spaceH,
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              _buildBottomActions(context, state),
-            ],
+                _buildBottomActions(context, state),
+              ],
+            ),
           ),
         );
       },
@@ -264,92 +274,98 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
       bottom: 0,
       left: 0,
       right: 0,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: 40.h,
-          bottom: 32.h,
-          left: 20.w,
-          right: 20.w,
-        ),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFFFEF8F4).withValues(alpha: 0.0),
-              const Color(0xFFFEF8F4),
-              const Color(0xFFFEF8F4),
-            ],
-            stops: const [0.0, 0.4, 1.0],
+      child: SafeArea(
+        top: false,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 40.h,
+            bottom: 32.h,
+            left: 20.w,
+            right: 20.w,
           ),
-        ),
-        child: AppButton(
-          title: "Continue",
-          onTap: () async {
-            if (state.selectedIndex < 0 ||
-                state.selectedIndex >= _options.length) {
-              showSnackBar(
-                message: "Please choose an area of support to continue",
-                type: SnackBarType.ERROR,
-              );
-              return;
-            }
-            final String selectedTitle =
-                _options[state.selectedIndex]['title'] as String;
-            EasyLoading.show();
-            final ApiResultStatus<GuideAreaMatch> result = await context
-                .read<ChooseSupportAreaCubit>()
-                .matchSupportArea(selectedTitle);
-            EasyLoading.dismiss();
-            if (!context.mounted) {
-              return;
-            }
-            if (result is Loging) {
-              return;
-            }
-            if (result is Error<GuideAreaMatch>) {
-              showSnackBar(
-                message: result.error.toString().replaceAll('Exception: ', ''),
-                type: SnackBarType.ERROR,
-              );
-              return;
-            }
-            if (result is! Data<GuideAreaMatch>) {
-              return;
-            }
-            final GuideAreaMatch match = result.data;
-            if (match.guides.isEmpty) {
-              final String detail = match.fullyBooked
-                  ? "Guides for $selectedTitle are fully booked right now. Nothing has been charged."
-                  : "No guides are available for $selectedTitle yet.";
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFFFEF8F4).withValues(alpha: 0.0),
+                const Color(0xFFFEF8F4),
+                const Color(0xFFFEF8F4),
+              ],
+              stops: const [0.0, 0.4, 1.0],
+            ),
+          ),
+          child: AppButton(
+            title: "Continue",
+            onTap: () async {
+              if (state.selectedIndex < 0 ||
+                  state.selectedIndex >= _options.length) {
+                showSnackBar(
+                  message: "Please choose an area of support to continue",
+                  type: SnackBarType.ERROR,
+                );
+                return;
+              }
+              final String selectedTitle =
+                  _options[state.selectedIndex]['title'] as String;
+              EasyLoading.show();
+              final ApiResultStatus<GuideAreaMatch> result = await context
+                  .read<ChooseSupportAreaCubit>()
+                  .matchSupportArea(selectedTitle);
+              EasyLoading.dismiss();
+              if (!context.mounted) {
+                return;
+              }
+              if (result is Loging) {
+                return;
+              }
+              if (result is Error<GuideAreaMatch>) {
+                showSnackBar(
+                  message: result.error.toString().replaceAll(
+                    'Exception: ',
+                    '',
+                  ),
+                  type: SnackBarType.ERROR,
+                );
+                return;
+              }
+              if (result is! Data<GuideAreaMatch>) {
+                return;
+              }
+              final GuideAreaMatch match = result.data;
+              if (match.guides.isEmpty) {
+                final String detail = match.fullyBooked
+                    ? "Guides for $selectedTitle are fully booked right now. Nothing has been charged."
+                    : "No guides are available for $selectedTitle yet.";
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => MentorshipUnavailableScreen(detail: detail),
+                  ),
+                );
+                return;
+              }
+              if (match.guides.length == 1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) =>
+                        GuideProfileScreen(guideId: match.guides.first.id),
+                  ),
+                );
+                return;
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (_) => MentorshipUnavailableScreen(detail: detail),
+                  builder: (_) => GuideListScreen(
+                    supportArea: selectedTitle,
+                    guides: match.guides,
+                  ),
                 ),
               );
-              return;
-            }
-            if (match.guides.length == 1) {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) =>
-                      GuideProfileScreen(guideId: match.guides.first.id),
-                ),
-              );
-              return;
-            }
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (_) => GuideListScreen(
-                  supportArea: selectedTitle,
-                  guides: match.guides,
-                ),
-              ),
-            );
-          },
+            },
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -43,181 +44,201 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
       builder: (BuildContext context, ParentSuccessGuideState state) {
         final GuideProfileModel? guide = state.guide;
         if (guide == null) {
-          return Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: SafeArea(
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.arrow_back, color: darkBlue),
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                      child: "This guide is no longer available.".appText(
-                        fontSize: 16.sp,
-                        color: greyColor,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+              systemNavigationBarColor: Color(0xFFFEF8F4),
+              systemNavigationBarIconBrightness: Brightness.dark,
             ),
-          );
-        }
-
-        return Scaffold(
-          backgroundColor: const Color(0xFFFEF8F4),
-          body: Stack(
-            children: [
-              // Top Left Glow
-              Positioned(
-                left: -150.w,
-                top: -150.h,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              // Bottom Right Glow
-              Positioned(
-                right: -150.w,
-                bottom: 0,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                      ],
-                      stops: const [0.0, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              SafeArea(
-                bottom: false,
+            child: Scaffold(
+              backgroundColor: const Color(0xFFFEF8F4),
+              body: SafeArea(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 8.h,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
-                          ),
-                        ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.arrow_back, color: darkBlue),
                       ),
                     ),
                     Expanded(
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        children: [
-                          16.spaceH,
-                          "Your Parent Success Guide".appText(
-                            fontSize: 32.sp,
-                            color: greyColor9,
-                            fraunces: true,
-                            textAlign: TextAlign.start,
-                          ),
-                          24.spaceH,
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Image.asset(
-                                  Assets.v2.images.imgSuccessGuide.path,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              16.spaceW,
-                              Expanded(
-                                flex: 6,
-                                child:
-                                    "${guide.name} is your dedicated guide who stays with you across everything here so you never have to explain your family from scratch."
-                                        .appText(
-                                          fontSize: 14.sp,
-                                          color: greyColor,
-                                          textAlign: TextAlign.start,
-                                          height: 1.4,
-                                        ),
-                              ),
-                            ],
-                          ),
-                          32.spaceH,
-                          if (state.pendingRequests.any(
-                            (MentorshipRequestModel r) =>
-                                r.status == MentorshipRequestStatus.pending,
-                          )) ...[
-                            _buildPendingRequestCard(
-                              state.pendingRequests.firstWhere(
-                                (MentorshipRequestModel r) =>
-                                    r.status == MentorshipRequestStatus.pending,
-                              ),
-                              guide,
-                            ),
-                            16.spaceH,
-                          ],
-                          if (state.activeGoals.isNotEmpty) ...[
-                            _buildActiveGoalsCard(state.activeGoals, guide),
-                            16.spaceH,
-                          ] else if (!state.pendingRequests.any(
-                            (MentorshipRequestModel r) =>
-                                r.status == MentorshipRequestStatus.pending,
-                          )) ...[
-                            _buildNoGoalsCard(guide),
-                            16.spaceH,
-                          ],
-                          if (state.recommendedNextStep != null &&
-                              state.recommendedNextStep!.isNotEmpty) ...[
-                            CommonInfoCard(
-                              chipTitle: "Recommended next step",
-                              title: state.recommendedNextStep!,
-                              subtitle: state.recommendedNextStepSubtitle ?? "",
-                            ),
-                            16.spaceH,
-                          ],
-                          160.spaceH,
-                        ],
+                      child: Center(
+                        child: "This guide is no longer available.".appText(
+                          fontSize: 16.sp,
+                          color: greyColor,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              _buildBottomActions(context, state, guide),
-            ],
+            ),
+          );
+        }
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: Stack(
+              children: [
+                // Top Left Glow
+                Positioned(
+                  left: -150.w,
+                  top: -150.h,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                // Bottom Right Glow
+                Positioned(
+                  right: -150.w,
+                  bottom: 0,
+                  child: Container(
+                    width: 400.w,
+                    height: 400.h,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                        ],
+                        stops: const [0.0, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 8.h,
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: EdgeInsets.all(8.r),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: darkBlue,
+                                size: 24.sp,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          children: [
+                            16.spaceH,
+                            "Your Parent Success Guide".appText(
+                              fontSize: 32.sp,
+                              color: greyColor9,
+                              fraunces: true,
+                              textAlign: TextAlign.start,
+                            ),
+                            24.spaceH,
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 4,
+                                  child: Image.asset(
+                                    Assets.v2.images.imgSuccessGuide.path,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                16.spaceW,
+                                Expanded(
+                                  flex: 6,
+                                  child:
+                                      "${guide.name} is your dedicated guide who stays with you across everything here so you never have to explain your family from scratch."
+                                          .appText(
+                                            fontSize: 14.sp,
+                                            color: greyColor,
+                                            textAlign: TextAlign.start,
+                                            height: 1.4,
+                                          ),
+                                ),
+                              ],
+                            ),
+                            32.spaceH,
+                            if (state.pendingRequests.any(
+                              (MentorshipRequestModel r) =>
+                                  r.status == MentorshipRequestStatus.pending,
+                            )) ...[
+                              _buildPendingRequestCard(
+                                state.pendingRequests.firstWhere(
+                                  (MentorshipRequestModel r) =>
+                                      r.status ==
+                                      MentorshipRequestStatus.pending,
+                                ),
+                                guide,
+                              ),
+                              16.spaceH,
+                            ],
+                            if (state.activeGoals.isNotEmpty) ...[
+                              _buildActiveGoalsCard(state.activeGoals, guide),
+                              16.spaceH,
+                            ] else if (!state.pendingRequests.any(
+                              (MentorshipRequestModel r) =>
+                                  r.status == MentorshipRequestStatus.pending,
+                            )) ...[
+                              _buildNoGoalsCard(guide),
+                              16.spaceH,
+                            ],
+                            if (state.recommendedNextStep != null &&
+                                state.recommendedNextStep!.isNotEmpty) ...[
+                              CommonInfoCard(
+                                chipTitle: "Recommended next step",
+                                title: state.recommendedNextStep!,
+                                subtitle:
+                                    state.recommendedNextStepSubtitle ?? "",
+                              ),
+                              16.spaceH,
+                            ],
+                            160.spaceH,
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _buildBottomActions(context, state, guide),
+              ],
+            ),
           ),
         );
       },
@@ -383,53 +404,58 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
       bottom: 0,
       left: 0,
       right: 0,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: 12.h,
-          bottom: 24.h,
-          left: 20.w,
-          right: 20.w,
-        ),
-        decoration: const BoxDecoration(color: Color(0xFFFEF2EA)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AppButton(
-              title: "Request a check-in",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => GuideProfileScreen(guideId: guide.id),
-                  ),
-                );
-              },
-            ),
-            16.spaceH,
-            BaseButton(
-              child: "Cancel active request".appText(
-                fontSize: 14.sp,
-                color: greyColor,
-                fontWeight: FontWeight.w500,
-                textAlign: TextAlign.center,
+      child: SafeArea(
+        top: false,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 12.h,
+            bottom: 24.h,
+            left: 20.w,
+            right: 20.w,
+          ),
+          decoration: const BoxDecoration(color: Color(0xFFFEF2EA)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppButton(
+                title: "Request a check-in",
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => GuideProfileScreen(guideId: guide.id),
+                    ),
+                  );
+                },
               ),
-              onTap: () {
-                if (state.pendingRequests.isNotEmpty) {
-                  final String reqId = state.pendingRequests.first.id;
-                  context.read<ParentSuccessGuideCubit>().cancelRequest(reqId);
-                  showSnackBar(
-                    message: "Mentorship request cancelled",
-                    type: SnackBarType.SUCCESS,
-                  );
-                } else {
-                  showSnackBar(
-                    message: "No active mentorship request to cancel",
-                    type: SnackBarType.None,
-                  );
-                }
-              },
-            ),
-          ],
+              16.spaceH,
+              BaseButton(
+                child: "Cancel active request".appText(
+                  fontSize: 14.sp,
+                  color: greyColor,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center,
+                ),
+                onTap: () {
+                  if (state.pendingRequests.isNotEmpty) {
+                    final String reqId = state.pendingRequests.first.id;
+                    context.read<ParentSuccessGuideCubit>().cancelRequest(
+                      reqId,
+                    );
+                    showSnackBar(
+                      message: "Mentorship request cancelled",
+                      type: SnackBarType.SUCCESS,
+                    );
+                  } else {
+                    showSnackBar(
+                      message: "No active mentorship request to cancel",
+                      type: SnackBarType.None,
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

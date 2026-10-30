@@ -36,6 +36,7 @@ class RoutePaths {
   static const String mentorshipLanding = '/mentorship-landing';
   static const String sleepForecast = '/sleep-forecast';
   static const String sleepDetails = '/sleep-details';
+  static const String consistencyRecognition = '/consistency-recognition';
 
   static String childProfilePath(
     String userId, {
