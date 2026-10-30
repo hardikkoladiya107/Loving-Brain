@@ -6,6 +6,7 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {HttpsError} = require("firebase-functions/v2/https");
 const {sendNotification} = require("../notification");
+const {evaluateDelivery, claimDailySlot} = require("./notificationDelivery");
 const {buildBrevoInvitationBody} = require("../utils/emailTemplate");
 const {
   normalizeEmail,
@@ -325,7 +326,16 @@ async function createCoParentInvitation(db, params) {
       read: false,
     });
     const token = invitee.data.fcm_token;
-    if (token) {
+    const decision = evaluateDelivery(
+        invitee.data,
+        "co_parent_invitation",
+        new Date(),
+    );
+    const userRef = db.collection(USERS_COLLECTION).doc(invitee.uid);
+    const claimed = decision.allow ?
+      await claimDailySlot(userRef, invitee.data, decision) :
+      false;
+    if (token && decision.allow && claimed) {
       await sendNotification(
           token,
           "Co-parent invitation",

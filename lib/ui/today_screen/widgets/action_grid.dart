@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_state.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_health_update_sheet.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_mood_update_sheet.dart';
+import 'package:loving_brain/ui/today_screen/sheets/add_notes_update_sheet.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
-import 'package:loving_brain/ui/today_screen/sheets/add_mood_update_sheet.dart';
-import 'package:loving_brain/ui/today_screen/sheets/add_health_update_sheet.dart';
-import 'package:loving_brain/ui/today_screen/sheets/add_notes_update_sheet.dart';
 
 class ActionGrid extends StatelessWidget {
   const ActionGrid({super.key});
@@ -25,43 +30,64 @@ class ActionGrid extends StatelessWidget {
       children: [
         _ActionGridItem(
           iconPath: Assets.v2.images.imgSleep.path,
-          title: "Sleep",
+          title: 'Sleep',
           onTap: () {
             showAddSleepUpdateSheet(context);
           },
         ),
         _ActionGridItem(
           iconPath: Assets.v2.images.imgTantrums.path,
-          title: "Tantrums",
+          title: 'Tantrums',
           onTap: () {
             showAddTantrumsUpdateSheet(context);
           },
         ),
         _ActionGridItem(
           iconPath: Assets.v2.images.imgMood.path,
-          title: "Mood",
+          title: 'Mood',
           onTap: () {
             showAddMoodUpdateSheet(context);
           },
         ),
         _ActionGridItem(
           iconPath: Assets.v2.images.imgHealth.path,
-          title: "Health",
+          title: 'Health',
           onTap: () {
             showAddHealthUpdateSheet(context);
           },
         ),
         _ActionGridItem(
           iconPath: Assets.v2.images.imgNotes.path,
-          title: "Notes",
+          title: 'Notes',
           onTap: () {
             showAddNotesUpdateSheet(context);
           },
         ),
         _ActionGridItem(
           iconPath: Assets.v2.images.imgAskBrainy.path,
-          title: "Ask Brainy",
+          title: 'Ask Brainy',
           onTap: () {
+            final TodayState state = context.read<TodayCubit>().state;
+            if (state.showBehaviourHeadsUp) {
+              context.push(
+                RoutePaths.brainyConversation,
+                extra: BrainyEntryContext.fromHeadsUp(
+                  headline: state.headsUpHeadline.isNotEmpty
+                      ? state.headsUpHeadline
+                      : 'A harder evening may be more likely',
+                  reason: state.headsUpReason.isNotEmpty
+                      ? state.headsUpReason
+                      : state.forecastSubtitle,
+                  windowStart: state.headsUpWindowStart,
+                  windowEnd: state.headsUpWindowEnd,
+                  confidenceLabel: state.confidenceLevel.isNotEmpty
+                      ? state.confidenceLevel
+                      : 'moderate',
+                  childName: state.childName,
+                ),
+              );
+              return;
+            }
             context.read<BaseCubit>().changeProps(bottomNavigationIndex: 1);
           },
         ),

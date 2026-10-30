@@ -1,17 +1,16 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/core/brainy_entry_context.dart';
-import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/other/preferances.dart';
-import 'bloc/today_cubit.dart';
-import 'bloc/today_state.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/today_screen/sheets/add_behaviour_sheet.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
-// Import sheets
 import 'package:loving_brain/ui/today_screen/sheets/view_support_sheet.dart';
 import 'package:loving_brain/ui/today_screen/widgets/action_grid.dart';
 import 'package:loving_brain/ui/today_screen/widgets/add_sleep_card.dart';
@@ -20,14 +19,13 @@ import 'package:loving_brain/ui/today_screen/widgets/main_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/nice_work_card.dart';
 import 'package:loving_brain/ui/today_screen/widgets/noticed_row.dart';
 import 'package:loving_brain/ui/today_screen/widgets/still_learning_patterns_card.dart';
-import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:loving_brain/repo/today_log_repo.dart';
-import 'package:loving_brain/ui/widget/offline_banner.dart';
-// Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
+import 'package:loving_brain/ui/widget/offline_banner.dart';
+
+import 'bloc/today_cubit.dart';
+import 'bloc/today_state.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
@@ -76,6 +74,29 @@ class _TodayScreenState extends State<TodayScreen> {
   void dispose() {
     _connectivitySubscription?.cancel();
     super.dispose();
+  }
+
+  Map<String, dynamic> _headsUpBrainyContext(TodayState state) {
+    return BrainyEntryContext.fromHeadsUp(
+      headline: state.headsUpHeadline.isNotEmpty
+          ? state.headsUpHeadline
+          : 'A harder evening may be more likely',
+      reason: state.headsUpReason.isNotEmpty
+          ? state.headsUpReason
+          : (state.forecastSubtitle.isNotEmpty
+                ? state.forecastSubtitle
+                : 'Recent sleep and behaviour patterns'),
+      windowStart: state.headsUpWindowStart.isNotEmpty
+          ? state.headsUpWindowStart
+          : state.sleepForecastStart,
+      windowEnd: state.headsUpWindowEnd.isNotEmpty
+          ? state.headsUpWindowEnd
+          : state.sleepForecastEnd,
+      confidenceLabel: state.confidenceLevel.isNotEmpty
+          ? state.confidenceLevel
+          : 'moderate',
+      childName: state.childName,
+    );
   }
 
   @override
@@ -135,58 +156,17 @@ class _TodayScreenState extends State<TodayScreen> {
                               ),
                             ] else if (state.activeChildId.isEmpty) ...[
                               _buildNoChildCard(context),
-                            ] else if (state.mode == TodayMode.normal) ...[
-                              const MainCard(),
-                              SizedBox(height: 24.h),
-                              if (state.hasMultiDayPatterns) ...[
-                                const NoticedRow(),
-                                SizedBox(height: 24.h),
-                                const NiceWorkCard(),
-                                SizedBox(height: 24.h),
-                              ] else ...[
-                                const StillLearningPatternsCard(),
-                                SizedBox(height: 24.h),
-                              ],
-                              const ActionGrid(),
                             ] else if (state.mode == TodayMode.newParent) ...[
-                              if (TodayLogRepo.instance
-                                      .canCurrentCaregiverViewHealth() &&
-                                  (state.forecastSubtitle
-                                          .toLowerCase()
-                                          .contains('fever') ||
-                                      state.forecastSubtitle
-                                          .toLowerCase()
-                                          .contains('health') ||
-                                      state.forecastSubtitle
-                                          .toLowerCase()
-                                          .contains('rest'))) ...[
-                                const HeadsUpCard(),
+                              if (state.showHealthHeadsUp) ...[
+                                const HeadsUpCard(isHealthNote: true),
                                 SizedBox(height: 16.h),
                               ],
-                              const AddSleepCard(),
-                              SizedBox(height: 16.h),
-                              AppButton(
-                                title: "Add behaviour update",
-                                onTap: () {
-                                  showAddTantrumsUpdateSheet(context);
-                                },
-                                backgroundColor: Colors.white,
-                                textColor: greyColor9,
-                              ),
-                              SizedBox(height: 16.h),
-                              AppButton(
-                                title: "Daily quick log",
-                                onTap: () {
-                                  showAddBehaviourSheet(context);
-                                },
-                                backgroundColor: Colors.white,
-                                textColor: greyColor9,
-                              ),
+                              ..._learningHomeCards(context, state),
                               SizedBox(height: 24.h),
                               const ActionGrid(),
                               SizedBox(height: 16.h),
                               AppButton(
-                                title: "Ask Brainy",
+                                title: 'Ask Brainy',
                                 onTap: () {
                                   context.push(
                                     RoutePaths.brainyConversation,
@@ -196,55 +176,58 @@ class _TodayScreenState extends State<TodayScreen> {
                                 backgroundColor: Colors.transparent,
                                 textColor: greyColor9,
                               ),
-                            ] else if (state.mode ==
-                                TodayMode.importantHeadsUp) ...[
-                              const HeadsUpCard(),
-                              SizedBox(height: 16.h),
-                              AppButton(
-                                title: "View support",
-                                onTap: () {
-                                  showViewSupportSheet(
-                                    context,
-                                    daysCount: state.loggedDaysCount,
-                                  );
-                                },
-                                backgroundColor: Colors.white,
-                                textColor: greyColor9,
-                              ),
-                              SizedBox(height: 16.h),
-                              AppButton(
-                                title: "Ask Brainy",
-                                onTap: () {
-                                  context.push(
-                                    RoutePaths.brainyConversation,
-                                    extra: BrainyEntryContext.fromHeadsUp(
-                                      headline:
-                                          'A harder evening may be more likely',
-                                      reason: state.forecastSubtitle.isNotEmpty
-                                          ? state.forecastSubtitle
-                                          : (state
-                                                    .sleepForecastReason
-                                                    .isNotEmpty
-                                                ? state.sleepForecastReason
-                                                : 'Recent sleep and behaviour patterns'),
-                                      windowStart: state.sleepForecastStart,
-                                      windowEnd: state.sleepForecastEnd,
-                                      confidenceLabel:
-                                          state.confidenceLevel.isNotEmpty
-                                          ? state.confidenceLevel
-                                          : 'moderate',
-                                      childName: state.childName,
-                                    ),
-                                  );
-                                },
-                                backgroundColor: Colors.transparent,
-                                textColor: greyColor9,
-                              ),
-                              if (state.hasMultiDayPatterns) ...[
-                                SizedBox(height: 24.h),
-                                const NoticedRow(),
+                            ] else ...[
+                              if (state.showBehaviourHeadsUp) ...[
+                                const HeadsUpCard(),
+                                SizedBox(height: 16.h),
+                                AppButton(
+                                  title: 'Ask Brainy',
+                                  onTap: () {
+                                    context.push(
+                                      RoutePaths.brainyConversation,
+                                      extra: _headsUpBrainyContext(state),
+                                    );
+                                  },
+                                  backgroundColor: Colors.transparent,
+                                  textColor: greyColor9,
+                                ),
+                                SizedBox(height: 16.h),
                               ],
+                              if (state.showHealthHeadsUp &&
+                                  !state.showBehaviourHeadsUp) ...[
+                                const HeadsUpCard(isHealthNote: true),
+                                SizedBox(height: 16.h),
+                              ],
+                              const MainCard(),
                               SizedBox(height: 24.h),
+                              if (state.showSupportOffer) ...[
+                                AppButton(
+                                  title: 'View support',
+                                  onTap: () {
+                                    showViewSupportSheet(
+                                      context,
+                                      daysCount: state.supportInconsistentDays,
+                                    );
+                                  },
+                                  backgroundColor: Colors.white,
+                                  textColor: greyColor9,
+                                ),
+                                SizedBox(height: 16.h),
+                              ],
+                              if (state.hasMultiDayPatterns) ...[
+                                if (state.showBehaviourHeadsUp ||
+                                    state.showNoticed) ...[
+                                  const NoticedRow(),
+                                  SizedBox(height: 24.h),
+                                ],
+                                if (state.showNiceWork) ...[
+                                  const NiceWorkCard(),
+                                  SizedBox(height: 24.h),
+                                ],
+                              ] else ...[
+                                const StillLearningPatternsCard(),
+                                SizedBox(height: 24.h),
+                              ],
                               const ActionGrid(),
                             ],
                             SizedBox(height: 100.h),
@@ -260,6 +243,31 @@ class _TodayScreenState extends State<TodayScreen> {
         );
       },
     );
+  }
+
+  List<Widget> _learningHomeCards(BuildContext context, TodayState state) {
+    final Widget sleepCard = const AddSleepCard();
+    final Widget behaviourButton = AppButton(
+      title: 'Add behaviour update',
+      onTap: () {
+        showAddTantrumsUpdateSheet(context);
+      },
+      backgroundColor: Colors.white,
+      textColor: greyColor9,
+    );
+
+    if (state.prioritiseSleepFirst) {
+      return <Widget>[
+        sleepCard,
+        SizedBox(height: 16.h),
+        behaviourButton,
+      ];
+    }
+    return <Widget>[
+      behaviourButton,
+      SizedBox(height: 16.h),
+      sleepCard,
+    ];
   }
 
   Widget _buildNoChildCard(BuildContext context) {
@@ -287,13 +295,13 @@ class _TodayScreenState extends State<TodayScreen> {
             ),
           ),
           16.spaceH,
-          "No child profile linked".appText(
+          'No child profile linked'.appText(
             fontSize: 22.sp,
             color: greyColor9,
             fraunces: true,
           ),
           10.spaceH,
-          "You are not currently linked to a child. You can create a new child profile to start tracking routines, or ask your partner to send an invite."
+          'You are not currently linked to a child. You can create a new child profile to start tracking routines, or ask your partner to send an invite.'
               .appText(
                 fontSize: 14.sp,
                 color: greyColor,
@@ -302,7 +310,7 @@ class _TodayScreenState extends State<TodayScreen> {
               ),
           24.spaceH,
           AppButton(
-            title: "Add child profile",
+            title: 'Add child profile',
             onTap: () async {
               final TodayCubit cubit = context.read<TodayCubit>();
               await context.push(

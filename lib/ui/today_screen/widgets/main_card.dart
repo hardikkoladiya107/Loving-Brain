@@ -16,8 +16,10 @@ import '../bloc/today_state.dart';
 class MainCard extends StatelessWidget {
   const MainCard({super.key});
 
-  double _fractionForTime(String? timeStr, {double fallback = 0.5}) {
-    if (timeStr == null || timeStr.trim().isEmpty) return fallback;
+  int _minutesForTime(String? timeStr, {int fallback = 19 * 60 + 30}) {
+    if (timeStr == null || timeStr.trim().isEmpty) {
+      return fallback;
+    }
     try {
       final DateFormat format12 = DateFormat('h:mm a');
       final DateFormat format12NoPad = DateFormat('hh:mm a');
@@ -27,17 +29,52 @@ class MainCard extends StatelessWidget {
       } catch (_) {
         dt = format12NoPad.parse(timeStr.trim());
       }
-      final int totalMinutes = dt.hour * 60 + dt.minute;
-      const int scaleStartMinutes = 18 * 60; // 6:00 PM
-      const int scaleEndMinutes = 21 * 60; // 9:00 PM
-      const int scaleDuration = scaleEndMinutes - scaleStartMinutes; // 180 mins
-
-      final double fraction =
-          (totalMinutes - scaleStartMinutes) / scaleDuration;
-      return fraction.clamp(0.05, 0.95);
+      return dt.hour * 60 + dt.minute;
     } catch (_) {
       return fallback;
     }
+  }
+
+  ({int start, int end}) _scaleRange(TodayState state) {
+    final int startMins = _minutesForTime(
+      state.sleepForecastStart,
+      fallback: 18 * 60,
+    );
+    final int endMins = _minutesForTime(
+      state.sleepForecastEnd,
+      fallback: 21 * 60,
+    );
+    int scaleStart = ((startMins ~/ 60) * 60) - 60;
+    int scaleEnd = (((endMins + 59) ~/ 60) * 60) + 60;
+    if (scaleEnd - scaleStart < 180) {
+      final int mid = (startMins + endMins) ~/ 2;
+      scaleStart = mid - 90;
+      scaleEnd = mid + 90;
+    }
+    scaleStart = scaleStart.clamp(12 * 60, 22 * 60);
+    scaleEnd = scaleEnd.clamp(scaleStart + 120, 24 * 60);
+    return (start: scaleStart, end: scaleEnd);
+  }
+
+  double _fractionForMinutes(
+    int totalMinutes, {
+    required int scaleStart,
+    required int scaleEnd,
+    double fallback = 0.5,
+  }) {
+    final int scaleDuration = scaleEnd - scaleStart;
+    if (scaleDuration <= 0) {
+      return fallback;
+    }
+    final double fraction = (totalMinutes - scaleStart) / scaleDuration;
+    return fraction.clamp(0.05, 0.95);
+  }
+
+  String _labelForMinutes(int totalMinutes) {
+    final int hour24 = (totalMinutes ~/ 60) % 24;
+    final int hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
+    final String suffix = hour24 >= 12 ? 'PM' : 'AM';
+    return '$hour12 $suffix';
   }
 
   @override
@@ -111,16 +148,26 @@ class MainCard extends StatelessWidget {
         LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             final double trackWidth = constraints.maxWidth;
-            final double startFrac = _fractionForTime(
-              state.sleepForecastStart,
+            final ({int start, int end}) scale = _scaleRange(state);
+            final double startFrac = _fractionForMinutes(
+              _minutesForTime(state.sleepForecastStart, fallback: scale.start),
+              scaleStart: scale.start,
+              scaleEnd: scale.end,
               fallback: 0.35,
             );
-            final double endFrac = _fractionForTime(
-              state.sleepForecastEnd,
+            final double endFrac = _fractionForMinutes(
+              _minutesForTime(state.sleepForecastEnd, fallback: scale.end),
+              scaleStart: scale.start,
+              scaleEnd: scale.end,
               fallback: 0.65,
             );
-            final double bedtimeFrac = _fractionForTime(
-              state.bedtimeEstimate,
+            final double bedtimeFrac = _fractionForMinutes(
+              _minutesForTime(
+                state.bedtimeEstimate,
+                fallback: (scale.start + scale.end) ~/ 2,
+              ),
+              scaleStart: scale.start,
+              scaleEnd: scale.end,
               fallback: 0.5,
             );
 
@@ -147,7 +194,6 @@ class MainCard extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.centerLeft,
                 children: [
-                  // Full background track
                   Container(
                     height: 12.h,
                     width: trackWidth,
@@ -156,7 +202,6 @@ class MainCard extends StatelessWidget {
                       color: secondaryColor.withValues(alpha: 0.18),
                     ),
                   ),
-                  // Active predicted window range
                   Positioned(
                     left: windowLeft,
                     width: windowWidth,
@@ -168,7 +213,6 @@ class MainCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Bedtime Estimate Thumb Indicator
                   Positioned(
                     left: thumbLeft,
                     child: Container(
@@ -202,19 +246,30 @@ class MainCard extends StatelessWidget {
             );
           },
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            4.spaceW,
-            "6 PM".appText(color: greyColor4, fontSize: 14.sp),
-            4.spaceW,
-            "7 PM".appText(color: greyColor4, fontSize: 14.sp),
-            4.spaceW,
-            "8 PM".appText(color: greyColor4, fontSize: 14.sp),
-            4.spaceW,
-            "9 PM".appText(color: greyColor4, fontSize: 14.sp),
-            4.spaceW,
-          ],
+        Builder(
+          builder: (BuildContext context) {
+            final ({int start, int end}) scale = _scaleRange(state);
+            final int step = ((scale.end - scale.start) / 3).round();
+            final List<int> labels = <int>[
+              scale.start,
+              scale.start + step,
+              scale.start + (step * 2),
+              scale.end,
+            ];
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (final int mins in labels) ...[
+                  4.spaceW,
+                  _labelForMinutes(mins).appText(
+                    color: greyColor4,
+                    fontSize: 14.sp,
+                  ),
+                  4.spaceW,
+                ],
+              ],
+            );
+          },
         ),
         16.spaceH,
         AppButton(

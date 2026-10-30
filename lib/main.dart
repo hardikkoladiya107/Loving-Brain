@@ -95,12 +95,13 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final _router = AppRouter.createRouter(navigatorKey);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       initNotification();
       // Must run at startup so invitation links work on cold start (before BaseScreen).
@@ -108,8 +109,22 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      NotificationUtil.cancelOverdueQuietHoursNotifications();
+    }
+  }
+
   Future<void> initNotification() async {
     await NotificationUtil.initializePlatformNotifications();
+    await NotificationUtil.cancelOverdueQuietHoursNotifications();
   }
 
   @override

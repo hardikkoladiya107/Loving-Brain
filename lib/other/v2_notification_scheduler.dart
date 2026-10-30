@@ -2,6 +2,8 @@ import 'package:intl/intl.dart';
 import 'package:loving_brain/model/notification_preferences_model.dart';
 import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/today_log_repo.dart';
+import 'package:loving_brain/repo/user_repo.dart';
 
 /// Unified V2 Notification Engine implementing the 8 specification types,
 /// daily cap (max 3/day), quiet hours (9pm–7am), and cancel-on-complete rules
@@ -80,6 +82,7 @@ class V2NotificationScheduler {
     reserved.add(notificationId.toString());
     preferences.putStringList(_reservedKey(date), reserved);
     incrementCountForDate(date);
+    UserRepo.instance.recordNotificationSent(date);
     return true;
   }
 
@@ -642,13 +645,20 @@ class V2NotificationScheduler {
           );
       for (final String childId in ids) {
         await cancelGentleCheckIn(childId, resetEmptyDays: false);
-        if (checkInTime != null && checkInTime.isAfter(now)) {
-          await scheduleGentleCheckIn(
-            childId: childId,
-            checkInTime: checkInTime,
-            hasLogsToday: false,
-          );
+        if (checkInTime == null || !checkInTime.isAfter(now)) {
+          continue;
         }
+        final bool hasLogsToday = await TodayLogRepo.instance.hasUsefulLogToday(
+          childId,
+        );
+        if (hasLogsToday) {
+          continue;
+        }
+        await scheduleGentleCheckIn(
+          childId: childId,
+          checkInTime: checkInTime,
+          hasLogsToday: false,
+        );
       }
     }
 

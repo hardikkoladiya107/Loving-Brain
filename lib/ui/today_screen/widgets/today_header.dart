@@ -24,63 +24,99 @@ class TodayHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () async {
-                  if (state.activeChildId.isEmpty) {
-                    final TodayCubit todayCubit = context.read<TodayCubit>();
-                    await context.push(
-                      RoutePaths.childProfilePath(
-                        preferences.getUserModel()?.uid ?? '',
-                        fromManageChildren: true,
-                      ),
-                    );
-                    todayCubit.init();
-                  } else {
-                    await showChildSwitcherSheet(context);
-                  }
-                },
-                child: Container(
-                  constraints: BoxConstraints(minHeight: 40.h),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(40.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircleAvatar(
-                        radius: 16.r,
-                        backgroundColor: Colors.amber,
-                        child: Icon(
-                          Icons.person,
-                          size: 20.sp,
-                          color: Colors.white,
+              child: Container(
+                constraints: BoxConstraints(minHeight: 40.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(40.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () async {
+                          final TodayCubit todayCubit = context
+                              .read<TodayCubit>();
+                          if (state.activeChildId.isEmpty) {
+                            await context.push(
+                              RoutePaths.childProfilePath(
+                                preferences.getUserModel()?.uid ?? '',
+                                fromManageChildren: true,
+                              ),
+                            );
+                            todayCubit.init();
+                            return;
+                          }
+                          await context.push(
+                            RoutePaths.childProfilePath(
+                              state.activeChildId.startsWith('local_')
+                                  ? (preferences.getUserModel()?.uid ?? '')
+                                  : state.activeChildId,
+                              fromManageChildren: false,
+                            ),
+                          );
+                          todayCubit.init();
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: 16.r,
+                              backgroundColor: Colors.amber,
+                              child: Icon(
+                                Icons.person,
+                                size: 20.sp,
+                                color: Colors.white,
+                              ),
+                            ),
+                            8.spaceW,
+                            Flexible(
+                              child:
+                                  (state.childName.isNotEmpty
+                                          ? state.childName
+                                          : (state.isLoading
+                                                ? ''
+                                                : 'Add child'))
+                                      .appText(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.start,
+                                      ),
+                            ),
+                          ],
                         ),
                       ),
-                      8.spaceW,
-                      Flexible(
-                        child:
-                            (state.childName.isNotEmpty
-                                    ? state.childName
-                                    : (state.isLoading ? '' : 'Add child'))
-                                .appText(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.start,
-                                ),
-                      ),
-                      4.spaceW,
-                      Icon(
+                    ),
+                    4.spaceW,
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () async {
+                        if (state.activeChildId.isEmpty) {
+                          final TodayCubit todayCubit = context
+                              .read<TodayCubit>();
+                          await context.push(
+                            RoutePaths.childProfilePath(
+                              preferences.getUserModel()?.uid ?? '',
+                              fromManageChildren: true,
+                            ),
+                          );
+                          todayCubit.init();
+                          return;
+                        }
+                        await showChildSwitcherSheet(context);
+                      },
+                      child: Icon(
                         Icons.keyboard_arrow_down_rounded,
                         size: 18.sp,
                         color: greyColor,
                       ),
-                    ],
-                  ).appPadding(left: 6.w, right: 10.w, top: 4.h, bottom: 4.h),
-                ),
+                    ),
+                  ],
+                ).appPadding(left: 6.w, right: 10.w, top: 4.h, bottom: 4.h),
               ),
             ),
             SizedBox(width: 12.w),
@@ -123,6 +159,14 @@ class TodayHeader extends StatelessWidget {
             ),
           ],
         ),
+        if (state.onboardingFocusLine.isNotEmpty) ...[
+          8.spaceH,
+          state.onboardingFocusLine.appText(
+            fontSize: 12.sp,
+            color: greyColor6,
+            textAlign: TextAlign.start,
+          ),
+        ],
       ],
     );
   }

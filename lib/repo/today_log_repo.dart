@@ -53,6 +53,74 @@ class TodayLogRepo {
   CollectionReference<Map<String, dynamic>> get _usersCollection =>
       FirebaseFirestore.instance.collection('users');
 
+  /// True when today already has a sleep, health, or tantrum log, including
+  /// one still waiting in the offline queue. A failed lookup returns true so
+  /// a check-in is not scheduled on top of a log we could not read.
+  Future<bool> hasUsefulLogToday(String childId) async {
+    if (childId.isEmpty) {
+      return false;
+    }
+    final DateTime now = DateTime.now();
+    final DateTime start = DateTime(now.year, now.month, now.day);
+    final DateTime end = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    try {
+      final QuerySnapshot<Map<String, dynamic>> sleep =
+          await _childrenCollection
+              .doc(childId)
+              .collection('sleep_logs')
+              .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+              .where('date', isLessThanOrEqualTo: Timestamp.fromDate(end))
+              .limit(1)
+              .get();
+      if (sleep.docs.isNotEmpty) {
+        return true;
+      }
+      for (final String name in <String>['health_logs', 'tantrum_logs']) {
+        final QuerySnapshot<Map<String, dynamic>> snap =
+            await _childrenCollection
+                .doc(childId)
+                .collection(name)
+                .where(
+                  'timestamp',
+                  isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+                )
+                .where(
+                  'timestamp',
+                  isLessThanOrEqualTo: Timestamp.fromDate(end),
+                )
+                .limit(1)
+                .get();
+        if (snap.docs.isNotEmpty) {
+          return true;
+        }
+      }
+    } catch (_) {
+      return true;
+    }
+    try {
+      final List<PendingLocalUpdateModel> pending = await OfflineSyncRepo
+          .instance
+          .getPendingUpdates();
+      for (final PendingLocalUpdateModel item in pending) {
+        if (item.childId != childId) {
+          continue;
+        }
+        final String type = item.updateType;
+        final bool useful =
+            type == 'sleep' || type == 'health' || type == 'tantrum';
+        if (!useful) {
+          continue;
+        }
+        if (item.timestamp.year == now.year &&
+            item.timestamp.month == now.month &&
+            item.timestamp.day == now.day) {
+          return true;
+        }
+      }
+    } catch (_) {}
+    return false;
+  }
+
   /// Resolves the currently active child ID from SharedPreferences or Firebase user.
   String? resolveActiveChildId() {
     final ChildModel? child = preferences.getChildModel();
@@ -160,7 +228,9 @@ class TodayLogRepo {
       // Also record to child timeline events for unified journey view
       final int durationMins =
           log.durationMinutes ?? log.wakeTime.difference(log.bedTime).inMinutes;
-      final String qualityText = '${log.sleepQualityIndex + 1}/5';
+      final String qualityText = log.sleepQualityIndex >= 0
+          ? '${log.sleepQualityIndex + 1}/5'
+          : 'not rated';
 
       await _childrenCollection
           .doc(childId)

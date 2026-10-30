@@ -1,16 +1,17 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/widget/app_button.dart';
-
-import 'package:easy_localization/easy_localization.dart';
-import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
@@ -22,7 +23,7 @@ Future<void> showAddSleepUpdateSheet(BuildContext context) {
     backgroundColor: const Color(0xFFFFFFFF),
     isScrollControlled: true,
     constraints: BoxConstraints(
-      maxHeight: MediaQuery.of(context).size.height * 0.75,
+      maxHeight: MediaQuery.of(context).size.height * 0.85,
     ),
     builder: (BuildContext context) => const AddSleepUpdateSheet(),
   );
@@ -31,14 +32,17 @@ Future<void> showAddSleepUpdateSheet(BuildContext context) {
 class AddSleepUpdateSheet extends StatelessWidget {
   const AddSleepUpdateSheet({super.key});
 
-  Future<void> _pickTime(BuildContext context, bool isWakeUp) async {
+  Future<void> _pickTime({
+    required BuildContext context,
+    required void Function(String formatted) onPicked,
+  }) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: primaryColor,
               onPrimary: Colors.white,
               surface: Colors.white,
@@ -59,12 +63,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
         picked.hour,
         picked.minute,
       );
-      final String formatted = DateFormat('hh:mm a').format(dt);
-      if (isWakeUp) {
-        context.read<TodayCubit>().setWokeUpTime(formatted);
-      } else {
-        context.read<TodayCubit>().setFellAsleepTime(formatted);
-      }
+      onPicked(DateFormat('hh:mm a').format(dt));
     }
   }
 
@@ -81,12 +80,12 @@ class AddSleepUpdateSheet extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.r),
               ),
-              title: "Overlapping sleep entry".appText(
+              title: 'Overlapping sleep entry'.appText(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
               content:
-                  "An existing sleep entry was already logged around ${dup.fellAsleepTime ?? 'this time'} \u2013 ${dup.wokeUpTime ?? ''}. Do you want to add a separate entry anyway?"
+                  'An existing sleep entry was already logged around ${dup.fellAsleepTime ?? 'this time'} \u2013 ${dup.wokeUpTime ?? ''}. Do you want to add a separate entry anyway?'
                       .appText(fontSize: 14.sp),
               actions: [
                 TextButton(
@@ -94,14 +93,14 @@ class AddSleepUpdateSheet extends StatelessWidget {
                     Navigator.pop(dialogContext);
                     context.read<TodayCubit>().clearDuplicateSleepAlert();
                   },
-                  child: "Cancel".appText(color: greyColor4),
+                  child: 'Cancel'.appText(color: greyColor4),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(dialogContext);
                     context.read<TodayCubit>().updateDuplicateSleepLog();
                   },
-                  child: "Edit existing".appText(
+                  child: 'Edit existing'.appText(
                     color: primaryColor,
                     fontWeight: FontWeight.bold,
                   ),
@@ -111,7 +110,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                     Navigator.pop(dialogContext);
                     context.read<TodayCubit>().saveSleepLog(forceSave: true);
                   },
-                  child: "Save as separate".appText(
+                  child: 'Save as separate'.appText(
                     color: greyColor8,
                     fontWeight: FontWeight.w600,
                   ),
@@ -127,23 +126,31 @@ class AddSleepUpdateSheet extends StatelessWidget {
             Navigator.pop(context);
             if (data == 'offline_queued') {
               showSnackBar(
-                message: "Saved offline. Will sync when reconnected.",
+                message: LocaleKeys.savedOfflineWillSync.tr(),
                 type: SnackBarType.SUCCESS,
               );
+            } else if (state.didForecastChangeSignificantly) {
+              showInstantResultSheet(
+                context,
+                title: state.instantResultTitle.isNotEmpty
+                    ? state.instantResultTitle
+                    : LocaleKeys.bedtimeMayShiftEarlier.tr(),
+                reason: state.forecastChangeReason.isNotEmpty
+                    ? state.forecastChangeReason
+                    : state.sleepForecastReason,
+                action: state.instantResultAction.isNotEmpty
+                    ? state.instantResultAction
+                    : LocaleKeys.checkUpdatedSleepPlan.tr(),
+                actionSubtitle: state.instantResultActionSubtitle.isNotEmpty
+                    ? state.instantResultActionSubtitle
+                    : LocaleKeys.windDownReflectsLatestRest.tr(),
+                onActionTap: () {
+                  context.push(RoutePaths.tonightsPlan);
+                },
+              );
             } else {
-              if (state.didForecastChangeSignificantly) {
-                showInstantResultSheet(
-                  context,
-                  title: "Sleep update recorded",
-                  reason: state.forecastChangeReason.isNotEmpty
-                      ? state.forecastChangeReason
-                      : "Today's sleep timing has updated tonight's settling window by 15+ minutes.",
-                  action: "Check updated sleep plan",
-                  actionSubtitle: "Wind-down timing reflects latest rest data.",
-                );
-              }
               showSnackBar(
-                message: LocaleKeys.sleepLogSaved.tr(),
+                message: LocaleKeys.updateSavedQuietly.tr(),
                 type: SnackBarType.SUCCESS,
               );
             }
@@ -157,16 +164,15 @@ class AddSleepUpdateSheet extends StatelessWidget {
         );
       },
       builder: (BuildContext context, TodayState state) {
-        String? napTimeStr;
-        final String? start = state.fellAsleepTime ?? state.napStartTime;
-        final String? end = state.wokeUpTime ?? state.napEndTime;
-        if (start != null && end != null) {
-          napTimeStr = "$start \u2013 $end";
-        } else if (start != null) {
-          napTimeStr = "$start \u2013 HH:MM";
-        } else if (end != null) {
-          napTimeStr = "HH:MM \u2013 $end";
-        }
+        final bool nightIncomplete =
+            (state.fellAsleepTime == null) != (state.wokeUpTime == null);
+        final bool napIncomplete =
+            (state.napStartTime == null) != (state.napEndTime == null);
+        final bool missingBoth =
+            state.fellAsleepTime == null &&
+            state.wokeUpTime == null &&
+            state.napStartTime == null &&
+            state.napEndTime == null;
 
         return Padding(
           padding: EdgeInsets.only(
@@ -191,13 +197,13 @@ class AddSleepUpdateSheet extends StatelessWidget {
                   ],
                 ),
                 12.spaceH,
-                "Sleep update".appText(
+                'Sleep update'.appText(
                   fontSize: 28.sp,
                   fraunces: true,
                   textAlign: TextAlign.start,
                 ),
                 12.spaceH,
-                "Takes about twenty seconds".appText(
+                'Takes about twenty seconds'.appText(
                   color: greyColor,
                   fontSize: 14.sp,
                   textAlign: TextAlign.start,
@@ -208,56 +214,112 @@ class AddSleepUpdateSheet extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _buildTimeInput(
-                        label: "FELL ASLEEP",
+                        label: 'FELL ASLEEP',
                         time: state.fellAsleepTime,
                         isError:
                             state.showSleepUpdateErrors &&
-                            state.fellAsleepTime == null,
-                        errorText: "Required",
-                        onTap: () => _pickTime(context, false),
+                            (missingBoth ||
+                                (state.fellAsleepTime == null &&
+                                    state.wokeUpTime != null)),
+                        errorText: 'Required',
+                        onTap: () => _pickTime(
+                          context: context,
+                          onPicked: (String formatted) {
+                            context.read<TodayCubit>().setFellAsleepTime(
+                              formatted,
+                            );
+                          },
+                        ),
                       ),
                     ),
                     12.spaceW,
                     Expanded(
                       child: _buildTimeInput(
-                        label: "WOKE UP",
+                        label: 'WOKE UP',
                         time: state.wokeUpTime,
                         isError:
                             state.showSleepUpdateErrors &&
-                            state.wokeUpTime == null,
-                        errorText: "Required",
-                        onTap: () => _pickTime(context, true),
+                            (missingBoth ||
+                                (state.wokeUpTime == null &&
+                                    state.fellAsleepTime != null)),
+                        errorText: 'Required',
+                        onTap: () => _pickTime(
+                          context: context,
+                          onPicked: (String formatted) {
+                            context.read<TodayCubit>().setWokeUpTime(formatted);
+                          },
+                        ),
                       ),
                     ),
                   ],
                 ),
                 24.spaceH,
-                _buildTimeInput(
-                  label: "NAP STARTED & ENDED",
-                  time: napTimeStr,
-                  isError: false,
-                  isEditable: false,
-                  onTap: null,
-                  dummyText: "HH:MM AM - HH:MM PM",
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildTimeInput(
+                        label: 'NAP STARTED',
+                        time: state.napStartTime,
+                        isError:
+                            state.showSleepUpdateErrors &&
+                            napIncomplete &&
+                            state.napStartTime == null,
+                        errorText: 'Required with nap end',
+                        onTap: () => _pickTime(
+                          context: context,
+                          onPicked: (String formatted) {
+                            context.read<TodayCubit>().setNapStartTime(
+                              formatted,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: _buildTimeInput(
+                        label: 'NAP ENDED',
+                        time: state.napEndTime,
+                        isError:
+                            state.showSleepUpdateErrors &&
+                            napIncomplete &&
+                            state.napEndTime == null,
+                        errorText: 'Required with nap start',
+                        onTap: () => _pickTime(
+                          context: context,
+                          onPicked: (String formatted) {
+                            context.read<TodayCubit>().setNapEndTime(formatted);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                8.spaceH,
+                'Log night sleep, a nap, or both.'.appText(
+                  fontSize: 12.sp,
+                  color: greyColor6,
+                  textAlign: TextAlign.start,
                 ),
                 24.spaceH,
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    "Night waking".appText(
+                    'Night waking'.appText(
                       fontWeight: FontWeight.w700,
                       fontSize: 16.sp,
                     ),
                     CupertinoSwitch(
                       value: state.isNightWaking,
-                      onChanged: (value) =>
+                      onChanged: (bool value) =>
                           context.read<TodayCubit>().toggleNightWaking(value),
                       activeTrackColor: primaryColor,
                     ),
                   ],
                 ),
                 24.spaceH,
-                "SLEEP QUALITY".appText(
+                'SLEEP QUALITY'.appText(
                   color: secondaryColor,
                   fontWeight: FontWeight.w800,
                   fontSize: 12.sp,
@@ -267,7 +329,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 Row(
                   children: List.generate(
                     5,
-                    (index) => GestureDetector(
+                    (int index) => GestureDetector(
                       onTap: () =>
                           context.read<TodayCubit>().setSleepQuality(index),
                       child: Container(
@@ -289,10 +351,16 @@ class AddSleepUpdateSheet extends StatelessWidget {
                 24.spaceH,
                 AppButton(
                   isLoading: state.isLoading,
-                  title: "Save update",
+                  title: 'Save update',
                   onTap: () {
-                    if (state.fellAsleepTime == null ||
-                        state.wokeUpTime == null) {
+                    final bool hasNight =
+                        state.fellAsleepTime != null &&
+                        state.wokeUpTime != null;
+                    final bool hasNap =
+                        state.napStartTime != null && state.napEndTime != null;
+                    if ((!hasNight && !hasNap) ||
+                        nightIncomplete ||
+                        napIncomplete) {
                       context.read<TodayCubit>().triggerSleepUpdateErrors();
                     } else {
                       context.read<TodayCubit>().saveSleepLog();
@@ -315,15 +383,14 @@ class AddSleepUpdateSheet extends StatelessWidget {
     required String? time,
     required bool isError,
     String? errorText,
-    bool isEditable = true,
-    VoidCallback? onTap,
-    String dummyText = "HH:MM AM",
+    required VoidCallback onTap,
+    String dummyText = 'HH:MM AM',
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          onTap: isEditable ? onTap : null,
+          onTap: onTap,
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -363,7 +430,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
         ),
         if (isError) ...[
           4.spaceH,
-          (errorText ?? "Please select time").appText(
+          (errorText ?? 'Please select time').appText(
             fontSize: 12.sp,
             color: Colors.red,
             fontWeight: FontWeight.w500,

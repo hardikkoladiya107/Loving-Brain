@@ -51,7 +51,7 @@ class AddMoodUpdateSheet extends StatelessWidget {
           data: (_) {
             Navigator.pop(context);
             showSnackBar(
-              message: LocaleKeys.moodLogSaved.tr(),
+              message: LocaleKeys.moodSavedAsContext.tr(),
               type: SnackBarType.SUCCESS,
             );
           },

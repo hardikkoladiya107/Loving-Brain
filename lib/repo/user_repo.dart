@@ -251,6 +251,39 @@ class UserRepo {
     }
   }
 
+  /// Shares one daily send count with Cloud Functions. Failures stay local.
+  Future<void> recordNotificationSent(DateTime when) async {
+    try {
+      final String uid = preferences.getUserModel()?.uid ?? '';
+      if (uid.isEmpty) {
+        return;
+      }
+      final String dayKey =
+          '${when.year.toString().padLeft(4, '0')}-'
+          '${when.month.toString().padLeft(2, '0')}-'
+          '${when.day.toString().padLeft(2, '0')}';
+      final DocumentReference<Map<String, dynamic>> ref = userCollection.doc(
+        uid,
+      );
+      await FirebaseFirestore.instance.runTransaction((
+        Transaction transaction,
+      ) async {
+        final DocumentSnapshot<Map<String, dynamic>> snap = await transaction
+            .get(ref);
+        final Map<String, dynamic> data = snap.data() ?? <String, dynamic>{};
+        final String storedDay =
+            data['notification_sent_day']?.toString() ?? '';
+        final int storedCount = storedDay == dayKey
+            ? (data['notification_sent_count'] as num?)?.toInt() ?? 0
+            : 0;
+        transaction.set(ref, <String, dynamic>{
+          'notification_sent_day': dayKey,
+          'notification_sent_count': storedCount + 1,
+        }, SetOptions(merge: true));
+      });
+    } catch (_) {}
+  }
+
   Future<ApiResultStatus> updateUserToFireStore({
     String? uId,
     required Map<String, dynamic> request,

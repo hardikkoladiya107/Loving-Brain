@@ -6,6 +6,9 @@ part 'today_state.freezed.dart';
 
 enum TodayMode { normal, newParent, importantHeadsUp }
 
+/// Destination for a Noticed insight card on Today.
+enum TodayNoticedDestination { none, sleepPattern, behaviourPattern }
+
 @freezed
 abstract class TodayState with _$TodayState {
   const factory TodayState({
@@ -35,6 +38,30 @@ abstract class TodayState with _$TodayState {
     @Default('') String forecastChangeReason,
     @Default(null) SleepLogModel? duplicateSleepLogDetected,
 
+    // Assembled home card copy (never invent in widgets)
+    @Default(false) bool showHealthHeadsUp,
+    @Default('') String healthHeadsUpTitle,
+    @Default('') String healthHeadsUpSubtitle,
+    @Default(false) bool showBehaviourHeadsUp,
+    @Default('') String headsUpHeadline,
+    @Default('') String headsUpReason,
+    @Default('') String headsUpWindowStart,
+    @Default('') String headsUpWindowEnd,
+    @Default(false) bool showNiceWork,
+    @Default('') String niceWorkTitle,
+    @Default('') String niceWorkSubtitle,
+    @Default(false) bool showNoticed,
+    @Default('') String noticedTitle,
+    @Default(TodayNoticedDestination.none)
+    TodayNoticedDestination noticedDestination,
+    @Default(false) bool showSupportOffer,
+    @Default(0) int supportInconsistentDays,
+    @Default('') String onboardingFocusLine,
+    @Default(true) bool prioritiseSleepFirst,
+    @Default('') String instantResultTitle,
+    @Default('') String instantResultAction,
+    @Default('') String instantResultActionSubtitle,
+
     // Check-in fields
     @Default(null) String? fellAsleepTime,
     @Default(null) String? wokeUpTime,
@@ -60,7 +87,7 @@ abstract class TodayState with _$TodayState {
     @Default('') String healthNotes,
     @Default(false) bool showHealthUpdateErrors,
 
-    // Sleep Add-ons
+    // Sleep Add-ons (-1 = unrated)
     @Default(false) bool isNightWaking,
     @Default(-1) int sleepQualityIndex,
 

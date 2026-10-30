@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/model/notification_preferences_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/v2_notification_scheduler.dart';
@@ -40,10 +41,13 @@ class NotificationUtil {
 
   /// Resolves the app route for a given notification payload or type string.
   static String resolveRouteForPayload(String? payload) {
-    if (payload == null || payload.trim().isEmpty) {
+    final String? cleanSource = payload == null
+        ? null
+        : unstampPayload(payload);
+    if (cleanSource == null || cleanSource.trim().isEmpty) {
       return RoutePaths.base;
     }
-    final String clean = payload.trim();
+    final String clean = cleanSource.trim();
 
     // V2 Sleep notifications -> Tonight's Plan (Doc 03 §2)
     if (clean == 'sleep_window' ||
@@ -219,6 +223,14 @@ class NotificationUtil {
           message.data['route']?.toString() ??
           '';
 
+      final NotificationPreferencesModel prefs =
+          V2NotificationScheduler.loadPreferences();
+      final bool quietNow = prefs.isInsideQuietHours(DateTime.now());
+      final bool quietException = payload == 'mentorship_reminder';
+      if (quietNow && !quietException) {
+        return;
+      }
+
       if (title.isNotEmpty || body.isNotEmpty) {
         await showLocalNotification(
           id: message.hashCode,
@@ -360,19 +372,91 @@ class NotificationUtil {
             channelName: channelName,
             channelDesc: channelDesc,
           );
-      await _localNotifications.zonedSchedule(
-        id: id,
-        title: title,
-        body: body,
-        scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
-        notificationDetails: platformChannelSpecifics,
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        payload: payload,
-      );
+      final String stampedPayload = stampPayload(payload, scheduledDate);
+      final tz.TZDateTime zoned = tz.TZDateTime.from(scheduledDate, tz.local);
+      try {
+        await _localNotifications.zonedSchedule(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: zoned,
+          notificationDetails: platformChannelSpecifics,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          payload: stampedPayload,
+        );
+      } catch (_) {
+        await _localNotifications.zonedSchedule(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: zoned,
+          notificationDetails: platformChannelSpecifics,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          payload: stampedPayload,
+        );
+      }
       return true;
     } catch (_) {
       return false;
     }
+  }
+
+  static String stampPayload(String payload, DateTime scheduledDate) {
+    final String clean = unstampPayload(payload);
+    return '$clean|at=${scheduledDate.toIso8601String()}';
+  }
+
+  static String unstampPayload(String? payload) {
+    if (payload == null) {
+      return '';
+    }
+    final int index = payload.indexOf('|at=');
+    if (index < 0) {
+      return payload;
+    }
+    return payload.substring(0, index);
+  }
+
+  static DateTime? scheduledInstantFromPayload(String? payload) {
+    if (payload == null) {
+      return null;
+    }
+    final int index = payload.indexOf('|at=');
+    if (index < 0) {
+      return null;
+    }
+    return DateTime.tryParse(payload.substring(index + 4));
+  }
+
+  /// Cancels a pending reminder that is already late and would now surface
+  /// during quiet hours. Future reminders are left in place.
+  static Future<void> cancelOverdueQuietHoursNotifications() async {
+    try {
+      final NotificationPreferencesModel prefs =
+          V2NotificationScheduler.loadPreferences();
+      final DateTime now = DateTime.now();
+      if (!prefs.isInsideQuietHours(now)) {
+        return;
+      }
+      final List<PendingNotificationRequest> pending = await _localNotifications
+          .pendingNotificationRequests();
+      for (final PendingNotificationRequest request in pending) {
+        final DateTime? scheduled = scheduledInstantFromPayload(
+          request.payload,
+        );
+        if (scheduled == null || !scheduled.isBefore(now)) {
+          continue;
+        }
+        final String kind = unstampPayload(request.payload);
+        final bool allowedLate =
+            kind == 'mentorship_reminder' ||
+            (kind == 'sleep_window' && prefs.sleepReminderTimeCustomized);
+        if (allowedLate) {
+          continue;
+        }
+        await cancelNotification(request.id);
+      }
+    } catch (_) {}
   }
 
   /// Opens the OS page where the parent can enable notifications for this app.

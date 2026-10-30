@@ -1,5 +1,9 @@
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
+const {
+  isInvalidTokenError,
+  clearInvalidToken,
+} = require("./services/notificationDelivery");
 
 /**
  * FCM data payloads must be string key/value pairs.
@@ -71,6 +75,13 @@ async function sendNotification(token, title, body, data = {}) {
     return {success: true, response};
   } catch (error) {
     logger.error("❌ Error sending notification:", {error});
+    if (isInvalidTokenError(error)) {
+      try {
+        await clearInvalidToken(admin.firestore(), token);
+      } catch (cleanupError) {
+        logger.error("Failed to clear invalid FCM token", {cleanupError});
+      }
+    }
     return {success: false, error};
   }
 }
@@ -109,6 +120,18 @@ async function sendMulticastNotification(tokens, title, body, data = {}) {
 
   try {
     const response = await admin.messaging().sendEachForMulticast(message);
+    if (Array.isArray(response.responses)) {
+      for (let index = 0; index < response.responses.length; index++) {
+        const item = response.responses[index];
+        if (!item.success && isInvalidTokenError(item.error)) {
+          try {
+            await clearInvalidToken(admin.firestore(), tokens[index]);
+          } catch (cleanupError) {
+            logger.error("Failed to clear invalid FCM token", {cleanupError});
+          }
+        }
+      }
+    }
     logger.info("✅ Multicast notification sent successfully:", {
       successCount: response.successCount,
       failureCount: response.failureCount,

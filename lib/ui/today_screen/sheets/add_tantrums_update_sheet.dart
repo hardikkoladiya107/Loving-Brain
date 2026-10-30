@@ -87,25 +87,28 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                 message: "Saved offline. Will sync when reconnected.",
                 type: SnackBarType.SUCCESS,
               );
+            } else if (state.didForecastChangeSignificantly) {
+              showInstantResultSheet(
+                context,
+                title: state.instantResultTitle.isNotEmpty
+                    ? state.instantResultTitle
+                    : 'A harder window may be more likely',
+                reason: state.forecastChangeReason.isNotEmpty
+                    ? state.forecastChangeReason
+                    : 'Recent patterns updated the challenging window.',
+                action: state.instantResultAction.isNotEmpty
+                    ? state.instantResultAction
+                    : 'Explore Calm Plan',
+                actionSubtitle: state.instantResultActionSubtitle.isNotEmpty
+                    ? state.instantResultActionSubtitle
+                    : 'Strategies for the upcoming challenging window.',
+                onActionTap: () {
+                  context.push(RoutePaths.calmPlan);
+                },
+              );
             } else {
-              if (state.didForecastChangeSignificantly) {
-                showInstantResultSheet(
-                  context,
-                  title: "Tantrum update logged",
-                  reason: state.forecastChangeReason.isNotEmpty
-                      ? state.forecastChangeReason
-                      : "Understanding difficult moments helps Loving Brain notice patterns in timing and what helps your child calm down.",
-                  action: "Explore Calm Plan",
-                  actionSubtitle: state.hasMultiDayPatterns
-                      ? "Proven responses ready for upcoming challenging windows."
-                      : "Strategies to help you stay calm and respond with confidence.",
-                  onActionTap: () {
-                    context.push(RoutePaths.calmPlan);
-                  },
-                );
-              }
               showSnackBar(
-                message: LocaleKeys.tantrumLogSaved.tr(),
+                message: LocaleKeys.tantrumSavedQuietly.tr(),
                 type: SnackBarType.SUCCESS,
               );
             }
@@ -124,12 +127,8 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
             state.tantrumWhatHappened.trim().isEmpty;
         final bool isTimeError =
             state.showTantrumUpdateErrors && state.tantrumTime == null;
-        final bool isTriggersError =
-            state.showTantrumUpdateErrors &&
-            state.selectedTantrumTriggers.isEmpty;
-        final bool isWhatHelpedError =
-            state.showTantrumUpdateErrors &&
-            state.tantrumWhatHelped.trim().isEmpty;
+        const bool isTriggersError = false;
+        const bool isWhatHelpedError = false;
 
         return DraggableScrollableSheet(
           initialChildSize: 0.94,
@@ -280,9 +279,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                         title: "Save update",
                         onTap: () {
                           if (state.tantrumWhatHappened.trim().isEmpty ||
-                              state.tantrumTime == null ||
-                              state.selectedTantrumTriggers.isEmpty ||
-                              state.tantrumWhatHelped.trim().isEmpty) {
+                              state.tantrumTime == null) {
                             context
                                 .read<TodayCubit>()
                                 .triggerTantrumUpdateErrors();

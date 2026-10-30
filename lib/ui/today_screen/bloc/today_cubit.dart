@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
 import 'package:loving_brain/core/energy_bridge_sleep_calculator.dart';
+import 'package:loving_brain/core/today_home_assembler.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
@@ -103,6 +106,27 @@ class TodayCubit extends Cubit<TodayState> {
     String? forecastChangeReason,
     SleepLogModel? duplicateSleepLogDetected,
     bool clearDuplicateSleep = false,
+    bool? showHealthHeadsUp,
+    String? healthHeadsUpTitle,
+    String? healthHeadsUpSubtitle,
+    bool? showBehaviourHeadsUp,
+    String? headsUpHeadline,
+    String? headsUpReason,
+    String? headsUpWindowStart,
+    String? headsUpWindowEnd,
+    bool? showNiceWork,
+    String? niceWorkTitle,
+    String? niceWorkSubtitle,
+    bool? showNoticed,
+    String? noticedTitle,
+    TodayNoticedDestination? noticedDestination,
+    bool? showSupportOffer,
+    int? supportInconsistentDays,
+    String? onboardingFocusLine,
+    bool? prioritiseSleepFirst,
+    String? instantResultTitle,
+    String? instantResultAction,
+    String? instantResultActionSubtitle,
     String? fellAsleepTime,
     String? wokeUpTime,
     String? napStartTime,
@@ -157,6 +181,31 @@ class TodayCubit extends Cubit<TodayState> {
         duplicateSleepLogDetected: clearDuplicateSleep
             ? null
             : (duplicateSleepLogDetected ?? state.duplicateSleepLogDetected),
+        showHealthHeadsUp: showHealthHeadsUp ?? state.showHealthHeadsUp,
+        healthHeadsUpTitle: healthHeadsUpTitle ?? state.healthHeadsUpTitle,
+        healthHeadsUpSubtitle:
+            healthHeadsUpSubtitle ?? state.healthHeadsUpSubtitle,
+        showBehaviourHeadsUp:
+            showBehaviourHeadsUp ?? state.showBehaviourHeadsUp,
+        headsUpHeadline: headsUpHeadline ?? state.headsUpHeadline,
+        headsUpReason: headsUpReason ?? state.headsUpReason,
+        headsUpWindowStart: headsUpWindowStart ?? state.headsUpWindowStart,
+        headsUpWindowEnd: headsUpWindowEnd ?? state.headsUpWindowEnd,
+        showNiceWork: showNiceWork ?? state.showNiceWork,
+        niceWorkTitle: niceWorkTitle ?? state.niceWorkTitle,
+        niceWorkSubtitle: niceWorkSubtitle ?? state.niceWorkSubtitle,
+        showNoticed: showNoticed ?? state.showNoticed,
+        noticedTitle: noticedTitle ?? state.noticedTitle,
+        noticedDestination: noticedDestination ?? state.noticedDestination,
+        showSupportOffer: showSupportOffer ?? state.showSupportOffer,
+        supportInconsistentDays:
+            supportInconsistentDays ?? state.supportInconsistentDays,
+        onboardingFocusLine: onboardingFocusLine ?? state.onboardingFocusLine,
+        prioritiseSleepFirst: prioritiseSleepFirst ?? state.prioritiseSleepFirst,
+        instantResultTitle: instantResultTitle ?? state.instantResultTitle,
+        instantResultAction: instantResultAction ?? state.instantResultAction,
+        instantResultActionSubtitle:
+            instantResultActionSubtitle ?? state.instantResultActionSubtitle,
         fellAsleepTime: clearSleepInputs
             ? null
             : (fellAsleepTime ?? state.fellAsleepTime),
@@ -195,6 +244,90 @@ class TodayCubit extends Cubit<TodayState> {
         saveStatus: saveStatus ?? const ApiResultStatus.initial(),
       ),
     );
+  }
+
+  void applyHomeSnapshot(TodayHomeSnapshot snapshot) {
+    changeProps(
+      mode: snapshot.mode,
+      sleepForecastStart: snapshot.sleepForecastStart,
+      sleepForecastEnd: snapshot.sleepForecastEnd,
+      bedtimeEstimate: snapshot.bedtimeEstimate,
+      forecastSubtitle: snapshot.forecastSubtitle,
+      confidenceLevel: snapshot.confidenceLevel,
+      confidenceDots: snapshot.confidenceDots,
+      sleepForecastReason: snapshot.sleepForecastReason,
+      hasSleepLogs: snapshot.hasSleepLogs,
+      hasMultiDayPatterns: snapshot.hasMultiDayPatterns,
+      hasAnyLogs: snapshot.hasAnyLogs,
+      loggedDaysCount: snapshot.loggedDaysCount,
+      showHealthHeadsUp: snapshot.showHealthHeadsUp,
+      healthHeadsUpTitle: snapshot.healthHeadsUpTitle,
+      healthHeadsUpSubtitle: snapshot.healthHeadsUpSubtitle,
+      showBehaviourHeadsUp: snapshot.showBehaviourHeadsUp,
+      headsUpHeadline: snapshot.headsUpHeadline,
+      headsUpReason: snapshot.headsUpReason,
+      headsUpWindowStart: snapshot.headsUpWindowStart,
+      headsUpWindowEnd: snapshot.headsUpWindowEnd,
+      showNiceWork: snapshot.showNiceWork,
+      niceWorkTitle: snapshot.niceWorkTitle,
+      niceWorkSubtitle: snapshot.niceWorkSubtitle,
+      showNoticed: snapshot.showNoticed,
+      noticedTitle: snapshot.noticedTitle,
+      noticedDestination: snapshot.noticedDestination,
+      showSupportOffer: snapshot.showSupportOffer,
+      supportInconsistentDays: snapshot.supportInconsistentDays,
+      onboardingFocusLine: snapshot.onboardingFocusLine,
+      prioritiseSleepFirst: snapshot.prioritiseSleepFirst,
+    );
+  }
+
+  Future<void> dismissSupportOffer() async {
+    final String childId = _resolveTargetChildId();
+    if (childId.isEmpty) {
+      return;
+    }
+    await preferences.putString(
+      TodayHomeAssembler.supportDismissalKey(childId),
+      DateTime.now().toIso8601String(),
+    );
+    changeProps(showSupportOffer: false);
+  }
+
+  Future<void> _cacheHomeSnapshot(
+    String childId,
+    TodayHomeSnapshot snapshot,
+  ) async {
+    if (childId.isEmpty || childId.startsWith('local_')) {
+      return;
+    }
+    await preferences.putString(
+      TodayHomeAssembler.homeCacheKey(childId),
+      json.encode(snapshot.toCacheMap()),
+    );
+  }
+
+  TodayHomeSnapshot? _loadCachedHomeSnapshot(String childId) {
+    if (childId.isEmpty) {
+      return null;
+    }
+    final String? raw = preferences.getString(
+      TodayHomeAssembler.homeCacheKey(childId),
+    );
+    if (raw == null || raw.isEmpty) {
+      return null;
+    }
+    try {
+      final Object? decoded = json.decode(raw);
+      if (decoded is Map<String, dynamic>) {
+        return TodayHomeSnapshot.fromCacheMap(decoded);
+      }
+      if (decoded is Map) {
+        return TodayHomeSnapshot.fromCacheMap(
+          Map<String, dynamic>.from(decoded),
+        );
+      }
+    } catch (_) {}
+    return null;
   }
 
   void toggleMode() {
@@ -393,10 +526,10 @@ class TodayCubit extends Cubit<TodayState> {
     if (finalChildId.isNotEmpty) {
       // Sync any pending offline quick updates in the background
       OfflineSyncRepo.instance.syncPendingUpdates();
-      await recalculateForecast(childOverride: child);
+      await recalculateForecast();
     } else {
       changeProps(
-        mode: TodayMode.normal,
+        mode: TodayMode.newParent,
         hasAnyLogs: false,
         hasSleepLogs: false,
         hasMultiDayPatterns: false,
@@ -405,6 +538,11 @@ class TodayCubit extends Cubit<TodayState> {
         sleepForecastEnd: '',
         bedtimeEstimate: '',
         confidenceLevel: '',
+        showBehaviourHeadsUp: false,
+        showHealthHeadsUp: false,
+        showNiceWork: false,
+        showNoticed: false,
+        showSupportOffer: false,
       );
     }
   }
@@ -432,30 +570,36 @@ class TodayCubit extends Cubit<TodayState> {
     await init();
   }
 
-  /// Dynamically computes Energy Bridge sleep forecast using child profile and recent logs.
+  /// Dynamically computes Energy Bridge sleep + behaviour home using child profile and recent logs.
   Future<void> recalculateForecast({ChildModel? childOverride}) async {
     final ChildModel? child = childOverride ?? preferences.getChildModel();
     final String childId = child?.reference?.id ?? _resolveTargetChildId();
     List<SleepLogModel> sleepLogs = <SleepLogModel>[];
+    List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
+    List<MoodLogModel> moodLogs = <MoodLogModel>[];
+    List<HealthLogModel> healthLogs = <HealthLogModel>[];
     HealthLogModel? todayHealthLog;
     bool hasTantrumToday = false;
+    bool sleepFetchFailed = false;
 
     if (childId.isNotEmpty) {
       final ApiResultStatus<List<SleepLogModel>> sleepResult =
           await TodayLogRepo.instance.getRecentSleepLogs(childId, limit: 14);
       if (sleepResult is Data<List<SleepLogModel>>) {
         sleepLogs = sleepResult.data;
+      } else if (sleepResult is Error<List<SleepLogModel>>) {
+        sleepFetchFailed = true;
       }
 
       final bool canViewHealth = TodayLogRepo.instance
           .canCurrentCaregiverViewHealth();
       if (canViewHealth) {
         final ApiResultStatus<List<HealthLogModel>> healthResult =
-            await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 5);
+            await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 10);
         if (healthResult is Data<List<HealthLogModel>>) {
+          healthLogs = healthResult.data;
           final DateTime now = DateTime.now();
-          final List<HealthLogModel> recentHealth = healthResult.data;
-          for (final HealthLogModel h in recentHealth) {
+          for (final HealthLogModel h in healthLogs) {
             if (h.timestamp.year == now.year &&
                 h.timestamp.month == now.month &&
                 h.timestamp.day == now.day) {
@@ -467,10 +611,11 @@ class TodayCubit extends Cubit<TodayState> {
       }
 
       final ApiResultStatus<List<TantrumLogModel>> tantrumResult =
-          await TodayLogRepo.instance.getRecentTantrumLogs(childId, limit: 5);
+          await TodayLogRepo.instance.getRecentTantrumLogs(childId, limit: 20);
       if (tantrumResult is Data<List<TantrumLogModel>>) {
+        tantrumLogs = tantrumResult.data;
         final DateTime now = DateTime.now();
-        for (final TantrumLogModel t in tantrumResult.data) {
+        for (final TantrumLogModel t in tantrumLogs) {
           if (t.timestamp.year == now.year &&
               t.timestamp.month == now.month &&
               t.timestamp.day == now.day) {
@@ -478,6 +623,21 @@ class TodayCubit extends Cubit<TodayState> {
             break;
           }
         }
+      }
+
+      final ApiResultStatus<List<MoodLogModel>> moodResult = await TodayLogRepo
+          .instance
+          .getRecentMoodLogs(childId, limit: 10);
+      if (moodResult is Data<List<MoodLogModel>>) {
+        moodLogs = moodResult.data;
+      }
+    }
+
+    if (sleepFetchFailed) {
+      final TodayHomeSnapshot? cached = _loadCachedHomeSnapshot(childId);
+      if (cached != null) {
+        applyHomeSnapshot(cached);
+        return;
       }
     }
 
@@ -489,58 +649,37 @@ class TodayCubit extends Cubit<TodayState> {
       todayHealthLog: canViewHealth ? todayHealthLog : null,
     );
 
-    final bool hasSevereHealthIssue =
-        canViewHealth &&
-        todayHealthLog != null &&
-        todayHealthLog.issues.any(
-          (String issue) =>
-              issue.toLowerCase().contains("fever") ||
-              issue.toLowerCase().contains("breath") ||
-              issue.toLowerCase().contains("illness"),
+    final BehaviourForecastResult behaviour =
+        EnergyBridgeBehaviourCalculator.calculate(
+          childModel: child,
+          tantrumLogs: tantrumLogs,
+          sleepLogs: sleepLogs,
+          moodLogs: moodLogs,
+          healthLogs: canViewHealth ? healthLogs : <HealthLogModel>[],
         );
 
-    final bool isOvertiredOrDisrupted =
-        forecast.healthCaveat != null ||
-        forecast.subtitle.contains("nap ran about") ||
-        hasTantrumToday ||
-        hasSevereHealthIssue;
-
-    final bool hasMultiDayPatterns = sleepLogs.length >= 3;
-    final Set<String> loggedDates = <String>{};
-    for (final SleepLogModel log in sleepLogs) {
-      loggedDates.add(
-        '${log.wakeTime.year}-${log.wakeTime.month}-${log.wakeTime.day}',
+    DateTime? supportDismissedAt;
+    if (childId.isNotEmpty) {
+      final String? dismissedRaw = preferences.getString(
+        TodayHomeAssembler.supportDismissalKey(childId),
       );
-    }
-    final int loggedDaysCount = loggedDates.length;
-
-    final bool hasAnyLogs =
-        sleepLogs.isNotEmpty || hasTantrumToday || todayHealthLog != null;
-
-    final TodayMode updatedMode;
-    if (!forecast.hasPersonalLogs) {
-      updatedMode = TodayMode.newParent;
-    } else if (hasMultiDayPatterns && isOvertiredOrDisrupted) {
-      // Require at least 3 logged sessions before predicting harder evening disruption (BUG-30)
-      updatedMode = TodayMode.importantHeadsUp;
-    } else {
-      updatedMode = TodayMode.normal;
+      if (dismissedRaw != null && dismissedRaw.isNotEmpty) {
+        supportDismissedAt = DateTime.tryParse(dismissedRaw);
+      }
     }
 
-    changeProps(
-      mode: updatedMode,
-      sleepForecastStart: forecast.windowStart,
-      sleepForecastEnd: forecast.windowEnd,
-      bedtimeEstimate: forecast.bedtimeEstimate,
-      forecastSubtitle: forecast.subtitle,
-      confidenceLevel: forecast.confidenceLabel.toLowerCase(),
-      confidenceDots: forecast.confidenceDots,
-      sleepForecastReason: forecast.reason,
-      hasSleepLogs: forecast.hasPersonalLogs,
-      hasMultiDayPatterns: hasMultiDayPatterns,
-      hasAnyLogs: hasAnyLogs,
-      loggedDaysCount: loggedDaysCount,
+    final TodayHomeSnapshot snapshot = TodayHomeAssembler.assemble(
+      child: child,
+      sleepForecast: forecast,
+      behaviourForecast: behaviour,
+      sleepLogs: sleepLogs,
+      tantrumLogs: tantrumLogs,
+      todayHealthLog: canViewHealth ? todayHealthLog : null,
+      supportDismissedAt: supportDismissedAt,
     );
+
+    applyHomeSnapshot(snapshot);
+    await _cacheHomeSnapshot(childId, snapshot);
 
     // Schedule Sleep Window notification if confidence >= moderate (Doc 03 §1)
     if (childId.isNotEmpty &&
@@ -604,7 +743,7 @@ class TodayCubit extends Cubit<TodayState> {
 
       // Schedule Weekly Review notification for next Sunday 9:00 AM only when enough meaningful data exists (Doc 03 §5)
       final bool hasMeaningfulWeeklyData =
-          hasMultiDayPatterns || sleepLogs.length >= 2;
+          snapshot.hasMultiDayPatterns || sleepLogs.length >= 2;
       if (hasMeaningfulWeeklyData) {
         DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
         int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
@@ -653,17 +792,17 @@ class TodayCubit extends Cubit<TodayState> {
 
   void setSleepQuality(int index) => changeProps(sleepQualityIndex: index);
 
-  void setFellAsleepTime(String time) => changeProps(
-    fellAsleepTime: time,
-    napStartTime: time,
-    showSleepUpdateErrors: false,
-  );
+  void setFellAsleepTime(String time) =>
+      changeProps(fellAsleepTime: time, showSleepUpdateErrors: false);
 
-  void setWokeUpTime(String time) => changeProps(
-    wokeUpTime: time,
-    napEndTime: time,
-    showSleepUpdateErrors: false,
-  );
+  void setWokeUpTime(String time) =>
+      changeProps(wokeUpTime: time, showSleepUpdateErrors: false);
+
+  void setNapStartTime(String time) =>
+      changeProps(napStartTime: time, showSleepUpdateErrors: false);
+
+  void setNapEndTime(String time) =>
+      changeProps(napEndTime: time, showSleepUpdateErrors: false);
 
   void setNapTimes(String? start, String? end) => changeProps(
     napStartTime: start,
@@ -718,40 +857,39 @@ class TodayCubit extends Cubit<TodayState> {
 
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
-
     final DateTime now = DateTime.now();
+    final int qualityIndex = state.sleepQualityIndex;
 
     // Check for duplicate sleep interval if not forced (Doc 06 §3)
     if (!forceSave) {
-      DateTime checkBed;
-      DateTime checkWake;
+      final List<ResolvedSleepInterval> intervals = <ResolvedSleepInterval>[];
       if (hasNight) {
-        final ResolvedSleepInterval interval =
-            TodayLogRepo.resolveSleepInterval(
-              bedTimeText: state.fellAsleepTime!,
-              wakeTimeText: state.wokeUpTime!,
-              now: now,
-            );
-        checkBed = interval.bedTime;
-        checkWake = interval.wakeTime;
-      } else {
-        final ResolvedSleepInterval interval =
-            TodayLogRepo.resolveSleepInterval(
-              bedTimeText: state.napStartTime!,
-              wakeTimeText: state.napEndTime!,
-              now: now,
-            );
-        checkBed = interval.bedTime;
-        checkWake = interval.wakeTime;
+        intervals.add(
+          TodayLogRepo.resolveSleepInterval(
+            bedTimeText: state.fellAsleepTime!,
+            wakeTimeText: state.wokeUpTime!,
+            now: now,
+          ),
+        );
       }
-
-      final SleepLogModel? duplicate = await findOverlappingSleepLog(
-        bedTime: checkBed,
-        wakeTime: checkWake,
-      );
-      if (duplicate != null) {
-        changeProps(duplicateSleepLogDetected: duplicate);
-        return;
+      if (hasNap) {
+        intervals.add(
+          TodayLogRepo.resolveSleepInterval(
+            bedTimeText: state.napStartTime!,
+            wakeTimeText: state.napEndTime!,
+            now: now,
+          ),
+        );
+      }
+      for (final ResolvedSleepInterval interval in intervals) {
+        final SleepLogModel? duplicate = await findOverlappingSleepLog(
+          bedTime: interval.bedTime,
+          wakeTime: interval.wakeTime,
+        );
+        if (duplicate != null) {
+          changeProps(duplicateSleepLogDetected: duplicate);
+          return;
+        }
       }
     }
 
@@ -759,7 +897,6 @@ class TodayCubit extends Cubit<TodayState> {
 
     final String prevEstimate = state.bedtimeEstimate;
     final String prevConfidence = state.confidenceLevel;
-
     ApiResultStatus<String> result = const ApiResultStatus.initial();
 
     if (hasNight) {
@@ -770,13 +907,12 @@ class TodayCubit extends Cubit<TodayState> {
       );
       final DateTime bedTime = interval.bedTime;
       final DateTime wakeTime = interval.wakeTime;
-
       final int durationMins = wakeTime.difference(bedTime).inMinutes;
       if (durationMins <= 0) {
         changeProps(
           isLoading: false,
           saveStatus: ApiResultStatus.error(
-            error: Exception("Wake time must be after sleep time"),
+            error: Exception('Wake time must be after sleep time'),
           ),
         );
         return;
@@ -785,34 +921,36 @@ class TodayCubit extends Cubit<TodayState> {
         changeProps(
           isLoading: false,
           saveStatus: ApiResultStatus.error(
-            error: Exception("Sleep duration cannot exceed 24 hours"),
+            error: Exception('Sleep duration cannot exceed 24 hours'),
           ),
         );
         return;
       }
 
-      final SleepLogModel nightLog = SleepLogModel(
-        id: null,
-        date: DateTime(now.year, now.month, now.day),
-        bedTime: bedTime,
-        wakeTime: wakeTime,
-        fellAsleepTime: state.fellAsleepTime,
-        wokeUpTime: state.wokeUpTime,
-        isNightWaking: state.isNightWaking,
-        sleepQualityIndex: state.sleepQualityIndex >= 0
-            ? state.sleepQualityIndex
-            : 3,
-        durationMinutes: durationMins,
-        userId: userUid,
-        childId: childId,
-        createdAt: now,
-      );
-
       result = await TodayLogRepo.instance.addSleepLog(
         childId: childId,
-        log: nightLog,
+        log: SleepLogModel(
+          id: null,
+          date: DateTime(now.year, now.month, now.day),
+          bedTime: bedTime,
+          wakeTime: wakeTime,
+          fellAsleepTime: state.fellAsleepTime,
+          wokeUpTime: state.wokeUpTime,
+          isNightWaking: state.isNightWaking,
+          sleepQualityIndex: qualityIndex,
+          durationMinutes: durationMins,
+          userId: userUid,
+          childId: childId,
+          createdAt: now,
+        ),
       );
-    } else if (hasNap) {
+      if (result is Error<String>) {
+        changeProps(isLoading: false, isSuccess: false, saveStatus: result);
+        return;
+      }
+    }
+
+    if (hasNap) {
       final ResolvedSleepInterval interval = TodayLogRepo.resolveSleepInterval(
         bedTimeText: state.napStartTime!,
         wakeTimeText: state.napEndTime!,
@@ -825,7 +963,7 @@ class TodayCubit extends Cubit<TodayState> {
         changeProps(
           isLoading: false,
           saveStatus: ApiResultStatus.error(
-            error: Exception("Nap end time must be after start time"),
+            error: Exception('Nap end time must be after start time'),
           ),
         );
         return;
@@ -834,94 +972,134 @@ class TodayCubit extends Cubit<TodayState> {
         changeProps(
           isLoading: false,
           saveStatus: ApiResultStatus.error(
-            error: Exception("Nap duration cannot exceed 12 hours"),
+            error: Exception('Nap duration cannot exceed 12 hours'),
           ),
         );
         return;
       }
 
-      final SleepLogModel napLog = SleepLogModel(
-        id: null,
-        date: DateTime(now.year, now.month, now.day),
-        bedTime: napBed,
-        wakeTime: napWake,
-        fellAsleepTime: state.napStartTime,
-        wokeUpTime: state.napEndTime,
-        isNightWaking: false,
-        sleepQualityIndex: state.sleepQualityIndex,
-        durationMinutes: napDurationMins,
-        userId: userUid,
-        childId: childId,
-        createdAt: now,
-      );
-
       result = await TodayLogRepo.instance.addSleepLog(
         childId: childId,
-        log: napLog,
+        log: SleepLogModel(
+          id: null,
+          date: DateTime(now.year, now.month, now.day),
+          bedTime: napBed,
+          wakeTime: napWake,
+          fellAsleepTime: state.napStartTime,
+          wokeUpTime: state.napEndTime,
+          isNightWaking: false,
+          sleepQualityIndex: qualityIndex,
+          durationMinutes: napDurationMins,
+          userId: userUid,
+          childId: childId,
+          createdAt: now,
+        ),
       );
     }
 
     if (result is Data<String>) {
-      await recalculateForecast();
-
-      bool changedSignificantly = false;
-      String changeReason = '';
-
-      if (state.confidenceLevel != prevConfidence &&
-          state.confidenceLevel != 'none') {
-        changedSignificantly = true;
-        changeReason =
-            "Confidence updated to ${state.confidenceLevel} based on latest rest data.";
-      } else if (prevEstimate != '--:--' && state.bedtimeEstimate != '--:--') {
-        try {
-          final DateTime prevDt = TodayLogRepo.parseTimeString(
-            prevEstimate,
-            referenceDate: now,
-          );
-          final DateTime newDt = TodayLogRepo.parseTimeString(
-            state.bedtimeEstimate,
-            referenceDate: now,
-          );
-          final int diffMinutes = newDt.difference(prevDt).inMinutes.abs();
-          if (diffMinutes >= 15) {
-            changedSignificantly = true;
-            changeReason =
-                "Bedtime estimate moved to ${state.bedtimeEstimate} (${diffMinutes}m change).";
-          }
-        } catch (_) {}
-      }
-
-      // Cancel pending sleep window reminder since parent logged sleep (Doc 03 §1, Doc 06 §8)
-      await V2NotificationScheduler.cancelSleepWindow(childId);
-      await V2NotificationScheduler.cancelGentleCheckIn(childId);
-
-      // If estimate changed materially (>=15 min), notify parent (Doc 03 §2)
-      if (changedSignificantly && state.bedtimeEstimate != '--:--') {
-        await V2NotificationScheduler.notifySleepEstimateChanged(
-          childId: childId,
-          childName: state.childName,
-          newBedtime: state.bedtimeEstimate,
-        );
-      }
-
-      changeProps(
-        isLoading: false,
-        isSuccess: true,
-        saveStatus: result,
-        didForecastChangeSignificantly: changedSignificantly,
-        forecastChangeReason: changeReason,
-        clearSleepInputs: true,
-        clearDuplicateSleep: true,
-        isNightWaking: false,
-        sleepQualityIndex: 3,
-        showSleepUpdateErrors: false,
+      await _finishSleepSaveSuccess(
+        childId: childId,
+        result: result,
+        prevEstimate: prevEstimate,
+        prevConfidence: prevConfidence,
+        now: now,
       );
-      // Reset isSuccess flag shortly after
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      changeProps(isSuccess: false);
     } else if (result is Error<String>) {
       changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
+  }
+
+  Future<void> _finishSleepSaveSuccess({
+    required String childId,
+    required ApiResultStatus<String> result,
+    required String prevEstimate,
+    required String prevConfidence,
+    required DateTime now,
+  }) async {
+    await recalculateForecast();
+
+    bool changedSignificantly = false;
+    String changeReason = state.sleepForecastReason;
+    String instantTitle = '';
+    String instantAction = '';
+    String instantActionSubtitle = '';
+
+    if (prevEstimate != '--:--' &&
+        state.bedtimeEstimate != '--:--' &&
+        state.bedtimeEstimate.isNotEmpty) {
+      try {
+        final DateTime prevDt = TodayLogRepo.parseTimeString(
+          prevEstimate,
+          referenceDate: now,
+        );
+        final DateTime newDt = TodayLogRepo.parseTimeString(
+          state.bedtimeEstimate,
+          referenceDate: now,
+        );
+        final int diffMinutes = newDt.difference(prevDt).inMinutes;
+        if (diffMinutes.abs() >= 15) {
+          changedSignificantly = true;
+          final bool earlier = diffMinutes < 0;
+          instantTitle = earlier
+              ? 'Bedtime may shift a little earlier'
+              : 'Bedtime may shift a little later';
+          changeReason = state.sleepForecastReason.isNotEmpty
+              ? state.sleepForecastReason
+              : 'Bedtime estimate moved to ${state.bedtimeEstimate}.';
+          final DateTime windDown = newDt.subtract(
+            const Duration(minutes: 30),
+          );
+          final String windDownLabel = DateFormat('h:mm a').format(windDown);
+          instantAction = 'Start wind-down at $windDownLabel';
+          instantActionSubtitle = earlier
+              ? 'About ${diffMinutes.abs()} minutes earlier than usual tonight.'
+              : 'About ${diffMinutes.abs()} minutes later than usual tonight.';
+        }
+      } catch (_) {}
+    }
+
+    if (!changedSignificantly &&
+        state.confidenceLevel != prevConfidence &&
+        state.confidenceLevel != 'none' &&
+        state.confidenceLevel.isNotEmpty) {
+      changedSignificantly = true;
+      instantTitle = 'Still learning this pattern';
+      changeReason = state.sleepForecastReason.isNotEmpty
+          ? state.sleepForecastReason
+          : 'Confidence updated based on latest rest data.';
+      instantAction = 'Check updated sleep plan';
+      instantActionSubtitle = 'Wind-down timing reflects latest rest data.';
+    }
+
+    await V2NotificationScheduler.cancelSleepWindow(childId);
+    await V2NotificationScheduler.cancelGentleCheckIn(childId);
+
+    if (changedSignificantly && state.bedtimeEstimate != '--:--') {
+      await V2NotificationScheduler.notifySleepEstimateChanged(
+        childId: childId,
+        childName: state.childName,
+        newBedtime: state.bedtimeEstimate,
+      );
+    }
+
+    changeProps(
+      isLoading: false,
+      isSuccess: true,
+      saveStatus: result,
+      didForecastChangeSignificantly: changedSignificantly,
+      forecastChangeReason: changeReason,
+      instantResultTitle: instantTitle,
+      instantResultAction: instantAction,
+      instantResultActionSubtitle: instantActionSubtitle,
+      clearSleepInputs: true,
+      clearDuplicateSleep: true,
+      isNightWaking: false,
+      sleepQualityIndex: -1,
+      showSleepUpdateErrors: false,
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    changeProps(isSuccess: false);
   }
 
   /// Updates an overlapping sleep log instead of inserting a duplicate entry (QA Audit X1).
@@ -935,32 +1113,35 @@ class TodayCubit extends Cubit<TodayState> {
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
     final DateTime now = DateTime.now();
+    final String prevEstimate = state.bedtimeEstimate;
+    final String prevConfidence = state.confidenceLevel;
 
     final String fellAsleep = state.fellAsleepTime ?? state.napStartTime ?? '';
     final String wokeUp = state.wokeUpTime ?? state.napEndTime ?? '';
-    final DateTime bedTime = TodayLogRepo.parseTimeString(
-      fellAsleep,
-      referenceDate: now,
-    );
-    DateTime wakeTime = TodayLogRepo.parseTimeString(
-      wokeUp,
-      referenceDate: now,
-    );
-    if (wakeTime.isBefore(bedTime)) {
-      wakeTime = wakeTime.add(const Duration(days: 1));
+    if (fellAsleep.isEmpty || wokeUp.isEmpty) {
+      triggerSleepUpdateErrors();
+      return;
     }
+
+    final ResolvedSleepInterval interval = TodayLogRepo.resolveSleepInterval(
+      bedTimeText: fellAsleep,
+      wakeTimeText: wokeUp,
+      now: now,
+    );
 
     final SleepLogModel updated = SleepLogModel(
       id: dup.id,
       ref: dup.ref,
       date: dup.date,
-      bedTime: bedTime,
-      wakeTime: wakeTime,
+      bedTime: interval.bedTime,
+      wakeTime: interval.wakeTime,
       fellAsleepTime: fellAsleep,
       wokeUpTime: wokeUp,
       isNightWaking: state.isNightWaking,
       sleepQualityIndex: state.sleepQualityIndex,
-      durationMinutes: wakeTime.difference(bedTime).inMinutes,
+      durationMinutes: interval.wakeTime
+          .difference(interval.bedTime)
+          .inMinutes,
       userId: userUid,
       childId: childId,
       createdAt: dup.createdAt,
@@ -978,19 +1159,13 @@ class TodayCubit extends Cubit<TodayState> {
     if (result is Data<bool>) {
       await V2NotificationScheduler.cancelSleepWindow(childId);
       await V2NotificationScheduler.cancelGentleCheckIn(childId);
-      changeProps(
-        isLoading: false,
-        isSuccess: true,
-        saveStatus: const ApiResultStatus.data(data: 'updated'),
-        clearSleepInputs: true,
-        clearDuplicateSleep: true,
-        isNightWaking: false,
-        sleepQualityIndex: 3,
-        showSleepUpdateErrors: false,
-        didForecastChangeSignificantly: false,
+      await _finishSleepSaveSuccess(
+        childId: childId,
+        result: const ApiResultStatus.data(data: 'updated'),
+        prevEstimate: prevEstimate,
+        prevConfidence: prevConfidence,
+        now: now,
       );
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      changeProps(isSuccess: false);
     } else {
       changeProps(isLoading: false, isSuccess: false, saveStatus: result);
     }
@@ -1098,10 +1273,8 @@ class TodayCubit extends Cubit<TodayState> {
       changeProps(showTantrumUpdateErrors: true);
 
   Future<void> saveTantrumLog() async {
-    if (state.tantrumWhatHappened.trim().isEmpty ||
-        state.tantrumTime == null ||
-        state.selectedTantrumTriggers.isEmpty ||
-        state.tantrumWhatHelped.trim().isEmpty) {
+    // What happened + time are required; trigger and what helped are optional (Doc 06 §4).
+    if (state.tantrumWhatHappened.trim().isEmpty || state.tantrumTime == null) {
       triggerTantrumUpdateErrors();
       return;
     }
@@ -1117,7 +1290,11 @@ class TodayCubit extends Cubit<TodayState> {
         : now;
 
     if (eventTime.isAfter(now)) {
-      triggerTantrumUpdateErrors();
+      changeProps(
+        isLoading: false,
+        showTantrumUpdateErrors: true,
+        saveStatus: const ApiResultStatus.initial(),
+      );
       return;
     }
 
@@ -1214,8 +1391,15 @@ class TodayCubit extends Cubit<TodayState> {
         showTantrumUpdateErrors: false,
         didForecastChangeSignificantly: behaviourShifted,
         forecastChangeReason: behaviourShifted
-            ? 'Harder window updated to ${updatedResult.windowStart}–${updatedResult.windowEnd} based on recent patterns'
-            : null,
+            ? updatedResult.reason
+            : '',
+        instantResultTitle: behaviourShifted
+            ? updatedResult.headline
+            : '',
+        instantResultAction: behaviourShifted ? 'Explore Calm Plan' : '',
+        instantResultActionSubtitle: behaviourShifted
+            ? 'Strategies for the upcoming challenging window.'
+            : '',
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
       changeProps(isSuccess: false);

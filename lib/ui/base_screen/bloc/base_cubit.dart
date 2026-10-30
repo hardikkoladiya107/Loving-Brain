@@ -146,6 +146,7 @@ class BaseCubit extends Cubit<BaseState> {
               if (data != null) {
                 final UserModel userModel = UserModel.fromJson(data);
                 await preferences.saveUserModel(userModel);
+                _syncSharedNotificationCount(data);
                 _listenToChild(userModel.defaultChild);
               }
             },
@@ -177,6 +178,18 @@ class BaseCubit extends Cubit<BaseState> {
       },
       cancelOnError: true,
     );
+  }
+
+  void _syncSharedNotificationCount(Map<String, dynamic> data) {
+    final String day = data['notification_sent_day']?.toString() ?? '';
+    if (day.isEmpty) {
+      return;
+    }
+    final int remote = (data['notification_sent_count'] as num?)?.toInt() ?? 0;
+    final int local = preferences.getInt('v2_notif_count_$day') ?? 0;
+    if (remote > local) {
+      preferences.putInt('v2_notif_count_$day', remote);
+    }
   }
 
   Future<void> updateFCMToken() async {

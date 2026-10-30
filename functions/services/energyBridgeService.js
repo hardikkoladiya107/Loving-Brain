@@ -1,6 +1,7 @@
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {sendMulticastNotification} = require("../notification");
+const {evaluateDelivery, claimDailySlot} = require("./notificationDelivery");
 const {NOTIFICATION_COPY} = require("../config/constants");
 
 /**
@@ -16,6 +17,7 @@ async function handleEnergyBridgeWrite(event, deps = {}) {
   const log = deps.logger || logger;
   const sendMulticast = deps.sendMulticastNotification || sendMulticastNotification;
   const notificationCopy = deps.notificationCopy || NOTIFICATION_COPY;
+  const now = deps.now instanceof Date ? deps.now : new Date();
 
   if (!event.data) return;
 
@@ -62,12 +64,17 @@ async function handleEnergyBridgeWrite(event, deps = {}) {
       const usersSnap = await db.collection("users")
           .where("uid", "in", chunk)
           .get();
-      usersSnap.forEach((userDoc) => {
-        const token = userDoc.data().fcm_token;
+      for (const userDoc of usersSnap.docs) {
+        const data = userDoc.data() || {};
+        const decision = evaluateDelivery(data, "energy_bridge", now);
+        if (!decision.allow) continue;
+        const claimed = await claimDailySlot(userDoc.ref, data, decision);
+        if (!claimed) continue;
+        const token = data.fcm_token;
         if (token && typeof token === "string" && token.trim()) {
           tokens.push(token.trim());
         }
-      });
+      }
     }
 
     const uniqueTokens = [...new Set(tokens)];

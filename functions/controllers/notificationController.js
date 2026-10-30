@@ -13,6 +13,11 @@ const {
   FCM_MULTICAST_LIMIT,
   NOTIFICATION_COPY,
 } = require("../config/constants");
+const {
+  evaluateDelivery,
+  claimDailySlot,
+  selectDeliverableTokens,
+} = require("../services/notificationDelivery");
 
 if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
@@ -106,11 +111,11 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
           .where("children", "array-contains", childRef)
           .get();
 
-      const tokens = [];
-      usersSnapshot.forEach((doc) => {
-        const t = doc.data().fcm_token;
-        if (t && typeof t === "string" && t.trim()) tokens.push(t.trim());
-      });
+      const tokens = await selectDeliverableTokens(
+          usersSnapshot.docs,
+          "routine",
+          new Date(),
+      );
 
       if (tokens.length > 0) {
         const {title, body: notificationBody} =
@@ -143,25 +148,26 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
         return res.status(200).send("OK");
       }
 
-      const tokens = [];
+      const userDocs = [];
       const uidChunkSize = 10;
       for (let i = 0; i < uniqueUids.length; i += uidChunkSize) {
         const chunk = uniqueUids.slice(i, i + uidChunkSize);
-        const userDocs = await db.collection("users")
+        const users = await db.collection("users")
             .where("uid", "in", chunk)
             .get();
-        userDocs.forEach((uDoc) => {
-          const t = uDoc.data().fcm_token;
-          if (t && typeof t === "string" && t.trim()) tokens.push(t.trim());
-        });
+        userDocs.push(...users.docs);
       }
-      const uniqueTokens = [...new Set(tokens)];
-      if (uniqueTokens.length > 0) {
+      const tokens = await selectDeliverableTokens(
+          userDocs,
+          "shared_event",
+          new Date(),
+      );
+      if (tokens.length > 0) {
         const eventTitle = eventData.title || "";
         const {title, body: notificationBody} =
           getSharedEventNotificationCopy(eventTitle);
         await sendMulticastBatched(
-            uniqueTokens,
+            tokens,
             title,
             notificationBody,
         );
@@ -211,11 +217,11 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
         .where("is_notification", "==", true)
         .get();
 
-    const tokens = [];
-    usersSnapshot.forEach((doc) => {
-      const t = doc.data().fcm_token;
-      if (t && typeof t === "string" && t.trim()) tokens.push(t.trim());
-    });
+    const tokens = await selectDeliverableTokens(
+        usersSnapshot.docs,
+        "announcement",
+        new Date(),
+    );
 
     if (tokens.length === 0) {
       return res.status(200).send({
@@ -253,6 +259,29 @@ exports.sendPushNotification = onRequest(async (req, res) => {
       return res.status(400).send({
         error: "Missing required fields: token, title, and body are mandatory",
       });
+    }
+
+    const owners = await db.collection("users")
+        .where("fcm_token", "==", token)
+        .limit(1)
+        .get();
+    if (!owners.empty) {
+      const owner = owners.docs[0];
+      const kind = (data && data.type) ? String(data.type) : "announcement";
+      const decision = evaluateDelivery(owner.data(), kind, new Date());
+      if (!decision.allow) {
+        return res.status(200).send({
+          success: true,
+          skipped: decision.reason,
+        });
+      }
+      const claimed = await claimDailySlot(owner.ref, owner.data(), decision);
+      if (!claimed) {
+        return res.status(200).send({
+          success: true,
+          skipped: "daily_cap",
+        });
+      }
     }
 
     const result = await sendNotification(token, title, body, data);

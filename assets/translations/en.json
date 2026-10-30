@@ -600,6 +600,16 @@
   "journeyTimelineError": "Could not load the timeline right now.",
   "journeyTimelineBedtimeEarlier": "{weeks} weeks with Loving Brain. Bedtime has moved {minutes} minutes earlier on average since you started.",
   "journeyTimelineBedtimeLater": "{weeks} weeks with Loving Brain. Bedtime has moved {minutes} minutes later on average since you started.",
-  "journeyTimelineKeepLogging": "Keep logging check-ins to see long-term bedtime and rhythm patterns emerge."
+  "journeyTimelineKeepLogging": "Keep logging check-ins to see long-term bedtime and rhythm patterns emerge.",
+  "savedOfflineWillSync": "Saved offline. Will sync when reconnected.",
+  "updateSavedQuietly": "Update saved.",
+  "bedtimeMayShiftEarlier": "Bedtime may shift a little earlier",
+  "checkUpdatedSleepPlan": "Check updated sleep plan",
+  "windDownReflectsLatestRest": "Wind-down timing reflects latest rest data.",
+  "moodSavedAsContext": "Saved. We'll use this as context, not as a diagnosis.",
+  "healthSavedConfidenceNote": "Saved. This can change how confident we are in today's guidance.",
+  "noteSavedQuietly": "Note saved.",
+  "tantrumSavedQuietly": "Saved. This helps us notice when hard moments tend to happen and what has helped.",
+  "supportWaitlistJoined": "You have joined the waitlist. We'll let you know when a guided sleep journey opens."
 }
 

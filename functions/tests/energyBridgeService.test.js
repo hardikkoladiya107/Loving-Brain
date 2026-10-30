@@ -41,18 +41,13 @@ class FakeDb {
     if (name === "users") {
       return {
         where: (_field, _op, values) => ({
-          get: async () => ({
-            forEach: (cb) => {
-              values.forEach((uid) => {
-                const token = this.usersByUid[uid];
-                if (token !== undefined) {
-                  cb({
-                    data: () => ({fcm_token: token}),
-                  });
-                }
-              });
-            },
-          }),
+        get: async () => ({
+          docs: values
+              .filter((uid) => this.usersByUid[uid] !== undefined)
+              .map((uid) => ({
+                data: () => ({fcm_token: this.usersByUid[uid]}),
+              })),
+        }),
         }),
       };
     }
@@ -107,6 +102,7 @@ test("sends multicast with deduplicated parent tokens", async () => {
         sendMulticastNotification: async (tokens, title, body, data) => {
           sent.push({tokens, title, body, data});
         },
+        now: new Date("2026-06-15T12:00:00Z"),
         notificationCopy: {
           ENERGY_BRIDGE: {TITLE: "LovingBrain ⚡"},
         },

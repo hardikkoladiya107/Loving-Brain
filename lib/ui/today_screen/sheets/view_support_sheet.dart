@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:go_router/go_router.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/repo/mentorship_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 void showViewSupportSheet(BuildContext context, {int daysCount = 0}) {
@@ -15,7 +20,7 @@ void showViewSupportSheet(BuildContext context, {int daysCount = 0}) {
     constraints: BoxConstraints(
       maxHeight: MediaQuery.of(context).size.height * 0.7,
     ),
-    builder: (context) => ViewSupportSheet(daysCount: daysCount),
+    builder: (BuildContext context) => ViewSupportSheet(daysCount: daysCount),
   );
 }
 
@@ -63,15 +68,15 @@ class ViewSupportSheet extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    "A guided sleep journey may help".appText(
+                    'A guided sleep journey may help'.appText(
                       fontSize: 28.sp,
                       fraunces: true,
                       textAlign: TextAlign.start,
                     ),
                     SizedBox(height: 8.h),
                     (daysCount >= 3
-                            ? "Sleep has been inconsistent for $daysCount days · a guided sleep journey may help you build a more consistent routine."
-                            : "A guided sleep journey can help support your child's emerging sleep rhythm and build a calm, consistent routine.")
+                            ? 'Sleep has been inconsistent for $daysCount days · a guided sleep journey may help you build a more consistent routine.'
+                            : 'A guided sleep journey can help support your child\'s emerging sleep rhythm and build a calm, consistent routine.')
                         .appText(
                           fontSize: 12.sp,
                           color: greyColor6,
@@ -83,7 +88,7 @@ class ViewSupportSheet extends StatelessWidget {
               ).appPadding(all: 16),
               12.spaceH,
               AppButton(
-                title: "View support",
+                title: 'View support',
                 onTap: () {
                   Navigator.pop(context);
                   context.push(RoutePaths.programRecommendation);
@@ -91,17 +96,37 @@ class ViewSupportSheet extends StatelessWidget {
               ),
               12.spaceH,
               AppButton(
-                title: "Join waitlist",
-                onTap: () {
+                title: 'Join waitlist',
+                onTap: () async {
+                  final TodayCubit cubit = context.read<TodayCubit>();
+                  final String userId = preferences.getUserModel()?.uid ?? '';
+                  final String childId = cubit.state.activeChildId;
                   Navigator.pop(context);
-                  context.push(RoutePaths.mentorshipUnavailable);
+                  if (userId.isNotEmpty && childId.isNotEmpty) {
+                    await MentorshipRepo.instance.joinWaitlist(
+                      userId: userId,
+                      childId: childId,
+                      supportArea: 'Sleep',
+                    );
+                  }
+                  showSnackBar(
+                    message:
+                        'You have joined the waitlist. We\'ll let you know when a guided sleep journey opens.',
+                    type: SnackBarType.SUCCESS,
+                  );
                 },
                 backgroundColor: Colors.white,
                 textColor: greyColor9,
               ),
               AppButton(
-                title: "Not now",
-                onTap: () => Navigator.pop(context),
+                title: 'Not now',
+                onTap: () async {
+                  final TodayCubit cubit = context.read<TodayCubit>();
+                  await cubit.dismissSupportOffer();
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
                 backgroundColor: Colors.transparent,
                 textColor: greyColor8,
               ),

@@ -321,13 +321,27 @@ class EnergyBridgeSleepCalculator {
       }
     }
 
-    // Normalize bedtime to be between 6:30 PM and 9:30 PM today
-    final DateTime minBedtime = DateTime(now.year, now.month, now.day, 18, 30);
-    final DateTime maxBedtime = DateTime(now.year, now.month, now.day, 21, 30);
-    if (targetBedtime.isBefore(minBedtime)) {
-      targetBedtime = minBedtime;
-    } else if (targetBedtime.isAfter(maxBedtime)) {
-      targetBedtime = maxBedtime;
+    // If the anchored estimate is outside a sensible evening range, fall back
+    // to the child's usual bedtime and keep confidence honest (Doc 04 §2).
+    final DateTime softMinBedtime = DateTime(now.year, now.month, now.day, 17, 0);
+    final DateTime softMaxBedtime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      23,
+      0,
+    );
+    bool usedFallbackBedtime = false;
+    if (targetBedtime.isBefore(softMinBedtime) ||
+        targetBedtime.isAfter(softMaxBedtime)) {
+      targetBedtime = _resolveBaselineBedtime(
+        now: now,
+        child: child,
+        effectiveAgeMonths: effectiveAgeMonths,
+      );
+      usedFallbackBedtime = true;
+      reasonText =
+          "Tonight's estimate is still wide — recent wake timing sits outside a typical evening window, so we are using $cName's usual bedtime as a guide.";
     }
 
     // 6. Evaluate confidence level and health caveats
@@ -344,6 +358,14 @@ class EnergyBridgeSleepCalculator {
     } else {
       confidence = ConfidenceTier.high;
       confidenceDots = 3;
+    }
+
+    if (usedFallbackBedtime && confidence == ConfidenceTier.high) {
+      confidence = ConfidenceTier.moderate;
+      confidenceDots = 2;
+    } else if (usedFallbackBedtime && confidence == ConfidenceTier.moderate) {
+      confidence = ConfidenceTier.low;
+      confidenceDots = 1;
     }
 
     // Health context downgrade: illness/teething reduces confidence and widens window

@@ -7,10 +7,10 @@ import 'package:loving_brain/ui/widget/app_button.dart';
 
 void showInstantResultSheet(
   BuildContext context, {
-  String? title,
-  String? reason,
-  String? action,
-  String? actionSubtitle,
+  required String title,
+  required String reason,
+  required String action,
+  required String actionSubtitle,
   VoidCallback? onActionTap,
 }) {
   showModalBottomSheet<void>(
@@ -32,31 +32,23 @@ void showInstantResultSheet(
 }
 
 class InstantResultSheet extends StatelessWidget {
-  final String? title;
-  final String? reason;
-  final String? action;
-  final String? actionSubtitle;
+  final String title;
+  final String reason;
+  final String action;
+  final String actionSubtitle;
   final VoidCallback? onActionTap;
 
   const InstantResultSheet({
     super.key,
-    this.title,
-    this.reason,
-    this.action,
-    this.actionSubtitle,
+    required this.title,
+    required this.reason,
+    required this.action,
+    required this.actionSubtitle,
     this.onActionTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final String resolvedTitle = title ?? "Bedtime may shift a little earlier";
-    final String resolvedReason =
-        reason ??
-        "Today’s nap ran 25 minutes short, which usually brings the settling window forward.";
-    final String resolvedAction = action ?? "Start wind-down at 7:30 PM";
-    final String resolvedActionSubtitle =
-        actionSubtitle ?? "About 15 minutes earlier than usual tonight.";
-
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
@@ -77,7 +69,7 @@ class InstantResultSheet extends StatelessWidget {
               ],
             ),
             12.spaceH,
-            resolvedTitle.appText(
+            title.appText(
               fontSize: 28.sp,
               fraunces: true,
               textAlign: TextAlign.start,
@@ -99,10 +91,10 @@ class InstantResultSheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const InfoChip(iconData: Icons.info, chipTitle: "Reason"),
+                  const InfoChip(iconData: Icons.info, chipTitle: 'Reason'),
                   10.spaceH,
                   SizedBox(width: 12.h),
-                  resolvedReason.appText(
+                  reason.appText(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.start,
@@ -142,7 +134,7 @@ class InstantResultSheet extends StatelessWidget {
                       children: [
                         const InfoChip(
                           iconData: Icons.stars_rounded,
-                          chipTitle: "Action",
+                          chipTitle: 'Action',
                         ),
                         if (onActionTap != null)
                           Icon(
@@ -153,13 +145,13 @@ class InstantResultSheet extends StatelessWidget {
                       ],
                     ),
                     10.spaceH,
-                    resolvedAction.appText(
+                    action.appText(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start,
                     ),
                     6.spaceH,
-                    resolvedActionSubtitle.appText(
+                    actionSubtitle.appText(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start,
@@ -172,7 +164,7 @@ class InstantResultSheet extends StatelessWidget {
             ),
             20.spaceH,
             AppButton(
-              title: "Done",
+              title: 'Done',
               onTap: () {
                 Navigator.pop(context);
               },

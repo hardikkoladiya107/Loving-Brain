@@ -52,7 +52,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
               );
             } else {
               showSnackBar(
-                message: LocaleKeys.healthLogSaved.tr(),
+                message: LocaleKeys.healthSavedConfidenceNote.tr(),
                 type: SnackBarType.SUCCESS,
               );
             }

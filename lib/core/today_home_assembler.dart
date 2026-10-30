@@ -7,9 +7,6 @@ import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_state.dart';
 
-/// Destination for a Noticed insight card on Today.
-enum TodayNoticedDestination { none, sleepPattern, behaviourPattern }
-
 /// Assembled Today home output from Energy Bridge sleep + behaviour engines.
 /// Widgets render these fields; they do not invent copy.
 class TodayHomeSnapshot {

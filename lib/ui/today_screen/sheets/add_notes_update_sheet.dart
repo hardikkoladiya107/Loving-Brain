@@ -6,6 +6,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/emergency_detector.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/transcribe_model.dart';
@@ -14,6 +16,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/ai_repo.dart';
 import 'package:loving_brain/other/permission_helper.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:path_provider/path_provider.dart';
@@ -628,7 +631,7 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
               );
             } else {
               showSnackBar(
-                message: LocaleKeys.noteSaved.tr(),
+                message: LocaleKeys.noteSavedQuietly.tr(),
                 type: SnackBarType.SUCCESS,
               );
             }
@@ -763,6 +766,18 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
                     }
 
                     if (!mounted) return;
+
+                    if (hasTypedText && EmergencyDetector.isEmergency(text)) {
+                      Navigator.pop(context);
+                      context.push(
+                        RoutePaths.safetyConcern,
+                        extra: <String, dynamic>{
+                          'mode': 'acute',
+                          'sourceMessage': text,
+                        },
+                      );
+                      return;
+                    }
 
                     if (hasTypedText) {
                       cubit.setQuickNoteText(text);

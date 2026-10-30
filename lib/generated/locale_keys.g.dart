@@ -596,5 +596,15 @@ abstract class  LocaleKeys {
   static const journeyTimelineBedtimeEarlier = 'journeyTimelineBedtimeEarlier';
   static const journeyTimelineBedtimeLater = 'journeyTimelineBedtimeLater';
   static const journeyTimelineKeepLogging = 'journeyTimelineKeepLogging';
+  static const savedOfflineWillSync = 'savedOfflineWillSync';
+  static const updateSavedQuietly = 'updateSavedQuietly';
+  static const bedtimeMayShiftEarlier = 'bedtimeMayShiftEarlier';
+  static const checkUpdatedSleepPlan = 'checkUpdatedSleepPlan';
+  static const windDownReflectsLatestRest = 'windDownReflectsLatestRest';
+  static const moodSavedAsContext = 'moodSavedAsContext';
+  static const healthSavedConfidenceNote = 'healthSavedConfidenceNote';
+  static const noteSavedQuietly = 'noteSavedQuietly';
+  static const tantrumSavedQuietly = 'tantrumSavedQuietly';
+  static const supportWaitlistJoined = 'supportWaitlistJoined';
 
 }
