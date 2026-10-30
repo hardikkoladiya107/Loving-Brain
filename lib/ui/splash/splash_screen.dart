@@ -7,6 +7,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
 import 'package:loving_brain/manager/deep_link/deep_link_manager.dart';
+import 'package:loving_brain/other/fcm_token_service.dart';
 import 'package:loving_brain/other/notification_util.dart';
 import '../../other/preferances.dart';
 
@@ -64,9 +65,17 @@ class _SplashScreenState extends State<SplashScreen> {
         return;
       }
       context.go(RoutePaths.base);
-    } else {
-      context.go(RoutePaths.welcome);
+      return;
     }
+    _openWelcomeAfterTokenRelease();
+  }
+
+  Future<void> _openWelcomeAfterTokenRelease() async {
+    await FcmTokenService.releaseFcmTokenIfSessionClosed();
+    if (!mounted) {
+      return;
+    }
+    context.go(RoutePaths.welcome);
   }
 
   @override

@@ -25,9 +25,7 @@ class FcmTokenService {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(authUser.uid)
-            .update(<String, dynamic>{
-              'fcm_token': FieldValue.delete(),
-            });
+            .update(<String, dynamic>{'fcm_token': FieldValue.delete()});
       }
     } catch (_) {}
     try {
@@ -54,9 +52,7 @@ class FcmTokenService {
           await FirebaseFirestore.instance
               .collection('users')
               .doc(remoteUid)
-              .update(<String, dynamic>{
-                'fcm_token': FieldValue.delete(),
-              });
+              .update(<String, dynamic>{'fcm_token': FieldValue.delete()});
         } catch (_) {}
         try {
           await FirebaseAuth.instance.signOut();

@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_session_manager.dart';
+import 'package:loving_brain/other/fcm_token_service.dart';
 import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
@@ -350,6 +351,12 @@ class AuthRepo {
       await callable.call<dynamic>(<String, dynamic>{});
 
       try {
+        await AppSessionManager.instance.clearAllSessionStates();
+      } catch (_) {}
+      try {
+        await FcmTokenService.detachFcmFromSignedInUser();
+      } catch (_) {}
+      try {
         await GoogleSignInManager.instance.signOut();
       } catch (_) {}
       try {
@@ -369,6 +376,9 @@ class AuthRepo {
       );
     } catch (e) {
       if (FirebaseAuth.instance.currentUser == null) {
+        try {
+          await FcmTokenService.detachFcmFromSignedInUser();
+        } catch (_) {}
         try {
           await GoogleSignInManager.instance.signOut();
         } catch (_) {}
@@ -674,6 +684,12 @@ class AuthRepo {
   Future<ApiResultStatus> logout() async {
     try {
       try {
+        await AppSessionManager.instance.clearAllSessionStates();
+      } catch (_) {}
+      try {
+        await FcmTokenService.detachFcmFromSignedInUser();
+      } catch (_) {}
+      try {
         await GoogleSignInManager.instance.signOut();
       } catch (_) {}
       try {
@@ -682,7 +698,6 @@ class AuthRepo {
       try {
         await OfflineSyncRepo.instance.clearQueue();
       } catch (_) {}
-      await AppSessionManager.instance.clearAllSessionStates();
       return const ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       try {

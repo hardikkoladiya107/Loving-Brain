@@ -12,6 +12,7 @@ import 'package:loving_brain/router/route_paths.dart';
 
 import '../../../model/child_model.dart';
 import '../../../model/user_model.dart';
+import '../../../other/fcm_token_service.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/auth_repo.dart';
 import 'base_state.dart';
@@ -180,6 +181,9 @@ class BaseCubit extends Cubit<BaseState> {
 
   Future<void> updateFCMToken() async {
     try {
+      if (!FcmTokenService.sessionIsLoggedIn()) {
+        return;
+      }
       if (Platform.isIOS) {
         String? apnsToken = await FirebaseMessaging.instance.getAPNSToken();
         if (apnsToken == null) {
@@ -189,7 +193,7 @@ class BaseCubit extends Cubit<BaseState> {
       }
 
       final String? token = await FirebaseMessaging.instance.getToken();
-      if (token != null) {
+      if (token != null && FcmTokenService.sessionIsLoggedIn()) {
         await AuthRepo.instance.updateUserToFireStore(
           request: <String, dynamic>{"fcm_token": token},
         );
@@ -204,6 +208,9 @@ class BaseCubit extends Cubit<BaseState> {
     _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh
         .listen(
           (String token) async {
+            if (!FcmTokenService.sessionIsLoggedIn()) {
+              return;
+            }
             await AuthRepo.instance.updateUserToFireStore(
               request: <String, dynamic>{"fcm_token": token},
             );

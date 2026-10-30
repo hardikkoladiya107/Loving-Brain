@@ -5,10 +5,7 @@ void main() {
   group('FcmTokenGuard', () {
     test('logged-in session may keep and refresh the token', () {
       expect(
-        FcmTokenGuard.sessionIsLoggedIn(
-          isLoginFlag: true,
-          prefsUid: 'user-a',
-        ),
+        FcmTokenGuard.sessionIsLoggedIn(isLoginFlag: true, prefsUid: 'user-a'),
         isTrue,
       );
       expect(
@@ -30,10 +27,7 @@ void main() {
 
     test('login flag without a uid is not a session', () {
       expect(
-        FcmTokenGuard.sessionIsLoggedIn(
-          isLoginFlag: true,
-          prefsUid: '  ',
-        ),
+        FcmTokenGuard.sessionIsLoggedIn(isLoginFlag: true, prefsUid: '  '),
         isFalse,
       );
     });
@@ -56,22 +50,25 @@ void main() {
       );
     });
 
-    test('full storage wipe has no uid so only the local token can be deleted', () {
-      expect(
-        FcmTokenGuard.remoteUidToClear(
-          isLoginFlag: false,
-          prefsUid: null,
-          authUid: null,
-        ),
-        isNull,
-      );
-      expect(
-        FcmTokenGuard.shouldDetachOnColdStart(
-          isLoginFlag: false,
-          prefsUid: null,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'full storage wipe has no uid so only the local token can be deleted',
+      () {
+        expect(
+          FcmTokenGuard.remoteUidToClear(
+            isLoginFlag: false,
+            prefsUid: null,
+            authUid: null,
+          ),
+          isNull,
+        );
+        expect(
+          FcmTokenGuard.shouldDetachOnColdStart(
+            isLoginFlag: false,
+            prefsUid: null,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 }
