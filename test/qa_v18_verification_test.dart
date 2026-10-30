@@ -14,9 +14,7 @@ import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
 import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
 import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
-import 'package:loving_brain/ui/today_screen/sheets/child_switcher_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/sleep_header.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
@@ -336,11 +334,9 @@ void main() {
         );
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Verifies header has back button, child chip, and parent avatar
+        // Verifies header has clean back button
         expect(find.byType(SleepHeader), findsOneWidget);
-        expect(find.byType(BaseButton), findsAtLeastNWidgets(1));
-        expect(find.text('K'), findsOneWidget);
-        expect(find.byIcon(Icons.face), findsOneWidget);
+        expect(find.byIcon(Icons.arrow_back), findsOneWidget);
 
         // Verifies forecast info
         expect(find.text('Next window'), findsOneWidget);
@@ -402,55 +398,43 @@ void main() {
       },
     );
 
-    testWidgets(
-      'SleepHeader child switcher chip opens ChildSwitcherSheet and back button pops',
-      (WidgetTester tester) async {
-        tester.view.physicalSize = const Size(389, 844);
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() => tester.view.resetPhysicalSize());
+    testWidgets('SleepHeader clean back button pops', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(389, 844);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
 
-        final ChildModel child = ChildModel(
-          childName: 'Emma',
-          parentReferenceIds: <String>['test_parent'],
-        );
-        await preferences.saveChildModel(child);
-
-        bool backTapped = false;
-        await tester.pumpWidget(
-          ScreenUtilInit(
-            designSize: const Size(389, 844),
-            minTextAdapt: true,
-            splitScreenMode: true,
-            builder: (BuildContext context, Widget? _) {
-              return MaterialApp(
-                home: Scaffold(
-                  body: SleepHeader(
-                    showBackButton: true,
-                    onBackTap: () => backTapped = true,
-                    titleWidget: const Text('Header Title'),
-                    chipText: 'Test Chip',
-                    timeText: '7:00 PM',
-                    estimateText: 'Estimate',
-                    cloudImagePath:
-                        'assets/v2/images/img_nori_sleep_forecaste.png',
-                  ),
+      bool backTapped = false;
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(389, 844),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (BuildContext context, Widget? _) {
+            return MaterialApp(
+              home: Scaffold(
+                body: SleepHeader(
+                  showBackButton: true,
+                  onBackTap: () => backTapped = true,
+                  titleWidget: const Text('Header Title'),
+                  chipText: 'Test Chip',
+                  timeText: '7:00 PM',
+                  estimateText: 'Estimate',
+                  cloudImagePath:
+                      'assets/v2/images/img_nori_sleep_forecaste.png',
                 ),
-              );
-            },
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 100));
+              ),
+            );
+          },
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
 
-        // Test Back Button
-        await tester.tap(find.byType(BaseButton));
-        await tester.pump(const Duration(milliseconds: 100));
-        expect(backTapped, isTrue);
-
-        // Test Child Chip Tap opens ChildSwitcherSheet
-        await tester.tap(find.text('Emma'));
-        await tester.pump(const Duration(milliseconds: 100));
-        expect(find.byType(ChildSwitcherSheet), findsOneWidget);
-      },
-    );
+      // Test Back Button
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(backTapped, isTrue);
+    });
   });
 }

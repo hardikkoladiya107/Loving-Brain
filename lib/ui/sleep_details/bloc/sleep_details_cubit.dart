@@ -58,13 +58,32 @@ class SleepDetailsCubit extends Cubit<SleepDetailsState> {
   }
 
   Future<void> init() async {
-    changeProps(isLoading: true);
-
     final ChildModel? child = preferences.getChildModel();
     final String cName =
         (child?.childName != null && child!.childName!.trim().isNotEmpty)
         ? child.childName!.trim()
         : 'your child';
+
+    final SleepForecastResult baselineForecast =
+        EnergyBridgeSleepCalculator.calculate(
+          child: child,
+          sleepLogs: const <SleepLogModel>[],
+        );
+
+    changeProps(
+      isLoading: false,
+      childName: cName,
+      windowStart: baselineForecast.windowStart,
+      windowEnd: baselineForecast.windowEnd,
+      bedtimeEstimate: baselineForecast.bedtimeEstimate,
+      confidenceLabel: baselineForecast.confidenceLabel,
+      confidenceDots: baselineForecast.confidenceDots,
+      whyWeExpectIt: baselineForecast.reason,
+      whatCouldChange:
+          baselineForecast.healthCaveat ??
+          "A later nap, overtiredness, or missed cues may shift this by 20–30 min.",
+      hasRealLogs: baselineForecast.hasPersonalLogs,
+    );
 
     final String childId =
         child?.reference?.id ??

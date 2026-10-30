@@ -59,8 +59,6 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
   }
 
   Future<void> init() async {
-    changeProps(isLoading: true);
-
     final int hour = DateTime.now().hour;
     String greeting = 'GOOD MORNING';
     if (hour >= 12 && hour < 17) {
@@ -77,33 +75,63 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
         ? childName
         : 'your child';
 
+    final DateTime now = DateTime.now();
+    final int todayWeekdayIndex = (now.weekday - 1) % 7;
+
+    final SleepForecastResult baselineForecast =
+        EnergyBridgeSleepCalculator.calculate(
+          child: child,
+          sleepLogs: const <SleepLogModel>[],
+        );
+
+    changeProps(
+      isLoading: false,
+      selectedDayIndex: todayWeekdayIndex,
+      parentName: pName,
+      childName: cName,
+      timeOfDayGreeting: greeting,
+      windowStart: baselineForecast.windowStart,
+      windowEnd: baselineForecast.windowEnd,
+      bedtimeEstimate: baselineForecast.bedtimeEstimate,
+      reason: baselineForecast.reason,
+      subtitle: baselineForecast.subtitle,
+      confidenceLevel: baselineForecast.confidenceLabel,
+      confidenceDots: baselineForecast.confidenceDots,
+      planSteps: baselineForecast.planSteps,
+      hasRealLogs: baselineForecast.hasPersonalLogs,
+      loggedDays: <int>[todayWeekdayIndex],
+      healthCaveat: baselineForecast.healthCaveat,
+    );
+
     final String childId =
         child?.reference?.id ??
         TodayLogRepo.instance.resolveActiveChildId() ??
         '';
 
+    if (childId.isEmpty) {
+      return;
+    }
+
     List<SleepLogModel> sleepLogs = <SleepLogModel>[];
     HealthLogModel? todayHealthLog;
 
-    if (childId.isNotEmpty) {
-      final ApiResultStatus<List<SleepLogModel>> sleepResult =
-          await TodayLogRepo.instance.getRecentSleepLogs(childId, limit: 14);
-      if (sleepResult is Data<List<SleepLogModel>>) {
-        sleepLogs = sleepResult.data;
-      }
+    final ApiResultStatus<List<SleepLogModel>> sleepResult = await TodayLogRepo
+        .instance
+        .getRecentSleepLogs(childId, limit: 14);
+    if (sleepResult is Data<List<SleepLogModel>>) {
+      sleepLogs = sleepResult.data;
+    }
 
-      final ApiResultStatus<List<HealthLogModel>> healthResult =
-          await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 5);
-      if (healthResult is Data<List<HealthLogModel>>) {
-        final DateTime now = DateTime.now();
-        final List<HealthLogModel> recentHealth = healthResult.data;
-        for (final HealthLogModel h in recentHealth) {
-          if (h.timestamp.year == now.year &&
-              h.timestamp.month == now.month &&
-              h.timestamp.day == now.day) {
-            todayHealthLog = h;
-            break;
-          }
+    final ApiResultStatus<List<HealthLogModel>> healthResult =
+        await TodayLogRepo.instance.getRecentHealthLogs(childId, limit: 5);
+    if (healthResult is Data<List<HealthLogModel>>) {
+      final List<HealthLogModel> recentHealth = healthResult.data;
+      for (final HealthLogModel h in recentHealth) {
+        if (h.timestamp.year == now.year &&
+            h.timestamp.month == now.month &&
+            h.timestamp.day == now.day) {
+          todayHealthLog = h;
+          break;
         }
       }
     }
@@ -114,8 +142,6 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
       todayHealthLog: todayHealthLog,
     );
 
-    final DateTime now = DateTime.now();
-    final int todayWeekdayIndex = (now.weekday - 1) % 7;
     final DateTime monday = DateTime(
       now.year,
       now.month,

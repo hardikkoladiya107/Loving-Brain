@@ -8,7 +8,6 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 
 import 'bloc/tonights_plan_cubit.dart';
 import 'bloc/tonights_plan_state.dart';
@@ -36,62 +35,60 @@ class _TonightsPlanScreenState extends State<TonightsPlanScreen> {
       listener: (BuildContext context, TonightsPlanState state) {},
       builder: (BuildContext context, TonightsPlanState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(
+          value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
-            body: state.isLoading
-                ? const AppLoadingIndicator()
-                : Column(
+            body: Column(
+              children: [
+                Expanded(
+                  child: ListView(
                     children: [
-                      Expanded(
-                        child: ListView(
-                          children: [
-                            _buildHeader(context),
-                            16.spaceH,
-                            _buildTimelineCard(state),
-                            16.spaceH,
-                            _buildInfoCard(state),
-                            16.spaceH,
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AppButton(
-                              title: state.isPlanStarted
-                                  ? "Stop plan"
-                                  : "Start plan",
-                              onTap: () =>
-                                  context.read<TonightsPlanCubit>().startPlan(),
-                              backgroundColor: primaryColor,
-                              textColor: Colors.white,
-                              padding: EdgeInsetsGeometry.zero,
-                            ),
-                          ),
-                          12.spaceW,
-                          Expanded(
-                            child: AppButton(
-                              title: state.isAudioPlaying
-                                  ? "Pause audio"
-                                  : "Play audio",
-                              onTap: () => context
-                                  .read<TonightsPlanCubit>()
-                                  .toggleAudio(),
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              padding: EdgeInsetsGeometry.zero,
-                            ),
-                          ),
-                        ],
-                      ).appPadding(all: 16.w),
+                      _buildHeader(context),
+                      16.spaceH,
+                      _buildTimelineCard(state),
+                      16.spaceH,
+                      _buildInfoCard(state),
+                      16.spaceH,
                     ],
                   ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppButton(
+                        title: state.isPlanStarted ? "Stop plan" : "Start plan",
+                        onTap: () =>
+                            context.read<TonightsPlanCubit>().startPlan(),
+                        backgroundColor: primaryColor,
+                        textColor: Colors.white,
+                        padding: EdgeInsetsGeometry.zero,
+                      ),
+                    ),
+                    12.spaceW,
+                    Expanded(
+                      child: AppButton(
+                        title: state.isAudioPlaying
+                            ? "Pause audio"
+                            : "Play audio",
+                        onTap: () =>
+                            context.read<TonightsPlanCubit>().toggleAudio(),
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                        padding: EdgeInsetsGeometry.zero,
+                      ),
+                    ),
+                  ],
+                ).appPadding(all: 16.w),
+              ],
+            ),
           ),
         );
       },

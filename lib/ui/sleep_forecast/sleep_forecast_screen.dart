@@ -9,7 +9,6 @@ import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_details_card.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 
 import 'bloc/sleep_forecast_cubit.dart';
 import 'bloc/sleep_forecast_state.dart';
@@ -37,39 +36,40 @@ class _SleepForecastScreenState extends State<SleepForecastScreen> {
       listener: (BuildContext context, SleepForecastState state) {},
       builder: (BuildContext context, SleepForecastState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(
+          value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
-            body: state.isLoading
-                ? const AppLoadingIndicator()
-                : ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      const ForecastHeader(),
-                      16.spaceH,
-                      const ForecastDaysRow(),
-                      16.spaceH,
-                      const ForecastDetailsCard(),
-                      32.spaceH,
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: AppButton(
-                          title: "View details",
-                          onTap: () {
-                            context.push(RoutePaths.sleepDetails);
-                          },
-                          backgroundColor: primaryColor,
-                          textColor: Colors.white,
-                        ),
-                      ),
-                      100.spaceH,
-                    ],
+            body: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const ForecastHeader(),
+                16.spaceH,
+                const ForecastDaysRow(),
+                16.spaceH,
+                const ForecastDetailsCard(),
+                32.spaceH,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: AppButton(
+                    title: "View details",
+                    onTap: () {
+                      context.push(RoutePaths.sleepDetails);
+                    },
+                    backgroundColor: primaryColor,
+                    textColor: Colors.white,
                   ),
+                ),
+                100.spaceH,
+              ],
+            ),
           ),
         );
       },

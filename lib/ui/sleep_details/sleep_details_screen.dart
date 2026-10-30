@@ -10,7 +10,6 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
-import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/sleep_header.dart';
 
 import 'bloc/sleep_details_cubit.dart';
@@ -39,80 +38,72 @@ class _SleepDetailsScreenState extends State<SleepDetailsScreen> {
       listener: (BuildContext context, SleepDetailsState state) {},
       builder: (BuildContext context, SleepDetailsState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(
+          value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             extendBodyBehindAppBar: true,
             backgroundColor: const Color(0xFFFEF8F4),
-            body: state.isLoading
-                ? const AppLoadingIndicator()
-                : ListView(
-                    padding: EdgeInsets.zero,
-                    physics: const AlwaysScrollableScrollPhysics(),
+            body: ListView(
+              padding: EdgeInsets.zero,
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SleepHeader(
+                  showBackButton: true,
+                  titleWidget: "Sleep details".appText(
+                    fontSize: 24.sp,
+                    color: Colors.white,
+                    fraunces: true,
+                    textAlign: TextAlign.start,
+                  ),
+                  chipText: "Tonight",
+                  timeText: "${state.windowStart} - ${state.windowEnd}",
+                  estimateText: "Bedtime estimate ${state.bedtimeEstimate}",
+                  cloudImagePath: Assets.v2.images.imgNoriSleepDetails.path,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SleepHeader(
-                        showBackButton: true,
-                        onChildSwitched: () =>
-                            context.read<SleepDetailsCubit>().init(),
-                        onParentProfileReturned: () =>
-                            context.read<SleepDetailsCubit>().init(),
-                        childName: state.childName.isNotEmpty
-                            ? state.childName
-                            : null,
-                        titleWidget: "Sleep details".appText(
-                          fontSize: 24.sp,
-                          color: Colors.white,
-                          fraunces: true,
-                          textAlign: TextAlign.start,
-                        ),
-                        chipText: "Tonight",
-                        timeText: "${state.windowStart} - ${state.windowEnd}",
-                        estimateText:
-                            "Bedtime estimate ${state.bedtimeEstimate}",
-                        cloudImagePath:
-                            Assets.v2.images.imgNoriSleepDetails.path,
+                      16.spaceH,
+                      _buildConfidenceRow(state),
+                      24.spaceH,
+                      _buildInfoCardsRow(state),
+                      24.spaceH,
+                      _buildLastSleepInfoCard(state),
+                      32.spaceH,
+                      AppButton(
+                        title: "Update sleep",
+                        onTap: () async {
+                          await showAddSleepUpdateSheet(context);
+                          if (context.mounted) {
+                            context.read<SleepDetailsCubit>().init();
+                          }
+                        },
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
                       ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            16.spaceH,
-                            _buildConfidenceRow(state),
-                            24.spaceH,
-                            _buildInfoCardsRow(state),
-                            24.spaceH,
-                            _buildLastSleepInfoCard(state),
-                            32.spaceH,
-                            AppButton(
-                              title: "Update sleep",
-                              onTap: () async {
-                                await showAddSleepUpdateSheet(context);
-                                if (context.mounted) {
-                                  context.read<SleepDetailsCubit>().init();
-                                }
-                              },
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                            ),
-                            12.spaceH,
-                            AppButton(
-                              title: "View tonight's plan",
-                              onTap: () {
-                                context.push(RoutePaths.tonightsPlan);
-                              },
-                              backgroundColor: primaryColor,
-                              textColor: Colors.white,
-                            ),
-                            SafeArea(top: false, child: 40.spaceH),
-                          ],
-                        ),
+                      12.spaceH,
+                      AppButton(
+                        title: "View tonight's plan",
+                        onTap: () {
+                          context.push(RoutePaths.tonightsPlan);
+                        },
+                        backgroundColor: primaryColor,
+                        textColor: Colors.white,
                       ),
+                      SafeArea(top: false, child: 40.spaceH),
                     ],
                   ),
+                ),
+              ],
+            ),
           ),
         );
       },

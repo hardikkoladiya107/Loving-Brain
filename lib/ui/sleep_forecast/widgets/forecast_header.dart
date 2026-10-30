@@ -12,14 +12,10 @@ class ForecastHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SleepForecastCubit cubit = context.read<SleepForecastCubit>();
     final SleepForecastState state = context.watch<SleepForecastCubit>().state;
 
     return SleepHeader(
       showBackButton: true,
-      onChildSwitched: () => cubit.init(),
-      onParentProfileReturned: () => cubit.init(),
-      childName: state.childName.isNotEmpty ? state.childName : null,
       titleWidget: Row(
         children: [
           Container(

@@ -36,7 +36,14 @@ class _SleepLowConfidenceScreenState extends State<SleepLowConfidenceScreen> {
       listener: (BuildContext context, SleepLowConfidenceState state) {},
       builder: (BuildContext context, SleepLowConfidenceState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light.copyWith(statusBarColor: darkBlue),
+          value: const SystemUiOverlayStyle(
+            statusBarColor: darkBlue,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
+          ),
           child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             appBar: AppBar(
