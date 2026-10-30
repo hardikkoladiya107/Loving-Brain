@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -36,15 +35,7 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
     return BlocConsumer<ProgrammeDetailCubit, ProgrammeDetailState>(
       listener: (BuildContext context, ProgrammeDetailState state) {},
       builder: (BuildContext context, ProgrammeDetailState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -166,8 +157,7 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
                 _buildBottomActions(context),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -199,8 +189,7 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
                       builder: (_) => const ChooseSupportAreaScreen(
                         initialArea: "Sleep guidance",
                       ),
-                    ),
-                  );
+                    );
                 },
               ),
               16.spaceH,
@@ -220,8 +209,7 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
                             "Can you help me understand if the 6-Week Sleep Journey fits my family's situation?",
                         topic: "Sleep Journey",
                       ),
-                    ),
-                  );
+                    );
                 },
               ),
             ],

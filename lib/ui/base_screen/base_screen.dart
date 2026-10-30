@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -33,34 +32,24 @@ class _BaseScreenState extends State<BaseScreen> {
     return BlocConsumer<BaseCubit, BaseState>(
       listener: (context, state) {},
       builder: (context, state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Colors.white,
-            systemNavigationBarIconBrightness: Brightness.dark,
-            systemNavigationBarDividerColor: Colors.transparent,
+        return Scaffold(
+          // Match primary tabs so any gap under transparent layers is neutral.
+          backgroundColor: Colors.white,
+          // Lets tab bodies paint under the nav slot; removes the full-width white
+          // â€œplateâ€ behind the pillâ€™s transparent margins (Scaffold Material is full-screen).
+          extendBody: true,
+          resizeToAvoidBottomInset: false,
+          body: IndexedStack(
+            index: state.bottomNavigationIndex,
+            children: const [
+              TodayScreen(),
+              BrainyHomeScreen(),
+              JourneyScreen(),
+            ],
           ),
-          child: Scaffold(
-            // Match primary tabs so any gap under transparent layers is neutral.
-            backgroundColor: Colors.white,
-            // Lets tab bodies paint under the nav slot; removes the full-width white
-            // â€œplateâ€ behind the pillâ€™s transparent margins (Scaffold Material is full-screen).
-            extendBody: true,
-            resizeToAvoidBottomInset: false,
-            body: IndexedStack(
-              index: state.bottomNavigationIndex,
-              children: const [
-                TodayScreen(),
-                BrainyHomeScreen(),
-                JourneyScreen(),
-              ],
-            ),
-            bottomNavigationBar: MediaQuery.of(context).viewInsets.bottom > 0
-                ? null
-                : _floatingBottomNavigation(context, state),
-          ),
+          bottomNavigationBar: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null
+              : _floatingBottomNavigation(context, state),
         );
       },
     );

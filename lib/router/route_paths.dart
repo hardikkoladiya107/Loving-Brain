@@ -37,6 +37,7 @@ class RoutePaths {
   static const String sleepForecast = '/sleep-forecast';
   static const String sleepDetails = '/sleep-details';
   static const String consistencyRecognition = '/consistency-recognition';
+  static const String addChild = '/add-child';
 
   static String childProfilePath(
     String userId, {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -40,15 +39,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
         if (!state.isAvailable) {
           return _buildUnavailableScaffold(context);
         }
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -161,8 +152,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                                     MaterialPageRoute<void>(
                                       builder: (_) =>
                                           const ProgrammeDetailScreen(),
-                                    ),
-                                  );
+                                    );
                                 },
                                 iconPath: Assets
                                     .v2
@@ -185,8 +175,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                                           const ChooseSupportAreaScreen(
                                             initialArea: 'Behaviour',
                                           ),
-                                    ),
-                                  );
+                                    );
                                 },
                                 iconPath: Assets
                                     .v2
@@ -217,8 +206,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                                           const ChooseSupportAreaScreen(
                                             initialArea: 'Parent Wellbeing',
                                           ),
-                                    ),
-                                  );
+                                    );
                                 },
                                 iconPath: Assets
                                     .v2
@@ -242,8 +230,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                                           const ChooseSupportAreaScreen(
                                             initialArea: 'Co-parenting',
                                           ),
-                                    ),
-                                  );
+                                    );
                                 },
                                 iconPath: Assets
                                     .v2
@@ -264,8 +251,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                 ),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -277,8 +263,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
           context,
           MaterialPageRoute<void>(
             builder: (_) => const ChooseSupportAreaScreen(),
-          ),
-        );
+          );
       },
       child: Container(
         width: double.infinity,

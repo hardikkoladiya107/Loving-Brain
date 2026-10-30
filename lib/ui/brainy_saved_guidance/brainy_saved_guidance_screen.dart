@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -31,15 +30,7 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
     return BlocConsumer<BrainySavedGuidanceCubit, BrainySavedGuidanceState>(
       listener: (BuildContext context, BrainySavedGuidanceState state) {},
       builder: (BuildContext context, BrainySavedGuidanceState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -174,8 +165,7 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
                 ),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -211,8 +201,7 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
                   initialChat: item.title,
                   topic: item.topic,
                 ),
-              ),
-            );
+              );
           },
           child: Padding(
             padding: EdgeInsets.all(12.w),

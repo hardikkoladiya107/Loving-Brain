@@ -9,6 +9,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/child_repo.dart';
+import 'package:loving_brain/ui/add_child/add_child_screen.dart';
 import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -321,13 +322,14 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                   final NavigatorState navigator = Navigator.of(context);
                   final TodayCubit todayCubit = context.read<TodayCubit>();
                   navigator.pop();
-                  await navigator.push(
-                    MaterialPageRoute<void>(
-                      builder: (_) =>
-                          const ChildProfileScreen(fromManageChildren: true),
+                  final dynamic created = await navigator.push<dynamic>(
+                    MaterialPageRoute<dynamic>(
+                      builder: (_) => const AddChildScreen(),
                     ),
                   );
-                  todayCubit.init();
+                  if (created == true) {
+                    todayCubit.init();
+                  }
                 },
               ),
 

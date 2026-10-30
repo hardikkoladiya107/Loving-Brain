@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -78,15 +77,7 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
     return BlocConsumer<ChooseSupportAreaCubit, ChooseSupportAreaState>(
       listener: (BuildContext context, ChooseSupportAreaState state) {},
       builder: (BuildContext context, ChooseSupportAreaState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -181,8 +172,7 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
                 _buildBottomActions(context, state),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -362,8 +352,7 @@ class _ChooseSupportAreaScreenState extends State<ChooseSupportAreaScreen> {
                     supportArea: selectedTitle,
                     guides: match.guides,
                   ),
-                ),
-              );
+                );
             },
           ),
         ),

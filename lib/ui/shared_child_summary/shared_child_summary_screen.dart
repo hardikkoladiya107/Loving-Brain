@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -37,15 +36,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
     return BlocConsumer<SharedChildSummaryCubit, SharedChildSummaryState>(
       listener: (BuildContext context, SharedChildSummaryState state) {},
       builder: (BuildContext context, SharedChildSummaryState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -121,8 +112,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) => const FamilyMenuScreen(),
-                                  ),
-                                );
+                                  );
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -186,8 +176,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
                 _buildBottomActions(context),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -402,8 +391,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => const ChildEssentialsScreen(),
-                ),
-              );
+                );
             },
           ),
         ),

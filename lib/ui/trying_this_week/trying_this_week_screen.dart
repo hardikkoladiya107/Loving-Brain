@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -60,15 +59,7 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
         final int totalDays = state.totalDays;
         final double progress = (currentDay / totalDays).clamp(0.0, 1.0);
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -152,8 +143,7 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
                 _buildBottomActions(context),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -393,8 +383,7 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  );
+                    );
                 },
                 child: Container(
                   width: double.infinity,

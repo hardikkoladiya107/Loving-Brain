@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/ui/add_child/bloc/add_child_cubit.dart';
 import 'package:loving_brain/ui/after_reflection/bloc/after_reflection_cubit.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/auth/otp/bloc/otp_cubit.dart';
@@ -61,6 +62,9 @@ import 'package:loving_brain/ui/weekly_family_review/bloc/weekly_family_review_c
 import 'package:nested/nested.dart';
 
 final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
+  BlocProvider<AddChildCubit>(
+    create: (BuildContext context) => AddChildCubit(),
+  ),
   BlocProvider<AfterReflectionCubit>(
     create: (BuildContext context) => AfterReflectionCubit(),
   ),

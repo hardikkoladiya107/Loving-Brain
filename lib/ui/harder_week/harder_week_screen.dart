@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -38,98 +37,89 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
       builder: (BuildContext context, HarderWeekState state) {
         final String dateLabel = state.insights?.dateRangeLabel ?? 'This week';
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150,
+                top: -150,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            'This week'.appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            dateLabel.appText(
-                              fontSize: 14.sp,
-                              color: greyColor9,
-                              textAlign: TextAlign.start,
-                            ),
-                            24.spaceH,
-                            _buildThisWeekCard(state),
-                            16.spaceH,
-                            _buildWhatWeNoticedCard(state),
-                            16.spaceH,
-                            _buildSmallThingToTryCard(state),
-                            200.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          'This week'.appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          dateLabel.appText(
+                            fontSize: 14.sp,
+                            color: greyColor9,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          _buildThisWeekCard(state),
+                          16.spaceH,
+                          _buildWhatWeNoticedCard(state),
+                          16.spaceH,
+                          _buildSmallThingToTryCard(state),
+                          200.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _buildBottomActions(context),
-              ],
-            ),
+              ),
+              _buildBottomActions(context),
+            ],
           ),
         );
       },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/ui/add_child/add_child_screen.dart';
 import 'package:loving_brain/ui/auth/login/login_screen.dart';
 import 'package:loving_brain/ui/auth/otp/otp_screen.dart';
 import 'package:loving_brain/ui/auth/register/register_screen.dart';
@@ -205,6 +206,11 @@ class AppRouter {
               fromManageChildren: fromManageChildren,
             );
           },
+        ),
+        GoRoute(
+          path: RoutePaths.addChild,
+          builder: (BuildContext context, GoRouterState state) =>
+              const AddChildScreen(),
         ),
         GoRoute(
           path: RoutePaths.base,

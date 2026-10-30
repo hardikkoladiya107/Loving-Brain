@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -44,15 +43,7 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
       builder: (BuildContext context, ParentSuccessGuideState state) {
         final GuideProfileModel? guide = state.guide;
         if (guide == null) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
-              systemNavigationBarColor: Color(0xFFFEF8F4),
-              systemNavigationBarIconBrightness: Brightness.dark,
-            ),
-            child: Scaffold(
+          return Scaffold(
               backgroundColor: const Color(0xFFFEF8F4),
               body: SafeArea(
                 child: Column(
@@ -80,15 +71,7 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
           );
         }
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -239,8 +222,7 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
                 _buildBottomActions(context, state, guide),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -424,8 +406,7 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => GuideProfileScreen(guideId: guide.id),
-                    ),
-                  );
+                    );
                 },
               ),
               16.spaceH,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -85,15 +84,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
         );
       },
       builder: (BuildContext context, FamilyMenuState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -299,8 +290,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                     MaterialPageRoute(
                                       builder: (_) =>
                                           const FamilySharingConsentScreen(),
-                                    ),
-                                  );
+                                    );
                                 },
                                 child: InfoBox.orange(
                                   title: "How sharing works",
@@ -319,8 +309,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                 _buildBottomActions(context, state),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -467,8 +456,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                 ),
               ],
             ),
-          ),
-        );
+          );
       },
     );
   }
@@ -532,8 +520,7 @@ void showPrimaryParentInfoDialog(BuildContext context, String parentName) {
               ],
             ),
           ),
-        ),
-      );
+        );
     },
   );
 }
