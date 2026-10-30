@@ -3,6 +3,7 @@ import 'package:loving_brain/core/journey_insights_engine.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
@@ -14,6 +15,8 @@ import 'harder_week_state.dart';
 
 class HarderWeekCubit extends Cubit<HarderWeekState> {
   HarderWeekCubit() : super(const HarderWeekState());
+
+  static const int _twoWeekLogLimit = 40;
 
   void init() {
     emit(const HarderWeekState());
@@ -48,6 +51,7 @@ class HarderWeekCubit extends Cubit<HarderWeekState> {
     List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
     List<HealthLogModel> healthLogs = <HealthLogModel>[];
     List<QuickNoteModel> quickNotes = <QuickNoteModel>[];
+    List<MoodLogModel> moodLogs = <MoodLogModel>[];
     List<TimelineEventModel> timelineEvents = <TimelineEventModel>[];
 
     if (childId.isNotEmpty) {
@@ -60,21 +64,37 @@ class HarderWeekCubit extends Cubit<HarderWeekState> {
         }
 
         final ApiResultStatus<List<TantrumLogModel>> tantrumRes =
-            await TodayLogRepo.instance.getRecentTantrumLogs(childId);
+            await TodayLogRepo.instance.getRecentTantrumLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (tantrumRes is Data<List<TantrumLogModel>>) {
           tantrumLogs = tantrumRes.data;
         }
 
         final ApiResultStatus<List<HealthLogModel>> healthRes =
-            await TodayLogRepo.instance.getRecentHealthLogs(childId);
+            await TodayLogRepo.instance.getRecentHealthLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (healthRes is Data<List<HealthLogModel>>) {
           healthLogs = healthRes.data;
         }
 
         final ApiResultStatus<List<QuickNoteModel>> notesRes =
-            await TodayLogRepo.instance.getRecentQuickNotes(childId);
+            await TodayLogRepo.instance.getRecentQuickNotes(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (notesRes is Data<List<QuickNoteModel>>) {
           quickNotes = notesRes.data;
+        }
+
+        final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+            .instance
+            .getRecentMoodLogs(childId, limit: _twoWeekLogLimit);
+        if (moodRes is Data<List<MoodLogModel>>) {
+          moodLogs = moodRes.data;
         }
 
         final ApiResultStatus<List<TimelineEventModel>> eventsRes =
@@ -91,6 +111,7 @@ class HarderWeekCubit extends Cubit<HarderWeekState> {
       tantrumLogs: tantrumLogs,
       healthLogs: healthLogs,
       quickNotes: quickNotes,
+      moodLogs: moodLogs,
       timelineEvents: timelineEvents,
     );
 
