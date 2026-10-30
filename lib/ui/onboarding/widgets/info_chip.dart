@@ -10,20 +10,29 @@ class InfoChip extends StatelessWidget {
     this.color = primaryColor,
     this.bgColor = orangeLightColor,
     this.padding,
+    this.borderColor,
+    this.fontWeight = FontWeight.w500,
+    this.letterSpacing,
   });
   final String chipTitle;
   final IconData iconData;
   final Color color;
   final Color bgColor;
   final EdgeInsetsGeometry? padding;
+  final Color? borderColor;
+  final FontWeight fontWeight;
+  final double? letterSpacing;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: padding ?? EdgeInsets.all(8),
+      padding: padding ?? const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(70),
+        border: borderColor == null
+            ? null
+            : Border.all(color: borderColor!, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -34,7 +43,8 @@ class InfoChip extends StatelessWidget {
             child: chipTitle.appText(
               fontSize: 14,
               color: color,
-              fontWeight: FontWeight.w500,
+              fontWeight: fontWeight,
+              letterSpacing: letterSpacing,
             ),
           ),
         ],

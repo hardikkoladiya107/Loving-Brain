@@ -294,6 +294,22 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     return '${minutes.toString().padLeft(1, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
+  String _formatPlaybackClock(Duration position, Duration total) {
+    return '${_formatAudioDuration(position)} / ${_formatAudioDuration(total)}';
+  }
+
+  double _attachedSliderMax(BrainyConversationState state) {
+    final int totalMs = state.attachedAudioDuration.inMilliseconds;
+    return totalMs > 0 ? totalMs.toDouble() : 1;
+  }
+
+  double _attachedSliderValue(BrainyConversationState state) {
+    final int totalMs = state.attachedAudioDuration.inMilliseconds;
+    if (totalMs <= 0) return 0;
+    final int positionMs = state.attachedAudioPosition.inMilliseconds;
+    return positionMs.clamp(0, totalMs).toDouble();
+  }
+
   Future<void> _confirmDeleteVoiceNote() async {
     final BrainyConversationCubit cubit = context
         .read<BrainyConversationCubit>();
@@ -387,18 +403,20 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BrainyConversationCubit, BrainyConversationState>(
-      listenWhen: (BrainyConversationState previous,
-          BrainyConversationState current) {
-        return previous.messages.length != current.messages.length ||
-            previous.isTyping != current.isTyping ||
-            previous.pendingSafetyMode != current.pendingSafetyMode;
-      },
+      listenWhen:
+          (BrainyConversationState previous, BrainyConversationState current) {
+            return previous.messages.length != current.messages.length ||
+                previous.isTyping != current.isTyping ||
+                previous.pendingSafetyMode != current.pendingSafetyMode;
+          },
       listener: (BuildContext context, BrainyConversationState state) {
         _scrollToBottom();
         final String? pendingMode = state.pendingSafetyMode;
         if (pendingMode != null && pendingMode.isNotEmpty) {
           final String? sourceMessage = state.pendingSafetySourceMessage;
-          context.read<BrainyConversationCubit>().clearPendingSafetyNavigation();
+          context
+              .read<BrainyConversationCubit>()
+              .clearPendingSafetyNavigation();
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
             context.push(
@@ -617,51 +635,66 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        "Voice Note".appText(
+                                        "Voice note".appText(
                                           fontSize: 13.sp,
                                           fontWeight: FontWeight.w600,
                                           color: darkBlue,
                                         ),
-                                        _formatAudioDuration(
-                                          state.isAttachedAudioPlaying ||
-                                                  state.attachedAudioPosition >
-                                                      Duration.zero
-                                              ? state.attachedAudioPosition
-                                              : state.attachedAudioDuration,
+                                        _formatPlaybackClock(
+                                          state.attachedAudioPosition,
+                                          state.attachedAudioDuration,
                                         ).appText(
-                                          fontSize: 11.sp,
-                                          color: greyColor6,
-                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12.sp,
+                                          color: darkBlue,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 0.2,
                                         ),
                                       ],
                                     ),
-                                    6.spaceH,
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4.r),
-                                      child: LinearProgressIndicator(
-                                        value:
-                                            (state
-                                                    .attachedAudioDuration
-                                                    .inMilliseconds >
-                                                0)
-                                            ? (state
-                                                          .attachedAudioPosition
-                                                          .inMilliseconds /
-                                                      state
-                                                          .attachedAudioDuration
-                                                          .inMilliseconds)
-                                                  .clamp(0.0, 1.0)
-                                            : (state.isAttachedAudioPlaying
-                                                  ? null
-                                                  : 0.0),
-                                        backgroundColor: const Color(
+                                    SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        trackHeight: 4.h,
+                                        thumbShape: RoundSliderThumbShape(
+                                          enabledThumbRadius: 6.r,
+                                        ),
+                                        overlayShape:
+                                            SliderComponentShape.noOverlay,
+                                        activeTrackColor: secondaryColor,
+                                        inactiveTrackColor: const Color(
                                           0xFFE2DCF8,
                                         ),
-                                        valueColor:
-                                            const AlwaysStoppedAnimation<Color>(
-                                              secondaryColor,
-                                            ),
-                                        minHeight: 4.h,
+                                        thumbColor: secondaryColor,
+                                        disabledActiveTrackColor: const Color(
+                                          0xFFE2DCF8,
+                                        ),
+                                        disabledInactiveTrackColor: const Color(
+                                          0xFFE2DCF8,
+                                        ),
+                                        disabledThumbColor: const Color(
+                                          0xFFD9D3F5,
+                                        ),
+                                      ),
+                                      child: Slider(
+                                        value: _attachedSliderValue(state),
+                                        max: _attachedSliderMax(state),
+                                        onChanged:
+                                            state
+                                                    .attachedAudioDuration
+                                                    .inMilliseconds >
+                                                0
+                                            ? (double value) {
+                                                context
+                                                    .read<
+                                                      BrainyConversationCubit
+                                                    >()
+                                                    .seekAttachedAudio(
+                                                      Duration(
+                                                        milliseconds: value
+                                                            .round(),
+                                                      ),
+                                                    );
+                                              }
+                                            : null,
                                       ),
                                     ),
                                   ],
@@ -774,22 +807,30 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                                                   Colors.transparent,
                                               builder: (_) => BrainyVoiceSheet(
                                                 topic: state.topic,
-                                                actionButtonTitle:
-                                                    "Attach Note",
-                                                onSendAudio: (audioFile, text) {
-                                                  if (audioFile != null) {
-                                                    cubit.attachAudio(
-                                                      audioFile.path,
-                                                    );
-                                                  }
-                                                  if (text.trim().isNotEmpty &&
-                                                      _controller.text
-                                                          .trim()
-                                                          .isEmpty) {
-                                                    _controller.text = text
-                                                        .trim();
-                                                  }
-                                                },
+                                                addsToMessage: true,
+                                                onSendAudio:
+                                                    (
+                                                      File? audioFile,
+                                                      String text,
+                                                      Duration recordedDuration,
+                                                    ) {
+                                                      if (audioFile != null) {
+                                                        cubit.attachAudio(
+                                                          audioFile.path,
+                                                          knownDuration:
+                                                              recordedDuration,
+                                                        );
+                                                      }
+                                                      if (text
+                                                              .trim()
+                                                              .isNotEmpty &&
+                                                          _controller.text
+                                                              .trim()
+                                                              .isEmpty) {
+                                                        _controller.text = text
+                                                            .trim();
+                                                      }
+                                                    },
                                               ),
                                             );
                                           },
@@ -877,43 +918,51 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     IconData icon;
     Color chipColor;
     Color chipBgColor;
+    Color? chipBorderColor;
 
     switch (msg.type) {
       case MessageType.user:
         icon = Icons.stars;
         chipColor = primaryColor;
         chipBgColor = orangeLightColor;
+        chipBorderColor = null;
         break;
       case MessageType.aiInfo:
         if (msg.chipTitle.toLowerCase().contains('when to get help')) {
           icon = Icons.health_and_safety_outlined;
           chipColor = const Color(0xFF665FCE);
           chipBgColor = const Color(0xFFF3F2FE);
+          chipBorderColor = const Color(0xFF665FCE).withValues(alpha: 0.22);
         } else {
           icon = Icons.info;
           chipColor = primaryColor;
           chipBgColor = orangeLightColor;
+          chipBorderColor = primaryColor.withValues(alpha: 0.18);
         }
         break;
       case MessageType.aiAction:
-        icon = Icons.stars;
-        chipColor = indigoLight;
-        chipBgColor = const Color(0xFFE5E7EB);
+        icon = Icons.stars_rounded;
+        chipColor = const Color(0xFF3D348C);
+        chipBgColor = const Color(0xFFE4DEFF);
+        chipBorderColor = const Color(0xFF665FCE).withValues(alpha: 0.45);
         break;
       case MessageType.safetyAlert:
         icon = Icons.warning_amber_rounded;
         chipColor = const Color(0xFFD32F2F);
         chipBgColor = const Color(0xFFFFEBEE);
+        chipBorderColor = const Color(0xFFD32F2F).withValues(alpha: 0.22);
         break;
       case MessageType.clinicalConcern:
         icon = Icons.medical_services_outlined;
         chipColor = const Color(0xFFB45309);
         chipBgColor = const Color(0xFFFFF7ED);
+        chipBorderColor = const Color(0xFFB45309).withValues(alpha: 0.22);
         break;
       case MessageType.error:
         icon = Icons.refresh_rounded;
         chipColor = const Color(0xFFD97706);
         chipBgColor = const Color(0xFFFEF3C7);
+        chipBorderColor = const Color(0xFFD97706).withValues(alpha: 0.28);
         break;
     }
 
@@ -926,6 +975,10 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
       icon: icon,
       chipColor: chipColor,
       chipBgColor: chipBgColor,
+      chipBorderColor: chipBorderColor,
+      chipFontWeight: msg.type == MessageType.aiAction
+          ? FontWeight.w700
+          : FontWeight.w600,
       headline: msg.headline,
       subtext: msg.subtext,
     );
@@ -944,6 +997,8 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
     required IconData icon,
     required Color chipColor,
     required Color chipBgColor,
+    required Color? chipBorderColor,
+    required FontWeight chipFontWeight,
     required String headline,
     String? subtext,
   }) {
@@ -995,6 +1050,9 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                   iconData: icon,
                   color: chipColor,
                   bgColor: chipBgColor,
+                  borderColor: chipBorderColor,
+                  fontWeight: chipFontWeight,
+                  letterSpacing: 0.15,
                 ),
               ),
               if (msg.type != MessageType.user &&

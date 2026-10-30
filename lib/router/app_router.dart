@@ -83,6 +83,9 @@ class AppRouter {
     return GoRouter(
       navigatorKey: navigatorKey,
       initialLocation: RoutePaths.splash,
+      // Invitation links are handled by DeepLinkManager. Do not let the
+      // platform route (/invite/...) become the first page.
+      overridePlatformDefaultLocation: true,
       redirect: (BuildContext context, GoRouterState state) {
         final UserModel? userModel = preferences.getUserModel();
         final bool isLoggedIn =

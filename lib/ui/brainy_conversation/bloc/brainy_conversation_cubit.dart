@@ -25,14 +25,13 @@ import 'brainy_conversation_state.dart';
 
 class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   BrainyConversationCubit() : super(const BrainyConversationState()) {
+    _prepareAttachedPlayer();
     _playerStateSubscription = _audioPlayer.onPlayerStateChanged.listen(
       (PlayerState s) {
         if (isClosed) return;
         final bool playing = s == PlayerState.playing;
-        final bool stopOrComplete =
-            s == PlayerState.completed || s == PlayerState.stopped;
 
-        if (stopOrComplete) {
+        if (s == PlayerState.completed) {
           changeProps(
             isAudioPlaying: false,
             clearPlayingMessageId: true,
@@ -40,12 +39,16 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             attachedAudioPosition: Duration.zero,
           );
         } else if (playing) {
-          if (state.isAttachedAudioPlaying) {
-            changeProps(isAudioPlaying: false, clearPlayingMessageId: true);
+          if (_attachedNoteIsSource) {
+            changeProps(
+              isAudioPlaying: false,
+              isAttachedAudioPlaying: true,
+              clearPlayingMessageId: true,
+            );
           } else {
             changeProps(isAudioPlaying: true, isAttachedAudioPlaying: false);
           }
-        } else {
+        } else if (s == PlayerState.paused) {
           changeProps(isAudioPlaying: false, isAttachedAudioPlaying: false);
         }
       },
@@ -59,20 +62,36 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     _positionSubscription = _audioPlayer.onPositionChanged.listen((
       Duration position,
     ) {
-      if (isClosed) return;
-      if (state.isAttachedAudioPlaying) {
-        changeProps(attachedAudioPosition: position);
-      }
+      if (isClosed || !_attachedNoteIsSource) return;
+      if (state.attachedAudioPath == null) return;
+      final Duration total = state.attachedAudioDuration;
+      final Duration clamped = total > Duration.zero && position > total
+          ? total
+          : position;
+      changeProps(attachedAudioPosition: clamped);
     }, onError: (_) {});
 
     _durationSubscription = _audioPlayer.onDurationChanged.listen((
       Duration duration,
     ) {
-      if (isClosed) return;
-      if (state.isAttachedAudioPlaying) {
-        changeProps(attachedAudioDuration: duration);
+      if (isClosed || !_attachedNoteIsSource) return;
+      if (state.attachedAudioPath == null || duration <= Duration.zero) {
+        return;
       }
+      changeProps(attachedAudioDuration: duration);
     }, onError: (_) {});
+  }
+
+  /// True while the shared player is pointed at the composer voice note.
+  /// Duration events must still land before playback starts, and must not
+  /// overwrite the note when a sent message is playing.
+  bool _attachedNoteIsSource = false;
+
+  Future<void> _prepareAttachedPlayer() async {
+    try {
+      await _audioPlayer.setReleaseMode(ReleaseMode.stop);
+      await _audioPlayer.setPlayerMode(PlayerMode.mediaPlayer);
+    } catch (_) {}
   }
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _chatsSubscription;
@@ -158,6 +177,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }
 
   void reset() {
+    _attachedNoteIsSource = false;
     _chatsSubscription?.cancel();
     _chatsSubscription = null;
     try {
@@ -168,6 +188,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
   void clearDraft() {
     if (isClosed) return;
+    _attachedNoteIsSource = false;
     _chatsSubscription?.cancel();
     _chatsSubscription = null;
     if (state.isAudioPlaying || state.isAttachedAudioPlaying) {
@@ -309,25 +330,47 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     changeProps(clearSelectedImages: true, clearSelectedImage: true);
   }
 
-  Future<void> attachAudio(String path) async {
+  Future<void> attachAudio(String path, {Duration? knownDuration}) async {
     if (path.trim().isEmpty) return;
-    if (state.isAttachedAudioPlaying) {
+    if (state.isAttachedAudioPlaying || state.isAudioPlaying) {
+      _attachedNoteIsSource = false;
       try {
         await _audioPlayer.stop();
       } catch (_) {}
     }
+    _attachedNoteIsSource = true;
+    final Duration initialDuration =
+        knownDuration != null && knownDuration > Duration.zero
+        ? knownDuration
+        : Duration.zero;
     changeProps(
       attachedAudioPath: path,
       isAttachedAudioPlaying: false,
+      isAudioPlaying: false,
+      clearPlayingMessageId: true,
       attachedAudioPosition: Duration.zero,
-      attachedAudioDuration: Duration.zero,
+      attachedAudioDuration: initialDuration,
     );
+    await _primeAttachedDuration(path);
+  }
+
+  Future<void> _primeAttachedDuration(String path) async {
+    if (!File(path).existsSync()) return;
+    try {
+      await _audioPlayer.setSource(DeviceFileSource(path));
+      final Duration? duration = await _audioPlayer.getDuration();
+      if (isClosed || state.attachedAudioPath != path) return;
+      if (duration != null && duration > Duration.zero) {
+        changeProps(attachedAudioDuration: duration);
+      }
+    } catch (_) {}
   }
 
   Future<void> removeAttachedAudio() async {
+    _attachedNoteIsSource = false;
     if (state.isAttachedAudioPlaying) {
       try {
-        await _audioPlayer.stop().timeout(const Duration(milliseconds: 200));
+        await _audioPlayer.stop();
       } catch (_) {}
     }
     changeProps(
@@ -345,14 +388,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     if (state.isAttachedAudioPlaying) {
       changeProps(isAttachedAudioPlaying: false);
       try {
-        await _audioPlayer.pause().timeout(const Duration(milliseconds: 200));
+        await _audioPlayer.pause();
       } catch (_) {}
       return;
     }
 
+    _attachedNoteIsSource = true;
     if (state.isAudioPlaying) {
       try {
-        await _audioPlayer.stop().timeout(const Duration(milliseconds: 200));
+        await _audioPlayer.stop();
       } catch (_) {}
     }
 
@@ -363,9 +407,14 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     );
     try {
       if (File(path).existsSync()) {
-        await _audioPlayer
-            .play(DeviceFileSource(path))
-            .timeout(const Duration(milliseconds: 200));
+        final bool resume =
+            _audioPlayer.state == PlayerState.paused &&
+            state.attachedAudioPosition > Duration.zero;
+        if (resume) {
+          await _audioPlayer.resume();
+        } else {
+          await _audioPlayer.play(DeviceFileSource(path));
+        }
       }
     } catch (_) {
       if (!isClosed) {
@@ -375,12 +424,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }
 
   Future<void> seekAttachedAudio(Duration position) async {
-    if (state.attachedAudioPath == null) return;
-    changeProps(attachedAudioPosition: position);
+    final String? path = state.attachedAudioPath;
+    if (path == null || path.isEmpty) return;
+    final Duration total = state.attachedAudioDuration;
+    final Duration clamped = total > Duration.zero && position > total
+        ? total
+        : (position < Duration.zero ? Duration.zero : position);
+    changeProps(attachedAudioPosition: clamped);
+    if (!File(path).existsSync()) return;
+    _attachedNoteIsSource = true;
     try {
-      await _audioPlayer
-          .seek(position)
-          .timeout(const Duration(milliseconds: 200));
+      if (_audioPlayer.state == PlayerState.stopped) {
+        await _audioPlayer.setSource(DeviceFileSource(path));
+      }
+      await _audioPlayer.seek(clamped);
     } catch (_) {}
   }
 
@@ -1488,6 +1545,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }
 
   Future<void> togglePlayAudio(BrainyMessage message) async {
+    _attachedNoteIsSource = false;
     if (state.isAttachedAudioPlaying) {
       try {
         await _audioPlayer.stop();

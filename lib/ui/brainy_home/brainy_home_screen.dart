@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -598,16 +600,21 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                             backgroundColor: Colors.transparent,
                             builder: (sheetContext) => BrainyVoiceSheet(
                               topic: state.selectedTopic,
-                              onSendAudio: (audioFile, text) {
-                                context.push(
-                                  RoutePaths.brainyConversation,
-                                  extra: <String, dynamic>{
-                                    'initialAudioFile': audioFile,
-                                    'initialChat': text,
-                                    'topic': state.selectedTopic,
+                              onSendAudio:
+                                  (
+                                    File? audioFile,
+                                    String text,
+                                    Duration recordedDuration,
+                                  ) {
+                                    context.push(
+                                      RoutePaths.brainyConversation,
+                                      extra: <String, dynamic>{
+                                        'initialAudioFile': audioFile,
+                                        'initialChat': text,
+                                        'topic': state.selectedTopic,
+                                      },
+                                    );
                                   },
-                                );
-                              },
                             ),
                           );
                         },

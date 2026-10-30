@@ -18,12 +18,21 @@ class BrainyVoiceSheet extends StatefulWidget {
     super.key,
     this.topic,
     this.actionButtonTitle,
+    this.addsToMessage = false,
     this.onSendAudio,
   });
 
   final String? topic;
   final String? actionButtonTitle;
-  final void Function(File? audioFile, String transcriptText)? onSendAudio;
+
+  /// Chat composer keeps the note above the message box. Home sends it.
+  final bool addsToMessage;
+  final void Function(
+    File? audioFile,
+    String transcriptText,
+    Duration recordedDuration,
+  )?
+  onSendAudio;
 
   @override
   State<BrainyVoiceSheet> createState() => _BrainyVoiceSheetState();
@@ -54,8 +63,18 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BrainyVoiceCubit, BrainyVoiceState>(
-      builder: (context, state) {
+    return BlocConsumer<BrainyVoiceCubit, BrainyVoiceState>(
+      listenWhen: (BrainyVoiceState previous, BrainyVoiceState next) {
+        return previous.isRecording != next.isRecording;
+      },
+      listener: (BuildContext context, BrainyVoiceState state) {
+        if (state.isRecording) {
+          _controller.repeat(reverse: true);
+        } else {
+          _controller.stop();
+        }
+      },
+      builder: (BuildContext context, BrainyVoiceState state) {
         return Container(
           width: double.infinity,
           decoration: const BoxDecoration(
@@ -93,8 +112,12 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                       color: Color(0xFFECEAFF),
                     ),
                     padding: const EdgeInsets.all(16),
-                    child: const Icon(
-                      Icons.mic,
+                    child: Icon(
+                      state.awaitingConfirm
+                          ? Icons.check_rounded
+                          : (state.isProcessing
+                                ? Icons.hourglass_top_rounded
+                                : Icons.mic_rounded),
                       color: secondaryColor,
                       size: 50,
                     ),
@@ -102,60 +125,29 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                 ),
               ),
               32.spaceH,
-              // Animated equalizer (fixed height container so sheet doesn't jump)
               SizedBox(
                 height: 90.h,
-                child: Center(
-                  child: AnimatedBuilder(
-                    animation: _controller,
-                    builder: (context, child) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          _buildEqBar(16.0 + _random.nextDouble() * 10),
-                          _buildEqBar(24.0 + _random.nextDouble() * 20),
-                          _buildEqBar(32.0 + _random.nextDouble() * 30),
-                          _buildEqBar(48.0 + _random.nextDouble() * 40),
-                          _buildEqBar(32.0 + _random.nextDouble() * 30),
-                          _buildEqBar(24.0 + _random.nextDouble() * 20),
-                          _buildEqBar(16.0 + _random.nextDouble() * 10),
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                child: Center(child: _buildRecorderVisual(state)),
               ),
               40.spaceH,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32.w),
-                child:
-                    (state.previewText.isNotEmpty
-                            ? '"${state.previewText}"'
-                            : (state.recordingFailed
-                                  ? 'Microphone unavailable'
-                                  : (state.awaitingConfirm
-                                        ? 'Ready to send'
-                                        : 'Listening...')))
-                        .appText(
-                          fontSize: 24.sp,
-                          fraunces: true,
-                          textAlign: TextAlign.center,
-                        ),
+                child: _headline(state).appText(
+                  fontSize: 24.sp,
+                  fraunces: true,
+                  textAlign: TextAlign.center,
+                ),
               ),
               12.spaceH,
-              (state.isProcessing
-                      ? 'Processing your voice note...'
-                      : (state.awaitingConfirm
-                            ? 'Check the transcript, then send.'
-                            : (state.recordingFailed
-                                  ? 'Typed chat still works without the microphone.'
-                                  : 'Listening... take your time.')))
-                  .appText(
-                    fontSize: 14.sp,
-                    color: greyColor6,
-                    textAlign: TextAlign.center,
-                  ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32.w),
+                child: _subtitle(state).appText(
+                  fontSize: 14.sp,
+                  color: greyColor6,
+                  textAlign: TextAlign.center,
+                  height: 1.4,
+                ),
+              ),
               40.spaceH,
               Padding(
                 padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 40.h),
@@ -183,14 +175,7 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                     Expanded(
                       child: AppButton(
                         height: 48,
-                        title: state.isProcessing
-                            ? 'Processing...'
-                            : (state.awaitingConfirm
-                                  ? (widget.actionButtonTitle ??
-                                        (widget.onSendAudio != null
-                                            ? 'Attach Note'
-                                            : 'Send'))
-                                  : 'Done'),
+                        title: _primaryTitle(state),
                         onTap: state.isProcessing || state.recordingFailed
                             ? null
                             : () async {
@@ -207,6 +192,18 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                                       message:
                                           'No audio was recorded. Please speak and try again.',
                                       type: SnackBarType.ERROR,
+                                    );
+                                    return;
+                                  }
+                                  if (widget.addsToMessage) {
+                                    final Duration recordedDuration = Duration(
+                                      seconds: cubit.state.elapsedSeconds,
+                                    );
+                                    Navigator.of(context).pop();
+                                    widget.onSendAudio?.call(
+                                      file,
+                                      text,
+                                      recordedDuration,
                                     );
                                   }
                                   return;
@@ -230,7 +227,13 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                                 if (!context.mounted) return;
                                 navigator.pop();
                                 if (widget.onSendAudio != null) {
-                                  widget.onSendAudio!(file, text);
+                                  widget.onSendAudio!(
+                                    file,
+                                    text,
+                                    Duration(
+                                      seconds: cubit.state.elapsedSeconds,
+                                    ),
+                                  );
                                 } else {
                                   context.push(
                                     RoutePaths.brainyConversation,
@@ -255,6 +258,101 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
         );
       },
     );
+  }
+
+  Widget _buildRecorderVisual(BrainyVoiceState state) {
+    if (state.isRecording) {
+      return AnimatedBuilder(
+        animation: _controller,
+        builder: (BuildContext context, Widget? child) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _buildEqBar(16.0 + _random.nextDouble() * 10),
+              _buildEqBar(24.0 + _random.nextDouble() * 20),
+              _buildEqBar(32.0 + _random.nextDouble() * 30),
+              _buildEqBar(48.0 + _random.nextDouble() * 40),
+              _buildEqBar(32.0 + _random.nextDouble() * 30),
+              _buildEqBar(24.0 + _random.nextDouble() * 20),
+              _buildEqBar(16.0 + _random.nextDouble() * 10),
+            ],
+          );
+        },
+      );
+    }
+
+    if (state.awaitingConfirm) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF4F3FF),
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(
+            color: secondaryColor.withValues(alpha: 0.28),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(Icons.graphic_eq_rounded, color: secondaryColor, size: 18.sp),
+            8.spaceW,
+            _clock(state.elapsedSeconds).appText(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              color: secondaryColor,
+              letterSpacing: 0.2,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
+  String _headline(BrainyVoiceState state) {
+    if (state.recordingFailed) return 'Microphone unavailable';
+    if (state.isProcessing) return 'Saving your note';
+    if (state.awaitingConfirm) {
+      if (state.previewText.trim().isNotEmpty) {
+        return '"${state.previewText.trim()}"';
+      }
+      return 'Voice note ready';
+    }
+    return _clock(state.elapsedSeconds);
+  }
+
+  String _subtitle(BrainyVoiceState state) {
+    if (state.recordingFailed) {
+      return 'You can still type your message.';
+    }
+    if (state.isProcessing) {
+      return 'Writing down what you said.';
+    }
+    if (state.awaitingConfirm) {
+      if (widget.addsToMessage) {
+        return 'Add it to your message. You can play it above the box, then send.';
+      }
+      return 'Send this note to Brainy when it looks right.';
+    }
+    return 'Recording. Tap Done when you finish speaking.';
+  }
+
+  String _primaryTitle(BrainyVoiceState state) {
+    if (state.isProcessing) return 'Saving...';
+    if (!state.awaitingConfirm) return 'Done';
+    final String custom = (widget.actionButtonTitle ?? '').trim();
+    if (custom.isNotEmpty) return custom;
+    return widget.addsToMessage ? 'Add to message' : 'Send';
+  }
+
+  String _clock(int totalSeconds) {
+    final int safe = totalSeconds < 0 ? 0 : totalSeconds;
+    final int minutes = safe ~/ 60;
+    final int seconds = safe % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   Widget _buildEqBar(double height) {

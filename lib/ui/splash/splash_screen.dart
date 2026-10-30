@@ -6,6 +6,7 @@ import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
 
+import 'package:loving_brain/manager/deep_link/deep_link_manager.dart';
 import 'package:loving_brain/other/notification_util.dart';
 import '../../other/preferances.dart';
 
@@ -20,31 +21,52 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future<void>.delayed(const Duration(seconds: 2), () {
-        if (!mounted) return;
-        final UserModel? userModel = preferences.getUserModel();
-        final bool isLogin =
-            (preferences.getBool(SharedPreference.isLogin) ?? false) &&
-            (userModel?.uid?.trim().isNotEmpty ?? false);
-
-        if (isLogin) {
-          if (userModel?.isOnboardingCompleted != true) {
-            context.go(RoutePaths.onboarding);
-            return;
-          }
-          final String? pendingRoute =
-              NotificationUtil.consumePendingNotificationRoute();
-          if (pendingRoute != null) {
-            context.go(pendingRoute);
-            return;
-          }
-          context.go(RoutePaths.base);
-        } else {
-          context.go(RoutePaths.welcome);
-        }
-      });
+      Future<void>.delayed(const Duration(seconds: 2), _continueFromSplash);
     });
     super.initState();
+  }
+
+  void _continueFromSplash() {
+    if (!mounted) {
+      return;
+    }
+    // An invitation route was pushed on top of splash. Replacing the stack
+    // here disposes that screen while its loading barrier is still up, and
+    // the barrier keeps eating taps on Today.
+    final GoRouter router = GoRouter.of(context);
+    if (router.canPop()) {
+      return;
+    }
+    if (router.state.uri.path != RoutePaths.splash) {
+      return;
+    }
+    if (DeepLinkManager.instance.isHandlingInvitation) {
+      Future<void>.delayed(
+        const Duration(milliseconds: 300),
+        _continueFromSplash,
+      );
+      return;
+    }
+    final UserModel? userModel = preferences.getUserModel();
+    final bool isLogin =
+        (preferences.getBool(SharedPreference.isLogin) ?? false) &&
+        (userModel?.uid?.trim().isNotEmpty ?? false);
+
+    if (isLogin) {
+      if (userModel?.isOnboardingCompleted != true) {
+        context.go(RoutePaths.onboarding);
+        return;
+      }
+      final String? pendingRoute =
+          NotificationUtil.consumePendingNotificationRoute();
+      if (pendingRoute != null) {
+        context.go(pendingRoute);
+        return;
+      }
+      context.go(RoutePaths.base);
+    } else {
+      context.go(RoutePaths.welcome);
+    }
   }
 
   @override

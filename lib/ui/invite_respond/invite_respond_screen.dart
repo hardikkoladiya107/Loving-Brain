@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -139,14 +141,23 @@ class _InviteRespondScreenState extends State<InviteRespondScreen> {
   }
 
   @override
+  void dispose() {
+    // If splash or a new link replaces this screen mid-load, the loading
+    // mask must not stay behind and swallow taps on Today.
+    unawaited(EasyLoading.dismiss(animation: false));
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<InviteRespondCubit, InviteRespondState>(
       listener: (BuildContext context, InviteRespondState state) {
         state.previewStatus.whenOrNull(
-          loading: () => EasyLoading.show(),
-          data: (_) => EasyLoading.dismiss(),
+          data: (_) {
+            unawaited(EasyLoading.dismiss(animation: false));
+          },
           error: (Exception error) {
-            EasyLoading.dismiss();
+            unawaited(EasyLoading.dismiss(animation: false));
             final String message = error.toString().replaceAll(
               'Exception: ',
               '',
@@ -257,6 +268,16 @@ class _InviteRespondScreenState extends State<InviteRespondScreen> {
                         ),
                       ),
                       24.spaceH,
+                      if (state.isLoadingPreview)
+                        SizedBox(
+                          width: 28.w,
+                          height: 28.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2.4,
+                            color: primaryColor,
+                          ),
+                        ),
+                      if (state.isLoadingPreview) 16.spaceH,
                       'Co-parent invitation'.appText(
                         fraunces: true,
                         fontSize: 28,

@@ -4,9 +4,12 @@ import 'package:app_links/app_links.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
+import 'package:loving_brain/other/app_color.dart';
+import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/co_parent_invitation_helpers.dart';
 import 'package:loving_brain/other/pending_invitation_manager.dart';
@@ -29,7 +32,13 @@ class DeepLinkManager {
   final AppLinks appLinks = AppLinks();
 
   StreamSubscription<Uri>? _appLinkStreamSubscription;
-  bool _isFetchingInvitation = false;
+  OverlayEntry? _fetchingEntry;
+  bool _isHandlingInvitation = false;
+  String? _activeInvitationId;
+  String? _lastHandledInvitationId;
+  DateTime? _lastHandledAt;
+
+  bool get isHandlingInvitation => _isHandlingInvitation;
 
   Future<void> init() async {
     await _handleInitialLink();
@@ -75,18 +84,35 @@ class DeepLinkManager {
   }
 
   Future<void> _processInvitation(String invitationId) async {
+    if (_activeInvitationId == invitationId) {
+      return;
+    }
+    final DateTime now = DateTime.now();
+    if (_lastHandledInvitationId == invitationId &&
+        _lastHandledAt != null &&
+        now.difference(_lastHandledAt!) < const Duration(seconds: 3)) {
+      return;
+    }
+    _activeInvitationId = invitationId;
+    _isHandlingInvitation = true;
     _showFetchingInvitation();
+    try {
+      await _openInvitation(invitationId);
+    } finally {
+      _finishHandling(invitationId);
+    }
+  }
+
+  Future<void> _openInvitation(String invitationId) async {
     final ApiResultStatus previewResult;
     try {
       previewResult = await CoParentRepo.instance.getInvitationPreview(
         invitationId: invitationId,
       );
     } catch (_) {
-      await _hideFetchingInvitation();
       _showError(LocaleKeys.deepLinkLoadFailed.tr());
       return;
     }
-    await _hideFetchingInvitation();
 
     String invitedEmail = '';
     String maskedEmail = '';
@@ -176,26 +202,46 @@ class DeepLinkManager {
     );
   }
 
-  void _showFetchingInvitation() {
-    _isFetchingInvitation = true;
-    _presentFetchingInvitation();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _presentFetchingInvitation();
-    });
+  void _finishHandling(String invitationId) {
+    _hideFetchingInvitation();
+    _isHandlingInvitation = false;
+    if (_activeInvitationId == invitationId) {
+      _activeInvitationId = null;
+    }
+    _lastHandledInvitationId = invitationId;
+    _lastHandledAt = DateTime.now();
   }
 
-  void _presentFetchingInvitation() {
-    if (!_isFetchingInvitation) {
+  void _showFetchingInvitation() {
+    _hideFetchingInvitation();
+    final OverlayState? overlay = navigatorKey.currentState?.overlay;
+    if (overlay == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_isHandlingInvitation || _fetchingEntry != null) {
+          return;
+        }
+        _showFetchingInvitation();
+      });
       return;
     }
-    try {
-      EasyLoading.show(status: LocaleKeys.fetchingInvitation.tr());
-    } catch (_) {}
+    final OverlayEntry entry = OverlayEntry(
+      builder: (BuildContext context) {
+        return const _FetchingInvitationMask();
+      },
+    );
+    _fetchingEntry = entry;
+    overlay.insert(entry);
   }
 
-  Future<void> _hideFetchingInvitation() async {
-    _isFetchingInvitation = false;
-    await EasyLoading.dismiss();
+  void _hideFetchingInvitation() {
+    final OverlayEntry? entry = _fetchingEntry;
+    _fetchingEntry = null;
+    entry?.remove();
+    // Drop any EasyLoading mask left by an earlier invitation open.
+    // Do not await: a stuck loader future must not keep this barrier up.
+    try {
+      unawaited(EasyLoading.dismiss(animation: false));
+    } catch (_) {}
   }
 
   void _showError(String message) {
@@ -217,5 +263,44 @@ class DeepLinkManager {
     if (ctx != null && ctx.mounted) {
       showSnackBar(message: message, type: SnackBarType.SUCCESS);
     }
+  }
+}
+
+class _FetchingInvitationMask extends StatelessWidget {
+  const _FetchingInvitationMask();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        const ModalBarrier(dismissible: false, color: Color(0x40000000)),
+        Center(
+          child: Material(
+            color: const Color(0xFFFEF8F4),
+            borderRadius: BorderRadius.circular(24.r),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 22.h),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(
+                    width: 36.w,
+                    height: 36.w,
+                    child: const CircularProgressIndicator(color: primaryColor),
+                  ),
+                  12.spaceH,
+                  LocaleKeys.fetchingInvitation.tr().appText(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: greyColor9,
+                    letterSpacing: 0.2,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
