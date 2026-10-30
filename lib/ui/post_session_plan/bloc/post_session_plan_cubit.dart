@@ -13,6 +13,11 @@ class PostSessionPlanCubit extends Cubit<PostSessionPlanState> {
 
   String _resolvedChildId = 'default_child';
 
+  void reset() {
+    _resolvedChildId = 'default_child';
+    emit(const PostSessionPlanState());
+  }
+
   Future<void> init({String? childId}) async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 

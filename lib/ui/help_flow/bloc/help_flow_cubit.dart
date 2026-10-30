@@ -20,6 +20,13 @@ class HelpFlowCubit extends Cubit<HelpFlowState> {
   StreamSubscription<DocumentSnapshot<Object?>>? _childSubscription;
   List<HelpGuidanceSuggestion> _currentSuggestions = <HelpGuidanceSuggestion>[];
 
+  void reset() {
+    _childSubscription?.cancel();
+    _childSubscription = null;
+    _currentSuggestions = <HelpGuidanceSuggestion>[];
+    emit(const HelpFlowState());
+  }
+
   void init() {
     final UserModel? userModel = preferences.getUserModel();
     emit(HelpFlowState(userModel: userModel));

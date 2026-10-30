@@ -17,6 +17,12 @@ class PermissionsCubit extends Cubit<PermissionsState> {
   String? _caregiverId;
   String? _caregiverEmail;
 
+  void reset() {
+    _caregiverId = null;
+    _caregiverEmail = null;
+    emit(const PermissionsState());
+  }
+
   void init({
     String? caregiverName,
     String? role,

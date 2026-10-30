@@ -53,6 +53,10 @@ class SleepDetailsCubit extends Cubit<SleepDetailsState> {
     );
   }
 
+  void reset() {
+    emit(const SleepDetailsState());
+  }
+
   Future<void> init() async {
     changeProps(isLoading: true);
 

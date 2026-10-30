@@ -10,6 +10,10 @@ import 'sleep_no_data_state.dart';
 class SleepNoDataCubit extends Cubit<SleepNoDataState> {
   SleepNoDataCubit() : super(const SleepNoDataState());
 
+  void reset() {
+    emit(const SleepNoDataState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

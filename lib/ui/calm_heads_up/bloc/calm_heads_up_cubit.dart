@@ -15,6 +15,10 @@ import 'calm_heads_up_state.dart';
 class CalmHeadsUpCubit extends Cubit<CalmHeadsUpState> {
   CalmHeadsUpCubit() : super(const CalmHeadsUpState());
 
+  void reset() {
+    emit(const CalmHeadsUpState());
+  }
+
   void init({ChildModel? childModel}) {
     emit(const CalmHeadsUpState());
     final ChildModel? child = childModel ?? preferences.getChildModel();

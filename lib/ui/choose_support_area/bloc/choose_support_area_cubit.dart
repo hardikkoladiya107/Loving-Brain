@@ -47,6 +47,10 @@ class ChooseSupportAreaCubit extends Cubit<ChooseSupportAreaState> {
     }
   }
 
+  void reset() {
+    emit(const ChooseSupportAreaState());
+  }
+
   void changeProps({
     int? selectedIndex,
     List<String>? areas,

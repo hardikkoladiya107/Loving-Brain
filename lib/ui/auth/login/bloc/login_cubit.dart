@@ -14,6 +14,10 @@ class LoginCubit extends Cubit<LoginState> {
     emit(LoginState());
   }
 
+  void reset() {
+    emit(LoginState());
+  }
+
   void changeProps({
     String? emailAddress,
     String? password,

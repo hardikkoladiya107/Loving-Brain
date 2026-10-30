@@ -26,6 +26,10 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     );
   }
 
+  void reset() {
+    emit(SubscriptionState());
+  }
+
   void init() {
     final UserModel? userModel = preferences.getUserModel();
     final List<SubsProductDetails> staticPlans = <SubsProductDetails>[

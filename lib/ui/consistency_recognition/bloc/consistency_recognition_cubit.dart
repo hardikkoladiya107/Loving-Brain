@@ -15,6 +15,10 @@ import 'consistency_recognition_state.dart';
 class ConsistencyRecognitionCubit extends Cubit<ConsistencyRecognitionState> {
   ConsistencyRecognitionCubit() : super(const ConsistencyRecognitionState());
 
+  void reset() {
+    emit(const ConsistencyRecognitionState());
+  }
+
   void init({int? initialDays}) {
     emit(const ConsistencyRecognitionState());
     if (initialDays != null && initialDays > 0) {

@@ -14,6 +14,10 @@ class TryingThisWeekCubit extends Cubit<TryingThisWeekState> {
     _loadExperiment();
   }
 
+  void reset() {
+    emit(const TryingThisWeekState());
+  }
+
   void changeProps({
     ActiveExperimentModel? experiment,
     ChildModel? child,

@@ -16,6 +16,10 @@ import 'invite_caregiver_state.dart';
 class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
   InviteCaregiverCubit() : super(const InviteCaregiverState());
 
+  void reset() {
+    emit(const InviteCaregiverState());
+  }
+
   void init() {
     final ChildModel? child = preferences.getChildModel();
     final String cName =

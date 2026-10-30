@@ -54,6 +54,10 @@ class SleepForecastCubit extends Cubit<SleepForecastState> {
     );
   }
 
+  void reset() {
+    emit(const SleepForecastState());
+  }
+
   Future<void> init() async {
     changeProps(isLoading: true);
 

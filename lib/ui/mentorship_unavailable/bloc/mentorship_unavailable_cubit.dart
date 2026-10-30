@@ -14,6 +14,10 @@ class MentorshipUnavailableCubit extends Cubit<MentorshipUnavailableState> {
     emit(const MentorshipUnavailableState());
   }
 
+  void reset() {
+    emit(const MentorshipUnavailableState());
+  }
+
   void changeProps({
     bool? isWaitlistJoined,
     bool? isLoading,

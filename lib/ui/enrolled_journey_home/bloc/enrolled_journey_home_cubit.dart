@@ -11,6 +11,10 @@ import 'enrolled_journey_home_state.dart';
 class EnrolledJourneyHomeCubit extends Cubit<EnrolledJourneyHomeState> {
   EnrolledJourneyHomeCubit() : super(const EnrolledJourneyHomeState());
 
+  void reset() {
+    emit(const EnrolledJourneyHomeState());
+  }
+
   Future<void> init({String? childId}) async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 

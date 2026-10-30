@@ -10,6 +10,10 @@ import 'help_safety_state.dart';
 class HelpSafetyCubit extends Cubit<HelpSafetyState> {
   HelpSafetyCubit() : super(const HelpSafetyState());
 
+  void reset() {
+    emit(const HelpSafetyState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final String location = (user?.location ?? '').toLowerCase();

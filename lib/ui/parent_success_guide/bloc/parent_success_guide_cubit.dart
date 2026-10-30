@@ -12,6 +12,10 @@ import 'parent_success_guide_state.dart';
 class ParentSuccessGuideCubit extends Cubit<ParentSuccessGuideState> {
   ParentSuccessGuideCubit() : super(const ParentSuccessGuideState());
 
+  void reset() {
+    emit(const ParentSuccessGuideState());
+  }
+
   Future<void> init({String? guideId}) async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 

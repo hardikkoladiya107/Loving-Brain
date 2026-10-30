@@ -12,6 +12,10 @@ import 'notifications_state.dart';
 class NotificationsCubit extends Cubit<NotificationsState> {
   NotificationsCubit() : super(const NotificationsState());
 
+  void reset() {
+    emit(const NotificationsState());
+  }
+
   void init() {
     final Map<String, dynamic>? rawPrefs = preferences
         .getNotificationPreferences();

@@ -22,6 +22,10 @@ import 'privacy_data_state.dart';
 class PrivacyDataCubit extends Cubit<PrivacyDataState> {
   PrivacyDataCubit() : super(const PrivacyDataState());
 
+  void reset() {
+    emit(const PrivacyDataState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

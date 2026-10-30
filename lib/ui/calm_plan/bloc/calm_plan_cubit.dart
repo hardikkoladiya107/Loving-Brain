@@ -24,6 +24,15 @@ class CalmPlanCubit extends Cubit<CalmPlanState> {
   Timer? _playbackTicker;
   File? _calmAudioFile;
 
+  void reset() {
+    _playbackTicker?.cancel();
+    _playbackTicker = null;
+    try {
+      _audioPlayer?.stop().catchError((_) {});
+    } catch (_) {}
+    emit(const CalmPlanState());
+  }
+
   void init({BehaviourForecastResult? forecast}) {
     emit(const CalmPlanState());
     _initAudioPlayer();

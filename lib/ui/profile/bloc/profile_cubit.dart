@@ -41,6 +41,12 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
+  void reset() {
+    profileSubscription?.cancel();
+    profileSubscription = null;
+    emit(const ProfileState());
+  }
+
   Future<void> deleteAccount() async {
     changeProps(deleteAccountApiResultStatus: const ApiResultStatus.loading());
     final ApiResultStatus apiResult = await AuthRepo.instance.deleteAccount();

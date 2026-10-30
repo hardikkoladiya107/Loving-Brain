@@ -135,6 +135,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     );
   }
 
+  void reset() {
+    _chatsSubscription?.cancel();
+    _chatsSubscription = null;
+    try {
+      _audioPlayer.stop().catchError((_) {});
+    } catch (_) {}
+    emit(const BrainyConversationState());
+  }
+
   void clearDraft() {
     if (isClosed) return;
     _chatsSubscription?.cancel();

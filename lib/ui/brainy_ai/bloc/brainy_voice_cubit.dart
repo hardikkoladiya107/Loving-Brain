@@ -36,6 +36,15 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
     );
   }
 
+  void reset() {
+    _timer?.cancel();
+    _timer = null;
+    try {
+      _recorder.stop().catchError((_) => null);
+    } catch (_) {}
+    emit(const BrainyVoiceState());
+  }
+
   Future<void> init({String? topic}) async {
     final String selectedTopic = topic ?? 'Behaviour';
     changeProps(topic: selectedTopic, previewText: '');

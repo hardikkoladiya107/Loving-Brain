@@ -52,6 +52,13 @@ class BaseCubit extends Cubit<BaseState> {
     );
   }
 
+  void reset() {
+    cancelSubscriptions();
+    _authSubscription?.cancel();
+    _authSubscription = null;
+    emit(BaseState());
+  }
+
   void cancelSubscriptions() {
     _profileSubscription?.cancel();
     _profileSubscription = null;

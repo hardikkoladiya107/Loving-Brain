@@ -12,6 +12,10 @@ import 'child_essentials_state.dart';
 class ChildEssentialsCubit extends Cubit<ChildEssentialsState> {
   ChildEssentialsCubit() : super(const ChildEssentialsState());
 
+  void reset() {
+    emit(const ChildEssentialsState());
+  }
+
   void init() {
     final ChildModel? child = preferences.getChildModel();
     final String cName =

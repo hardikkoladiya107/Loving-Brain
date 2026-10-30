@@ -13,6 +13,10 @@ import 'request_session_state.dart';
 class RequestSessionCubit extends Cubit<RequestSessionState> {
   RequestSessionCubit() : super(const RequestSessionState());
 
+  void reset() {
+    emit(const RequestSessionState());
+  }
+
   void init({GuideProfileModel? guide, String? initialConcern}) {
     final ChildModel? child = preferences.getChildModel();
     final String? childName = child?.childName?.trim();

@@ -5,4 +5,8 @@ class InviteAcceptedCubit extends Cubit<InviteAcceptedState> {
   InviteAcceptedCubit() : super(const InviteAcceptedState());
 
   void init() {}
+
+  void reset() {
+    emit(const InviteAcceptedState());
+  }
 }

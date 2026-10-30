@@ -65,6 +65,12 @@ class TodayCubit extends Cubit<TodayState> {
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
   _childDocSubscription;
 
+  void reset() {
+    _childDocSubscription?.cancel();
+    _childDocSubscription = null;
+    emit(const TodayState());
+  }
+
   @override
   Future<void> close() {
     _childDocSubscription?.cancel();
@@ -228,32 +234,47 @@ class TodayCubit extends Cubit<TodayState> {
       cName = '';
     }
 
-    // Immediately present cached child profile to eliminate any delay/flash
-    if (currentChildId.isNotEmpty) {
-      changeProps(
-        isLoading: false,
-        timeOfDayGreeting: greeting,
-        parentName: pName.toUpperCase(),
-        childName: cName,
-        activeChildId: currentChildId,
-      );
-    } else if (userUid != null && userUid.isNotEmpty) {
-      // User is logged in but local cache has no child yet; show loading indicator while syncing
-      changeProps(
-        isLoading: true,
-        timeOfDayGreeting: greeting,
-        parentName: pName.toUpperCase(),
-        activeChildId: '',
-        childName: '',
+    // If active child or parent changed (e.g. user switch/logout), wipe any stale previous user forecasts/logs immediately
+    if (state.activeChildId != currentChildId ||
+        (userUid != null && state.parentName != pName.toUpperCase())) {
+      emit(
+        TodayState(
+          isLoading:
+              currentChildId.isEmpty && (userUid != null && userUid.isNotEmpty),
+          timeOfDayGreeting: greeting,
+          parentName: pName.toUpperCase(),
+          childName: cName,
+          activeChildId: currentChildId,
+        ),
       );
     } else {
-      changeProps(
-        isLoading: false,
-        timeOfDayGreeting: greeting,
-        parentName: pName.toUpperCase(),
-        activeChildId: '',
-        childName: '',
-      );
+      // Immediately present cached child profile to eliminate any delay/flash
+      if (currentChildId.isNotEmpty) {
+        changeProps(
+          isLoading: false,
+          timeOfDayGreeting: greeting,
+          parentName: pName.toUpperCase(),
+          childName: cName,
+          activeChildId: currentChildId,
+        );
+      } else if (userUid != null && userUid.isNotEmpty) {
+        // User is logged in but local cache has no child yet; show loading indicator while syncing
+        changeProps(
+          isLoading: true,
+          timeOfDayGreeting: greeting,
+          parentName: pName.toUpperCase(),
+          activeChildId: '',
+          childName: '',
+        );
+      } else {
+        changeProps(
+          isLoading: false,
+          timeOfDayGreeting: greeting,
+          parentName: pName.toUpperCase(),
+          activeChildId: '',
+          childName: '',
+        );
+      }
     }
 
     // Sync latest user and default child first to guarantee accurate link status

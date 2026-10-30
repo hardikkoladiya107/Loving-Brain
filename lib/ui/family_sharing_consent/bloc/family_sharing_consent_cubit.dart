@@ -10,6 +10,10 @@ import 'family_sharing_consent_state.dart';
 class FamilySharingConsentCubit extends Cubit<FamilySharingConsentState> {
   FamilySharingConsentCubit() : super(const FamilySharingConsentState());
 
+  void reset() {
+    emit(const FamilySharingConsentState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

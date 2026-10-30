@@ -14,6 +14,10 @@ import 'shared_child_summary_state.dart';
 class SharedChildSummaryCubit extends Cubit<SharedChildSummaryState> {
   SharedChildSummaryCubit() : super(const SharedChildSummaryState());
 
+  void reset() {
+    emit(const SharedChildSummaryState());
+  }
+
   Future<void> init() async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 

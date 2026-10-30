@@ -10,6 +10,10 @@ import 'guide_profile_state.dart';
 class GuideProfileCubit extends Cubit<GuideProfileState> {
   GuideProfileCubit() : super(const GuideProfileState());
 
+  void reset() {
+    emit(const GuideProfileState());
+  }
+
   Future<void> init({String? guideId, String? supportArea}) async {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 

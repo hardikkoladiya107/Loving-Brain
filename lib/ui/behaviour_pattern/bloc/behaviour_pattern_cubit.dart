@@ -11,6 +11,10 @@ import 'behaviour_pattern_state.dart';
 class BehaviourPatternCubit extends Cubit<BehaviourPatternState> {
   BehaviourPatternCubit() : super(const BehaviourPatternState());
 
+  void reset() {
+    emit(const BehaviourPatternState());
+  }
+
   void init({ChildModel? childModel}) {
     emit(const BehaviourPatternState());
     _loadPatternData(childModel);

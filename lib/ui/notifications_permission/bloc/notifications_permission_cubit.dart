@@ -11,6 +11,10 @@ import 'notifications_permission_state.dart';
 class NotificationsPermissionCubit extends Cubit<NotificationsPermissionState> {
   NotificationsPermissionCubit() : super(const NotificationsPermissionState());
 
+  void reset() {
+    emit(const NotificationsPermissionState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

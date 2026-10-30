@@ -12,6 +12,14 @@ class OtpCubit extends Cubit<OtpState> {
   Timer? _resendTimer;
   Timer? _lockoutTimer;
 
+  void reset() {
+    _resendTimer?.cancel();
+    _resendTimer = null;
+    _lockoutTimer?.cancel();
+    _lockoutTimer = null;
+    emit(const OtpState());
+  }
+
   void init({
     String? destination,
     String? verificationId,

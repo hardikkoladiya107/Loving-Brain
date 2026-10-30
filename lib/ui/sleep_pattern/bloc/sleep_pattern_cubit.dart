@@ -38,6 +38,10 @@ class SleepPatternCubit extends Cubit<SleepPatternState> {
     );
   }
 
+  void reset() {
+    emit(const SleepPatternState());
+  }
+
   Future<void> init() async {
     changeProps(isLoading: true);
 

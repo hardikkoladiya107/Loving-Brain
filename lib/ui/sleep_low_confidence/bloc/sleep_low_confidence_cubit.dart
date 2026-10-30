@@ -11,6 +11,10 @@ class SleepLowConfidenceCubit extends Cubit<SleepLowConfidenceState> {
     emit(const SleepLowConfidenceState());
   }
 
+  void reset() {
+    emit(const SleepLowConfidenceState());
+  }
+
   void changeProps({
     String? windowTimeRange,
     int? nightsCount,

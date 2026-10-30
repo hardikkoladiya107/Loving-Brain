@@ -25,6 +25,10 @@ class JourneyCubit extends Cubit<JourneyState> {
     _loadJourneyData();
   }
 
+  void reset() {
+    emit(const JourneyState());
+  }
+
   void changeProps({
     JourneyMode? mode,
     ChildModel? child,

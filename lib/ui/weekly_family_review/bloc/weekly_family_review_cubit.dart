@@ -23,6 +23,10 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
     _loadReview();
   }
 
+  void reset() {
+    emit(const WeeklyFamilyReviewState());
+  }
+
   void changeProps({
     ChildModel? child,
     WeeklyInsightsResult? insights,

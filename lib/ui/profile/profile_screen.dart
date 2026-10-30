@@ -11,6 +11,7 @@ import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/app_session_manager.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
@@ -29,7 +30,6 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../gen/assets.gen.dart';
 import '../../generated/locale_keys.g.dart';
 import '../../other/app_color.dart';
-import '../../other/preferances.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -718,10 +718,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _performLogout() async {
-    if (navigatorKey.currentContext != null) {
-      await preferences.putBool(SharedPreference.isLogin, false);
-      await preferences.clearUser();
-      navigatorKey.currentContext!.go(RoutePaths.welcome);
+    final BuildContext? ctx = navigatorKey.currentContext;
+    if (ctx != null) {
+      await AppSessionManager.instance.clearAllSessionStates(context: ctx);
+      if (ctx.mounted) {
+        ctx.go(RoutePaths.welcome);
+      }
+    } else if (mounted) {
+      await AppSessionManager.instance.clearAllSessionStates(context: context);
+      if (mounted) {
+        context.go(RoutePaths.welcome);
+      }
     }
   }
 

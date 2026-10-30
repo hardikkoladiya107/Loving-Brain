@@ -20,6 +20,11 @@ class RegisterCubit extends Cubit<RegisterState> {
     emit(RegisterState());
   }
 
+  void reset() {
+    _submittingMethod = '';
+    emit(RegisterState());
+  }
+
   void changeProps({
     bool? obscureTextPassword,
     bool? obscureTextConfirmPassword,

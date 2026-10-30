@@ -10,6 +10,10 @@ import 'invite_pending_state.dart';
 class InvitePendingCubit extends Cubit<InvitePendingState> {
   InvitePendingCubit() : super(const InvitePendingState());
 
+  void reset() {
+    emit(const InvitePendingState());
+  }
+
   void init({
     String? recipient,
     String? role,

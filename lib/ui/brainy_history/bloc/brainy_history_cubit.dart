@@ -25,6 +25,12 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
     preferences.putString('deleted_brainy_samples', current.join(','));
   }
 
+  void reset() {
+    _conversationSubscription?.cancel();
+    _conversationSubscription = null;
+    emit(const BrainyHistoryState());
+  }
+
   void init() {
     emit(const BrainyHistoryState());
 

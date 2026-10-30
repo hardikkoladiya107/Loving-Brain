@@ -7,4 +7,8 @@ class SessionRequestConfirmationCubit
     : super(const SessionRequestConfirmationState());
 
   void init() {}
+
+  void reset() {
+    emit(const SessionRequestConfirmationState());
+  }
 }

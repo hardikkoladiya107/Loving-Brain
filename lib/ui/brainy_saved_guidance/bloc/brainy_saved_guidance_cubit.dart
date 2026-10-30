@@ -28,6 +28,12 @@ class BrainySavedGuidanceCubit extends Cubit<BrainySavedGuidanceState> {
     );
   }
 
+  void reset() {
+    _savedSubscription?.cancel();
+    _savedSubscription = null;
+    emit(const BrainySavedGuidanceState());
+  }
+
   void init() {
     emit(const BrainySavedGuidanceState());
 

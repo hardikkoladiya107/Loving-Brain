@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/other/app_session_manager.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -370,6 +371,7 @@ class AuthRepo {
       } catch (_) {}
       await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
+      await AppSessionManager.instance.clearAllSessionStates();
       return const ApiResultStatus.data(data: "");
     } catch (e) {
       try {
@@ -383,6 +385,7 @@ class AuthRepo {
       } catch (_) {}
       await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
+      await AppSessionManager.instance.clearAllSessionStates();
 
       // If the Auth user is gone, consider account deletion successful locally
       if (FirebaseAuth.instance.currentUser == null) {
@@ -683,29 +686,25 @@ class AuthRepo {
       try {
         await GoogleSignInManager.instance.signOut();
       } catch (_) {}
-      await FirebaseAuth.instance.signOut();
+      try {
+        await FirebaseAuth.instance.signOut();
+      } catch (_) {}
       try {
         await OfflineSyncRepo.instance.clearQueue();
       } catch (_) {}
-      await preferences.clearOnboardingDraft();
-      await preferences.clearUser();
-      await preferences.putBool(SharedPreference.isLogin, false);
+      await AppSessionManager.instance.clearAllSessionStates();
       return const ApiResultStatus.data(data: "");
     } on FirebaseException catch (e) {
       try {
         await OfflineSyncRepo.instance.clearQueue();
       } catch (_) {}
-      await preferences.clearOnboardingDraft();
-      await preferences.clearUser();
-      await preferences.putBool(SharedPreference.isLogin, false);
+      await AppSessionManager.instance.clearAllSessionStates();
       return onFirebaseException(e);
     } catch (e) {
       try {
         await OfflineSyncRepo.instance.clearQueue();
       } catch (_) {}
-      await preferences.clearOnboardingDraft();
-      await preferences.clearUser();
-      await preferences.putBool(SharedPreference.isLogin, false);
+      await AppSessionManager.instance.clearAllSessionStates();
       return ApiResultStatus.error(
         error: e is Exception ? e : Exception(e.toString()),
       );

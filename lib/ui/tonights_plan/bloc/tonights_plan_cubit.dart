@@ -42,6 +42,10 @@ class TonightsPlanCubit extends Cubit<TonightsPlanState> {
     );
   }
 
+  void reset() {
+    emit(const TonightsPlanState());
+  }
+
   Future<void> init() async {
     changeProps(isLoading: true);
 

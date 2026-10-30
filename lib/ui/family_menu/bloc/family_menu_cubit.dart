@@ -36,6 +36,14 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     _setupStreams(childId, userEmail);
   }
 
+  void reset() {
+    _childSubscription?.cancel();
+    _childSubscription = null;
+    _inviteSubscription?.cancel();
+    _inviteSubscription = null;
+    emit(const FamilyMenuState());
+  }
+
   void _setupStreams(String? childId, String? userEmail) {
     _childSubscription?.cancel();
     _inviteSubscription?.cancel();

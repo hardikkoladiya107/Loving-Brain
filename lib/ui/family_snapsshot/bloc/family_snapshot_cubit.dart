@@ -7,6 +7,10 @@ import 'family_snapshot_state.dart';
 class FamilySnapshotCubit extends Cubit<FamilySnapshotState> {
   FamilySnapshotCubit() : super(const FamilySnapshotState());
 
+  void reset() {
+    emit(const FamilySnapshotState());
+  }
+
   void init() {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

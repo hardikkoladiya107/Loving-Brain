@@ -9,6 +9,10 @@ import 'guide_list_state.dart';
 class GuideListCubit extends Cubit<GuideListState> {
   GuideListCubit() : super(const GuideListState());
 
+  void reset() {
+    emit(const GuideListState());
+  }
+
   Future<void> init({
     required String supportArea,
     List<GuideProfileModel>? guides,

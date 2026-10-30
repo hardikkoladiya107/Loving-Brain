@@ -10,6 +10,10 @@ class ProgrammeDetailCubit extends Cubit<ProgrammeDetailState> {
     emit(const ProgrammeDetailState());
   }
 
+  void reset() {
+    emit(const ProgrammeDetailState());
+  }
+
   void changeProps() {
     emit(const ProgrammeDetailState());
   }

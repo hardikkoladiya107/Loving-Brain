@@ -17,6 +17,10 @@ class FamilyTimelineCubit extends Cubit<FamilyTimelineState> {
     _loadTimeline();
   }
 
+  void reset() {
+    emit(const FamilyTimelineState());
+  }
+
   void changeProps({
     List<TimelineEventModel>? allEvents,
     List<TimelineEventModel>? filteredEvents,

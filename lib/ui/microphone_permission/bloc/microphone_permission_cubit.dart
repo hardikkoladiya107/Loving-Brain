@@ -12,6 +12,10 @@ class MicrophonePermissionCubit extends Cubit<MicrophonePermissionState> {
     emit(const MicrophonePermissionState());
   }
 
+  void reset() {
+    emit(const MicrophonePermissionState());
+  }
+
   void changeProps({bool? isGranted}) {
     emit(state.copyWith(isGranted: isGranted ?? state.isGranted));
   }

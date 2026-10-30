@@ -21,6 +21,10 @@ class MentorshipLandingCubit extends Cubit<MentorshipLandingState> {
     MentorshipRepo.instance.checkWaitlistSlotAvailability(userId);
   }
 
+  void reset() {
+    emit(const MentorshipLandingState());
+  }
+
   void changeProps({
     bool? isLoading,
     bool? isAvailable,

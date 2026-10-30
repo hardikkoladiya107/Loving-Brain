@@ -20,6 +20,10 @@ class HarderWeekCubit extends Cubit<HarderWeekState> {
     _loadHarderWeekData();
   }
 
+  void reset() {
+    emit(const HarderWeekState());
+  }
+
   void changeProps({
     ChildModel? child,
     WeeklyInsightsResult? insights,

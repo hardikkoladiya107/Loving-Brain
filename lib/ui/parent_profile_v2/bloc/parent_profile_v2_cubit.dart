@@ -49,6 +49,11 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
     );
   }
 
+  void reset() {
+    _locationData = null;
+    emit(const ParentProfileV2State());
+  }
+
   Future<void> init() async {
     UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

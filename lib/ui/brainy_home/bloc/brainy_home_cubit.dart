@@ -53,6 +53,10 @@ class BrainyHomeCubit extends Cubit<BrainyHomeState> {
     );
   }
 
+  void reset() {
+    emit(const BrainyHomeState());
+  }
+
   Future<void> init() async {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = preferences.getChildModel();

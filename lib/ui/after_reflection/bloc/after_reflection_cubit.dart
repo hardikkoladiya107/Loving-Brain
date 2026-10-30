@@ -15,6 +15,10 @@ class AfterReflectionCubit extends Cubit<AfterReflectionState> {
     emit(const AfterReflectionState());
   }
 
+  void reset() {
+    emit(const AfterReflectionState());
+  }
+
   void changeProps({
     bool? isLoading,
     ApiResultStatus? saveStatus,

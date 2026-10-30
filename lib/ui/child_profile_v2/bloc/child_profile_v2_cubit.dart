@@ -84,6 +84,11 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     return '';
   }
 
+  void reset() {
+    _locationData = null;
+    emit(const ChildProfileV2State());
+  }
+
   Future<void> init({bool createNew = false}) async {
     final DateTime today = DateTime.now();
     if (createNew) {
