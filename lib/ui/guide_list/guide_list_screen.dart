@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,98 +53,88 @@ class _GuideListScreenState extends State<GuideListScreen> {
         }
       },
       builder: (BuildContext context, GuideListState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 8.h,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(8.r),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: darkBlue,
-                            size: 24.sp,
-                          ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 8.h,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: EdgeInsets.all(8.r),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: darkBlue,
+                          size: 24.sp,
                         ),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: "Available guides".appText(
-                      fontSize: 32.sp,
-                      color: greyColor9,
-                      fraunces: true,
-                    ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: "Available guides".appText(
+                    fontSize: 32.sp,
+                    color: greyColor9,
+                    fraunces: true,
                   ),
-                  8.spaceH,
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: widget.supportArea.appText(
-                      fontSize: 14.sp,
-                      color: greyColor,
-                    ),
+                ),
+                8.spaceH,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: widget.supportArea.appText(
+                    fontSize: 14.sp,
+                    color: greyColor,
                   ),
-                  24.spaceH,
-                  Expanded(
-                    child: state.guides.isEmpty
-                        ? Center(
-                            child: "No guides available right now.".appText(
-                              fontSize: 16.sp,
-                              color: greyColor,
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        : ListView.separated(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 8.h,
-                            ),
-                            itemCount: state.guides.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) => 12.spaceH,
-                            itemBuilder: (BuildContext context, int index) {
-                              final GuideProfileModel guide =
-                                  state.guides[index];
-                              return _GuideCard(
-                                guide: guide,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (_) =>
-                                          GuideProfileScreen(guideId: guide.id),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
+                ),
+                24.spaceH,
+                Expanded(
+                  child: state.guides.isEmpty
+                      ? Center(
+                          child: "No guides available right now.".appText(
+                            fontSize: 16.sp,
+                            color: greyColor,
+                            textAlign: TextAlign.center,
                           ),
-                  ),
-                ],
-              ),
+                        )
+                      : ListView.separated(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 8.h,
+                          ),
+                          itemCount: state.guides.length,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              12.spaceH,
+                          itemBuilder: (BuildContext context, int index) {
+                            final GuideProfileModel guide = state.guides[index];
+                            return _GuideCard(
+                              guide: guide,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (_) =>
+                                        GuideProfileScreen(guideId: guide.id),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
           ),
         );

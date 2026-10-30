@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
@@ -44,138 +43,129 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
     return BlocConsumer<CalmPlanCubit, CalmPlanState>(
       listener: (BuildContext context, CalmPlanState state) {},
       builder: (BuildContext context, CalmPlanState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.6),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.6),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    children: [
-                      16.spaceH,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          borderRadius: BorderRadius.circular(24.r),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  children: [
+                    16.spaceH,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        borderRadius: BorderRadius.circular(24.r),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      24.spaceH,
-                      "Calm Heads-Up".appText(
-                        fontSize: 32.sp,
-                        color: darkBlue,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
-                      24.spaceH,
-                      _buildRightNowCard(state),
-                      16.spaceH,
-                      _buildAvoidCard(state),
-                      16.spaceH,
-                      _buildAudioCard(context, state),
-                      24.spaceH,
-                      AppButton(
-                        title: "Tell us what happened",
-                        onTap: () {
+                    ),
+                    24.spaceH,
+                    "Calm Heads-Up".appText(
+                      fontSize: 32.sp,
+                      color: darkBlue,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    24.spaceH,
+                    _buildRightNowCard(state),
+                    16.spaceH,
+                    _buildAvoidCard(state),
+                    16.spaceH,
+                    _buildAudioCard(context, state),
+                    24.spaceH,
+                    AppButton(
+                      title: "Tell us what happened",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AfterReflectionScreen(),
+                          ),
+                        );
+                      },
+                      backgroundColor: primaryColor,
+                      textColor: Colors.white,
+                    ),
+                    16.spaceH,
+                    Center(
+                      child: TextButton(
+                        onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const AfterReflectionScreen(),
+                              builder: (_) => const BrainyConversationScreen(
+                                topic: 'Calm Plan',
+                                initialChat:
+                                    'Can you help me with a calming plan for my child during a hard moment?',
+                              ),
                             ),
                           );
                         },
-                        backgroundColor: primaryColor,
-                        textColor: Colors.white,
-                      ),
-                      16.spaceH,
-                      Center(
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BrainyConversationScreen(
-                                  topic: 'Calm Plan',
-                                  initialChat:
-                                      'Can you help me with a calming plan for my child during a hard moment?',
-                                ),
-                              ),
-                            );
-                          },
-                          child: "Ask Brainy".appText(
-                            fontSize: 16.sp,
-                            color: greyColor,
-                            fontWeight: FontWeight.w500,
-                          ),
+                        child: "Ask Brainy".appText(
+                          fontSize: 16.sp,
+                          color: greyColor,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      100.spaceH,
-                    ],
-                  ),
+                    ),
+                    100.spaceH,
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

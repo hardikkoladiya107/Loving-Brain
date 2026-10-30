@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -58,158 +57,147 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
             ? (program.currentWeek / program.totalWeeks).clamp(0.0, 1.0)
             : 0.33;
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            program.title.appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            24.spaceH,
-                            _buildProgressCard(program, progress),
-                            16.spaceH,
-                            _buildActionRow(
-                              iconPath: Assets.v2.icons.icNextSession.path,
-                              iconBgColor: orangeLightColor,
-                              iconColor: primaryColor,
-                              title: "Next session",
-                              subtitle:
-                                  "Confirmed with ${program.guideName}. Details sent by email.",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        const RequestSessionScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            16.spaceH,
-                            _buildActionRow(
-                              iconData: Icons.check_circle_outline,
-                              iconBgColor: const Color(0xFFF1EEFF),
-                              iconColor: secondaryColor,
-                              title: "Post-session plan",
-                              subtitle:
-                                  "Action items agreed with ${program.guideName}",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        const PostSessionPlanScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            16.spaceH,
-                            _buildActionRow(
-                              iconData: Icons.play_arrow_rounded,
-                              iconBgColor: const Color(0xFFFCE4EC),
-                              iconColor: const Color(0xFFE91E63),
-                              title: program.recordedModuleTitle,
-                              subtitle:
-                                  "Recorded module · ${program.recordedModuleDuration}",
-                              onTap: () {
-                                showSnackBar(
-                                  message:
-                                      'Audio for this module will be available in an upcoming update.',
-                                  type: SnackBarType.None,
-                                );
-                              },
-                            ),
-                            16.spaceH,
-                            _buildQuoteCard(program),
-                            140.spaceH,
-                          ],
-                        ),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          program.title.appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          _buildProgressCard(program, progress),
+                          16.spaceH,
+                          _buildActionRow(
+                            iconPath: Assets.v2.icons.icNextSession.path,
+                            iconBgColor: orangeLightColor,
+                            iconColor: primaryColor,
+                            title: "Next session",
+                            subtitle:
+                                "Confirmed with ${program.guideName}. Details sent by email.",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const RequestSessionScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          16.spaceH,
+                          _buildActionRow(
+                            iconData: Icons.check_circle_outline,
+                            iconBgColor: const Color(0xFFF1EEFF),
+                            iconColor: secondaryColor,
+                            title: "Post-session plan",
+                            subtitle:
+                                "Action items agreed with ${program.guideName}",
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const PostSessionPlanScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          16.spaceH,
+                          _buildActionRow(
+                            iconData: Icons.play_arrow_rounded,
+                            iconBgColor: const Color(0xFFFCE4EC),
+                            iconColor: const Color(0xFFE91E63),
+                            title: program.recordedModuleTitle,
+                            subtitle:
+                                "Recorded module · ${program.recordedModuleDuration}",
+                            onTap: () {
+                              showSnackBar(
+                                message:
+                                    'Audio for this module will be available in an upcoming update.',
+                                type: SnackBarType.None,
+                              );
+                            },
+                          ),
+                          16.spaceH,
+                          _buildQuoteCard(program),
+                          140.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -86,205 +85,196 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
             ? "None recorded"
             : state.medications.join(", ");
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                // Bottom Right Glow
-                Positioned(
-                  right: -150.w,
-                  bottom: 0,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+              ),
+              // Bottom Right Glow
+              Positioned(
+                right: -150.w,
+                bottom: 0,
+                child: Container(
+                  width: 400.w,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 8.h,
-                        ),
-                        child: InkWell(
-                          onTap: () => Navigator.pop(context),
-                          child: Container(
-                            padding: EdgeInsets.all(8.r),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: darkBlue,
-                              size: 24.sp,
-                            ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 8.h,
+                      ),
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.all(8.r),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_back,
+                            color: darkBlue,
+                            size: 24.sp,
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          children: [
-                            16.spaceH,
-                            "Child essentials".appText(
-                              fontSize: 32.sp,
-                              color: greyColor9,
-                              fraunces: true,
-                              textAlign: TextAlign.start,
-                            ),
-                            8.spaceH,
-                            "The few things someone would need in a hurry."
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor,
-                                  textAlign: TextAlign.start,
+                    ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        children: [
+                          16.spaceH,
+                          "Child essentials".appText(
+                            fontSize: 32.sp,
+                            color: greyColor9,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          8.spaceH,
+                          "The few things someone would need in a hurry."
+                              .appText(
+                                fontSize: 14.sp,
+                                color: greyColor,
+                                textAlign: TextAlign.start,
+                              ),
+                          24.spaceH,
+                          _buildListItem(
+                            iconPath: Assets.v2.icons.icAllergies.path,
+                            iconBgColor: const Color(0xFFFCE4EC),
+                            iconColor: const Color(0xFFE91E63),
+                            title: "Allergies",
+                            subtitle: allergiesSubtitle,
+                            onTap: () {
+                              Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext _) =>
+                                      const AllergiesScreen(),
                                 ),
-                            24.spaceH,
-                            _buildListItem(
-                              iconPath: Assets.v2.icons.icAllergies.path,
-                              iconBgColor: const Color(0xFFFCE4EC),
-                              iconColor: const Color(0xFFE91E63),
-                              title: "Allergies",
-                              subtitle: allergiesSubtitle,
-                              onTap: () {
-                                Navigator.push<void>(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext _) =>
-                                        const AllergiesScreen(),
-                                  ),
-                                );
-                              },
+                              );
+                            },
+                          ),
+                          12.spaceH,
+                          _buildListItem(
+                            iconPath: Assets.v2.icons.icMedications.path,
+                            iconBgColor: orangeLightColor,
+                            iconColor: primaryColor,
+                            title: "Medications",
+                            subtitle: medicationsSubtitle,
+                            onTap: () {
+                              Navigator.push<void>(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext _) =>
+                                      const MedicationsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          16.spaceH,
+                          AppButton(
+                            onTap: () => _showAddItemDialog(context),
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                            borderColor: greyColor.withValues(alpha: 0.3),
+                            widget: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add,
+                                  color: greyColor14,
+                                  size: 20.sp,
+                                ),
+                                8.spaceW,
+                                "Add another item".appText(
+                                  fontSize: 18.sp,
+                                  color: greyColor14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
                             ),
-                            12.spaceH,
-                            _buildListItem(
-                              iconPath: Assets.v2.icons.icMedications.path,
-                              iconBgColor: orangeLightColor,
-                              iconColor: primaryColor,
-                              title: "Medications",
-                              subtitle: medicationsSubtitle,
-                              onTap: () {
-                                Navigator.push<void>(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext _) =>
-                                        const MedicationsScreen(),
-                                  ),
-                                );
-                              },
+                          ),
+                          24.spaceH,
+                          Container(
+                            padding: EdgeInsets.all(20.r),
+                            decoration: BoxDecoration(
+                              color: softPeachOrange,
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            16.spaceH,
-                            AppButton(
-                              onTap: () => _showAddItemDialog(context),
-                              padding: EdgeInsets.zero,
-                              backgroundColor: Colors.transparent,
-                              borderColor: greyColor.withValues(alpha: 0.3),
-                              widget: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    color: greyColor14,
-                                    size: 20.sp,
-                                  ),
-                                  8.spaceW,
-                                  "Add another item".appText(
-                                    fontSize: 18.sp,
-                                    color: greyColor14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ],
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info,
+                                      color: greyColor9,
+                                      size: 20.sp,
+                                    ),
+                                    8.spaceW,
+                                    "Who can see this".appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor9,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ],
+                                ),
+                                8.spaceH,
+                                ((_coParentName != null &&
+                                            _coParentName!.trim().isNotEmpty)
+                                        ? "$_coParentName, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record."
+                                        : "Your linked co-parents, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record.")
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor9,
+                                      textAlign: TextAlign.start,
+                                      height: 1.4,
+                                    ),
+                              ],
                             ),
-                            24.spaceH,
-                            Container(
-                              padding: EdgeInsets.all(20.r),
-                              decoration: BoxDecoration(
-                                color: softPeachOrange,
-                                borderRadius: BorderRadius.circular(16.r),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.info,
-                                        color: greyColor9,
-                                        size: 20.sp,
-                                      ),
-                                      8.spaceW,
-                                      "Who can see this".appText(
-                                        fontSize: 14.sp,
-                                        color: greyColor9,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ],
-                                  ),
-                                  8.spaceH,
-                                  ((_coParentName != null &&
-                                              _coParentName!.trim().isNotEmpty)
-                                          ? "$_coParentName, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record."
-                                          : "Your linked co-parents, and anyone else you give access to. Keep it to what a carer or clinician would need quickly not a full medical record.")
-                                      .appText(
-                                        fontSize: 14.sp,
-                                        color: greyColor9,
-                                        textAlign: TextAlign.start,
-                                        height: 1.4,
-                                      ),
-                                ],
-                              ),
-                            ),
-                            140.spaceH,
-                          ],
-                        ),
+                          ),
+                          140.spaceH,
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

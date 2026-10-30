@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -42,85 +41,74 @@ class _JourneyScreenState extends State<JourneyScreen> {
     return BlocConsumer<JourneyCubit, JourneyState>(
       listener: (BuildContext context, JourneyState state) {},
       builder: (BuildContext context, JourneyState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Colors.white,
-            systemNavigationBarIconBrightness: Brightness.dark,
-            systemNavigationBarDividerColor: Colors.transparent,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                // Top Left Glow
-                Positioned(
-                  left: -150,
-                  top: -150,
-                  child: Container(
-                    width: 400.w,
-                    height: 400.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: SafeArea(
-                    bottom: false,
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 140.h),
-                      children: [
-                        16.spaceH,
-                        'Journey'.appText(
-                          fontSize: 28.sp,
-                          color: greyColor9,
-                          fraunces: true,
-                          textAlign: TextAlign.start,
-                        ),
-                        8.spaceH,
-                        'How things have been changing for your family.'
-                            .appText(
-                              fontSize: 16.sp,
-                              color: greyColor9,
-                              textAlign: TextAlign.start,
-                            ),
-                        12.spaceH,
-                        _buildWeeklyReviewCard(context, state),
-                        32.spaceH,
-                        'ALSO HERE'.appText(
-                          fontSize: 12.sp,
-                          color: secondaryColor,
-                          fontWeight: FontWeight.w700,
-                          textAlign: TextAlign.start,
-                        ),
-                        16.spaceH,
-                        _buildSleepJourneyCard(context, state),
-                        12.spaceH,
-                        _buildFamilyTimelineCard(context),
-                        12.spaceH,
-                        _buildSavedGuidanceCard(context, state),
-                        12.spaceH,
-                        _buildConsistencyCard(context, state),
-                        12.spaceH,
-                        _buildGuidedMentorshipCard(context),
-                        40.spaceH,
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              // Top Left Glow
+              Positioned(
+                left: -150,
+                top: -150,
+                child: Container(
+                  width: 400.w,
+                  height: 400.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
                       ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              Positioned.fill(
+                child: SafeArea(
+                  bottom: false,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 140.h),
+                    children: [
+                      16.spaceH,
+                      'Journey'.appText(
+                        fontSize: 28.sp,
+                        color: greyColor9,
+                        fraunces: true,
+                        textAlign: TextAlign.start,
+                      ),
+                      8.spaceH,
+                      'How things have been changing for your family.'.appText(
+                        fontSize: 16.sp,
+                        color: greyColor9,
+                        textAlign: TextAlign.start,
+                      ),
+                      12.spaceH,
+                      _buildWeeklyReviewCard(context, state),
+                      32.spaceH,
+                      'ALSO HERE'.appText(
+                        fontSize: 12.sp,
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w700,
+                        textAlign: TextAlign.start,
+                      ),
+                      16.spaceH,
+                      _buildSleepJourneyCard(context, state),
+                      12.spaceH,
+                      _buildFamilyTimelineCard(context),
+                      12.spaceH,
+                      _buildSavedGuidanceCard(context, state),
+                      12.spaceH,
+                      _buildConsistencyCard(context, state),
+                      12.spaceH,
+                      _buildGuidedMentorshipCard(context),
+                      40.spaceH,
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

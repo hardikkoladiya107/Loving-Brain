@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,147 +68,137 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
         final RequestSessionCubit cubit = context.read<RequestSessionCubit>();
         final String guideName = state.guide?.name ?? "Priya";
 
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
-            systemNavigationBarIconBrightness: Brightness.dark,
-            systemNavigationBarDividerColor: Colors.transparent,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                Positioned(
-                  left: -150.w,
-                  top: -150.h,
-                  child: Container(
-                    width: 450.w,
-                    height: 450.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.8),
-                          const Color(0xFFFFD4C8).withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              Positioned(
+                left: -150.w,
+                top: -150.h,
+                child: Container(
+                  width: 450.w,
+                  height: 450.h,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.8),
+                        const Color(0xFFFFD4C8).withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: ListView(
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 16.h,
-                    ),
-                    children: [
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: EdgeInsets.all(12.r),
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.arrow_back,
-                                color: darkBlue,
-                                size: 24.sp,
-                              ),
+              ),
+              SafeArea(
+                bottom: false,
+                child: ListView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 16.h,
+                  ),
+                  children: [
+                    Row(
+                      children: [
+                        InkWell(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: EdgeInsets.all(12.r),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: darkBlue,
+                              size: 24.sp,
                             ),
                           ),
-                        ],
-                      ),
-                      24.spaceH,
-                      "Request a session".appText(
-                        fontSize: 28.sp,
-                        color: darkBlue,
-                        fraunces: true,
-                        textAlign: TextAlign.start,
-                      ),
-                      8.spaceH,
-                      "$guideName will confirm availability and come back to you."
-                          .appText(
-                            fontSize: 14.sp,
-                            color: greyColor9,
-                            textAlign: TextAlign.start,
-                            height: 1.4,
-                          ),
-                      24.spaceH,
-                      SessionField(
-                        label: "MAIN CONCERN",
-                        initialValue: state.mainConcern,
-                        errorText: state.mainConcernError,
-                        onChanged: cubit.updateMainConcern,
-                        autoFocus: true,
-                      ),
-                      12.spaceH,
-                      SessionField(
-                        label: "CHILD AGE",
-                        initialValue: state.childAge,
-                        onChanged: cubit.updateChildAge,
-                      ),
-                      12.spaceH,
-                      SessionField(
-                        label: "PREFERRED DAYS / TIMES",
-                        initialValue: state.preferredDays,
-                        onChanged: cubit.updatePreferredDays,
-                      ),
-                      12.spaceH,
-                      SessionField(
-                        label: "PREFERRED LANGUAGE",
-                        initialValue: state.preferredLanguage,
-                        onChanged: cubit.updatePreferredLanguage,
-                      ),
-                      24.spaceH,
-                      GestureDetector(
-                        onTap: () =>
-                            cubit.toggleShareSummary(!state.shareSummary),
-                        child: Container(
-                          padding: EdgeInsets.all(16.r),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFBEADB),
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child:
-                                    "We'll share your recent Loving Brain summary with $guideName so you don't have to explain from scratch. You can turn this off."
-                                        .appText(
-                                          fontSize: 14.sp,
-                                          color: greyColor9,
-                                          textAlign: TextAlign.start,
-                                          height: 1.4,
-                                        ),
-                              ),
-                              12.spaceW,
-                              Switch(
-                                value: state.shareSummary,
-                                onChanged: cubit.toggleShareSummary,
-                                activeThumbColor: Colors.white,
-                                activeTrackColor: primaryColor,
-                              ),
-                            ],
-                          ),
+                        ),
+                      ],
+                    ),
+                    24.spaceH,
+                    "Request a session".appText(
+                      fontSize: 28.sp,
+                      color: darkBlue,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    8.spaceH,
+                    "$guideName will confirm availability and come back to you."
+                        .appText(
+                          fontSize: 14.sp,
+                          color: greyColor9,
+                          textAlign: TextAlign.start,
+                          height: 1.4,
+                        ),
+                    24.spaceH,
+                    SessionField(
+                      label: "MAIN CONCERN",
+                      initialValue: state.mainConcern,
+                      errorText: state.mainConcernError,
+                      onChanged: cubit.updateMainConcern,
+                      autoFocus: true,
+                    ),
+                    12.spaceH,
+                    SessionField(
+                      label: "CHILD AGE",
+                      initialValue: state.childAge,
+                      onChanged: cubit.updateChildAge,
+                    ),
+                    12.spaceH,
+                    SessionField(
+                      label: "PREFERRED DAYS / TIMES",
+                      initialValue: state.preferredDays,
+                      onChanged: cubit.updatePreferredDays,
+                    ),
+                    12.spaceH,
+                    SessionField(
+                      label: "PREFERRED LANGUAGE",
+                      initialValue: state.preferredLanguage,
+                      onChanged: cubit.updatePreferredLanguage,
+                    ),
+                    24.spaceH,
+                    GestureDetector(
+                      onTap: () =>
+                          cubit.toggleShareSummary(!state.shareSummary),
+                      child: Container(
+                        padding: EdgeInsets.all(16.r),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFBEADB),
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child:
+                                  "We'll share your recent Loving Brain summary with $guideName so you don't have to explain from scratch. You can turn this off."
+                                      .appText(
+                                        fontSize: 14.sp,
+                                        color: greyColor9,
+                                        textAlign: TextAlign.start,
+                                        height: 1.4,
+                                      ),
+                            ),
+                            12.spaceW,
+                            Switch(
+                              value: state.shareSummary,
+                              onChanged: cubit.toggleShareSummary,
+                              activeThumbColor: Colors.white,
+                              activeTrackColor: primaryColor,
+                            ),
+                          ],
                         ),
                       ),
-                      180.spaceH,
-                    ],
-                  ),
+                    ),
+                    180.spaceH,
+                  ],
                 ),
-                _buildBottomActions(context, state, cubit),
-              ],
-            ),
+              ),
+              _buildBottomActions(context, state, cubit),
+            ],
           ),
         );
       },

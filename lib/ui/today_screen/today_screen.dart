@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'bloc/today_cubit.dart';
 import 'bloc/today_state.dart';
@@ -81,174 +80,163 @@ class _TodayScreenState extends State<TodayScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<TodayCubit, TodayState>(
       builder: (BuildContext context, TodayState state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Colors.white,
-            systemNavigationBarIconBrightness: Brightness.dark,
-            systemNavigationBarDividerColor: Colors.transparent,
-          ),
-          child: Scaffold(
-            backgroundColor: const Color(0xFFFEF8F4),
-            body: Stack(
-              children: [
-                Positioned(
-                  left: -283,
-                  top: -283,
-                  child: Container(
-                    width: 450,
-                    height: 450,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        colors: [
-                          cardColor4.withValues(alpha: 0.5),
-                          cardColor4.withValues(alpha: 0.0),
-                        ],
-                        stops: const [0.0, 1.0],
-                      ),
+        return Scaffold(
+          backgroundColor: const Color(0xFFFEF8F4),
+          body: Stack(
+            children: [
+              Positioned(
+                left: -283,
+                top: -283,
+                child: Container(
+                  width: 450,
+                  height: 450,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        cardColor4.withValues(alpha: 0.5),
+                        cardColor4.withValues(alpha: 0.0),
+                      ],
+                      stops: const [0.0, 1.0],
                     ),
                   ),
                 ),
-                SafeArea(
-                  bottom: false,
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 16.h,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const TodayHeader(),
-                        if (_isOffline) ...[
-                          16.spaceH,
-                          const OfflineBanner(isVisible: true),
-                        ],
+              ),
+              SafeArea(
+                bottom: false,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 16.h,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const TodayHeader(),
+                      if (_isOffline) ...[
+                        16.spaceH,
+                        const OfflineBanner(isVisible: true),
+                      ],
+                      SizedBox(height: 24.h),
+                      if (state.isLoading && state.activeChildId.isEmpty) ...[
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 48.h),
+                          child: const Center(child: AppLoadingIndicator()),
+                        ),
+                      ] else if (state.activeChildId.isEmpty) ...[
+                        _buildNoChildCard(context),
+                      ] else if (state.mode == TodayMode.normal) ...[
+                        const MainCard(),
                         SizedBox(height: 24.h),
-                        if (state.isLoading && state.activeChildId.isEmpty) ...[
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 48.h),
-                            child: const Center(child: AppLoadingIndicator()),
-                          ),
-                        ] else if (state.activeChildId.isEmpty) ...[
-                          _buildNoChildCard(context),
-                        ] else if (state.mode == TodayMode.normal) ...[
-                          const MainCard(),
+                        if (state.hasMultiDayPatterns) ...[
+                          const NoticedRow(),
                           SizedBox(height: 24.h),
-                          if (state.hasMultiDayPatterns) ...[
-                            const NoticedRow(),
-                            SizedBox(height: 24.h),
-                            const NiceWorkCard(),
-                            SizedBox(height: 24.h),
-                          ] else ...[
-                            const StillLearningPatternsCard(),
-                            SizedBox(height: 24.h),
-                          ],
-                          const ActionGrid(),
-                        ] else if (state.mode == TodayMode.newParent) ...[
-                          if (TodayLogRepo.instance
-                                  .canCurrentCaregiverViewHealth() &&
-                              (state.forecastSubtitle.toLowerCase().contains(
-                                    'fever',
-                                  ) ||
-                                  state.forecastSubtitle.toLowerCase().contains(
-                                    'health',
-                                  ) ||
-                                  state.forecastSubtitle.toLowerCase().contains(
-                                    'rest',
-                                  ))) ...[
-                            const HeadsUpCard(),
-                            SizedBox(height: 16.h),
-                          ],
-                          const AddSleepCard(),
-                          SizedBox(height: 16.h),
-                          AppButton(
-                            title: "Add behaviour update",
-                            onTap: () {
-                              showAddTantrumsUpdateSheet(context);
-                            },
-                            backgroundColor: Colors.white,
-                            textColor: greyColor9,
-                          ),
-                          SizedBox(height: 16.h),
-                          AppButton(
-                            title: "Daily quick log",
-                            onTap: () {
-                              showAddBehaviourSheet(context);
-                            },
-                            backgroundColor: Colors.white,
-                            textColor: greyColor9,
-                          ),
+                          const NiceWorkCard(),
                           SizedBox(height: 24.h),
-                          const ActionGrid(),
-                          SizedBox(height: 16.h),
-                          AppButton(
-                            title: "Ask Brainy",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const BrainyConversationScreen(
-                                    initialChat:
-                                        "I'm new here and want to understand how Loving-Brain works for my child.",
-                                    topic: "Getting Started",
-                                  ),
-                                ),
-                              );
-                            },
-                            backgroundColor: Colors.transparent,
-                            textColor: greyColor9,
-                          ),
-                        ] else if (state.mode ==
-                            TodayMode.importantHeadsUp) ...[
+                        ] else ...[
+                          const StillLearningPatternsCard(),
+                          SizedBox(height: 24.h),
+                        ],
+                        const ActionGrid(),
+                      ] else if (state.mode == TodayMode.newParent) ...[
+                        if (TodayLogRepo.instance
+                                .canCurrentCaregiverViewHealth() &&
+                            (state.forecastSubtitle.toLowerCase().contains(
+                                  'fever',
+                                ) ||
+                                state.forecastSubtitle.toLowerCase().contains(
+                                  'health',
+                                ) ||
+                                state.forecastSubtitle.toLowerCase().contains(
+                                  'rest',
+                                ))) ...[
                           const HeadsUpCard(),
                           SizedBox(height: 16.h),
-                          AppButton(
-                            title: "View support",
-                            onTap: () {
-                              showViewSupportSheet(
-                                context,
-                                daysCount: state.loggedDaysCount,
-                              );
-                            },
-                            backgroundColor: Colors.white,
-                            textColor: greyColor9,
-                          ),
-                          SizedBox(height: 16.h),
-                          AppButton(
-                            title: "Ask Brainy",
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const BrainyConversationScreen(
-                                    initialChat:
-                                        "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
-                                    topic: "Calm Heads-Up",
-                                  ),
-                                ),
-                              );
-                            },
-                            backgroundColor: Colors.transparent,
-                            textColor: greyColor9,
-                          ),
-                          if (state.hasMultiDayPatterns) ...[
-                            SizedBox(height: 24.h),
-                            const NoticedRow(),
-                          ],
-                          SizedBox(height: 24.h),
-                          const ActionGrid(),
                         ],
-                        SizedBox(height: 100.h),
+                        const AddSleepCard(),
+                        SizedBox(height: 16.h),
+                        AppButton(
+                          title: "Add behaviour update",
+                          onTap: () {
+                            showAddTantrumsUpdateSheet(context);
+                          },
+                          backgroundColor: Colors.white,
+                          textColor: greyColor9,
+                        ),
+                        SizedBox(height: 16.h),
+                        AppButton(
+                          title: "Daily quick log",
+                          onTap: () {
+                            showAddBehaviourSheet(context);
+                          },
+                          backgroundColor: Colors.white,
+                          textColor: greyColor9,
+                        ),
+                        SizedBox(height: 24.h),
+                        const ActionGrid(),
+                        SizedBox(height: 16.h),
+                        AppButton(
+                          title: "Ask Brainy",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const BrainyConversationScreen(
+                                  initialChat:
+                                      "I'm new here and want to understand how Loving-Brain works for my child.",
+                                  topic: "Getting Started",
+                                ),
+                              ),
+                            );
+                          },
+                          backgroundColor: Colors.transparent,
+                          textColor: greyColor9,
+                        ),
+                      ] else if (state.mode == TodayMode.importantHeadsUp) ...[
+                        const HeadsUpCard(),
+                        SizedBox(height: 16.h),
+                        AppButton(
+                          title: "View support",
+                          onTap: () {
+                            showViewSupportSheet(
+                              context,
+                              daysCount: state.loggedDaysCount,
+                            );
+                          },
+                          backgroundColor: Colors.white,
+                          textColor: greyColor9,
+                        ),
+                        SizedBox(height: 16.h),
+                        AppButton(
+                          title: "Ask Brainy",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const BrainyConversationScreen(
+                                  initialChat:
+                                      "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
+                                  topic: "Calm Heads-Up",
+                                ),
+                              ),
+                            );
+                          },
+                          backgroundColor: Colors.transparent,
+                          textColor: greyColor9,
+                        ),
+                        if (state.hasMultiDayPatterns) ...[
+                          SizedBox(height: 24.h),
+                          const NoticedRow(),
+                        ],
+                        SizedBox(height: 24.h),
+                        const ActionGrid(),
                       ],
-                    ),
+                      SizedBox(height: 100.h),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

@@ -44,37 +44,28 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
       builder: (BuildContext context, ParentSuccessGuideState state) {
         final GuideProfileModel? guide = state.guide;
         if (guide == null) {
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
-              systemNavigationBarColor: Color(0xFFFEF8F4),
-              systemNavigationBarIconBrightness: Brightness.dark,
-            ),
-            child: Scaffold(
-              backgroundColor: const Color(0xFFFEF8F4),
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.arrow_back, color: darkBlue),
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.arrow_back, color: darkBlue),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: "This guide is no longer available.".appText(
+                        fontSize: 16.sp,
+                        color: greyColor,
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                    Expanded(
-                      child: Center(
-                        child: "This guide is no longer available.".appText(
-                          fontSize: 16.sp,
-                          color: greyColor,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );
