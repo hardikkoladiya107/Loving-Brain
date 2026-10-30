@@ -207,18 +207,6 @@ class ParentProfileV2Cubit extends Cubit<ParentProfileV2State> {
           .updateUserToFireStore(uId: user.uid, request: userUpdate);
 
       if (result is Data) {
-        final DocumentReference<Object?>? childRef = user.defaultChild;
-        if (state.location.trim().isNotEmpty && childRef != null) {
-          try {
-            await childRef.update(<String, dynamic>{
-              'location': resolvedLoc?.toJson() ?? state.location.trim(),
-              if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
-              if (state.relationship.trim().isNotEmpty)
-                'relationship_to_child': state.relationship.trim(),
-            });
-          } catch (_) {}
-        }
-
         final String? userUid = user.uid;
         final UserModel? newModel = (userUid != null && userUid.isNotEmpty)
             ? await AuthRepo.instance.syncUserAndDefaultChild(uId: userUid)

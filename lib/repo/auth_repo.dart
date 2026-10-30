@@ -4,11 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_session_manager.dart';
+import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -38,6 +40,62 @@ class AuthRepo {
       FirebaseFirestore.instance.collection('shared_event');
   CollectionReference<Map<String, dynamic>> get _coParentInvitationCollection =>
       FirebaseFirestore.instance.collection('co-parent-invitation');
+
+  /// Removes [removeRef] from the user children list and promotes the next
+  /// remaining child as default_child when available.
+  Future<UserModel> _promoteNextDefaultChild({
+    required String uId,
+    required UserModel userModel,
+    required DocumentReference removeRef,
+  }) async {
+    final List<DocumentReference> remaining =
+        (userModel.children ?? <DocumentReference>[])
+            .where((DocumentReference ref) => ref.id != removeRef.id)
+            .toList();
+
+    final Map<String, dynamic> updates = <String, dynamic>{
+      'children': FieldValue.arrayRemove(<dynamic>[removeRef]),
+    };
+    if (remaining.isNotEmpty) {
+      updates['default_child'] = remaining.first;
+    } else {
+      updates['default_child'] = FieldValue.delete();
+    }
+    await userCollection.doc(uId).update(updates).catchError((_) => null);
+
+    if (remaining.isNotEmpty) {
+      try {
+        final DocumentSnapshot<Object?> nextSnap = await remaining.first.get();
+        final Object? nextData = nextSnap.data();
+        if (nextSnap.exists && nextData is Map<String, dynamic>) {
+          final List<dynamic>? pIds =
+              nextData['parent_reference_ids'] as List<dynamic>?;
+          if (pIds != null && pIds.contains(uId)) {
+            final ChildModel childModel = ChildModel.fromJson(
+              nextData,
+              remaining.first,
+            );
+            await preferences.saveDefaultChildModel(childModel);
+            await preferences.saveChildModel(childModel);
+            final UserModel? refreshed = await getUserFromUid(uId: uId);
+            if (refreshed != null) {
+              await preferences.saveUserModel(refreshed);
+              return refreshed;
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    await preferences.clearChild();
+    await preferences.putString(SharedPreference.child, '');
+    final UserModel updatedUser = userModel.copyWith(
+      clearDefaultChild: true,
+      children: remaining,
+    );
+    await preferences.saveUserModel(updatedUser);
+    return updatedUser;
+  }
 
   Future<bool> currentUserExist({required String uId}) async {
     try {
@@ -102,42 +160,18 @@ class AuthRepo {
             await preferences.saveDefaultChildModel(childModel);
             await preferences.saveChildModel(childModel);
           } else {
-            // Caregiver access was removed
-            await preferences.clearChild();
-            await preferences.putString(SharedPreference.child, '');
-            final UserModel updatedUser = userModel.copyWith(
-              clearDefaultChild: true,
-              clearPartnerUserId: true,
+            return await _promoteNextDefaultChild(
+              uId: uId,
+              userModel: userModel,
+              removeRef: childRef,
             );
-            await preferences.saveUserModel(updatedUser);
-            await userCollection
-                .doc(uId)
-                .update(<String, dynamic>{
-                  'default_child': FieldValue.delete(),
-                  'children': FieldValue.arrayRemove(<dynamic>[childRef]),
-                  'partner_user_id': FieldValue.delete(),
-                })
-                .catchError((_) => null);
-            return updatedUser;
           }
         } else {
-          // Child was deleted (e.g., inviter deleted account)
-          await preferences.clearChild();
-          await preferences.putString(SharedPreference.child, '');
-          final UserModel updatedUser = userModel.copyWith(
-            clearDefaultChild: true,
-            clearPartnerUserId: true,
+          return await _promoteNextDefaultChild(
+            uId: uId,
+            userModel: userModel,
+            removeRef: childRef,
           );
-          await preferences.saveUserModel(updatedUser);
-          await userCollection
-              .doc(uId)
-              .update(<String, dynamic>{
-                'default_child': FieldValue.delete(),
-                'children': FieldValue.arrayRemove(<dynamic>[childRef]),
-                'partner_user_id': FieldValue.delete(),
-              })
-              .catchError((_) => null);
-          return updatedUser;
         }
       } else {
         await preferences.clearChild();
@@ -146,29 +180,18 @@ class AuthRepo {
     } on FirebaseException catch (e) {
       debugPrint('FirebaseException during syncDefaultChild: ${e.code} / $e');
       if (e.code == 'permission-denied') {
-        await preferences.clearChild();
-        await preferences.putString(SharedPreference.child, '');
         final DocumentReference? badRef =
             userModel.defaultChild ??
             ((userModel.children != null && userModel.children!.isNotEmpty)
                 ? userModel.children!.first
                 : null);
         if (badRef != null) {
-          await userCollection
-              .doc(uId)
-              .update(<String, dynamic>{
-                'default_child': FieldValue.delete(),
-                'children': FieldValue.arrayRemove(<dynamic>[badRef]),
-                'partner_user_id': FieldValue.delete(),
-              })
-              .catchError((_) => null);
+          return await _promoteNextDefaultChild(
+            uId: uId,
+            userModel: userModel,
+            removeRef: badRef,
+          );
         }
-        final UserModel cleanedUser = userModel.copyWith(
-          clearDefaultChild: true,
-          clearPartnerUserId: true,
-        );
-        await preferences.saveUserModel(cleanedUser);
-        return cleanedUser;
       }
       // On network errors / offline / server glitch, retain cached child and don't wipe data
       return userModel;
@@ -293,17 +316,14 @@ class AuthRepo {
     }
   }
 
-  /// Deletes all Firestore data for the user, then deletes the Auth account
-  /// and clears local session. Requires recent authentication (< 4.5 minutes)
-  /// before deleting any data, ensuring no partial data loss (V14-08).
+  /// Deletes account via Cloud Function, then clears local session.
+  /// Requires recent authentication (< 4.5 minutes).
   Future<ApiResultStatus> deleteAccount() async {
     try {
       final User? currentUser = FirebaseAuth.instance.currentUser;
       final UserModel? userModel = preferences.getUserModel();
       final String uid = currentUser?.uid ?? userModel?.uid ?? '';
-      final String? email = userModel?.email ?? currentUser?.email;
 
-      // ── Pre-flight check: ensure session is authenticated and recent ──
       if (currentUser == null && uid.isEmpty) {
         return ApiResultStatus.error(
           error: Exception('No active user found to delete.'),
@@ -324,40 +344,10 @@ class AuthRepo {
         }
       }
 
-      if (uid.isNotEmpty) {
-        try {
-          await _deleteAllUserData(
-            uid: uid,
-            email: email,
-            userModel: userModel,
-          );
-        } catch (e) {
-          debugPrint('Partial error deleting user Firestore data: $e');
-        }
-      }
-
-      if (currentUser != null) {
-        try {
-          await currentUser.delete();
-        } on FirebaseAuthException catch (e) {
-          debugPrint(
-            'FirebaseAuth user.delete warning (${e.code}): ${e.message}',
-          );
-          if (e.code == 'requires-recent-login') {
-            return ApiResultStatus.error(
-              error: Exception(
-                'For security, please sign out and sign in again before deleting your account.',
-              ),
-            );
-          }
-          return ApiResultStatus.error(
-            error: Exception(e.message ?? 'Failed to delete account.'),
-          );
-        } catch (e) {
-          debugPrint('FirebaseAuth user.delete error: $e');
-          return ApiResultStatus.error(error: Exception(e.toString()));
-        }
-      }
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'deleteMyAccount',
+      );
+      await callable.call<dynamic>(<String, dynamic>{});
 
       try {
         await GoogleSignInManager.instance.signOut();
@@ -372,32 +362,32 @@ class AuthRepo {
       await preferences.clearAll();
       await preferences.putBool(SharedPreference.isLogin, false);
       await AppSessionManager.instance.clearAllSessionStates();
-      return const ApiResultStatus.data(data: "");
+      return const ApiResultStatus.data(data: '');
+    } on FirebaseFunctionsException catch (e) {
+      return ApiResultStatus.error(
+        error: Exception(e.message ?? 'Failed to delete account.'),
+      );
     } catch (e) {
-      try {
-        await GoogleSignInManager.instance.signOut();
-      } catch (_) {}
-      try {
-        await FirebaseAuth.instance.signOut();
-      } catch (_) {}
-      try {
-        await OfflineSyncRepo.instance.clearQueue();
-      } catch (_) {}
-      await preferences.clearAll();
-      await preferences.putBool(SharedPreference.isLogin, false);
-      await AppSessionManager.instance.clearAllSessionStates();
-
-      // If the Auth user is gone, consider account deletion successful locally
       if (FirebaseAuth.instance.currentUser == null) {
-        return const ApiResultStatus.data(data: "");
+        try {
+          await GoogleSignInManager.instance.signOut();
+        } catch (_) {}
+        try {
+          await OfflineSyncRepo.instance.clearQueue();
+        } catch (_) {}
+        await preferences.clearAll();
+        await preferences.putBool(SharedPreference.isLogin, false);
+        await AppSessionManager.instance.clearAllSessionStates();
+        return const ApiResultStatus.data(data: '');
       }
-
       return ApiResultStatus.error(
         error: e is Exception ? e : Exception(e.toString()),
       );
     }
   }
 
+  // Kept for emergency client-side cleanup / tests; deleteAccount uses Cloud Function.
+  // ignore: unused_element
   Future<void> _deleteAllUserData({
     required String uid,
     required String? email,
@@ -781,6 +771,7 @@ class AuthRepo {
             },
           );
         }
+        await _resolveAuthIdentity(email: signInUser.user!.email);
         userModel = await syncUserAndDefaultChild(uId: signInUser.user!.uid);
         if (userModel != null) {
           return ApiResultStatus.data(data: userModel.toJson());
@@ -809,6 +800,21 @@ class AuthRepo {
       return ApiResultStatus.error(
         error: e is Exception ? e : Exception(e.toString()),
       );
+    }
+  }
+
+  Future<void> _resolveAuthIdentity({String? email, String? phone}) async {
+    try {
+      final HttpsCallable callable = FirebaseFunctions.instance.httpsCallable(
+        'resolveAuthIdentity',
+      );
+      await callable.call<dynamic>(<String, dynamic>{
+        if (email != null && email.trim().isNotEmpty)
+          'email': email.trim().toLowerCase(),
+        if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
+      });
+    } catch (e) {
+      debugPrint('resolveAuthIdentity skipped: $e');
     }
   }
 
@@ -908,6 +914,11 @@ class AuthRepo {
           } catch (_) {}
         }
 
+        await _resolveAuthIdentity(
+          email: resolvedEmail.isNotEmpty
+              ? resolvedEmail
+              : signInUser.user!.email,
+        );
         userModel = await syncUserAndDefaultChild(uId: signInUser.user!.uid);
         if (userModel != null) {
           return ApiResultStatus.data(data: userModel.toJson());
@@ -1036,18 +1047,53 @@ class AuthRepo {
   }) async {
     try {
       final String tUid = preferences.getUserModel()?.uid ?? "";
-      if (tUid.isNotEmpty) {
-        await AuthRepo.instance.userCollection
-            .doc(tUid)
-            .collection("conversations")
-            .doc(conversationId)
-            .delete();
-        return ApiResultStatus.data(data: tUid);
-      } else {
+      if (tUid.isEmpty) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
+
+      final DocumentReference<Map<String, dynamic>> convRef = AuthRepo
+          .instance
+          .userCollection
+          .doc(tUid)
+          .collection("conversations")
+          .doc(conversationId);
+
+      final QuerySnapshot<Map<String, dynamic>> chatsSnap = await convRef
+          .collection("chats")
+          .get();
+
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> chatDoc
+          in chatsSnap.docs) {
+        final Map<String, dynamic> data = chatDoc.data();
+        final List<String> urls = <String>[];
+        final String? imagePath = data['image_network_path']?.toString();
+        if (imagePath != null && imagePath.isNotEmpty) {
+          urls.add(imagePath);
+        }
+        final List<dynamic>? imagePaths =
+            data['image_network_paths'] as List<dynamic>?;
+        if (imagePaths != null) {
+          for (final dynamic u in imagePaths) {
+            final String url = u.toString();
+            if (url.isNotEmpty) urls.add(url);
+          }
+        }
+        final String? audioPath = data['audio_network_path']?.toString();
+        if (audioPath != null && audioPath.isNotEmpty) {
+          urls.add(audioPath);
+        }
+        for (final String url in urls) {
+          try {
+            await FirebaseStorage.instance.refFromURL(url).delete();
+          } catch (_) {}
+        }
+        await chatDoc.reference.delete();
+      }
+
+      await convRef.delete();
+      return ApiResultStatus.data(data: tUid);
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } catch (e) {
@@ -1058,37 +1104,41 @@ class AuthRepo {
   }
 
   /// Adds a child to the current user: creates child doc, appends to [children]
-  /// and sets [default_child] to the new child. Returns updated [UserModel].
+  /// and sets [default_child] only when the user has none.
   Future<ApiResultStatus<UserModel>> addChild({
     required Map<String, dynamic> request,
   }) async {
     try {
-      final String tUid = preferences.getUserModel()?.uid ?? "";
+      final String tUid = preferences.getUserModel()?.uid ?? '';
       if (tUid.isEmpty) {
         return ApiResultStatus.error(
           error: Exception(LocaleKeys.somethingWentWrong.tr()),
         );
       }
 
-      final DocumentReference<Map<String, dynamic>> documentReference =
-          await childrenCollection.add(request);
-
-      await documentReference.update({
-        'parent_reference_ids': FieldValue.arrayUnion([tUid]),
-      });
-
-      final Map<String, dynamic> userUpdate = {
-        "default_child": documentReference,
-        ...request,
-      };
       final UserModel? currentUser = preferences.getUserModel();
-      final List<DocumentReference<Object?>?>? existingChildren =
-          currentUser?.children;
-      if (existingChildren != null && existingChildren.isNotEmpty) {
-        userUpdate["children"] = FieldValue.arrayUnion([documentReference]);
-      } else {
-        userUpdate["children"] = [documentReference];
+      final Map<String, dynamic> childPayload = Map<String, dynamic>.from(
+        request,
+      );
+      childPayload['primary_parent_uid'] = tUid;
+      childPayload['parent_reference_ids'] = <String>[tUid];
+
+      final DocumentReference<Map<String, dynamic>> documentReference =
+          await childrenCollection.add(childPayload);
+
+      final bool hasDefaultChild = currentUser?.defaultChild != null;
+      final Map<String, dynamic> userUpdate = <String, dynamic>{
+        'children': FieldValue.arrayUnion(<DocumentReference>[
+          documentReference,
+        ]),
+      };
+      if (!hasDefaultChild) {
+        userUpdate['default_child'] = documentReference;
       }
+      assert(
+        FamilyMembershipHelpers.isValidAddChildUserPayload(userUpdate),
+        'addChild must only write children/default_child on the user',
+      );
       await userCollection.doc(tUid).update(userUpdate);
 
       final UserModel? updatedUser = await syncUserAndDefaultChild(uId: tUid);
@@ -1333,51 +1383,20 @@ class AuthRepo {
         UserModel? userModel = await getUserFromUid(uId: credential.user!.uid);
 
         if (userModel == null) {
-          final DocumentSnapshot<Map<String, dynamic>>? existingDoc =
-              await findUserByPhoneOrEmail(
-                email: cleanEmail,
-                phoneNumber: cleanPhone,
-              );
-
-          if (existingDoc != null && existingDoc.data() != null) {
-            final Map<String, dynamic> existingData = Map<String, dynamic>.from(
-              existingDoc.data()!,
-            );
-            existingData['uid'] = credential.user!.uid;
-            existingData['email'] = cleanEmail;
-            if (cleanPhone.isNotEmpty) {
-              existingData['phone_number'] = cleanPhone;
-            }
-            await userCollection
-                .doc(credential.user!.uid)
-                .set(existingData, SetOptions(merge: true));
-
-            final Map<String, dynamic> updateMap = <String, dynamic>{
+          await addUserToFireStore(
+            uId: credential.user!.uid,
+            request: <String, dynamic>{
+              'uid': credential.user!.uid,
+              'display_name': credential.user!.displayName ?? 'Parent',
               'email': cleanEmail,
-            };
-            if (cleanPhone.isNotEmpty) {
-              updateMap['phone_number'] = cleanPhone;
-            }
-            await userCollection
-                .doc(existingDoc.id)
-                .set(updateMap, SetOptions(merge: true));
-          } else {
-            // New user registration
-            await addUserToFireStore(
-              uId: credential.user!.uid,
-              request: <String, dynamic>{
-                'uid': credential.user!.uid,
-                'display_name': credential.user!.displayName ?? 'Parent',
-                'email': cleanEmail,
-                'phone_number': cleanPhone,
-                'is_google_sign_in': false,
-                'is_apple_in': false,
-                'streak': 0,
-                'last_opened': DateTime.now(),
-                'is_onboarding_completed': false,
-              },
-            );
-          }
+              'phone_number': cleanPhone,
+              'is_google_sign_in': false,
+              'is_apple_in': false,
+              'streak': 0,
+              'last_opened': DateTime.now(),
+              'is_onboarding_completed': false,
+            },
+          );
         } else {
           final Map<String, dynamic> updates = <String, dynamic>{
             'email': cleanEmail,
@@ -1392,6 +1411,10 @@ class AuthRepo {
               .set(updates, SetOptions(merge: true));
         }
 
+        await _resolveAuthIdentity(
+          email: cleanEmail,
+          phone: cleanPhone.isNotEmpty ? cleanPhone : null,
+        );
         userModel = await syncUserAndDefaultChild(uId: credential.user!.uid);
         if (userModel == null) {
           return ApiResultStatus.error(
@@ -1534,50 +1557,20 @@ class AuthRepo {
 
     UserModel? userModel = await getUserFromUid(uId: user.uid);
     if (userModel == null) {
-      final DocumentSnapshot<Map<String, dynamic>>? existingDoc =
-          await findUserByPhoneOrEmail(
-            phoneNumber: cleanPhone,
-            email: cleanEmail,
-          );
-
-      if (existingDoc != null && existingDoc.data() != null) {
-        final Map<String, dynamic> existingData = Map<String, dynamic>.from(
-          existingDoc.data()!,
-        );
-        existingData['uid'] = user.uid;
-        existingData['phone_number'] = cleanPhone;
-        if (cleanEmail.isNotEmpty) {
-          existingData['email'] = cleanEmail;
-        }
-        await userCollection
-            .doc(user.uid)
-            .set(existingData, SetOptions(merge: true));
-
-        final Map<String, dynamic> updateMap = <String, dynamic>{
+      await addUserToFireStore(
+        uId: user.uid,
+        request: <String, dynamic>{
+          'uid': user.uid,
+          'display_name': user.displayName ?? 'Parent',
+          'email': cleanEmail,
           'phone_number': cleanPhone,
-        };
-        if (cleanEmail.isNotEmpty) {
-          updateMap['email'] = cleanEmail;
-        }
-        await userCollection
-            .doc(existingDoc.id)
-            .set(updateMap, SetOptions(merge: true));
-      } else {
-        await addUserToFireStore(
-          uId: user.uid,
-          request: <String, dynamic>{
-            'uid': user.uid,
-            'display_name': user.displayName ?? 'Parent',
-            'email': cleanEmail,
-            'phone_number': cleanPhone,
-            'is_google_sign_in': false,
-            'is_apple_in': false,
-            'streak': 0,
-            'last_opened': DateTime.now(),
-            'is_onboarding_completed': false,
-          },
-        );
-      }
+          'is_google_sign_in': false,
+          'is_apple_in': false,
+          'streak': 0,
+          'last_opened': DateTime.now(),
+          'is_onboarding_completed': false,
+        },
+      );
     } else {
       final Map<String, dynamic> updates = <String, dynamic>{
         'phone_number': cleanPhone,
@@ -1588,6 +1581,10 @@ class AuthRepo {
       }
       await userCollection.doc(user.uid).set(updates, SetOptions(merge: true));
     }
+    await _resolveAuthIdentity(
+      email: cleanEmail.isNotEmpty ? cleanEmail : null,
+      phone: cleanPhone,
+    );
     userModel = await syncUserAndDefaultChild(uId: user.uid);
     if (userModel != null) {
       await preferences.saveUserModel(userModel);

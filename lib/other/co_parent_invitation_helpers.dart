@@ -21,10 +21,22 @@ class CoParentInvitationHelpers {
   static const String appStoreUrl =
       'https://apps.apple.com/app/loving-brain/id6470000000';
 
+  /// Path segments that are site pages, never invitation ids.
+  static const Set<String> reservedPathSegments = <String>{
+    'privacy',
+    'terms',
+    'faq',
+    'welcome',
+    'login',
+    'register',
+    'otp',
+    'invite.html',
+  };
+
   /// Builds the universal link sent in the invitation email.
   static String buildInvitationLink(String invitationId) {
     final String id = invitationId.trim();
-    return '$invitationBaseUrl/$id';
+    return '$invitationBaseUrl/invite/$id';
   }
 
   /// Builds the custom scheme link for direct app launch (`lovingbrain://invite/{id}`).
@@ -66,7 +78,7 @@ class CoParentInvitationHelpers {
       final String candidate = segments.last.trim();
       if (candidate.isNotEmpty &&
           candidate != 'invite' &&
-          candidate != 'invite.html') {
+          !reservedPathSegments.contains(candidate.toLowerCase())) {
         return candidate;
       }
     }

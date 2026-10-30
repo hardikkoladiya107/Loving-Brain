@@ -36,9 +36,11 @@ import 'package:loving_brain/ui/harder_week/harder_week_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_guidance_screen.dart';
 import 'package:loving_brain/ui/help_flow/help_problem_selection_screen.dart';
 import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
+import 'package:loving_brain/ui/safety_concern/safety_concern_screen.dart';
 import 'package:loving_brain/ui/invite_accepted/invite_accepted_screen.dart';
 import 'package:loving_brain/ui/invite_caregiver/invite_caregiver_screen.dart';
 import 'package:loving_brain/ui/invite_pending/invite_pending_screen.dart';
+import 'package:loving_brain/ui/invite_respond/invite_respond_screen.dart';
 import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
 import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_screen.dart';
 import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
@@ -341,6 +343,7 @@ class AppRouter {
                 state.uri.queryParameters['conversationId'];
             String? initialChat = state.uri.queryParameters['initialChat'];
             String? topic = state.uri.queryParameters['topic'];
+            String? attachedContext;
             File? initialAudioFile;
             List<String>? initialImagePaths;
 
@@ -350,6 +353,8 @@ class AppRouter {
                   extra['conversationId'] as String? ?? conversationId;
               initialChat = extra['initialChat'] as String? ?? initialChat;
               topic = extra['topic'] as String? ?? topic;
+              attachedContext =
+                  extra['attachedContext'] as String? ?? attachedContext;
               initialAudioFile = extra['initialAudioFile'] as File?;
               initialImagePaths = extra['initialImagePaths'] as List<String>?;
             } else if (extra is String) {
@@ -362,6 +367,7 @@ class AppRouter {
               initialAudioFile: initialAudioFile,
               initialImagePaths: initialImagePaths,
               topic: topic,
+              attachedContext: attachedContext,
             );
           },
         ),
@@ -379,6 +385,32 @@ class AppRouter {
           path: RoutePaths.helpSafety,
           builder: (BuildContext context, GoRouterState state) =>
               const HelpSafetyScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.safetyConcern,
+          builder: (BuildContext context, GoRouterState state) {
+            SafetyConcernMode mode = SafetyConcernMode.acute;
+            String? sourceMessage;
+            final dynamic extra = state.extra;
+            if (extra is Map<String, dynamic>) {
+              final String? modeRaw = extra['mode']?.toString();
+              if (modeRaw == 'clinical') {
+                mode = SafetyConcernMode.clinical;
+              }
+              sourceMessage = extra['sourceMessage']?.toString();
+            } else if (extra is String) {
+              sourceMessage = extra;
+            }
+            final String? queryMode = state.uri.queryParameters['mode'];
+            if (queryMode == 'clinical') {
+              mode = SafetyConcernMode.clinical;
+            }
+            return SafetyConcernScreen(
+              mode: mode,
+              sourceMessage:
+                  sourceMessage ?? state.uri.queryParameters['sourceMessage'],
+            );
+          },
         ),
         GoRoute(
           path: RoutePaths.behaviourPattern,
@@ -565,6 +597,19 @@ class AppRouter {
               caregiverName: caregiverName,
               caregiverRole: caregiverRole,
             );
+          },
+        ),
+        GoRoute(
+          path: RoutePaths.inviteRespond,
+          builder: (BuildContext context, GoRouterState state) {
+            final dynamic extra = state.extra;
+            String? invitationId = state.uri.queryParameters['invitationId'];
+            if (extra is Map<String, dynamic>) {
+              invitationId = extra['invitationId'] as String? ?? invitationId;
+            } else if (extra is String && extra.trim().isNotEmpty) {
+              invitationId = extra.trim();
+            }
+            return InviteRespondScreen(invitationId: invitationId);
           },
         ),
         GoRoute(

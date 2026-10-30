@@ -132,7 +132,11 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                 child:
                     (state.previewText.isNotEmpty
                             ? '"${state.previewText}"'
-                            : "Listening...")
+                            : (state.recordingFailed
+                                  ? 'Microphone unavailable'
+                                  : (state.awaitingConfirm
+                                        ? 'Ready to send'
+                                        : 'Listening...')))
                         .appText(
                           fontSize: 24.sp,
                           fraunces: true,
@@ -141,8 +145,12 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
               ),
               12.spaceH,
               (state.isProcessing
-                      ? "Processing your voice note..."
-                      : "Listening... take your time.")
+                      ? 'Processing your voice note...'
+                      : (state.awaitingConfirm
+                            ? 'Check the transcript, then send.'
+                            : (state.recordingFailed
+                                  ? 'Typed chat still works without the microphone.'
+                                  : 'Listening... take your time.')))
                   .appText(
                     fontSize: 14.sp,
                     color: greyColor6,
@@ -155,7 +163,7 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                   children: [
                     Expanded(
                       child: AppButton(
-                        title: "Cancel",
+                        title: 'Cancel',
                         onTap: () async {
                           await context
                               .read<BrainyVoiceCubit>()
@@ -176,28 +184,44 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                       child: AppButton(
                         height: 48,
                         title: state.isProcessing
-                            ? "Processing..."
-                            : (widget.actionButtonTitle ??
-                                  (widget.onSendAudio != null
-                                      ? "Attach Note"
-                                      : "Send")),
-                        onTap: state.isProcessing
+                            ? 'Processing...'
+                            : (state.awaitingConfirm
+                                  ? (widget.actionButtonTitle ??
+                                        (widget.onSendAudio != null
+                                            ? 'Attach Note'
+                                            : 'Send'))
+                                  : 'Done'),
+                        onTap: state.isProcessing || state.recordingFailed
                             ? null
                             : () async {
+                                final BrainyVoiceCubit cubit = context
+                                    .read<BrainyVoiceCubit>();
+
+                                if (!state.awaitingConfirm) {
+                                  final (File? file, String text) = await cubit
+                                      .stopAndPrepareTranscript();
+                                  if (!context.mounted) return;
+                                  if ((file == null || !await file.exists()) &&
+                                      text.trim().isEmpty) {
+                                    showSnackBar(
+                                      message:
+                                          'No audio was recorded. Please speak and try again.',
+                                      type: SnackBarType.ERROR,
+                                    );
+                                  }
+                                  return;
+                                }
+
                                 final NavigatorState navigator = Navigator.of(
                                   context,
                                 );
-                                final BrainyVoiceCubit cubit = context
-                                    .read<BrainyVoiceCubit>();
-                                final (File? file, String text) = await cubit
-                                    .stopAndFinishRecording();
-                                if (!context.mounted) return;
-
+                                final (File? file, String text) = cubit
+                                    .confirmPreparedNote();
                                 if ((file == null || !await file.exists()) &&
                                     text.trim().isEmpty) {
                                   showSnackBar(
                                     message:
-                                        "No audio was recorded. Please speak and try again.",
+                                        'No audio was recorded. Please speak and try again.',
                                     type: SnackBarType.ERROR,
                                   );
                                   return;

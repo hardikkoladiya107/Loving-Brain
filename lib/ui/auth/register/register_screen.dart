@@ -1,20 +1,18 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/pending_invitation_manager.dart';
+import 'package:loving_brain/other/pending_invitation_nav.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -320,66 +318,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 apiResultStatus: const ApiResultStatus.initial(),
               );
 
-              if (PendingInvitationManager.hasPending()) {
-                final String pendingId = PendingInvitationManager.getId();
-                final String loggedEmail = (userModel.email ?? '')
-                    .trim()
-                    .toLowerCase();
-                if (PendingInvitationManager.matchesEmail(loggedEmail)) {
-                  final ApiResultStatus result = await CoParentRepo.instance
-                      .addUserAsCoParent(pendingId);
-                  bool invitationSuccess = false;
-                  result.whenOrNull(data: (_) => invitationSuccess = true);
-                  if (invitationSuccess) {
-                    await PendingInvitationManager.clear();
-                    await preferences.putBool(SharedPreference.isLogin, true);
-                    if (!mounted) return;
-                    router.go(
-                      RoutePaths.successScreen,
-                      extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
-                    );
-                    return;
-                  } else {
-                    String errMsg = '';
-                    result.whenOrNull(
-                      error: (Exception err) =>
-                          errMsg = err.toString().replaceAll('Exception: ', ''),
-                    );
-                    if (errMsg.isNotEmpty) {
-                      showSnackBar(message: errMsg, type: SnackBarType.ERROR);
-                    }
-                  }
-                } else {
-                  showSnackBar(
-                    message: LocaleKeys.coParentInvitationEmailMismatch.tr(),
-                    type: SnackBarType.ERROR,
-                  );
-                }
-              } else {
-                final String loggedEmail = (userModel.email ?? '')
-                    .trim()
-                    .toLowerCase();
-                if (loggedEmail.isNotEmpty) {
-                  final String? pendingInviteId = await CoParentRepo.instance
-                      .checkPendingInvitationForUser(loggedEmail);
-                  if (pendingInviteId != null && pendingInviteId.isNotEmpty) {
-                    final ApiResultStatus result = await CoParentRepo.instance
-                        .addUserAsCoParent(pendingInviteId);
-                    bool invitationSuccess = false;
-                    result.whenOrNull(data: (_) => invitationSuccess = true);
-                    if (invitationSuccess) {
-                      await preferences.putBool(SharedPreference.isLogin, true);
-                      if (!context.mounted) return;
-                      router.go(
-                        RoutePaths.successScreen,
-                        extra: LocaleKeys.coParentInvitationAcceptedSuccess
-                            .tr(),
-                      );
-                      return;
-                    }
-                  }
-                }
-              }
+              await preferences.putBool(SharedPreference.isLogin, true);
+              final bool handledInvite = await navigateForPendingInvitation(
+                context: context,
+                userModel: userModel,
+                router: router,
+              );
+              if (handledInvite) return;
 
               if (!context.mounted) return;
               context.read<OnboardingCubit>().reset();

@@ -49,9 +49,44 @@ void main() {
       final Uri uri = Uri.parse('https://www.lovingbrain.com/');
       expect(CoParentInvitationHelpers.parseInvitationIdFromUri(uri), isNull);
     });
+
+    test('ignores reserved site paths like privacy and terms', () {
+      for (final String path in <String>[
+        'privacy',
+        'terms',
+        'faq',
+        'welcome',
+        'login',
+        'register',
+        'otp',
+      ]) {
+        expect(
+          CoParentInvitationHelpers.parseInvitationIdFromUri(
+            Uri.parse('https://www.lovingbrain.com/$path'),
+          ),
+          isNull,
+          reason: 'path /$path must not be treated as an invite id',
+        );
+      }
+    });
+
+    test('extracts id from /invite/{id} path', () {
+      final Uri uri = Uri.parse('https://www.lovingbrain.com/invite/abc123xyz');
+      expect(
+        CoParentInvitationHelpers.parseInvitationIdFromUri(uri),
+        'abc123xyz',
+      );
+    });
   });
 
   group('CoParentInvitationHelpers store & custom scheme builders', () {
+    test('builds universal invite link under /invite/', () {
+      expect(
+        CoParentInvitationHelpers.buildInvitationLink('inv999'),
+        'https://www.lovingbrain.com/invite/inv999',
+      );
+    });
+
     test('builds custom scheme link properly', () {
       expect(
         CoParentInvitationHelpers.buildCustomSchemeInvitationLink('inv999'),
@@ -113,7 +148,7 @@ void main() {
     test('uses production base url', () {
       expect(
         CoParentInvitationHelpers.buildInvitationLink('doc123'),
-        'https://www.lovingbrain.com/doc123',
+        'https://www.lovingbrain.com/invite/doc123',
       );
     });
   });

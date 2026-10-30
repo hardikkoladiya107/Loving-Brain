@@ -20,6 +20,7 @@ class BaseCubit extends Cubit<BaseState> {
   _profileSubscription;
   StreamSubscription<DocumentSnapshot<Object?>>? _childSubscription;
   StreamSubscription<User?>? _authSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _inviteSubscription;
 
   void changeProps({int? bottomNavigationIndex}) {
     emit(
@@ -36,6 +37,21 @@ class BaseCubit extends Cubit<BaseState> {
     updateFCMToken();
     _listenTokenRefresh();
     _listenToUser();
+    _listenIncomingInvites();
+  }
+
+  void _listenIncomingInvites() {
+    final String? uid = preferences.getUserModel()?.uid;
+    if (uid == null || uid.isEmpty) return;
+    _inviteSubscription?.cancel();
+    try {
+      _inviteSubscription = FirebaseFirestore.instance
+          .collection('co-parent-invitation')
+          .where('to_uid', isEqualTo: uid)
+          .where('status', isEqualTo: 'REQUESTED')
+          .snapshots()
+          .listen((_) {}, onError: (_) {});
+    } catch (_) {}
   }
 
   void _listenAuth() {
@@ -66,6 +82,8 @@ class BaseCubit extends Cubit<BaseState> {
     _childSubscription = null;
     _tokenRefreshSubscription?.cancel();
     _tokenRefreshSubscription = null;
+    _inviteSubscription?.cancel();
+    _inviteSubscription = null;
   }
 
   void _listenToUser() {

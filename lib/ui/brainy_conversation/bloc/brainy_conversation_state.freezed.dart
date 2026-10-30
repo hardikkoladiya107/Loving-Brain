@@ -15,7 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BrainyConversationState {
 
- List<BrainyMessage> get messages; bool get isTyping; String? get conversationId; String? get topic; String? get selectedImagePath; List<String> get selectedImagePaths; String? get attachedAudioPath; bool get isAttachedAudioPlaying; Duration get attachedAudioPosition; Duration get attachedAudioDuration; String? get playingMessageId; bool get isAudioPlaying;
+ List<BrainyMessage> get messages; bool get isTyping; String? get conversationId; String? get topic; String? get attachedContext; String? get selectedImagePath; List<String> get selectedImagePaths; String? get attachedAudioPath; bool get isAttachedAudioPlaying; Duration get attachedAudioPosition; Duration get attachedAudioDuration; String? get playingMessageId; bool get isAudioPlaying;/// When set, UI should open Safety Concern (p70) once then clear it.
+ String? get pendingSafetyMode; String? get pendingSafetySourceMessage;
 /// Create a copy of BrainyConversationState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +28,20 @@ $BrainyConversationStateCopyWith<BrainyConversationState> get copyWith => _$Brai
 @override
 bool operator ==(Object other) {
   final _this = this as BrainyConversationState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BrainyConversationState&&const DeepCollectionEquality().equals(other.messages, _this.messages)&&(identical(other.isTyping, _this.isTyping) || other.isTyping == _this.isTyping)&&(identical(other.conversationId, _this.conversationId) || other.conversationId == _this.conversationId)&&(identical(other.topic, _this.topic) || other.topic == _this.topic)&&(identical(other.selectedImagePath, _this.selectedImagePath) || other.selectedImagePath == _this.selectedImagePath)&&const DeepCollectionEquality().equals(other.selectedImagePaths, _this.selectedImagePaths)&&(identical(other.attachedAudioPath, _this.attachedAudioPath) || other.attachedAudioPath == _this.attachedAudioPath)&&(identical(other.isAttachedAudioPlaying, _this.isAttachedAudioPlaying) || other.isAttachedAudioPlaying == _this.isAttachedAudioPlaying)&&(identical(other.attachedAudioPosition, _this.attachedAudioPosition) || other.attachedAudioPosition == _this.attachedAudioPosition)&&(identical(other.attachedAudioDuration, _this.attachedAudioDuration) || other.attachedAudioDuration == _this.attachedAudioDuration)&&(identical(other.playingMessageId, _this.playingMessageId) || other.playingMessageId == _this.playingMessageId)&&(identical(other.isAudioPlaying, _this.isAudioPlaying) || other.isAudioPlaying == _this.isAudioPlaying));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BrainyConversationState&&const DeepCollectionEquality().equals(other.messages, _this.messages)&&(identical(other.isTyping, _this.isTyping) || other.isTyping == _this.isTyping)&&(identical(other.conversationId, _this.conversationId) || other.conversationId == _this.conversationId)&&(identical(other.topic, _this.topic) || other.topic == _this.topic)&&(identical(other.attachedContext, _this.attachedContext) || other.attachedContext == _this.attachedContext)&&(identical(other.selectedImagePath, _this.selectedImagePath) || other.selectedImagePath == _this.selectedImagePath)&&const DeepCollectionEquality().equals(other.selectedImagePaths, _this.selectedImagePaths)&&(identical(other.attachedAudioPath, _this.attachedAudioPath) || other.attachedAudioPath == _this.attachedAudioPath)&&(identical(other.isAttachedAudioPlaying, _this.isAttachedAudioPlaying) || other.isAttachedAudioPlaying == _this.isAttachedAudioPlaying)&&(identical(other.attachedAudioPosition, _this.attachedAudioPosition) || other.attachedAudioPosition == _this.attachedAudioPosition)&&(identical(other.attachedAudioDuration, _this.attachedAudioDuration) || other.attachedAudioDuration == _this.attachedAudioDuration)&&(identical(other.playingMessageId, _this.playingMessageId) || other.playingMessageId == _this.playingMessageId)&&(identical(other.isAudioPlaying, _this.isAudioPlaying) || other.isAudioPlaying == _this.isAudioPlaying)&&(identical(other.pendingSafetyMode, _this.pendingSafetyMode) || other.pendingSafetyMode == _this.pendingSafetyMode)&&(identical(other.pendingSafetySourceMessage, _this.pendingSafetySourceMessage) || other.pendingSafetySourceMessage == _this.pendingSafetySourceMessage));
 }
 
 
 @override
 int get hashCode {
   final _this = this as BrainyConversationState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.messages),_this.isTyping,_this.conversationId,_this.topic,_this.selectedImagePath,const DeepCollectionEquality().hash(_this.selectedImagePaths),_this.attachedAudioPath,_this.isAttachedAudioPlaying,_this.attachedAudioPosition,_this.attachedAudioDuration,_this.playingMessageId,_this.isAudioPlaying);
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.messages),_this.isTyping,_this.conversationId,_this.topic,_this.attachedContext,_this.selectedImagePath,const DeepCollectionEquality().hash(_this.selectedImagePaths),_this.attachedAudioPath,_this.isAttachedAudioPlaying,_this.attachedAudioPosition,_this.attachedAudioDuration,_this.playingMessageId,_this.isAudioPlaying,_this.pendingSafetyMode,_this.pendingSafetySourceMessage);
 }
 
 @override
 String toString() {
   final _this = this as BrainyConversationState;
-  return 'BrainyConversationState(messages: ${_this.messages}, isTyping: ${_this.isTyping}, conversationId: ${_this.conversationId}, topic: ${_this.topic}, selectedImagePath: ${_this.selectedImagePath}, selectedImagePaths: ${_this.selectedImagePaths}, attachedAudioPath: ${_this.attachedAudioPath}, isAttachedAudioPlaying: ${_this.isAttachedAudioPlaying}, attachedAudioPosition: ${_this.attachedAudioPosition}, attachedAudioDuration: ${_this.attachedAudioDuration}, playingMessageId: ${_this.playingMessageId}, isAudioPlaying: ${_this.isAudioPlaying})';
+  return 'BrainyConversationState(messages: ${_this.messages}, isTyping: ${_this.isTyping}, conversationId: ${_this.conversationId}, topic: ${_this.topic}, attachedContext: ${_this.attachedContext}, selectedImagePath: ${_this.selectedImagePath}, selectedImagePaths: ${_this.selectedImagePaths}, attachedAudioPath: ${_this.attachedAudioPath}, isAttachedAudioPlaying: ${_this.isAttachedAudioPlaying}, attachedAudioPosition: ${_this.attachedAudioPosition}, attachedAudioDuration: ${_this.attachedAudioDuration}, playingMessageId: ${_this.playingMessageId}, isAudioPlaying: ${_this.isAudioPlaying}, pendingSafetyMode: ${_this.pendingSafetyMode}, pendingSafetySourceMessage: ${_this.pendingSafetySourceMessage})';
 }
 
 
@@ -51,7 +52,7 @@ abstract mixin class $BrainyConversationStateCopyWith<$Res>  {
   factory $BrainyConversationStateCopyWith(BrainyConversationState value, $Res Function(BrainyConversationState) _then) = _$BrainyConversationStateCopyWithImpl;
 @useResult
 $Res call({
- List<BrainyMessage> messages, bool isTyping, String? conversationId, String? topic, String? selectedImagePath, List<String> selectedImagePaths, String? attachedAudioPath, bool isAttachedAudioPlaying, Duration attachedAudioPosition, Duration attachedAudioDuration, String? playingMessageId, bool isAudioPlaying
+ List<BrainyMessage> messages, bool isTyping, String? conversationId, String? topic, String? attachedContext, String? selectedImagePath, List<String> selectedImagePaths, String? attachedAudioPath, bool isAttachedAudioPlaying, Duration attachedAudioPosition, Duration attachedAudioDuration, String? playingMessageId, bool isAudioPlaying, String? pendingSafetyMode, String? pendingSafetySourceMessage
 });
 
 
@@ -68,12 +69,13 @@ class _$BrainyConversationStateCopyWithImpl<$Res>
 
 /// Create a copy of BrainyConversationState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? messages = null,Object? isTyping = null,Object? conversationId = freezed,Object? topic = freezed,Object? selectedImagePath = freezed,Object? selectedImagePaths = null,Object? attachedAudioPath = freezed,Object? isAttachedAudioPlaying = null,Object? attachedAudioPosition = null,Object? attachedAudioDuration = null,Object? playingMessageId = freezed,Object? isAudioPlaying = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? messages = null,Object? isTyping = null,Object? conversationId = freezed,Object? topic = freezed,Object? attachedContext = freezed,Object? selectedImagePath = freezed,Object? selectedImagePaths = null,Object? attachedAudioPath = freezed,Object? isAttachedAudioPlaying = null,Object? attachedAudioPosition = null,Object? attachedAudioDuration = null,Object? playingMessageId = freezed,Object? isAudioPlaying = null,Object? pendingSafetyMode = freezed,Object? pendingSafetySourceMessage = freezed,}) {
   return _then(BrainyConversationState(
 messages: null == messages ? _self.messages : messages // ignore: cast_nullable_to_non_nullable
 as List<BrainyMessage>,isTyping: null == isTyping ? _self.isTyping : isTyping // ignore: cast_nullable_to_non_nullable
 as bool,conversationId: freezed == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String?,topic: freezed == topic ? _self.topic : topic // ignore: cast_nullable_to_non_nullable
+as String?,attachedContext: freezed == attachedContext ? _self.attachedContext : attachedContext // ignore: cast_nullable_to_non_nullable
 as String?,selectedImagePath: freezed == selectedImagePath ? _self.selectedImagePath : selectedImagePath // ignore: cast_nullable_to_non_nullable
 as String?,selectedImagePaths: null == selectedImagePaths ? _self.selectedImagePaths : selectedImagePaths // ignore: cast_nullable_to_non_nullable
 as List<String>,attachedAudioPath: freezed == attachedAudioPath ? _self.attachedAudioPath : attachedAudioPath // ignore: cast_nullable_to_non_nullable
@@ -82,7 +84,9 @@ as bool,attachedAudioPosition: null == attachedAudioPosition ? _self.attachedAud
 as Duration,attachedAudioDuration: null == attachedAudioDuration ? _self.attachedAudioDuration : attachedAudioDuration // ignore: cast_nullable_to_non_nullable
 as Duration,playingMessageId: freezed == playingMessageId ? _self.playingMessageId : playingMessageId // ignore: cast_nullable_to_non_nullable
 as String?,isAudioPlaying: null == isAudioPlaying ? _self.isAudioPlaying : isAudioPlaying // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,pendingSafetyMode: freezed == pendingSafetyMode ? _self.pendingSafetyMode : pendingSafetyMode // ignore: cast_nullable_to_non_nullable
+as String?,pendingSafetySourceMessage: freezed == pendingSafetySourceMessage ? _self.pendingSafetySourceMessage : pendingSafetySourceMessage // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -167,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BrainyMessage> messages,  bool isTyping,  String? conversationId,  String? topic,  String? selectedImagePath,  List<String> selectedImagePaths,  String? attachedAudioPath,  bool isAttachedAudioPlaying,  Duration attachedAudioPosition,  Duration attachedAudioDuration,  String? playingMessageId,  bool isAudioPlaying)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BrainyMessage> messages,  bool isTyping,  String? conversationId,  String? topic,  String? attachedContext,  String? selectedImagePath,  List<String> selectedImagePaths,  String? attachedAudioPath,  bool isAttachedAudioPlaying,  Duration attachedAudioPosition,  Duration attachedAudioDuration,  String? playingMessageId,  bool isAudioPlaying,  String? pendingSafetyMode,  String? pendingSafetySourceMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BrainyConversationState() when $default != null:
-return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_that.selectedImagePath,_that.selectedImagePaths,_that.attachedAudioPath,_that.isAttachedAudioPlaying,_that.attachedAudioPosition,_that.attachedAudioDuration,_that.playingMessageId,_that.isAudioPlaying);case _:
+return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_that.attachedContext,_that.selectedImagePath,_that.selectedImagePaths,_that.attachedAudioPath,_that.isAttachedAudioPlaying,_that.attachedAudioPosition,_that.attachedAudioDuration,_that.playingMessageId,_that.isAudioPlaying,_that.pendingSafetyMode,_that.pendingSafetySourceMessage);case _:
   return orElse();
 
 }
@@ -188,10 +192,10 @@ return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BrainyMessage> messages,  bool isTyping,  String? conversationId,  String? topic,  String? selectedImagePath,  List<String> selectedImagePaths,  String? attachedAudioPath,  bool isAttachedAudioPlaying,  Duration attachedAudioPosition,  Duration attachedAudioDuration,  String? playingMessageId,  bool isAudioPlaying)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BrainyMessage> messages,  bool isTyping,  String? conversationId,  String? topic,  String? attachedContext,  String? selectedImagePath,  List<String> selectedImagePaths,  String? attachedAudioPath,  bool isAttachedAudioPlaying,  Duration attachedAudioPosition,  Duration attachedAudioDuration,  String? playingMessageId,  bool isAudioPlaying,  String? pendingSafetyMode,  String? pendingSafetySourceMessage)  $default,) {final _that = this;
 switch (_that) {
 case _BrainyConversationState():
-return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_that.selectedImagePath,_that.selectedImagePaths,_that.attachedAudioPath,_that.isAttachedAudioPlaying,_that.attachedAudioPosition,_that.attachedAudioDuration,_that.playingMessageId,_that.isAudioPlaying);case _:
+return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_that.attachedContext,_that.selectedImagePath,_that.selectedImagePaths,_that.attachedAudioPath,_that.isAttachedAudioPlaying,_that.attachedAudioPosition,_that.attachedAudioDuration,_that.playingMessageId,_that.isAudioPlaying,_that.pendingSafetyMode,_that.pendingSafetySourceMessage);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +212,10 @@ return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BrainyMessage> messages,  bool isTyping,  String? conversationId,  String? topic,  String? selectedImagePath,  List<String> selectedImagePaths,  String? attachedAudioPath,  bool isAttachedAudioPlaying,  Duration attachedAudioPosition,  Duration attachedAudioDuration,  String? playingMessageId,  bool isAudioPlaying)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BrainyMessage> messages,  bool isTyping,  String? conversationId,  String? topic,  String? attachedContext,  String? selectedImagePath,  List<String> selectedImagePaths,  String? attachedAudioPath,  bool isAttachedAudioPlaying,  Duration attachedAudioPosition,  Duration attachedAudioDuration,  String? playingMessageId,  bool isAudioPlaying,  String? pendingSafetyMode,  String? pendingSafetySourceMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _BrainyConversationState() when $default != null:
-return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_that.selectedImagePath,_that.selectedImagePaths,_that.attachedAudioPath,_that.isAttachedAudioPlaying,_that.attachedAudioPosition,_that.attachedAudioDuration,_that.playingMessageId,_that.isAudioPlaying);case _:
+return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_that.attachedContext,_that.selectedImagePath,_that.selectedImagePaths,_that.attachedAudioPath,_that.isAttachedAudioPlaying,_that.attachedAudioPosition,_that.attachedAudioDuration,_that.playingMessageId,_that.isAudioPlaying,_that.pendingSafetyMode,_that.pendingSafetySourceMessage);case _:
   return null;
 
 }
@@ -223,7 +227,7 @@ return $default(_that.messages,_that.isTyping,_that.conversationId,_that.topic,_
 
 
 class _BrainyConversationState implements BrainyConversationState {
-  const _BrainyConversationState({ List<BrainyMessage> messages = const [], this.isTyping = false, this.conversationId, this.topic, this.selectedImagePath,  List<String> selectedImagePaths = const [], this.attachedAudioPath, this.isAttachedAudioPlaying = false, this.attachedAudioPosition = Duration.zero, this.attachedAudioDuration = Duration.zero, this.playingMessageId, this.isAudioPlaying = false}): _messages = messages,_selectedImagePaths = selectedImagePaths;
+  const _BrainyConversationState({ List<BrainyMessage> messages = const [], this.isTyping = false, this.conversationId, this.topic, this.attachedContext, this.selectedImagePath,  List<String> selectedImagePaths = const [], this.attachedAudioPath, this.isAttachedAudioPlaying = false, this.attachedAudioPosition = Duration.zero, this.attachedAudioDuration = Duration.zero, this.playingMessageId, this.isAudioPlaying = false, this.pendingSafetyMode, this.pendingSafetySourceMessage}): _messages = messages,_selectedImagePaths = selectedImagePaths;
   
 
  final  List<BrainyMessage> _messages;
@@ -236,6 +240,7 @@ class _BrainyConversationState implements BrainyConversationState {
 @override@JsonKey() final  bool isTyping;
 @override final  String? conversationId;
 @override final  String? topic;
+@override final  String? attachedContext;
 @override final  String? selectedImagePath;
  final  List<String> _selectedImagePaths;
 @override@JsonKey() List<String> get selectedImagePaths {
@@ -250,6 +255,9 @@ class _BrainyConversationState implements BrainyConversationState {
 @override@JsonKey() final  Duration attachedAudioDuration;
 @override final  String? playingMessageId;
 @override@JsonKey() final  bool isAudioPlaying;
+/// When set, UI should open Safety Concern (p70) once then clear it.
+@override final  String? pendingSafetyMode;
+@override final  String? pendingSafetySourceMessage;
 
 /// Create a copy of BrainyConversationState
 /// with the given fields replaced by the non-null parameter values.
@@ -261,18 +269,18 @@ _$BrainyConversationStateCopyWith<_BrainyConversationState> get copyWith => __$B
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BrainyConversationState&&const DeepCollectionEquality().equals(other.messages, _messages)&&(identical(other.isTyping, isTyping) || other.isTyping == isTyping)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.topic, topic) || other.topic == topic)&&(identical(other.selectedImagePath, selectedImagePath) || other.selectedImagePath == selectedImagePath)&&const DeepCollectionEquality().equals(other.selectedImagePaths, _selectedImagePaths)&&(identical(other.attachedAudioPath, attachedAudioPath) || other.attachedAudioPath == attachedAudioPath)&&(identical(other.isAttachedAudioPlaying, isAttachedAudioPlaying) || other.isAttachedAudioPlaying == isAttachedAudioPlaying)&&(identical(other.attachedAudioPosition, attachedAudioPosition) || other.attachedAudioPosition == attachedAudioPosition)&&(identical(other.attachedAudioDuration, attachedAudioDuration) || other.attachedAudioDuration == attachedAudioDuration)&&(identical(other.playingMessageId, playingMessageId) || other.playingMessageId == playingMessageId)&&(identical(other.isAudioPlaying, isAudioPlaying) || other.isAudioPlaying == isAudioPlaying));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BrainyConversationState&&const DeepCollectionEquality().equals(other.messages, _messages)&&(identical(other.isTyping, isTyping) || other.isTyping == isTyping)&&(identical(other.conversationId, conversationId) || other.conversationId == conversationId)&&(identical(other.topic, topic) || other.topic == topic)&&(identical(other.attachedContext, attachedContext) || other.attachedContext == attachedContext)&&(identical(other.selectedImagePath, selectedImagePath) || other.selectedImagePath == selectedImagePath)&&const DeepCollectionEquality().equals(other.selectedImagePaths, _selectedImagePaths)&&(identical(other.attachedAudioPath, attachedAudioPath) || other.attachedAudioPath == attachedAudioPath)&&(identical(other.isAttachedAudioPlaying, isAttachedAudioPlaying) || other.isAttachedAudioPlaying == isAttachedAudioPlaying)&&(identical(other.attachedAudioPosition, attachedAudioPosition) || other.attachedAudioPosition == attachedAudioPosition)&&(identical(other.attachedAudioDuration, attachedAudioDuration) || other.attachedAudioDuration == attachedAudioDuration)&&(identical(other.playingMessageId, playingMessageId) || other.playingMessageId == playingMessageId)&&(identical(other.isAudioPlaying, isAudioPlaying) || other.isAudioPlaying == isAudioPlaying)&&(identical(other.pendingSafetyMode, pendingSafetyMode) || other.pendingSafetyMode == pendingSafetyMode)&&(identical(other.pendingSafetySourceMessage, pendingSafetySourceMessage) || other.pendingSafetySourceMessage == pendingSafetySourceMessage));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_messages),isTyping,conversationId,topic,selectedImagePath,const DeepCollectionEquality().hash(_selectedImagePaths),attachedAudioPath,isAttachedAudioPlaying,attachedAudioPosition,attachedAudioDuration,playingMessageId,isAudioPlaying);
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_messages),isTyping,conversationId,topic,attachedContext,selectedImagePath,const DeepCollectionEquality().hash(_selectedImagePaths),attachedAudioPath,isAttachedAudioPlaying,attachedAudioPosition,attachedAudioDuration,playingMessageId,isAudioPlaying,pendingSafetyMode,pendingSafetySourceMessage);
 }
 
 @override
 String toString() {
-    return 'BrainyConversationState(messages: $messages, isTyping: $isTyping, conversationId: $conversationId, topic: $topic, selectedImagePath: $selectedImagePath, selectedImagePaths: $selectedImagePaths, attachedAudioPath: $attachedAudioPath, isAttachedAudioPlaying: $isAttachedAudioPlaying, attachedAudioPosition: $attachedAudioPosition, attachedAudioDuration: $attachedAudioDuration, playingMessageId: $playingMessageId, isAudioPlaying: $isAudioPlaying)';
+    return 'BrainyConversationState(messages: $messages, isTyping: $isTyping, conversationId: $conversationId, topic: $topic, attachedContext: $attachedContext, selectedImagePath: $selectedImagePath, selectedImagePaths: $selectedImagePaths, attachedAudioPath: $attachedAudioPath, isAttachedAudioPlaying: $isAttachedAudioPlaying, attachedAudioPosition: $attachedAudioPosition, attachedAudioDuration: $attachedAudioDuration, playingMessageId: $playingMessageId, isAudioPlaying: $isAudioPlaying, pendingSafetyMode: $pendingSafetyMode, pendingSafetySourceMessage: $pendingSafetySourceMessage)';
 }
 
 
@@ -283,7 +291,7 @@ abstract mixin class _$BrainyConversationStateCopyWith<$Res> implements $BrainyC
   factory _$BrainyConversationStateCopyWith(_BrainyConversationState value, $Res Function(_BrainyConversationState) _then) = __$BrainyConversationStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<BrainyMessage> messages, bool isTyping, String? conversationId, String? topic, String? selectedImagePath, List<String> selectedImagePaths, String? attachedAudioPath, bool isAttachedAudioPlaying, Duration attachedAudioPosition, Duration attachedAudioDuration, String? playingMessageId, bool isAudioPlaying
+ List<BrainyMessage> messages, bool isTyping, String? conversationId, String? topic, String? attachedContext, String? selectedImagePath, List<String> selectedImagePaths, String? attachedAudioPath, bool isAttachedAudioPlaying, Duration attachedAudioPosition, Duration attachedAudioDuration, String? playingMessageId, bool isAudioPlaying, String? pendingSafetyMode, String? pendingSafetySourceMessage
 });
 
 
@@ -300,12 +308,13 @@ class __$BrainyConversationStateCopyWithImpl<$Res>
 
 /// Create a copy of BrainyConversationState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? messages = null,Object? isTyping = null,Object? conversationId = freezed,Object? topic = freezed,Object? selectedImagePath = freezed,Object? selectedImagePaths = null,Object? attachedAudioPath = freezed,Object? isAttachedAudioPlaying = null,Object? attachedAudioPosition = null,Object? attachedAudioDuration = null,Object? playingMessageId = freezed,Object? isAudioPlaying = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? messages = null,Object? isTyping = null,Object? conversationId = freezed,Object? topic = freezed,Object? attachedContext = freezed,Object? selectedImagePath = freezed,Object? selectedImagePaths = null,Object? attachedAudioPath = freezed,Object? isAttachedAudioPlaying = null,Object? attachedAudioPosition = null,Object? attachedAudioDuration = null,Object? playingMessageId = freezed,Object? isAudioPlaying = null,Object? pendingSafetyMode = freezed,Object? pendingSafetySourceMessage = freezed,}) {
   return _then(_BrainyConversationState(
 messages: null == messages ? _self._messages : messages // ignore: cast_nullable_to_non_nullable
 as List<BrainyMessage>,isTyping: null == isTyping ? _self.isTyping : isTyping // ignore: cast_nullable_to_non_nullable
 as bool,conversationId: freezed == conversationId ? _self.conversationId : conversationId // ignore: cast_nullable_to_non_nullable
 as String?,topic: freezed == topic ? _self.topic : topic // ignore: cast_nullable_to_non_nullable
+as String?,attachedContext: freezed == attachedContext ? _self.attachedContext : attachedContext // ignore: cast_nullable_to_non_nullable
 as String?,selectedImagePath: freezed == selectedImagePath ? _self.selectedImagePath : selectedImagePath // ignore: cast_nullable_to_non_nullable
 as String?,selectedImagePaths: null == selectedImagePaths ? _self._selectedImagePaths : selectedImagePaths // ignore: cast_nullable_to_non_nullable
 as List<String>,attachedAudioPath: freezed == attachedAudioPath ? _self.attachedAudioPath : attachedAudioPath // ignore: cast_nullable_to_non_nullable
@@ -314,7 +323,9 @@ as bool,attachedAudioPosition: null == attachedAudioPosition ? _self.attachedAud
 as Duration,attachedAudioDuration: null == attachedAudioDuration ? _self.attachedAudioDuration : attachedAudioDuration // ignore: cast_nullable_to_non_nullable
 as Duration,playingMessageId: freezed == playingMessageId ? _self.playingMessageId : playingMessageId // ignore: cast_nullable_to_non_nullable
 as String?,isAudioPlaying: null == isAudioPlaying ? _self.isAudioPlaying : isAudioPlaying // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,pendingSafetyMode: freezed == pendingSafetyMode ? _self.pendingSafetyMode : pendingSafetyMode // ignore: cast_nullable_to_non_nullable
+as String?,pendingSafetySourceMessage: freezed == pendingSafetySourceMessage ? _self.pendingSafetySourceMessage : pendingSafetySourceMessage // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

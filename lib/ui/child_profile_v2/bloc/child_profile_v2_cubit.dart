@@ -8,6 +8,7 @@ import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
+import 'package:loving_brain/repo/co_parent_repo.dart';
 
 import 'child_profile_v2_state.dart';
 
@@ -16,6 +17,19 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
 
   LocationDataModel? _locationData;
   LocationDataModel? get locationData => _locationData;
+
+  bool get isPrimaryParent {
+    final UserModel? user = preferences.getUserModel();
+    final ChildModel? child = state.childModel ?? preferences.getChildModel();
+    final String uid = user?.uid ?? '';
+    if (uid.isEmpty || child == null) return false;
+    final String? primary = child.primaryParentUid?.trim();
+    if (primary != null && primary.isNotEmpty) {
+      return primary == uid;
+    }
+    final List<String>? ids = child.parentReferenceIds;
+    return ids != null && ids.isNotEmpty && ids.first == uid;
+  }
 
   void changeProps({
     ChildModel? childModel,
@@ -235,12 +249,46 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
     updateField(childDob: picked, age: ageLabel, dob: formatted);
   }
 
+  Future<void> removeChild() async {
+    if (!isPrimaryParent) {
+      changeProps(
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Only the primary parent can remove this child.'),
+        ),
+      );
+      return;
+    }
+    final String childId = state.childModel?.reference?.id ?? '';
+    if (childId.isEmpty) {
+      changeProps(
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Child not found.'),
+        ),
+      );
+      return;
+    }
+    changeProps(saveStatus: const ApiResultStatus.loading());
+    final ApiResultStatus result = await CoParentRepo.instance.removeChild(
+      childId: childId,
+    );
+    changeProps(saveStatus: result);
+  }
+
   Future<void> saveProfile() async {
     final String trimmedName = state.name.trim();
     if (trimmedName.isEmpty) {
       changeProps(
         saveStatus: ApiResultStatus.error(
           error: Exception("Please enter child's name"),
+        ),
+      );
+      return;
+    }
+
+    if (!isPrimaryParent && state.childModel != null) {
+      changeProps(
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Only the primary parent can edit identity fields.'),
         ),
       );
       return;
@@ -297,21 +345,6 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
 
         final String? userUid = user?.uid;
         if (userUid != null && userUid.isNotEmpty) {
-          final Map<String, dynamic> userUpdate = <String, dynamic>{
-            'child_name': trimmedName,
-            'child_age': computedAge,
-          };
-          if (state.location.trim().isNotEmpty || resolvedLoc != null) {
-            userUpdate['location'] =
-                resolvedLoc?.toJson() ?? state.location.trim();
-            if (resolvedLoc != null) {
-              userUpdate['location_data'] = resolvedLoc.toJson();
-            }
-          }
-          await AuthRepo.instance.updateUserToFireStore(
-            uId: userUid,
-            request: userUpdate,
-          );
           await AuthRepo.instance.syncUserAndDefaultChild(uId: userUid);
         }
 

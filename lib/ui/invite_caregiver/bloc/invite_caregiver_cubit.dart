@@ -12,7 +12,6 @@ import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'invite_caregiver_state.dart';
 
 /// Cubit managing Invite a Caregiver (Screen 55).
-/// Conforms to AGENTS.md Rule 4.2.
 class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
   InviteCaregiverCubit() : super(const InviteCaregiverState());
 
@@ -101,7 +100,7 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
   }
 
   Future<bool> sendInvite() async {
-    final String cleanRecipient = state.email.trim();
+    final String cleanRecipient = state.email.trim().toLowerCase();
     if (cleanRecipient.isEmpty) {
       final String errorMsg = LocaleKeys.pleaseEnterEmailAddress.tr();
       changeProps(
@@ -130,7 +129,17 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
     }
 
     if (state.selectedRole.trim().isEmpty) {
-      final String errorMsg = "Please select a relationship role.";
+      final String errorMsg = 'Please select a relationship role.';
+      changeProps(
+        emailError: errorMsg,
+        sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),
+      );
+      return false;
+    }
+
+    final String childId = preferences.getChildModel()?.reference?.id ?? '';
+    if (childId.isEmpty) {
+      final String errorMsg = LocaleKeys.somethingWentWrong.tr();
       changeProps(
         emailError: errorMsg,
         sendStatus: ApiResultStatus.error(error: Exception(errorMsg)),
@@ -144,53 +153,47 @@ class InviteCaregiverCubit extends Cubit<InviteCaregiverState> {
       sendStatus: const ApiResultStatus.loading(),
     );
 
-    final String fromEmail =
-        preferences.getUserModel()?.email ?? 'parent@lovingbrain.com';
-    final String childId =
-        preferences.getChildModel()?.reference?.id ?? 'child_local';
-
-    final Map<String, dynamic> request = <String, dynamic>{
-      'from_parent': fromEmail,
-      'to_parent': cleanRecipient,
-      'role': state.selectedRole,
-      'children': childId,
-      'status': 'REQUESTED',
-      'created_at': DateTime.now().toIso8601String(),
-      'expires_at': DateTime.now()
-          .add(const Duration(days: 14))
-          .toIso8601String(),
-    };
+    final String fromParentName =
+        (preferences.getUserModel()?.parentName?.trim().isNotEmpty == true)
+        ? preferences.getUserModel()!.parentName!.trim()
+        : ((preferences.getUserModel()?.displayName?.trim().isNotEmpty == true)
+              ? preferences.getUserModel()!.displayName!.trim()
+              : 'Your co-parent');
 
     final ApiResultStatus res = await CoParentRepo.instance.createInvitation(
-      request: request,
+      toEmail: cleanRecipient,
+      role: state.selectedRole,
+      childIds: <String>[childId],
+      fromParentName: fromParentName,
     );
 
     bool isSuccess = false;
     String invitationId = '';
+    bool emailSent = true;
     res.whenOrNull(
       data: (dynamic data) {
         isSuccess = true;
-        invitationId = data?.toString() ?? '';
+        if (data is Map) {
+          invitationId = data['invitationId']?.toString() ?? '';
+          emailSent = data['emailSent'] != false;
+        }
       },
       error: (_) => isSuccess = false,
     );
 
-    if (isSuccess && invitationId.isNotEmpty) {
-      final String fromParentName =
-          (preferences.getUserModel()?.parentName?.trim().isNotEmpty == true)
-          ? preferences.getUserModel()!.parentName!.trim()
-          : ((preferences.getUserModel()?.displayName?.trim().isNotEmpty ==
-                    true)
-                ? preferences.getUserModel()!.displayName!.trim()
-                : 'Your co-parent');
-
-      // Dispatch invitation email via Cloud Function (Brevo)
-      await CoParentRepo.instance.sendInvitationEmail(
-        toEmail: cleanRecipient,
-        fromParentName: fromParentName,
-        childrenNames: state.childName,
-        invitationId: invitationId,
+    if (isSuccess && invitationId.isNotEmpty && !emailSent) {
+      changeProps(
+        isSending: false,
+        createdInvitationId: invitationId,
+        emailError:
+            'Invitation created but email could not be sent. You can resend.',
+        sendStatus: ApiResultStatus.error(
+          error: Exception(
+            'Invitation created but email could not be sent. You can resend.',
+          ),
+        ),
       );
+      return true;
     }
 
     changeProps(

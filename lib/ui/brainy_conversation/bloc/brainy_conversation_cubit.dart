@@ -444,6 +444,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         type = MessageType.aiAction;
       } else if (cardType == 'safetyAlert') {
         type = MessageType.safetyAlert;
+      } else if (cardType == 'clinicalConcern') {
+        type = MessageType.clinicalConcern;
       }
       return [
         BrainyMessage(
@@ -457,6 +459,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
                   ? 'What may be happening'
                   : type == MessageType.safetyAlert
                   ? 'Immediate Attention'
+                  : type == MessageType.clinicalConcern
+                  ? 'Health check'
                   : 'What to try now'),
           headline:
               data['headline']?.toString() ?? data['text']?.toString() ?? '',
@@ -587,18 +591,34 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       audioLocalPath: effectiveAudioFile?.path,
     );
 
-    if (EmergencyDetector.isEmergency(displayHeadline) ||
-        (cleanText.isNotEmpty && EmergencyDetector.isEmergency(cleanText))) {
-      final String displayNumber =
-          EmergencyDetector.getEmergencyDisplayNumber();
-      final BrainyMessage safetyMsg = BrainyMessage(
-        id: 'safety_${DateTime.now().millisecondsSinceEpoch}',
-        type: MessageType.safetyAlert,
-        chipTitle: 'Immediate Attention',
-        headline: 'Please contact emergency services ($displayNumber)',
-        subtext:
-            "Loving Brain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.",
-      );
+    final bool isAcuteEmergency =
+        EmergencyDetector.isEmergency(displayHeadline) ||
+        (cleanText.isNotEmpty && EmergencyDetector.isEmergency(cleanText));
+    final bool isClinicalConcern =
+        !isAcuteEmergency &&
+        (EmergencyDetector.isConcerningHealth(displayHeadline) ||
+            (cleanText.isNotEmpty &&
+                EmergencyDetector.isConcerningHealth(cleanText)));
+
+    if (isAcuteEmergency || isClinicalConcern) {
+      final BrainyMessage safetyMsg = isAcuteEmergency
+          ? BrainyMessage(
+              id: 'safety_${DateTime.now().millisecondsSinceEpoch}',
+              type: MessageType.safetyAlert,
+              chipTitle: 'Immediate Attention',
+              headline:
+                  'Please contact emergency services (${EmergencyDetector.getEmergencyDisplayNumber()})',
+              subtext:
+                  'Loving Brain cannot assess acute medical symptoms or emergencies. If your child is struggling to breathe, turned blue, unresponsive, or in immediate danger, please call emergency services right away.',
+            )
+          : BrainyMessage(
+              id: 'clinical_${DateTime.now().millisecondsSinceEpoch}',
+              type: MessageType.clinicalConcern,
+              chipTitle: 'Health check',
+              headline: 'Please speak with a health professional',
+              subtext:
+                  'Loving Brain cannot assess symptoms. This sounds like something a doctor or health visitor should review. We will not generate parenting advice for this message.',
+            );
 
       changeProps(
         messages: <BrainyMessage>[
@@ -617,7 +637,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
       await AuthRepo.instance.addChatToConversation(
         conversationId: convId,
-        request: {
+        request: <String, dynamic>{
           'text': displayHeadline,
           'chip_title': optimisticUserMsg.chipTitle,
           'headline': displayHeadline,
@@ -642,12 +662,12 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
       await AuthRepo.instance.addChatToConversation(
         conversationId: convId,
-        request: {
+        request: <String, dynamic>{
           'text': safetyMsg.headline,
           'chip_title': safetyMsg.chipTitle,
           'headline': safetyMsg.headline,
           'subtext': safetyMsg.subtext,
-          'card_type': 'safetyAlert',
+          'card_type': isAcuteEmergency ? 'safetyAlert' : 'clinicalConcern',
           'type': 'text',
           'role': 'assistant',
           'image_local_path': null,
@@ -762,15 +782,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       } catch (_) {}
     }
 
-    final String liveContext = await AiDataTools.buildLiveContextString(
-      childModel: childModel,
-    );
+    final BrainyContextSummary contextSummary =
+        await AiDataTools.buildFourteenDayContext(childModel: childModel);
 
     final String systemPrompt = BrainAiSystemPrompt.build(
       childModel: childModel,
       parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
       topic: state.topic,
-      liveContextString: liveContext,
+      liveContextString: contextSummary.contextString,
+      hasPersonalData: contextSummary.hasPersonalData,
     );
 
     // Build multi-turn conversational history
@@ -779,7 +799,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       if (msg.id == optimisticUserMsg.id) continue;
       if (msg.type == MessageType.user) {
         history.add(<String, dynamic>{'role': 'user', 'content': msg.headline});
-      } else {
+      } else if (msg.type == MessageType.aiInfo ||
+          msg.type == MessageType.aiAction) {
         final String combinedText =
             msg.subtext != null && msg.subtext!.isNotEmpty
             ? '${msg.headline}\n${msg.subtext}'
@@ -792,33 +813,41 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     }
 
     List<BrainyMessage> aiCards = <BrainyMessage>[];
-    final ApiResultStatus aiResult = await AiRepo.instance.createResponse(
-      conversationId: convId,
-      messageText: displayHeadline,
-      imageFiles: effectiveImageFiles,
-      audioFile: effectiveAudioFile,
-      history: history,
-      systemPrompt: systemPrompt,
-    );
+    try {
+      final ApiResultStatus aiResult = await AiRepo.instance
+          .createResponse(
+            conversationId: convId,
+            messageText: displayHeadline,
+            imageFiles: effectiveImageFiles,
+            audioFile: effectiveAudioFile,
+            history: history,
+            systemPrompt: systemPrompt,
+          )
+          .timeout(const Duration(seconds: 45));
 
-    aiResult.whenOrNull(
-      data: (dynamic data) {
-        if (data is Map<String, dynamic>) {
-          final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
-            data,
-          );
-          final List<ConversationItem> outputs = (aiResponseModel.output ?? [])
-              .where((ConversationItem e) => e.type == 'message')
-              .toList();
-          if (outputs.isNotEmpty && (outputs.first.content ?? []).isNotEmpty) {
-            final String rawAiText = outputs.first.content!.first.text ?? '';
-            if (rawAiText.trim().isNotEmpty) {
-              aiCards = _parseAiResponseText(rawAiText);
+      aiResult.whenOrNull(
+        data: (dynamic data) {
+          if (data is Map<String, dynamic>) {
+            final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
+              data,
+            );
+            final List<ConversationItem> outputs =
+                (aiResponseModel.output ?? [])
+                    .where((ConversationItem e) => e.type == 'message')
+                    .toList();
+            if (outputs.isNotEmpty &&
+                (outputs.first.content ?? []).isNotEmpty) {
+              final String rawAiText = outputs.first.content!.first.text ?? '';
+              if (rawAiText.trim().isNotEmpty) {
+                aiCards = _parseAiResponseText(rawAiText);
+              }
             }
           }
-        }
-      },
-    );
+        },
+      );
+    } catch (_) {
+      aiCards = <BrainyMessage>[];
+    }
 
     if (aiCards.isEmpty) {
       if (isClosed) return;
@@ -836,6 +865,11 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       );
       return;
     }
+
+    aiCards = _applyGeneralGuidanceLabel(
+      aiCards,
+      hasPersonalData: contextSummary.hasPersonalData,
+    );
 
     // 1. Immediately display the AI cards in the UI and stop the thinking indicator
     changeProps(
@@ -906,15 +940,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       } catch (_) {}
     }
 
-    final String liveContext = await AiDataTools.buildLiveContextString(
-      childModel: childModel,
-    );
+    final BrainyContextSummary contextSummary =
+        await AiDataTools.buildFourteenDayContext(childModel: childModel);
 
     final String systemPrompt = BrainAiSystemPrompt.build(
       childModel: childModel,
       parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
       topic: state.topic,
-      liveContextString: liveContext,
+      liveContextString: contextSummary.contextString,
+      hasPersonalData: contextSummary.hasPersonalData,
     );
 
     final List<Map<String, dynamic>> history = <Map<String, dynamic>>[];
@@ -947,33 +981,41 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         : null;
 
     List<BrainyMessage> aiCards = <BrainyMessage>[];
-    final ApiResultStatus aiResult = await AiRepo.instance.createResponse(
-      conversationId: convId,
-      messageText: lastUserMsg.headline,
-      imageFile: imgFile,
-      audioFile: audFile,
-      history: history,
-      systemPrompt: systemPrompt,
-    );
+    try {
+      final ApiResultStatus aiResult = await AiRepo.instance
+          .createResponse(
+            conversationId: convId,
+            messageText: lastUserMsg.headline,
+            imageFile: imgFile,
+            audioFile: audFile,
+            history: history,
+            systemPrompt: systemPrompt,
+          )
+          .timeout(const Duration(seconds: 45));
 
-    aiResult.whenOrNull(
-      data: (dynamic data) {
-        if (data is Map<String, dynamic>) {
-          final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
-            data,
-          );
-          final List<ConversationItem> outputs = (aiResponseModel.output ?? [])
-              .where((ConversationItem e) => e.type == 'message')
-              .toList();
-          if (outputs.isNotEmpty && (outputs.first.content ?? []).isNotEmpty) {
-            final String rawAiText = outputs.first.content!.first.text ?? '';
-            if (rawAiText.trim().isNotEmpty) {
-              aiCards = _parseAiResponseText(rawAiText);
+      aiResult.whenOrNull(
+        data: (dynamic data) {
+          if (data is Map<String, dynamic>) {
+            final AiResponseModel aiResponseModel = AiResponseModel.fromJson(
+              data,
+            );
+            final List<ConversationItem> outputs =
+                (aiResponseModel.output ?? [])
+                    .where((ConversationItem e) => e.type == 'message')
+                    .toList();
+            if (outputs.isNotEmpty &&
+                (outputs.first.content ?? []).isNotEmpty) {
+              final String rawAiText = outputs.first.content!.first.text ?? '';
+              if (rawAiText.trim().isNotEmpty) {
+                aiCards = _parseAiResponseText(rawAiText);
+              }
             }
           }
-        }
-      },
-    );
+        },
+      );
+    } catch (_) {
+      aiCards = <BrainyMessage>[];
+    }
 
     if (aiCards.isEmpty) {
       if (isClosed) return;
@@ -991,6 +1033,11 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       );
       return;
     }
+
+    aiCards = _applyGeneralGuidanceLabel(
+      aiCards,
+      hasPersonalData: contextSummary.hasPersonalData,
+    );
 
     // 1. Immediately display the AI cards in the UI and stop the thinking indicator
     changeProps(
@@ -1039,6 +1086,25 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     bool isSaved = false,
   }) => _parseAiResponseText(rawText, baseId: baseId, isSaved: isSaved);
 
+  List<BrainyMessage> applyGeneralGuidanceLabelForTesting(
+    List<BrainyMessage> cards, {
+    required bool hasPersonalData,
+  }) => _applyGeneralGuidanceLabel(cards, hasPersonalData: hasPersonalData);
+
+  List<BrainyMessage> _applyGeneralGuidanceLabel(
+    List<BrainyMessage> cards, {
+    required bool hasPersonalData,
+  }) {
+    if (hasPersonalData || cards.isEmpty) return cards;
+    if (cards.first.chipTitle == 'Brainy') return cards;
+    final BrainyMessage first = cards.first;
+    final String existing = first.subtext?.trim() ?? '';
+    final String label = AiDataTools.generalGuidanceLabel;
+    if (existing.contains(label)) return cards;
+    final String combined = existing.isEmpty ? label : '$label $existing';
+    return <BrainyMessage>[first.copyWith(subtext: combined), ...cards.skip(1)];
+  }
+
   List<BrainyMessage> _parseAiResponseText(
     String rawText, {
     String? baseId,
@@ -1055,93 +1121,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           .where((String s) => s.isNotEmpty)
           .toList();
 
-      if (rawParts.isNotEmpty) {
+      if (rawParts.length >= 3) {
         final (String, String?) part1 = _extractHeadlineAndSubtext(rawParts[0]);
-        final (String, String?) part2 = rawParts.length > 1
-            ? _extractHeadlineAndSubtext(rawParts[1])
-            : (
-                'Try one gentle step tonight',
-                'Keep your voice low and predictable to help your child settle.',
-              );
-
-        final List<BrainyMessage> messages = <BrainyMessage>[
-          BrainyMessage(
-            id: baseId != null ? '${baseId}_info' : null,
-            type: MessageType.aiInfo,
-            chipTitle: 'What may be happening',
-            headline: part1.$1,
-            subtext: part1.$2,
-            isSaved: isSaved,
-          ),
-          BrainyMessage(
-            id: baseId != null ? '${baseId}_action' : null,
-            type: MessageType.aiAction,
-            chipTitle: 'What to try now',
-            headline: part2.$1,
-            subtext: part2.$2,
-            isSaved: isSaved,
-          ),
-        ];
-
-        if (rawParts.length > 2) {
-          final (String, String?) part3 = _extractHeadlineAndSubtext(
-            rawParts[2],
-          );
-          if (part3.$1.trim().isNotEmpty) {
-            messages.add(
-              BrainyMessage(
-                id: baseId != null ? '${baseId}_help' : null,
-                type: MessageType.aiInfo,
-                chipTitle: 'When to get help',
-                headline: part3.$1,
-                subtext: part3.$2,
-                isSaved: isSaved,
-              ),
-            );
-          }
+        final (String, String?) part2 = _extractHeadlineAndSubtext(rawParts[1]);
+        final (String, String?) part3 = _extractHeadlineAndSubtext(rawParts[2]);
+        if (part1.$1.trim().isEmpty ||
+            part2.$1.trim().isEmpty ||
+            part3.$1.trim().isEmpty) {
+          return <BrainyMessage>[];
         }
-
-        if (messages.length == 2) {
-          messages.add(
-            BrainyMessage(
-              id: baseId != null ? '${baseId}_help' : null,
-              type: MessageType.aiInfo,
-              chipTitle: 'When to get help',
-              headline: 'Reach out if challenges persist over 2–3 weeks',
-              subtext:
-                  'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
-              isSaved: isSaved,
-            ),
-          );
-        }
-
-        return messages;
-      }
-    }
-
-    // Case 2: Section headers (e.g., "Part 1:", "What may be happening:", "### 1.")
-    final RegExp sectionHeaderRegex = RegExp(
-      r'(?:^|\n+)(?:#{1,4}\s*)?(?:(?:Part\s*[123]|Step\s*[123])[:.]?\s*)?(?:(?:What\s+may\s+be\s+happening|What\s+to\s+try\s+now|When\s+to\s+get\s+help)[:.]?)\s*',
-      caseSensitive: false,
-    );
-
-    if (sectionHeaderRegex.hasMatch(cleaned)) {
-      final List<String> sections = cleaned
-          .split(sectionHeaderRegex)
-          .map((String s) => s.trim())
-          .where((String s) => s.isNotEmpty)
-          .toList();
-
-      if (sections.length >= 2) {
-        final (String, String?) part1 = _extractHeadlineAndSubtext(sections[0]);
-        final (String, String?) part2 = _extractHeadlineAndSubtext(sections[1]);
-        final (String, String?) part3 = sections.length > 2
-            ? _extractHeadlineAndSubtext(sections[2])
-            : (
-                'Reach out if challenges persist over 2–3 weeks',
-                'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
-              );
-
         return <BrainyMessage>[
           BrainyMessage(
             id: baseId != null ? '${baseId}_info' : null,
@@ -1169,6 +1157,60 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
           ),
         ];
       }
+      // Incomplete parenting answer — do not invent missing parts.
+      return <BrainyMessage>[];
+    }
+
+    // Case 2: Section headers (e.g., "Part 1:", "What may be happening:", "### 1.")
+    final RegExp sectionHeaderRegex = RegExp(
+      r'(?:^|\n+)(?:#{1,4}\s*)?(?:(?:Part\s*[123]|Step\s*[123])[:.]?\s*)?(?:(?:What\s+may\s+be\s+happening|What\s+to\s+try\s+now|When\s+to\s+get\s+help)[:.]?)\s*',
+      caseSensitive: false,
+    );
+
+    if (sectionHeaderRegex.hasMatch(cleaned)) {
+      final List<String> sections = cleaned
+          .split(sectionHeaderRegex)
+          .map((String s) => s.trim())
+          .where((String s) => s.isNotEmpty)
+          .toList();
+
+      if (sections.length >= 3) {
+        final (String, String?) part1 = _extractHeadlineAndSubtext(sections[0]);
+        final (String, String?) part2 = _extractHeadlineAndSubtext(sections[1]);
+        final (String, String?) part3 = _extractHeadlineAndSubtext(sections[2]);
+        if (part1.$1.trim().isEmpty ||
+            part2.$1.trim().isEmpty ||
+            part3.$1.trim().isEmpty) {
+          return <BrainyMessage>[];
+        }
+        return <BrainyMessage>[
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_info' : null,
+            type: MessageType.aiInfo,
+            chipTitle: 'What may be happening',
+            headline: part1.$1,
+            subtext: part1.$2,
+            isSaved: isSaved,
+          ),
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_action' : null,
+            type: MessageType.aiAction,
+            chipTitle: 'What to try now',
+            headline: part2.$1,
+            subtext: part2.$2,
+            isSaved: isSaved,
+          ),
+          BrainyMessage(
+            id: baseId != null ? '${baseId}_help' : null,
+            type: MessageType.aiInfo,
+            chipTitle: 'When to get help',
+            headline: part3.$1,
+            subtext: part3.$2,
+            isSaved: isSaved,
+          ),
+        ];
+      }
+      return <BrainyMessage>[];
     }
 
     // Case 3: Casual greetings (Rule 75-76)
@@ -1196,23 +1238,24 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       ];
     }
 
-    // Case 4: Multi-paragraph response without explicit delimiters -> Partition into 3-part cards
+    // Case 4: Multi-paragraph response — require three real parts, never invent.
     final List<String> paragraphs = cleaned
         .split(RegExp(r'\n\s*\n'))
         .map((String s) => s.trim())
         .where((String s) => s.isNotEmpty)
         .toList();
 
-    if (paragraphs.length >= 2) {
+    if (paragraphs.length >= 3) {
       final (String, String?) part1 = _extractHeadlineAndSubtext(paragraphs[0]);
       final (String, String?) part2 = _extractHeadlineAndSubtext(paragraphs[1]);
-      final (String, String?) part3 = paragraphs.length > 2
-          ? _extractHeadlineAndSubtext(paragraphs.sublist(2).join('\n\n'))
-          : (
-              'Reach out if challenges persist over 2–3 weeks',
-              'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
-            );
-
+      final (String, String?) part3 = _extractHeadlineAndSubtext(
+        paragraphs.sublist(2).join('\n\n'),
+      );
+      if (part1.$1.trim().isEmpty ||
+          part2.$1.trim().isEmpty ||
+          part3.$1.trim().isEmpty) {
+        return <BrainyMessage>[];
+      }
       return <BrainyMessage>[
         BrainyMessage(
           id: baseId != null ? '${baseId}_info' : null,
@@ -1241,36 +1284,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       ];
     }
 
-    // Fallback: Ensure 3-part card structure is always respected
-    final (String, String?) parsed = _extractHeadlineAndSubtext(cleaned);
-    return <BrainyMessage>[
-      BrainyMessage(
-        id: baseId != null ? '${baseId}_info' : null,
-        type: MessageType.aiInfo,
-        chipTitle: 'What may be happening',
-        headline: parsed.$1,
-        subtext: parsed.$2,
-        isSaved: isSaved,
-      ),
-      BrainyMessage(
-        id: baseId != null ? '${baseId}_action' : null,
-        type: MessageType.aiAction,
-        chipTitle: 'What to try now',
-        headline: 'Focus on predictable, gentle steps',
-        subtext:
-            'Small consistent changes to your routine often help your child settle best over time.',
-        isSaved: isSaved,
-      ),
-      BrainyMessage(
-        id: baseId != null ? '${baseId}_help' : null,
-        type: MessageType.aiInfo,
-        chipTitle: 'When to get help',
-        headline: 'Reach out if challenges persist over 2–3 weeks',
-        subtext:
-            'If routine adjustments do not help or if distress begins impacting daily wellbeing, discuss these patterns with your pediatrician.',
-        isSaved: isSaved,
-      ),
-    ];
+    // Incomplete or unstructured parenting answer — surface retry, do not fabricate.
+    return <BrainyMessage>[];
   }
 
   (String, String?) _extractHeadlineAndSubtext(String section) {
@@ -1308,32 +1323,60 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
   Future<void> toggleSaveGuidance(BrainyMessage message, int index) async {
     if (index < 0 || index >= state.messages.length) return;
+    if (message.type != MessageType.aiInfo &&
+        message.type != MessageType.aiAction) {
+      return;
+    }
+
     final bool newSaved = !message.isSaved;
+    final List<int> groupIndexes = _findAnswerGroupIndexes(index);
     final List<BrainyMessage> updatedMessages = <BrainyMessage>[
       ...state.messages,
     ];
-    updatedMessages[index] = message.copyWith(isSaved: newSaved);
+    for (final int i in groupIndexes) {
+      updatedMessages[i] = updatedMessages[i].copyWith(isSaved: newSaved);
+    }
     changeProps(messages: updatedMessages);
 
     final String uid = preferences.getUserModel()?.uid ?? '';
     if (uid.isEmpty) return;
 
-    if (state.conversationId != null &&
-        message.id != null &&
-        !message.id!.startsWith('local_') &&
-        !message.id!.startsWith('default_')) {
-      final String rawDocId = message.id!
-          .replaceAll('_info', '')
-          .replaceAll('_action', '');
-      await AuthRepo.instance.updateChatToConversation(
-        conversationId: state.conversationId!,
-        chatReferenceId: rawDocId,
-        request: <String, dynamic>{'is_saved': newSaved},
-      );
+    BrainyMessage? happening;
+    BrainyMessage? tryNow;
+    BrainyMessage? getHelp;
+    for (final int i in groupIndexes) {
+      final BrainyMessage m = updatedMessages[i];
+      if (m.chipTitle == 'What may be happening') happening = m;
+      if (m.chipTitle == 'What to try now') tryNow = m;
+      if (m.chipTitle == 'When to get help') getHelp = m;
+    }
+    happening ??= message;
+
+    for (final int i in groupIndexes) {
+      final BrainyMessage m = updatedMessages[i];
+      if (state.conversationId != null &&
+          m.id != null &&
+          !m.id!.startsWith('local_') &&
+          !m.id!.startsWith('default_') &&
+          !m.id!.startsWith('retry_')) {
+        final String rawDocId = m.id!
+            .replaceAll('_info', '')
+            .replaceAll('_action', '')
+            .replaceAll('_help', '');
+        try {
+          await AuthRepo.instance.updateChatToConversation(
+            conversationId: state.conversationId!,
+            chatReferenceId: rawDocId,
+            request: <String, dynamic>{'is_saved': newSaved},
+          );
+        } catch (_) {}
+      }
     }
 
     final String savedDocId =
-        message.id ?? 'saved_${message.headline.hashCode.abs()}';
+        state.conversationId != null && state.conversationId!.isNotEmpty
+        ? 'answer_${state.conversationId}_${happening.headline.hashCode.abs()}'
+        : 'saved_${happening.headline.hashCode.abs()}';
     final DocumentReference<Map<String, dynamic>> savedRef = AuthRepo
         .instance
         .userCollection
@@ -1345,8 +1388,14 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       await savedRef.set(<String, dynamic>{
         'id': savedDocId,
         'conversation_id': state.conversationId,
-        'title': message.headline,
-        'subtext': message.subtext ?? '',
+        'title': happening.headline,
+        'subtext': happening.subtext ?? '',
+        'what_may_be_happening_headline': happening.headline,
+        'what_may_be_happening_subtext': happening.subtext ?? '',
+        'what_to_try_now_headline': tryNow?.headline ?? '',
+        'what_to_try_now_subtext': tryNow?.subtext ?? '',
+        'when_to_get_help_headline': getHelp?.headline ?? '',
+        'when_to_get_help_subtext': getHelp?.subtext ?? '',
         'topic': state.topic ?? 'Sleep',
         'saved_at': Timestamp.now(),
       });
@@ -1355,6 +1404,33 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         await savedRef.delete();
       } catch (_) {}
     }
+  }
+
+  List<int> _findAnswerGroupIndexes(int index) {
+    final List<BrainyMessage> messages = state.messages;
+    if (index < 0 || index >= messages.length) return <int>[index];
+
+    int start = index;
+    while (start > 0) {
+      final BrainyMessage prev = messages[start - 1];
+      if (prev.type != MessageType.aiInfo &&
+          prev.type != MessageType.aiAction) {
+        break;
+      }
+      if (messages[start].chipTitle == 'What may be happening') break;
+      start -= 1;
+    }
+
+    final List<int> group = <int>[];
+    for (int i = start; i < messages.length && group.length < 3; i++) {
+      final BrainyMessage m = messages[i];
+      if (m.type != MessageType.aiInfo && m.type != MessageType.aiAction) {
+        break;
+      }
+      group.add(i);
+      if (m.chipTitle == 'When to get help') break;
+    }
+    return group.isEmpty ? <int>[index] : group;
   }
 
   Future<void> togglePlayAudio(BrainyMessage message) async {

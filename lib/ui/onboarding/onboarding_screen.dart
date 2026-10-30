@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,11 +11,11 @@ import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/pending_invitation_manager.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
-import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -1467,35 +1466,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           }
 
                           Navigator.pop(dialogContext);
-                          EasyLoading.show(status: 'Joining family...');
-
-                          final ApiResultStatus result = await CoParentRepo
-                              .instance
-                              .addUserAsCoParent(inviteId);
-
-                          EasyLoading.dismiss();
-
-                          result.whenOrNull(
-                            data: (_) {
-                              showSnackBar(
-                                message: "Joined family successfully!",
-                                type: SnackBarType.SUCCESS,
-                              );
-                              try {
-                                context.read<TodayCubit>().init();
-                              } catch (_) {}
-                              context.read<OnboardingCubit>().reset();
-                              context.go(RoutePaths.base);
-                            },
-                            error: (Exception err) {
-                              showSnackBar(
-                                message: err.toString().replaceAll(
-                                  'Exception: ',
-                                  '',
-                                ),
-                                type: SnackBarType.ERROR,
-                              );
-                            },
+                          await PendingInvitationManager.save(
+                            invitationId: inviteId,
+                            invitationEmail:
+                                preferences.getUserModel()?.email ?? '',
+                          );
+                          if (!context.mounted) return;
+                          context.push(
+                            RoutePaths.inviteRespond,
+                            extra: <String, dynamic>{'invitationId': inviteId},
                           );
                         },
                       ),

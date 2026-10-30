@@ -156,7 +156,7 @@ If intense distress continues consistently, discuss these patterns with your hea
     });
 
     test(
-      'Multi-paragraph unstructured response generates 3-part guidance per V2 specification',
+      'Incomplete multi-paragraph response does not invent a third card',
       () {
         final BrainyConversationCubit cubit = BrainyConversationCubit();
 
@@ -170,14 +170,60 @@ A small quiet reading pause can signal rest time without pressure.''';
         final List<BrainyMessage> cards = cubit.parseAiResponseForTesting(
           unstructuredResponse,
         );
-        expect(cards.length, 3);
-        expect(cards[0].chipTitle, 'What may be happening');
-        expect(cards[1].chipTitle, 'What to try now');
-        expect(cards[2].chipTitle, 'When to get help');
+        expect(cards, isEmpty);
 
         cubit.close();
       },
     );
+
+    test(
+      'Incomplete --- response with only two parts returns empty for retry',
+      () {
+        final BrainyConversationCubit cubit = BrainyConversationCubit();
+        const String incomplete = '''
+Overtired from a short nap
+Johnny may be overtired tonight.
+
+---
+Offer a calm wind-down
+Dim the lights before bedtime.''';
+        expect(cubit.parseAiResponseForTesting(incomplete), isEmpty);
+        cubit.close();
+      },
+    );
+
+    test('General guidance label is applied when no personal data exists', () {
+      final BrainyConversationCubit cubit = BrainyConversationCubit();
+      final List<BrainyMessage> labeled = cubit
+          .applyGeneralGuidanceLabelForTesting(<BrainyMessage>[
+            BrainyMessage(
+              type: MessageType.aiInfo,
+              chipTitle: 'What may be happening',
+              headline: 'Age-typical evenings',
+              subtext: 'Toddlers often need wind-down time.',
+            ),
+          ], hasPersonalData: false);
+      expect(
+        labeled.first.subtext,
+        contains('not based on your child\'s pattern yet'),
+      );
+      cubit.close();
+    });
+
+    test('General guidance label is skipped when personal data exists', () {
+      final BrainyConversationCubit cubit = BrainyConversationCubit();
+      final List<BrainyMessage> labeled = cubit
+          .applyGeneralGuidanceLabelForTesting(<BrainyMessage>[
+            BrainyMessage(
+              type: MessageType.aiInfo,
+              chipTitle: 'What may be happening',
+              headline: 'Short nap pattern',
+              subtext: 'Four of five naps ended early.',
+            ),
+          ], hasPersonalData: true);
+      expect(labeled.first.subtext, equals('Four of five naps ended early.'));
+      cubit.close();
+    });
 
     test(
       'Empty or whitespace text safely returns empty list without crashing',
@@ -347,7 +393,10 @@ A small quiet reading pause can signal rest time without pressure.''';
         expect(prompt, contains('Johnny'));
         expect(prompt, contains('Sarah'));
         expect(prompt, contains('Bedtime: 8:00 PM'));
-        expect(prompt, contains('Live recorded data for Johnny today'));
+        expect(
+          prompt,
+          contains('Relevant recorded data for Johnny (last 14 days)'),
+        );
         expect(prompt, contains('CRITICAL FORMATTING REQUIREMENT'));
         expect(prompt, contains('separated by a line containing only "---"'));
       },
@@ -393,7 +442,7 @@ A small quiet reading pause can signal rest time without pressure.''';
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.text('Why is bedtime so hard?'), findsOneWidget);
-      expect(find.text('Brainy is thinking'), findsOneWidget);
+      expect(find.text('Looking at the last two weeks…'), findsOneWidget);
       expect(
         find.text('Crafting a thoughtful response for you'),
         findsOneWidget,

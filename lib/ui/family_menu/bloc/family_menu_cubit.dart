@@ -81,14 +81,18 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     final UserModel? user = preferences.getUserModel();
     ChildModel? child = preferences.getChildModel();
     final List<CaregiverItem> linked = <CaregiverItem>[];
-    String? partnerId = user?.partnerUserId?.trim();
-
     final String currentUid = user?.uid ?? '';
-    final String ownerUid =
-        (child?.parentReferenceIds != null &&
-            child!.parentReferenceIds!.isNotEmpty)
-        ? child.parentReferenceIds!.first
-        : currentUid;
+    String ownerUid = '';
+    if (child != null) {
+      final String? primary = child.primaryParentUid?.trim();
+      if (primary != null && primary.isNotEmpty) {
+        ownerUid = primary;
+      } else if (child.parentReferenceIds != null &&
+          child.parentReferenceIds!.isNotEmpty) {
+        ownerUid = child.parentReferenceIds!.first;
+      }
+    }
+    if (ownerUid.isEmpty) ownerUid = currentUid;
     final bool isCurrentUserOwner =
         currentUid.isNotEmpty && currentUid == ownerUid;
 
@@ -126,29 +130,13 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
       } catch (_) {}
     }
 
-    // Auto-discover linked co-parents via child parent_reference_ids if partnerUserId is unset
-    if ((partnerId == null || partnerId.isEmpty) &&
-        child?.parentReferenceIds != null &&
-        child!.parentReferenceIds!.length > 1) {
-      for (final String pid in child.parentReferenceIds!) {
-        if (pid.isNotEmpty && pid != currentUid) {
-          partnerId = pid;
-          // Self-heal partnerUserId on current user document
-          if (currentUid.isNotEmpty) {
-            UserRepo.instance.userCollection
-                .doc(currentUid)
-                .update(<String, dynamic>{'partner_user_id': partnerId})
-                .catchError((_) => null);
-          }
-          break;
-        }
-      }
-    }
-
-    if (partnerId != null && partnerId.isNotEmpty) {
+    // List every linked parent on the active child (not a single partner_user_id).
+    final List<String> parentIds = child?.parentReferenceIds ?? <String>[];
+    for (final String pid in parentIds) {
+      if (pid.isEmpty || pid == currentUid) continue;
       UserModel? partnerUser;
       try {
-        partnerUser = await UserRepo.instance.getUserById(uid: partnerId);
+        partnerUser = await UserRepo.instance.getUserById(uid: pid);
       } catch (_) {}
 
       final String? partnerName = partnerUser?.parentName?.trim();
@@ -175,11 +163,11 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
       } else {
         name = rel?.isNotEmpty == true ? rel! : 'Co-Parent';
       }
-      final bool isPartnerOwner = partnerId == ownerUid;
+      final bool isPartnerOwner = pid == ownerUid;
 
       linked.add(
         CaregiverItem(
-          id: partnerId,
+          id: pid,
           name: name,
           email: email,
           role:

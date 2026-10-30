@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/brainy_saved_guidance_cubit.dart';
 import 'bloc/brainy_saved_guidance_state.dart';
@@ -89,7 +90,38 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
                       fraunces: true,
                       textAlign: TextAlign.start,
                     ),
-                    if (state.sleepItems.isEmpty &&
+                    if (state.hasLoadError) ...[
+                      32.spaceH,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(24.r),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        child: Column(
+                          children: [
+                            'Could not load saved guidance'.appText(
+                              fontSize: 16.sp,
+                              color: darkBlue,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            12.spaceH,
+                            AppButton(
+                              title: 'Try again',
+                              onTap: () {
+                                context
+                                    .read<BrainySavedGuidanceCubit>()
+                                    .retry();
+                              },
+                              backgroundColor: primaryColor,
+                              textColor: Colors.white,
+                              height: 44,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else if (state.sleepItems.isEmpty &&
                         state.behaviourItems.isEmpty &&
                         state.parentWellbeingItems.isEmpty) ...[
                       32.spaceH,
@@ -192,14 +224,21 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(24.r),
           onTap: () {
-            context.push(
-              RoutePaths.brainyConversation,
-              extra: <String, dynamic>{
-                'conversationId': item.conversationId,
-                'initialChat': item.title,
-                'topic': item.topic,
-              },
-            );
+            if (item.conversationId != null &&
+                item.conversationId!.trim().isNotEmpty) {
+              context.push(
+                RoutePaths.brainyConversation,
+                extra: <String, dynamic>{
+                  'conversationId': item.conversationId,
+                  'initialChat': item.title,
+                  'topic': item.topic,
+                },
+              );
+              return;
+            }
+            if (item.hasStoredAnswerParts) {
+              _showStoredAnswerSheet(context, item);
+            }
           },
           child: Padding(
             padding: EdgeInsets.all(12.w),
@@ -243,6 +282,101 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showStoredAnswerSheet(BuildContext context, BrainySavedItem item) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext sheetContext) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 32.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  'Saved answer'.appText(
+                    fontSize: 20.sp,
+                    fraunces: true,
+                    color: darkBlue,
+                  ),
+                  16.spaceH,
+                  if ((item.whatMayBeHappeningHeadline ?? '').isNotEmpty) ...[
+                    'What may be happening'.appText(
+                      fontSize: 12.sp,
+                      color: primaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    6.spaceH,
+                    item.whatMayBeHappeningHeadline!.appText(
+                      fontSize: 16.sp,
+                      color: darkBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    if ((item.whatMayBeHappeningSubtext ?? '').isNotEmpty) ...[
+                      6.spaceH,
+                      item.whatMayBeHappeningSubtext!.appText(
+                        fontSize: 13.sp,
+                        color: greyColor,
+                      ),
+                    ],
+                    16.spaceH,
+                  ],
+                  if ((item.whatToTryNowHeadline ?? '').isNotEmpty) ...[
+                    'What to try now'.appText(
+                      fontSize: 12.sp,
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    6.spaceH,
+                    item.whatToTryNowHeadline!.appText(
+                      fontSize: 16.sp,
+                      color: darkBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    if ((item.whatToTryNowSubtext ?? '').isNotEmpty) ...[
+                      6.spaceH,
+                      item.whatToTryNowSubtext!.appText(
+                        fontSize: 13.sp,
+                        color: greyColor,
+                      ),
+                    ],
+                    16.spaceH,
+                  ],
+                  if ((item.whenToGetHelpHeadline ?? '').isNotEmpty) ...[
+                    'When to get help'.appText(
+                      fontSize: 12.sp,
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    6.spaceH,
+                    item.whenToGetHelpHeadline!.appText(
+                      fontSize: 16.sp,
+                      color: darkBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    if ((item.whenToGetHelpSubtext ?? '').isNotEmpty) ...[
+                      6.spaceH,
+                      item.whenToGetHelpSubtext!.appText(
+                        fontSize: 13.sp,
+                        color: greyColor,
+                      ),
+                    ],
+                  ],
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

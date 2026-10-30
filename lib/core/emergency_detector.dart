@@ -77,6 +77,59 @@ class EmergencyDetector {
     ),
   ];
 
+  static const List<String> _clinicalKeywords = <String>[
+    'high fever',
+    'fever of',
+    'fever over',
+    'temperature of',
+    'rash',
+    'spots all over',
+    'repeated vomiting',
+    'keeps vomiting',
+    'vomiting all day',
+    'throwing up all day',
+    'will not drink',
+    "won't drink",
+    'wont drink',
+    'not drinking',
+    'refusing fluids',
+    'dehydrated',
+    'dehydration',
+    'ear pain',
+    'earache',
+    'pulling at ear',
+    'stiff neck',
+    'swollen glands',
+    'persistent cough',
+    'wheezing',
+    'chest pain',
+  ];
+
+  static final List<RegExp> _clinicalPatterns = <RegExp>[
+    RegExp(
+      r'\b(fever|temperature)\b.{0,20}\b(10[2-9]|1[1-9]\d|[4-9]\d)\b',
+      caseSensitive: false,
+    ),
+    RegExp(r'\bhigh\s+fever\b', caseSensitive: false),
+    RegExp(
+      r'\b(rash|spots)\b.{0,30}\b(body|face|chest|legs|arms|everywhere)\b',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'\b(vomit\w*|throwing up)\b.{0,40}\b(repeat|again|all day|all night|won.?t stop)\b',
+      caseSensitive: false,
+    ),
+    RegExp(
+      r'\b(won.?t|will not|not|refusing)\s+(drink|drinking|fluids|water|milk)\b',
+      caseSensitive: false,
+    ),
+    RegExp(r'\bdehydra\w*\b', caseSensitive: false),
+    RegExp(
+      r'\b(ear\s*ache|ear\s*pain|pulling at (an |the )?ear)\b',
+      caseSensitive: false,
+    ),
+  ];
+
   /// Returns true if the provided text indicates an acute clinical emergency.
   static bool isEmergency(String text) {
     final String clean = text.trim();
@@ -93,6 +146,31 @@ class EmergencyDetector {
     }
 
     for (final RegExp pattern in _emergencyPatterns) {
+      if (pattern.hasMatch(clean)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /// Non-emergency but concerning health statements that must not get AI advice.
+  static bool isConcerningHealth(String text) {
+    final String clean = text.trim();
+    if (clean.isEmpty) return false;
+    if (isEmergency(clean)) return false;
+
+    final String rawLower = clean.toLowerCase();
+    final String normalized = rawLower.replaceAll(RegExp(r'[^\w\s]'), '');
+
+    for (final String keyword in _clinicalKeywords) {
+      if (rawLower.contains(keyword) ||
+          normalized.contains(keyword.replaceAll(RegExp(r'[^\w\s]'), ''))) {
+        return true;
+      }
+    }
+
+    for (final RegExp pattern in _clinicalPatterns) {
       if (pattern.hasMatch(clean)) {
         return true;
       }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/ai_data_tools.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -10,6 +11,12 @@ import 'brainy_home_state.dart';
 /// Conforms to AGENTS.md §3.1 and §4.2.
 class BrainyHomeCubit extends Cubit<BrainyHomeState> {
   BrainyHomeCubit() : super(const BrainyHomeState());
+
+  static const List<String> defaultQuestions = <String>[
+    'Why is bedtime harder lately?',
+    'What can I try tonight?',
+    'How to handle evening meltdowns?',
+  ];
 
   static const Map<String, List<String>> _topicQuestions =
       <String, List<String>>{
@@ -72,15 +79,15 @@ class BrainyHomeCubit extends Cubit<BrainyHomeState> {
         ? user.childName!.trim()
         : 'your child';
 
+    final List<String> contextQuestions = await _questionsFromRecentContext(
+      child,
+    );
+
     changeProps(
       parentName: pName,
       childName: cName,
       selectedTopic: '',
-      suggestedQuestions: const <String>[
-        'Why is bedtime harder lately?',
-        'What can I try tonight?',
-        'How to handle evening meltdowns?',
-      ],
+      suggestedQuestions: contextQuestions,
     );
 
     if (user?.uid != null && user!.uid!.isNotEmpty) {
@@ -108,25 +115,38 @@ class BrainyHomeCubit extends Cubit<BrainyHomeState> {
     }
   }
 
+  Future<List<String>> _questionsFromRecentContext(ChildModel? child) async {
+    try {
+      final BrainyContextSummary summary =
+          await AiDataTools.buildFourteenDayContext(childModel: child);
+      if (summary.hasSleepSignals && !summary.hasBehaviourSignals) {
+        return List<String>.from(_topicQuestions['Sleep']!);
+      }
+      if (summary.hasBehaviourSignals && !summary.hasSleepSignals) {
+        return List<String>.from(_topicQuestions['Behaviour']!);
+      }
+      if (summary.hasSleepSignals && summary.hasBehaviourSignals) {
+        return const <String>[
+          'Why is bedtime harder lately?',
+          'What helps when they\'re overwhelmed?',
+          'What can I try tonight?',
+        ];
+      }
+    } catch (_) {}
+    return List<String>.from(defaultQuestions);
+  }
+
   void setTopic(String topic) {
     if (state.selectedTopic == topic) {
       changeProps(
         selectedTopic: '',
-        suggestedQuestions: const <String>[
-          'Why is bedtime harder lately?',
-          'What can I try tonight?',
-          'How to handle evening meltdowns?',
-        ],
+        suggestedQuestions: List<String>.from(defaultQuestions),
       );
     } else {
       changeProps(
         selectedTopic: topic,
         suggestedQuestions:
-            _topicQuestions[topic] ??
-            const <String>[
-              'Why is bedtime harder lately?',
-              'What can I try tonight?',
-            ],
+            _topicQuestions[topic] ?? List<String>.from(defaultQuestions),
       );
     }
   }

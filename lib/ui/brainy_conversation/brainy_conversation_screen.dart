@@ -14,7 +14,6 @@ import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,6 +29,7 @@ class BrainyConversationScreen extends StatefulWidget {
     this.initialAudioFile,
     this.initialImagePaths,
     this.topic,
+    this.attachedContext,
   });
 
   final String? conversationId;
@@ -37,6 +37,7 @@ class BrainyConversationScreen extends StatefulWidget {
   final File? initialAudioFile;
   final List<String>? initialImagePaths;
   final String? topic;
+  final String? attachedContext;
 
   @override
   State<BrainyConversationScreen> createState() =>
@@ -75,6 +76,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
         initialChat: widget.initialChat,
         initialAudioFile: widget.initialAudioFile,
         topic: widget.topic,
+        attachedContext: widget.attachedContext,
       );
       if (widget.initialImagePaths != null &&
           widget.initialImagePaths!.isNotEmpty) {
@@ -385,33 +387,25 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BrainyConversationCubit, BrainyConversationState>(
-      listenWhen: (previous, current) =>
-          previous.messages.length != current.messages.length ||
-          previous.isTyping != current.isTyping,
-      listener: (context, state) {
+      listenWhen: (BrainyConversationState previous,
+          BrainyConversationState current) {
+        return previous.messages.length != current.messages.length ||
+            previous.isTyping != current.isTyping ||
+            previous.pendingSafetyMode != current.pendingSafetyMode;
+      },
+      listener: (BuildContext context, BrainyConversationState state) {
         _scrollToBottom();
-        if (state.messages.isNotEmpty &&
-            state.messages.last.type == MessageType.safetyAlert) {
+        final String? pendingMode = state.pendingSafetyMode;
+        if (pendingMode != null && pendingMode.isNotEmpty) {
+          final String? sourceMessage = state.pendingSafetySourceMessage;
+          context.read<BrainyConversationCubit>().clearPendingSafetyNavigation();
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!mounted) return;
-            AlertBottomSheet.showSafetyConcern(
-              context,
-              alertPillText: "Immediate emergency attention",
-              title: "Please contact emergency services immediately",
-              message:
-                  "Struggling to breathe or turning blue is an acute medical emergency. Loving Brain cannot assess symptoms or replace emergency medical care.",
-              primaryButtonText:
-                  "Call emergency services (${EmergencyDetector.getEmergencyDisplayNumber()})",
-              onCallEmergency: () async {
-                final Uri uri = Uri.parse(
-                  EmergencyDetector.getEmergencyPhone(),
-                );
-                try {
-                  await launchUrl(uri);
-                } catch (_) {}
-              },
-              onReadSafety: () {
-                context.push(RoutePaths.helpSafety);
+            context.push(
+              RoutePaths.safetyConcern,
+              extra: <String, dynamic>{
+                'mode': pendingMode,
+                'sourceMessage': sourceMessage,
               },
             );
           });
@@ -911,6 +905,11 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
         chipColor = const Color(0xFFD32F2F);
         chipBgColor = const Color(0xFFFFEBEE);
         break;
+      case MessageType.clinicalConcern:
+        icon = Icons.medical_services_outlined;
+        chipColor = const Color(0xFFB45309);
+        chipBgColor = const Color(0xFFFFF7ED);
+        break;
       case MessageType.error:
         icon = Icons.refresh_rounded;
         chipColor = const Color(0xFFD97706);
@@ -1000,6 +999,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
               ),
               if (msg.type != MessageType.user &&
                   msg.type != MessageType.safetyAlert &&
+                  msg.type != MessageType.clinicalConcern &&
                   msg.type != MessageType.error)
                 InkWell(
                   borderRadius: BorderRadius.circular(16),
@@ -1177,6 +1177,55 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                 },
               ),
             ),
+            10.spaceH,
+            TextButton(
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                }
+              },
+              child: "Not now — stay in chat".appText(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: greyColor9,
+              ),
+            ),
+          ],
+          if (msg.type == MessageType.clinicalConcern) ...[
+            20.spaceH,
+            SizedBox(
+              width: double.infinity,
+              height: 44.h,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFB45309), width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                ),
+                child: "Read safety information".appText(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFFB45309),
+                ),
+                onPressed: () {
+                  context.push(RoutePaths.helpSafety);
+                },
+              ),
+            ),
+            10.spaceH,
+            TextButton(
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                }
+              },
+              child: "Not now — stay in chat".appText(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+                color: greyColor9,
+              ),
+            ),
           ],
           if (msg.type == MessageType.error) ...[
             18.spaceH,
@@ -1318,7 +1367,7 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Flexible(
-                          child: "Brainy is thinking".appText(
+                          child: "Looking at the last two weeks…".appText(
                             fontSize: 15.sp,
                             color: greyColor9,
                             fontWeight: FontWeight.w600,

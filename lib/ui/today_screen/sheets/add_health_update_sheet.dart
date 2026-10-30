@@ -10,7 +10,6 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_choice_chip.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -298,20 +297,22 @@ class AddHealthUpdateSheet extends StatelessWidget {
                   title: isEmergency ? "Review safety guidance" : "Save update",
                   onTap: () {
                     if (isEmergency) {
-                      AlertBottomSheet.showSafetyConcern(
-                        context,
-                        title: "Urgent medical attention recommended",
-                        message:
-                            "Breathing difficulty or severe symptoms require prompt clinical evaluation. Loving Brain cannot assess medical emergencies.",
-                        onCallEmergency: () {
-                          launchUrl(
-                            Uri.parse(EmergencyDetector.getEmergencyPhone()),
+                      final String notes = state.healthNotes.trim();
+                      final bool isAcute =
+                          EmergencyDetector.isEmergency(notes) ||
+                          state.selectedHealthIssues.any(
+                            (String issue) =>
+                                EmergencyDetector.isEmergency(issue),
                           );
+                      Navigator.pop(context);
+                      context.push(
+                        RoutePaths.safetyConcern,
+                        extra: <String, dynamic>{
+                          'mode': isAcute ? 'acute' : 'clinical',
+                          'sourceMessage': notes.isNotEmpty
+                              ? notes
+                              : state.selectedHealthIssues.join(', '),
                         },
-                        onReadSafety: () {
-                          context.push(RoutePaths.helpSafety);
-                        },
-                        tertiaryButtonText: "Not now, return to Health update",
                       );
                       return;
                     }

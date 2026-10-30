@@ -23,7 +23,7 @@ void main() {
     });
 
     test(
-      'PermissionsCubit.revokeAccess() removes partner from local child parentReferenceIds and partnerUserId',
+      'PermissionsCubit.revokeAccess() blocks primary parent and requires child id for server revoke',
       () async {
         final ChildModel? childBefore = preferences.getChildModel();
         expect(childBefore, isNotNull);
@@ -32,6 +32,18 @@ void main() {
         final UserModel? userBefore = preferences.getUserModel();
         expect(userBefore?.partnerUserId, 'coparent_02');
 
+        // Revoking the primary parent must fail locally before any callable.
+        final PermissionsCubit primaryBlock = PermissionsCubit();
+        primaryBlock.init(
+          caregiverName: 'Primary',
+          role: 'Mother',
+          caregiverId: 'inviter_01',
+          caregiverEmail: 'parent@lovingbrain.com',
+        );
+        expect(await primaryBlock.revokeAccess(), isFalse);
+        await primaryBlock.close();
+
+        // Without a Firestore child DocumentReference, server revoke cannot run.
         final PermissionsCubit cubit = PermissionsCubit();
         cubit.init(
           caregiverName: 'Co-Parent',
@@ -39,21 +51,13 @@ void main() {
           caregiverId: 'coparent_02',
           caregiverEmail: 'coparent@lovingbrain.com',
         );
-
-        final bool success = await cubit.revokeAccess();
-        expect(success, isTrue);
-
-        // Verify child model in preferences had coparent_02 removed
-        final ChildModel? childAfter = preferences.getChildModel();
-        expect(childAfter, isNotNull);
-        expect(childAfter!.parentReferenceIds, isNot(contains('coparent_02')));
-        expect(childAfter.parentReferenceIds, contains('inviter_01'));
-
-        // Verify user model in preferences had partnerUserId cleared
-        final UserModel? userAfter = preferences.getUserModel();
-        expect(userAfter?.partnerUserId, isNull);
-
-        cubit.close();
+        expect(await cubit.revokeAccess(), isFalse);
+        expect(
+          preferences.getChildModel()?.parentReferenceIds,
+          contains('coparent_02'),
+        );
+        expect(preferences.getUserModel()?.partnerUserId, 'coparent_02');
+        await cubit.close();
       },
     );
 

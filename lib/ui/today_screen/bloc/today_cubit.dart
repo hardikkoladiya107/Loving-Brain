@@ -348,52 +348,42 @@ class TodayCubit extends Cubit<TodayState> {
             .listen((DocumentSnapshot<Map<String, dynamic>> snap) async {
               if (isClosed) return;
               if (!snap.exists) {
-                await preferences.clearChild();
                 _childDocSubscription?.cancel();
-                try {
-                  final DocumentReference childRef = FirebaseFirestore.instance
-                      .collection('children')
-                      .doc(finalChildId);
-                  await FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(userUid)
-                      .update(<String, dynamic>{
-                        'default_child': FieldValue.delete(),
-                        'children': FieldValue.arrayRemove(<dynamic>[childRef]),
-                        'partner_user_id': FieldValue.delete(),
-                      });
-                } catch (_) {}
+                final UserModel? refreshed = await AuthRepo.instance
+                    .syncUserAndDefaultChild(uId: userUid);
+                final String nextId =
+                    refreshed?.defaultChild?.id ??
+                    preferences.getChildModel()?.reference?.id ??
+                    '';
                 changeProps(
-                  activeChildId: '',
-                  childName: '',
+                  activeChildId: nextId,
+                  childName: preferences.getChildModel()?.childName ?? '',
                   mode: TodayMode.normal,
                 );
+                if (nextId.isNotEmpty) {
+                  init();
+                }
                 return;
               }
 
               final List<dynamic>? pIds =
                   snap.data()?['parent_reference_ids'] as List<dynamic>?;
               if (pIds != null && !pIds.contains(userUid)) {
-                await preferences.clearChild();
                 _childDocSubscription?.cancel();
-                try {
-                  final DocumentReference childRef = FirebaseFirestore.instance
-                      .collection('children')
-                      .doc(finalChildId);
-                  await FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(userUid)
-                      .update(<String, dynamic>{
-                        'default_child': FieldValue.delete(),
-                        'children': FieldValue.arrayRemove(<dynamic>[childRef]),
-                        'partner_user_id': FieldValue.delete(),
-                      });
-                } catch (_) {}
+                final UserModel? refreshed = await AuthRepo.instance
+                    .syncUserAndDefaultChild(uId: userUid);
+                final String nextId =
+                    refreshed?.defaultChild?.id ??
+                    preferences.getChildModel()?.reference?.id ??
+                    '';
                 changeProps(
-                  activeChildId: '',
-                  childName: '',
+                  activeChildId: nextId,
+                  childName: preferences.getChildModel()?.childName ?? '',
                   mode: TodayMode.normal,
                 );
+                if (nextId.isNotEmpty) {
+                  init();
+                }
               }
             }, onError: (_) {});
       } catch (_) {}

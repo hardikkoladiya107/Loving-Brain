@@ -21,8 +21,11 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
     String? previewText,
     bool? isRecording,
     bool? isProcessing,
+    bool? awaitingConfirm,
+    bool? recordingFailed,
     int? elapsedSeconds,
     File? recordedFile,
+    bool clearRecordedFile = false,
   }) {
     emit(
       state.copyWith(
@@ -30,8 +33,11 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
         previewText: previewText ?? state.previewText,
         isRecording: isRecording ?? state.isRecording,
         isProcessing: isProcessing ?? state.isProcessing,
+        awaitingConfirm: awaitingConfirm ?? state.awaitingConfirm,
+        recordingFailed: recordingFailed ?? state.recordingFailed,
         elapsedSeconds: elapsedSeconds ?? state.elapsedSeconds,
-        recordedFile: recordedFile ?? state.recordedFile,
+        recordedFile: recordedFile,
+        clearRecordedFile: clearRecordedFile,
       ),
     );
   }
@@ -47,7 +53,13 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
 
   Future<void> init({String? topic}) async {
     final String selectedTopic = topic ?? 'Behaviour';
-    changeProps(topic: selectedTopic, previewText: '');
+    changeProps(
+      topic: selectedTopic,
+      previewText: '',
+      awaitingConfirm: false,
+      recordingFailed: false,
+      clearRecordedFile: true,
+    );
     await startRecording();
   }
 
@@ -58,23 +70,38 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
         final String path =
             '${dir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
         await _recorder.start(const RecordConfig(), path: path);
-        changeProps(isRecording: true, elapsedSeconds: 0);
+        changeProps(
+          isRecording: true,
+          recordingFailed: false,
+          awaitingConfirm: false,
+          elapsedSeconds: 0,
+        );
         _timer?.cancel();
         _timer = Timer.periodic(const Duration(seconds: 1), (Timer _) {
           if (!isClosed) {
             changeProps(elapsedSeconds: state.elapsedSeconds + 1);
           }
         });
+      } else {
+        changeProps(
+          isRecording: false,
+          recordingFailed: true,
+          awaitingConfirm: false,
+        );
       }
     } catch (_) {
-      // Even if recorder fails on emulator/missing hardware, keep UI responsive
-      changeProps(isRecording: true);
+      changeProps(
+        isRecording: false,
+        recordingFailed: true,
+        awaitingConfirm: false,
+      );
     }
   }
 
-  Future<(File?, String)> stopAndFinishRecording() async {
+  /// Stops recording and transcribes. Does not send — waits for confirm.
+  Future<(File?, String)> stopAndPrepareTranscript() async {
     _timer?.cancel();
-    changeProps(isRecording: false, isProcessing: true);
+    changeProps(isRecording: false, isProcessing: true, recordingFailed: false);
 
     File? recordedFile;
     String finalText = '';
@@ -92,11 +119,13 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
       try {
         final ApiResultStatus result = await AiRepo.instance
             .transcribeAudio(file: recordedFile)
-            .timeout(const Duration(seconds: 6));
+            .timeout(const Duration(seconds: 45));
         result.whenOrNull(
           data: (dynamic data) {
             final TranscribeModel transcribeModel = TranscribeModel.fromJson(
-              data,
+              data is Map<String, dynamic>
+                  ? data
+                  : Map<String, dynamic>.from(data as Map),
             );
             if (transcribeModel.text != null &&
                 transcribeModel.text!.trim().isNotEmpty) {
@@ -107,14 +136,26 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
       } catch (_) {}
     }
 
+    final bool hasAudio = recordedFile != null && await recordedFile.exists();
     if (!isClosed) {
       changeProps(
         isProcessing: false,
-        recordedFile: recordedFile,
+        recordedFile: hasAudio ? recordedFile : null,
+        clearRecordedFile: !hasAudio,
         previewText: finalText,
+        awaitingConfirm: hasAudio || finalText.isNotEmpty,
+        recordingFailed: !hasAudio && finalText.isEmpty,
       );
     }
-    return (recordedFile, finalText);
+    return (hasAudio ? recordedFile : null, finalText);
+  }
+
+  /// Backward-compatible alias used by older callers.
+  Future<(File?, String)> stopAndFinishRecording() =>
+      stopAndPrepareTranscript();
+
+  (File?, String) confirmPreparedNote() {
+    return (state.recordedFile, state.previewText);
   }
 
   Future<void> cancelRecording() async {
@@ -124,6 +165,16 @@ class BrainyVoiceCubit extends Cubit<BrainyVoiceState> {
         await _recorder.stop();
       }
     } catch (_) {}
+    if (!isClosed) {
+      changeProps(
+        isRecording: false,
+        isProcessing: false,
+        awaitingConfirm: false,
+        recordingFailed: false,
+        previewText: '',
+        clearRecordedFile: true,
+      );
+    }
   }
 
   @override

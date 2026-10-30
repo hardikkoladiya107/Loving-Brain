@@ -5,10 +5,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
-import 'package:loving_brain/model/invitation_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/energy_bridge_notification_helper.dart';
-import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/repo/energy_bridge_repo.dart';
 import 'package:mime/mime.dart';
 
@@ -381,29 +379,11 @@ class ChildRepo {
     UserModel user,
   ) async {
     try {
-      final QuerySnapshot<Map<String, dynamic>> childrenResponse =
-          await CoParentRepo.instance.coParentInvitationCollection
-              .where('to_parent', isEqualTo: user.email)
-              .where('childs_essentials', isEqualTo: true)
-              .where('status', isEqualTo: 'ACCEPTED')
-              .get();
-
-      if (childrenResponse.docs.isEmpty) {
-        return ApiResultStatus.data(data: <ChildModel>[]);
-      }
-      final List<InvitationModel> invitations = childrenResponse.docs
-          .map((doc) => InvitationModel.fromJson(doc.data()))
-          .toList();
-      final Set<String> childIds = <String>{};
-      for (final InvitationModel inv in invitations) {
-        final String raw = (inv.children ?? "").trim();
-        if (raw.isEmpty) continue;
-        for (final String part in raw.split(',')) {
-          final String id = part.trim();
-          if (id.isNotEmpty) childIds.add(id);
-        }
-      }
-      return await getChildren(childrenIds: childIds.toList());
+      // Membership is stored on users/{uid}.children after accept.
+      final List<String> ownChildIds =
+          user.children?.map((e) => e.id).whereType<String>().toList() ??
+          <String>[];
+      return await getChildren(childrenIds: ownChildIds);
     } on FirebaseException {
       return ApiResultStatus.error(
         error: Exception(LocaleKeys.somethingWentWrong.tr()),

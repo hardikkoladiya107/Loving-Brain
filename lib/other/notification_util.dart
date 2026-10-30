@@ -85,7 +85,7 @@ class NotificationUtil {
     if (clean == 'invitation' ||
         clean == 'co_parent_invitation' ||
         clean == 'invite') {
-      return RoutePaths.base;
+      return RoutePaths.inviteRespond;
     }
     if (clean == 'essentials') {
       return RoutePaths.essentials;

@@ -4,6 +4,7 @@ import 'package:loving_brain/core/age_utils.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 
@@ -511,21 +512,25 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         location: state.location.isNotEmpty ? state.location : null,
         locationData: resolvedLoc,
       );
-      await childDoc.set(childModel.toJson());
+      final Map<String, dynamic> childJson = childModel.toJson();
+      childJson['primary_parent_uid'] = user.uid!;
+      await childDoc.set(childJson);
 
-      // 2. Update User Document in Firestore with location JSON
+      // 2. Update User Document — arrayUnion so existing shared children stay linked
       final Map<String, dynamic> userUpdate = <String, dynamic>{
         'parent_name': state.parentName.trim(),
         'relationship_to_child': state.parentRole,
         'preferred_language': state.preferredLanguage,
         'location': resolvedLoc?.toJson() ?? state.location,
         if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
-        'child_name': state.childName.trim(),
-        'child_age': computedChildAge,
-        'children': <DocumentReference>[childDoc],
-        'default_child': childDoc,
+        'children': FieldValue.arrayUnion(<DocumentReference>[childDoc]),
         'is_onboarding_completed': true,
       };
+      if (FamilyMembershipHelpers.shouldSetDefaultChildOnOnboarding(
+        hasExistingDefaultChild: user.defaultChild != null,
+      )) {
+        userUpdate['default_child'] = childDoc;
+      }
 
       await AuthRepo.instance.updateUserToFireStore(
         uId: user.uid,

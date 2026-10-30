@@ -241,5 +241,44 @@ void main() {
         await cubit.close();
       },
     );
+
+    test('History retention keeps 10-day and drops 91-day conversations', () {
+      final DateTime now = DateTime(2026, 10, 30);
+      expect(
+        BrainyHistoryCubit.isWithinRetention(DateTime(2026, 10, 20), now),
+        isTrue,
+      );
+      expect(
+        BrainyHistoryCubit.isWithinRetention(DateTime(2026, 7, 31), now),
+        isFalse,
+      );
+    });
+
+    test('Saved subtitle uses real weeks after day 7', () {
+      final DateTime now = DateTime(2026, 10, 30);
+      expect(
+        BrainySavedGuidanceCubit.formatSavedSubtitleForTesting(
+          DateTime(2026, 10, 20),
+          now,
+        ),
+        'Saved 1 week ago',
+      );
+      expect(
+        BrainySavedGuidanceCubit.formatSavedSubtitleForTesting(
+          DateTime(2026, 10, 9),
+          now,
+        ),
+        'Saved 3 weeks ago',
+      );
+    });
+
+    test('System prompt labels general guidance when no personal data', () {
+      final String prompt = BrainAiSystemPrompt.build(
+        childModel: null,
+        parentName: 'Alex',
+        hasPersonalData: false,
+      );
+      expect(prompt, contains('not based on the child\'s own pattern yet'));
+    });
   });
 }

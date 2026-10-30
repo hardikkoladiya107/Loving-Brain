@@ -10,6 +10,8 @@ import 'brainy_history_state.dart';
 class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
   BrainyHistoryCubit() : super(const BrainyHistoryState());
 
+  static const int retentionDays = 90;
+
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
   _conversationSubscription;
 
@@ -33,7 +35,19 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
 
   void init() {
     emit(const BrainyHistoryState());
+    _listen();
+  }
 
+  void retry() {
+    changeProps(
+      thisWeekHistory: const <BrainyHistoryItem>[],
+      earlierHistory: const <BrainyHistoryItem>[],
+      hasLoadError: false,
+    );
+    _listen();
+  }
+
+  void _listen() {
     final String uid = preferences.getUserModel()?.uid ?? '';
     if (uid.isEmpty) return;
 
@@ -49,12 +63,14 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
               changeProps(
                 thisWeekHistory: const <BrainyHistoryItem>[],
                 earlierHistory: const <BrainyHistoryItem>[],
+                hasLoadError: false,
               );
               return;
             }
 
             final DateTime now = DateTime.now();
-            final List<(DateTime, BrainyHistoryItem)> parsed = [];
+            final List<(DateTime, BrainyHistoryItem)> parsed =
+                <(DateTime, BrainyHistoryItem)>[];
 
             for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
                 in snapshot.docs) {
@@ -78,6 +94,10 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
                 }
               }
 
+              if (now.difference(createdAt).inDays > retentionDays) {
+                continue;
+              }
+
               parsed.add((
                 createdAt,
                 BrainyHistoryItem(
@@ -96,8 +116,8 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
               ) => b.$1.compareTo(a.$1),
             );
 
-            final List<BrainyHistoryItem> thisWeek = [];
-            final List<BrainyHistoryItem> earlier = [];
+            final List<BrainyHistoryItem> thisWeek = <BrainyHistoryItem>[];
+            final List<BrainyHistoryItem> earlier = <BrainyHistoryItem>[];
 
             for (final (DateTime, BrainyHistoryItem) entry in parsed) {
               final int diffDays = now.difference(entry.$1).inDays;
@@ -108,26 +128,37 @@ class BrainyHistoryCubit extends Cubit<BrainyHistoryState> {
               }
             }
 
-            changeProps(thisWeekHistory: thisWeek, earlierHistory: earlier);
+            changeProps(
+              thisWeekHistory: thisWeek,
+              earlierHistory: earlier,
+              hasLoadError: false,
+            );
           },
           onError: (_) {
-            _conversationSubscription?.cancel();
-            _conversationSubscription = null;
+            if (isClosed) return;
+            changeProps(hasLoadError: true);
           },
-          cancelOnError: true,
+          cancelOnError: false,
         );
   }
 
   void changeProps({
     List<BrainyHistoryItem>? thisWeekHistory,
     List<BrainyHistoryItem>? earlierHistory,
+    bool? hasLoadError,
   }) {
     emit(
       state.copyWith(
         thisWeekHistory: thisWeekHistory ?? state.thisWeekHistory,
         earlierHistory: earlierHistory ?? state.earlierHistory,
+        hasLoadError: hasLoadError ?? state.hasLoadError,
       ),
     );
+  }
+
+  /// Exposed for unit tests — same cutoff used by history listing.
+  static bool isWithinRetention(DateTime createdAt, DateTime now) {
+    return now.difference(createdAt).inDays <= retentionDays;
   }
 
   String _formatRelativeDate(DateTime date, DateTime now) {

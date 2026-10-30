@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/model/child_model.dart';
-import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/repo/co_parent_repo.dart';
 
 import 'permissions_state.dart';
 
@@ -235,13 +235,12 @@ class PermissionsCubit extends Cubit<PermissionsState> {
             .collection('children')
             .doc(childId)
             .collection('caregiver_permissions');
-        if (email.isNotEmpty) {
-          await col.doc(email).set(pMap, SetOptions(merge: true));
-        }
-        if (_caregiverId != null &&
-            _caregiverId!.isNotEmpty &&
-            _caregiverId != email) {
-          await col.doc(_caregiverId!).set(pMap, SetOptions(merge: true));
+        final String permDocId =
+            (_caregiverId != null && _caregiverId!.isNotEmpty)
+            ? _caregiverId!
+            : email;
+        if (permDocId.isNotEmpty) {
+          await col.doc(permDocId).set(pMap, SetOptions(merge: true));
         }
       } catch (_) {}
     }
@@ -308,74 +307,55 @@ class PermissionsCubit extends Cubit<PermissionsState> {
       }
     }
 
-    if (childId.isNotEmpty) {
-      try {
-        final CollectionReference<Map<String, dynamic>> col = FirebaseFirestore
-            .instance
-            .collection('children')
-            .doc(childId)
-            .collection('caregiver_permissions');
-        if (email.isNotEmpty) {
-          await col.doc(email).delete();
-        }
-        if (_caregiverId != null && _caregiverId!.isNotEmpty) {
-          await col.doc(_caregiverId!).delete();
-        }
-      } catch (_) {}
-
-      // Remove co-parent from child parent_reference_ids so they cannot access child records
-      if (partnerId.isNotEmpty) {
-        try {
-          await FirebaseFirestore.instance
-              .collection('children')
-              .doc(childId)
-              .update(<String, dynamic>{
-                'parent_reference_ids': FieldValue.arrayRemove(<dynamic>[
-                  partnerId,
-                ]),
-              });
-        } catch (_) {}
-      }
-    }
-
-    // Update local child model in preferences
-    if (child != null && child.parentReferenceIds != null) {
-      final List<String> updatedParents = List<String>.from(
-        child.parentReferenceIds!,
-      )..remove(partnerId);
-      final ChildModel updatedChild = child.copyWith(
-        parentReferenceIds: updatedParents,
+    if (childId.isEmpty || partnerId.isEmpty) {
+      changeProps(
+        isSaving: false,
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Missing caregiver or child.'),
+        ),
       );
-      await preferences.saveChildModel(updatedChild);
-      await preferences.saveDefaultChildModel(updatedChild);
+      return false;
     }
 
-    final UserModel? user = preferences.getUserModel();
-    if (user != null && user.uid != null) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update(<String, dynamic>{'partner_user_id': FieldValue.delete()});
-        if (partnerId.isNotEmpty) {
-          try {
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(partnerId)
-                .update(<String, dynamic>{
-                  'partner_user_id': FieldValue.delete(),
-                });
-          } catch (_) {}
-        }
-      } catch (_) {}
-      final UserModel updatedUser = user.copyWith(clearPartnerUserId: true);
-      await preferences.saveUserModel(updatedUser);
-    }
+    try {
+      final ApiResultStatus result = await CoParentRepo.instance
+          .revokeCaregiver(childId: childId, targetUid: partnerId);
+      bool ok = false;
+      result.whenOrNull(
+        data: (_) => ok = true,
+        error: (Exception err) {
+          changeProps(
+            isSaving: false,
+            saveStatus: ApiResultStatus.error(error: err),
+          );
+        },
+      );
+      if (!ok) return false;
 
-    changeProps(
-      isSaving: false,
-      saveStatus: const ApiResultStatus.data(data: 'access_revoked'),
-    );
-    return true;
+      if (child != null && child.parentReferenceIds != null) {
+        final List<String> updatedParents = List<String>.from(
+          child.parentReferenceIds!,
+        )..remove(partnerId);
+        final ChildModel updatedChild = child.copyWith(
+          parentReferenceIds: updatedParents,
+        );
+        await preferences.saveChildModel(updatedChild);
+        await preferences.saveDefaultChildModel(updatedChild);
+      }
+
+      changeProps(
+        isSaving: false,
+        saveStatus: const ApiResultStatus.data(data: 'access_revoked'),
+      );
+      return true;
+    } catch (e) {
+      changeProps(
+        isSaving: false,
+        saveStatus: ApiResultStatus.error(
+          error: e is Exception ? e : Exception(e.toString()),
+        ),
+      );
+      return false;
+    }
   }
 }

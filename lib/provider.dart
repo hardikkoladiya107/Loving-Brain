@@ -31,6 +31,7 @@ import 'package:loving_brain/ui/help_safety/bloc/help_safety_cubit.dart';
 import 'package:loving_brain/ui/invite_accepted/bloc/invite_accepted_cubit.dart';
 import 'package:loving_brain/ui/invite_caregiver/bloc/invite_caregiver_cubit.dart';
 import 'package:loving_brain/ui/invite_pending/bloc/invite_pending_cubit.dart';
+import 'package:loving_brain/ui/invite_respond/bloc/invite_respond_cubit.dart';
 import 'package:loving_brain/ui/journey/bloc/journey_cubit.dart';
 import 'package:loving_brain/ui/mentorship_landing/bloc/mentorship_landing_cubit.dart';
 import 'package:loving_brain/ui/mentorship_unavailable/bloc/mentorship_unavailable_cubit.dart';
@@ -143,6 +144,9 @@ final List<SingleChildWidget> blocProvider = <SingleChildWidget>[
   ),
   BlocProvider<InvitePendingCubit>(
     create: (BuildContext context) => InvitePendingCubit(),
+  ),
+  BlocProvider<InviteRespondCubit>(
+    create: (BuildContext context) => InviteRespondCubit(),
   ),
   BlocProvider<JourneyCubit>(create: (BuildContext context) => JourneyCubit()),
   BlocProvider<LoginCubit>(create: (BuildContext context) => LoginCubit()),

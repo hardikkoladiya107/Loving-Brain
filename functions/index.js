@@ -24,7 +24,25 @@ const {
   sendEmailOtp,
   verifyEmailOtp,
   sendInvitationEmail,
+  resolveAuthIdentity,
 } = require("./controllers/authController");
+const {
+  brainyChat,
+  transcribeAudio,
+  purgeExpiredBrainyConversations,
+} = require("./controllers/brainyController");
+const {
+  createCoParentInvitation,
+  getInvitationPreview,
+  acceptInvitation,
+  rejectInvitation,
+  cancelInvitation,
+  revokeCaregiver,
+  leaveChild,
+  removeChild,
+  deleteMyAccount,
+  resendInvitationEmail,
+} = require("./controllers/familyController");
 
 exports.sendScheduledNotification = sendScheduledNotification;
 exports.sendNotificationToAll = sendNotificationToAll;
@@ -37,4 +55,18 @@ exports.onUserDelete = onUserDelete;
 exports.sendEmailOtp = sendEmailOtp;
 exports.verifyEmailOtp = verifyEmailOtp;
 exports.sendInvitationEmail = sendInvitationEmail;
+exports.resolveAuthIdentity = resolveAuthIdentity;
+exports.brainyChat = brainyChat;
+exports.transcribeAudio = transcribeAudio;
+exports.purgeExpiredBrainyConversations = purgeExpiredBrainyConversations;
+exports.createCoParentInvitation = createCoParentInvitation;
+exports.getInvitationPreview = getInvitationPreview;
+exports.acceptInvitation = acceptInvitation;
+exports.rejectInvitation = rejectInvitation;
+exports.cancelInvitation = cancelInvitation;
+exports.revokeCaregiver = revokeCaregiver;
+exports.leaveChild = leaveChild;
+exports.removeChild = removeChild;
+exports.deleteMyAccount = deleteMyAccount;
+exports.resendInvitationEmail = resendInvitationEmail;
 

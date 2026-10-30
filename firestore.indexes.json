@@ -7,6 +7,30 @@
         { "fieldPath": "child_id", "order": "ASCENDING" },
         { "fieldPath": "timestamp", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "co-parent-invitation",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "to_uid", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "co-parent-invitation",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "from_uid", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "co-parent-invitation",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "to_parent", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

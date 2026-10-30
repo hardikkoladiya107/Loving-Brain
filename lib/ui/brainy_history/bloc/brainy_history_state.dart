@@ -21,5 +21,6 @@ abstract class BrainyHistoryState with _$BrainyHistoryState {
   const factory BrainyHistoryState({
     @Default([]) List<BrainyHistoryItem> thisWeekHistory,
     @Default([]) List<BrainyHistoryItem> earlierHistory,
+    @Default(false) bool hasLoadError,
   }) = _BrainyHistoryState;
 }

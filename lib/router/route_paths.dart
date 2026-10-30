@@ -44,6 +44,7 @@ class RoutePaths {
   static const String brainyHistory = '/brainy-history';
   static const String brainySaved = '/brainy-saved';
   static const String helpSafety = '/help-safety';
+  static const String safetyConcern = '/safety-concern';
   static const String behaviourPattern = '/behaviour-pattern';
   static const String calmHeadsUp = '/calm-heads-up';
   static const String afterReflection = '/after-reflection';
@@ -63,6 +64,7 @@ class RoutePaths {
   static const String inviteCaregiver = '/invite-caregiver';
   static const String invitePending = '/invite-pending';
   static const String inviteAccepted = '/invite-accepted';
+  static const String inviteRespond = '/invite-respond';
   static const String familySharingConsent = '/family-sharing-consent';
   static const String sharedChildSummary = '/shared-child-summary';
   static const String harderWeek = '/harder-week';

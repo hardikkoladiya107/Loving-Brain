@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BrainyHistoryState {
 
- List<BrainyHistoryItem> get thisWeekHistory; List<BrainyHistoryItem> get earlierHistory;
+ List<BrainyHistoryItem> get thisWeekHistory; List<BrainyHistoryItem> get earlierHistory; bool get hasLoadError;
 /// Create a copy of BrainyHistoryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $BrainyHistoryStateCopyWith<BrainyHistoryState> get copyWith => _$BrainyHistoryS
 @override
 bool operator ==(Object other) {
   final _this = this as BrainyHistoryState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BrainyHistoryState&&const DeepCollectionEquality().equals(other.thisWeekHistory, _this.thisWeekHistory)&&const DeepCollectionEquality().equals(other.earlierHistory, _this.earlierHistory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BrainyHistoryState&&const DeepCollectionEquality().equals(other.thisWeekHistory, _this.thisWeekHistory)&&const DeepCollectionEquality().equals(other.earlierHistory, _this.earlierHistory)&&(identical(other.hasLoadError, _this.hasLoadError) || other.hasLoadError == _this.hasLoadError));
 }
 
 
 @override
 int get hashCode {
   final _this = this as BrainyHistoryState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.thisWeekHistory),const DeepCollectionEquality().hash(_this.earlierHistory));
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.thisWeekHistory),const DeepCollectionEquality().hash(_this.earlierHistory),_this.hasLoadError);
 }
 
 @override
 String toString() {
   final _this = this as BrainyHistoryState;
-  return 'BrainyHistoryState(thisWeekHistory: ${_this.thisWeekHistory}, earlierHistory: ${_this.earlierHistory})';
+  return 'BrainyHistoryState(thisWeekHistory: ${_this.thisWeekHistory}, earlierHistory: ${_this.earlierHistory}, hasLoadError: ${_this.hasLoadError})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $BrainyHistoryStateCopyWith<$Res>  {
   factory $BrainyHistoryStateCopyWith(BrainyHistoryState value, $Res Function(BrainyHistoryState) _then) = _$BrainyHistoryStateCopyWithImpl;
 @useResult
 $Res call({
- List<BrainyHistoryItem> thisWeekHistory, List<BrainyHistoryItem> earlierHistory
+ List<BrainyHistoryItem> thisWeekHistory, List<BrainyHistoryItem> earlierHistory, bool hasLoadError
 });
 
 
@@ -68,11 +68,12 @@ class _$BrainyHistoryStateCopyWithImpl<$Res>
 
 /// Create a copy of BrainyHistoryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? thisWeekHistory = null,Object? earlierHistory = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? thisWeekHistory = null,Object? earlierHistory = null,Object? hasLoadError = null,}) {
   return _then(BrainyHistoryState(
 thisWeekHistory: null == thisWeekHistory ? _self.thisWeekHistory : thisWeekHistory // ignore: cast_nullable_to_non_nullable
 as List<BrainyHistoryItem>,earlierHistory: null == earlierHistory ? _self.earlierHistory : earlierHistory // ignore: cast_nullable_to_non_nullable
-as List<BrainyHistoryItem>,
+as List<BrainyHistoryItem>,hasLoadError: null == hasLoadError ? _self.hasLoadError : hasLoadError // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -157,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BrainyHistoryItem> thisWeekHistory,  List<BrainyHistoryItem> earlierHistory)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BrainyHistoryItem> thisWeekHistory,  List<BrainyHistoryItem> earlierHistory,  bool hasLoadError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BrainyHistoryState() when $default != null:
-return $default(_that.thisWeekHistory,_that.earlierHistory);case _:
+return $default(_that.thisWeekHistory,_that.earlierHistory,_that.hasLoadError);case _:
   return orElse();
 
 }
@@ -178,10 +179,10 @@ return $default(_that.thisWeekHistory,_that.earlierHistory);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BrainyHistoryItem> thisWeekHistory,  List<BrainyHistoryItem> earlierHistory)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BrainyHistoryItem> thisWeekHistory,  List<BrainyHistoryItem> earlierHistory,  bool hasLoadError)  $default,) {final _that = this;
 switch (_that) {
 case _BrainyHistoryState():
-return $default(_that.thisWeekHistory,_that.earlierHistory);case _:
+return $default(_that.thisWeekHistory,_that.earlierHistory,_that.hasLoadError);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -198,10 +199,10 @@ return $default(_that.thisWeekHistory,_that.earlierHistory);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BrainyHistoryItem> thisWeekHistory,  List<BrainyHistoryItem> earlierHistory)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BrainyHistoryItem> thisWeekHistory,  List<BrainyHistoryItem> earlierHistory,  bool hasLoadError)?  $default,) {final _that = this;
 switch (_that) {
 case _BrainyHistoryState() when $default != null:
-return $default(_that.thisWeekHistory,_that.earlierHistory);case _:
+return $default(_that.thisWeekHistory,_that.earlierHistory,_that.hasLoadError);case _:
   return null;
 
 }
@@ -213,7 +214,7 @@ return $default(_that.thisWeekHistory,_that.earlierHistory);case _:
 
 
 class _BrainyHistoryState implements BrainyHistoryState {
-  const _BrainyHistoryState({ List<BrainyHistoryItem> thisWeekHistory = const [],  List<BrainyHistoryItem> earlierHistory = const []}): _thisWeekHistory = thisWeekHistory,_earlierHistory = earlierHistory;
+  const _BrainyHistoryState({ List<BrainyHistoryItem> thisWeekHistory = const [],  List<BrainyHistoryItem> earlierHistory = const [], this.hasLoadError = false}): _thisWeekHistory = thisWeekHistory,_earlierHistory = earlierHistory;
   
 
  final  List<BrainyHistoryItem> _thisWeekHistory;
@@ -230,6 +231,7 @@ class _BrainyHistoryState implements BrainyHistoryState {
   return EqualUnmodifiableListView(_earlierHistory);
 }
 
+@override@JsonKey() final  bool hasLoadError;
 
 /// Create a copy of BrainyHistoryState
 /// with the given fields replaced by the non-null parameter values.
@@ -241,18 +243,18 @@ _$BrainyHistoryStateCopyWith<_BrainyHistoryState> get copyWith => __$BrainyHisto
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BrainyHistoryState&&const DeepCollectionEquality().equals(other.thisWeekHistory, _thisWeekHistory)&&const DeepCollectionEquality().equals(other.earlierHistory, _earlierHistory));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BrainyHistoryState&&const DeepCollectionEquality().equals(other.thisWeekHistory, _thisWeekHistory)&&const DeepCollectionEquality().equals(other.earlierHistory, _earlierHistory)&&(identical(other.hasLoadError, hasLoadError) || other.hasLoadError == hasLoadError));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_thisWeekHistory),const DeepCollectionEquality().hash(_earlierHistory));
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_thisWeekHistory),const DeepCollectionEquality().hash(_earlierHistory),hasLoadError);
 }
 
 @override
 String toString() {
-    return 'BrainyHistoryState(thisWeekHistory: $thisWeekHistory, earlierHistory: $earlierHistory)';
+    return 'BrainyHistoryState(thisWeekHistory: $thisWeekHistory, earlierHistory: $earlierHistory, hasLoadError: $hasLoadError)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$BrainyHistoryStateCopyWith<$Res> implements $BrainyHistor
   factory _$BrainyHistoryStateCopyWith(_BrainyHistoryState value, $Res Function(_BrainyHistoryState) _then) = __$BrainyHistoryStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<BrainyHistoryItem> thisWeekHistory, List<BrainyHistoryItem> earlierHistory
+ List<BrainyHistoryItem> thisWeekHistory, List<BrainyHistoryItem> earlierHistory, bool hasLoadError
 });
 
 
@@ -280,11 +282,12 @@ class __$BrainyHistoryStateCopyWithImpl<$Res>
 
 /// Create a copy of BrainyHistoryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? thisWeekHistory = null,Object? earlierHistory = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? thisWeekHistory = null,Object? earlierHistory = null,Object? hasLoadError = null,}) {
   return _then(_BrainyHistoryState(
 thisWeekHistory: null == thisWeekHistory ? _self._thisWeekHistory : thisWeekHistory // ignore: cast_nullable_to_non_nullable
 as List<BrainyHistoryItem>,earlierHistory: null == earlierHistory ? _self._earlierHistory : earlierHistory // ignore: cast_nullable_to_non_nullable
-as List<BrainyHistoryItem>,
+as List<BrainyHistoryItem>,hasLoadError: null == hasLoadError ? _self.hasLoadError : hasLoadError // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

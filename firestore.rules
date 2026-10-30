@@ -5,14 +5,73 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isSelf(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function childDoc(childId) {
+      return get(/databases/$(database)/documents/children/$(childId)).data;
+    }
+
     function isLinkedParent(childId) {
       return isSignedIn() &&
-        request.auth.uid in get(/databases/$(database)/documents/children/$(childId)).data.parent_reference_ids;
+        request.auth.uid in childDoc(childId).parent_reference_ids;
+    }
+
+    function primaryParentUid(childId) {
+      return childDoc(childId).keys().hasAny(['primary_parent_uid']) &&
+        childDoc(childId).primary_parent_uid is string &&
+        childDoc(childId).primary_parent_uid.size() > 0
+          ? childDoc(childId).primary_parent_uid
+          : childDoc(childId).parent_reference_ids[0];
+    }
+
+    function isPrimaryParent(childId) {
+      return isSignedIn() && request.auth.uid == primaryParentUid(childId);
+    }
+
+    function caregiverPermDoc(childId) {
+      return get(/databases/$(database)/documents/children/$(childId)/caregiver_permissions/$(request.auth.uid)).data;
+    }
+
+    function hasCaregiverPerm(childId) {
+      return exists(/databases/$(database)/documents/children/$(childId)/caregiver_permissions/$(request.auth.uid));
+    }
+
+    function canViewSleep(childId) {
+      return isPrimaryParent(childId) ||
+        (isLinkedParent(childId) &&
+          (!hasCaregiverPerm(childId) || caregiverPermDoc(childId).can_view_sleep == true));
+    }
+
+    function canViewBehaviour(childId) {
+      return isPrimaryParent(childId) ||
+        (isLinkedParent(childId) &&
+          (!hasCaregiverPerm(childId) || caregiverPermDoc(childId).can_view_behaviour == true));
+    }
+
+    function canViewHealth(childId) {
+      return isPrimaryParent(childId) ||
+        (isLinkedParent(childId) &&
+          hasCaregiverPerm(childId) &&
+          caregiverPermDoc(childId).can_view_health_notes == true);
+    }
+
+    function canViewPlans(childId) {
+      return isPrimaryParent(childId) ||
+        (isLinkedParent(childId) &&
+          (!hasCaregiverPerm(childId) || caregiverPermDoc(childId).can_view_plans == true));
     }
 
     function isAdmin() {
       return isSignedIn() &&
         exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isLinkedUserDoc(userId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(userId)) &&
+        request.auth.uid in get(/databases/$(database)/documents/users/$(userId)).data.get('linked_user_ids', []);
     }
 
     // Energy Bridge: only linked parents can read and update/delete
@@ -23,38 +82,82 @@ service cloud.firestore {
       allow delete: if isLinkedParent(childId);
     }
 
-    // OTP codes: permanently locked from all client SDKs (Cloud Functions use Admin SDK)
+    // OTP codes: permanently locked from all client SDKs
     match /otps/{email} {
       allow read, write: if false;
     }
 
-    // Co-parent invitations: allow single get for invite links without login; list/write requires auth
+    // Co-parent invitations: clients may read their own; writes via Admin SDK callables
     match /co-parent-invitation/{invitationId} {
-      allow get: if true;
-      allow list, write: if isSignedIn();
+      allow read: if isSignedIn() &&
+        (resource.data.from_uid == request.auth.uid ||
+         resource.data.to_uid == request.auth.uid);
+      allow write: if false;
     }
 
     // User profiles & user subcollections
     match /users/{userId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn() && request.auth.uid == userId;
-      allow update: if isSignedIn() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['partner_user_id', 'is_active_logger']);
+      allow read: if isSelf(userId) || isLinkedUserDoc(userId);
+      allow create: if isSelf(userId);
+      allow update: if isSelf(userId);
+      allow delete: if isSelf(userId);
+
+      match /notifications/{notificationId} {
+        allow read, update: if isSelf(userId);
+        allow create, delete: if false;
+      }
+
       match /{allChildren=**} {
-        allow read, write: if isSignedIn() && request.auth.uid == userId;
+        allow read, write: if isSelf(userId);
       }
     }
 
-    // Children & child subcollections (sleep_logs, behaviours, experiments, events)
-    // Only linked parents can read and modify child records (Doc 01 & Doc 06 §7)
+    // Children & child subcollections
     match /children/{childId} {
       allow read: if isLinkedParent(childId);
-      allow create: if isSignedIn();
-      allow update: if isLinkedParent(childId) ||
-        (isSignedIn() &&
-         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['parent_reference_ids']) &&
-         request.auth.uid in request.resource.data.parent_reference_ids);
-      allow delete: if isLinkedParent(childId);
+
+      allow create: if isSignedIn() &&
+        request.resource.data.primary_parent_uid == request.auth.uid &&
+        request.resource.data.parent_reference_ids is list &&
+        request.resource.data.parent_reference_ids.size() == 1 &&
+        request.auth.uid in request.resource.data.parent_reference_ids;
+
+      allow update: if isLinkedParent(childId) &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['parent_reference_ids', 'primary_parent_uid']);
+
+      allow delete: if isPrimaryParent(childId);
+
+      match /caregiver_permissions/{permId} {
+        allow read: if isLinkedParent(childId);
+        allow write: if isPrimaryParent(childId);
+      }
+
+      match /sleep_logs/{docId} {
+        allow read: if canViewSleep(childId);
+        allow write: if isLinkedParent(childId) && canViewSleep(childId);
+      }
+
+      match /behaviours/{docId} {
+        allow read: if canViewBehaviour(childId);
+        allow write: if isLinkedParent(childId) && canViewBehaviour(childId);
+      }
+
+      match /tantrum_logs/{docId} {
+        allow read: if canViewBehaviour(childId);
+        allow write: if isLinkedParent(childId) && canViewBehaviour(childId);
+      }
+
+      match /health_logs/{docId} {
+        allow read: if canViewHealth(childId);
+        allow write: if isLinkedParent(childId) && canViewHealth(childId);
+      }
+
+      match /experiments/{docId} {
+        allow read: if canViewPlans(childId);
+        allow write: if isLinkedParent(childId) && canViewPlans(childId);
+      }
+
       match /{allChildren=**} {
         allow read, write: if isLinkedParent(childId);
       }
@@ -62,21 +165,28 @@ service cloud.firestore {
 
     // Shared family events
     match /shared_event/{id} {
-      allow read, write: if isSignedIn() &&
-        (resource == null || 
-         resource.data.userId == request.auth.uid || 
+      allow read: if isSignedIn() &&
+        (resource.data.userId == request.auth.uid ||
+         resource.data.created_by == request.auth.uid ||
+         (resource.data.childId != null && isLinkedParent(resource.data.childId)) ||
+         (resource.data.child_id != null && isLinkedParent(resource.data.child_id)));
+      allow create: if isSignedIn() &&
+        (request.resource.data.child_id == null ||
+         isLinkedParent(request.resource.data.child_id) ||
+         request.resource.data.childId == null ||
+         isLinkedParent(request.resource.data.childId));
+      allow update, delete: if isSignedIn() &&
+        (resource.data.userId == request.auth.uid ||
          resource.data.created_by == request.auth.uid ||
          (resource.data.childId != null && isLinkedParent(resource.data.childId)) ||
          (resource.data.child_id != null && isLinkedParent(resource.data.child_id)));
     }
 
-    // Behaviour category definitions
     match /behaviours/{id} {
       allow read: if isSignedIn();
       allow write: if false;
     }
 
-    // Static parenting content (read-only)
     match /dailyParentingTips/{id} {
       allow read: if true;
       allow write: if false;
@@ -87,59 +197,56 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Mentorship & milestones
     match /milestones/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || 
-         resource.data.userId == request.auth.uid || 
+        (resource == null ||
+         resource.data.userId == request.auth.uid ||
          (resource.data.childId != null && isLinkedParent(resource.data.childId)));
       match /{allChildren=**} {
         allow read, write: if isSignedIn() &&
-          (resource == null || 
-           resource.data.userId == request.auth.uid || 
+          (resource == null ||
+           resource.data.userId == request.auth.uid ||
            (resource.data.childId != null && isLinkedParent(resource.data.childId)));
       }
     }
 
     match /mentorship_requests/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || 
-         resource.data.userId == request.auth.uid || 
-         resource.data.parent_id == request.auth.uid || 
+        (resource == null ||
+         resource.data.userId == request.auth.uid ||
+         resource.data.parent_id == request.auth.uid ||
          request.resource.data.userId == request.auth.uid ||
          request.resource.data.parent_id == request.auth.uid);
     }
 
     match /mentorship_waitlist/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || 
-         resource.data.userId == request.auth.uid || 
-         resource.data.user_id == request.auth.uid || 
+        (resource == null ||
+         resource.data.userId == request.auth.uid ||
+         resource.data.user_id == request.auth.uid ||
          request.resource.data.userId == request.auth.uid ||
          request.resource.data.user_id == request.auth.uid);
     }
 
     match /enrolled_programs/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || 
-         resource.data.userId == request.auth.uid || 
+        (resource == null ||
+         resource.data.userId == request.auth.uid ||
          (resource.data.childId != null && isLinkedParent(resource.data.childId)));
     }
 
     match /post_session_plans/{id} {
       allow read, write: if isSignedIn() &&
-        (resource == null || 
-         resource.data.userId == request.auth.uid || 
+        (resource == null ||
+         resource.data.userId == request.auth.uid ||
          (resource.data.childId != null && isLinkedParent(resource.data.childId)));
     }
 
-    // Admin marker docs — created in Firebase Console; clients cannot write
     match /admins/{adminId} {
       allow read: if isSignedIn() && request.auth.uid == adminId;
       allow write: if false;
     }
 
-    // Guide profiles catalogue — parents read; admins write
     match /guides/{guideId} {
       allow read: if isSignedIn();
       allow create, update, delete: if isAdmin();

@@ -35,6 +35,7 @@ class UserModel {
     String? profileImage,
     bool? isActiveLogger,
     String? partnerUserId,
+    List<String>? linkedUserIds,
     String? preferredLanguage,
     String? location,
     LocationDataModel? locationData,
@@ -71,6 +72,7 @@ class UserModel {
     _profileImage = profileImage;
     _isActiveLogger = isActiveLogger;
     _partnerUserId = partnerUserId;
+    _linkedUserIds = linkedUserIds;
     _preferredLanguage = preferredLanguage;
     _locationData = locationData ?? LocationDataModel.tryParse(location);
     _location = location ?? _locationData?.formatted;
@@ -105,6 +107,13 @@ class UserModel {
     _profileImage = jsonObject['profile_image'];
     _isActiveLogger = jsonObject['is_active_logger'] as bool?;
     _partnerUserId = jsonObject['partner_user_id'] as String?;
+    final dynamic rawLinked = jsonObject['linked_user_ids'];
+    if (rawLinked is List) {
+      _linkedUserIds = rawLinked
+          .map((dynamic e) => e?.toString() ?? '')
+          .where((String s) => s.isNotEmpty)
+          .toList();
+    }
     _preferredLanguage = jsonObject['preferred_language']?.toString();
     final dynamic rawLocation =
         jsonObject['location_data'] ?? jsonObject['location'];
@@ -287,6 +296,7 @@ class UserModel {
   String? _profileImage;
   bool? _isActiveLogger;
   String? _partnerUserId;
+  List<String>? _linkedUserIds;
   String? _preferredLanguage;
   String? _location;
   LocationDataModel? _locationData;
@@ -327,6 +337,7 @@ class UserModel {
     String? partnerUserId,
     bool clearPartnerUserId = false,
     bool clearDefaultChild = false,
+    List<String>? linkedUserIds,
     String? preferredLanguage,
     String? location,
     LocationDataModel? locationData,
@@ -366,6 +377,7 @@ class UserModel {
       partnerUserId: clearPartnerUserId
           ? null
           : (partnerUserId ?? _partnerUserId),
+      linkedUserIds: linkedUserIds ?? _linkedUserIds,
       preferredLanguage: preferredLanguage ?? _preferredLanguage,
       location: location ?? _location,
       locationData: locationData ?? _locationData,
@@ -454,6 +466,7 @@ class UserModel {
   bool get isActiveLogger => _isActiveLogger ?? true;
 
   String? get partnerUserId => _partnerUserId;
+  List<String>? get linkedUserIds => _linkedUserIds;
   String? get preferredLanguage => _preferredLanguage;
   String? get location => _location ?? _locationData?.formatted;
   LocationDataModel? get locationData => _locationData;
@@ -504,6 +517,7 @@ class UserModel {
     map['profile_image'] = _profileImage;
     map['is_active_logger'] = _isActiveLogger;
     map['partner_user_id'] = _partnerUserId;
+    map['linked_user_ids'] = _linkedUserIds;
     map['preferred_language'] = _preferredLanguage;
     final LocationDataModel? resolvedLoc =
         _locationData ?? LocationDataModel.tryParse(_location);

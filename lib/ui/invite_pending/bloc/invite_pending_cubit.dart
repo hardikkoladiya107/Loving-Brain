@@ -6,7 +6,6 @@ import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'invite_pending_state.dart';
 
 /// Cubit managing Invite Pending (Screen 56).
-/// Conforms to AGENTS.md Rule 4.2.
 class InvitePendingCubit extends Cubit<InvitePendingState> {
   InvitePendingCubit() : super(const InvitePendingState());
 
@@ -65,49 +64,71 @@ class InvitePendingCubit extends Cubit<InvitePendingState> {
       actionStatus: const ApiResultStatus.loading(),
     );
 
-    final String recipient = state.recipientEmail.trim();
     final String invId = state.invitationId.trim();
-
-    if (recipient.isNotEmpty && invId.isNotEmpty) {
-      final String fromParentName =
-          (preferences.getUserModel()?.parentName?.trim().isNotEmpty == true)
-          ? preferences.getUserModel()!.parentName!.trim()
-          : ((preferences.getUserModel()?.displayName?.trim().isNotEmpty ==
-                    true)
-                ? preferences.getUserModel()!.displayName!.trim()
-                : 'Your co-parent');
-
-      await CoParentRepo.instance.sendInvitationEmail(
-        toEmail: recipient,
-        fromParentName: fromParentName,
-        childrenNames: state.childName.isNotEmpty
-            ? state.childName
-            : 'your child',
-        invitationId: invId,
+    if (invId.isEmpty) {
+      changeProps(
+        isResending: false,
+        actionStatus: ApiResultStatus.error(
+          error: Exception('Missing invitation id'),
+        ),
       );
-    } else {
-      await Future.delayed(const Duration(milliseconds: 300));
+      return;
     }
 
-    changeProps(
-      isResending: false,
-      daysUntilExpiry: 14,
-      actionStatus: const ApiResultStatus.data(data: 'invite_resent'),
+    final ApiResultStatus result = await CoParentRepo.instance
+        .sendInvitationEmail(
+          toEmail: state.recipientEmail.trim(),
+          fromParentName: preferences.getUserModel()?.parentName ?? 'Parent',
+          childrenNames: state.childName.isNotEmpty
+              ? state.childName
+              : 'your child',
+          invitationId: invId,
+        );
+
+    result.whenOrNull(
+      data: (_) {
+        changeProps(
+          isResending: false,
+          daysUntilExpiry: 14,
+          actionStatus: const ApiResultStatus.data(data: 'invite_resent'),
+        );
+      },
+      error: (Exception err) {
+        changeProps(
+          isResending: false,
+          actionStatus: ApiResultStatus.error(error: err),
+        );
+      },
     );
   }
 
   Future<void> cancelInvite() async {
     changeProps(actionStatus: const ApiResultStatus.loading());
 
-    if (state.invitationId.trim().isNotEmpty) {
-      await CoParentRepo.instance.cancelInvitation(
-        invitationId: state.invitationId.trim(),
+    final String invId = state.invitationId.trim();
+    if (invId.isEmpty) {
+      changeProps(
+        actionStatus: ApiResultStatus.error(
+          error: Exception('Missing invitation id'),
+        ),
       );
+      return;
     }
 
-    changeProps(
-      isCancelled: true,
-      actionStatus: const ApiResultStatus.data(data: 'invite_cancelled'),
+    final ApiResultStatus result = await CoParentRepo.instance.cancelInvitation(
+      invitationId: invId,
+    );
+
+    result.whenOrNull(
+      data: (_) {
+        changeProps(
+          isCancelled: true,
+          actionStatus: const ApiResultStatus.data(data: 'invite_cancelled'),
+        );
+      },
+      error: (Exception err) {
+        changeProps(actionStatus: ApiResultStatus.error(error: err));
+      },
     );
   }
 }

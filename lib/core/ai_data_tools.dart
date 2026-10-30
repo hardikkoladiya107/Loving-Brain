@@ -4,16 +4,36 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
 
+/// Summary of the last 14 days of child logs for Brainy prompts.
+class BrainyContextSummary {
+  final String contextString;
+  final bool hasPersonalData;
+  final bool hasSleepSignals;
+  final bool hasBehaviourSignals;
+
+  const BrainyContextSummary({
+    required this.contextString,
+    required this.hasPersonalData,
+    required this.hasSleepSignals,
+    required this.hasBehaviourSignals,
+  });
+}
+
 /// Provides OpenAI function calling schemas and tool execution handlers
 /// to make Brainy AI completely aware of all user and child data across the app.
 class AiDataTools {
   AiDataTools._();
+
+  static const int contextWindowDays = 14;
+  static const String generalGuidanceLabel =
+      'This answer is general guidance and is not based on your child\'s pattern yet.';
 
   /// OpenAI Tool / Function Definitions
   static final List<Map<String, dynamic>> openAiTools = <Map<String, dynamic>>[
@@ -282,54 +302,140 @@ class AiDataTools {
   static Future<String> buildLiveContextString({
     required ChildModel? childModel,
   }) async {
-    final Map<String, dynamic> todayData = await getTodaySummaryData(
-      childId: childModel?.reference?.id,
+    final BrainyContextSummary summary = await buildFourteenDayContext(
+      childModel: childModel,
     );
+    return summary.contextString;
+  }
 
-    final StringBuffer buffer = StringBuffer();
+  /// Last 14 days of relevant logs for Brainy (not the whole child record).
+  static Future<BrainyContextSummary> buildFourteenDayContext({
+    required ChildModel? childModel,
+  }) async {
+    final String childId =
+        childModel?.reference?.id ??
+        TodayLogRepo.instance.resolveActiveChildId() ??
+        '';
     final String childName = (childModel?.childName ?? '').trim().isNotEmpty
         ? childModel!.childName!.trim()
         : 'your child';
+    final StringBuffer buffer = StringBuffer();
+    buffer.writeln(
+      'Relevant recorded data for $childName (last $contextWindowDays days):',
+    );
 
-    buffer.writeln("Live recorded data for $childName today:");
-
-    if (todayData.containsKey('sleep')) {
-      final Map<String, dynamic> sleep =
-          todayData['sleep'] as Map<String, dynamic>;
-      final bool isToday = sleep['is_today'] == true;
-      final String prefix = isToday
-          ? 'Sleep logged today'
-          : 'Most recent sleep log';
-      buffer.writeln(
-        "- $prefix: Fell asleep ${sleep['fell_asleep'] ?? 'N/A'}, Woke up ${sleep['woke_up'] ?? 'N/A'}, Nap: ${sleep['nap_duration_mins'] ?? 0}m, Night waking: ${sleep['night_waking'] == true ? 'Yes' : 'No'}, Quality rating: ${sleep['sleep_quality'] ?? 'N/A'}",
+    if (childId.isEmpty) {
+      buffer.writeln('- No child profile selected yet.');
+      return BrainyContextSummary(
+        contextString: buffer.toString(),
+        hasPersonalData: false,
+        hasSleepSignals: false,
+        hasBehaviourSignals: false,
       );
-    } else {
-      buffer.writeln("- Sleep: No sleep update logged yet.");
     }
 
-    if (todayData.containsKey('tantrums')) {
-      final List<dynamic> tantrums = todayData['tantrums'] as List<dynamic>;
+    final DateTime cutoff = DateTime.now().subtract(
+      const Duration(days: contextWindowDays),
+    );
+    bool hasSleep = false;
+    bool hasBehaviour = false;
+    bool hasMood = false;
+    bool hasHealth = false;
+
+    final ApiResultStatus<List<SleepLogModel>> sleepRes = await TodayLogRepo
+        .instance
+        .getRecentSleepLogs(childId, limit: 20);
+    sleepRes.whenOrNull(
+      data: (List<SleepLogModel> list) {
+        final List<SleepLogModel> recent = list
+            .where((SleepLogModel s) => s.bedTime.isAfter(cutoff))
+            .toList();
+        if (recent.isEmpty) return;
+        hasSleep = true;
+        buffer.writeln('- Sleep logs (${recent.length}):');
+        for (final SleepLogModel s in recent.take(8)) {
+          buffer.writeln(
+            '  * ${s.bedTime.toIso8601String().split('T').first}: fell asleep ${s.fellAsleepTime ?? s.bedTime.toIso8601String()}, woke ${s.wokeUpTime ?? s.wakeTime.toIso8601String()}, night waking: ${s.isNightWaking ? 'Yes' : 'No'}, quality: ${s.sleepQualityIndex + 1}/5',
+          );
+        }
+      },
+    );
+
+    final ApiResultStatus<List<TantrumLogModel>> tantrumRes = await TodayLogRepo
+        .instance
+        .getRecentTantrumLogs(childId, limit: 20);
+    tantrumRes.whenOrNull(
+      data: (List<TantrumLogModel> list) {
+        final List<TantrumLogModel> recent = list
+            .where((TantrumLogModel t) => t.timestamp.isAfter(cutoff))
+            .toList();
+        if (recent.isEmpty) return;
+        hasBehaviour = true;
+        buffer.writeln('- Tantrum / meltdowns (${recent.length}):');
+        for (final TantrumLogModel t in recent.take(8)) {
+          buffer.writeln(
+            '  * ${t.time ?? t.timestamp.toIso8601String()}: \'${t.whatHappened}\' (intensity ${t.intensity}). Triggers: ${t.triggers.join(', ')}. Helped: \'${t.whatHelped}\'',
+          );
+        }
+      },
+    );
+
+    final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+        .instance
+        .getRecentMoodLogs(childId, limit: 20);
+    moodRes.whenOrNull(
+      data: (List<MoodLogModel> list) {
+        final List<MoodLogModel> recent = list
+            .where((MoodLogModel m) => m.logTime.isAfter(cutoff))
+            .toList();
+        if (recent.isEmpty) return;
+        hasMood = true;
+        buffer.writeln('- Mood check-ins (${recent.length}):');
+        for (final MoodLogModel m in recent.take(6)) {
+          buffer.writeln(
+            '  * ${m.logTime.toIso8601String().split('T').first}: child ${m.childMood}, parent ${m.parentMood}',
+          );
+        }
+      },
+    );
+
+    final ApiResultStatus<List<HealthLogModel>> healthRes = await TodayLogRepo
+        .instance
+        .getRecentHealthLogs(childId, limit: 10);
+    healthRes.whenOrNull(
+      data: (List<HealthLogModel> list) {
+        final List<HealthLogModel> recent = list
+            .where((HealthLogModel h) => h.timestamp.isAfter(cutoff))
+            .toList();
+        if (recent.isEmpty) return;
+        hasHealth = true;
+        buffer.writeln('- Health notes (${recent.length}):');
+        for (final HealthLogModel h in recent.take(5)) {
+          buffer.writeln(
+            '  * ${h.timestamp.toIso8601String().split('T').first}: \'${h.notes}\'',
+          );
+        }
+      },
+    );
+
+    final String? concern = childModel?.primaryConcern?.trim();
+    if (concern != null && concern.isNotEmpty) {
+      buffer.writeln('- Active focus / concern: $concern');
+    }
+
+    final bool hasPersonalData =
+        hasSleep || hasBehaviour || hasMood || hasHealth;
+    if (!hasPersonalData) {
       buffer.writeln(
-        "- Tantrum / Meltdowns today (${tantrums.length} recorded):",
+        '- No sleep, behaviour, mood, or health logs in the last $contextWindowDays days.',
       );
-      for (final dynamic item in tantrums) {
-        final Map<String, dynamic> t = item as Map<String, dynamic>;
-        buffer.writeln(
-          "  * At ${t['approximate_time']}: '${t['what_happened']}' (Intensity: ${t['intensity']}). Triggers: ${(t['triggers'] as List<dynamic>?)?.join(', ') ?? 'None'}. What helped: '${t['what_helped'] ?? 'None'}'",
-        );
-      }
-    } else {
-      buffer.writeln("- Tantrums / Meltdowns: None logged today.");
     }
 
-    if (todayData.containsKey('health_notes')) {
-      buffer.writeln("- Health update: '${todayData['health_notes']}'");
-    }
-
-    if (todayData.containsKey('quick_note')) {
-      buffer.writeln("- Parent note: '${todayData['quick_note']}'");
-    }
-
-    return buffer.toString();
+    return BrainyContextSummary(
+      contextString: buffer.toString(),
+      hasPersonalData: hasPersonalData,
+      hasSleepSignals: hasSleep,
+      hasBehaviourSignals: hasBehaviour,
+    );
   }
 }

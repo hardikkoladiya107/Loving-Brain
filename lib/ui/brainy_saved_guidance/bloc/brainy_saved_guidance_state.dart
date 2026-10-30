@@ -10,6 +10,12 @@ class BrainySavedItem {
   final String imagePath;
   final int imageBgColorValue;
   final String? topic;
+  final String? whatMayBeHappeningHeadline;
+  final String? whatMayBeHappeningSubtext;
+  final String? whatToTryNowHeadline;
+  final String? whatToTryNowSubtext;
+  final String? whenToGetHelpHeadline;
+  final String? whenToGetHelpSubtext;
 
   BrainySavedItem({
     this.id,
@@ -19,7 +25,18 @@ class BrainySavedItem {
     required this.imagePath,
     required this.imageBgColorValue,
     this.topic,
+    this.whatMayBeHappeningHeadline,
+    this.whatMayBeHappeningSubtext,
+    this.whatToTryNowHeadline,
+    this.whatToTryNowSubtext,
+    this.whenToGetHelpHeadline,
+    this.whenToGetHelpSubtext,
   });
+
+  bool get hasStoredAnswerParts =>
+      (whatMayBeHappeningHeadline ?? '').trim().isNotEmpty ||
+      (whatToTryNowHeadline ?? '').trim().isNotEmpty ||
+      (whenToGetHelpHeadline ?? '').trim().isNotEmpty;
 }
 
 @freezed
@@ -28,5 +45,6 @@ abstract class BrainySavedGuidanceState with _$BrainySavedGuidanceState {
     @Default([]) List<BrainySavedItem> sleepItems,
     @Default([]) List<BrainySavedItem> behaviourItems,
     @Default([]) List<BrainySavedItem> parentWellbeingItems,
+    @Default(false) bool hasLoadError,
   }) = _BrainySavedGuidanceState;
 }

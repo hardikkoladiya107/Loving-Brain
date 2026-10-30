@@ -11,8 +11,8 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/pending_invitation_manager.dart';
+import 'package:loving_brain/other/pending_invitation_nav.dart';
 import 'package:loving_brain/other/preferances.dart';
-import 'package:loving_brain/repo/co_parent_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/auth/login/bloc/login_cubit.dart';
 import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
@@ -470,73 +470,13 @@ class _LoginScreenState extends State<LoginScreen> {
     context.read<OnboardingCubit>().reset();
     if (userModel.uid == null) return;
 
-    // ── Pending co-parent invitation (saved by DeepLinkManager before login) ──
-    if (PendingInvitationManager.hasPending()) {
-      final String pendingId = PendingInvitationManager.getId();
-      final String loggedEmail = (userModel.email ?? '').trim().toLowerCase();
-
-      if (PendingInvitationManager.matchesEmail(loggedEmail)) {
-        final ApiResultStatus result = await CoParentRepo.instance
-            .addUserAsCoParent(pendingId);
-
-        bool invitationSuccess = false;
-        result.whenOrNull(data: (_) => invitationSuccess = true);
-
-        if (invitationSuccess) {
-          await PendingInvitationManager.clear();
-        }
-
-        if (!mounted) {
-          return;
-        }
-
-        if (invitationSuccess) {
-          await preferences.putBool(SharedPreference.isLogin, true);
-          if (!mounted) return;
-          router.go(
-            RoutePaths.successScreen,
-            extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
-          );
-          return;
-        }
-
-        String errMsg = '';
-        result.whenOrNull(
-          error: (Exception err) =>
-              errMsg = err.toString().replaceAll('Exception: ', ''),
-        );
-        if (errMsg.isNotEmpty) {
-          showSnackBar(message: errMsg, type: SnackBarType.ERROR);
-        }
-      } else {
-        showSnackBar(
-          message: LocaleKeys.coParentInvitationEmailMismatch.tr(),
-          type: SnackBarType.ERROR,
-        );
-      }
-    } else {
-      final String loggedEmail = (userModel.email ?? '').trim().toLowerCase();
-      if (loggedEmail.isNotEmpty) {
-        final String? pendingInviteId = await CoParentRepo.instance
-            .checkPendingInvitationForUser(loggedEmail);
-        if (pendingInviteId != null && pendingInviteId.isNotEmpty) {
-          final ApiResultStatus result = await CoParentRepo.instance
-              .addUserAsCoParent(pendingInviteId);
-          bool invitationSuccess = false;
-          result.whenOrNull(data: (_) => invitationSuccess = true);
-          if (invitationSuccess) {
-            await preferences.putBool(SharedPreference.isLogin, true);
-            if (!mounted) return;
-            router.go(
-              RoutePaths.successScreen,
-              extra: LocaleKeys.coParentInvitationAcceptedSuccess.tr(),
-            );
-            return;
-          }
-        }
-      }
-    }
-    // ─────────────────────────────────────────────────────────────────────────
+    await preferences.putBool(SharedPreference.isLogin, true);
+    final bool handledInvite = await navigateForPendingInvitation(
+      context: context,
+      userModel: userModel,
+      router: router,
+    );
+    if (handledInvite) return;
 
     if (!mounted) return;
     if (!userModel.isOnboardingCompleted) {

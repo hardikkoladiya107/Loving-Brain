@@ -309,6 +309,49 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                             body:
                                 "Changing the date of birth will re-base age guidance from the next day.",
                           ),
+                          if (cubit.isPrimaryParent &&
+                              state.childModel?.reference != null) ...<Widget>[
+                            24.spaceH,
+                            AppButton(
+                              title: 'Remove child',
+                              backgroundColor: Colors.white,
+                              borderColor: const Color(0xFFD84315),
+                              textColor: const Color(0xFFD84315),
+                              onTap: () async {
+                                final bool? confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (BuildContext dialogContext) {
+                                    return AlertDialog(
+                                      title: const Text('Remove child?'),
+                                      content: const Text(
+                                        'This permanently deletes this child profile and shared logs for all linked parents.',
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                            dialogContext,
+                                            false,
+                                          ),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(dialogContext, true),
+                                          child: const Text('Remove'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (confirmed == true && context.mounted) {
+                                  await cubit.removeChild();
+                                  if (context.mounted && context.canPop()) {
+                                    context.pop(true);
+                                  }
+                                }
+                              },
+                            ),
+                          ],
                           if (state.isEdited) 120.spaceH else 40.spaceH,
                         ],
                       ),

@@ -170,12 +170,12 @@ void main() {
         expect(cubit.state.sendStatus, isA<Error>());
         expect(cubit.state.emailError, isNotEmpty);
 
-        // Valid caregiver email succeeds
+        // Valid email clears local validation; create is server-side (callable).
         cubit.updateEmail('nanny@example.com');
-        final bool successResult = await cubit.sendInvite();
-        expect(successResult, isTrue);
-        expect(cubit.state.sendStatus, isA<Data>());
         expect(cubit.state.emailError, isEmpty);
+        final bool successResult = await cubit.sendInvite();
+        expect(successResult, isFalse);
+        expect(cubit.state.sendStatus, isA<Error>());
 
         cubit.close();
       },
@@ -218,7 +218,7 @@ void main() {
     });
 
     test(
-      'InvitePendingCubit manages expiry and allows resend / cancellation',
+      'InvitePendingCubit manages expiry and requires invitation id for actions',
       () async {
         final InvitePendingCubit cubit = InvitePendingCubit();
         cubit.init(recipient: 'grandma@example.com', role: 'Grandparent');
@@ -228,11 +228,11 @@ void main() {
         expect(cubit.state.isCancelled, isFalse);
 
         await cubit.resendInvite();
-        expect(cubit.state.daysUntilExpiry, 14);
-        expect(cubit.state.actionStatus, isA<Data<dynamic>>());
+        expect(cubit.state.actionStatus, isA<Error<dynamic>>());
 
         await cubit.cancelInvite();
-        expect(cubit.state.isCancelled, isTrue);
+        expect(cubit.state.isCancelled, isFalse);
+        expect(cubit.state.actionStatus, isA<Error<dynamic>>());
 
         cubit.close();
       },
@@ -257,8 +257,9 @@ void main() {
       expect(saved, isTrue);
       expect(cubit.state.saveStatus, isA<Data<dynamic>>());
 
+      // Revoke is server-side; without a child DocumentReference it fails closed.
       final bool revoked = await cubit.revokeAccess();
-      expect(revoked, isTrue);
+      expect(revoked, isFalse);
 
       cubit.close();
     });

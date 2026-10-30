@@ -89,7 +89,36 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
                       fraunces: true,
                       textAlign: TextAlign.start,
                     ),
-                    if (state.thisWeekHistory.isEmpty &&
+                    if (state.hasLoadError) ...[
+                      32.spaceH,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(24.r),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        child: Column(
+                          children: [
+                            'Could not load history'.appText(
+                              fontSize: 16.sp,
+                              color: darkBlue,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            12.spaceH,
+                            AppButton(
+                              title: 'Try again',
+                              onTap: () {
+                                context.read<BrainyHistoryCubit>().retry();
+                              },
+                              backgroundColor: primaryColor,
+                              textColor: Colors.white,
+                              height: 44,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else if (state.thisWeekHistory.isEmpty &&
                         state.earlierHistory.isEmpty) ...[
                       32.spaceH,
                       _buildEmptyState(context),

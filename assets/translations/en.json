@@ -560,6 +560,11 @@
   "noteSaved": "Quick note saved.",
   "pleaseSelectChildFirst": "Please select a child profile first.",
   "cannotInviteYourselfCaregiver": "You cannot invite your own email address.",
-  "coParentInvitationEmailMismatch": "This account email does not match the invitation. The invite is still waiting — sign in with the invited email to accept it."
+  "coParentInvitationEmailMismatch": "This account email does not match the invitation. The invite is still waiting — sign in with the invited email to accept it.",
+  "brainyLookingAtLastTwoWeeks": "Looking at the last two weeks…",
+  "brainyGeneralGuidanceLabel": "This answer is general guidance and is not based on your child's pattern yet.",
+  "brainyNoAudioRecorded": "No audio was recorded. Please speak and try again.",
+  "brainyHistoryLoadError": "Could not load history",
+  "brainySavedLoadError": "Could not load saved guidance"
 }
 

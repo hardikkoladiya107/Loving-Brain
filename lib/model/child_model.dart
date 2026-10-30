@@ -15,6 +15,7 @@ class ChildModel {
     List<EssentialNote>? essentials,
     List<String>? documents,
     List<String>? parentReferenceIds,
+    String? primaryParentUid,
     DocumentReference<Object?>? reference,
     ChildState? childState,
     DateTime? stateUpdatedAt,
@@ -40,6 +41,7 @@ class ChildModel {
     _essentialList = essentials;
     _documents = documents;
     _parentReferenceIds = parentReferenceIds;
+    _primaryParentUid = primaryParentUid;
     _reference = reference;
     _childState = childState;
     _stateUpdatedAt = stateUpdatedAt;
@@ -123,6 +125,7 @@ class ChildModel {
               .where((s) => s.isNotEmpty)
               .toList();
     }
+    _primaryParentUid = jsonObject['primary_parent_uid']?.toString();
     if (jsonObject['concerns'] is List<dynamic>) {
       _concerns = (jsonObject['concerns'] as List<dynamic>)
           .map((e) => e?.toString() ?? '')
@@ -174,6 +177,7 @@ class ChildModel {
   List<EssentialNote>? _essentialList;
   List<String>? _documents;
   List<String>? _parentReferenceIds;
+  String? _primaryParentUid;
   DocumentReference<Object?>? _reference;
   ChildState? _childState;
   DateTime? _stateUpdatedAt;
@@ -200,6 +204,7 @@ class ChildModel {
   List<EssentialNote>? get essentials => _essentialList;
   List<String>? get documents => _documents;
   List<String>? get parentReferenceIds => _parentReferenceIds;
+  String? get primaryParentUid => _primaryParentUid;
   DocumentReference<Object?>? get reference => _reference;
   ChildState? get childState => _childState;
   DateTime? get stateUpdatedAt => _stateUpdatedAt;
@@ -227,6 +232,7 @@ class ChildModel {
     List<EssentialNote>? essentials,
     List<String>? documents,
     List<String>? parentReferenceIds,
+    String? primaryParentUid,
     DocumentReference<Object?>? reference,
     ChildState? childState,
     DateTime? stateUpdatedAt,
@@ -252,6 +258,7 @@ class ChildModel {
     essentials: essentials ?? _essentialList,
     documents: documents ?? _documents,
     parentReferenceIds: parentReferenceIds ?? _parentReferenceIds,
+    primaryParentUid: primaryParentUid ?? _primaryParentUid,
     reference: reference ?? _reference,
     childState: childState ?? _childState,
     stateUpdatedAt: stateUpdatedAt ?? _stateUpdatedAt,
@@ -296,6 +303,7 @@ class ChildModel {
     map['essentials'] = _essentialList?.map((e) => e.toJson()).toList();
     map['documents'] = _documents?.map((e) => e.toString()).toList();
     map['parent_reference_ids'] = _parentReferenceIds;
+    map['primary_parent_uid'] = _primaryParentUid;
     map['child_state'] = _childState?.key;
     map['concerns'] = _concerns;
     map['primary_concern'] = _primaryConcern;

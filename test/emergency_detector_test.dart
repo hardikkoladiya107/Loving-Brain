@@ -74,6 +74,41 @@ void main() {
       );
     });
 
+    test('detects concerning non-emergency health statements', () {
+      expect(
+        EmergencyDetector.isConcerningHealth('high fever overnight'),
+        isTrue,
+      );
+      expect(
+        EmergencyDetector.isConcerningHealth('rash all over body'),
+        isTrue,
+      );
+      expect(
+        EmergencyDetector.isConcerningHealth('keeps vomiting all day'),
+        isTrue,
+      );
+      expect(
+        EmergencyDetector.isConcerningHealth('will not drink anything'),
+        isTrue,
+      );
+      expect(
+        EmergencyDetector.isConcerningHealth('ear pain since morning'),
+        isTrue,
+      );
+    });
+
+    test('acute emergency is not also clinical concern', () {
+      expect(EmergencyDetector.isEmergency('not breathing'), isTrue);
+      expect(EmergencyDetector.isConcerningHealth('not breathing'), isFalse);
+    });
+
+    test('normal queries are not clinical concerns', () {
+      expect(
+        EmergencyDetector.isConcerningHealth('Why is bedtime harder lately?'),
+        isFalse,
+      );
+    });
+
     test('returns fallback emergency phone numbers', () {
       final String phone = EmergencyDetector.getEmergencyPhone();
       expect(phone, startsWith('tel:'));

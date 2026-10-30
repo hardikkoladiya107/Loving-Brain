@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BrainySavedGuidanceState {
 
- List<BrainySavedItem> get sleepItems; List<BrainySavedItem> get behaviourItems; List<BrainySavedItem> get parentWellbeingItems;
+ List<BrainySavedItem> get sleepItems; List<BrainySavedItem> get behaviourItems; List<BrainySavedItem> get parentWellbeingItems; bool get hasLoadError;
 /// Create a copy of BrainySavedGuidanceState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $BrainySavedGuidanceStateCopyWith<BrainySavedGuidanceState> get copyWith => _$Br
 @override
 bool operator ==(Object other) {
   final _this = this as BrainySavedGuidanceState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BrainySavedGuidanceState&&const DeepCollectionEquality().equals(other.sleepItems, _this.sleepItems)&&const DeepCollectionEquality().equals(other.behaviourItems, _this.behaviourItems)&&const DeepCollectionEquality().equals(other.parentWellbeingItems, _this.parentWellbeingItems));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BrainySavedGuidanceState&&const DeepCollectionEquality().equals(other.sleepItems, _this.sleepItems)&&const DeepCollectionEquality().equals(other.behaviourItems, _this.behaviourItems)&&const DeepCollectionEquality().equals(other.parentWellbeingItems, _this.parentWellbeingItems)&&(identical(other.hasLoadError, _this.hasLoadError) || other.hasLoadError == _this.hasLoadError));
 }
 
 
 @override
 int get hashCode {
   final _this = this as BrainySavedGuidanceState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.sleepItems),const DeepCollectionEquality().hash(_this.behaviourItems),const DeepCollectionEquality().hash(_this.parentWellbeingItems));
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.sleepItems),const DeepCollectionEquality().hash(_this.behaviourItems),const DeepCollectionEquality().hash(_this.parentWellbeingItems),_this.hasLoadError);
 }
 
 @override
 String toString() {
   final _this = this as BrainySavedGuidanceState;
-  return 'BrainySavedGuidanceState(sleepItems: ${_this.sleepItems}, behaviourItems: ${_this.behaviourItems}, parentWellbeingItems: ${_this.parentWellbeingItems})';
+  return 'BrainySavedGuidanceState(sleepItems: ${_this.sleepItems}, behaviourItems: ${_this.behaviourItems}, parentWellbeingItems: ${_this.parentWellbeingItems}, hasLoadError: ${_this.hasLoadError})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $BrainySavedGuidanceStateCopyWith<$Res>  {
   factory $BrainySavedGuidanceStateCopyWith(BrainySavedGuidanceState value, $Res Function(BrainySavedGuidanceState) _then) = _$BrainySavedGuidanceStateCopyWithImpl;
 @useResult
 $Res call({
- List<BrainySavedItem> sleepItems, List<BrainySavedItem> behaviourItems, List<BrainySavedItem> parentWellbeingItems
+ List<BrainySavedItem> sleepItems, List<BrainySavedItem> behaviourItems, List<BrainySavedItem> parentWellbeingItems, bool hasLoadError
 });
 
 
@@ -68,12 +68,13 @@ class _$BrainySavedGuidanceStateCopyWithImpl<$Res>
 
 /// Create a copy of BrainySavedGuidanceState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? sleepItems = null,Object? behaviourItems = null,Object? parentWellbeingItems = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? sleepItems = null,Object? behaviourItems = null,Object? parentWellbeingItems = null,Object? hasLoadError = null,}) {
   return _then(BrainySavedGuidanceState(
 sleepItems: null == sleepItems ? _self.sleepItems : sleepItems // ignore: cast_nullable_to_non_nullable
 as List<BrainySavedItem>,behaviourItems: null == behaviourItems ? _self.behaviourItems : behaviourItems // ignore: cast_nullable_to_non_nullable
 as List<BrainySavedItem>,parentWellbeingItems: null == parentWellbeingItems ? _self.parentWellbeingItems : parentWellbeingItems // ignore: cast_nullable_to_non_nullable
-as List<BrainySavedItem>,
+as List<BrainySavedItem>,hasLoadError: null == hasLoadError ? _self.hasLoadError : hasLoadError // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BrainySavedItem> sleepItems,  List<BrainySavedItem> behaviourItems,  List<BrainySavedItem> parentWellbeingItems)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BrainySavedItem> sleepItems,  List<BrainySavedItem> behaviourItems,  List<BrainySavedItem> parentWellbeingItems,  bool hasLoadError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BrainySavedGuidanceState() when $default != null:
-return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems);case _:
+return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems,_that.hasLoadError);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BrainySavedItem> sleepItems,  List<BrainySavedItem> behaviourItems,  List<BrainySavedItem> parentWellbeingItems)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BrainySavedItem> sleepItems,  List<BrainySavedItem> behaviourItems,  List<BrainySavedItem> parentWellbeingItems,  bool hasLoadError)  $default,) {final _that = this;
 switch (_that) {
 case _BrainySavedGuidanceState():
-return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems);case _:
+return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems,_that.hasLoadError);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BrainySavedItem> sleepItems,  List<BrainySavedItem> behaviourItems,  List<BrainySavedItem> parentWellbeingItems)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BrainySavedItem> sleepItems,  List<BrainySavedItem> behaviourItems,  List<BrainySavedItem> parentWellbeingItems,  bool hasLoadError)?  $default,) {final _that = this;
 switch (_that) {
 case _BrainySavedGuidanceState() when $default != null:
-return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems);case _:
+return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems,_that.hasLoadError);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.sleepItems,_that.behaviourItems,_that.parentWellbeingItems
 
 
 class _BrainySavedGuidanceState implements BrainySavedGuidanceState {
-  const _BrainySavedGuidanceState({ List<BrainySavedItem> sleepItems = const [],  List<BrainySavedItem> behaviourItems = const [],  List<BrainySavedItem> parentWellbeingItems = const []}): _sleepItems = sleepItems,_behaviourItems = behaviourItems,_parentWellbeingItems = parentWellbeingItems;
+  const _BrainySavedGuidanceState({ List<BrainySavedItem> sleepItems = const [],  List<BrainySavedItem> behaviourItems = const [],  List<BrainySavedItem> parentWellbeingItems = const [], this.hasLoadError = false}): _sleepItems = sleepItems,_behaviourItems = behaviourItems,_parentWellbeingItems = parentWellbeingItems;
   
 
  final  List<BrainySavedItem> _sleepItems;
@@ -238,6 +239,7 @@ class _BrainySavedGuidanceState implements BrainySavedGuidanceState {
   return EqualUnmodifiableListView(_parentWellbeingItems);
 }
 
+@override@JsonKey() final  bool hasLoadError;
 
 /// Create a copy of BrainySavedGuidanceState
 /// with the given fields replaced by the non-null parameter values.
@@ -249,18 +251,18 @@ _$BrainySavedGuidanceStateCopyWith<_BrainySavedGuidanceState> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BrainySavedGuidanceState&&const DeepCollectionEquality().equals(other.sleepItems, _sleepItems)&&const DeepCollectionEquality().equals(other.behaviourItems, _behaviourItems)&&const DeepCollectionEquality().equals(other.parentWellbeingItems, _parentWellbeingItems));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BrainySavedGuidanceState&&const DeepCollectionEquality().equals(other.sleepItems, _sleepItems)&&const DeepCollectionEquality().equals(other.behaviourItems, _behaviourItems)&&const DeepCollectionEquality().equals(other.parentWellbeingItems, _parentWellbeingItems)&&(identical(other.hasLoadError, hasLoadError) || other.hasLoadError == hasLoadError));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_sleepItems),const DeepCollectionEquality().hash(_behaviourItems),const DeepCollectionEquality().hash(_parentWellbeingItems));
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_sleepItems),const DeepCollectionEquality().hash(_behaviourItems),const DeepCollectionEquality().hash(_parentWellbeingItems),hasLoadError);
 }
 
 @override
 String toString() {
-    return 'BrainySavedGuidanceState(sleepItems: $sleepItems, behaviourItems: $behaviourItems, parentWellbeingItems: $parentWellbeingItems)';
+    return 'BrainySavedGuidanceState(sleepItems: $sleepItems, behaviourItems: $behaviourItems, parentWellbeingItems: $parentWellbeingItems, hasLoadError: $hasLoadError)';
 }
 
 
@@ -271,7 +273,7 @@ abstract mixin class _$BrainySavedGuidanceStateCopyWith<$Res> implements $Brainy
   factory _$BrainySavedGuidanceStateCopyWith(_BrainySavedGuidanceState value, $Res Function(_BrainySavedGuidanceState) _then) = __$BrainySavedGuidanceStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<BrainySavedItem> sleepItems, List<BrainySavedItem> behaviourItems, List<BrainySavedItem> parentWellbeingItems
+ List<BrainySavedItem> sleepItems, List<BrainySavedItem> behaviourItems, List<BrainySavedItem> parentWellbeingItems, bool hasLoadError
 });
 
 
@@ -288,12 +290,13 @@ class __$BrainySavedGuidanceStateCopyWithImpl<$Res>
 
 /// Create a copy of BrainySavedGuidanceState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? sleepItems = null,Object? behaviourItems = null,Object? parentWellbeingItems = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? sleepItems = null,Object? behaviourItems = null,Object? parentWellbeingItems = null,Object? hasLoadError = null,}) {
   return _then(_BrainySavedGuidanceState(
 sleepItems: null == sleepItems ? _self._sleepItems : sleepItems // ignore: cast_nullable_to_non_nullable
 as List<BrainySavedItem>,behaviourItems: null == behaviourItems ? _self._behaviourItems : behaviourItems // ignore: cast_nullable_to_non_nullable
 as List<BrainySavedItem>,parentWellbeingItems: null == parentWellbeingItems ? _self._parentWellbeingItems : parentWellbeingItems // ignore: cast_nullable_to_non_nullable
-as List<BrainySavedItem>,
+as List<BrainySavedItem>,hasLoadError: null == hasLoadError ? _self.hasLoadError : hasLoadError // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
