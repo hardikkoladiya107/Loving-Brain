@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
@@ -93,7 +94,7 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
                           ),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(24.r),
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Padding(
                               padding: EdgeInsets.all(8.r),
                               child: Icon(
@@ -126,7 +127,7 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
                       AppButton(
                         title: "Add update",
                         onTap: () {
-                          Navigator.pop(context);
+                          context.pop();
                         },
                         backgroundColor: Colors.white,
                         textColor: greyColor9,
@@ -248,12 +249,7 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
           AppButton(
             title: "See calm plan",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => CalmPlanScreen(forecast: state.forecast),
-                ),
-              );
+              context.push(RoutePaths.calmPlan, extra: state.forecast);
             },
             backgroundColor: primaryColor,
             textColor: Colors.white,

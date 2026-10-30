@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
-import 'package:loving_brain/ui/invite_caregiver/invite_caregiver_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/action_consent_screen.dart';
 
 import 'bloc/family_sharing_consent_cubit.dart';
@@ -53,15 +54,10 @@ class _FamilySharingConsentScreenState
           primaryButtonText: "Continue",
           onPrimaryAction: () {
             context.read<FamilySharingConsentCubit>().grantConsent();
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute<void>(
-                builder: (_) => const InviteCaregiverScreen(),
-              ),
-            );
+            context.pushReplacement(RoutePaths.inviteCaregiver);
           },
           secondaryButtonText: "Not now",
-          onSecondaryAction: () => Navigator.pop(context),
+          onSecondaryAction: () => context.pop(),
         );
       },
     );

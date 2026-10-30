@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/post_session_plan/post_session_plan_screen.dart';
-import 'package:loving_brain/ui/request_session/request_session_screen.dart';
 
 import 'bloc/enrolled_journey_home_cubit.dart';
 import 'bloc/enrolled_journey_home_state.dart';
@@ -110,7 +110,7 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                         vertical: 8.h,
                       ),
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: const BoxDecoration(
@@ -147,12 +147,7 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                             subtitle:
                                 "Confirmed with ${program.guideName}. Details sent by email.",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const RequestSessionScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.requestSession);
                             },
                           ),
                           16.spaceH,
@@ -164,12 +159,7 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                             subtitle:
                                 "Action items agreed with ${program.guideName}",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const PostSessionPlanScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.postSessionPlan);
                             },
                           ),
                           16.spaceH,

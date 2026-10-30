@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -79,13 +80,7 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
                             child: AppButton(
                               title: "Try this change",
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext routeCtx) =>
-                                        const ProgramRecommendationScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.programRecommendation);
                               },
                               backgroundColor: primaryColor,
                               textColor: Colors.white,
@@ -141,8 +136,8 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
           left: 20.w,
           child: BaseButton(
             onTap: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
+              if (context.canPop()) {
+                context.pop();
               }
             },
             child: Container(

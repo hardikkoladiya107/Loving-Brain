@@ -192,15 +192,13 @@ class _BrainySavedGuidanceScreenState extends State<BrainySavedGuidanceScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(24.r),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BrainyConversationScreen(
-                  conversationId: item.conversationId,
-                  initialChat: item.title,
-                  topic: item.topic,
-                ),
-              ),
+            context.push(
+              RoutePaths.brainyConversation,
+              extra: <String, dynamic>{
+                'conversationId': item.conversationId,
+                'initialChat': item.title,
+                'topic': item.topic,
+              },
             );
           },
           child: Padding(

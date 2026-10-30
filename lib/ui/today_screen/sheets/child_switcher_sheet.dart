@@ -321,8 +321,9 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                 onTap: () async {
                   final TodayCubit todayCubit = context.read<TodayCubit>();
                   Navigator.pop(context);
-                  final dynamic created =
-                      await context.push<dynamic>(RoutePaths.addChild);
+                  final dynamic created = await context.push<dynamic>(
+                    RoutePaths.addChild,
+                  );
                   if (created == true) {
                     todayCubit.init();
                   }
@@ -365,7 +366,7 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                     Navigator.pop(context);
                     await context.push(
                       RoutePaths.childProfilePath(
-                        activeChild?.reference?.id ??
+                        activeChild.reference?.id ??
                             preferences.getUserModel()?.uid ??
                             '',
                         fromManageChildren: false,

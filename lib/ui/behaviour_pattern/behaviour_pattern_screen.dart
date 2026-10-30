@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
-import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
@@ -90,7 +90,7 @@ class _BehaviourPatternScreenState extends State<BehaviourPatternScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         borderRadius: BorderRadius.circular(24.r),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
@@ -152,12 +152,7 @@ class _BehaviourPatternScreenState extends State<BehaviourPatternScreen> {
                         AppButton(
                           title: "Try this plan",
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const CalmPlanScreen(),
-                              ),
-                            );
+                            context.push(RoutePaths.calmPlan);
                           },
                           backgroundColor: primaryColor,
                           textColor: Colors.white,
@@ -165,12 +160,7 @@ class _BehaviourPatternScreenState extends State<BehaviourPatternScreen> {
                         16.spaceH,
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const MentorshipLandingScreen(),
-                              ),
-                            );
+                            context.push(RoutePaths.mentorshipLanding);
                           },
                           child: "View mentorship".appText(
                             fontSize: 16.sp,

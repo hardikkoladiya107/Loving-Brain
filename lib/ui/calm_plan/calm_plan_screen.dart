@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
+import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/after_reflection/after_reflection_screen.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
-import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/v2_notification_scheduler.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/calm_plan_cubit.dart';
@@ -96,7 +96,7 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         borderRadius: BorderRadius.circular(24.r),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
@@ -129,12 +129,7 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                     AppButton(
                       title: "Tell us what happened",
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const AfterReflectionScreen(),
-                          ),
-                        );
+                        context.push(RoutePaths.afterReflection);
                       },
                       backgroundColor: primaryColor,
                       textColor: Colors.white,
@@ -143,15 +138,13 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                     Center(
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const BrainyConversationScreen(
-                                topic: 'Calm Plan',
-                                initialChat:
-                                    'Can you help me with a calming plan for my child during a hard moment?',
-                              ),
-                            ),
+                          context.push(
+                            RoutePaths.brainyConversation,
+                            extra: <String, dynamic>{
+                              'topic': 'Calm Plan',
+                              'initialChat':
+                                  'Can you help me with a calming plan for my child during a hard moment?',
+                            },
                           );
                         },
                         child: "Ask Brainy".appText(

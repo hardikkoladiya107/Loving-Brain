@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/invite_pending/invite_pending_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 
@@ -52,16 +53,14 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
               message: "Invitation sent successfully",
               type: SnackBarType.SUCCESS,
             );
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => InvitePendingScreen(
-                  invitationId: state.createdInvitationId,
-                  recipientEmail: state.email.trim(),
-                  role: state.selectedRole,
-                  childName: state.childName,
-                ),
-              ),
+            context.pushReplacement(
+              RoutePaths.invitePending,
+              extra: <String, dynamic>{
+                'invitationId': state.createdInvitationId,
+                'recipientEmail': state.email.trim(),
+                'role': state.selectedRole,
+                'childName': state.childName,
+              },
             );
           },
           error: (Exception error) {
@@ -129,7 +128,7 @@ class _InviteCaregiverScreenState extends State<InviteCaregiverScreen> {
                         vertical: 8.h,
                       ),
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: const BoxDecoration(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/child_essentials/child_essentials_screen.dart';
-import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
@@ -92,7 +92,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Container(
                               padding: EdgeInsets.all(8.r),
                               decoration: const BoxDecoration(
@@ -108,12 +108,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const FamilyMenuScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.familyMenu);
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
@@ -388,12 +383,7 @@ class _SharedChildSummaryScreenState extends State<SharedChildSummaryScreen> {
           child: AppButton(
             title: "View child essentials",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const ChildEssentialsScreen(),
-                ),
-              );
+              context.push(RoutePaths.essentials);
             },
           ),
         ),

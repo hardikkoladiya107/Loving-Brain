@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/trying_this_week/trying_this_week_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
@@ -73,7 +73,7 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
@@ -256,12 +256,7 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
                       .read<WeeklyFamilyReviewCubit>()
                       .startRecommendedExperiment();
                   if (context.mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const TryingThisWeekScreen(),
-                      ),
-                    );
+                    context.push(RoutePaths.tryingThisWeek);
                   }
                 },
               ),
@@ -277,14 +272,12 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
                   final String prompt = context
                       .read<WeeklyFamilyReviewCubit>()
                       .buildBrainyPrompt();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BrainyConversationScreen(
-                        topic: 'Weekly Review',
-                        initialChat: prompt,
-                      ),
-                    ),
+                  context.push(
+                    RoutePaths.brainyConversation,
+                    extra: <String, dynamic>{
+                      'topic': 'Weekly Review',
+                      'initialChat': prompt,
+                    },
                   );
                 },
               ),

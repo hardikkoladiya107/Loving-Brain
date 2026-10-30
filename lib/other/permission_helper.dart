@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/notification_util.dart';
-import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
-import 'package:loving_brain/ui/notifications_permission/notifications_permission_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:record/record.dart';
 
 /// Centralized helper for managing system permissions and their explainer screens.
@@ -48,11 +48,8 @@ class PermissionHelper {
 
     if (!context.mounted) return false;
 
-    final bool? result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        fullscreenDialog: true,
-        builder: (BuildContext _) => const MicrophonePermissionScreen(),
-      ),
+    final bool? result = await context.push<bool>(
+      RoutePaths.microphonePermission,
     );
 
     return result ?? false;
@@ -71,11 +68,8 @@ class PermissionHelper {
 
     if (!context.mounted) return false;
 
-    final bool? result = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        fullscreenDialog: true,
-        builder: (BuildContext _) => const NotificationsPermissionScreen(),
-      ),
+    final bool? result = await context.push<bool>(
+      RoutePaths.notificationsPermission,
     );
 
     return result ?? false;

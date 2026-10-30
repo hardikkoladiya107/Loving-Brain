@@ -51,10 +51,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
     FocusScope.of(context).unfocus();
     context.push(
       RoutePaths.brainyConversation,
-      extra: <String, dynamic>{
-        'initialChat': trimmed,
-        'topic': topic,
-      },
+      extra: <String, dynamic>{'initialChat': trimmed, 'topic': topic},
     );
   }
 

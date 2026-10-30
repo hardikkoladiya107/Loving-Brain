@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/caregiver_permissions_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/family_sharing_consent/family_sharing_consent_screen.dart';
-import 'package:loving_brain/ui/invite_caregiver/invite_caregiver_screen.dart';
-import 'package:loving_brain/ui/invite_pending/invite_pending_screen.dart';
-import 'package:loving_brain/ui/permissions/permissions_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/person_card.dart';
@@ -72,7 +70,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
               message: "You have left the family profile",
               type: SnackBarType.SUCCESS,
             );
-            Navigator.pop(context);
+            context.pop();
           },
           error: (Exception error) {
             EasyLoading.dismiss();
@@ -137,7 +135,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                         vertical: 8.h,
                       ),
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: const BoxDecoration(
@@ -215,24 +213,21 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                             c.name,
                                           );
                                         }
-                                      : () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) => PermissionsScreen(
-                                                caregiverName: c.name,
-                                                caregiverRole: c.role,
-                                                caregiverId: c.id,
-                                                caregiverEmail: c.email,
-                                              ),
-                                            ),
-                                          ).then((_) {
-                                            if (context.mounted) {
-                                              context
-                                                  .read<FamilyMenuCubit>()
-                                                  .init();
-                                            }
-                                          });
+                                      : () async {
+                                          await context.push(
+                                            RoutePaths.permissions,
+                                            extra: <String, dynamic>{
+                                              'caregiverName': c.name,
+                                              'caregiverRole': c.role,
+                                              'caregiverId': c.id,
+                                              'caregiverEmail': c.email,
+                                            },
+                                          );
+                                          if (context.mounted) {
+                                            context
+                                                .read<FamilyMenuCubit>()
+                                                .init();
+                                          }
                                         },
                                 ),
                               );
@@ -257,24 +252,21 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                       "${c.role} · ${c.daysRemaining} days left",
                                   statusPill: StatusPill.awaitingResponse(),
                                   showChevron: true,
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => InvitePendingScreen(
-                                          invitationId: c.id,
-                                          recipientEmail: c.email.isNotEmpty
-                                              ? c.email
-                                              : c.name,
-                                          role: c.role,
-                                          childName: state.childName,
-                                        ),
-                                      ),
-                                    ).then((_) {
-                                      if (context.mounted) {
-                                        context.read<FamilyMenuCubit>().init();
-                                      }
-                                    });
+                                  onTap: () async {
+                                    await context.push(
+                                      RoutePaths.invitePending,
+                                      extra: <String, dynamic>{
+                                        'invitationId': c.id,
+                                        'recipientEmail': c.email.isNotEmpty
+                                            ? c.email
+                                            : c.name,
+                                        'role': c.role,
+                                        'childName': state.childName,
+                                      },
+                                    );
+                                    if (context.mounted) {
+                                      context.read<FamilyMenuCubit>().init();
+                                    }
                                   },
                                 ),
                               );
@@ -282,13 +274,7 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                             24.spaceH,
                             InkWell(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        const FamilySharingConsentScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.familySharingConsent);
                               },
                               child: InfoBox.orange(
                                 title: "How sharing works",
@@ -341,23 +327,19 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
           child: state.isCurrentUserOwner
               ? AppButton(
                   title: "Invite a caregiver",
-                  onTap: () {
+                  onTap: () async {
                     final bool hasConsented =
                         preferences.getBool(
                           SharedPreference.isFamilyConsentGranted,
                         ) ??
                         false;
-                    final Widget destination = hasConsented
-                        ? const InviteCaregiverScreen()
-                        : const FamilySharingConsentScreen();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => destination),
-                    ).then((_) {
-                      if (context.mounted) {
-                        context.read<FamilyMenuCubit>().init();
-                      }
-                    });
+                    final String destination = hasConsented
+                        ? RoutePaths.inviteCaregiver
+                        : RoutePaths.familySharingConsent;
+                    await context.push(destination);
+                    if (context.mounted) {
+                      context.read<FamilyMenuCubit>().init();
+                    }
                   },
                 )
               : AppButton(

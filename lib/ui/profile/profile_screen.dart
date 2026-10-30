@@ -12,15 +12,9 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/app_session_manager.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
-import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
-import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
-import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
-import 'package:loving_brain/ui/notifications/notifications_screen.dart';
-import 'package:loving_brain/ui/parent_profile_v2/parent_profile_screen.dart';
-import 'package:loving_brain/ui/privacy_data/privacy_data_screen.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/profile/bloc/profile_state.dart';
 import 'package:loving_brain/ui/widget/app_image.dart';
@@ -124,13 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 iconBgColor: primaryColor,
                                 assetIcon: Assets.v2.icons.icMentorshipBooking,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const MentorshipLandingScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.mentorshipLanding);
                                 },
                               ),
                             ]),
@@ -142,13 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.user,
                                 iconBgColor: primaryColor,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const ParentProfileScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.parentProfile);
                                 },
                                 isLast: false,
                               ),
@@ -157,13 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.bell,
                                 iconBgColor: gentleReminderIconColor,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const NotificationsScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.notifications);
                                 },
                                 isLast: false,
                               ),
@@ -172,12 +148,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.users,
                                 iconBgColor: const Color(0xFF6366F1), // Indigo
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const FamilyMenuScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.familyMenu);
                                 },
                                 isLast: false,
                               ),
@@ -186,11 +157,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.baby,
                                 iconBgColor: primaryColor,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const ChildProfileScreen(),
+                                  context.push(
+                                    RoutePaths.childProfilePath(
+                                      preferences.getUserModel()?.uid ?? '',
                                     ),
                                   );
                                 },
@@ -223,12 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.shieldCheck,
                                 iconBgColor: privacyPolicyIconColor,
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const PrivacyDataScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.privacyData);
                                 },
                                 isLast: true,
                               ),
@@ -241,12 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 icon: LucideIcons.lifeBuoy,
                                 iconBgColor: const Color(0xFF2E7D32),
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const HelpSafetyScreen(),
-                                    ),
-                                  );
+                                  context.push(RoutePaths.helpSafety);
                                 },
                                 isLast: false,
                               ),

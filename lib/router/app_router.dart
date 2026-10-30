@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -62,6 +63,7 @@ import 'package:loving_brain/ui/sleep_no_data/sleep_no_data_screen.dart';
 import 'package:loving_brain/ui/sleep_pattern/sleep_pattern_screen.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/states_gallery/states_gallery_screen.dart';
+import 'package:loving_brain/ui/widget/skeleton_loader.dart';
 import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
@@ -289,8 +291,12 @@ class AppRouter {
         ),
         GoRoute(
           path: RoutePaths.calmPlan,
-          builder: (BuildContext context, GoRouterState state) =>
-              const CalmPlanScreen(),
+          builder: (BuildContext context, GoRouterState state) {
+            final dynamic extra = state.extra;
+            final BehaviourForecastResult? forecast =
+                extra is BehaviourForecastResult ? extra : null;
+            return CalmPlanScreen(forecast: forecast);
+          },
         ),
         GoRoute(
           path: RoutePaths.weeklyReview,
@@ -300,7 +306,8 @@ class AppRouter {
         GoRoute(
           path: RoutePaths.sessionConfirmation,
           builder: (BuildContext context, GoRouterState state) {
-            final String? guideName = state.uri.queryParameters['guideName'] ??
+            final String? guideName =
+                state.uri.queryParameters['guideName'] ??
                 (state.extra is String ? state.extra as String : null);
             return SessionRequestConfirmationScreen(guideName: guideName);
           },
@@ -609,6 +616,11 @@ class AppRouter {
           path: RoutePaths.statesGallery,
           builder: (BuildContext context, GoRouterState state) =>
               const StatesGalleryScreen(),
+        ),
+        GoRoute(
+          path: RoutePaths.loadingSkeleton,
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoadingSkeletonScreen(),
         ),
       ],
       errorBuilder: (BuildContext context, GoRouterState state) {

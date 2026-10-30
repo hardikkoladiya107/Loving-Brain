@@ -73,6 +73,7 @@ class RoutePaths {
   static const String notifications = '/notifications';
   static const String privacyData = '/privacy-data';
   static const String statesGallery = '/states-gallery';
+  static const String loadingSkeleton = '/loading-skeleton';
 
   static String childProfilePath(
     String userId, {

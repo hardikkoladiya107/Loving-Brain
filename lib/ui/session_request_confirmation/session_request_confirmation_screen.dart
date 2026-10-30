@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/base_screen/bloc/base_cubit.dart';
-import 'package:loving_brain/ui/parent_success_guide/parent_success_guide_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
@@ -200,10 +201,13 @@ class _SessionRequestConfirmationScreenState
               title: "Back to Journey",
               onTap: () {
                 context.read<BaseCubit>().changeProps(bottomNavigationIndex: 2);
-                Navigator.popUntil(
-                  context,
-                  (Route<dynamic> route) => route.isFirst,
-                );
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(
+                    context,
+                  ).popUntil((Route<dynamic> route) => route.isFirst);
+                } else {
+                  context.go(RoutePaths.base);
+                }
               },
             ),
             16.spaceH,
@@ -215,12 +219,7 @@ class _SessionRequestConfirmationScreenState
                 textAlign: TextAlign.center,
               ),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ParentSuccessGuideScreen(),
-                  ),
-                );
+                context.push(RoutePaths.parentSuccessGuide);
               },
             ),
           ],

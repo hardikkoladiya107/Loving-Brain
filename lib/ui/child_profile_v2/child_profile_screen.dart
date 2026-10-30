@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/child_essentials/child_essentials_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_state.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -72,8 +73,8 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
               message: message?.toString() ?? 'Profile saved successfully',
               type: SnackBarType.SUCCESS,
             );
-            if (widget.fromManageChildren && Navigator.canPop(context)) {
-              Navigator.pop(context, true);
+            if (widget.fromManageChildren && context.canPop()) {
+              context.pop(true);
             }
           },
           error: (Exception exception) {
@@ -141,7 +142,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                       child: Row(
                         children: [
                           InkWell(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: const BoxDecoration(
@@ -238,13 +239,7 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                           24.spaceH,
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext routeCtx) =>
-                                      const ChildEssentialsScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.essentials);
                             },
                             child: Container(
                               width: double.infinity,

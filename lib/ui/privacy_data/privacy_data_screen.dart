@@ -11,8 +11,6 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
-import 'package:loving_brain/ui/privacy_policy/privacy_policy_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/setting_tile.dart';
@@ -898,7 +896,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                         vertical: 8.h,
                       ),
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: const BoxDecoration(
@@ -1001,12 +999,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                             title: "Linked caregivers",
                             subtitle: "Manage linked caregivers & permissions",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const FamilyMenuScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.familyMenu);
                             },
                           ),
                           12.spaceH,
@@ -1020,12 +1013,7 @@ class _PrivacyDataScreenState extends State<PrivacyDataScreen> {
                             title: "Read the full privacy policy",
                             subtitle: "Updated October 2026",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (_) => const PrivacyPolicyScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.privacy);
                             },
                           ),
                           24.spaceH,

@@ -6,15 +6,7 @@ import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/brainy_saved_guidance/brainy_saved_guidance_screen.dart';
-import 'package:loving_brain/ui/enrolled_journey_home/enrolled_journey_home_screen.dart';
-import 'package:loving_brain/ui/family_timeline/family_timeline_screen.dart';
-import 'package:loving_brain/ui/harder_week/harder_week_screen.dart';
-import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
-import 'package:loving_brain/ui/trying_this_week/trying_this_week_screen.dart';
-import 'package:loving_brain/ui/weekly_family_review/weekly_family_review_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/journey_cubit.dart';
@@ -122,7 +114,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
         "One positive change, one thing that's still hard, and one focus for next week.";
     String buttonText = 'Open review';
     String imagePath = Assets.v2.images.imgJournyWeeklyReview.path;
-    Widget targetScreen = const WeeklyFamilyReviewScreen();
+    String targetRoute = RoutePaths.weeklyReview;
 
     if (state.mode == JourneyMode.harder) {
       chipTitle = 'Disrupted week';
@@ -131,7 +123,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           state.weeklyInsights?.harderExplanation ??
           "Travel or illness disrupted the routine. That's expected, and routines take a few days to settle again.";
       imagePath = Assets.v2.images.imgJourneyThisWeek.path;
-      targetScreen = const HarderWeekScreen();
+      targetRoute = RoutePaths.harderWeek;
     } else if (state.mode == JourneyMode.trying) {
       chipTitle = 'Active recommendation';
       titleText = "What we're trying this week";
@@ -140,7 +132,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
           'An earlier, shorter afternoon nap.';
       buttonText = 'View progress';
       imagePath = Assets.v2.images.imgSprout.path;
-      targetScreen = const TryingThisWeekScreen();
+      targetRoute = RoutePaths.tryingThisWeek;
     }
 
     return Container(
@@ -197,15 +189,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
           16.spaceH,
           AppButton(
             title: buttonText,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => targetScreen),
-              ).then((_) {
-                if (context.mounted) {
-                  context.read<JourneyCubit>().init();
-                }
-              });
+            onTap: () async {
+              await context.push(targetRoute);
+              if (context.mounted) {
+                context.read<JourneyCubit>().init();
+              }
             },
           ),
         ],
@@ -220,27 +208,14 @@ class _JourneyScreenState extends State<JourneyScreen> {
     final double fraction = (currentWeek / totalWeeks).clamp(0.0, 1.0);
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (isEnrolled) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const EnrolledJourneyHomeScreen(),
-            ),
-          ).then((_) {
-            if (context.mounted) {
-              context.read<JourneyCubit>().init();
-            }
-          });
+          await context.push(RoutePaths.enrolledJourney);
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const ProgrammeDetailScreen()),
-          ).then((_) {
-            if (context.mounted) {
-              context.read<JourneyCubit>().init();
-            }
-          });
+          await context.push(RoutePaths.programmeDetail);
+        }
+        if (context.mounted) {
+          context.read<JourneyCubit>().init();
         }
       },
       child: Container(
@@ -328,15 +303,11 @@ class _JourneyScreenState extends State<JourneyScreen> {
         : '${state.savedGuidanceCount} saved answers';
 
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const BrainySavedGuidanceScreen()),
-        ).then((_) {
-          if (context.mounted) {
-            context.read<JourneyCubit>().init();
-          }
-        });
+      onTap: () async {
+        await context.push(RoutePaths.brainySaved);
+        if (context.mounted) {
+          context.read<JourneyCubit>().init();
+        }
       },
       child: Container(
         width: double.infinity,
@@ -393,10 +364,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   Widget _buildFamilyTimelineCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const FamilyTimelineScreen()),
-        );
+        context.push(RoutePaths.familyTimeline);
       },
       child: Container(
         width: double.infinity,
@@ -513,12 +481,7 @@ class _JourneyScreenState extends State<JourneyScreen> {
   Widget _buildGuidedMentorshipCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (BuildContext routeCtx) => const MentorshipLandingScreen(),
-          ),
-        );
+        context.push(RoutePaths.mentorshipLanding);
       },
       child: Container(
         width: double.infinity,

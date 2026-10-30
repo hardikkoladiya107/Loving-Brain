@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
+import 'package:loving_brain/other/preferances.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_sleep_update_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/person_card.dart';
@@ -110,10 +112,9 @@ class _SleepNoDataScreenState extends State<SleepNoDataScreen> {
                         name: cName,
                         subtitle: "$cAge old",
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ChildProfileScreen(),
+                          context.push(
+                            RoutePaths.childProfilePath(
+                              preferences.getUserModel()?.uid ?? '',
                             ),
                           );
                         },

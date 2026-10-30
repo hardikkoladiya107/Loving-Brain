@@ -10,12 +10,8 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/family_menu/family_menu_screen.dart';
-import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
-import 'package:loving_brain/ui/notifications/notifications_screen.dart';
 import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_state.dart';
-import 'package:loving_brain/ui/privacy_data/privacy_data_screen.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/editable_field_card.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
@@ -179,7 +175,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                       child: Row(
                         children: [
                           InkWell(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: const BoxDecoration(
@@ -404,12 +400,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                             subtitle:
                                 "Manage co-parents, permissions and invites",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const FamilyMenuScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.familyMenu);
                             },
                           ),
                           12.spaceH,
@@ -423,12 +414,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                             subtitle:
                                 "Quiet hours and predictive alert preferences",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const NotificationsScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.notifications);
                             },
                           ),
                           12.spaceH,
@@ -441,12 +427,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                             title: "Privacy & Data",
                             subtitle: "Offline sync, export and data controls",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const PrivacyDataScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.privacyData);
                             },
                           ),
                           12.spaceH,
@@ -459,12 +440,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
                             title: "Help & Safety",
                             subtitle: "Medical disclaimers and crisis support",
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const HelpSafetyScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.helpSafety);
                             },
                           ),
                           if (state.isEdited) 120.spaceH else 40.spaceH,

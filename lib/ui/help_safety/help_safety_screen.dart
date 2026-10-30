@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
 import 'package:loving_brain/ui/widget/setting_tile.dart';
 import 'package:loving_brain/ui/widget/warning_box.dart';
-import 'package:loving_brain/ui/faq/faq_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'bloc/help_safety_cubit.dart';
@@ -110,7 +111,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                           vertical: 8.h,
                         ),
                         child: InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(8.r),
                             decoration: const BoxDecoration(
@@ -147,12 +148,7 @@ class _HelpSafetyScreenState extends State<HelpSafetyScreen> {
                               iconBackgroundColor: const Color(0xFFE8F5E9),
                               title: "FAQs",
                               subtitle: "Sleep, tantrums, sharing and billing",
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const FaqScreen(),
-                                ),
-                              ),
+                              onTap: () => context.push(RoutePaths.faq),
                             ),
                             12.spaceH,
                             SettingTile(

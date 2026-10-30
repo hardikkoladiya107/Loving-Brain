@@ -8,7 +8,6 @@ import 'bloc/today_state.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_behaviour_sheet.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_tantrums_update_sheet.dart';
 // Import sheets
@@ -23,7 +22,6 @@ import 'package:loving_brain/ui/today_screen/widgets/still_learning_patterns_car
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
-import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/widget/offline_banner.dart';
 // Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';

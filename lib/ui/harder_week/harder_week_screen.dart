@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
-import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -72,7 +72,7 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: const BoxDecoration(
@@ -273,14 +273,12 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
                   final String prompt = context
                       .read<HarderWeekCubit>()
                       .buildBrainyDisruptionPrompt();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BrainyConversationScreen(
-                        topic: 'Harder Week Support',
-                        initialChat: prompt,
-                      ),
-                    ),
+                  context.push(
+                    RoutePaths.brainyConversation,
+                    extra: <String, dynamic>{
+                      'topic': 'Harder Week Support',
+                      'initialChat': prompt,
+                    },
                   );
                 },
               ),
@@ -290,12 +288,7 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
                 backgroundColor: Colors.white,
                 textColor: darkBlue,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MentorshipLandingScreen(),
-                    ),
-                  );
+                  context.push(RoutePaths.mentorshipLanding);
                 },
               ),
               16.spaceH,
@@ -307,7 +300,7 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
-                  Navigator.pop(context);
+                  context.pop();
                 },
               ),
             ],

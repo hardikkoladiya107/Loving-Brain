@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:loving_brain/ui/family_sharing_consent/family_sharing_consent_screen.dart';
-import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_screen.dart';
-import 'package:loving_brain/ui/microphone_permission/microphone_permission_screen.dart';
-import 'package:loving_brain/ui/notifications_permission/notifications_permission_screen.dart';
-import 'package:loving_brain/ui/sleep_low_confidence/sleep_low_confidence_screen.dart';
-import 'package:loving_brain/ui/sleep_no_data/sleep_no_data_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/offline_banner.dart';
-import 'package:loving_brain/ui/widget/skeleton_loader.dart';
 
 class StatesGalleryScreen extends StatefulWidget {
   const StatesGalleryScreen({super.key});
@@ -64,32 +59,17 @@ class _StatesGalleryScreenState extends State<StatesGalleryScreen> {
                 _buildLink(
                   context,
                   "Family Sharing Consent",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const FamilySharingConsentScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.familySharingConsent),
                 ),
                 _buildLink(
                   context,
                   "Microphone Permission",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MicrophonePermissionScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.microphonePermission),
                 ),
                 _buildLink(
                   context,
                   "Notifications Permission",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const NotificationsPermissionScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.notificationsPermission),
                 ),
 
                 const Divider(),
@@ -97,32 +77,17 @@ class _StatesGalleryScreenState extends State<StatesGalleryScreen> {
                 _buildLink(
                   context,
                   "No Data State (Sleep)",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SleepNoDataScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.sleepNoData),
                 ),
                 _buildLink(
                   context,
                   "Low Confidence State (Sleep)",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SleepLowConfidenceScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.sleepLowConfidence),
                 ),
                 _buildLink(
                   context,
                   "Service Unavailable (Mentorship)",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MentorshipUnavailableScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.mentorshipUnavailable),
                 ),
 
                 const Divider(),
@@ -130,12 +95,7 @@ class _StatesGalleryScreenState extends State<StatesGalleryScreen> {
                 _buildLink(
                   context,
                   "Loading Skeleton Screen",
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const LoadingSkeletonScreen(),
-                    ),
-                  ),
+                  () => context.push(RoutePaths.loadingSkeleton),
                 ),
               ],
             ),

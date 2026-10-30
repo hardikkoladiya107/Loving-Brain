@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/user_repo.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
-import 'allergies_screen.dart';
 import 'bloc/child_essentials_cubit.dart';
 import 'bloc/child_essentials_state.dart';
-import 'medications_screen.dart';
 
 /// Screen 53: Child Essentials.
 /// Conforms strictly to AGENTS.md Rules 3, 5, and 6.
@@ -138,7 +138,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                         vertical: 8.h,
                       ),
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: const BoxDecoration(
@@ -179,13 +179,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                             title: "Allergies",
                             subtitle: allergiesSubtitle,
                             onTap: () {
-                              Navigator.push<void>(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext _) =>
-                                      const AllergiesScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.allergies);
                             },
                           ),
                           12.spaceH,
@@ -196,13 +190,7 @@ class _ChildEssentialsScreenState extends State<ChildEssentialsScreen> {
                             title: "Medications",
                             subtitle: medicationsSubtitle,
                             onTap: () {
-                              Navigator.push<void>(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext _) =>
-                                      const MedicationsScreen(),
-                                ),
-                              );
+                              context.push(RoutePaths.medications);
                             },
                           ),
                           16.spaceH,

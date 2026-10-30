@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/permissions/permissions_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/info_box.dart';
@@ -107,7 +108,7 @@ class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
                         vertical: 8.h,
                       ),
                       child: InkWell(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => context.pop(),
                         child: Container(
                           padding: EdgeInsets.all(8.r),
                           decoration: const BoxDecoration(
@@ -229,21 +230,19 @@ class _InviteAcceptedScreenState extends State<InviteAcceptedScreen> {
             AppButton(
               title: "Manage permissions",
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PermissionsScreen(
-                      caregiverName: name,
-                      caregiverRole: role,
-                    ),
-                  ),
+                context.push(
+                  RoutePaths.permissions,
+                  extra: <String, dynamic>{
+                    'caregiverName': name,
+                    'caregiverRole': role,
+                  },
                 );
               },
             ),
             16.spaceH,
             BaseButton(
               onTap: () {
-                Navigator.of(context).popUntil((Route<dynamic> r) => r.isFirst);
+                context.go(RoutePaths.familyMenu);
               },
               child: "Back to Family".appText(
                 fontSize: 16.sp,

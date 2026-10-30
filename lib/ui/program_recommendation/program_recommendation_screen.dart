@@ -265,10 +265,7 @@ class _ProgramRecommendationScreenState
   ) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ProgrammeDetailScreen()),
-        );
+        context.push(RoutePaths.programmeDetail);
       },
       child: Container(
         decoration: BoxDecoration(

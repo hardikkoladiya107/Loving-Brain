@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/success_screen/success_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/after_reflection_cubit.dart';
@@ -48,14 +49,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
           loading: () => EasyLoading.show(),
           data: (_) {
             EasyLoading.dismiss();
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    const SucessScreen(successText: "Check-in Complete!"),
-              ),
-              (Route<dynamic> route) => route.isFirst,
-            );
+            context.go(RoutePaths.successScreen, extra: "Check-in Complete!");
           },
           error: (Exception error) {
             EasyLoading.dismiss();
@@ -101,7 +95,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           borderRadius: BorderRadius.circular(24.r),
                           child: Container(
                             padding: EdgeInsets.all(8.r),
@@ -284,7 +278,7 @@ class _AfterReflectionScreenState extends State<AfterReflectionScreen> {
                     16.spaceH,
                     TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        context.pop();
                       },
                       child: "Skip".appText(
                         fontSize: 16.sp,
