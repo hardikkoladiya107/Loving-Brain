@@ -143,13 +143,16 @@ class AiRepo {
       );
       final List<Map<String, dynamic>> toolTail = <Map<String, dynamic>>[];
       for (int round = 0; round < 3; round++) {
+        final bool allowTools = round < 2;
         final HttpsCallableResult<dynamic> response = await callable
             .call(<String, dynamic>{
               'messageText': finalText,
               'systemPrompt': systemPrompt,
               'history': history ?? <Map<String, dynamic>>[],
               'imageUrls': imageUrls,
-              'tools': AiDataTools.openAiTools,
+              'tools': allowTools
+                  ? AiDataTools.openAiTools
+                  : <Map<String, dynamic>>[],
               'toolTail': toolTail,
             })
             .timeout(_callableTimeout);
@@ -186,9 +189,11 @@ class AiRepo {
         }
 
         final dynamic assistantMessage = data['assistantMessage'];
+        final int tailBefore = toolTail.length;
         if (assistantMessage is Map) {
           toolTail.add(Map<String, dynamic>.from(assistantMessage));
         }
+        int answeredCalls = 0;
         for (final dynamic call in toolCalls) {
           if (call is! Map) continue;
           final String callId = call['id']?.toString() ?? '';
@@ -208,12 +213,23 @@ class AiRepo {
           } else if (rawArguments is Map) {
             arguments = Map<String, dynamic>.from(rawArguments);
           }
-          final String output = await AiDataTools.executeTool(name, arguments);
+          String output;
+          try {
+            output = await AiDataTools.executeTool(name, arguments);
+          } catch (_) {
+            output = jsonEncode(<String, dynamic>{
+              'error': 'Could not read that record just now.',
+            });
+          }
           toolTail.add(<String, dynamic>{
             'role': 'tool',
             'tool_call_id': callId,
             'content': output,
           });
+          answeredCalls += 1;
+        }
+        if (answeredCalls == 0) {
+          toolTail.removeRange(tailBefore, toolTail.length);
         }
       }
       return ApiResultStatus.error(error: Exception('Failed to get response'));

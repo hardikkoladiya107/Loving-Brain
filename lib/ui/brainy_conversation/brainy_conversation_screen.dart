@@ -50,6 +50,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   final ImagePicker _imagePicker = ImagePicker();
   late BrainyConversationCubit _cubit;
   int _lastMessageCount = 0;
+  bool _seenLatest = false;
   double? _olderAnchorExtent;
   double? _olderAnchorPixels;
 
@@ -102,12 +103,19 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
 
   void _onChatScroll() {
     if (!_scrollController.hasClients) return;
-    if (_scrollController.position.pixels > 160) return;
+    final ScrollPosition position = _scrollController.position;
+    final bool nearLatest =
+        position.maxScrollExtent <= 24 ||
+        position.pixels >= position.maxScrollExtent - 48;
+    if (nearLatest) {
+      _seenLatest = true;
+    }
+    if (!_seenLatest || position.pixels > 160) return;
     final BrainyConversationCubit cubit = context
         .read<BrainyConversationCubit>();
     if (!cubit.state.hasMoreMessages || cubit.state.isLoadingOlder) return;
-    _olderAnchorExtent = _scrollController.position.maxScrollExtent;
-    _olderAnchorPixels = _scrollController.position.pixels;
+    _olderAnchorExtent = position.maxScrollExtent;
+    _olderAnchorPixels = position.pixels;
     cubit.loadOlderMessages();
   }
 

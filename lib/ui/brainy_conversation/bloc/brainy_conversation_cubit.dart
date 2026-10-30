@@ -303,6 +303,14 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             subtext:
                 'Dimming the lights and turning off background noise can help signal that it is time to wind down.',
           ),
+          BrainyMessage(
+            id: 'default_help',
+            type: MessageType.aiInfo,
+            chipTitle: 'When to get help',
+            headline: 'Ask a health professional if evenings stay hard',
+            subtext:
+                'If this keeps going, or $childName seems unwell, speak with an appropriate health professional.',
+          ),
         ],
       );
     }
