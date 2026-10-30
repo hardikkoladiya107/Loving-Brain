@@ -713,29 +713,23 @@ class TodayCubit extends Cubit<TodayState> {
       DateTime checkBed;
       DateTime checkWake;
       if (hasNight) {
-        checkBed = TodayLogRepo.parseTimeString(
-          state.fellAsleepTime!,
-          referenceDate: now,
-        );
-        checkWake = TodayLogRepo.parseTimeString(
-          state.wokeUpTime!,
-          referenceDate: now,
-        );
-        if (!checkWake.isAfter(checkBed)) {
-          checkWake = checkWake.add(const Duration(days: 1));
-        }
+        final ResolvedSleepInterval interval =
+            TodayLogRepo.resolveSleepInterval(
+              bedTimeText: state.fellAsleepTime!,
+              wakeTimeText: state.wokeUpTime!,
+              now: now,
+            );
+        checkBed = interval.bedTime;
+        checkWake = interval.wakeTime;
       } else {
-        checkBed = TodayLogRepo.parseTimeString(
-          state.napStartTime!,
-          referenceDate: now,
-        );
-        checkWake = TodayLogRepo.parseTimeString(
-          state.napEndTime!,
-          referenceDate: now,
-        );
-        if (!checkWake.isAfter(checkBed)) {
-          checkWake = checkWake.add(const Duration(days: 1));
-        }
+        final ResolvedSleepInterval interval =
+            TodayLogRepo.resolveSleepInterval(
+              bedTimeText: state.napStartTime!,
+              wakeTimeText: state.napEndTime!,
+              now: now,
+            );
+        checkBed = interval.bedTime;
+        checkWake = interval.wakeTime;
       }
 
       final SleepLogModel? duplicate = await findOverlappingSleepLog(
@@ -756,35 +750,13 @@ class TodayCubit extends Cubit<TodayState> {
     ApiResultStatus<String> result = const ApiResultStatus.initial();
 
     if (hasNight) {
-      DateTime bedTime = TodayLogRepo.parseTimeString(
-        state.fellAsleepTime!,
-        referenceDate: now,
+      final ResolvedSleepInterval interval = TodayLogRepo.resolveSleepInterval(
+        bedTimeText: state.fellAsleepTime!,
+        wakeTimeText: state.wokeUpTime!,
+        now: now,
       );
-      DateTime wakeTime = TodayLogRepo.parseTimeString(
-        state.wokeUpTime!,
-        referenceDate: now,
-      );
-
-      // If wake is earlier or same as bed (e.g. overnight 11:00 PM to 07:00 AM)
-      if (!wakeTime.isAfter(bedTime)) {
-        if (wakeTime.isBefore(now)) {
-          // Bedtime was last night, wake was earlier today
-          bedTime = bedTime.subtract(const Duration(days: 1));
-        } else {
-          wakeTime = wakeTime.add(const Duration(days: 1));
-        }
-      }
-
-      if (wakeTime.isAfter(now)) {
-        changeProps(
-          isLoading: false,
-          showSleepUpdateErrors: true,
-          saveStatus: ApiResultStatus.error(
-            error: Exception("Wake time cannot be in the future"),
-          ),
-        );
-        return;
-      }
+      final DateTime bedTime = interval.bedTime;
+      final DateTime wakeTime = interval.wakeTime;
 
       final int durationMins = wakeTime.difference(bedTime).inMinutes;
       if (durationMins <= 0) {
@@ -828,26 +800,13 @@ class TodayCubit extends Cubit<TodayState> {
         log: nightLog,
       );
     } else if (hasNap) {
-      final DateTime napBed = TodayLogRepo.parseTimeString(
-        state.napStartTime!,
-        referenceDate: now,
+      final ResolvedSleepInterval interval = TodayLogRepo.resolveSleepInterval(
+        bedTimeText: state.napStartTime!,
+        wakeTimeText: state.napEndTime!,
+        now: now,
       );
-      DateTime napWake = TodayLogRepo.parseTimeString(
-        state.napEndTime!,
-        referenceDate: now,
-      );
-      if (!napWake.isAfter(napBed)) {
-        napWake = napWake.add(const Duration(days: 1));
-      }
-      if (napWake.isAfter(now)) {
-        changeProps(
-          isLoading: false,
-          saveStatus: ApiResultStatus.error(
-            error: Exception("Nap end time cannot be in the future"),
-          ),
-        );
-        return;
-      }
+      final DateTime napBed = interval.bedTime;
+      final DateTime napWake = interval.wakeTime;
       final int napDurationMins = napWake.difference(napBed).inMinutes;
       if (napDurationMins <= 0) {
         changeProps(

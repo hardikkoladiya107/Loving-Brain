@@ -706,7 +706,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: state.usualWakeTime.isEmpty
-                                  ? greyColor
+                                  ? greyColor4
                                   : greyColor9,
                               textAlign: TextAlign.start,
                             ),
@@ -782,7 +782,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: state.usualBedtime.isEmpty
-                                  ? greyColor
+                                  ? greyColor4
                                   : greyColor9,
                               textAlign: TextAlign.start,
                             ),
@@ -1094,7 +1094,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: state.dateOfBirth.isEmpty
-                                  ? greyColor
+                                  ? greyColor4
                                   : greyColor9,
                               textAlign: TextAlign.start,
                             ),

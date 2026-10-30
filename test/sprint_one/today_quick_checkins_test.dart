@@ -203,6 +203,41 @@ void main() {
       expect(dtNoPad.minute, equals(20));
     });
 
+    test(
+      'resolveSleepInterval keeps a future wake when the child fell asleep already',
+      () {
+        final DateTime now = DateTime(2026, 10, 30, 21, 30);
+        final ResolvedSleepInterval interval =
+            TodayLogRepo.resolveSleepInterval(
+              bedTimeText: '09:29 PM',
+              wakeTimeText: '09:29 AM',
+              now: now,
+            );
+
+        expect(interval.bedTime, DateTime(2026, 10, 30, 21, 29));
+        expect(interval.wakeTime, DateTime(2026, 10, 31, 9, 29));
+        expect(interval.wakeTime.isAfter(now), isTrue);
+        expect(interval.wakeTime.isAfter(interval.bedTime), isTrue);
+      },
+    );
+
+    test(
+      'resolveSleepInterval uses last night when fell asleep is still ahead of now',
+      () {
+        final DateTime now = DateTime(2026, 10, 30, 8, 0);
+        final ResolvedSleepInterval interval =
+            TodayLogRepo.resolveSleepInterval(
+              bedTimeText: '09:29 PM',
+              wakeTimeText: '07:00 AM',
+              now: now,
+            );
+
+        expect(interval.bedTime, DateTime(2026, 10, 29, 21, 29));
+        expect(interval.wakeTime, DateTime(2026, 10, 30, 7, 0));
+        expect(interval.wakeTime.isBefore(now), isTrue);
+      },
+    );
+
     test('TimelineEventModel parses new quick check-in event types', () {
       final Map<String, dynamic> sleepData = <String, dynamic>{
         'type': 'sleep_log',

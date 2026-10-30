@@ -18,6 +18,14 @@ import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
 
+/// Fell-asleep and wake times placed on real calendar dates.
+class ResolvedSleepInterval {
+  const ResolvedSleepInterval({required this.bedTime, required this.wakeTime});
+
+  final DateTime bedTime;
+  final DateTime wakeTime;
+}
+
 /// Singleton repository managing the 5 Quick Update event writes and history queries
 /// for TodayScreen according to V2 architecture rules.
 class TodayLogRepo {
@@ -91,6 +99,27 @@ class TodayLogRepo {
     } catch (_) {
       return base;
     }
+  }
+
+  /// Places a fell-asleep and wake clock time on real dates.
+  ///
+  /// Fell asleep is the latest time that is not still ahead of [now].
+  /// Wake is the next time after that. A wake time later than [now] is kept,
+  /// because a child who is asleep now wakes up later.
+  static ResolvedSleepInterval resolveSleepInterval({
+    required String bedTimeText,
+    required String wakeTimeText,
+    required DateTime now,
+  }) {
+    DateTime bedTime = parseTimeString(bedTimeText, referenceDate: now);
+    if (bedTime.isAfter(now)) {
+      bedTime = bedTime.subtract(const Duration(days: 1));
+    }
+    DateTime wakeTime = parseTimeString(wakeTimeText, referenceDate: bedTime);
+    if (!wakeTime.isAfter(bedTime)) {
+      wakeTime = wakeTime.add(const Duration(days: 1));
+    }
+    return ResolvedSleepInterval(bedTime: bedTime, wakeTime: wakeTime);
   }
 
   // =========================================================================
