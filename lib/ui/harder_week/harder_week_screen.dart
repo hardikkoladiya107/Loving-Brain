@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -270,15 +271,20 @@ class _HarderWeekScreenState extends State<HarderWeekScreen> {
               AppButton(
                 title: 'Talk to Brainy about this',
                 onTap: () {
-                  final String prompt = context
-                      .read<HarderWeekCubit>()
-                      .buildBrainyDisruptionPrompt();
+                  final HarderWeekCubit cubit = context.read<HarderWeekCubit>();
+                  final String prompt = cubit.buildBrainyDisruptionPrompt();
+                  final String reason =
+                      cubit.state.insights?.harderExplanation ??
+                      'Travel or illness disrupted our usual routine';
+                  final String name =
+                      cubit.state.child?.childName ?? 'our family';
                   context.push(
                     RoutePaths.brainyConversation,
-                    extra: <String, dynamic>{
-                      'topic': 'Harder Week Support',
-                      'initialChat': prompt,
-                    },
+                    extra: BrainyEntryContext.fromHarderWeek(
+                      prompt: prompt,
+                      attachedSummary:
+                          'Harder week context\n- Child/family: $name\n- Disruption: $reason',
+                    ),
                   );
                 },
               ),

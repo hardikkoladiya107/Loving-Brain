@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/router/route_paths.dart';
@@ -200,11 +201,9 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
                 onTap: () {
                   context.push(
                     RoutePaths.brainyConversation,
-                    extra: <String, dynamic>{
-                      'initialChat':
-                          "Can you help me understand if the 6-Week Sleep Journey fits my family's situation?",
-                      'topic': "Sleep Journey",
-                    },
+                    extra: BrainyEntryContext.fromProgrammeDetail(
+                      programmeName: '6-Week Sleep Journey',
+                    ),
                   );
                 },
               ),

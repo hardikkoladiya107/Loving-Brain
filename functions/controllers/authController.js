@@ -3,7 +3,7 @@ const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const {
   getOtpEmailHtml,
-  getInvitationEmailHtml,
+  buildBrevoInvitationBody,
 } = require("../utils/emailTemplate");
 const authIdentity = require("../services/authIdentity");
 
@@ -251,11 +251,14 @@ exports.sendInvitationEmail = onCall(async (request) => {
   }
 
   const invitationLink = `https://www.lovingbrain.com/invite/${invitationId}`;
-  const htmlContent = getInvitationEmailHtml(
-      fromParentName,
-      childrenNames,
-      invitationLink,
-  );
+  const mail = buildBrevoInvitationBody({
+    toEmail,
+    fromParentName,
+    childrenNames,
+    invitationId,
+    invitationLink,
+    sender: {name: SENDER_NAME, email: SENDER_EMAIL},
+  });
 
   try {
     const response = await fetch(BREVO_API_URL, {
@@ -265,12 +268,7 @@ exports.sendInvitationEmail = onCall(async (request) => {
         "Content-Type": "application/json",
         "Accept": "application/json",
       },
-      body: JSON.stringify({
-        sender: {name: SENDER_NAME, email: SENDER_EMAIL},
-        to: [{email: toEmail}],
-        subject: `${fromParentName} invited you to co-parent on Loving Brain`,
-        htmlContent,
-      }),
+      body: JSON.stringify(mail),
     });
 
     if (!response.ok) {

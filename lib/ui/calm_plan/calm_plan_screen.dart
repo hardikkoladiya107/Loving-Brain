@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_color.dart';
@@ -138,13 +139,27 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                     Center(
                       child: TextButton(
                         onPressed: () {
+                          final CalmPlanState planState = context
+                              .read<CalmPlanCubit>()
+                              .state;
+                          final List<String> steps = planState.actions
+                              .map(
+                                (CalmPlanAction a) =>
+                                    '${a.stepNumber}. ${a.title}: ${a.description}',
+                              )
+                              .toList();
+                          final BehaviourForecastResult? forecast =
+                              planState.forecast;
+                          final String? window = forecast == null
+                              ? null
+                              : '${forecast.windowStart}–${forecast.windowEnd}';
                           context.push(
                             RoutePaths.brainyConversation,
-                            extra: <String, dynamic>{
-                              'topic': 'Calm Plan',
-                              'initialChat':
-                                  'Can you help me with a calming plan for my child during a hard moment?',
-                            },
+                            extra: BrainyEntryContext.fromCalmPlan(
+                              childName: planState.childName,
+                              planSteps: steps,
+                              windowLabel: window,
+                            ),
                           );
                         },
                         child: "Ask Brainy".appText(

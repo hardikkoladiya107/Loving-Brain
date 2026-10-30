@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
+import 'package:loving_brain/core/journey_insights_engine.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -269,15 +271,22 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
-                  final String prompt = context
-                      .read<WeeklyFamilyReviewCubit>()
-                      .buildBrainyPrompt();
+                  final WeeklyFamilyReviewCubit cubit = context
+                      .read<WeeklyFamilyReviewCubit>();
+                  final String prompt = cubit.buildBrainyPrompt();
+                  final WeeklyInsightsResult? insights = cubit.state.insights;
+                  final String? attached = insights == null
+                      ? null
+                      : 'Weekly review summary\n'
+                            '- Positive: ${insights.positiveTitle}\n'
+                            '- Difficulty: ${insights.difficultyTitle}\n'
+                            '- Recommended: ${insights.recommendedChange}';
                   context.push(
                     RoutePaths.brainyConversation,
-                    extra: <String, dynamic>{
-                      'topic': 'Weekly Review',
-                      'initialChat': prompt,
-                    },
+                    extra: BrainyEntryContext.fromWeeklyReview(
+                      prompt: prompt,
+                      attachedSummary: attached,
+                    ),
                   );
                 },
               ),

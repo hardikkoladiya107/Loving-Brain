@@ -1,0 +1,16 @@
+---
+description: Deploy Firebase changes with the CLI instead of leaving deploy for the user
+alwaysApply: true
+---
+
+# Firebase deploy
+
+This project already has the Firebase CLI and project `hugsand-heart-u86wap`. When a change needs to go live, deploy it yourself. Do not hand deploy back as a user task.
+
+Use `npx -y firebase-tools@latest` (never a bare `firebase` command). Run it outside the sandbox so the CLI can write its log and use the saved login.
+
+- Functions: `npx -y firebase-tools@latest deploy --only functions --project hugsand-heart-u86wap`
+- Indexes: `npx -y firebase-tools@latest deploy --only firestore:indexes --project hugsand-heart-u86wap`
+- Rules: `npx -y firebase-tools@latest deploy --only firestore:rules --project hugsand-heart-u86wap`
+
+For membership or security-rule changes, deploy functions first, then the app build, then Firestore rules. Deploying rules before the new app is what users run breaks older installs.

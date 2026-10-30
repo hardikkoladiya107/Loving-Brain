@@ -6,7 +6,7 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {HttpsError} = require("firebase-functions/v2/https");
 const {sendNotification} = require("../notification");
-const {getInvitationEmailHtml} = require("../utils/emailTemplate");
+const {buildBrevoInvitationBody} = require("../utils/emailTemplate");
 const {
   normalizeEmail,
   maskEmail,
@@ -281,16 +281,14 @@ async function createCoParentInvitation(db, params) {
           "Content-Type": "application/json",
           "Accept": "application/json",
         },
-        body: JSON.stringify({
+        body: JSON.stringify(buildBrevoInvitationBody({
+          toEmail: cleanEmail,
+          fromParentName: displayName,
+          childrenNames,
+          invitationId,
+          invitationLink,
           sender: {name: SENDER_NAME, email: SENDER_EMAIL},
-          to: [{email: cleanEmail}],
-          subject: `${displayName} invited you to co-parent on Loving Brain`,
-          htmlContent: getInvitationEmailHtml(
-              displayName,
-              childrenNames,
-              invitationLink,
-          ),
-        }),
+        })),
       });
       emailSent = response.ok;
       if (!response.ok) {

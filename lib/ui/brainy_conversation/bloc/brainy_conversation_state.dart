@@ -71,6 +71,7 @@ abstract class BrainyConversationState with _$BrainyConversationState {
     @Default(false) bool isTyping,
     String? conversationId,
     String? topic,
+    String? attachedContext,
     String? selectedImagePath,
     @Default([]) List<String> selectedImagePaths,
     String? attachedAudioPath,
@@ -79,5 +80,8 @@ abstract class BrainyConversationState with _$BrainyConversationState {
     @Default(Duration.zero) Duration attachedAudioDuration,
     String? playingMessageId,
     @Default(false) bool isAudioPlaying,
+    /// When set, UI should open Safety Concern (p70) once then clear it.
+    String? pendingSafetyMode,
+    String? pendingSafetySourceMessage,
   }) = _BrainyConversationState;
 }

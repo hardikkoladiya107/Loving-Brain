@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'bloc/today_cubit.dart';
@@ -181,11 +182,7 @@ class _TodayScreenState extends State<TodayScreen> {
                           onTap: () {
                             context.push(
                               RoutePaths.brainyConversation,
-                              extra: <String, dynamic>{
-                                'initialChat':
-                                    "I'm new here and want to understand how Loving-Brain works for my child.",
-                                'topic': "Getting Started",
-                              },
+                              extra: BrainyEntryContext.gettingStarted(),
                             );
                           },
                           backgroundColor: Colors.transparent,
@@ -211,11 +208,21 @@ class _TodayScreenState extends State<TodayScreen> {
                           onTap: () {
                             context.push(
                               RoutePaths.brainyConversation,
-                              extra: <String, dynamic>{
-                                'initialChat':
-                                    "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
-                                'topic': "Calm Heads-Up",
-                              },
+                              extra: BrainyEntryContext.fromHeadsUp(
+                                headline: 'A harder evening may be more likely',
+                                reason: state.forecastSubtitle.isNotEmpty
+                                    ? state.forecastSubtitle
+                                    : (state.sleepForecastReason.isNotEmpty
+                                          ? state.sleepForecastReason
+                                          : 'Recent sleep and behaviour patterns'),
+                                windowStart: state.sleepForecastStart,
+                                windowEnd: state.sleepForecastEnd,
+                                confidenceLabel:
+                                    state.confidenceLevel.isNotEmpty
+                                    ? state.confidenceLevel
+                                    : 'moderate',
+                                childName: state.childName,
+                              ),
                             );
                           },
                           backgroundColor: Colors.transparent,

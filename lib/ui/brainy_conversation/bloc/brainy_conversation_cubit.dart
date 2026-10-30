@@ -86,6 +86,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     bool? isTyping,
     String? conversationId,
     String? topic,
+    String? attachedContext,
+    bool clearAttachedContext = false,
     String? selectedImagePath,
     bool clearSelectedImage = false,
     List<String>? selectedImagePaths,
@@ -98,6 +100,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     String? playingMessageId,
     bool clearPlayingMessageId = false,
     bool? isAudioPlaying,
+    String? pendingSafetyMode,
+    bool clearPendingSafetyMode = false,
+    String? pendingSafetySourceMessage,
+    bool clearPendingSafetySourceMessage = false,
   }) {
     if (isClosed) return;
 
@@ -111,6 +117,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         isTyping: isTyping ?? state.isTyping,
         conversationId: conversationId ?? state.conversationId,
         topic: topic ?? state.topic,
+        attachedContext: clearAttachedContext
+            ? null
+            : (attachedContext ?? state.attachedContext),
         selectedImagePath: clearSelectedImage
             ? null
             : (selectedImagePath ??
@@ -131,7 +140,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             ? null
             : (playingMessageId ?? state.playingMessageId),
         isAudioPlaying: isAudioPlaying ?? state.isAudioPlaying,
+        pendingSafetyMode: clearPendingSafetyMode
+            ? null
+            : (pendingSafetyMode ?? state.pendingSafetyMode),
+        pendingSafetySourceMessage: clearPendingSafetySourceMessage
+            ? null
+            : (pendingSafetySourceMessage ?? state.pendingSafetySourceMessage),
       ),
+    );
+  }
+
+  void clearPendingSafetyNavigation() {
+    changeProps(
+      clearPendingSafetyMode: true,
+      clearPendingSafetySourceMessage: true,
     );
   }
 
@@ -170,11 +192,20 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     String? initialChat,
     File? initialAudioFile,
     String? topic,
+    String? attachedContext,
   }) async {
     clearDraft();
     final String effectiveTopic = (topic ?? '').trim().isNotEmpty
         ? topic!.trim()
         : 'Sleep';
+
+    changeProps(
+      topic: effectiveTopic,
+      attachedContext: (attachedContext ?? '').trim().isNotEmpty
+          ? attachedContext!.trim()
+          : null,
+      clearAttachedContext: (attachedContext ?? '').trim().isEmpty,
+    );
 
     if (conversationId != null && conversationId.isNotEmpty) {
       if (conversationId != state.conversationId) {
@@ -631,6 +662,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         clearSelectedImages: true,
         clearAttachedAudio: true,
         isAttachedAudioPlaying: false,
+        pendingSafetyMode: isAcuteEmergency ? 'acute' : 'clinical',
+        pendingSafetySourceMessage: displayHeadline,
       );
 
       final String convId = await _ensureConversationCreated(displayHeadline);
@@ -784,12 +817,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     final BrainyContextSummary contextSummary =
         await AiDataTools.buildFourteenDayContext(childModel: childModel);
+    final String liveWithAttached = _mergeAttachedContext(
+      contextSummary.contextString,
+    );
 
     final String systemPrompt = BrainAiSystemPrompt.build(
       childModel: childModel,
       parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
       topic: state.topic,
-      liveContextString: contextSummary.contextString,
+      liveContextString: liveWithAttached,
       hasPersonalData: contextSummary.hasPersonalData,
     );
 
@@ -942,12 +978,15 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
     final BrainyContextSummary contextSummary =
         await AiDataTools.buildFourteenDayContext(childModel: childModel);
+    final String liveWithAttached = _mergeAttachedContext(
+      contextSummary.contextString,
+    );
 
     final String systemPrompt = BrainAiSystemPrompt.build(
       childModel: childModel,
       parentName: userModel?.parentName ?? userModel?.displayName ?? 'Parent',
       topic: state.topic,
-      liveContextString: contextSummary.contextString,
+      liveContextString: liveWithAttached,
       hasPersonalData: contextSummary.hasPersonalData,
     );
 
@@ -1090,6 +1129,21 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     List<BrainyMessage> cards, {
     required bool hasPersonalData,
   }) => _applyGeneralGuidanceLabel(cards, hasPersonalData: hasPersonalData);
+
+  String mergeAttachedContextForTesting(String liveContext) =>
+      _mergeAttachedContext(liveContext);
+
+  String _mergeAttachedContext(String liveContext) {
+    final String attached = state.attachedContext?.trim() ?? '';
+    if (attached.isEmpty) return liveContext;
+    final StringBuffer buffer = StringBuffer(liveContext.trim());
+    if (buffer.isNotEmpty) {
+      buffer.writeln();
+    }
+    buffer.writeln('Attached screen context:');
+    buffer.writeln(attached);
+    return buffer.toString();
+  }
 
   List<BrainyMessage> _applyGeneralGuidanceLabel(
     List<BrainyMessage> cards, {

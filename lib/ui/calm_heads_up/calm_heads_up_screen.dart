@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -124,6 +125,25 @@ class _CalmHeadsUpScreenState extends State<CalmHeadsUpScreen> {
                         _buildHealthCaveat(state.healthCaveat!),
                       ],
                       32.spaceH,
+                      AppButton(
+                        title: "Ask Brainy",
+                        onTap: () {
+                          context.push(
+                            RoutePaths.brainyConversation,
+                            extra: BrainyEntryContext.fromHeadsUp(
+                              headline: state.headline,
+                              reason: state.reason,
+                              windowStart: state.windowStart,
+                              windowEnd: state.windowEnd,
+                              confidenceLabel: state.confidenceLabel,
+                              contributingSignals: state.contributingSignals,
+                              healthCaveat: state.healthCaveat,
+                              childName: state.childName,
+                            ),
+                          );
+                        },
+                      ),
+                      12.spaceH,
                       AppButton(
                         title: "Add update",
                         onTap: () {

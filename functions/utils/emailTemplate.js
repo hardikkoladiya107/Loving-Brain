@@ -111,28 +111,141 @@ function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL) {
   `.trim();
 }
 
-/**
- * Returns a fully styled HTML email for Co-Parent / Caregiver invitation.
- * @param {string} fromParentName Name of the inviter.
- * @param {string} childrenNames Name of the child.
- * @param {string} invitationLink Universal deep link.
- * @param {string} [logoUrl] Optional hosted image URL.
- * @return {string} Fully formatted HTML string.
- */
-function getInvitationEmailHtml(
-  fromParentName,
-  childrenNames,
-  invitationLink,
-  logoUrl = DEFAULT_LOGO_URL,
-  appStoreUrl = "https://apps.apple.com/app/loving-brain/id6470000000",
-  playStoreUrl = "https://play.google.com/store/apps/details?id=com.app.loving_brain"
-) {
-  const brandLogoHtml = `
-    <img src="${logoUrl}" alt="Loving Brain" width="76" height="76" style="display: block; margin: 0 auto 14px auto; border: 0; outline: none; text-decoration: none; max-width: 76px; height: auto;" />
-  `;
+const APP_STORE_URL = "https://apps.apple.com/app/loving-brain/id6470000000";
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.app.loving_brain";
 
-  const encodedLink = encodeURIComponent(invitationLink);
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=2&data=${encodedLink}`;
+/**
+ * @param {string} value
+ * @return {string}
+ */
+function escapeHtml(value) {
+  return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+}
+
+/**
+ * Single-line text safe for a subject line.
+ * @param {string} value
+ * @param {string} fallback
+ * @param {number} max
+ * @return {string}
+ */
+function oneLine(value, fallback, max) {
+  const clean = String(value || "")
+      .replace(/[\r\n\t]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  const text = clean || fallback;
+  if (text.length <= max) return text;
+  return `${text.slice(0, Math.max(0, max - 3))}...`;
+}
+
+/**
+ * Small footer reference, same shape as `176165021031-d8`.
+ * The stamp changes on every send. The two-letter suffix comes from the invite id.
+ * @param {string} invitationId
+ * @param {number} sentAtMs
+ * @return {string}
+ */
+function invitationReference(invitationId, sentAtMs) {
+  const stamp = String(Math.max(0, Number(sentAtMs) || 0));
+  const idSource = String(invitationId || "x0").replace(/[^a-zA-Z0-9]/g, "");
+  const suffix = (idSource.slice(-2) || "x0").toLowerCase();
+  return `${stamp}-${suffix}`;
+}
+
+/**
+ * @param {object} input
+ * @return {object}
+ */
+function buildInvitationEmail(input) {
+  const fromParentName = oneLine(input.fromParentName, "A parent", 40);
+  const childrenNames = oneLine(input.childrenNames, "your child", 60);
+  const invitationLink = String(input.invitationLink || "").trim();
+  const invitationId = String(input.invitationId || "").trim();
+  const sentAtMs = Number(input.sentAtMs) || Date.now();
+  const reference = invitationReference(invitationId, sentAtMs);
+  const logoUrl = input.logoUrl || DEFAULT_LOGO_URL;
+  const appStoreUrl = input.appStoreUrl || APP_STORE_URL;
+  const playStoreUrl = input.playStoreUrl || PLAY_STORE_URL;
+  const subject = `${fromParentName} invited you to Loving Brain`;
+  const htmlContent = renderInvitationEmailHtml({
+    fromParentName,
+    childrenNames,
+    invitationLink,
+    reference,
+    logoUrl,
+    appStoreUrl,
+    playStoreUrl,
+  });
+  const textContent = [
+    `${fromParentName} invited you to care for ${childrenNames} on Loving Brain.`,
+    "",
+    `Open the invitation: ${invitationLink}`,
+    "",
+    "This invitation expires in 14 days.",
+    "",
+    `App Store: ${appStoreUrl}`,
+    `Google Play: ${playStoreUrl}`,
+    "",
+    "If you did not expect this, you can ignore this email.",
+    "",
+    `Ref: ${reference}`,
+  ].join("\n");
+
+  return {
+    reference,
+    subject,
+    htmlContent,
+    textContent,
+    headers: {
+      "X-Entity-Ref-ID": `${invitationId || reference}.${sentAtMs}`,
+    },
+  };
+}
+
+/**
+ * Brevo body for one invitation send. The subject stays clean.
+ * A unique X-Entity-Ref-ID keeps each send out of the previous Gmail thread.
+ * @param {object} input
+ * @return {object}
+ */
+function buildBrevoInvitationBody(input) {
+  const mail = buildInvitationEmail(input);
+  const sender = input.sender || {
+    name: "Loving Brain",
+    email: "hardikkoladiya107@gmail.com",
+  };
+  return {
+    sender,
+    to: [{email: String(input.toEmail || "").trim()}],
+    subject: mail.subject,
+    htmlContent: mail.htmlContent,
+    textContent: mail.textContent,
+    headers: mail.headers,
+  };
+}
+
+/**
+ * @param {object} input
+ * @return {string}
+ */
+function renderInvitationEmailHtml(input) {
+  const safeName = escapeHtml(input.fromParentName);
+  const safeChild = escapeHtml(input.childrenNames);
+  const safeLink = escapeHtml(input.invitationLink);
+  const safeRef = escapeHtml(input.reference);
+  const safeLogo = escapeHtml(input.logoUrl);
+  const safeAppStore = escapeHtml(input.appStoreUrl);
+  const safePlay = escapeHtml(input.playStoreUrl);
+  const preheader = escapeHtml(
+      `${input.fromParentName} invited you to care for ${input.childrenNames}.`,
+  );
 
   return `
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -141,132 +254,58 @@ function getInvitationEmailHtml(
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="x-apple-disable-message-reformatting" />
-  <title>You've Been Invited to Loving Brain</title>
+  <title>You're invited</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #FEF8F4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FEF8F4; padding: 36px 16px;">
+<body style="margin: 0; padding: 0; background-color: #FEF8F4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
+    ${preheader}
+  </div>
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #FEF8F4;">
     <tr>
-      <td align="center">
-        <!-- Main Container Card -->
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #FFFFFF; border-radius: 28px; border: 1px solid #F5EAE4; box-shadow: 0 10px 32px rgba(240, 109, 77, 0.08); overflow: hidden;">
-          
-          <!-- Header Banner -->
+      <td align="center" style="padding: 32px 16px;">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; background-color: #FFFFFF; border: 1px solid #F0E6E0; border-radius: 16px;">
           <tr>
-            <td align="center" style="padding: 38px 32px 18px 32px; background: linear-gradient(180deg, #FFF7F2 0%, #FFFFFF 100%);">
-              ${brandLogoHtml}
-              <h1 style="margin: 0; font-size: 26px; font-weight: 800; color: #212E5A; letter-spacing: -0.5px;">Loving Brain</h1>
-              <p style="margin: 6px 0 0 0; font-size: 13px; color: #8A8A8A; font-weight: 500;">Parenting Together, Beautifully</p>
+            <td align="center" style="padding: 28px 32px 8px 32px;">
+              <img src="${safeLogo}" alt="Loving Brain" width="48" height="48" style="display: block; margin: 0 auto 12px auto; border: 0; outline: none; text-decoration: none;" />
+              <p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.4px; color: #212E5A;">Loving Brain</p>
             </td>
           </tr>
-
-          <!-- Main Content Area -->
           <tr>
-            <td style="padding: 10px 32px 36px 32px; text-align: center;">
-
-              <!-- Mobile App Notice Banner -->
-              <div style="background-color: #FFF2ED; border: 1.5px solid #F8BEAD; border-radius: 14px; padding: 12px 16px; margin-bottom: 22px; text-align: left;">
-                <p style="margin: 0; font-size: 13px; font-weight: 700; color: #F06D4D;">
-                  📱 Loving Brain is a Mobile App
-                </p>
-                <p style="margin: 4px 0 0 0; font-size: 12px; line-height: 18px; color: #5F4239;">
-                  To accept this invitation and sync your family, <strong>please open this email on your mobile phone (iPhone or Android)</strong>.
-                </p>
-              </div>
-
-              <!-- Greeting & Description -->
-              <h2 style="margin: 0 0 10px 0; font-size: 21px; font-weight: 800; color: #212E5A;">You've been invited! 🎉</h2>
-              <p style="margin: 0 0 14px 0; font-size: 14px; line-height: 22px; color: #545454;">
-                <strong style="color: #665FCE;">${fromParentName}</strong> has invited you to collaborate and support <strong style="color: #F06D4D;">${childrenNames}</strong> on Loving Brain.
+            <td style="padding: 12px 32px 28px 32px; text-align: center;">
+              <h1 style="margin: 0 0 12px 0; font-size: 22px; line-height: 28px; font-weight: 700; color: #212E5A;">You're invited</h1>
+              <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 22px; color: #3D3D3D;">
+                <strong>${safeName}</strong> invited you to care for <strong>${safeChild}</strong>.
               </p>
-              <p style="margin: 0 0 24px 0; font-size: 13px; line-height: 20px; color: #767676;">
-                Stay synchronized on sleep forecasts, routines, and daily plans—all in one calm, supportive space.
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 20px auto;">
+                <tr>
+                  <td align="center" bgcolor="#F06D4D" style="border-radius: 8px;">
+                    <a href="${safeLink}" style="display: inline-block; padding: 12px 28px; font-size: 15px; font-weight: 700; color: #FFFFFF; text-decoration: none;">Open invitation</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin: 0 0 8px 0; font-size: 12px; line-height: 18px; color: #8A8A8A;">
+                Expires in 14 days
               </p>
-
-              <!-- Step-by-Step Guide Card -->
-              <div style="background-color: #FAF8F6; border: 1px solid #EFEAE5; border-radius: 18px; padding: 20px; margin-bottom: 24px; text-align: left;">
-                
-                <!-- Step 1: Install App -->
-                <div style="margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px dashed #E5DFD9;">
-                  <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: 800; color: #212E5A;">
-                    <span style="display: inline-block; background-color: #665FCE; color: #FFFFFF; width: 20px; height: 20px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 11px; margin-right: 6px;">1</span>
-                    Install Loving Brain App
-                  </p>
-                  <p style="margin: 0 0 12px 0; font-size: 12px; color: #6C757D; line-height: 17px;">
-                    Don't have the mobile app installed yet? Download it for free:
-                  </p>
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tr>
-                      <td align="center" style="padding: 4px; width: 50%;">
-                        <a href="${appStoreUrl}" target="_blank" style="display: block; background-color: #000000; color: #FFFFFF; font-size: 12px; font-weight: 600; text-decoration: none; padding: 11px 12px; border-radius: 10px; text-align: center; box-sizing: border-box;">
-                           App Store
-                        </a>
-                      </td>
-                      <td align="center" style="padding: 4px; width: 50%;">
-                        <a href="${playStoreUrl}" target="_blank" style="display: block; background-color: #000000; color: #FFFFFF; font-size: 12px; font-weight: 600; text-decoration: none; padding: 11px 12px; border-radius: 10px; text-align: center; box-sizing: border-box;">
-                          ▶ Google Play
-                        </a>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-
-                <!-- Step 2: Accept Invitation -->
-                <div>
-                  <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: 800; color: #212E5A;">
-                    <span style="display: inline-block; background-color: #F06D4D; color: #FFFFFF; width: 20px; height: 20px; border-radius: 50%; text-align: center; line-height: 20px; font-size: 11px; margin-right: 6px;">2</span>
-                    Accept Invitation &amp; Open App
-                  </p>
-                  <p style="margin: 0 0 14px 0; font-size: 12px; color: #6C757D; line-height: 17px;">
-                    Once installed, tap the button below on your phone to connect instantly:
-                  </p>
-                  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                    <tr>
-                      <td align="center">
-                        <a href="${invitationLink}" style="display: block; background: linear-gradient(135deg, #F06D4D 0%, #FF8A65 100%); color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; padding: 15px 24px; border-radius: 50px; text-align: center; box-shadow: 0 6px 20px rgba(240, 109, 77, 0.35);">
-                          Accept Invitation &amp; Open App
-                        </a>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Desktop User Guidance (QR Code) -->
-              <div style="background-color: #FFFDFB; border: 1px dashed #D6CEC8; border-radius: 16px; padding: 18px 16px; margin-bottom: 22px; text-align: center;">
-                <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 700; color: #212E5A;">
-                  💻 Reading this on your Computer?
-                </p>
-                <p style="margin: 0 0 12px 0; font-size: 11px; line-height: 16px; color: #767676;">
-                  Scan this QR code with your mobile camera to open the invitation directly on your phone:
-                </p>
-                <img src="${qrCodeUrl}" alt="Scan QR code with phone" width="130" height="130" style="display: block; margin: 0 auto 10px auto; border-radius: 8px; border: 1px solid #ECECEC;" />
-                <p style="margin: 0; font-size: 10px; color: #9E9E9E;">
-                  Point your phone's camera at the screen to open
-                </p>
-              </div>
-
-              <!-- Direct link fallback -->
-              <p style="margin: 0 0 4px 0; font-size: 12px; color: #9E9E9E;">Or open this link on your phone:</p>
-              <p style="margin: 0 0 20px 0; font-size: 12px; color: #665FCE; word-break: break-all;">${invitationLink}</p>
-              <p style="margin: 0; font-size: 11px; line-height: 16px; color: #ADB5BD;">
-                If you did not expect this invitation, you can safely ignore this email. The link expires after 14 days.
+              <p style="margin: 0; font-size: 12px; line-height: 18px; color: #8A8A8A;">
+                <a href="${safeAppStore}" style="color: #665FCE; text-decoration: underline;">App Store</a>
+                &nbsp;·&nbsp;
+                <a href="${safePlay}" style="color: #665FCE; text-decoration: underline;">Google Play</a>
               </p>
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
-            <td style="padding: 22px 32px; background-color: #FAF6F3; border-top: 1px solid #F1E9E3; text-align: center;">
-              <p style="margin: 0 0 4px 0; font-size: 12px; font-weight: 600; color: #6C757D;">
-                Loving Brain
+            <td style="padding: 14px 20px 6px 20px; border-top: 1px solid #F3EBE6; text-align: center;">
+              <p style="margin: 0; font-size: 11px; line-height: 16px; color: #B0A8A4;">
+                If you did not expect this, you can ignore this email.
               </p>
-              <p style="margin: 0; font-size: 11px; line-height: 16px; color: #ADB5BD;">
-                © 2026 Loving Brain · Nurturing calm, connected families.
-              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="right" style="padding: 0 16px 14px 16px;">
+              <p style="margin: 0; font-size: 11px; line-height: 14px; color: #9A9A9A; text-align: right;">Ref: ${safeRef}</p>
             </td>
           </tr>
         </table>
-        <!-- End Main Container Card -->
       </td>
     </tr>
   </table>
@@ -277,6 +316,8 @@ function getInvitationEmailHtml(
 
 module.exports = {
   getOtpEmailHtml,
-  getInvitationEmailHtml,
+  invitationReference,
+  buildInvitationEmail,
+  buildBrevoInvitationBody,
 };
 

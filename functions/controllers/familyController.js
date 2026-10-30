@@ -186,7 +186,7 @@ exports.resendInvitationEmail = onCall(async (request) => {
   if (!apiKey) {
     throw new HttpsError("failed-precondition", "Email service is unconfigured.");
   }
-  const {getInvitationEmailHtml} = require("../utils/emailTemplate");
+  const {buildBrevoInvitationBody} = require("../utils/emailTemplate");
   const invitationLink = `https://www.lovingbrain.com/invite/${invitationId}`;
   const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
@@ -195,16 +195,14 @@ exports.resendInvitationEmail = onCall(async (request) => {
       "Content-Type": "application/json",
       "Accept": "application/json",
     },
-    body: JSON.stringify({
+    body: JSON.stringify(buildBrevoInvitationBody({
+      toEmail: invite.to_parent,
+      fromParentName,
+      childrenNames: names.length ? names.join(" & ") : "your child",
+      invitationId,
+      invitationLink,
       sender: {name: "Loving Brain", email: "hardikkoladiya107@gmail.com"},
-      to: [{email: invite.to_parent}],
-      subject: `${fromParentName} invited you to co-parent on Loving Brain`,
-      htmlContent: getInvitationEmailHtml(
-          fromParentName,
-          names.length ? names.join(" & ") : "your child",
-          invitationLink,
-      ),
-    }),
+    })),
   });
   if (!response.ok) {
     throw new HttpsError("internal", "Failed to resend invitation email.");
