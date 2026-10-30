@@ -992,11 +992,13 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              InfoChip(
-                chipTitle: chipTitle,
-                iconData: icon,
-                color: chipColor,
-                bgColor: chipBgColor,
+              Flexible(
+                child: InfoChip(
+                  chipTitle: chipTitle,
+                  iconData: icon,
+                  color: chipColor,
+                  bgColor: chipBgColor,
+                ),
               ),
               if (msg.type != MessageType.user &&
                   msg.type != MessageType.safetyAlert &&
@@ -1231,8 +1233,10 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
   Widget _buildDot(int index) {
     final double phase = (_controller.value * 2 * math.pi) - (index * 0.65);
     final double offset = math.sin(phase) * 3.5;
-    final double opacity =
-        (0.45 + 0.55 * ((math.sin(phase) + 1) / 2)).clamp(0.0, 1.0);
+    final double opacity = (0.45 + 0.55 * ((math.sin(phase) + 1) / 2)).clamp(
+      0.0,
+      1.0,
+    );
     return Transform.translate(
       offset: Offset(0, -offset.clamp(-3.5, 3.5)),
       child: Container(
@@ -1318,11 +1322,15 @@ class _BrainyThinkingIndicatorState extends State<_BrainyThinkingIndicator>
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        "Brainy is thinking".appText(
-                          fontSize: 15.sp,
-                          color: greyColor9,
-                          fontWeight: FontWeight.w600,
-                          textAlign: TextAlign.start,
+                        Flexible(
+                          child: "Brainy is thinking".appText(
+                            fontSize: 15.sp,
+                            color: greyColor9,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         6.spaceW,
                         _buildDot(0),

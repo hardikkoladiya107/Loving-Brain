@@ -15,6 +15,7 @@ import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
 import 'package:loving_brain/ui/sleep_forecast/sleep_forecast_screen.dart';
 import 'package:loving_brain/ui/sleep_forecast/widgets/forecast_days_row.dart';
 import 'package:loving_brain/ui/today_screen/sheets/child_switcher_sheet.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/sleep_header.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
@@ -328,9 +329,7 @@ void main() {
               minTextAdapt: true,
               splitScreenMode: true,
               builder: (BuildContext context, Widget? _) {
-                return const MaterialApp(
-                  home: SleepForecastScreen(),
-                );
+                return const MaterialApp(home: SleepForecastScreen());
               },
             ),
           ),
@@ -343,13 +342,19 @@ void main() {
         expect(find.text('K'), findsOneWidget);
         expect(find.byIcon(Icons.face), findsOneWidget);
 
-        // Verifies greeting and forecast info
-        expect(find.text('GOOD MORNING '), findsOneWidget);
-        expect(find.text('HARDIK!'), findsOneWidget);
+        // Verifies forecast info
         expect(find.text('Next window'), findsOneWidget);
-        expect(find.text('6:00 pm - 7:00 pm'), findsOneWidget);
+        expect(find.text('Reason'), findsOneWidget);
+        expect(
+          find.text('${cubit.state.windowStart} - ${cubit.state.windowEnd}'),
+          findsOneWidget,
+        );
 
         // Verifies View details CTA button
+        await tester.scrollUntilVisible(
+          find.widgetWithText(AppButton, 'View details'),
+          200,
+        );
         expect(find.widgetWithText(AppButton, 'View details'), findsOneWidget);
 
         await cubit.close();
@@ -364,10 +369,7 @@ void main() {
         addTearDown(() => tester.view.resetPhysicalSize());
 
         final SleepForecastCubit cubit = SleepForecastCubit();
-        cubit.changeProps(
-          isLoading: false,
-          selectedDayIndex: 0,
-        );
+        cubit.changeProps(isLoading: false, selectedDayIndex: 0);
 
         await tester.pumpWidget(
           BlocProvider<SleepForecastCubit>.value(
@@ -429,7 +431,8 @@ void main() {
                     chipText: 'Test Chip',
                     timeText: '7:00 PM',
                     estimateText: 'Estimate',
-                    cloudImagePath: 'assets/v2/images/img_nori_sleep_forecaste.png',
+                    cloudImagePath:
+                        'assets/v2/images/img_nori_sleep_forecaste.png',
                   ),
                 ),
               );

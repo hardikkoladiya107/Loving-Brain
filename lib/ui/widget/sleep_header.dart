@@ -101,10 +101,9 @@ class SleepHeader extends StatelessWidget {
                   Flexible(
                     child: GestureDetector(
                       onTap: () async {
-                        final ChildModel? currentChild =
-                            preferences.getChildModel();
-                        if (currentChild == null ||
-                            (currentChild.reference?.id ?? '').isEmpty) {
+                        final ChildModel? currentChild = preferences
+                            .getChildModel();
+                        if (currentChild == null) {
                           await Navigator.push(
                             context,
                             MaterialPageRoute<void>(
@@ -128,45 +127,47 @@ class SleepHeader extends StatelessWidget {
                             color: Colors.white.withValues(alpha: 0.2),
                           ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              radius: 16.r,
-                              backgroundColor: Colors.amber,
-                              child: Icon(
-                                Icons.person,
-                                size: 18.sp,
-                                color: Colors.white,
-                              ),
-                            ),
-                            8.spaceW,
-                            Flexible(
-                              child: (effectiveChildName.isNotEmpty
-                                      ? effectiveChildName
-                                      : 'Child')
-                                  .appText(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15.sp,
+                        child:
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircleAvatar(
+                                  radius: 16.r,
+                                  backgroundColor: Colors.amber,
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 18.sp,
                                     color: Colors.white,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.start,
                                   ),
+                                ),
+                                8.spaceW,
+                                Flexible(
+                                  child:
+                                      (effectiveChildName.isNotEmpty
+                                              ? effectiveChildName
+                                              : 'Child')
+                                          .appText(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15.sp,
+                                            color: Colors.white,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                ),
+                                4.spaceW,
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  size: 18.sp,
+                                  color: Colors.white70,
+                                ),
+                              ],
+                            ).appPadding(
+                              left: 6.w,
+                              right: 10.w,
+                              top: 4.h,
+                              bottom: 4.h,
                             ),
-                            4.spaceW,
-                            Icon(
-                              Icons.keyboard_arrow_down_rounded,
-                              size: 18.sp,
-                              color: Colors.white70,
-                            ),
-                          ],
-                        ).appPadding(
-                          left: 6.w,
-                          right: 10.w,
-                          top: 4.h,
-                          bottom: 4.h,
-                        ),
                       ),
                     ),
                   ),

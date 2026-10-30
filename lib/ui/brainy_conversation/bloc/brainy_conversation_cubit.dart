@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loving_brain/content/brain_ai_system_prompt.dart';
 import 'package:loving_brain/core/ai_data_tools.dart';
@@ -144,7 +145,6 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       } catch (_) {}
     }
     changeProps(
-      isTyping: false,
       clearSelectedImage: true,
       clearSelectedImages: true,
       clearAttachedAudio: true,
@@ -197,36 +197,38 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       return;
     }
 
-    final ChildModel? child = preferences.getChildModel();
-    final String childName = (child?.childName ?? '').trim().isNotEmpty
-        ? child!.childName!.trim()
-        : 'your child';
-    changeProps(
-      messages: [
-        BrainyMessage(
-          id: 'default_user',
-          type: MessageType.user,
-          chipTitle: 'You asked',
-          headline: 'Why is bedtime harder lately?',
-        ),
-        BrainyMessage(
-          id: 'default_info',
-          type: MessageType.aiInfo,
-          chipTitle: 'What may be happening',
-          headline: "$childName's nap or evening rhythm may be shifting",
-          subtext:
-              'Shortened naps or late afternoon stimulation can raise overtiredness by the evening.',
-        ),
-        BrainyMessage(
-          id: 'default_action',
-          type: MessageType.aiAction,
-          chipTitle: 'What to try now',
-          headline: 'Offer a quieter environment 30m earlier',
-          subtext:
-              'Dimming the lights and turning off background noise can help signal that it is time to wind down.',
-        ),
-      ],
-    );
+    if (state.messages.isEmpty) {
+      final ChildModel? child = preferences.getChildModel();
+      final String childName = (child?.childName ?? '').trim().isNotEmpty
+          ? child!.childName!.trim()
+          : 'your child';
+      changeProps(
+        messages: [
+          BrainyMessage(
+            id: 'default_user',
+            type: MessageType.user,
+            chipTitle: 'You asked',
+            headline: 'Why is bedtime harder lately?',
+          ),
+          BrainyMessage(
+            id: 'default_info',
+            type: MessageType.aiInfo,
+            chipTitle: 'What may be happening',
+            headline: "$childName's nap or evening rhythm may be shifting",
+            subtext:
+                'Shortened naps or late afternoon stimulation can raise overtiredness by the evening.',
+          ),
+          BrainyMessage(
+            id: 'default_action',
+            type: MessageType.aiAction,
+            chipTitle: 'What to try now',
+            headline: 'Offer a quieter environment 30m earlier',
+            subtext:
+                'Dimming the lights and turning off background noise can help signal that it is time to wind down.',
+          ),
+        ],
+      );
+    }
   }
 
   void selectImage(String path) {
@@ -1021,6 +1023,13 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     }
   }
 
+  @visibleForTesting
+  List<BrainyMessage> parseAiResponseForTesting(
+    String rawText, {
+    String? baseId,
+    bool isSaved = false,
+  }) => _parseAiResponseText(rawText, baseId: baseId, isSaved: isSaved);
+
   List<BrainyMessage> _parseAiResponseText(
     String rawText, {
     String? baseId,
@@ -1066,8 +1075,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         ];
 
         if (rawParts.length > 2) {
-          final (String, String?) part3 =
-              _extractHeadlineAndSubtext(rawParts[2]);
+          final (String, String?) part3 = _extractHeadlineAndSubtext(
+            rawParts[2],
+          );
           if (part3.$1.trim().isNotEmpty) {
             messages.add(
               BrainyMessage(
@@ -1153,7 +1163,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     }
 
     // Case 3: Casual greetings (Rule 75-76)
-    final bool isCasualGreeting = cleaned.length < 250 &&
+    final bool isCasualGreeting =
+        cleaned.length < 250 &&
         (cleaned.toLowerCase().startsWith('hi') ||
             cleaned.toLowerCase().startsWith('hello') ||
             cleaned.toLowerCase().startsWith('hey') ||

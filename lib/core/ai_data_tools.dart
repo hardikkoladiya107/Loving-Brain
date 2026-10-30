@@ -217,7 +217,7 @@ class AiDataTools {
               'nap_duration_mins': todayLog.durationMinutes,
               'night_waking': todayLog.isNightWaking,
               'sleep_quality': '${todayLog.sleepQualityIndex + 1}/5',
-              'is_today': todayLog.timestamp.isAfter(startOfDay),
+              'is_today': todayLog.bedTime.isAfter(startOfDay),
             };
           }
         },
@@ -297,8 +297,9 @@ class AiDataTools {
       final Map<String, dynamic> sleep =
           todayData['sleep'] as Map<String, dynamic>;
       final bool isToday = sleep['is_today'] == true;
-      final String prefix =
-          isToday ? 'Sleep logged today' : 'Most recent sleep log';
+      final String prefix = isToday
+          ? 'Sleep logged today'
+          : 'Most recent sleep log';
       buffer.writeln(
         "- $prefix: Fell asleep ${sleep['fell_asleep'] ?? 'N/A'}, Woke up ${sleep['woke_up'] ?? 'N/A'}, Nap: ${sleep['nap_duration_mins'] ?? 0}m, Night waking: ${sleep['night_waking'] == true ? 'Yes' : 'No'}, Quality rating: ${sleep['sleep_quality'] ?? 'N/A'}",
       );
