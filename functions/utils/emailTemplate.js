@@ -8,11 +8,12 @@ const DEFAULT_LOGO_URL =
 
 /**
  * Returns a fully styled HTML email for OTP verification.
- * @param {string} otpCode 4-digit verification code.
+ * @param {string} otpCode 6-digit verification code.
  * @param {string} [logoUrl] Optional hosted image URL for the logo.
+ * @param {string} [reference] Footer reference, printed bottom-right.
  * @returns {string} Fully formatted HTML string.
  */
-function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL) {
+function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL, reference = "") {
   const brandLogoHtml = `
     <img src="${logoUrl}" alt="Loving Brain" width="76" height="76" style="display: block; margin: 0 auto 14px auto; border: 0; outline: none; text-decoration: none; max-width: 76px; height: auto;" />
   `;
@@ -66,8 +67,8 @@ function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL) {
                 <tr>
                   <td align="center">
                     <div style="display: inline-block; background-color: #FFF2ED; border: 2px dashed #F06D4D; border-radius: 20px; padding: 18px 36px; text-align: center;">
-                      <span style="font-family: 'Courier New', Courier, monospace, sans-serif; font-size: 38px; font-weight: 800; color: #F06D4D; letter-spacing: 12px; margin-left: 12px; display: inline-block;">
-                        ${otpCode}
+                      <span style="font-family: 'Courier New', Courier, monospace, sans-serif; font-size: 32px; font-weight: 800; color: #F06D4D; letter-spacing: 8px; margin-left: 8px; display: inline-block;">
+                        ${escapeHtml(otpCode)}
                       </span>
                     </div>
                   </td>
@@ -100,6 +101,7 @@ function getOtpEmailHtml(otpCode, logoUrl = DEFAULT_LOGO_URL) {
               </p>
             </td>
           </tr>
+          ${referenceFooterRow(reference)}
 
         </table>
         <!-- End Main Container Card -->
@@ -119,6 +121,21 @@ const PLAY_STORE_URL =
  * @param {string} value
  * @return {string}
  */
+/**
+ * Bottom-right reference line used on every Loving Brain email.
+ * @param {string} reference
+ * @return {string}
+ */
+function referenceFooterRow(reference) {
+  if (!reference) return "";
+  return `
+          <tr>
+            <td align="right" style="padding: 0 16px 14px 16px;">
+              <p style="margin: 0; font-size: 11px; line-height: 14px; color: #9A9A9A; text-align: right;">Ref: ${escapeHtml(reference)}</p>
+            </td>
+          </tr>`;
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
       .replace(/&/g, "&amp;")
@@ -215,6 +232,41 @@ function buildInvitationEmail(input) {
  * @param {object} input
  * @return {object}
  */
+/**
+ * OTP email payload. Each send gets its own footer reference and thread header.
+ * @param {object} input
+ * @return {object}
+ */
+function buildBrevoOtpBody(input) {
+  const sentAtMs = Number(input.sentAtMs) || Date.now();
+  const toEmail = String(input.toEmail || "").trim();
+  const otpCode = String(input.otpCode || "").trim();
+  const reference = invitationReference(toEmail || "otp", sentAtMs);
+  const logoUrl = input.logoUrl || DEFAULT_LOGO_URL;
+  const sender = input.sender || {
+    name: "Loving Brain",
+    email: "hardikkoladiya107@gmail.com",
+  };
+  return {
+    sender,
+    to: [{email: toEmail}],
+    subject: "Your Loving Brain Verification Code",
+    htmlContent: getOtpEmailHtml(otpCode, logoUrl, reference),
+    textContent: [
+      "Your Loving Brain verification code is:",
+      otpCode,
+      "",
+      "This code expires in 10 minutes.",
+      "If you did not request it, you can ignore this email.",
+      "",
+      `Ref: ${reference}`,
+    ].join("\n"),
+    headers: {
+      "X-Entity-Ref-ID": `otp.${reference}`,
+    },
+  };
+}
+
 function buildBrevoInvitationBody(input) {
   const mail = buildInvitationEmail(input);
   const sender = input.sender || {
@@ -239,7 +291,6 @@ function renderInvitationEmailHtml(input) {
   const safeName = escapeHtml(input.fromParentName);
   const safeChild = escapeHtml(input.childrenNames);
   const safeLink = escapeHtml(input.invitationLink);
-  const safeRef = escapeHtml(input.reference);
   const safeLogo = escapeHtml(input.logoUrl);
   const safeAppStore = escapeHtml(input.appStoreUrl);
   const safePlay = escapeHtml(input.playStoreUrl);
@@ -300,11 +351,7 @@ function renderInvitationEmailHtml(input) {
               </p>
             </td>
           </tr>
-          <tr>
-            <td align="right" style="padding: 0 16px 14px 16px;">
-              <p style="margin: 0; font-size: 11px; line-height: 14px; color: #9A9A9A; text-align: right;">Ref: ${safeRef}</p>
-            </td>
-          </tr>
+          ${referenceFooterRow(input.reference)}
         </table>
       </td>
     </tr>
@@ -319,5 +366,6 @@ module.exports = {
   invitationReference,
   buildInvitationEmail,
   buildBrevoInvitationBody,
+  buildBrevoOtpBody,
 };
 

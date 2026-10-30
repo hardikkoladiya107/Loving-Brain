@@ -7,7 +7,7 @@ import 'package:loving_brain/other/app_extentions.dart';
 class AppOtpField extends StatefulWidget {
   const AppOtpField({
     super.key,
-    this.length = 4,
+    this.length = 6,
     this.onChanged,
     this.onCompleted,
     this.controller,

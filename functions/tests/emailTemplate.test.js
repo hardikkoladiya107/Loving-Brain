@@ -1,10 +1,10 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
-  getOtpEmailHtml,
   invitationReference,
   buildInvitationEmail,
   buildBrevoInvitationBody,
+  buildBrevoOtpBody,
 } = require("../utils/emailTemplate");
 
 const link = "https://www.lovingbrain.com/invite/l8fnSa0VSOKST2Ss7Mve";
@@ -81,8 +81,24 @@ test("invitation email escapes names and stays a valid Brevo payload", () => {
   assert.ok(body.headers["X-Entity-Ref-ID"].startsWith("invite123."));
 });
 
-test("getOtpEmailHtml includes OTP and security notices", () => {
-  const html = getOtpEmailHtml("5678");
-  assert.ok(html.includes("5678"));
-  assert.ok(html.includes("10 minutes"));
+test("OTP email is 6 digits, keeps a clean subject, and has its own reference", () => {
+  const first = buildBrevoOtpBody({
+    toEmail: "parent@example.com",
+    otpCode: "123456",
+    sentAtMs: 1_700_000_000_000,
+    sender: {name: "Loving Brain", email: "hello@lovingbrain.com"},
+  });
+  const second = buildBrevoOtpBody({
+    toEmail: "parent@example.com",
+    otpCode: "654321",
+    sentAtMs: 1_700_000_060_000,
+    sender: {name: "Loving Brain", email: "hello@lovingbrain.com"},
+  });
+  assert.equal(first.subject, "Your Loving Brain Verification Code");
+  assert.equal(first.subject.includes("1700000000000"), false);
+  assert.ok(first.htmlContent.includes("123456"));
+  assert.ok(first.htmlContent.includes("10 minutes"));
+  assert.ok(first.htmlContent.includes("Ref: 1700000000000-om"));
+  assert.notEqual(first.headers["X-Entity-Ref-ID"], second.headers["X-Entity-Ref-ID"]);
+  assert.ok(first.textContent.includes("Ref: 1700000000000-om"));
 });

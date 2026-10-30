@@ -236,7 +236,7 @@ class OtpCubit extends Cubit<OtpState> {
       changeProps(otpError: 'Please enter verification code');
       return;
     }
-    final int requiredLength = state.isPhoneAuth ? 6 : 4;
+    const int requiredLength = 6;
     if (code.length < requiredLength) {
       changeProps(
         otpError: 'Please enter $requiredLength-digit verification code',

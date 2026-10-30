@@ -2,7 +2,7 @@ const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 const {
-  getOtpEmailHtml,
+  buildBrevoOtpBody,
   buildBrevoInvitationBody,
 } = require("../utils/emailTemplate");
 const authIdentity = require("../services/authIdentity");
@@ -71,12 +71,11 @@ exports.sendEmailOtp = onCall(async (request) => {
         "Content-Type": "application/json",
         "Accept": "application/json",
       },
-      body: JSON.stringify({
+      body: JSON.stringify(buildBrevoOtpBody({
+        toEmail: email,
+        otpCode,
         sender: {name: SENDER_NAME, email: SENDER_EMAIL},
-        to: [{email}],
-        subject: "Your Loving Brain Verification Code",
-        htmlContent: getOtpEmailHtml(otpCode),
-      }),
+      })),
     });
 
     if (!response.ok) {

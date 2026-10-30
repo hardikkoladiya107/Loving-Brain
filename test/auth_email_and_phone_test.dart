@@ -177,7 +177,7 @@ void main() {
 
   group('OtpCubit Dual Mode (Email vs Phone) Tests', () {
     test(
-      'Initializes in email mode by default with 4-digit code requirement',
+      'Initializes in email mode with the same 6-digit code requirement',
       () async {
         final OtpCubit cubit = OtpCubit();
         cubit.init(destination: 'user@example.com', isPhoneAuth: false);
@@ -185,10 +185,9 @@ void main() {
         expect(cubit.state.isPhoneAuth, isFalse);
         expect(cubit.state.destination, 'user@example.com');
 
-        // Attempting to verify with less than 4 digits fails
-        cubit.onOtpChanged('123');
+        cubit.onOtpChanged('1234');
         await cubit.verifyOtp();
-        expect(cubit.state.otpError, 'Please enter 4-digit verification code');
+        expect(cubit.state.otpError, 'Please enter 6-digit verification code');
         cubit.close();
       },
     );

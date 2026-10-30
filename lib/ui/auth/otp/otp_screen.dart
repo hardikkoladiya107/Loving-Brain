@@ -128,7 +128,7 @@ class _OtpScreenState extends State<OtpScreen> {
         );
       },
       builder: (BuildContext context, OtpState state) {
-        final int codeLength = state.isPhoneAuth ? 6 : 4;
+        const int codeLength = 6;
         final String subtitle = state.destination.isNotEmpty
             ? "We’ve sent a $codeLength digit verification code to ${state.destination}."
             : "We’ve sent a $codeLength digit verification code.";
@@ -183,9 +183,9 @@ class _OtpScreenState extends State<OtpScreen> {
                             28.spaceH,
                             AppOtpField(
                               length: codeLength,
-                              boxWidth: state.isPhoneAuth ? 44.w : null,
-                              boxHeight: state.isPhoneAuth ? 52.h : null,
-                              spacing: state.isPhoneAuth ? 8.w : null,
+                              boxWidth: 44.w,
+                              boxHeight: 52.h,
+                              spacing: 8.w,
                               value: state.otpCode,
                               hasError: state.otpError.isNotEmpty,
                               activeBorderColor: secondaryColor,
