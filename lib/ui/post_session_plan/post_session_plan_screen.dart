@@ -1,10 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -35,36 +40,67 @@ class _PostSessionPlanScreenState extends State<PostSessionPlanScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<PostSessionPlanCubit, PostSessionPlanState>(
-      listener: (BuildContext context, PostSessionPlanState state) {},
+      listener: (BuildContext context, PostSessionPlanState state) {
+        final ApiResultStatus status = state.fetchStatus;
+        if (status is Loging) {
+          EasyLoading.show();
+        } else if (status is Data) {
+          EasyLoading.dismiss();
+        } else if (status is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: status.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+      },
       builder: (BuildContext context, PostSessionPlanState state) {
-        final PostSessionPlanModel plan =
-            state.plan ??
-            const PostSessionPlanModel(
-              id: 'plan_default',
-              guideName: 'Priya',
-              tasks: <PlanTaskItem>[
-                PlanTaskItem(
-                  id: 'task_1',
-                  title: 'Move the nap 15 minutes earlier',
-                  subtitle: 'Done Tuesday',
-                  isCompleted: true,
+        if (state.plan == null) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    8.spaceH,
+                    InkWell(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        padding: EdgeInsets.all(8.r),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: darkBlue,
+                          size: 24.sp,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    LocaleKeys.journeyNoPostSessionPlan.tr().appText(
+                      fontSize: 24.sp,
+                      color: greyColor9,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    24.spaceH,
+                    AppButton(
+                      title: LocaleKeys.journeyBackToJourney.tr(),
+                      onTap: () => context.pop(),
+                    ),
+                    const Spacer(),
+                  ],
                 ),
-                PlanTaskItem(
-                  id: 'task_2',
-                  title: 'Keep the bedtime routine to 20 minutes',
-                  subtitle: 'Ongoing this week',
-                  isCompleted: false,
-                ),
-                PlanTaskItem(
-                  id: 'task_3',
-                  title: 'Log three nights this week',
-                  subtitle: 'One logged so far',
-                  isCompleted: false,
-                ),
-              ],
-              negativeGuidanceTitle: 'No screen time before bed',
-              negativeGuidanceSubtitle: 'Just while the nap change settles.',
-            );
+              ),
+            ),
+          );
+        }
+
+        final PostSessionPlanModel plan = state.plan!;
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),

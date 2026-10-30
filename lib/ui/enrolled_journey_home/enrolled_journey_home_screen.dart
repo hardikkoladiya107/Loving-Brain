@@ -1,14 +1,19 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
+import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/enrolled_journey_home_cubit.dart';
 import 'bloc/enrolled_journey_home_state.dart';
@@ -35,27 +40,81 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<EnrolledJourneyHomeCubit, EnrolledJourneyHomeState>(
-      listener: (BuildContext context, EnrolledJourneyHomeState state) {},
+      listener: (BuildContext context, EnrolledJourneyHomeState state) {
+        final ApiResultStatus status = state.fetchStatus;
+        if (status is Loging) {
+          EasyLoading.show();
+        } else if (status is Data) {
+          EasyLoading.dismiss();
+        } else if (status is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: status.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+      },
       builder: (BuildContext context, EnrolledJourneyHomeState state) {
-        final EnrolledProgramModel program =
-            state.program ??
-            const EnrolledProgramModel(
-              id: 'prog_default',
-              title: 'Sleep Reset journey',
-              guideName: 'Priya S.',
-              currentWeek: 2,
-              totalWeeks: 6,
-              currentFocus: 'Try the earlier nap, and log three nights',
-              recentQuote:
-                  "Great first week keep the nap timing steady and don't worry about the odd late night.",
-              quoteAuthorAndTime: 'Priya S. · 2 days ago',
-              recordedModuleTitle: 'Understanding over tiredness',
-              recordedModuleDuration: '12 min',
-            );
+        if (!state.isEnrolled || state.program == null) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    8.spaceH,
+                    InkWell(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        padding: EdgeInsets.all(8.r),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: darkBlue,
+                          size: 24.sp,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    LocaleKeys.journeyNotEnrolledTitle.tr().appText(
+                      fontSize: 28.sp,
+                      color: greyColor9,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    12.spaceH,
+                    LocaleKeys.journeyNotEnrolledBody.tr().appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                      height: 1.4,
+                    ),
+                    24.spaceH,
+                    AppButton(
+                      title: LocaleKeys.journeyViewProgram.tr(),
+                      onTap: () {
+                        context.pushReplacement(RoutePaths.programmeDetail);
+                      },
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
 
-        final double progress = (program.totalWeeks > 0)
-            ? (program.currentWeek / program.totalWeeks).clamp(0.0, 1.0)
-            : 0.33;
+        final EnrolledProgramModel program = state.program!;
+        final int totalWeeks = program.totalWeeks <= 0 ? 6 : program.totalWeeks;
+        final double progress = (program.currentWeek / totalWeeks).clamp(
+          0.0,
+          1.0,
+        );
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),

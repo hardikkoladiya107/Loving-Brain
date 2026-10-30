@@ -171,7 +171,8 @@ void main() {
         sleepLogs: lateLogs,
       );
 
-      expect(result.isHarderWeek, isTrue);
+      expect(result.isHarderWeek, isFalse);
+      expect(result.difficultyTitle.toLowerCase(), contains('bedtime'));
     });
 
     test(
@@ -373,9 +374,12 @@ void main() {
   });
 
   group('Sprint 3: JourneyCubit mode cycling', () {
-    test('cycles correctly between normal, harder, and trying modes', () {
+    test('cycles correctly between normal, learning, harder, and trying modes', () {
       final JourneyCubit cubit = JourneyCubit();
       expect(cubit.state.mode, JourneyMode.normal);
+
+      cubit.cycleMode();
+      expect(cubit.state.mode, JourneyMode.learning);
 
       cubit.cycleMode();
       expect(cubit.state.mode, JourneyMode.harder);

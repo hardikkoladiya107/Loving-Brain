@@ -39,14 +39,19 @@ class _ConsistencyRecognitionScreenState
     >(
       listener: (BuildContext context, ConsistencyRecognitionState state) {},
       builder: (BuildContext context, ConsistencyRecognitionState state) {
-        final int days = state.daysCheckedIn;
-        final String headline = days == 0
-            ? "Showing up for\nyour family this week"
-            : (days == 5
-                  ? "You've shown up five\ndays this week"
-                  : (days == 1
-                        ? "You've shown up 1\nday this week"
-                        : "You've shown up $days\ndays this week"));
+        final String headline = state.consistencyTitle.trim().isNotEmpty
+            ? state.consistencyTitle
+            : (state.daysCheckedIn == 0
+                  ? "Starting your family\njourney"
+                  : "You've checked in ${state.daysCheckedIn}\ndays this week");
+        final String subtitle = state.consistencySubtitle.trim().isNotEmpty
+            ? state.consistencySubtitle
+            : 'No streak to lose — we just wanted to notice the effort.';
+        final String detail = state.consistencyDetail.trim().isNotEmpty
+            ? state.consistencyDetail
+            : (state.daysCheckedIn < 4
+                  ? 'Small, regular check-ins are what let us spot patterns. After 4 days, weekly reviews appear.'
+                  : "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too.");
 
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
@@ -127,12 +132,11 @@ class _ConsistencyRecognitionScreenState
                             height: 1.2,
                           ),
                           16.spaceH,
-                          'No streak to lose we just wanted to notice the effort.'
-                              .appText(
-                                fontSize: 14.sp,
-                                color: greyColor,
-                                textAlign: TextAlign.center,
-                              ),
+                          subtitle.appText(
+                            fontSize: 14.sp,
+                            color: greyColor,
+                            textAlign: TextAlign.center,
+                          ),
                           32.spaceH,
                           Container(
                             width: double.infinity,
@@ -144,13 +148,11 @@ class _ConsistencyRecognitionScreenState
                               color: softPeachOrange,
                               borderRadius: BorderRadius.circular(16.r),
                             ),
-                            child:
-                                "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too."
-                                    .appText(
-                                      fontSize: 14.sp,
-                                      color: greyColor9,
-                                      textAlign: TextAlign.start,
-                                    ),
+                            child: detail.appText(
+                              fontSize: 14.sp,
+                              color: greyColor9,
+                              textAlign: TextAlign.start,
+                            ),
                           ),
                           120.spaceH,
                         ],

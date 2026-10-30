@@ -7,14 +7,13 @@ import 'package:loving_brain/repo/mentorship_repo.dart';
 import 'post_session_plan_state.dart';
 
 /// Cubit managing Post-Session Plan (Screen 50).
-/// Conforms to AGENTS.md Rule 4.2.
 class PostSessionPlanCubit extends Cubit<PostSessionPlanState> {
   PostSessionPlanCubit() : super(const PostSessionPlanState());
 
-  String _resolvedChildId = 'default_child';
+  String _resolvedChildId = '';
 
   void reset() {
-    _resolvedChildId = 'default_child';
+    _resolvedChildId = '';
     emit(const PostSessionPlanState());
   }
 
@@ -22,37 +21,52 @@ class PostSessionPlanCubit extends Cubit<PostSessionPlanState> {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
     _resolvedChildId =
-        childId ??
-        preferences.getChildModel()?.reference?.id ??
-        'default_child';
+        childId ?? preferences.getChildModel()?.reference?.id ?? '';
 
-    final ApiResultStatus<PostSessionPlanModel> res = await MentorshipRepo
+    if (_resolvedChildId.isEmpty) {
+      changeProps(
+        isLoading: false,
+        clearPlan: true,
+        fetchStatus: ApiResultStatus.error(
+          error: Exception('Please select a child profile first.'),
+        ),
+      );
+      return;
+    }
+
+    final ApiResultStatus<PostSessionPlanModel?> res = await MentorshipRepo
         .instance
         .getPostSessionPlan(_resolvedChildId);
 
-    if (res is Data<PostSessionPlanModel>) {
-      changeProps(isLoading: false, plan: res.data, fetchStatus: res);
+    if (res is Data<PostSessionPlanModel?>) {
+      changeProps(
+        isLoading: false,
+        plan: res.data,
+        clearPlan: res.data == null,
+        fetchStatus: res,
+      );
     } else {
-      changeProps(isLoading: false, fetchStatus: res);
+      changeProps(isLoading: false, clearPlan: true, fetchStatus: res);
     }
   }
 
   void changeProps({
     bool? isLoading,
     PostSessionPlanModel? plan,
+    bool clearPlan = false,
     ApiResultStatus? fetchStatus,
   }) {
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,
-        plan: plan ?? state.plan,
+        plan: clearPlan ? null : (plan ?? state.plan),
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
 
   Future<void> toggleTask(String taskId) async {
-    if (state.plan == null) return;
+    if (state.plan == null || _resolvedChildId.isEmpty) return;
 
     final PlanTaskItem? target = state.plan!.tasks
         .where((PlanTaskItem t) => t.id == taskId)
@@ -70,6 +84,8 @@ class PostSessionPlanCubit extends Cubit<PostSessionPlanState> {
 
     if (res is Data<PostSessionPlanModel>) {
       changeProps(plan: res.data);
+    } else if (res is Error<PostSessionPlanModel>) {
+      changeProps(fetchStatus: res);
     }
   }
 }

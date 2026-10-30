@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FamilyTimelineState {
 
- List<TimelineEventModel> get allEvents; List<TimelineEventModel> get filteredEvents; String get selectedFilter; ChildModel? get child; int get weeksWithLovingBrain; int get averageBedtimeShiftMinutes; ApiResultStatus<dynamic> get fetchStatus;
+ List<TimelineEventModel> get allEvents; List<TimelineEventModel> get filteredEvents; String get selectedFilter; ChildModel? get child; int get weeksWithLovingBrain; int get averageBedtimeShiftMinutes; bool get hasEnoughBedtimeHistory; ApiResultStatus<dynamic> get fetchStatus;
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $FamilyTimelineStateCopyWith<FamilyTimelineState> get copyWith => _$FamilyTimeli
 @override
 bool operator ==(Object other) {
   final _this = this as FamilyTimelineState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilyTimelineState&&const DeepCollectionEquality().equals(other.allEvents, _this.allEvents)&&const DeepCollectionEquality().equals(other.filteredEvents, _this.filteredEvents)&&(identical(other.selectedFilter, _this.selectedFilter) || other.selectedFilter == _this.selectedFilter)&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.weeksWithLovingBrain, _this.weeksWithLovingBrain) || other.weeksWithLovingBrain == _this.weeksWithLovingBrain)&&(identical(other.averageBedtimeShiftMinutes, _this.averageBedtimeShiftMinutes) || other.averageBedtimeShiftMinutes == _this.averageBedtimeShiftMinutes)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FamilyTimelineState&&const DeepCollectionEquality().equals(other.allEvents, _this.allEvents)&&const DeepCollectionEquality().equals(other.filteredEvents, _this.filteredEvents)&&(identical(other.selectedFilter, _this.selectedFilter) || other.selectedFilter == _this.selectedFilter)&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.weeksWithLovingBrain, _this.weeksWithLovingBrain) || other.weeksWithLovingBrain == _this.weeksWithLovingBrain)&&(identical(other.averageBedtimeShiftMinutes, _this.averageBedtimeShiftMinutes) || other.averageBedtimeShiftMinutes == _this.averageBedtimeShiftMinutes)&&(identical(other.hasEnoughBedtimeHistory, _this.hasEnoughBedtimeHistory) || other.hasEnoughBedtimeHistory == _this.hasEnoughBedtimeHistory)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as FamilyTimelineState;
-  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.allEvents),const DeepCollectionEquality().hash(_this.filteredEvents),_this.selectedFilter,_this.child,_this.weeksWithLovingBrain,_this.averageBedtimeShiftMinutes,_this.fetchStatus);
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.allEvents),const DeepCollectionEquality().hash(_this.filteredEvents),_this.selectedFilter,_this.child,_this.weeksWithLovingBrain,_this.averageBedtimeShiftMinutes,_this.hasEnoughBedtimeHistory,_this.fetchStatus);
 }
 
 @override
 String toString() {
   final _this = this as FamilyTimelineState;
-  return 'FamilyTimelineState(allEvents: ${_this.allEvents}, filteredEvents: ${_this.filteredEvents}, selectedFilter: ${_this.selectedFilter}, child: ${_this.child}, weeksWithLovingBrain: ${_this.weeksWithLovingBrain}, averageBedtimeShiftMinutes: ${_this.averageBedtimeShiftMinutes}, fetchStatus: ${_this.fetchStatus})';
+  return 'FamilyTimelineState(allEvents: ${_this.allEvents}, filteredEvents: ${_this.filteredEvents}, selectedFilter: ${_this.selectedFilter}, child: ${_this.child}, weeksWithLovingBrain: ${_this.weeksWithLovingBrain}, averageBedtimeShiftMinutes: ${_this.averageBedtimeShiftMinutes}, hasEnoughBedtimeHistory: ${_this.hasEnoughBedtimeHistory}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $FamilyTimelineStateCopyWith<$Res>  {
   factory $FamilyTimelineStateCopyWith(FamilyTimelineState value, $Res Function(FamilyTimelineState) _then) = _$FamilyTimelineStateCopyWithImpl;
 @useResult
 $Res call({
- List<TimelineEventModel> allEvents, List<TimelineEventModel> filteredEvents, String selectedFilter, ChildModel? child, int weeksWithLovingBrain, int averageBedtimeShiftMinutes, ApiResultStatus<dynamic> fetchStatus
+ List<TimelineEventModel> allEvents, List<TimelineEventModel> filteredEvents, String selectedFilter, ChildModel? child, int weeksWithLovingBrain, int averageBedtimeShiftMinutes, bool hasEnoughBedtimeHistory, ApiResultStatus<dynamic> fetchStatus
 });
 
 
@@ -68,7 +68,7 @@ class _$FamilyTimelineStateCopyWithImpl<$Res>
 
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? allEvents = null,Object? filteredEvents = null,Object? selectedFilter = null,Object? child = freezed,Object? weeksWithLovingBrain = null,Object? averageBedtimeShiftMinutes = null,Object? fetchStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? allEvents = null,Object? filteredEvents = null,Object? selectedFilter = null,Object? child = freezed,Object? weeksWithLovingBrain = null,Object? averageBedtimeShiftMinutes = null,Object? hasEnoughBedtimeHistory = null,Object? fetchStatus = null,}) {
   return _then(FamilyTimelineState(
 allEvents: null == allEvents ? _self.allEvents : allEvents // ignore: cast_nullable_to_non_nullable
 as List<TimelineEventModel>,filteredEvents: null == filteredEvents ? _self.filteredEvents : filteredEvents // ignore: cast_nullable_to_non_nullable
@@ -76,7 +76,8 @@ as List<TimelineEventModel>,selectedFilter: null == selectedFilter ? _self.selec
 as String,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
 as ChildModel?,weeksWithLovingBrain: null == weeksWithLovingBrain ? _self.weeksWithLovingBrain : weeksWithLovingBrain // ignore: cast_nullable_to_non_nullable
 as int,averageBedtimeShiftMinutes: null == averageBedtimeShiftMinutes ? _self.averageBedtimeShiftMinutes : averageBedtimeShiftMinutes // ignore: cast_nullable_to_non_nullable
-as int,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as int,hasEnoughBedtimeHistory: null == hasEnoughBedtimeHistory ? _self.hasEnoughBedtimeHistory : hasEnoughBedtimeHistory // ignore: cast_nullable_to_non_nullable
+as bool,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }
@@ -171,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  bool hasEnoughBedtimeHistory,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FamilyTimelineState() when $default != null:
-return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.fetchStatus);case _:
+return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.hasEnoughBedtimeHistory,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -192,10 +193,10 @@ return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  bool hasEnoughBedtimeHistory,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _FamilyTimelineState():
-return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.fetchStatus);case _:
+return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.hasEnoughBedtimeHistory,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +213,10 @@ return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TimelineEventModel> allEvents,  List<TimelineEventModel> filteredEvents,  String selectedFilter,  ChildModel? child,  int weeksWithLovingBrain,  int averageBedtimeShiftMinutes,  bool hasEnoughBedtimeHistory,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _FamilyTimelineState() when $default != null:
-return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.fetchStatus);case _:
+return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.child,_that.weeksWithLovingBrain,_that.averageBedtimeShiftMinutes,_that.hasEnoughBedtimeHistory,_that.fetchStatus);case _:
   return null;
 
 }
@@ -227,7 +228,7 @@ return $default(_that.allEvents,_that.filteredEvents,_that.selectedFilter,_that.
 
 
 class _FamilyTimelineState implements FamilyTimelineState {
-  const _FamilyTimelineState({ List<TimelineEventModel> allEvents = const [],  List<TimelineEventModel> filteredEvents = const [], this.selectedFilter = 'All', this.child, this.weeksWithLovingBrain = 0, this.averageBedtimeShiftMinutes = 0, this.fetchStatus = const ApiResultStatus.initial()}): _allEvents = allEvents,_filteredEvents = filteredEvents;
+  const _FamilyTimelineState({ List<TimelineEventModel> allEvents = const [],  List<TimelineEventModel> filteredEvents = const [], this.selectedFilter = 'All', this.child, this.weeksWithLovingBrain = 0, this.averageBedtimeShiftMinutes = 0, this.hasEnoughBedtimeHistory = false, this.fetchStatus = const ApiResultStatus.initial()}): _allEvents = allEvents,_filteredEvents = filteredEvents;
   
 
  final  List<TimelineEventModel> _allEvents;
@@ -248,6 +249,7 @@ class _FamilyTimelineState implements FamilyTimelineState {
 @override final  ChildModel? child;
 @override@JsonKey() final  int weeksWithLovingBrain;
 @override@JsonKey() final  int averageBedtimeShiftMinutes;
+@override@JsonKey() final  bool hasEnoughBedtimeHistory;
 @override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
 /// Create a copy of FamilyTimelineState
@@ -260,18 +262,18 @@ _$FamilyTimelineStateCopyWith<_FamilyTimelineState> get copyWith => __$FamilyTim
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilyTimelineState&&const DeepCollectionEquality().equals(other.allEvents, _allEvents)&&const DeepCollectionEquality().equals(other.filteredEvents, _filteredEvents)&&(identical(other.selectedFilter, selectedFilter) || other.selectedFilter == selectedFilter)&&(identical(other.child, child) || other.child == child)&&(identical(other.weeksWithLovingBrain, weeksWithLovingBrain) || other.weeksWithLovingBrain == weeksWithLovingBrain)&&(identical(other.averageBedtimeShiftMinutes, averageBedtimeShiftMinutes) || other.averageBedtimeShiftMinutes == averageBedtimeShiftMinutes)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FamilyTimelineState&&const DeepCollectionEquality().equals(other.allEvents, _allEvents)&&const DeepCollectionEquality().equals(other.filteredEvents, _filteredEvents)&&(identical(other.selectedFilter, selectedFilter) || other.selectedFilter == selectedFilter)&&(identical(other.child, child) || other.child == child)&&(identical(other.weeksWithLovingBrain, weeksWithLovingBrain) || other.weeksWithLovingBrain == weeksWithLovingBrain)&&(identical(other.averageBedtimeShiftMinutes, averageBedtimeShiftMinutes) || other.averageBedtimeShiftMinutes == averageBedtimeShiftMinutes)&&(identical(other.hasEnoughBedtimeHistory, hasEnoughBedtimeHistory) || other.hasEnoughBedtimeHistory == hasEnoughBedtimeHistory)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_allEvents),const DeepCollectionEquality().hash(_filteredEvents),selectedFilter,child,weeksWithLovingBrain,averageBedtimeShiftMinutes,fetchStatus);
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_allEvents),const DeepCollectionEquality().hash(_filteredEvents),selectedFilter,child,weeksWithLovingBrain,averageBedtimeShiftMinutes,hasEnoughBedtimeHistory,fetchStatus);
 }
 
 @override
 String toString() {
-    return 'FamilyTimelineState(allEvents: $allEvents, filteredEvents: $filteredEvents, selectedFilter: $selectedFilter, child: $child, weeksWithLovingBrain: $weeksWithLovingBrain, averageBedtimeShiftMinutes: $averageBedtimeShiftMinutes, fetchStatus: $fetchStatus)';
+    return 'FamilyTimelineState(allEvents: $allEvents, filteredEvents: $filteredEvents, selectedFilter: $selectedFilter, child: $child, weeksWithLovingBrain: $weeksWithLovingBrain, averageBedtimeShiftMinutes: $averageBedtimeShiftMinutes, hasEnoughBedtimeHistory: $hasEnoughBedtimeHistory, fetchStatus: $fetchStatus)';
 }
 
 
@@ -282,7 +284,7 @@ abstract mixin class _$FamilyTimelineStateCopyWith<$Res> implements $FamilyTimel
   factory _$FamilyTimelineStateCopyWith(_FamilyTimelineState value, $Res Function(_FamilyTimelineState) _then) = __$FamilyTimelineStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<TimelineEventModel> allEvents, List<TimelineEventModel> filteredEvents, String selectedFilter, ChildModel? child, int weeksWithLovingBrain, int averageBedtimeShiftMinutes, ApiResultStatus<dynamic> fetchStatus
+ List<TimelineEventModel> allEvents, List<TimelineEventModel> filteredEvents, String selectedFilter, ChildModel? child, int weeksWithLovingBrain, int averageBedtimeShiftMinutes, bool hasEnoughBedtimeHistory, ApiResultStatus<dynamic> fetchStatus
 });
 
 
@@ -299,7 +301,7 @@ class __$FamilyTimelineStateCopyWithImpl<$Res>
 
 /// Create a copy of FamilyTimelineState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? allEvents = null,Object? filteredEvents = null,Object? selectedFilter = null,Object? child = freezed,Object? weeksWithLovingBrain = null,Object? averageBedtimeShiftMinutes = null,Object? fetchStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? allEvents = null,Object? filteredEvents = null,Object? selectedFilter = null,Object? child = freezed,Object? weeksWithLovingBrain = null,Object? averageBedtimeShiftMinutes = null,Object? hasEnoughBedtimeHistory = null,Object? fetchStatus = null,}) {
   return _then(_FamilyTimelineState(
 allEvents: null == allEvents ? _self._allEvents : allEvents // ignore: cast_nullable_to_non_nullable
 as List<TimelineEventModel>,filteredEvents: null == filteredEvents ? _self._filteredEvents : filteredEvents // ignore: cast_nullable_to_non_nullable
@@ -307,7 +309,8 @@ as List<TimelineEventModel>,selectedFilter: null == selectedFilter ? _self.selec
 as String,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
 as ChildModel?,weeksWithLovingBrain: null == weeksWithLovingBrain ? _self.weeksWithLovingBrain : weeksWithLovingBrain // ignore: cast_nullable_to_non_nullable
 as int,averageBedtimeShiftMinutes: null == averageBedtimeShiftMinutes ? _self.averageBedtimeShiftMinutes : averageBedtimeShiftMinutes // ignore: cast_nullable_to_non_nullable
-as int,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as int,hasEnoughBedtimeHistory: null == hasEnoughBedtimeHistory ? _self.hasEnoughBedtimeHistory : hasEnoughBedtimeHistory // ignore: cast_nullable_to_non_nullable
+as bool,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }

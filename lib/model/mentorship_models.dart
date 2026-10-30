@@ -320,25 +320,55 @@ class EnrolledProgramModel {
   }
 
   factory EnrolledProgramModel.fromMap(Map<String, dynamic> map) {
+    int readInt(List<String> keys, int fallback) {
+      for (final String key in keys) {
+        final Object? value = map[key];
+        if (value is num) {
+          return value.toInt();
+        }
+      }
+      return fallback;
+    }
+
+    String readString(List<String> keys, String fallback) {
+      for (final String key in keys) {
+        final Object? value = map[key];
+        if (value != null && value.toString().trim().isNotEmpty) {
+          return value.toString();
+        }
+      }
+      return fallback;
+    }
+
     return EnrolledProgramModel(
-      programId: map['programId']?.toString() ?? 'sleep_reset_6w',
-      title: map['title']?.toString() ?? '6-Week Sleep Reset Journey',
-      currentWeek: (map['currentWeek'] as num?)?.toInt() ?? 2,
-      totalWeeks: (map['totalWeeks'] as num?)?.toInt() ?? 6,
-      thisWeekFocus:
-          map['thisWeekFocus']?.toString() ?? 'Shifting bedtime by 15m',
-      focusDescription:
-          map['focusDescription']?.toString() ??
-          'Anchor evening wind-down at 7:15 PM and hold consistent for 4 nights.',
-      nextSessionDate:
-          map['nextSessionDate']?.toString() ?? 'Thursday, 10:00 AM',
-      mentorNote:
-          map['mentorNote']?.toString() ??
-          'Great consistency on bedtime cues this week! Keep holding the 15m shift steady.',
-      recordedModuleTitle:
-          map['recordedModuleTitle']?.toString() ??
-          'Module 2: Managing Evening Cortisol Surges',
-      isModuleCompleted: map['isModuleCompleted'] == true,
+      programId: readString(const <String>[
+        'programId',
+        'program_id',
+      ], 'sleep_reset_6w'),
+      title: readString(const <String>['title'], '6-Week Sleep Reset Journey'),
+      currentWeek: readInt(const <String>['currentWeek', 'current_week'], 1),
+      totalWeeks: readInt(const <String>['totalWeeks', 'total_weeks'], 6),
+      thisWeekFocus: readString(const <String>[
+        'thisWeekFocus',
+        'this_week_focus',
+        'currentFocus',
+      ], 'Anchor bedtime 15 minutes earlier'),
+      focusDescription: readString(const <String>[
+        'focusDescription',
+        'focus_description',
+      ], 'Start quiet bedtime cues and hold them steady for a few nights.'),
+      nextSessionDate: readString(const <String>[
+        'nextSessionDate',
+        'next_session_date',
+      ], ''),
+      mentorNote: readString(const <String>['mentorNote', 'mentor_note'], ''),
+      recordedModuleTitle: readString(const <String>[
+        'recordedModuleTitle',
+        'recorded_module_title',
+      ], 'Recorded module'),
+      isModuleCompleted:
+          map['isModuleCompleted'] == true ||
+          map['is_module_completed'] == true,
     );
   }
 

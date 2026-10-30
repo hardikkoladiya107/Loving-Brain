@@ -14,6 +14,7 @@ abstract class FamilyTimelineState with _$FamilyTimelineState {
     ChildModel? child,
     @Default(0) int weeksWithLovingBrain,
     @Default(0) int averageBedtimeShiftMinutes,
+    @Default(false) bool hasEnoughBedtimeHistory,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _FamilyTimelineState;
 }

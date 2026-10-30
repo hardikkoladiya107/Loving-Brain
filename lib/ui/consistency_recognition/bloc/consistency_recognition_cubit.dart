@@ -3,6 +3,7 @@ import 'package:loving_brain/core/journey_insights_engine.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
@@ -15,34 +16,38 @@ import 'consistency_recognition_state.dart';
 class ConsistencyRecognitionCubit extends Cubit<ConsistencyRecognitionState> {
   ConsistencyRecognitionCubit() : super(const ConsistencyRecognitionState());
 
+  static const int _twoWeekLogLimit = 40;
+
   void reset() {
     emit(const ConsistencyRecognitionState());
   }
 
   void init({int? initialDays}) {
     emit(const ConsistencyRecognitionState());
-    if (initialDays != null && initialDays > 0) {
-      changeProps(daysCheckedIn: initialDays);
-      return;
-    }
-    _loadConsistency();
+    _loadConsistency(preferredDays: initialDays);
   }
 
   void changeProps({
     int? daysCheckedIn,
+    String? consistencyTitle,
+    String? consistencySubtitle,
+    String? consistencyDetail,
     ChildModel? child,
     ApiResultStatus? fetchStatus,
   }) {
     emit(
       state.copyWith(
         daysCheckedIn: daysCheckedIn ?? state.daysCheckedIn,
+        consistencyTitle: consistencyTitle ?? state.consistencyTitle,
+        consistencySubtitle: consistencySubtitle ?? state.consistencySubtitle,
+        consistencyDetail: consistencyDetail ?? state.consistencyDetail,
         child: child ?? state.child,
         fetchStatus: fetchStatus ?? const ApiResultStatus.initial(),
       ),
     );
   }
 
-  Future<void> _loadConsistency() async {
+  Future<void> _loadConsistency({int? preferredDays}) async {
     changeProps(fetchStatus: const ApiResultStatus.loading());
 
     final ChildModel? child = preferences.getChildModel();
@@ -52,6 +57,7 @@ class ConsistencyRecognitionCubit extends Cubit<ConsistencyRecognitionState> {
     List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
     List<HealthLogModel> healthLogs = <HealthLogModel>[];
     List<QuickNoteModel> quickNotes = <QuickNoteModel>[];
+    List<MoodLogModel> moodLogs = <MoodLogModel>[];
     List<TimelineEventModel> timelineEvents = <TimelineEventModel>[];
 
     if (childId.isNotEmpty) {
@@ -64,21 +70,37 @@ class ConsistencyRecognitionCubit extends Cubit<ConsistencyRecognitionState> {
         }
 
         final ApiResultStatus<List<TantrumLogModel>> tantrumRes =
-            await TodayLogRepo.instance.getRecentTantrumLogs(childId);
+            await TodayLogRepo.instance.getRecentTantrumLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (tantrumRes is Data<List<TantrumLogModel>>) {
           tantrumLogs = tantrumRes.data;
         }
 
         final ApiResultStatus<List<HealthLogModel>> healthRes =
-            await TodayLogRepo.instance.getRecentHealthLogs(childId);
+            await TodayLogRepo.instance.getRecentHealthLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (healthRes is Data<List<HealthLogModel>>) {
           healthLogs = healthRes.data;
         }
 
         final ApiResultStatus<List<QuickNoteModel>> notesRes =
-            await TodayLogRepo.instance.getRecentQuickNotes(childId);
+            await TodayLogRepo.instance.getRecentQuickNotes(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (notesRes is Data<List<QuickNoteModel>>) {
           quickNotes = notesRes.data;
+        }
+
+        final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+            .instance
+            .getRecentMoodLogs(childId, limit: _twoWeekLogLimit);
+        if (moodRes is Data<List<MoodLogModel>>) {
+          moodLogs = moodRes.data;
         }
 
         final ApiResultStatus<List<TimelineEventModel>> eventsRes =
@@ -95,11 +117,19 @@ class ConsistencyRecognitionCubit extends Cubit<ConsistencyRecognitionState> {
       tantrumLogs: tantrumLogs,
       healthLogs: healthLogs,
       quickNotes: quickNotes,
+      moodLogs: moodLogs,
       timelineEvents: timelineEvents,
     );
 
+    final int days = preferredDays != null && preferredDays > 0
+        ? preferredDays
+        : insights.daysCheckedIn;
+
     changeProps(
-      daysCheckedIn: insights.daysCheckedIn,
+      daysCheckedIn: days,
+      consistencyTitle: insights.consistencyTitle,
+      consistencySubtitle: insights.consistencySubtitle,
+      consistencyDetail: insights.consistencyDetail,
       child: child,
       fetchStatus: const ApiResultStatus.data(data: null),
     );

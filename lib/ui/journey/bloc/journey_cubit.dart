@@ -5,6 +5,8 @@ import 'package:loving_brain/model/active_experiment_model.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mentorship_models.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
@@ -19,6 +21,8 @@ import 'journey_state.dart';
 
 class JourneyCubit extends Cubit<JourneyState> {
   JourneyCubit() : super(const JourneyState());
+
+  static const int _twoWeekLogLimit = 40;
 
   void init() {
     emit(const JourneyState());
@@ -69,8 +73,10 @@ class JourneyCubit extends Cubit<JourneyState> {
     List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
     List<HealthLogModel> healthLogs = <HealthLogModel>[];
     List<QuickNoteModel> quickNotes = <QuickNoteModel>[];
+    List<MoodLogModel> moodLogs = <MoodLogModel>[];
     List<TimelineEventModel> timelineEvents = <TimelineEventModel>[];
     ActiveExperimentModel? activeExperiment;
+    Exception? loadError;
 
     if (childId.isNotEmpty) {
       try {
@@ -79,24 +85,42 @@ class JourneyCubit extends Cubit<JourneyState> {
             .getSleepLogsForChild(childId);
         if (sleepRes is Data<List<SleepLogModel>>) {
           sleepLogs = sleepRes.data;
+        } else if (sleepRes is Error<List<SleepLogModel>>) {
+          loadError = sleepRes.error;
         }
 
         final ApiResultStatus<List<TantrumLogModel>> tantrumRes =
-            await TodayLogRepo.instance.getRecentTantrumLogs(childId);
+            await TodayLogRepo.instance.getRecentTantrumLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (tantrumRes is Data<List<TantrumLogModel>>) {
           tantrumLogs = tantrumRes.data;
         }
 
         final ApiResultStatus<List<HealthLogModel>> healthRes =
-            await TodayLogRepo.instance.getRecentHealthLogs(childId);
+            await TodayLogRepo.instance.getRecentHealthLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (healthRes is Data<List<HealthLogModel>>) {
           healthLogs = healthRes.data;
         }
 
         final ApiResultStatus<List<QuickNoteModel>> notesRes =
-            await TodayLogRepo.instance.getRecentQuickNotes(childId);
+            await TodayLogRepo.instance.getRecentQuickNotes(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (notesRes is Data<List<QuickNoteModel>>) {
           quickNotes = notesRes.data;
+        }
+
+        final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+            .instance
+            .getRecentMoodLogs(childId, limit: _twoWeekLogLimit);
+        if (moodRes is Data<List<MoodLogModel>>) {
+          moodLogs = moodRes.data;
         }
 
         final ApiResultStatus<List<TimelineEventModel>> eventsRes =
@@ -110,7 +134,9 @@ class JourneyCubit extends Cubit<JourneyState> {
         if (expRes is Data<ActiveExperimentModel?>) {
           activeExperiment = expRes.data;
         }
-      } catch (_) {}
+      } catch (e) {
+        loadError = Exception(e.toString());
+      }
     }
 
     int savedCount = 0;
@@ -132,12 +158,13 @@ class JourneyCubit extends Cubit<JourneyState> {
     int totalWeeks = 6;
     if (childId.isNotEmpty) {
       try {
-        final DocumentSnapshot<Map<String, dynamic>> progDoc =
-            await MentorshipRepo.instance.programsCollection.doc(childId).get();
-        if (progDoc.exists && progDoc.data() != null) {
+        final ApiResultStatus<EnrolledProgramModel?> progRes =
+            await MentorshipRepo.instance.getEnrolledProgram(childId);
+        if (progRes is Data<EnrolledProgramModel?> && progRes.data != null) {
+          final EnrolledProgramModel program = progRes.data!;
           isEnrolled = true;
-          currentWeek = (progDoc.data()!['current_week'] as int?) ?? 1;
-          totalWeeks = (progDoc.data()!['total_weeks'] as int?) ?? 6;
+          currentWeek = program.currentWeek;
+          totalWeeks = program.totalWeeks <= 0 ? 6 : program.totalWeeks;
         }
       } catch (_) {}
     }
@@ -148,6 +175,7 @@ class JourneyCubit extends Cubit<JourneyState> {
       tantrumLogs: tantrumLogs,
       healthLogs: healthLogs,
       quickNotes: quickNotes,
+      moodLogs: moodLogs,
       timelineEvents: timelineEvents,
       activeExperiment: activeExperiment,
     );
@@ -157,6 +185,8 @@ class JourneyCubit extends Cubit<JourneyState> {
       calculatedMode = JourneyMode.trying;
     } else if (insights.isHarderWeek) {
       calculatedMode = JourneyMode.harder;
+    } else if (insights.isLearning) {
+      calculatedMode = JourneyMode.learning;
     }
 
     changeProps(
@@ -169,7 +199,9 @@ class JourneyCubit extends Cubit<JourneyState> {
       sleepJourneyWeek: currentWeek,
       sleepJourneyTotalWeeks: totalWeeks,
       timelineEventCount: timelineEvents.length,
-      fetchStatus: const ApiResultStatus.data(data: null),
+      fetchStatus: loadError == null
+          ? const ApiResultStatus.data(data: null)
+          : ApiResultStatus.error(error: loadError),
     );
   }
 

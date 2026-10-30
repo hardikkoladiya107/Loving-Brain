@@ -6,7 +6,7 @@ import 'package:loving_brain/model/child_model.dart';
 
 part 'journey_state.freezed.dart';
 
-enum JourneyMode { normal, harder, trying }
+enum JourneyMode { normal, learning, harder, trying }
 
 @freezed
 abstract class JourneyState with _$JourneyState {

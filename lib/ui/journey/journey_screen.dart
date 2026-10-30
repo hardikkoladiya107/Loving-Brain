@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'bloc/journey_cubit.dart';
 import 'bloc/journey_state.dart';
@@ -31,7 +36,20 @@ class _JourneyScreenState extends State<JourneyScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<JourneyCubit, JourneyState>(
-      listener: (BuildContext context, JourneyState state) {},
+      listener: (BuildContext context, JourneyState state) {
+        final ApiResultStatus status = state.fetchStatus;
+        if (status is Loging) {
+          EasyLoading.show();
+        } else if (status is Data) {
+          EasyLoading.dismiss();
+        } else if (status is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: status.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+      },
       builder: (BuildContext context, JourneyState state) {
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
@@ -110,29 +128,46 @@ class _JourneyScreenState extends State<JourneyScreen> {
   }
 
   Widget _buildWeeklyReviewCard(BuildContext context, JourneyState state) {
-    String chipTitle = 'Weekly review';
-    String titleText = "This week's review is ready";
-    String subtitleText =
-        "One positive change, one thing that's still hard, and one focus for next week.";
-    String buttonText = 'Open review';
+    final bool insightsReady = state.weeklyInsights != null;
+    String chipTitle = LocaleKeys.journeyWeeklyReviewChip.tr();
+    String titleText = insightsReady
+        ? LocaleKeys.journeyWeeklyReviewReadyTitle.tr()
+        : LocaleKeys.journeyWeeklyReviewLoadingTitle.tr();
+    String subtitleText = insightsReady
+        ? LocaleKeys.journeyWeeklyReviewReadySubtitle.tr()
+        : LocaleKeys.journeyWeeklyReviewLoadingSubtitle.tr();
+    String buttonText = LocaleKeys.journeyOpenReview.tr();
     String imagePath = Assets.v2.images.imgJournyWeeklyReview.path;
     String targetRoute = RoutePaths.weeklyReview;
 
-    if (state.mode == JourneyMode.harder) {
-      chipTitle = 'Disrupted week';
-      titleText = 'This week was harder';
+    if (state.mode == JourneyMode.learning) {
+      chipTitle = LocaleKeys.journeyPatternsInProgressChip.tr();
+      titleText = LocaleKeys.journeyPatternsInProgressTitle.tr();
+      subtitleText = LocaleKeys.journeyPatternsInProgressSubtitle.tr();
+      buttonText = LocaleKeys.journeySeeProgress.tr();
+      targetRoute = RoutePaths.weeklyReview;
+    } else if (state.mode == JourneyMode.harder) {
+      chipTitle = LocaleKeys.journeyDisruptedWeekChip.tr();
+      titleText = LocaleKeys.journeyHarderWeekTitle.tr();
       subtitleText =
           state.weeklyInsights?.harderExplanation ??
-          "Travel or illness disrupted the routine. That's expected, and routines take a few days to settle again.";
+          LocaleKeys.journeyHarderWeekFallback.tr();
       imagePath = Assets.v2.images.imgJourneyThisWeek.path;
       targetRoute = RoutePaths.harderWeek;
     } else if (state.mode == JourneyMode.trying) {
-      chipTitle = 'Active recommendation';
-      titleText = "What we're trying this week";
+      chipTitle = LocaleKeys.journeyActiveRecommendationChip.tr();
+      titleText = LocaleKeys.journeyTryingThisWeekTitle.tr();
+      final String experimentTitle =
+          state.activeExperiment?.changeTitle.trim() ?? '';
+      final String disruptionLine = state.weeklyInsights?.isHarderWeek == true
+          ? ' ${LocaleKeys.journeyAlsoDisruptedNote.tr()}'
+          : '';
       subtitleText =
-          state.activeExperiment?.changeTitle ??
-          'An earlier, shorter afternoon nap.';
-      buttonText = 'View progress';
+          (experimentTitle.isNotEmpty
+              ? experimentTitle
+              : LocaleKeys.journeyTryingThisWeekFallback.tr()) +
+          disruptionLine;
+      buttonText = LocaleKeys.journeyViewProgress.tr();
       imagePath = Assets.v2.images.imgSprout.path;
       targetRoute = RoutePaths.tryingThisWeek;
     }
@@ -206,7 +241,9 @@ class _JourneyScreenState extends State<JourneyScreen> {
   Widget _buildSleepJourneyCard(BuildContext context, JourneyState state) {
     final bool isEnrolled = state.isSleepJourneyEnrolled;
     final int currentWeek = state.sleepJourneyWeek;
-    final int totalWeeks = state.sleepJourneyTotalWeeks;
+    final int totalWeeks = state.sleepJourneyTotalWeeks <= 0
+        ? 6
+        : state.sleepJourneyTotalWeeks;
     final double fraction = (currentWeek / totalWeeks).clamp(0.0, 1.0);
 
     return GestureDetector(

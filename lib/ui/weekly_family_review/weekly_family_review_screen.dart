@@ -1,12 +1,17 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/core/brainy_entry_context.dart';
 import 'package:loving_brain/core/journey_insights_engine.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -36,7 +41,38 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<WeeklyFamilyReviewCubit, WeeklyFamilyReviewState>(
-      listener: (BuildContext context, WeeklyFamilyReviewState state) {},
+      listener: (BuildContext context, WeeklyFamilyReviewState state) {
+        final ApiResultStatus fetchStatus = state.fetchStatus;
+        if (fetchStatus is Loging) {
+          EasyLoading.show();
+        } else if (fetchStatus is Data) {
+          EasyLoading.dismiss();
+        } else if (fetchStatus is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: fetchStatus.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+
+        final ApiResultStatus saveStatus = state.saveStatus;
+        if (saveStatus is Loging) {
+          EasyLoading.show();
+        } else if (saveStatus is Data) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: LocaleKeys.journeyExperimentStarted.tr(),
+            type: SnackBarType.SUCCESS,
+          );
+          context.push(RoutePaths.tryingThisWeek);
+        } else if (saveStatus is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: saveStatus.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+      },
       builder: (BuildContext context, WeeklyFamilyReviewState state) {
         final String dateLabel = state.insights?.dateRangeLabel ?? 'This week';
 
@@ -132,10 +168,10 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
   Widget _buildPositiveChangeCard(WeeklyFamilyReviewState state) {
     final String title =
         state.insights?.positiveTitle ??
-        'Bedtime\nresistance eased\ntwice this week';
+        LocaleKeys.journeyPatternsInProgressTitle.tr();
     final String detail =
         state.insights?.positiveDetail ??
-        'Settling took about 12 minutes on Tuesday and Friday, down from 20.';
+        LocaleKeys.journeyPatternsInProgressSubtitle.tr();
 
     return Container(
       width: double.infinity,
@@ -196,10 +232,11 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
 
   Widget _buildContinuingDifficultyCard(WeeklyFamilyReviewState state) {
     final String title =
-        state.insights?.difficultyTitle ?? 'Naps are still inconsistent';
+        state.insights?.difficultyTitle ??
+        LocaleKeys.journeyPatternsInProgressTitle.tr();
     final String detail =
         state.insights?.difficultyDetail ??
-        'Four of seven ended early. This is the one to keep watching.';
+        LocaleKeys.journeyPatternsInProgressSubtitle.tr();
 
     return CommonInfoCard(
       chipTitle: 'One continuing difficulty',
@@ -214,10 +251,11 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
 
   Widget _buildUsefulPatternCard(WeeklyFamilyReviewState state) {
     final String title =
-        state.insights?.patternTitle ?? 'She sleeps better after active days';
+        state.insights?.patternTitle ??
+        LocaleKeys.journeyPatternsInProgressTitle.tr();
     final String detail =
         state.insights?.patternDetail ??
-        'Days with outdoor park time resulted in fewer night wakings.';
+        LocaleKeys.journeyPatternsInProgressSubtitle.tr();
 
     return CommonInfoCard(
       chipTitle: 'One useful pattern',
@@ -251,18 +289,22 @@ class _WeeklyFamilyReviewScreenState extends State<WeeklyFamilyReviewScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AppButton(
-                title: 'Try the recommendation',
-                onTap: () async {
-                  await context
-                      .read<WeeklyFamilyReviewCubit>()
-                      .startRecommendedExperiment();
-                  if (context.mounted) {
-                    context.push(RoutePaths.tryingThisWeek);
-                  }
-                },
-              ),
-              16.spaceH,
+              if (state.insights?.isLearning != true) ...[
+                AppButton(
+                  title: 'Try the recommendation',
+                  onTap: () {
+                    final WeeklyFamilyReviewCubit cubit = context
+                        .read<WeeklyFamilyReviewCubit>();
+                    if (cubit.state.activeExperiment != null &&
+                        cubit.state.activeExperiment!.status == 'active') {
+                      context.push(RoutePaths.tryingThisWeek);
+                      return;
+                    }
+                    cubit.startRecommendedExperiment();
+                  },
+                ),
+                16.spaceH,
+              ],
               BaseButton(
                 child: 'Ask Brainy about this week'.appText(
                   fontSize: 14.sp,

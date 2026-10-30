@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EnrolledJourneyHomeState {
 
- bool get isLoading; EnrolledProgramModel? get program; ApiResultStatus<dynamic> get fetchStatus;
+ bool get isLoading; EnrolledProgramModel? get program; bool get isEnrolled; ApiResultStatus<dynamic> get fetchStatus;
 /// Create a copy of EnrolledJourneyHomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $EnrolledJourneyHomeStateCopyWith<EnrolledJourneyHomeState> get copyWith => _$En
 @override
 bool operator ==(Object other) {
   final _this = this as EnrolledJourneyHomeState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnrolledJourneyHomeState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.program, _this.program) || other.program == _this.program)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnrolledJourneyHomeState&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.program, _this.program) || other.program == _this.program)&&(identical(other.isEnrolled, _this.isEnrolled) || other.isEnrolled == _this.isEnrolled)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as EnrolledJourneyHomeState;
-  return Object.hash(runtimeType,_this.isLoading,_this.program,_this.fetchStatus);
+  return Object.hash(runtimeType,_this.isLoading,_this.program,_this.isEnrolled,_this.fetchStatus);
 }
 
 @override
 String toString() {
   final _this = this as EnrolledJourneyHomeState;
-  return 'EnrolledJourneyHomeState(isLoading: ${_this.isLoading}, program: ${_this.program}, fetchStatus: ${_this.fetchStatus})';
+  return 'EnrolledJourneyHomeState(isLoading: ${_this.isLoading}, program: ${_this.program}, isEnrolled: ${_this.isEnrolled}, fetchStatus: ${_this.fetchStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $EnrolledJourneyHomeStateCopyWith<$Res>  {
   factory $EnrolledJourneyHomeStateCopyWith(EnrolledJourneyHomeState value, $Res Function(EnrolledJourneyHomeState) _then) = _$EnrolledJourneyHomeStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, EnrolledProgramModel? program, ApiResultStatus<dynamic> fetchStatus
+ bool isLoading, EnrolledProgramModel? program, bool isEnrolled, ApiResultStatus<dynamic> fetchStatus
 });
 
 
@@ -68,11 +68,12 @@ class _$EnrolledJourneyHomeStateCopyWithImpl<$Res>
 
 /// Create a copy of EnrolledJourneyHomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? program = freezed,Object? fetchStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? program = freezed,Object? isEnrolled = null,Object? fetchStatus = null,}) {
   return _then(EnrolledJourneyHomeState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,program: freezed == program ? _self.program : program // ignore: cast_nullable_to_non_nullable
-as EnrolledProgramModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as EnrolledProgramModel?,isEnrolled: null == isEnrolled ? _self.isEnrolled : isEnrolled // ignore: cast_nullable_to_non_nullable
+as bool,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }
@@ -167,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  EnrolledProgramModel? program,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  EnrolledProgramModel? program,  bool isEnrolled,  ApiResultStatus<dynamic> fetchStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EnrolledJourneyHomeState() when $default != null:
-return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.program,_that.isEnrolled,_that.fetchStatus);case _:
   return orElse();
 
 }
@@ -188,10 +189,10 @@ return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  EnrolledProgramModel? program,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  EnrolledProgramModel? program,  bool isEnrolled,  ApiResultStatus<dynamic> fetchStatus)  $default,) {final _that = this;
 switch (_that) {
 case _EnrolledJourneyHomeState():
-return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.program,_that.isEnrolled,_that.fetchStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +209,10 @@ return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  EnrolledProgramModel? program,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  EnrolledProgramModel? program,  bool isEnrolled,  ApiResultStatus<dynamic> fetchStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _EnrolledJourneyHomeState() when $default != null:
-return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
+return $default(_that.isLoading,_that.program,_that.isEnrolled,_that.fetchStatus);case _:
   return null;
 
 }
@@ -223,11 +224,12 @@ return $default(_that.isLoading,_that.program,_that.fetchStatus);case _:
 
 
 class _EnrolledJourneyHomeState implements EnrolledJourneyHomeState {
-  const _EnrolledJourneyHomeState({this.isLoading = false, this.program, this.fetchStatus = const ApiResultStatus.initial()});
+  const _EnrolledJourneyHomeState({this.isLoading = false, this.program, this.isEnrolled = false, this.fetchStatus = const ApiResultStatus.initial()});
   
 
 @override@JsonKey() final  bool isLoading;
 @override final  EnrolledProgramModel? program;
+@override@JsonKey() final  bool isEnrolled;
 @override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 
 /// Create a copy of EnrolledJourneyHomeState
@@ -240,18 +242,18 @@ _$EnrolledJourneyHomeStateCopyWith<_EnrolledJourneyHomeState> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnrolledJourneyHomeState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.program, program) || other.program == program)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnrolledJourneyHomeState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.program, program) || other.program == program)&&(identical(other.isEnrolled, isEnrolled) || other.isEnrolled == isEnrolled)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,isLoading,program,fetchStatus);
+    return Object.hash(runtimeType,isLoading,program,isEnrolled,fetchStatus);
 }
 
 @override
 String toString() {
-    return 'EnrolledJourneyHomeState(isLoading: $isLoading, program: $program, fetchStatus: $fetchStatus)';
+    return 'EnrolledJourneyHomeState(isLoading: $isLoading, program: $program, isEnrolled: $isEnrolled, fetchStatus: $fetchStatus)';
 }
 
 
@@ -262,7 +264,7 @@ abstract mixin class _$EnrolledJourneyHomeStateCopyWith<$Res> implements $Enroll
   factory _$EnrolledJourneyHomeStateCopyWith(_EnrolledJourneyHomeState value, $Res Function(_EnrolledJourneyHomeState) _then) = __$EnrolledJourneyHomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, EnrolledProgramModel? program, ApiResultStatus<dynamic> fetchStatus
+ bool isLoading, EnrolledProgramModel? program, bool isEnrolled, ApiResultStatus<dynamic> fetchStatus
 });
 
 
@@ -279,11 +281,12 @@ class __$EnrolledJourneyHomeStateCopyWithImpl<$Res>
 
 /// Create a copy of EnrolledJourneyHomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? program = freezed,Object? fetchStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? program = freezed,Object? isEnrolled = null,Object? fetchStatus = null,}) {
   return _then(_EnrolledJourneyHomeState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,program: freezed == program ? _self.program : program // ignore: cast_nullable_to_non_nullable
-as EnrolledProgramModel?,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as EnrolledProgramModel?,isEnrolled: null == isEnrolled ? _self.isEnrolled : isEnrolled // ignore: cast_nullable_to_non_nullable
+as bool,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
 }

@@ -7,7 +7,6 @@ import 'package:loving_brain/repo/mentorship_repo.dart';
 import 'enrolled_journey_home_state.dart';
 
 /// Cubit managing Enrolled Sleep Reset Journey (Screen 49).
-/// Conforms to AGENTS.md Rule 4.2.
 class EnrolledJourneyHomeCubit extends Cubit<EnrolledJourneyHomeState> {
   EnrolledJourneyHomeCubit() : super(const EnrolledJourneyHomeState());
 
@@ -19,36 +18,60 @@ class EnrolledJourneyHomeCubit extends Cubit<EnrolledJourneyHomeState> {
     changeProps(isLoading: true, fetchStatus: const ApiResultStatus.loading());
 
     final String resolvedId =
-        childId ??
-        preferences.getChildModel()?.reference?.id ??
-        'default_child';
+        childId ?? preferences.getChildModel()?.reference?.id ?? '';
 
-    final ApiResultStatus<EnrolledProgramModel> res = await MentorshipRepo
+    if (resolvedId.isEmpty) {
+      changeProps(
+        isLoading: false,
+        clearProgram: true,
+        isEnrolled: false,
+        fetchStatus: ApiResultStatus.error(
+          error: Exception('Please select a child profile first.'),
+        ),
+      );
+      return;
+    }
+
+    final ApiResultStatus<EnrolledProgramModel?> res = await MentorshipRepo
         .instance
         .getEnrolledProgram(resolvedId);
 
-    if (res is Data<EnrolledProgramModel>) {
-      changeProps(isLoading: false, program: res.data, fetchStatus: res);
+    if (res is Data<EnrolledProgramModel?>) {
+      changeProps(
+        isLoading: false,
+        program: res.data,
+        clearProgram: res.data == null,
+        isEnrolled: res.data != null,
+        fetchStatus: res,
+      );
     } else {
-      changeProps(isLoading: false, fetchStatus: res);
+      changeProps(
+        isLoading: false,
+        clearProgram: true,
+        isEnrolled: false,
+        fetchStatus: res,
+      );
     }
   }
 
   void changeProps({
     bool? isLoading,
     EnrolledProgramModel? program,
+    bool clearProgram = false,
+    bool? isEnrolled,
     ApiResultStatus? fetchStatus,
   }) {
     emit(
       state.copyWith(
         isLoading: isLoading ?? state.isLoading,
-        program: program ?? state.program,
+        program: clearProgram ? null : (program ?? state.program),
+        isEnrolled: isEnrolled ?? state.isEnrolled,
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
       ),
     );
   }
 
-  void toggleModuleCompleted() {
+  Future<void> toggleModuleCompleted() async {
     if (state.program == null) return;
     final EnrolledProgramModel updated = state.program!.copyWith(
       isModuleCompleted: !state.program!.isModuleCompleted,

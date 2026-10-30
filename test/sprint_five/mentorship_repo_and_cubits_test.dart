@@ -250,20 +250,60 @@ void main() {
       () async {
         final MentorshipRepo repo = MentorshipRepo.instance;
         const String childId = 'child_test_456';
+        repo.clearProgramCachesForTesting();
 
-        final ApiResultStatus<EnrolledProgramModel> progRes = await repo
+        final ApiResultStatus<EnrolledProgramModel?> emptyProg = await repo
             .getEnrolledProgram(childId);
-        expect(progRes, isA<Data<EnrolledProgramModel>>());
+        expect(emptyProg, isA<Data<EnrolledProgramModel?>>());
+        expect((emptyProg as Data<EnrolledProgramModel?>).data, isNull);
+
+        repo.seedEnrolledProgramForTesting(
+          childId,
+          const EnrolledProgramModel(
+            programId: 'sleep_reset_6w',
+            title: '6-Week Sleep Reset Journey',
+            currentWeek: 1,
+            totalWeeks: 6,
+            thisWeekFocus: 'Anchor bedtime 15 minutes earlier',
+          ),
+        );
+
+        final ApiResultStatus<EnrolledProgramModel?> progRes = await repo
+            .getEnrolledProgram(childId);
+        expect(progRes, isA<Data<EnrolledProgramModel?>>());
         final EnrolledProgramModel program =
-            (progRes as Data<EnrolledProgramModel>).data;
-        expect(program.currentWeek, 2);
+            (progRes as Data<EnrolledProgramModel?>).data!;
+        expect(program.currentWeek, 1);
         expect(program.totalWeeks, 6);
 
-        final ApiResultStatus<PostSessionPlanModel> planRes = await repo
+        repo.seedPostSessionPlanForTesting(
+          childId,
+          PostSessionPlanModel(
+            id: 'plan_test',
+            mentorName: 'Guide',
+            sessionDate: DateTime(2026, 5, 10),
+            tasks: const <PlanTaskItem>[
+              PlanTaskItem(
+                id: 'task_1',
+                title: 'Dim lights early',
+                subtitle: 'Warm lamp only',
+                isCompleted: false,
+              ),
+              PlanTaskItem(
+                id: 'task_2',
+                title: 'Log three nights',
+                subtitle: 'Usual check-ins',
+                isCompleted: false,
+              ),
+            ],
+          ),
+        );
+
+        final ApiResultStatus<PostSessionPlanModel?> planRes = await repo
             .getPostSessionPlan(childId);
-        expect(planRes, isA<Data<PostSessionPlanModel>>());
+        expect(planRes, isA<Data<PostSessionPlanModel?>>());
         final PostSessionPlanModel plan =
-            (planRes as Data<PostSessionPlanModel>).data;
+            (planRes as Data<PostSessionPlanModel?>).data!;
         expect(plan.tasks.length, greaterThanOrEqualTo(2));
 
         final PlanTaskItem secondTask = plan.tasks[1];
@@ -462,9 +502,23 @@ void main() {
     test(
       'EnrolledJourneyHomeCubit initializes and toggles module completion',
       () async {
-        final EnrolledJourneyHomeCubit cubit = EnrolledJourneyHomeCubit();
-        await cubit.init(childId: 'child_test_journey');
+        final MentorshipRepo repo = MentorshipRepo.instance;
+        const String childId = 'child_test_journey';
+        repo.seedEnrolledProgramForTesting(
+          childId,
+          const EnrolledProgramModel(
+            programId: 'sleep_reset_6w',
+            title: '6-Week Sleep Reset Journey',
+            currentWeek: 2,
+            totalWeeks: 6,
+            thisWeekFocus: 'Anchor bedtime 15 minutes earlier',
+          ),
+        );
 
+        final EnrolledJourneyHomeCubit cubit = EnrolledJourneyHomeCubit();
+        await cubit.init(childId: childId);
+
+        expect(cubit.state.isEnrolled, isTrue);
         expect(cubit.state.program?.title, '6-Week Sleep Reset Journey');
         expect(cubit.state.program?.currentWeek, 2);
 
@@ -477,8 +531,27 @@ void main() {
     );
 
     test('PostSessionPlanCubit toggles tasks properly', () async {
+      final MentorshipRepo repo = MentorshipRepo.instance;
+      const String childId = 'child_plan_test';
+      repo.seedPostSessionPlanForTesting(
+        childId,
+        PostSessionPlanModel(
+          id: 'plan_test',
+          mentorName: 'Guide',
+          sessionDate: DateTime(2026, 5, 10),
+          tasks: const <PlanTaskItem>[
+            PlanTaskItem(
+              id: 'task_1',
+              title: 'Dim lights early',
+              subtitle: 'Warm lamp only',
+              isCompleted: false,
+            ),
+          ],
+        ),
+      );
+
       final PostSessionPlanCubit cubit = PostSessionPlanCubit();
-      await cubit.init(childId: 'child_plan_test');
+      await cubit.init(childId: childId);
 
       expect(cubit.state.plan?.tasks.isNotEmpty, isTrue);
       final PlanTaskItem firstTask = cubit.state.plan!.tasks.first;

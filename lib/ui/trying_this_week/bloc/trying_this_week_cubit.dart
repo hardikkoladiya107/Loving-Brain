@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loving_brain/core/journey_insights_engine.dart';
 import 'package:loving_brain/model/active_experiment_model.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
+import 'package:loving_brain/model/sleep_log_model.dart';
+import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/experiment_repo.dart';
+import 'package:loving_brain/repo/sleep_log_repo.dart';
+import 'package:loving_brain/repo/today_log_repo.dart';
 import 'trying_this_week_state.dart';
 
 class TryingThisWeekCubit extends Cubit<TryingThisWeekState> {
@@ -23,15 +28,18 @@ class TryingThisWeekCubit extends Cubit<TryingThisWeekState> {
     ChildModel? child,
     int? currentDay,
     int? totalDays,
+    bool? hasExperiment,
+    bool clearExperiment = false,
     ApiResultStatus? fetchStatus,
     ApiResultStatus? finishStatus,
   }) {
     emit(
       state.copyWith(
-        experiment: experiment ?? state.experiment,
+        experiment: clearExperiment ? null : (experiment ?? state.experiment),
         child: child ?? state.child,
         currentDay: currentDay ?? state.currentDay,
         totalDays: totalDays ?? state.totalDays,
+        hasExperiment: hasExperiment ?? state.hasExperiment,
         fetchStatus: fetchStatus ?? const ApiResultStatus.initial(),
         finishStatus: finishStatus ?? const ApiResultStatus.initial(),
       ),
@@ -51,33 +59,78 @@ class TryingThisWeekCubit extends Cubit<TryingThisWeekState> {
           .getActiveExperiment(childId: childId);
       if (res is Data<ActiveExperimentModel?>) {
         active = res.data;
+      } else if (res is Error<ActiveExperimentModel?>) {
+        changeProps(child: child, hasExperiment: false, fetchStatus: res);
+        return;
       }
     }
 
     if (active == null) {
-      final DateTime now = DateTime.now();
-      final DateTime startDate = now.subtract(const Duration(days: 2));
-      active = ActiveExperimentModel(
-        id: 'default_exp',
-        childId: childId,
-        changeTitle: 'An earlier, shorter\nafternoon nap',
-        observeTarget: 'Evening mood and how easily\nbedtime goes',
-        startDate: startDate,
-        targetDays: 7,
-        reviewDate: startDate.add(const Duration(days: 7)),
-        status: 'active',
+      changeProps(
+        child: child,
+        hasExperiment: false,
+        clearExperiment: true,
+        currentDay: 0,
+        totalDays: 7,
+        fetchStatus: const ApiResultStatus.data(data: null),
       );
+      return;
     }
 
-    final int dayNum = active.currentDayNumber;
-    final int total = active.targetDays;
+    if (active.isDueForReview && childId.isNotEmpty) {
+      await _completeDueExperiment(childId: childId, experiment: active);
+      changeProps(
+        child: child,
+        hasExperiment: false,
+        clearExperiment: true,
+        currentDay: 0,
+        totalDays: 7,
+        fetchStatus: const ApiResultStatus.data(data: null),
+      );
+      return;
+    }
 
     changeProps(
       experiment: active,
       child: child,
-      currentDay: dayNum,
-      totalDays: total,
+      currentDay: active.currentDayNumber,
+      totalDays: active.targetDays,
+      hasExperiment: true,
       fetchStatus: const ApiResultStatus.data(data: null),
+    );
+  }
+
+  Future<void> _completeDueExperiment({
+    required String childId,
+    required ActiveExperimentModel experiment,
+  }) async {
+    List<SleepLogModel> sleepLogs = <SleepLogModel>[];
+    List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
+
+    final ApiResultStatus<List<SleepLogModel>> sleepRes = await SleepLogRepo
+        .instance
+        .getSleepLogsForChild(childId);
+    if (sleepRes is Data<List<SleepLogModel>>) {
+      sleepLogs = sleepRes.data;
+    }
+
+    final ApiResultStatus<List<TantrumLogModel>> tantrumRes = await TodayLogRepo
+        .instance
+        .getRecentTantrumLogs(childId, limit: 40);
+    if (tantrumRes is Data<List<TantrumLogModel>>) {
+      tantrumLogs = tantrumRes.data;
+    }
+
+    final String resultNote = JourneyInsightsEngine.compareExperimentOutcome(
+      experiment: experiment,
+      sleepLogs: sleepLogs,
+      tantrumLogs: tantrumLogs,
+    );
+
+    await ExperimentRepo.instance.completeExperiment(
+      childId: childId,
+      experimentId: experiment.id,
+      resultNote: resultNote,
     );
   }
 
@@ -88,17 +141,21 @@ class TryingThisWeekCubit extends Cubit<TryingThisWeekState> {
     final String childId = child?.reference?.id ?? '';
     final String expId = state.experiment?.id ?? '';
 
-    if (childId.isNotEmpty && expId.isNotEmpty) {
-      final ApiResultStatus<bool> res = await ExperimentRepo.instance
-          .finishExperimentEarly(
-            childId: childId,
-            experimentId: expId,
-            reason: reason,
-          );
-      changeProps(finishStatus: res);
+    if (childId.isEmpty || expId.isEmpty || expId == 'default_exp') {
+      changeProps(
+        finishStatus: ApiResultStatus.error(
+          error: Exception('No active experiment to finish.'),
+        ),
+      );
       return;
     }
 
-    changeProps(finishStatus: const ApiResultStatus.data(data: true));
+    final ApiResultStatus<bool> res = await ExperimentRepo.instance
+        .finishExperimentEarly(
+          childId: childId,
+          experimentId: expId,
+          reason: reason,
+        );
+    changeProps(finishStatus: res);
   }
 }

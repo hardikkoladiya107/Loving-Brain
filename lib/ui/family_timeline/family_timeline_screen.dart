@@ -1,13 +1,20 @@
 import 'dart:async';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
+import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/snack_bar.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import 'bloc/family_timeline_cubit.dart';
 import 'bloc/family_timeline_state.dart';
@@ -31,7 +38,20 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<FamilyTimelineCubit, FamilyTimelineState>(
-      listener: (BuildContext context, FamilyTimelineState state) {},
+      listener: (BuildContext context, FamilyTimelineState state) {
+        final ApiResultStatus status = state.fetchStatus;
+        if (status is Loging) {
+          EasyLoading.show();
+        } else if (status is Data) {
+          EasyLoading.dismiss();
+        } else if (status is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: status.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+      },
       builder: (BuildContext context, FamilyTimelineState state) {
         return Scaffold(
           backgroundColor: const Color(0xFFFEF8F4),
@@ -125,12 +145,40 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(24.r),
                       ),
-                      child: state.filteredEvents.isEmpty
+                      child: state.fetchStatus is Loging
                           ? Center(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 32.h),
-                                child: 'No events found for this filter.'
-                                    .appText(fontSize: 14.sp, color: greyColor),
+                                child: LocaleKeys.journeyTimelineLoading
+                                    .tr()
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor,
+                                    ),
+                              ),
+                            )
+                          : state.fetchStatus is Error
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 32.h),
+                                child: LocaleKeys.journeyTimelineError
+                                    .tr()
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor,
+                                    ),
+                              ),
+                            )
+                          : state.filteredEvents.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 32.h),
+                                child: LocaleKeys.journeyTimelineEmpty
+                                    .tr()
+                                    .appText(
+                                      fontSize: 14.sp,
+                                      color: greyColor,
+                                    ),
                               ),
                             )
                           : Column(
@@ -141,6 +189,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                                   final int idx = entry.key;
                                   final TimelineEventModel event = entry.value;
                                   return _buildTimelineItem(
+                                    context: context,
                                     event: event,
                                     isFirst: idx == 0,
                                     isLast:
@@ -161,23 +210,7 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                         color: orangeLightColor,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
-                      child:
-                          (state.weeksWithLovingBrain >= 2 &&
-                              state.averageBedtimeShiftMinutes > 0)
-                          ? '${state.weeksWithLovingBrain} weeks with Loving Brain. Bedtime has moved ${state.averageBedtimeShiftMinutes} minutes earlier on average since you started.'
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                  height: 1.4,
-                                )
-                          : 'Keep logging check-ins to see long-term bedtime and rhythm patterns emerge.'
-                                .appText(
-                                  fontSize: 14.sp,
-                                  color: greyColor9,
-                                  textAlign: TextAlign.start,
-                                  height: 1.4,
-                                ),
+                      child: _buildBedtimeFooter(state),
                     ),
                     120.spaceH,
                   ],
@@ -187,6 +220,38 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildBedtimeFooter(FamilyTimelineState state) {
+    if (!state.hasEnoughBedtimeHistory ||
+        state.averageBedtimeShiftMinutes == 0) {
+      return LocaleKeys.journeyTimelineKeepLogging.tr().appText(
+        fontSize: 14.sp,
+        color: greyColor9,
+        textAlign: TextAlign.start,
+        height: 1.4,
+      );
+    }
+    final int minutes = state.averageBedtimeShiftMinutes.abs();
+    final String text = state.averageBedtimeShiftMinutes > 0
+        ? LocaleKeys.journeyTimelineBedtimeEarlier.tr(
+            namedArgs: <String, String>{
+              'weeks': '${state.weeksWithLovingBrain}',
+              'minutes': '$minutes',
+            },
+          )
+        : LocaleKeys.journeyTimelineBedtimeLater.tr(
+            namedArgs: <String, String>{
+              'weeks': '${state.weeksWithLovingBrain}',
+              'minutes': '$minutes',
+            },
+          );
+    return text.appText(
+      fontSize: 14.sp,
+      color: greyColor9,
+      textAlign: TextAlign.start,
+      height: 1.4,
     );
   }
 
@@ -213,7 +278,23 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
     );
   }
 
+  void _openRelatedDetail(BuildContext context, TimelineEventModel event) {
+    final String type = event.type.toLowerCase();
+    if (type.contains('experiment')) {
+      context.push(RoutePaths.tryingThisWeek);
+      return;
+    }
+    if (type.contains('weekly') || type.contains('review')) {
+      context.push(RoutePaths.weeklyReview);
+      return;
+    }
+    if (type.contains('program') || type.contains('mentorship')) {
+      context.push(RoutePaths.enrolledJourney);
+    }
+  }
+
   Widget _buildTimelineItem({
+    required BuildContext context,
     required TimelineEventModel event,
     required bool isFirst,
     required bool isLast,
@@ -224,117 +305,130 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
     final bool hasCustomText =
         event.subtitle.isNotEmpty && event.subtitle != 'Voice note';
 
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Timeline line & dot
-          SizedBox(
-            width: 24.w,
-            child: Column(
-              children: [
-                Container(
-                  width: 2,
-                  height: 16.h,
-                  color: isFirst ? Colors.transparent : const Color(0xFFE5E7EB),
-                ),
-                Container(
-                  width: 12.w,
-                  height: 12.w,
-                  decoration: const BoxDecoration(
-                    color: secondaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                Expanded(
-                  child: Container(
+    return GestureDetector(
+      onTap: () => _openRelatedDetail(context, event),
+      behavior: HitTestBehavior.opaque,
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Timeline line & dot
+            SizedBox(
+              width: 24.w,
+              child: Column(
+                children: [
+                  Container(
                     width: 2,
-                    color: isLast
+                    height: 16.h,
+                    color: isFirst
                         ? Colors.transparent
                         : const Color(0xFFE5E7EB),
                   ),
-                ),
-              ],
+                  Container(
+                    width: 12.w,
+                    height: 12.w,
+                    decoration: const BoxDecoration(
+                      color: secondaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      width: 2,
+                      color: isLast
+                          ? Colors.transparent
+                          : const Color(0xFFE5E7EB),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          16.spaceW,
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                12.spaceH,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          event.title.appText(
-                            fontSize: 16.sp,
-                            color: greyColor9,
-                            fontWeight: FontWeight.w600,
-                            textAlign: TextAlign.start,
-                          ),
-                          if (event.authorName != null &&
-                              event.authorName!.trim().isNotEmpty) ...[
-                            2.spaceH,
-                            "by ${event.authorName!.trim()}".appText(
-                              fontSize: 12.sp,
-                              color: greyColor,
-                              fontWeight: FontWeight.w400,
+            16.spaceW,
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  12.spaceH,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            event.title.appText(
+                              fontSize: 16.sp,
+                              color: greyColor9,
+                              fontWeight: FontWeight.w600,
                               textAlign: TextAlign.start,
                             ),
+                            if (event.authorName != null &&
+                                event.authorName!.trim().isNotEmpty) ...[
+                              2.spaceH,
+                              "by ${event.authorName!.trim()}".appText(
+                                fontSize: 12.sp,
+                                color: greyColor,
+                                fontWeight: FontWeight.w400,
+                                textAlign: TextAlign.start,
+                              ),
+                            ],
                           ],
-                        ],
+                        ),
                       ),
-                    ),
-                    8.spaceW,
-                    DateFormat('MMM d · h:mm a')
-                        .format(event.timestamp.toLocal())
-                        .appText(
-                          fontSize: 11.sp,
-                          color: greyColor6,
+                      8.spaceW,
+                      DateFormat('MMM d · h:mm a')
+                          .format(event.timestamp.toLocal())
+                          .appText(
+                            fontSize: 11.sp,
+                            color: greyColor6,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.end,
+                          ),
+                    ],
+                  ),
+                  if (isQuickNote) ...[
+                    if (hasCustomText) ...[
+                      6.spaceH,
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 10.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF9F7FC),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: secondaryColor.withValues(alpha: 0.15),
+                            width: 1.w,
+                          ),
+                        ),
+                        child: event.subtitle.appText(
+                          fontSize: 14.sp,
+                          color: darkBlue,
+                          height: 1.45,
+                          textAlign: TextAlign.start,
                           fontWeight: FontWeight.w500,
-                          textAlign: TextAlign.end,
-                        ),
-                  ],
-                ),
-                if (isQuickNote) ...[
-                  if (hasCustomText) ...[
-                    6.spaceH,
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 14.w,
-                        vertical: 10.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF9F7FC),
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: secondaryColor.withValues(alpha: 0.15),
-                          width: 1.w,
                         ),
                       ),
-                      child: event.subtitle.appText(
-                        fontSize: 14.sp,
-                        color: darkBlue,
-                        height: 1.45,
+                    ],
+                    if (hasAudio)
+                      TimelineAudioPlayer(
+                        audioPath: event.audioLocalPath!,
+                        durationSeconds: event.audioDurationSeconds,
+                      )
+                    else if (!hasCustomText) ...[
+                      4.spaceH,
+                      event.subtitle.appText(
+                        fontSize: 12.sp,
+                        color: greyColor,
                         textAlign: TextAlign.start,
-                        fontWeight: FontWeight.w500,
                       ),
-                    ),
-                  ],
-                  if (hasAudio)
-                    TimelineAudioPlayer(
-                      audioPath: event.audioLocalPath!,
-                      durationSeconds: event.audioDurationSeconds,
-                    )
-                  else if (!hasCustomText) ...[
+                    ],
+                  ] else ...[
                     4.spaceH,
                     event.subtitle.appText(
                       fontSize: 12.sp,
@@ -342,19 +436,12 @@ class _FamilyTimelineScreenState extends State<FamilyTimelineScreen> {
                       textAlign: TextAlign.start,
                     ),
                   ],
-                ] else ...[
-                  4.spaceH,
-                  event.subtitle.appText(
-                    fontSize: 12.sp,
-                    color: greyColor,
-                    textAlign: TextAlign.start,
-                  ),
+                  28.spaceH,
                 ],
-                28.spaceH,
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

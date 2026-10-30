@@ -152,10 +152,11 @@ class ExperimentRepo {
         );
       }
 
-      try {
-        final CollectionReference<Map<String, dynamic>>? col =
-            _childrenCollection;
-        if (col != null && experimentId.isNotEmpty) {
+      bool wrote = false;
+      final CollectionReference<Map<String, dynamic>>? col =
+          _childrenCollection;
+      if (col != null && experimentId.isNotEmpty) {
+        try {
           await col
               .doc(childId)
               .collection('experiments')
@@ -165,8 +166,14 @@ class ExperimentRepo {
                 'resultNote': reason ?? 'Ended before 7-day review',
                 'updatedAt': FieldValue.serverTimestamp(),
               });
+          wrote = true;
+        } catch (e) {
+          // Keep cache-only path for unit tests without Firestore.
+          if (_cachedActiveExperiments[childId] == null) {
+            return ApiResultStatus.error(error: Exception(e.toString()));
+          }
         }
-      } catch (_) {}
+      }
 
       final ActiveExperimentModel? cached = _cachedActiveExperiments[childId];
       if (cached != null) {
@@ -174,9 +181,15 @@ class ExperimentRepo {
           status: 'ended_early',
           resultNote: reason ?? 'Ended before 7-day review',
         );
+        wrote = true;
       }
 
-      // Record timeline item for ending experiment
+      if (!wrote) {
+        return ApiResultStatus.error(
+          error: Exception('Could not finish this experiment right now.'),
+        );
+      }
+
       try {
         await TodayLogRepo.instance.addTimelineEvent(
           childId: childId,
@@ -205,10 +218,11 @@ class ExperimentRepo {
         );
       }
 
-      try {
-        final CollectionReference<Map<String, dynamic>>? col =
-            _childrenCollection;
-        if (col != null && experimentId.isNotEmpty) {
+      bool wrote = false;
+      final CollectionReference<Map<String, dynamic>>? col =
+          _childrenCollection;
+      if (col != null && experimentId.isNotEmpty) {
+        try {
           await col
               .doc(childId)
               .collection('experiments')
@@ -218,14 +232,26 @@ class ExperimentRepo {
                 'resultNote': resultNote ?? 'Completed full 7-day review',
                 'updatedAt': FieldValue.serverTimestamp(),
               });
+          wrote = true;
+        } catch (e) {
+          if (_cachedActiveExperiments[childId] == null) {
+            return ApiResultStatus.error(error: Exception(e.toString()));
+          }
         }
-      } catch (_) {}
+      }
 
       final ActiveExperimentModel? cached = _cachedActiveExperiments[childId];
       if (cached != null) {
         _cachedActiveExperiments[childId] = cached.copyWith(
           status: 'completed',
           resultNote: resultNote ?? 'Completed full 7-day review',
+        );
+        wrote = true;
+      }
+
+      if (!wrote) {
+        return ApiResultStatus.error(
+          error: Exception('Could not complete this experiment right now.'),
         );
       }
 

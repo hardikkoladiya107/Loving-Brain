@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TryingThisWeekState {
 
- ActiveExperimentModel? get experiment; ChildModel? get child; int get currentDay; int get totalDays; ApiResultStatus<dynamic> get fetchStatus; ApiResultStatus<dynamic> get finishStatus;
+ ActiveExperimentModel? get experiment; ChildModel? get child; int get currentDay; int get totalDays; bool get hasExperiment; ApiResultStatus<dynamic> get fetchStatus; ApiResultStatus<dynamic> get finishStatus;
 /// Create a copy of TryingThisWeekState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $TryingThisWeekStateCopyWith<TryingThisWeekState> get copyWith => _$TryingThisWe
 @override
 bool operator ==(Object other) {
   final _this = this as TryingThisWeekState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TryingThisWeekState&&(identical(other.experiment, _this.experiment) || other.experiment == _this.experiment)&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.currentDay, _this.currentDay) || other.currentDay == _this.currentDay)&&(identical(other.totalDays, _this.totalDays) || other.totalDays == _this.totalDays)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus)&&(identical(other.finishStatus, _this.finishStatus) || other.finishStatus == _this.finishStatus));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TryingThisWeekState&&(identical(other.experiment, _this.experiment) || other.experiment == _this.experiment)&&(identical(other.child, _this.child) || other.child == _this.child)&&(identical(other.currentDay, _this.currentDay) || other.currentDay == _this.currentDay)&&(identical(other.totalDays, _this.totalDays) || other.totalDays == _this.totalDays)&&(identical(other.hasExperiment, _this.hasExperiment) || other.hasExperiment == _this.hasExperiment)&&(identical(other.fetchStatus, _this.fetchStatus) || other.fetchStatus == _this.fetchStatus)&&(identical(other.finishStatus, _this.finishStatus) || other.finishStatus == _this.finishStatus));
 }
 
 
 @override
 int get hashCode {
   final _this = this as TryingThisWeekState;
-  return Object.hash(runtimeType,_this.experiment,_this.child,_this.currentDay,_this.totalDays,_this.fetchStatus,_this.finishStatus);
+  return Object.hash(runtimeType,_this.experiment,_this.child,_this.currentDay,_this.totalDays,_this.hasExperiment,_this.fetchStatus,_this.finishStatus);
 }
 
 @override
 String toString() {
   final _this = this as TryingThisWeekState;
-  return 'TryingThisWeekState(experiment: ${_this.experiment}, child: ${_this.child}, currentDay: ${_this.currentDay}, totalDays: ${_this.totalDays}, fetchStatus: ${_this.fetchStatus}, finishStatus: ${_this.finishStatus})';
+  return 'TryingThisWeekState(experiment: ${_this.experiment}, child: ${_this.child}, currentDay: ${_this.currentDay}, totalDays: ${_this.totalDays}, hasExperiment: ${_this.hasExperiment}, fetchStatus: ${_this.fetchStatus}, finishStatus: ${_this.finishStatus})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $TryingThisWeekStateCopyWith<$Res>  {
   factory $TryingThisWeekStateCopyWith(TryingThisWeekState value, $Res Function(TryingThisWeekState) _then) = _$TryingThisWeekStateCopyWithImpl;
 @useResult
 $Res call({
- ActiveExperimentModel? experiment, ChildModel? child, int currentDay, int totalDays, ApiResultStatus<dynamic> fetchStatus, ApiResultStatus<dynamic> finishStatus
+ ActiveExperimentModel? experiment, ChildModel? child, int currentDay, int totalDays, bool hasExperiment, ApiResultStatus<dynamic> fetchStatus, ApiResultStatus<dynamic> finishStatus
 });
 
 
@@ -68,13 +68,14 @@ class _$TryingThisWeekStateCopyWithImpl<$Res>
 
 /// Create a copy of TryingThisWeekState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? experiment = freezed,Object? child = freezed,Object? currentDay = null,Object? totalDays = null,Object? fetchStatus = null,Object? finishStatus = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? experiment = freezed,Object? child = freezed,Object? currentDay = null,Object? totalDays = null,Object? hasExperiment = null,Object? fetchStatus = null,Object? finishStatus = null,}) {
   return _then(TryingThisWeekState(
 experiment: freezed == experiment ? _self.experiment : experiment // ignore: cast_nullable_to_non_nullable
 as ActiveExperimentModel?,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
 as ChildModel?,currentDay: null == currentDay ? _self.currentDay : currentDay // ignore: cast_nullable_to_non_nullable
 as int,totalDays: null == totalDays ? _self.totalDays : totalDays // ignore: cast_nullable_to_non_nullable
-as int,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as int,hasExperiment: null == hasExperiment ? _self.hasExperiment : hasExperiment // ignore: cast_nullable_to_non_nullable
+as bool,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,finishStatus: null == finishStatus ? _self.finishStatus : finishStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));
@@ -179,10 +180,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ActiveExperimentModel? experiment,  ChildModel? child,  int currentDay,  int totalDays,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> finishStatus)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ActiveExperimentModel? experiment,  ChildModel? child,  int currentDay,  int totalDays,  bool hasExperiment,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> finishStatus)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TryingThisWeekState() when $default != null:
-return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_that.fetchStatus,_that.finishStatus);case _:
+return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_that.hasExperiment,_that.fetchStatus,_that.finishStatus);case _:
   return orElse();
 
 }
@@ -200,10 +201,10 @@ return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ActiveExperimentModel? experiment,  ChildModel? child,  int currentDay,  int totalDays,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> finishStatus)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ActiveExperimentModel? experiment,  ChildModel? child,  int currentDay,  int totalDays,  bool hasExperiment,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> finishStatus)  $default,) {final _that = this;
 switch (_that) {
 case _TryingThisWeekState():
-return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_that.fetchStatus,_that.finishStatus);case _:
+return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_that.hasExperiment,_that.fetchStatus,_that.finishStatus);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -220,10 +221,10 @@ return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ActiveExperimentModel? experiment,  ChildModel? child,  int currentDay,  int totalDays,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> finishStatus)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ActiveExperimentModel? experiment,  ChildModel? child,  int currentDay,  int totalDays,  bool hasExperiment,  ApiResultStatus<dynamic> fetchStatus,  ApiResultStatus<dynamic> finishStatus)?  $default,) {final _that = this;
 switch (_that) {
 case _TryingThisWeekState() when $default != null:
-return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_that.fetchStatus,_that.finishStatus);case _:
+return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_that.hasExperiment,_that.fetchStatus,_that.finishStatus);case _:
   return null;
 
 }
@@ -235,13 +236,14 @@ return $default(_that.experiment,_that.child,_that.currentDay,_that.totalDays,_t
 
 
 class _TryingThisWeekState implements TryingThisWeekState {
-  const _TryingThisWeekState({this.experiment, this.child, this.currentDay = 3, this.totalDays = 7, this.fetchStatus = const ApiResultStatus.initial(), this.finishStatus = const ApiResultStatus.initial()});
+  const _TryingThisWeekState({this.experiment, this.child, this.currentDay = 3, this.totalDays = 7, this.hasExperiment = false, this.fetchStatus = const ApiResultStatus.initial(), this.finishStatus = const ApiResultStatus.initial()});
   
 
 @override final  ActiveExperimentModel? experiment;
 @override final  ChildModel? child;
 @override@JsonKey() final  int currentDay;
 @override@JsonKey() final  int totalDays;
+@override@JsonKey() final  bool hasExperiment;
 @override@JsonKey() final  ApiResultStatus<dynamic> fetchStatus;
 @override@JsonKey() final  ApiResultStatus<dynamic> finishStatus;
 
@@ -255,18 +257,18 @@ _$TryingThisWeekStateCopyWith<_TryingThisWeekState> get copyWith => __$TryingThi
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TryingThisWeekState&&(identical(other.experiment, experiment) || other.experiment == experiment)&&(identical(other.child, child) || other.child == child)&&(identical(other.currentDay, currentDay) || other.currentDay == currentDay)&&(identical(other.totalDays, totalDays) || other.totalDays == totalDays)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus)&&(identical(other.finishStatus, finishStatus) || other.finishStatus == finishStatus));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TryingThisWeekState&&(identical(other.experiment, experiment) || other.experiment == experiment)&&(identical(other.child, child) || other.child == child)&&(identical(other.currentDay, currentDay) || other.currentDay == currentDay)&&(identical(other.totalDays, totalDays) || other.totalDays == totalDays)&&(identical(other.hasExperiment, hasExperiment) || other.hasExperiment == hasExperiment)&&(identical(other.fetchStatus, fetchStatus) || other.fetchStatus == fetchStatus)&&(identical(other.finishStatus, finishStatus) || other.finishStatus == finishStatus));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,experiment,child,currentDay,totalDays,fetchStatus,finishStatus);
+    return Object.hash(runtimeType,experiment,child,currentDay,totalDays,hasExperiment,fetchStatus,finishStatus);
 }
 
 @override
 String toString() {
-    return 'TryingThisWeekState(experiment: $experiment, child: $child, currentDay: $currentDay, totalDays: $totalDays, fetchStatus: $fetchStatus, finishStatus: $finishStatus)';
+    return 'TryingThisWeekState(experiment: $experiment, child: $child, currentDay: $currentDay, totalDays: $totalDays, hasExperiment: $hasExperiment, fetchStatus: $fetchStatus, finishStatus: $finishStatus)';
 }
 
 
@@ -277,7 +279,7 @@ abstract mixin class _$TryingThisWeekStateCopyWith<$Res> implements $TryingThisW
   factory _$TryingThisWeekStateCopyWith(_TryingThisWeekState value, $Res Function(_TryingThisWeekState) _then) = __$TryingThisWeekStateCopyWithImpl;
 @override @useResult
 $Res call({
- ActiveExperimentModel? experiment, ChildModel? child, int currentDay, int totalDays, ApiResultStatus<dynamic> fetchStatus, ApiResultStatus<dynamic> finishStatus
+ ActiveExperimentModel? experiment, ChildModel? child, int currentDay, int totalDays, bool hasExperiment, ApiResultStatus<dynamic> fetchStatus, ApiResultStatus<dynamic> finishStatus
 });
 
 
@@ -294,13 +296,14 @@ class __$TryingThisWeekStateCopyWithImpl<$Res>
 
 /// Create a copy of TryingThisWeekState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? experiment = freezed,Object? child = freezed,Object? currentDay = null,Object? totalDays = null,Object? fetchStatus = null,Object? finishStatus = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? experiment = freezed,Object? child = freezed,Object? currentDay = null,Object? totalDays = null,Object? hasExperiment = null,Object? fetchStatus = null,Object? finishStatus = null,}) {
   return _then(_TryingThisWeekState(
 experiment: freezed == experiment ? _self.experiment : experiment // ignore: cast_nullable_to_non_nullable
 as ActiveExperimentModel?,child: freezed == child ? _self.child : child // ignore: cast_nullable_to_non_nullable
 as ChildModel?,currentDay: null == currentDay ? _self.currentDay : currentDay // ignore: cast_nullable_to_non_nullable
 as int,totalDays: null == totalDays ? _self.totalDays : totalDays // ignore: cast_nullable_to_non_nullable
-as int,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
+as int,hasExperiment: null == hasExperiment ? _self.hasExperiment : hasExperiment // ignore: cast_nullable_to_non_nullable
+as bool,fetchStatus: null == fetchStatus ? _self.fetchStatus : fetchStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,finishStatus: null == finishStatus ? _self.finishStatus : finishStatus // ignore: cast_nullable_to_non_nullable
 as ApiResultStatus<dynamic>,
   ));

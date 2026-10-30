@@ -9,6 +9,7 @@ abstract class EnrolledJourneyHomeState with _$EnrolledJourneyHomeState {
   const factory EnrolledJourneyHomeState({
     @Default(false) bool isLoading,
     EnrolledProgramModel? program,
+    @Default(false) bool isEnrolled,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _EnrolledJourneyHomeState;
 }

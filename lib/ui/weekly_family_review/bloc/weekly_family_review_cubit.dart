@@ -4,6 +4,7 @@ import 'package:loving_brain/model/active_experiment_model.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
@@ -17,6 +18,8 @@ import 'weekly_family_review_state.dart';
 
 class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
   WeeklyFamilyReviewCubit() : super(const WeeklyFamilyReviewState());
+
+  static const int _twoWeekLogLimit = 40;
 
   void init() {
     emit(const WeeklyFamilyReviewState());
@@ -55,6 +58,7 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
     List<TantrumLogModel> tantrumLogs = <TantrumLogModel>[];
     List<HealthLogModel> healthLogs = <HealthLogModel>[];
     List<QuickNoteModel> quickNotes = <QuickNoteModel>[];
+    List<MoodLogModel> moodLogs = <MoodLogModel>[];
     List<TimelineEventModel> timelineEvents = <TimelineEventModel>[];
     ActiveExperimentModel? activeExperiment;
 
@@ -68,21 +72,37 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
         }
 
         final ApiResultStatus<List<TantrumLogModel>> tantrumRes =
-            await TodayLogRepo.instance.getRecentTantrumLogs(childId);
+            await TodayLogRepo.instance.getRecentTantrumLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (tantrumRes is Data<List<TantrumLogModel>>) {
           tantrumLogs = tantrumRes.data;
         }
 
         final ApiResultStatus<List<HealthLogModel>> healthRes =
-            await TodayLogRepo.instance.getRecentHealthLogs(childId);
+            await TodayLogRepo.instance.getRecentHealthLogs(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (healthRes is Data<List<HealthLogModel>>) {
           healthLogs = healthRes.data;
         }
 
         final ApiResultStatus<List<QuickNoteModel>> notesRes =
-            await TodayLogRepo.instance.getRecentQuickNotes(childId);
+            await TodayLogRepo.instance.getRecentQuickNotes(
+              childId,
+              limit: _twoWeekLogLimit,
+            );
         if (notesRes is Data<List<QuickNoteModel>>) {
           quickNotes = notesRes.data;
+        }
+
+        final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+            .instance
+            .getRecentMoodLogs(childId, limit: _twoWeekLogLimit);
+        if (moodRes is Data<List<MoodLogModel>>) {
+          moodLogs = moodRes.data;
         }
 
         final ApiResultStatus<List<TimelineEventModel>> eventsRes =
@@ -105,6 +125,7 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
       tantrumLogs: tantrumLogs,
       healthLogs: healthLogs,
       quickNotes: quickNotes,
+      moodLogs: moodLogs,
       timelineEvents: timelineEvents,
       activeExperiment: activeExperiment,
     );
@@ -116,8 +137,7 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
       fetchStatus: const ApiResultStatus.data(data: null),
     );
 
-    // Schedule Sunday 9:00 AM weekly review notification only when enough meaningful data exists (Doc 03 §5)
-    if (!insights.isLearning && insights.daysCheckedIn >= 2) {
+    if (!insights.isLearning) {
       final DateTime now = DateTime.now();
       DateTime nextSunday = DateTime(now.year, now.month, now.day, 9, 0);
       int daysUntilSunday = (DateTime.sunday - now.weekday) % 7;
@@ -138,14 +158,38 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
     final String childId = child?.reference?.id ?? '';
     final WeeklyInsightsResult? insights = state.insights;
 
+    if (insights == null || insights.isLearning) {
+      changeProps(
+        saveStatus: ApiResultStatus.error(
+          error: Exception(
+            'Keep logging daily check-ins before starting a recommendation.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (state.activeExperiment != null &&
+        state.activeExperiment!.status == 'active') {
+      changeProps(saveStatus: const ApiResultStatus.data(data: 'existing'));
+      return;
+    }
+
+    if (childId.isEmpty) {
+      changeProps(
+        saveStatus: ApiResultStatus.error(
+          error: Exception('Please select a child profile first.'),
+        ),
+      );
+      return;
+    }
+
     final DateTime now = DateTime.now();
     final ActiveExperimentModel newExp = ActiveExperimentModel(
       id: now.millisecondsSinceEpoch.toString(),
       childId: childId,
-      changeTitle:
-          insights?.recommendedChange ?? 'An earlier, shorter afternoon nap',
-      observeTarget:
-          insights?.observeTarget ?? 'Evening mood and how easily bedtime goes',
+      changeTitle: insights.recommendedChange,
+      observeTarget: insights.observeTarget,
       startDate: now,
       targetDays: 7,
       reviewDate: now.add(const Duration(days: 7)),
@@ -153,25 +197,17 @@ class WeeklyFamilyReviewCubit extends Cubit<WeeklyFamilyReviewState> {
       createdAt: now,
     );
 
-    if (childId.isNotEmpty) {
-      final ApiResultStatus<String> res = await ExperimentRepo.instance
-          .startExperiment(childId: childId, experiment: newExp);
-      if (res is Data<String>) {
-        changeProps(
-          activeExperiment: newExp.copyWith(id: res.data),
-          saveStatus: res,
-        );
-        return;
-      } else if (res is Error<String>) {
-        changeProps(saveStatus: res);
-        return;
-      }
+    final ApiResultStatus<String> res = await ExperimentRepo.instance
+        .startExperiment(childId: childId, experiment: newExp);
+    if (res is Data<String>) {
+      changeProps(
+        activeExperiment: newExp.copyWith(id: res.data),
+        saveStatus: res,
+      );
+      return;
     }
 
-    changeProps(
-      activeExperiment: newExp,
-      saveStatus: const ApiResultStatus.data(data: null),
-    );
+    changeProps(saveStatus: res);
   }
 
   String buildBrainyPrompt() {

@@ -514,6 +514,17 @@ class MentorshipRepo {
           mentorName: updatedRequest.guideName ?? 'Your Guide',
           statusText: 'confirmed',
         );
+        final String concern = updatedRequest.mainConcern.toLowerCase();
+        if (concern.contains('sleep') ||
+            concern.contains('bedtime') ||
+            concern.contains('night')) {
+          await enrollSleepProgram(
+            childId: updatedRequest.childId,
+            guideName: updatedRequest.guideName,
+            thisWeekFocus: updatedRequest.mainConcern,
+            nextSessionDate: confirmedTime,
+          );
+        }
         return ApiResultStatus.data(data: updatedRequest);
       }
 
@@ -523,8 +534,73 @@ class MentorshipRepo {
     }
   }
 
+  /// Saves or refreshes the 6-week sleep program for [childId].
+  Future<ApiResultStatus<EnrolledProgramModel>> enrollSleepProgram({
+    required String childId,
+    String? guideName,
+    String? thisWeekFocus,
+    DateTime? nextSessionDate,
+  }) async {
+    try {
+      if (childId.trim().isEmpty) {
+        return ApiResultStatus.error(
+          error: Exception('Child id is required to enrol in a program.'),
+        );
+      }
+
+      final String focus =
+          (thisWeekFocus != null && thisWeekFocus.trim().isNotEmpty)
+          ? thisWeekFocus.trim()
+          : 'Anchor bedtime 15 minutes earlier';
+      final String nextLabel = nextSessionDate != null
+          ? '${nextSessionDate.weekday == DateTime.thursday ? 'Thursday' : 'Next session'}, '
+                '${nextSessionDate.hour.toString().padLeft(2, '0')}:'
+                '${nextSessionDate.minute.toString().padLeft(2, '0')}'
+          : '';
+      final String note = guideName != null && guideName.trim().isNotEmpty
+          ? '$guideName: "Looking forward to walking through this week with you."'
+          : '';
+
+      EnrolledProgramModel program = EnrolledProgramModel(
+        programId: 'sleep_reset_6w',
+        title: '6-Week Sleep Reset Journey',
+        currentWeek: 1,
+        totalWeeks: 6,
+        thisWeekFocus: focus,
+        focusDescription:
+            'One small bedtime focus for this program week. Session and module progress advance by program rules.',
+        nextSessionDate: nextLabel,
+        mentorNote: note,
+        recordedModuleTitle: 'Module 1: Settling the evening rhythm',
+        isModuleCompleted: false,
+      );
+
+      final ApiResultStatus<EnrolledProgramModel?> existing =
+          await getEnrolledProgram(childId);
+      if (existing is Data<EnrolledProgramModel?> && existing.data != null) {
+        program = existing.data!.copyWith(
+          thisWeekFocus: focus,
+          nextSessionDate: nextLabel.isNotEmpty
+              ? nextLabel
+              : existing.data!.nextSessionDate,
+          mentorNote: note.isNotEmpty ? note : existing.data!.mentorNote,
+        );
+      }
+
+      _localPrograms[childId] = program;
+      try {
+        await programsCollection.doc(childId).set(program.toMap());
+      } catch (_) {}
+
+      return ApiResultStatus.data(data: program);
+    } catch (e) {
+      return ApiResultStatus.error(error: Exception(e.toString()));
+    }
+  }
+
   /// Retrieves active enrolled program details (Screens 44, 49).
-  Future<ApiResultStatus<EnrolledProgramModel>> getEnrolledProgram(
+  /// Returns null data when the family is not enrolled.
+  Future<ApiResultStatus<EnrolledProgramModel?>> getEnrolledProgram(
     String childId,
   ) async {
     try {
@@ -536,34 +612,58 @@ class MentorshipRepo {
         );
       }
 
-      if (_localPrograms.containsKey(childId)) {
-        return ApiResultStatus.data(data: _localPrograms[childId]!);
+      if (childId.trim().isEmpty) {
+        return const ApiResultStatus.data(data: null);
       }
 
-      final EnrolledProgramModel defaultProgram = EnrolledProgramModel(
-        programId: 'sleep_reset_6w',
-        title: '6-Week Sleep Reset Journey',
-        currentWeek: 2,
-        totalWeeks: 6,
-        thisWeekFocus: 'Anchor bedtime 15m earlier',
-        focusDescription:
-            'Start quiet bedtime cues at 7:15 PM and hold consistent for 4 consecutive nights.',
-        nextSessionDate: 'Thursday, 10:00 AM',
-        mentorNote:
-            'Elena: "You did great holding the boundary on lighting this week. Notice how bedtime resistance dropped."',
-        recordedModuleTitle: 'Module 2: Managing Evening Cortisol Surges',
-        isModuleCompleted: false,
-      );
+      try {
+        final DocumentSnapshot<Map<String, dynamic>> doc =
+            await programsCollection.doc(childId).get();
+        if (doc.exists && doc.data() != null) {
+          final EnrolledProgramModel program = EnrolledProgramModel.fromMap(
+            doc.data()!,
+          );
+          _localPrograms[childId] = program;
+          return ApiResultStatus.data(data: program);
+        }
+      } catch (_) {
+        // Fall through to in-memory cache for tests / offline.
+      }
 
-      _localPrograms[childId] = defaultProgram;
-      return ApiResultStatus.data(data: defaultProgram);
+      if (_localPrograms.containsKey(childId)) {
+        return ApiResultStatus.data(data: _localPrograms[childId]);
+      }
+
+      return const ApiResultStatus.data(data: null);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
   }
 
+  /// Test helper: seed an enrolled program into the in-memory cache.
+  void seedEnrolledProgramForTesting(
+    String childId,
+    EnrolledProgramModel program,
+  ) {
+    _localPrograms[childId] = program;
+  }
+
+  /// Test helper: seed a post-session plan into the in-memory cache.
+  void seedPostSessionPlanForTesting(
+    String childId,
+    PostSessionPlanModel plan,
+  ) {
+    _localPlans[childId] = plan;
+  }
+
+  /// Clears in-memory program and plan caches (tests).
+  void clearProgramCachesForTesting() {
+    _localPrograms.clear();
+    _localPlans.clear();
+  }
+
   /// Retrieves post-session plan agreed with mentor (Screen 50).
-  Future<ApiResultStatus<PostSessionPlanModel>> getPostSessionPlan(
+  Future<ApiResultStatus<PostSessionPlanModel?>> getPostSessionPlan(
     String childId,
   ) async {
     try {
@@ -575,44 +675,28 @@ class MentorshipRepo {
         );
       }
 
-      if (_localPlans.containsKey(childId)) {
-        return ApiResultStatus.data(data: _localPlans[childId]!);
+      if (childId.trim().isEmpty) {
+        return const ApiResultStatus.data(data: null);
       }
 
-      final PostSessionPlanModel defaultPlan = PostSessionPlanModel(
-        id: 'plan_sleep_01',
-        mentorName: 'Elena Rostova',
-        sessionDate: DateTime.now().subtract(const Duration(days: 2)),
-        summary:
-            'Focus on shifting bedtime 15 minutes earlier, reducing overhead light 30 minutes before bed, and logging 3 consecutive nights.',
-        tasks: const <PlanTaskItem>[
-          PlanTaskItem(
-            id: 'task_1',
-            title: 'Dim overhead lights at 7:00 PM',
-            subtitle: 'Switch to warm amber table lamp in the bedroom.',
-            isCompleted: true,
-          ),
-          PlanTaskItem(
-            id: 'task_2',
-            title: 'Offer the same 2 calm bedtime stories',
-            subtitle: 'Repeat predictable cues to signal winding down.',
-            isCompleted: true,
-          ),
-          PlanTaskItem(
-            id: 'task_3',
-            title: 'Log 3 consecutive nights of wake and sleep',
-            subtitle: 'This will sharpen confidence for our next check-in.',
-            isCompleted: false,
-          ),
-        ],
-        activeGoals: const <String>[
-          'Reduce bedtime settling time to under 25 minutes',
-          'Eliminate midnight cortisol surges',
-        ],
-      );
+      try {
+        final DocumentSnapshot<Map<String, dynamic>> doc = await plansCollection
+            .doc(childId)
+            .get();
+        if (doc.exists && doc.data() != null) {
+          final PostSessionPlanModel plan = PostSessionPlanModel.fromMap(
+            doc.data()!,
+          );
+          _localPlans[childId] = plan;
+          return ApiResultStatus.data(data: plan);
+        }
+      } catch (_) {}
 
-      _localPlans[childId] = defaultPlan;
-      return ApiResultStatus.data(data: defaultPlan);
+      if (_localPlans.containsKey(childId)) {
+        return ApiResultStatus.data(data: _localPlans[childId]);
+      }
+
+      return const ApiResultStatus.data(data: null);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));
     }
@@ -625,9 +709,14 @@ class MentorshipRepo {
     required bool isCompleted,
   }) async {
     try {
-      final ApiResultStatus<PostSessionPlanModel> current =
+      final ApiResultStatus<PostSessionPlanModel?> current =
           await getPostSessionPlan(childId);
-      PostSessionPlanModel plan = (current as Data<PostSessionPlanModel>).data;
+      if (current is! Data<PostSessionPlanModel?> || current.data == null) {
+        return ApiResultStatus.error(
+          error: Exception('No post-session plan is saved yet.'),
+        );
+      }
+      final PostSessionPlanModel plan = current.data!;
 
       final List<PlanTaskItem> updatedTasks = plan.tasks.map((PlanTaskItem t) {
         if (t.id == taskId) {
@@ -646,6 +735,9 @@ class MentorshipRepo {
       );
 
       _localPlans[childId] = updatedPlan;
+      try {
+        await plansCollection.doc(childId).set(updatedPlan.toMap());
+      } catch (_) {}
       return ApiResultStatus.data(data: updatedPlan);
     } catch (e) {
       return ApiResultStatus.error(error: Exception(e.toString()));

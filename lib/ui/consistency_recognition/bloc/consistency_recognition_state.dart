@@ -8,6 +8,9 @@ part 'consistency_recognition_state.freezed.dart';
 abstract class ConsistencyRecognitionState with _$ConsistencyRecognitionState {
   const factory ConsistencyRecognitionState({
     @Default(0) int daysCheckedIn,
+    @Default('') String consistencyTitle,
+    @Default('') String consistencySubtitle,
+    @Default('') String consistencyDetail,
     ChildModel? child,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
   }) = _ConsistencyRecognitionState;

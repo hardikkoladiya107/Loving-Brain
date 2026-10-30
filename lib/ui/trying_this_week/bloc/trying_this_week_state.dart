@@ -12,6 +12,7 @@ abstract class TryingThisWeekState with _$TryingThisWeekState {
     ChildModel? child,
     @Default(3) int currentDay,
     @Default(7) int totalDays,
+    @Default(false) bool hasExperiment,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus finishStatus,
   }) = _TryingThisWeekState;

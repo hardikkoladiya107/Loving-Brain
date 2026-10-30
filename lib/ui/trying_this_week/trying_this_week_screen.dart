@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
@@ -35,29 +38,103 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<TryingThisWeekCubit, TryingThisWeekState>(
       listener: (BuildContext context, TryingThisWeekState state) {
-        if (state.finishStatus is Data) {
+        final ApiResultStatus fetchStatus = state.fetchStatus;
+        if (fetchStatus is Loging) {
+          EasyLoading.show();
+        } else if (fetchStatus is Data) {
+          EasyLoading.dismiss();
+        } else if (fetchStatus is Error) {
+          EasyLoading.dismiss();
           showSnackBar(
-            message: 'Experiment finished early.',
+            message: fetchStatus.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
+          );
+        }
+
+        final ApiResultStatus finishStatus = state.finishStatus;
+        if (finishStatus is Loging) {
+          EasyLoading.show();
+        } else if (finishStatus is Data) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message: LocaleKeys.journeyExperimentFinishedEarly.tr(),
             type: SnackBarType.SUCCESS,
+          );
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        } else if (finishStatus is Error) {
+          EasyLoading.dismiss();
+          showSnackBar(
+            message:
+                finishStatus.error.toString().replaceAll('Exception: ', ''),
+            type: SnackBarType.ERROR,
           );
         }
       },
       builder: (BuildContext context, TryingThisWeekState state) {
-        final String changeTitle =
-            state.experiment?.changeTitle ??
-            'An earlier, shorter\nafternoon nap';
-        final String observeTarget =
-            state.experiment?.observeTarget ??
-            'Evening mood and how easily\nbedtime goes';
+        if (!state.hasExperiment) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFEF8F4),
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    8.spaceH,
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: darkBlue,
+                          size: 24.sp,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    LocaleKeys.journeyNoActiveExperimentTitle.tr().appText(
+                      fontSize: 28.sp,
+                      color: greyColor9,
+                      fraunces: true,
+                      textAlign: TextAlign.start,
+                    ),
+                    12.spaceH,
+                    LocaleKeys.journeyNoActiveExperimentBody.tr().appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.start,
+                      height: 1.4,
+                    ),
+                    24.spaceH,
+                    AppButton(
+                      title: LocaleKeys.journeyBackToJourney.tr(),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        final String changeTitle = state.experiment?.changeTitle ?? '';
+        final String observeTarget = state.experiment?.observeTarget ?? '';
         final DateTime reviewDate =
-            state.experiment?.reviewDate ??
-            DateTime.now().add(const Duration(days: 4));
+            state.experiment?.reviewDate ?? DateTime.now();
         final String reviewDateStr = DateFormat(
           'EEEE d MMMM',
         ).format(reviewDate);
 
         final int currentDay = state.currentDay;
-        final int totalDays = state.totalDays;
+        final int totalDays = state.totalDays <= 0 ? 7 : state.totalDays;
         final double progress = (currentDay / totalDays).clamp(0.0, 1.0);
 
         return Scaffold(
@@ -372,9 +449,6 @@ class _TryingThisWeekScreenState extends State<TryingThisWeekScreen> {
                                             .finishEarly(
                                               'Ended early by parent',
                                             );
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
                                       },
                                     ),
                                   ),

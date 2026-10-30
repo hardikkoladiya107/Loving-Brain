@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:loving_brain/model/active_experiment_model.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
@@ -66,8 +67,21 @@ class WeeklyInsightsResult {
   });
 }
 
-/// Core engine for Sprint 3 calculating weekly insights, positive changes,
-/// patterns, harder week detection, and consistency recognition.
+class _WeekSleepMetrics {
+  final int nightCount;
+  final int nightWakingCount;
+  final int? medianBedMinutes;
+  final int lateBedCount;
+
+  const _WeekSleepMetrics({
+    required this.nightCount,
+    required this.nightWakingCount,
+    required this.medianBedMinutes,
+    required this.lateBedCount,
+  });
+}
+
+/// Core engine calculating weekly insights from real family logs.
 class JourneyInsightsEngine {
   JourneyInsightsEngine._();
 
@@ -78,13 +92,13 @@ class JourneyInsightsEngine {
     List<TantrumLogModel> tantrumLogs = const <TantrumLogModel>[],
     List<HealthLogModel> healthLogs = const <HealthLogModel>[],
     List<QuickNoteModel> quickNotes = const <QuickNoteModel>[],
+    List<MoodLogModel> moodLogs = const <MoodLogModel>[],
     List<TimelineEventModel> timelineEvents = const <TimelineEventModel>[],
     ActiveExperimentModel? activeExperiment,
   }) {
     final DateTime ref = referenceDate ?? DateTime.now();
 
-    // Calculate current week boundaries (Sunday to Saturday)
-    final int weekday = ref.weekday; // 1 = Monday, 7 = Sunday
+    final int weekday = ref.weekday;
     final DateTime sunday = weekday == DateTime.sunday
         ? DateTime(ref.year, ref.month, ref.day)
         : DateTime(
@@ -93,15 +107,19 @@ class JourneyInsightsEngine {
             ref.day,
           ).subtract(Duration(days: weekday));
     final DateTime saturday = sunday.add(const Duration(days: 6));
+    final DateTime weekEndExclusive = saturday.add(const Duration(days: 1));
+    final DateTime prevSunday = sunday.subtract(const Duration(days: 7));
+    final DateTime prevSaturday = saturday.subtract(const Duration(days: 7));
+    final DateTime prevWeekEndExclusive = prevSaturday.add(
+      const Duration(days: 1),
+    );
 
     final String dateRangeLabel =
         '${DateFormat('EEEE d MMM').format(sunday)} – ${DateFormat('EEEE d MMM').format(saturday)}';
 
-    // 1. Calculate check-in days in the 7-day period
     final Set<String> activeDays = <String>{};
     void recordDay(DateTime dt) {
-      if (!dt.isBefore(sunday) &&
-          dt.isBefore(saturday.add(const Duration(days: 1)))) {
+      if (!dt.isBefore(sunday) && dt.isBefore(weekEndExclusive)) {
         activeDays.add(DateFormat('yyyy-MM-dd').format(dt));
       }
     }
@@ -118,91 +136,116 @@ class JourneyInsightsEngine {
     for (final QuickNoteModel q in quickNotes) {
       recordDay(q.timestamp);
     }
+    for (final MoodLogModel m in moodLogs) {
+      recordDay(m.logTime);
+    }
 
     final int daysCheckedIn = activeDays.length;
     final bool hasEnoughWeeklyData = activeDays.length >= 4;
+    final bool isLearning = !hasEnoughWeeklyData;
 
-    // 2. Harder week detection (only evaluated when at least 4 active days exist)
-    bool isHarderWeek = false;
-    String harderReason = 'Travel or disruption shifted the routine.';
-
-    if (hasEnoughWeeklyData) {
-      // Check health logs in the week
-      for (final HealthLogModel h in healthLogs) {
-        if (!h.timestamp.isBefore(sunday)) {
-          final String combined = '${h.issues.join(' ')} ${h.notes}'
-              .toLowerCase();
-          if (combined.contains('travel') ||
-              combined.contains('trip') ||
-              combined.contains('flight') ||
-              combined.contains('hotel')) {
-            isHarderWeek = true;
-            harderReason =
-                "Travel disrupted the routine. That's expected, and it isn't a setback — routines take a few days to settle again.";
-            break;
-          }
-          if (combined.contains('sick') ||
-              combined.contains('illness') ||
-              combined.contains('fever') ||
-              combined.contains('teething')) {
-            isHarderWeek = true;
-            harderReason =
-                "Illness disrupted sleep this week. That's completely expected — rest and comfort matter most right now.";
-            break;
-          }
-        }
-      }
-
-      // Check quick notes in the week
-      if (!isHarderWeek) {
-        for (final QuickNoteModel q in quickNotes) {
-          if (!q.timestamp.isBefore(sunday)) {
-            final String noteText = q.note.toLowerCase();
-            if (noteText.contains('travel') ||
-                noteText.contains('holiday') ||
-                noteText.contains('hard week') ||
-                noteText.contains('sick')) {
-              isHarderWeek = true;
-              harderReason =
-                  "A disruption changed the daily rhythm this week. Routines usually need a few quiet days to settle back in.";
-              break;
-            }
-          }
-        }
-      }
-    }
-
-    // Check sleep logs: late bedtime shift or high night wakings
-    final List<SleepLogModel> weekSleepLogs = sleepLogs
-        .where(
-          (SleepLogModel s) =>
-              !s.date.isBefore(sunday) &&
-              s.date.isBefore(saturday.add(const Duration(days: 1))),
-        )
-        .toList();
-
-    if (!isHarderWeek && hasEnoughWeeklyData && weekSleepLogs.length >= 3) {
-      final int lateNights = weekSleepLogs
-          .where((SleepLogModel s) => s.bedTime.hour >= 21)
-          .length;
-      if (lateNights >= 3) {
-        isHarderWeek = true;
-        harderReason =
-            'Bedtime shifted significantly later across multiple nights this week.';
-      }
-    }
-
-    // 3. Child name / gender pronouns
     final String? rawChildName = child?.childName?.trim();
     final String childName = (rawChildName != null && rawChildName.isNotEmpty)
         ? rawChildName
         : '';
-    final String subject = childName.isNotEmpty
-        ? childName
-        : ((child?.childGender?.toLowerCase() == 'male') ? 'He' : 'She');
+    final String subject = childName.isNotEmpty ? childName : 'your child';
 
-    // 4. Determine Weekly Review items
-    final bool isLearning = !hasEnoughWeeklyData;
+    bool isHarderWeek = false;
+    String harderReason =
+        'A disruption changed the daily rhythm this week. Routines usually need a few quiet days to settle back in.';
+    String harderNoticedTitle = 'The usual rhythm was interrupted';
+    String harderNoticedDetail =
+        'Travel, illness, or another context change made this week less typical.';
+    String harderSmallThingToTry = 'Keep comfort and rest as the focus';
+
+    if (hasEnoughWeeklyData) {
+      for (final HealthLogModel h in healthLogs) {
+        if (h.timestamp.isBefore(sunday) ||
+            !h.timestamp.isBefore(weekEndExclusive)) {
+          continue;
+        }
+        final String combined = '${h.issues.join(' ')} ${h.notes}'
+            .toLowerCase();
+        if (combined.contains('travel') ||
+            combined.contains('trip') ||
+            combined.contains('flight') ||
+            combined.contains('hotel')) {
+          isHarderWeek = true;
+          harderReason =
+              "Travel disrupted the routine. That's expected, and it isn't a setback — routines take a few days to settle again.";
+          harderNoticedTitle = 'Travel changed the usual sleep window';
+          harderNoticedDetail =
+              'Bedtimes and wake-ups were less predictable while away from home.';
+          harderSmallThingToTry = 'Return to the usual wind-down cues gently';
+          break;
+        }
+        if (combined.contains('sick') ||
+            combined.contains('illness') ||
+            combined.contains('fever') ||
+            combined.contains('teething')) {
+          isHarderWeek = true;
+          harderReason =
+              "Illness disrupted sleep this week. That's completely expected — rest and comfort matter most right now.";
+          harderNoticedTitle = 'Illness made nights less settled';
+          harderNoticedDetail =
+              'Sleep looked different while $subject needed more comfort.';
+          harderSmallThingToTry =
+              'Prioritise rest and comfort over the routine';
+          break;
+        }
+      }
+
+      if (!isHarderWeek) {
+        for (final QuickNoteModel q in quickNotes) {
+          if (q.timestamp.isBefore(sunday) ||
+              !q.timestamp.isBefore(weekEndExclusive)) {
+            continue;
+          }
+          final String noteText = q.note.toLowerCase();
+          if (noteText.contains('travel') ||
+              noteText.contains('holiday') ||
+              noteText.contains('hard week') ||
+              noteText.contains('sick')) {
+            isHarderWeek = true;
+            harderReason =
+                "A disruption changed the daily rhythm this week. Routines usually need a few quiet days to settle back in.";
+            harderNoticedTitle = 'A disruption shifted the week';
+            harderNoticedDetail =
+                'Your note helped us see that this week was not a typical week.';
+            harderSmallThingToTry = 'Keep one familiar calm cue each evening';
+            break;
+          }
+        }
+      }
+    }
+
+    final List<SleepLogModel> weekSleepLogs = _sleepInRange(
+      sleepLogs,
+      sunday,
+      weekEndExclusive,
+    );
+    final List<SleepLogModel> prevSleepLogs = _sleepInRange(
+      sleepLogs,
+      prevSunday,
+      prevWeekEndExclusive,
+    );
+    final List<TantrumLogModel> weekTantrums = tantrumLogs
+        .where(
+          (TantrumLogModel t) =>
+              !t.timestamp.isBefore(sunday) &&
+              t.timestamp.isBefore(weekEndExclusive),
+        )
+        .toList();
+    final List<TantrumLogModel> prevTantrums = tantrumLogs
+        .where(
+          (TantrumLogModel t) =>
+              !t.timestamp.isBefore(prevSunday) &&
+              t.timestamp.isBefore(prevWeekEndExclusive),
+        )
+        .toList();
+
+    final _WeekSleepMetrics currentMetrics = _metricsFor(weekSleepLogs);
+    final _WeekSleepMetrics previousMetrics = _metricsFor(prevSleepLogs);
 
     String positiveTitle;
     String positiveDetail;
@@ -210,6 +253,8 @@ class JourneyInsightsEngine {
     String difficultyDetail;
     String patternTitle;
     String patternDetail;
+    String recommendedChange;
+    String observeTarget;
 
     if (isLearning) {
       positiveTitle = 'Gathering baseline rhythm';
@@ -222,49 +267,32 @@ class JourneyInsightsEngine {
       patternTitle = 'Patterns in progress';
       patternDetail =
           'Loving Brain learns your child\'s rhythm from real logs over time.';
+      recommendedChange = 'Keep logging daily check-ins';
+      observeTarget = 'Notice wake windows and energy levels';
     } else {
-      positiveTitle = 'Bedtime resistance eased this week';
-      positiveDetail =
-          'Settling routines were more predictable on consistent days.';
-      difficultyTitle = 'Naps are still settling';
-      difficultyDetail =
-          'Afternoon rest is variable. This is the one to keep watching.';
-      patternTitle = '$subject sleeps better after active days';
-      patternDetail =
-          'Days with daytime active play resulted in easier bedtimes.';
-
-      if (weekSleepLogs.length >= 4) {
-        final int quietNights = weekSleepLogs
-            .where((SleepLogModel s) => !s.isNightWaking)
-            .length;
-        if (quietNights >= 3) {
-          positiveTitle = 'Bedtime held steady for $quietNights nights';
-          positiveDetail =
-              'Consistent wind-down helped bedtime start reliably inside the target window.';
-        }
-      }
+      final _InsightPick pick = _buildReadyInsights(
+        subject: subject,
+        current: currentMetrics,
+        previous: previousMetrics,
+        weekTantrumCount: weekTantrums.length,
+        prevTantrumCount: prevTantrums.length,
+        isHarderWeek: isHarderWeek,
+      );
+      positiveTitle = pick.positiveTitle;
+      positiveDetail = pick.positiveDetail;
+      difficultyTitle = pick.difficultyTitle;
+      difficultyDetail = pick.difficultyDetail;
+      patternTitle = pick.patternTitle;
+      patternDetail = pick.patternDetail;
+      recommendedChange = pick.recommendedChange;
+      observeTarget = pick.observeTarget;
     }
 
-    final String recommendedChange = isLearning
-        ? 'Keep logging daily check-ins'
-        : 'An earlier, shorter afternoon nap';
-    final String observeTarget = isLearning
-        ? 'Notice wake windows and energy levels'
-        : 'Evening mood and how easily bedtime goes';
-
-    // Format next review date (Saturday 7 days ahead)
     final DateTime reviewDate = saturday;
     final String reviewDateLabel = DateFormat('EEEE d MMMM').format(reviewDate);
 
-    // 5. Harder week copy
     const String harderHeadline = 'This week was harder';
-    final String harderExplanation = harderReason;
-    const String harderNoticedTitle = 'Sleep windows shifted later most nights';
-    const String harderNoticedDetail =
-        'Bedtime averaged later than usual during the disrupted days.';
-    const String harderSmallThingToTry = 'Focus on morning sunlight';
 
-    // 6. Consistency Recognition copy
     final String consistencyTitle = daysCheckedIn == 0
         ? "Starting your family\njourney"
         : (daysCheckedIn == 1
@@ -273,9 +301,9 @@ class JourneyInsightsEngine {
                     ? "You've shown up five\ndays this week"
                     : "You've checked in $daysCheckedIn\ndays this week"));
     const String consistencySubtitle =
-        'No streak to lose we just wanted to notice the effort.';
+        'No streak to lose — we just wanted to notice the effort.';
     final String consistencyDetail = daysCheckedIn < 4
-        ? "Small, regular check-ins are what let us spot patterns. After 4 days, weekly reviews appear."
+        ? 'Small, regular check-ins are what let us spot patterns. After 4 days, weekly reviews appear.'
         : "Small, regular check-ins are what let us spot patterns. Weeks where you don't manage it are fine too.";
 
     return WeeklyInsightsResult(
@@ -295,7 +323,7 @@ class JourneyInsightsEngine {
       observeTarget: observeTarget,
       reviewDateLabel: reviewDateLabel,
       harderHeadline: harderHeadline,
-      harderExplanation: harderExplanation,
+      harderExplanation: harderReason,
       harderNoticedTitle: harderNoticedTitle,
       harderNoticedDetail: harderNoticedDetail,
       harderSmallThingToTry: harderSmallThingToTry,
@@ -304,4 +332,255 @@ class JourneyInsightsEngine {
       consistencyDetail: consistencyDetail,
     );
   }
+
+  /// Builds a short result note when an experiment review date arrives.
+  static String compareExperimentOutcome({
+    required ActiveExperimentModel experiment,
+    required List<SleepLogModel> sleepLogs,
+    required List<TantrumLogModel> tantrumLogs,
+  }) {
+    final DateTime start = DateTime(
+      experiment.startDate.year,
+      experiment.startDate.month,
+      experiment.startDate.day,
+    );
+    final DateTime end = DateTime(
+      experiment.reviewDate.year,
+      experiment.reviewDate.month,
+      experiment.reviewDate.day,
+    ).add(const Duration(days: 1));
+    final DateTime baselineStart = start.subtract(const Duration(days: 7));
+
+    final _WeekSleepMetrics during = _metricsFor(
+      _sleepInRange(sleepLogs, start, end),
+    );
+    final _WeekSleepMetrics before = _metricsFor(
+      _sleepInRange(sleepLogs, baselineStart, start),
+    );
+    final int tantrumsDuring = tantrumLogs
+        .where(
+          (TantrumLogModel t) =>
+              !t.timestamp.isBefore(start) && t.timestamp.isBefore(end),
+        )
+        .length;
+    final int tantrumsBefore = tantrumLogs
+        .where(
+          (TantrumLogModel t) =>
+              !t.timestamp.isBefore(baselineStart) &&
+              t.timestamp.isBefore(start),
+        )
+        .length;
+
+    final List<String> helped = <String>[];
+    if (during.nightCount >= 2 &&
+        before.nightCount >= 2 &&
+        during.nightWakingCount < before.nightWakingCount) {
+      helped.add('fewer nights with waking');
+    }
+    if (during.medianBedMinutes != null &&
+        before.medianBedMinutes != null &&
+        during.medianBedMinutes! + 10 < before.medianBedMinutes!) {
+      helped.add('an earlier bedtime');
+    }
+    if (tantrumsDuring < tantrumsBefore) {
+      helped.add('fewer hard moments');
+    }
+
+    if (helped.isNotEmpty) {
+      return 'This change may have helped: ${helped.join(', ')}.';
+    }
+    return 'We did not see a clear shift yet. One small change is still useful to try again or adjust.';
+  }
+
+  static List<SleepLogModel> _sleepInRange(
+    List<SleepLogModel> sleepLogs,
+    DateTime startInclusive,
+    DateTime endExclusive,
+  ) {
+    return sleepLogs
+        .where(
+          (SleepLogModel s) =>
+              !s.date.isBefore(startInclusive) && s.date.isBefore(endExclusive),
+        )
+        .toList();
+  }
+
+  static _WeekSleepMetrics _metricsFor(List<SleepLogModel> logs) {
+    final List<SleepLogModel> nights = logs
+        .where((SleepLogModel s) => !s.isNap)
+        .toList();
+    final int waking = nights
+        .where((SleepLogModel s) => s.isNightWaking)
+        .length;
+    final List<int> bedMinutes = nights
+        .map((SleepLogModel s) => s.bedTime.hour * 60 + s.bedTime.minute)
+        .toList();
+    bedMinutes.sort();
+    int? median;
+    if (bedMinutes.isNotEmpty) {
+      median = bedMinutes[bedMinutes.length ~/ 2];
+    }
+    final int late = nights
+        .where((SleepLogModel s) => s.bedTime.hour >= 21)
+        .length;
+    return _WeekSleepMetrics(
+      nightCount: nights.length,
+      nightWakingCount: waking,
+      medianBedMinutes: median,
+      lateBedCount: late,
+    );
+  }
+
+  static _InsightPick _buildReadyInsights({
+    required String subject,
+    required _WeekSleepMetrics current,
+    required _WeekSleepMetrics previous,
+    required int weekTantrumCount,
+    required int prevTantrumCount,
+    required bool isHarderWeek,
+  }) {
+    String positiveTitle = 'No clear positive change yet';
+    String positiveDetail =
+        'We compared this week with the previous one and did not see a clear improvement yet.';
+    String difficultyTitle = 'Still learning what is hard';
+    String difficultyDetail =
+        'Keep logging the usual check-ins so we can spot what stays difficult.';
+    String patternTitle = 'A weekly rhythm is forming';
+    String patternDetail =
+        'With enough days logged, we can compare this week with the one before.';
+    String recommendedChange = 'Keep one steady evening wind-down';
+    String observeTarget = 'How easily bedtime starts each night';
+
+    final bool canCompareSleep =
+        current.nightCount >= 2 && previous.nightCount >= 2;
+    final bool wakingImproved =
+        canCompareSleep && current.nightWakingCount < previous.nightWakingCount;
+    final bool bedtimeEarlier =
+        canCompareSleep &&
+        current.medianBedMinutes != null &&
+        previous.medianBedMinutes != null &&
+        current.medianBedMinutes! + 10 < previous.medianBedMinutes!;
+    final bool tantrumsImproved = weekTantrumCount < prevTantrumCount;
+
+    if (wakingImproved) {
+      positiveTitle = 'Fewer nights with waking this week';
+      positiveDetail =
+          'Night waking dropped from ${previous.nightWakingCount} to ${current.nightWakingCount} across logged nights.';
+    } else if (bedtimeEarlier) {
+      final int delta = previous.medianBedMinutes! - current.medianBedMinutes!;
+      positiveTitle = 'Bedtime moved about $delta minutes earlier';
+      positiveDetail =
+          'Compared with last week, bedtime started earlier on the nights you logged.';
+    } else if (tantrumsImproved && prevTantrumCount > 0) {
+      positiveTitle = 'Fewer hard moments this week';
+      positiveDetail =
+          'Logged hard moments went from $prevTantrumCount to $weekTantrumCount.';
+    } else if (current.nightCount >= 3 && current.nightWakingCount == 0) {
+      positiveTitle = 'Quiet nights held for ${current.nightCount} nights';
+      positiveDetail =
+          'None of the logged nights this week included night waking.';
+    }
+
+    final bool wakingHarder =
+        canCompareSleep && current.nightWakingCount > previous.nightWakingCount;
+    final bool bedtimeLater =
+        canCompareSleep &&
+        current.medianBedMinutes != null &&
+        previous.medianBedMinutes != null &&
+        current.medianBedMinutes! > previous.medianBedMinutes! + 10;
+    final bool lateBeds = current.nightCount >= 3 && current.lateBedCount >= 3;
+    final bool tantrumsHarder = weekTantrumCount > prevTantrumCount;
+
+    if (isHarderWeek) {
+      difficultyTitle = 'A disruption made this week harder';
+      difficultyDetail =
+          'Travel or illness changed the usual comparisons, so we are keeping the focus gentle.';
+      recommendedChange = 'Prioritise rest and one familiar calm cue';
+      observeTarget = 'Energy and comfort through the evening';
+    } else if (wakingHarder ||
+        (current.nightCount >= 3 &&
+            current.nightWakingCount >= (current.nightCount / 2).ceil())) {
+      difficultyTitle = 'Night waking is still hard';
+      difficultyDetail = wakingHarder
+          ? 'Night waking rose from ${previous.nightWakingCount} to ${current.nightWakingCount} this week.'
+          : 'Night waking showed up on most of the nights you logged.';
+      recommendedChange = 'Keep one steady response to night waking';
+      observeTarget = 'How long settling takes after a waking';
+    } else if (lateBeds || bedtimeLater) {
+      difficultyTitle = 'Bedtime is running later';
+      difficultyDetail = lateBeds
+          ? 'Bedtime was after 9:00 PM on ${current.lateBedCount} of ${current.nightCount} logged nights.'
+          : 'Median bedtime moved later than last week.';
+      recommendedChange = 'Start the wind-down a little earlier';
+      observeTarget = 'How the evening mood looks after an earlier wind-down';
+    } else if (tantrumsHarder || weekTantrumCount >= 3) {
+      difficultyTitle = 'Hard moments are still showing up';
+      difficultyDetail = tantrumsHarder
+          ? 'Logged hard moments rose from $prevTantrumCount to $weekTantrumCount.'
+          : 'There were $weekTantrumCount hard moments logged this week.';
+      recommendedChange = 'Use one short, calm response plan';
+      observeTarget = 'What helps most when a hard moment starts';
+    } else if (current.nightCount < 2) {
+      difficultyTitle = 'Sleep pattern still settling';
+      difficultyDetail =
+          'A few more night logs will make the weekly comparison clearer.';
+      recommendedChange = 'Keep logging bedtime and wake time';
+      observeTarget = 'Wake windows and evening energy';
+    }
+
+    if (current.nightCount >= 3 &&
+        current.nightWakingCount >= (current.nightCount / 2).ceil()) {
+      patternTitle = 'Night waking shows up on most nights';
+      patternDetail =
+          '${current.nightWakingCount} of ${current.nightCount} logged nights included waking.';
+    } else if (lateBeds) {
+      patternTitle = 'Later bedtimes are repeating';
+      patternDetail =
+          'Bedtime was after 9:00 PM on most of the nights you logged.';
+    } else if (bedtimeLater) {
+      patternTitle = 'Bedtime is later than last week';
+      patternDetail =
+          'Compared with the previous week, bedtime started later on logged nights.';
+    } else if (weekTantrumCount >= 3) {
+      patternTitle = 'Hard moments are clustering this week';
+      patternDetail =
+          '$weekTantrumCount hard moments were logged across the week.';
+    } else if (current.nightCount >= 3 && current.nightWakingCount == 0) {
+      patternTitle = '$subject had quieter nights this week';
+      patternDetail = 'Logged nights stayed free of night waking.';
+    }
+
+    return _InsightPick(
+      positiveTitle: positiveTitle,
+      positiveDetail: positiveDetail,
+      difficultyTitle: difficultyTitle,
+      difficultyDetail: difficultyDetail,
+      patternTitle: patternTitle,
+      patternDetail: patternDetail,
+      recommendedChange: recommendedChange,
+      observeTarget: observeTarget,
+    );
+  }
+}
+
+class _InsightPick {
+  final String positiveTitle;
+  final String positiveDetail;
+  final String difficultyTitle;
+  final String difficultyDetail;
+  final String patternTitle;
+  final String patternDetail;
+  final String recommendedChange;
+  final String observeTarget;
+
+  const _InsightPick({
+    required this.positiveTitle,
+    required this.positiveDetail,
+    required this.difficultyTitle,
+    required this.difficultyDetail,
+    required this.patternTitle,
+    required this.patternDetail,
+    required this.recommendedChange,
+    required this.observeTarget,
+  });
 }
