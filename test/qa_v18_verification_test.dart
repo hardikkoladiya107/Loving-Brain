@@ -191,5 +191,52 @@ void main() {
         );
       },
     );
+
+    test(
+      'Today tab pre-populates activeChildId from cached child synchronously on frame 0',
+      () async {
+        final UserModel user = UserModel(
+          uid: 'cached_user_uid',
+          email: 'parent@test.com',
+          parentName: 'Sarah',
+        );
+        final ChildModel child = ChildModel(childName: 'Liam');
+        await preferences.saveUserModel(user);
+        await preferences.saveChildModel(child);
+        await preferences.putBool(SharedPreference.isLogin, true);
+
+        // Instantiation must evaluate synchronously from cached preferences
+        final TodayCubit todayCubit = TodayCubit();
+
+        expect(todayCubit.state.isLoading, false);
+        expect(todayCubit.state.activeChildId, 'local_Liam');
+        expect(todayCubit.state.childName, 'Liam');
+        expect(todayCubit.state.parentName, 'SARAH');
+
+        await todayCubit.close();
+      },
+    );
+
+    test(
+      'Today tab marks isLoading: true when logged in user has no cached child yet',
+      () async {
+        final UserModel user = UserModel(
+          uid: 'fresh_user_uid',
+          email: 'fresh@test.com',
+          parentName: 'David',
+        );
+        await preferences.saveUserModel(user);
+        await preferences.clearChild();
+        await preferences.putBool(SharedPreference.isLogin, true);
+
+        // Initial state for logged in user without cached child should be loading
+        final TodayCubit todayCubit = TodayCubit();
+
+        expect(todayCubit.state.isLoading, true);
+        expect(todayCubit.state.activeChildId, '');
+
+        await todayCubit.close();
+      },
+    );
   });
 }

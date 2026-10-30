@@ -63,7 +63,7 @@ class TodayHeader extends StatelessWidget {
                         child:
                             (state.childName.isNotEmpty
                                     ? state.childName
-                                    : 'Add child')
+                                    : (state.isLoading ? '' : 'Add child'))
                                 .appText(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 15,

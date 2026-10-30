@@ -142,31 +142,38 @@ class AuthRepo {
         await preferences.clearChild();
         await preferences.putString(SharedPreference.child, '');
       }
+    } on FirebaseException catch (e) {
+      debugPrint('FirebaseException during syncDefaultChild: ${e.code} / $e');
+      if (e.code == 'permission-denied') {
+        await preferences.clearChild();
+        await preferences.putString(SharedPreference.child, '');
+        final DocumentReference? badRef =
+            userModel.defaultChild ??
+            ((userModel.children != null && userModel.children!.isNotEmpty)
+                ? userModel.children!.first
+                : null);
+        if (badRef != null) {
+          await userCollection
+              .doc(uId)
+              .update(<String, dynamic>{
+                'default_child': FieldValue.delete(),
+                'children': FieldValue.arrayRemove(<dynamic>[badRef]),
+                'partner_user_id': FieldValue.delete(),
+              })
+              .catchError((_) => null);
+        }
+        final UserModel cleanedUser = userModel.copyWith(
+          clearDefaultChild: true,
+          clearPartnerUserId: true,
+        );
+        await preferences.saveUserModel(cleanedUser);
+        return cleanedUser;
+      }
+      // On network errors / offline / server glitch, retain cached child and don't wipe data
+      return userModel;
     } catch (e) {
       debugPrint('Failed to sync default child on login: $e');
-      await preferences.clearChild();
-      await preferences.putString(SharedPreference.child, '');
-      final DocumentReference? badRef =
-          userModel.defaultChild ??
-          ((userModel.children != null && userModel.children!.isNotEmpty)
-              ? userModel.children!.first
-              : null);
-      if (badRef != null) {
-        await userCollection
-            .doc(uId)
-            .update(<String, dynamic>{
-              'default_child': FieldValue.delete(),
-              'children': FieldValue.arrayRemove(<dynamic>[badRef]),
-              'partner_user_id': FieldValue.delete(),
-            })
-            .catchError((_) => null);
-      }
-      final UserModel cleanedUser = userModel.copyWith(
-        clearDefaultChild: true,
-        clearPartnerUserId: true,
-      );
-      await preferences.saveUserModel(cleanedUser);
-      return cleanedUser;
+      return userModel;
     }
 
     return userModel;

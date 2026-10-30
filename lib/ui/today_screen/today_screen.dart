@@ -26,6 +26,7 @@ import 'package:loving_brain/ui/widget/offline_banner.dart';
 // Import widgets
 import 'package:loving_brain/ui/today_screen/widgets/today_header.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 
 class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
@@ -122,7 +123,12 @@ class _TodayScreenState extends State<TodayScreen> {
                           const OfflineBanner(isVisible: true),
                         ],
                         SizedBox(height: 24.h),
-                        if (state.activeChildId.isEmpty) ...[
+                        if (state.isLoading && state.activeChildId.isEmpty) ...[
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 48.h),
+                            child: const Center(child: AppLoadingIndicator()),
+                          ),
+                        ] else if (state.activeChildId.isEmpty) ...[
                           _buildNoChildCard(context),
                         ] else if (state.mode == TodayMode.normal) ...[
                           const MainCard(),

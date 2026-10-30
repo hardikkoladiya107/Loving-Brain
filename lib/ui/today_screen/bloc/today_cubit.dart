@@ -21,7 +21,46 @@ import 'today_state.dart';
 
 /// Cubit managing Today tab dashboard state and the 5 Quick Update logging flows.
 class TodayCubit extends Cubit<TodayState> {
-  TodayCubit() : super(const TodayState());
+  TodayCubit() : super(_initialState());
+
+  static TodayState _initialState() {
+    final int hour = DateTime.now().hour;
+    String greeting = 'GOOD MORNING';
+    if (hour >= 12 && hour < 17) {
+      greeting = 'GOOD AFTERNOON';
+    } else if (hour >= 17) {
+      greeting = 'GOOD EVENING';
+    }
+
+    final UserModel? user = preferences.getUserModel();
+    final ChildModel? child = preferences.getChildModel();
+
+    String pName = user?.parentName ?? 'Parent';
+    if (pName.trim().isEmpty) pName = 'Parent';
+
+    String cName = child?.childName ?? user?.childName ?? '';
+    final String finalChildId;
+    if (child != null &&
+        ((child.reference != null && child.reference!.id.isNotEmpty) ||
+            (child.childName?.trim().isNotEmpty ?? false))) {
+      finalChildId = child.reference?.id ?? 'local_${child.childName!.trim()}';
+    } else {
+      finalChildId = '';
+      cName = '';
+    }
+
+    final bool isUserLoggedIn =
+        preferences.getBool(SharedPreference.isLogin, defValue: false) ?? false;
+    final bool initialLoading = isUserLoggedIn && finalChildId.isEmpty;
+
+    return TodayState(
+      isLoading: initialLoading,
+      timeOfDayGreeting: greeting,
+      parentName: pName.toUpperCase(),
+      childName: cName,
+      activeChildId: finalChildId,
+    );
+  }
 
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
   _childDocSubscription;
@@ -172,7 +211,50 @@ class TodayCubit extends Cubit<TodayState> {
     }
 
     UserModel? user = preferences.getUserModel();
+    ChildModel? child = preferences.getChildModel();
     final String? userUid = user?.uid;
+
+    String pName = user?.parentName ?? 'Parent';
+    String cName = child?.childName ?? user?.childName ?? '';
+    if (pName.trim().isEmpty) pName = 'Parent';
+
+    String currentChildId = '';
+    if (child != null &&
+        ((child.reference != null && child.reference!.id.isNotEmpty) ||
+            (child.childName?.trim().isNotEmpty ?? false))) {
+      currentChildId =
+          child.reference?.id ?? 'local_${child.childName!.trim()}';
+    } else {
+      cName = '';
+    }
+
+    // Immediately present cached child profile to eliminate any delay/flash
+    if (currentChildId.isNotEmpty) {
+      changeProps(
+        isLoading: false,
+        timeOfDayGreeting: greeting,
+        parentName: pName.toUpperCase(),
+        childName: cName,
+        activeChildId: currentChildId,
+      );
+    } else if (userUid != null && userUid.isNotEmpty) {
+      // User is logged in but local cache has no child yet; show loading indicator while syncing
+      changeProps(
+        isLoading: true,
+        timeOfDayGreeting: greeting,
+        parentName: pName.toUpperCase(),
+        activeChildId: '',
+        childName: '',
+      );
+    } else {
+      changeProps(
+        isLoading: false,
+        timeOfDayGreeting: greeting,
+        parentName: pName.toUpperCase(),
+        activeChildId: '',
+        childName: '',
+      );
+    }
 
     // Sync latest user and default child first to guarantee accurate link status
     if (userUid != null && userUid.isNotEmpty) {
@@ -200,16 +282,19 @@ class TodayCubit extends Cubit<TodayState> {
       }
     }
 
-    final ChildModel? child = preferences.getChildModel();
-    String pName = user?.parentName ?? 'Parent';
-    String cName = child?.childName ?? user?.childName ?? '';
+    final ChildModel? updatedChild = preferences.getChildModel();
+    pName = user?.parentName ?? 'Parent';
+    cName = updatedChild?.childName ?? user?.childName ?? '';
     if (pName.trim().isEmpty) pName = 'Parent';
 
     final String finalChildId;
-    if (child != null &&
-        ((child.reference != null && child.reference!.id.isNotEmpty) ||
-            (child.childName?.trim().isNotEmpty ?? false))) {
-      finalChildId = child.reference?.id ?? 'local_${child.childName!.trim()}';
+    if (updatedChild != null &&
+        ((updatedChild.reference != null &&
+                updatedChild.reference!.id.isNotEmpty) ||
+            (updatedChild.childName?.trim().isNotEmpty ?? false))) {
+      finalChildId =
+          updatedChild.reference?.id ??
+          'local_${updatedChild.childName!.trim()}';
     } else {
       finalChildId = '';
       cName = '';
@@ -252,10 +337,10 @@ class TodayCubit extends Cubit<TodayState> {
                       .collection('users')
                       .doc(userUid)
                       .update(<String, dynamic>{
-                    'default_child': FieldValue.delete(),
-                    'children': FieldValue.arrayRemove(<dynamic>[childRef]),
-                    'partner_user_id': FieldValue.delete(),
-                  });
+                        'default_child': FieldValue.delete(),
+                        'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+                        'partner_user_id': FieldValue.delete(),
+                      });
                 } catch (_) {}
                 changeProps(
                   activeChildId: '',
@@ -278,10 +363,10 @@ class TodayCubit extends Cubit<TodayState> {
                       .collection('users')
                       .doc(userUid)
                       .update(<String, dynamic>{
-                    'default_child': FieldValue.delete(),
-                    'children': FieldValue.arrayRemove(<dynamic>[childRef]),
-                    'partner_user_id': FieldValue.delete(),
-                  });
+                        'default_child': FieldValue.delete(),
+                        'children': FieldValue.arrayRemove(<dynamic>[childRef]),
+                        'partner_user_id': FieldValue.delete(),
+                      });
                 } catch (_) {}
                 changeProps(
                   activeChildId: '',
