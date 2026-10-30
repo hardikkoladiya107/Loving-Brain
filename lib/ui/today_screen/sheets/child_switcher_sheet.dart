@@ -288,11 +288,11 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                   ],
                 ),
                 onTap: () async {
-                  Navigator.pop(context);
+                  final NavigatorState navigator = Navigator.of(context);
                   final TodayCubit todayCubit = context.read<TodayCubit>();
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
+                  navigator.pop();
+                  await navigator.push(
+                    MaterialPageRoute<void>(
                       builder: (_) =>
                           const ChildProfileScreen(fromManageChildren: true),
                     ),
@@ -302,30 +302,44 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
               ),
 
               if (activeChild != null) ...<Widget>[
-                10.spaceH,
-                Center(
-                  child: TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      final TodayCubit todayCubit = context.read<TodayCubit>();
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const ChildProfileScreen(
-                            fromManageChildren: false,
-                          ),
-                        ),
-                      );
-                      todayCubit.init();
-                    },
-                    child: "Edit active child profile".appText(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: primaryColor,
-                    ),
+                12.spaceH,
+                // Action: Edit active child profile
+                AppButton(
+                  title: "Edit active child profile",
+                  backgroundColor: Colors.white,
+                  borderColor: const Color(0xFFE9E2DC),
+                  textColor: greyColor9,
+                  widget: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.edit_outlined,
+                        size: 20.sp,
+                        color: primaryColor,
+                      ),
+                      8.spaceW,
+                      "Edit active child profile".appText(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w700,
+                        color: greyColor9,
+                      ),
+                    ],
                   ),
+                  onTap: () async {
+                    final NavigatorState navigator = Navigator.of(context);
+                    final TodayCubit todayCubit = context.read<TodayCubit>();
+                    navigator.pop();
+                    await navigator.push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            const ChildProfileScreen(fromManageChildren: false),
+                      ),
+                    );
+                    todayCubit.init();
+                  },
                 ),
               ],
+              8.spaceH,
             ],
           ),
         ),

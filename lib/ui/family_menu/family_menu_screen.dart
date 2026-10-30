@@ -210,34 +210,9 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                   showChevron: !c.isOwner,
                                   onTap: c.isOwner
                                       ? () {
-                                          showDialog<void>(
-                                            context: context,
-                                            builder: (BuildContext dCtx) =>
-                                                AlertDialog(
-                                                  title: "Primary Parent"
-                                                      .appText(
-                                                        fontSize: 18.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: greyColor9,
-                                                      ),
-                                                  content:
-                                                      "${c.name} is the primary parent and creator of this profile. Their permissions cannot be modified."
-                                                          .appText(
-                                                            fontSize: 14.sp,
-                                                            color: greyColor,
-                                                          ),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(dCtx),
-                                                      child: "OK".appText(
-                                                        fontSize: 14.sp,
-                                                        color: primaryColor,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                          showPrimaryParentInfoDialog(
+                                            context,
+                                            c.name,
                                           );
                                         }
                                       : () {
@@ -402,9 +377,12 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
   ) {
     showDialog<void>(
       context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (BuildContext dialogContext) {
         return Dialog(
           backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24.r),
           ),
@@ -478,4 +456,68 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
       },
     );
   }
+}
+
+void showPrimaryParentInfoDialog(BuildContext context, String parentName) {
+  showDialog<void>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.4),
+    builder: (BuildContext dialogContext) {
+      return Dialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 20.h),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 52.w,
+                  height: 52.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF3F2FE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.shield_rounded,
+                    color: const Color(0xFF665FCE),
+                    size: 26.sp,
+                  ),
+                ),
+                16.spaceH,
+                "Primary Parent".appText(
+                  fontSize: 20.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                ),
+                10.spaceH,
+                "$parentName is the primary parent and creator of this profile. Their permissions cannot be modified."
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.center,
+                      height: 1.4,
+                    ),
+                24.spaceH,
+                AppButton(
+                  height: 44.h,
+                  padding: EdgeInsets.zero,
+                  title: 'Got it',
+                  backgroundColor: primaryColor,
+                  borderColor: primaryColor,
+                  textColor: Colors.white,
+                  onTap: () => Navigator.pop(dialogContext),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
