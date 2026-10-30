@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
@@ -65,7 +66,15 @@ class _PostSessionPlanScreenState extends State<PostSessionPlanScreen> {
               negativeGuidanceSubtitle: 'Just while the nap change settles.',
             );
 
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -158,7 +167,8 @@ class _PostSessionPlanScreenState extends State<PostSessionPlanScreen> {
                 _buildBottomActions(context),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -310,7 +320,8 @@ class _PostSessionPlanScreenState extends State<PostSessionPlanScreen> {
                     context,
                     MaterialPageRoute(
                       builder: (_) => const ParentSuccessGuideScreen(),
-                    );
+                    ),
+                  );
                 },
               ),
             ],

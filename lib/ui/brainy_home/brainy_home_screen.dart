@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -263,7 +264,8 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                 ],
               ),
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -279,7 +281,16 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
           );
         }
 
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -398,7 +409,8 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                 ),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -426,7 +438,8 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const BrainyHistoryScreen(),
-                        );
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -457,7 +470,8 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const BrainySavedGuidanceScreen(),
-                        );
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -636,9 +650,11 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                                       initialChat: text,
                                       topic: state.selectedTopic,
                                     ),
-                                  );
+                                  ),
+                                );
                               },
-                            );
+                            ),
+                          );
                         },
                         icon: Icon(
                           Icons.mic_none_rounded,

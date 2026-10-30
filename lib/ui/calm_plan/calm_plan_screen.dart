@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/core/energy_bridge_behaviour_calculator.dart';
@@ -43,7 +44,15 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
     return BlocConsumer<CalmPlanCubit, CalmPlanState>(
       listener: (BuildContext context, CalmPlanState state) {},
       builder: (BuildContext context, CalmPlanState state) {
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -133,7 +142,8 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (_) => const AfterReflectionScreen(),
-                            );
+                            ),
+                          );
                         },
                         backgroundColor: primaryColor,
                         textColor: Colors.white,
@@ -150,7 +160,8 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                                   initialChat:
                                       'Can you help me with a calming plan for my child during a hard moment?',
                                 ),
-                              );
+                              ),
+                            );
                           },
                           child: "Ask Brainy".appText(
                             fontSize: 16.sp,
@@ -165,7 +176,8 @@ class _CalmPlanScreenState extends State<CalmPlanScreen> {
                 ),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }

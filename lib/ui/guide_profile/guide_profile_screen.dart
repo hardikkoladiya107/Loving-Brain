@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,7 +61,15 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
       builder: (BuildContext context, GuideProfileState state) {
         final GuideProfileModel? guide = state.guide;
 
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -240,7 +249,8 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                 if (guide != null) _buildBottomActions(context, guide),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -304,7 +314,8 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                     context,
                     MaterialPageRoute<void>(
                       builder: (_) => RequestSessionScreen(guide: guide),
-                    );
+                    ),
+                  );
                 },
               ),
               if (showSleepReset) ...[
@@ -321,7 +332,8 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                       context,
                       MaterialPageRoute<void>(
                         builder: (_) => const ProgrammeDetailScreen(),
-                      );
+                      ),
+                    );
                   },
                 ),
               ],

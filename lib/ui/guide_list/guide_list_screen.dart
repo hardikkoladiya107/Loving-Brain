@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,7 +54,15 @@ class _GuideListScreenState extends State<GuideListScreen> {
         }
       },
       builder: (BuildContext context, GuideListState state) {
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: SafeArea(
               child: Column(
@@ -128,7 +137,8 @@ class _GuideListScreenState extends State<GuideListScreen> {
                                     MaterialPageRoute<void>(
                                       builder: (_) =>
                                           GuideProfileScreen(guideId: guide.id),
-                                    );
+                                    ),
+                                  );
                                 },
                               );
                             },
@@ -137,7 +147,8 @@ class _GuideListScreenState extends State<GuideListScreen> {
                 ],
               ),
             ),
-          );
+          ),
+        );
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -41,7 +42,16 @@ class _JourneyScreenState extends State<JourneyScreen> {
     return BlocConsumer<JourneyCubit, JourneyState>(
       listener: (BuildContext context, JourneyState state) {},
       builder: (BuildContext context, JourneyState state) {
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -111,7 +121,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
                 ),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -518,7 +529,8 @@ class _JourneyScreenState extends State<JourneyScreen> {
           context,
           MaterialPageRoute<void>(
             builder: (BuildContext routeCtx) => const MentorshipLandingScreen(),
-          );
+          ),
+        );
       },
       child: Container(
         width: double.infinity,

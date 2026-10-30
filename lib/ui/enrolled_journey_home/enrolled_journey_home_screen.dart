@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -57,7 +58,15 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
             ? (program.currentWeek / program.totalWeeks).clamp(0.0, 1.0)
             : 0.33;
 
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -152,7 +161,8 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                                   MaterialPageRoute(
                                     builder: (_) =>
                                         const RequestSessionScreen(),
-                                  );
+                                  ),
+                                );
                               },
                             ),
                             16.spaceH,
@@ -169,7 +179,8 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                                   MaterialPageRoute(
                                     builder: (_) =>
                                         const PostSessionPlanScreen(),
-                                  );
+                                  ),
+                                );
                               },
                             ),
                             16.spaceH,
@@ -199,7 +210,8 @@ class _EnrolledJourneyHomeScreenState extends State<EnrolledJourneyHomeScreen> {
                 ),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }

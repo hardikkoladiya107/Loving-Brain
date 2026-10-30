@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -144,7 +145,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     ],
                   ),
                 ),
-              );
+              ),
+            );
           },
         );
       },
@@ -281,7 +283,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                     ],
                   ),
                 ),
-              );
+              ),
+            );
           },
         );
       },
@@ -373,7 +376,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 ],
               ),
             ),
-          );
+          ),
+        );
       },
     );
   }
@@ -383,7 +387,15 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     return BlocConsumer<ChildEssentialsCubit, ChildEssentialsState>(
       listener: (BuildContext context, ChildEssentialsState state) {},
       builder: (BuildContext context, ChildEssentialsState state) {
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: Stack(
               children: [
@@ -639,7 +651,8 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
                 ),
               ],
             ),
-          );
+          ),
+        );
       },
     );
   }

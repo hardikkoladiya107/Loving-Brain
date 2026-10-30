@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
@@ -36,7 +37,15 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
     return BlocConsumer<SleepPatternCubit, SleepPatternState>(
       listener: (BuildContext context, SleepPatternState state) {},
       builder: (BuildContext context, SleepPatternState state) {
-        return Scaffold(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+          ),
+          child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),
             body: state.isLoading
                 ? const AppLoadingIndicator()
@@ -75,7 +84,8 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
                                   MaterialPageRoute<void>(
                                     builder: (BuildContext routeCtx) =>
                                         const ProgramRecommendationScreen(),
-                                  );
+                                  ),
+                                );
                               },
                               backgroundColor: primaryColor,
                               textColor: Colors.white,
@@ -85,7 +95,8 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
                       ),
                     ],
                   ),
-          );
+          ),
+        );
       },
     );
   }
@@ -325,7 +336,8 @@ class _SleepPatternScreenState extends State<SleepPatternScreen> {
                             color: Colors.white54,
                             fontWeight: FontWeight.w400,
                             fontSize: 10,
-                          );
+                          ),
+                        );
                       },
                     ),
                   ),
