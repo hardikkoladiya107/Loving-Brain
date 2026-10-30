@@ -4,7 +4,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/main.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import '../../../model/child_model.dart';
 import '../../../model/user_model.dart';
@@ -21,6 +25,7 @@ class BaseCubit extends Cubit<BaseState> {
   StreamSubscription<DocumentSnapshot<Object?>>? _childSubscription;
   StreamSubscription<User?>? _authSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _inviteSubscription;
+  String? _routedIncomingInvitationId;
 
   void changeProps({int? bottomNavigationIndex}) {
     emit(
@@ -50,8 +55,46 @@ class BaseCubit extends Cubit<BaseState> {
           .where('to_uid', isEqualTo: uid)
           .where('status', isEqualTo: 'REQUESTED')
           .snapshots()
-          .listen((_) {}, onError: (_) {});
+          .listen((QuerySnapshot<Map<String, dynamic>> snap) {
+            _routeFirstUnexpiredInvite(snap);
+          }, onError: (_) {});
     } catch (_) {}
+  }
+
+  void _routeFirstUnexpiredInvite(QuerySnapshot<Map<String, dynamic>> snap) {
+    final DateTime now = DateTime.now();
+    String? invitationId;
+    for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in snap.docs) {
+      final Map<String, dynamic> data = doc.data();
+      final String? expiresAtRaw = data['expires_at']?.toString();
+      if (expiresAtRaw != null && expiresAtRaw.isNotEmpty) {
+        final DateTime? expires = DateTime.tryParse(expiresAtRaw);
+        if (expires != null && expires.isBefore(now)) {
+          continue;
+        }
+      }
+      invitationId = doc.id;
+      break;
+    }
+    if (invitationId == null || invitationId.isEmpty) {
+      return;
+    }
+    if (_routedIncomingInvitationId == invitationId) {
+      return;
+    }
+    _routedIncomingInvitationId = invitationId;
+    final BuildContext? context = navigatorKey.currentContext;
+    if (context == null || !context.mounted) {
+      return;
+    }
+    final UserModel? user = preferences.getUserModel();
+    if (user?.isOnboardingCompleted != true) {
+      return;
+    }
+    GoRouter.of(context).push(
+      RoutePaths.inviteRespond,
+      extra: <String, dynamic>{'invitationId': invitationId},
+    );
   }
 
   void _listenAuth() {
@@ -59,6 +102,7 @@ class BaseCubit extends Cubit<BaseState> {
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen(
       (User? user) {
         if (user == null) {
+          _routedIncomingInvitationId = null;
           cancelSubscriptions();
         }
       },
@@ -72,6 +116,7 @@ class BaseCubit extends Cubit<BaseState> {
     cancelSubscriptions();
     _authSubscription?.cancel();
     _authSubscription = null;
+    _routedIncomingInvitationId = null;
     emit(BaseState());
   }
 

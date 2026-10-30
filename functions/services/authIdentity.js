@@ -195,6 +195,32 @@ async function mergeProfileOntoAuthUid(db, params) {
   return {merged: true, canonicalUid: authUid};
 }
 
+/**
+ * Attach the signed-in uid to every pending invite for that email.
+ * Needed when the invite was created before the invitee had an account.
+ * @param {FirebaseFirestore.Firestore} db
+ * @param {object} params
+ * @return {Promise<number>}
+ */
+async function backfillInvitationToUid(db, params) {
+  const clean = normalizeEmail(params.email);
+  const uid = params.uid || "";
+  if (!clean || !uid) return 0;
+  const snap = await db
+      .collection("co-parent-invitation")
+      .where("to_parent", "==", clean)
+      .where("status", "==", "REQUESTED")
+      .get();
+  let count = 0;
+  for (const doc of snap.docs) {
+    const data = doc.data() || {};
+    if (data.to_uid === uid) continue;
+    await doc.ref.update({to_uid: uid});
+    count += 1;
+  }
+  return count;
+}
+
 module.exports = {
   OTP_MAX_ATTEMPTS,
   OTP_TTL_MS,
@@ -207,4 +233,5 @@ module.exports = {
   findUserDocByPhone,
   resolveUidForEmail,
   mergeProfileOntoAuthUid,
+  backfillInvitationToUid,
 };

@@ -31,6 +31,7 @@ abstract class FamilyMenuState with _$FamilyMenuState {
     @Default(true) bool isCurrentUserOwner,
     @Default(<CaregiverItem>[]) List<CaregiverItem> linkedCaregivers,
     @Default(<CaregiverItem>[]) List<CaregiverItem> pendingInvites,
+    @Default(<CaregiverItem>[]) List<CaregiverItem> incomingInvites,
     @Default(ApiResultStatus.initial()) ApiResultStatus fetchStatus,
     @Default(ApiResultStatus.initial()) ApiResultStatus leaveStatus,
   }) = _FamilyMenuState;

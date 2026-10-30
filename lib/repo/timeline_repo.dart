@@ -3,7 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
+import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/repo/child_repo.dart';
+import 'package:loving_brain/repo/today_log_repo.dart';
 
 class TimelineRepo {
   TimelineRepo._();
@@ -34,9 +36,17 @@ class TimelineRepo {
           .orderBy('timestamp', descending: true)
           .get();
 
-      final List<TimelineEventModel> events = eventsSnap.docs
-          .map(TimelineEventModel.fromFirestore)
-          .toList();
+      final List<TimelineEventModel> events =
+          FamilyMembershipHelpers.filterHealthTimelineEvents<
+            TimelineEventModel
+          >(
+            events: eventsSnap.docs
+                .map(TimelineEventModel.fromFirestore)
+                .toList(),
+            canViewHealth: TodayLogRepo.instance
+                .canCurrentCaregiverViewHealth(),
+            typeOf: (TimelineEventModel event) => event.type,
+          );
 
       return ApiResultStatus.data(data: events);
     } on FirebaseException catch (e) {

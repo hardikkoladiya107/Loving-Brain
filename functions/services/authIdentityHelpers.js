@@ -108,6 +108,26 @@ function resolveSocialIdentityMerge(opts) {
   };
 }
 
+/**
+ * Which pending invites should receive to_uid for this signed-in user.
+ * @param {Array<object>} invites
+ * @param {string} email
+ * @param {string} uid
+ * @return {Array<string>} invitation document ids
+ */
+function invitesNeedingToUidBackfill(invites, email, uid) {
+  const clean = normalizeEmail(email);
+  if (!clean || !uid) return [];
+  return (invites || [])
+      .filter((invite) => {
+        if (!invite || (invite.status || "") !== "REQUESTED") return false;
+        if (normalizeEmail(invite.to_parent) !== clean) return false;
+        return invite.to_uid !== uid;
+      })
+      .map((invite) => String(invite.id || ""))
+      .filter((id) => id.length > 0);
+}
+
 module.exports = {
   OTP_MAX_ATTEMPTS,
   OTP_TTL_MS,
@@ -119,4 +139,5 @@ module.exports = {
   evaluateOtpAttempt,
   resolveTargetUid,
   resolveSocialIdentityMerge,
+  invitesNeedingToUidBackfill,
 };

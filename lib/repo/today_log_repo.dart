@@ -14,6 +14,7 @@ import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/model/timeline_event_model.dart';
 import 'package:loving_brain/model/user_model.dart';
 import 'package:loving_brain/model/pending_local_update_model.dart';
+import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
 
@@ -683,15 +684,14 @@ class TodayLogRepo {
           .limit(limit)
           .get();
 
-      List<TimelineEventModel> list = snap.docs
-          .map(TimelineEventModel.fromFirestore)
-          .toList();
-
-      if (!canCurrentCaregiverViewHealth()) {
-        list = list
-            .where((TimelineEventModel e) => e.type != 'health_log')
-            .toList();
-      }
+      final List<TimelineEventModel> list =
+          FamilyMembershipHelpers.filterHealthTimelineEvents<
+            TimelineEventModel
+          >(
+            events: snap.docs.map(TimelineEventModel.fromFirestore).toList(),
+            canViewHealth: canCurrentCaregiverViewHealth(),
+            typeOf: (TimelineEventModel event) => event.type,
+          );
 
       return ApiResultStatus.data(data: list);
     } catch (e) {

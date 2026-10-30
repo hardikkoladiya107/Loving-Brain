@@ -87,11 +87,20 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    function authEmailLower() {
+      return isSignedIn() &&
+        request.auth.token.email is string
+          ? request.auth.token.email.lower()
+          : '';
+    }
+
     // Co-parent invitations: clients may read their own; writes via Admin SDK callables
     match /co-parent-invitation/{invitationId} {
       allow read: if isSignedIn() &&
         (resource.data.from_uid == request.auth.uid ||
-         resource.data.to_uid == request.auth.uid);
+         resource.data.to_uid == request.auth.uid ||
+         (authEmailLower().size() > 0 &&
+          resource.data.to_parent == authEmailLower()));
       allow write: if false;
     }
 
@@ -153,12 +162,26 @@ service cloud.firestore {
         allow write: if isLinkedParent(childId) && canViewHealth(childId);
       }
 
+      match /mood_logs/{docId} {
+        allow read: if canViewBehaviour(childId);
+        allow write: if isLinkedParent(childId) && canViewBehaviour(childId);
+      }
+
       match /experiments/{docId} {
         allow read: if canViewPlans(childId);
         allow write: if isLinkedParent(childId) && canViewPlans(childId);
       }
 
-      match /{allChildren=**} {
+      match /quick_notes/{docId} {
+        allow read: if canViewPlans(childId);
+        allow write: if isLinkedParent(childId) && canViewPlans(childId);
+      }
+
+      match /events/{docId} {
+        allow read, write: if isLinkedParent(childId);
+      }
+
+      match /states/{docId} {
         allow read, write: if isLinkedParent(childId);
       }
     }

@@ -143,6 +143,11 @@ exports.verifyEmailOtp = onCall(async (request) => {
 
   const uid = await authIdentity.resolveUidForEmail(db, email);
   try {
+    await authIdentity.backfillInvitationToUid(db, {email, uid});
+  } catch (error) {
+    logger.warn("Invitation to_uid backfill skipped", {error: String(error)});
+  }
+  try {
     const token = await admin.auth().createCustomToken(uid);
     return {success: true, token, uid};
   } catch (error) {
@@ -175,6 +180,14 @@ exports.resolveAuthIdentity = onCall(async (request) => {
     email,
     phone,
   });
+
+  if (email) {
+    try {
+      await authIdentity.backfillInvitationToUid(db, {email, uid});
+    } catch (error) {
+      logger.warn("Invitation to_uid backfill skipped", {error: String(error)});
+    }
+  }
 
   const userRef = db.collection("users").doc(uid);
   const snap = await userRef.get();

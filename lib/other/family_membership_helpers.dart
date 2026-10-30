@@ -40,4 +40,16 @@ class FamilyMembershipHelpers {
     );
     return keys.difference(allowed).isEmpty;
   }
+
+  /// Drops health timeline rows when the caregiver may not see health notes.
+  static List<T> filterHealthTimelineEvents<T>({
+    required List<T> events,
+    required bool canViewHealth,
+    required String Function(T event) typeOf,
+  }) {
+    if (canViewHealth) {
+      return List<T>.from(events);
+    }
+    return events.where((T event) => typeOf(event) != 'health_log').toList();
+  }
 }

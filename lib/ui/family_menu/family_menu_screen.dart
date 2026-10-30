@@ -232,6 +232,44 @@ class _FamilyMenuScreenState extends State<FamilyMenuScreen> {
                                 ),
                               );
                             }),
+                            ...state.incomingInvites.map((CaregiverItem c) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: PersonCard(
+                                  avatar: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF665FCE),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.mail_outline,
+                                      size: 30.sp,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  name: c.name,
+                                  subtitle:
+                                      "${c.role} · ${c.daysRemaining} days left",
+                                  statusPill: const StatusPill(
+                                    text: "Respond",
+                                    textColor: Color(0xFF665FCE),
+                                    backgroundColor: Color(0xFFF3F2FE),
+                                  ),
+                                  showChevron: true,
+                                  onTap: () async {
+                                    await context.push(
+                                      RoutePaths.inviteRespond,
+                                      extra: <String, dynamic>{
+                                        'invitationId': c.id,
+                                      },
+                                    );
+                                    if (context.mounted) {
+                                      context.read<FamilyMenuCubit>().init();
+                                    }
+                                  },
+                                ),
+                              );
+                            }),
                             ...state.pendingInvites.map((CaregiverItem c) {
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 12.h),

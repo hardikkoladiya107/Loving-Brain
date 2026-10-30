@@ -19,6 +19,8 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
   _childSubscription;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _inviteSubscription;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?
+  _incomingInviteSubscription;
 
   Future<void> init() async {
     final ChildModel? child = preferences.getChildModel();
@@ -41,12 +43,15 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     _childSubscription = null;
     _inviteSubscription?.cancel();
     _inviteSubscription = null;
+    _incomingInviteSubscription?.cancel();
+    _incomingInviteSubscription = null;
     emit(const FamilyMenuState());
   }
 
   void _setupStreams(String? childId, String? userEmail) {
     _childSubscription?.cancel();
     _inviteSubscription?.cancel();
+    _incomingInviteSubscription?.cancel();
 
     if (childId != null && childId.isNotEmpty) {
       try {
@@ -62,11 +67,25 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
       } catch (_) {}
     }
 
-    if (userEmail != null && userEmail.isNotEmpty) {
+    final String? uid = preferences.getUserModel()?.uid;
+    if (uid != null && uid.isNotEmpty) {
       try {
         _inviteSubscription = FirebaseFirestore.instance
             .collection('co-parent-invitation')
-            .where('from_parent', isEqualTo: userEmail)
+            .where('from_uid', isEqualTo: uid)
+            .where('status', isEqualTo: 'REQUESTED')
+            .snapshots()
+            .listen((QuerySnapshot<Map<String, dynamic>> snap) {
+              if (!isClosed) {
+                _loadCaregivers();
+              }
+            }, onError: (_) {});
+      } catch (_) {}
+      try {
+        _incomingInviteSubscription = FirebaseFirestore.instance
+            .collection('co-parent-invitation')
+            .where('to_uid', isEqualTo: uid)
+            .where('status', isEqualTo: 'REQUESTED')
             .snapshots()
             .listen((QuerySnapshot<Map<String, dynamic>> snap) {
               if (!isClosed) {
@@ -189,51 +208,69 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
       pendingRes.whenOrNull(
         data: (List<Map<String, dynamic>> items) {
           for (final Map<String, dynamic> item in items) {
-            final String id = item['id'] as String? ?? '';
-            final String toEmail = item['to_parent'] as String? ?? '';
-            final String role = item['role'] as String? ?? 'Co-Parent';
-            final String name = role.isNotEmpty ? role : 'Co-Parent';
-            int daysRemaining = 14;
-            final DateTime now = DateTime.now();
-            if (item['created_at'] != null) {
-              final DateTime? created = DateTime.tryParse(
-                item['created_at'].toString(),
-              );
-              if (created != null) {
-                final int daysPassed = now.difference(created).inDays;
-                daysRemaining = (14 - daysPassed).clamp(0, 14);
-              }
-            } else if (item['expires_at'] != null) {
-              final DateTime? expires = DateTime.tryParse(
-                item['expires_at'].toString(),
-              );
-              if (expires != null) {
-                daysRemaining = (expires.difference(now).inMinutes / 1440.0)
-                    .ceil();
-                if (daysRemaining < 0) daysRemaining = 0;
-                if (daysRemaining > 14) daysRemaining = 14;
-              }
-            }
             pending.add(
-              CaregiverItem(
-                id: id,
-                name: name.isNotEmpty ? name : toEmail,
-                email: toEmail,
-                role: role,
-                status: 'Awaiting response',
-                daysRemaining: daysRemaining,
-              ),
+              _caregiverFromInvite(item, status: 'Awaiting response'),
             );
           }
         },
       );
     }
 
+    final List<CaregiverItem> incoming = <CaregiverItem>[];
+    final List<Map<String, dynamic>> incomingDocs = await CoParentRepo.instance
+        .getIncomingPendingInvitations();
+    for (final Map<String, dynamic> item in incomingDocs) {
+      incoming.add(_caregiverFromInvite(item, status: 'Respond'));
+    }
+
     changeProps(
       isCurrentUserOwner: isCurrentUserOwner,
       linkedCaregivers: linked,
       pendingInvites: pending,
+      incomingInvites: incoming,
       fetchStatus: const ApiResultStatus.data(data: null),
+    );
+  }
+
+  CaregiverItem _caregiverFromInvite(
+    Map<String, dynamic> item, {
+    required String status,
+  }) {
+    final String id = item['id'] as String? ?? '';
+    final String toEmail = item['to_parent'] as String? ?? '';
+    final String fromParent = item['from_parent'] as String? ?? '';
+    final String role = item['role'] as String? ?? 'Co-Parent';
+    final String displayEmail = status == 'Respond' && fromParent.isNotEmpty
+        ? fromParent
+        : toEmail;
+    int daysRemaining = 14;
+    final DateTime now = DateTime.now();
+    if (item['expires_at'] != null) {
+      final DateTime? expires = DateTime.tryParse(
+        item['expires_at'].toString(),
+      );
+      if (expires != null) {
+        daysRemaining = (expires.difference(now).inMinutes / 1440.0)
+            .ceil()
+            .clamp(0, 14);
+      }
+    } else if (item['created_at'] != null) {
+      final DateTime? created = DateTime.tryParse(
+        item['created_at'].toString(),
+      );
+      if (created != null) {
+        daysRemaining = (14 - now.difference(created).inDays).clamp(0, 14);
+      }
+    }
+    return CaregiverItem(
+      id: id,
+      name: status == 'Respond'
+          ? (fromParent.isNotEmpty ? fromParent : 'Family invite')
+          : (role.isNotEmpty ? role : toEmail),
+      email: displayEmail,
+      role: role,
+      status: status,
+      daysRemaining: daysRemaining,
     );
   }
 
@@ -265,6 +302,7 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
   Future<void> close() {
     _childSubscription?.cancel();
     _inviteSubscription?.cancel();
+    _incomingInviteSubscription?.cancel();
     return super.close();
   }
 
@@ -274,6 +312,7 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
     bool? isCurrentUserOwner,
     List<CaregiverItem>? linkedCaregivers,
     List<CaregiverItem>? pendingInvites,
+    List<CaregiverItem>? incomingInvites,
     ApiResultStatus? fetchStatus,
     ApiResultStatus? leaveStatus,
   }) {
@@ -285,6 +324,7 @@ class FamilyMenuCubit extends Cubit<FamilyMenuState> {
         isCurrentUserOwner: isCurrentUserOwner ?? state.isCurrentUserOwner,
         linkedCaregivers: linkedCaregivers ?? state.linkedCaregivers,
         pendingInvites: pendingInvites ?? state.pendingInvites,
+        incomingInvites: incomingInvites ?? state.incomingInvites,
         fetchStatus: fetchStatus ?? ApiResultStatus.initial(),
         leaveStatus: leaveStatus ?? ApiResultStatus.initial(),
       ),

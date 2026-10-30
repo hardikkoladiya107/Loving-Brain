@@ -238,3 +238,37 @@ test("social identity merges old profile onto current auth uid", () => {
       },
   );
 });
+
+test("pending invite for that email needs to_uid backfill", () => {
+  const ids = authIdentity.invitesNeedingToUidBackfill(
+      [
+        {
+          id: "inv1",
+          status: "REQUESTED",
+          to_parent: "Care@Example.COM",
+          to_uid: null,
+        },
+        {
+          id: "inv2",
+          status: "REQUESTED",
+          to_parent: "other@example.com",
+          to_uid: null,
+        },
+        {
+          id: "inv3",
+          status: "ACCEPTED",
+          to_parent: "care@example.com",
+          to_uid: null,
+        },
+        {
+          id: "inv4",
+          status: "REQUESTED",
+          to_parent: "care@example.com",
+          to_uid: "uid1",
+        },
+      ],
+      "care@example.com",
+      "uid1",
+  );
+  assert.deepEqual(ids, ["inv1"]);
+});

@@ -51,4 +51,26 @@ void main() {
       );
     });
   });
+
+  group('FamilyMembershipHelpers.filterHealthTimelineEvents', () {
+    test('keeps health rows when caregiver can view health', () {
+      final List<String> filtered =
+          FamilyMembershipHelpers.filterHealthTimelineEvents<String>(
+            events: <String>['sleep', 'health_log', 'note'],
+            canViewHealth: true,
+            typeOf: (String e) => e,
+          );
+      expect(filtered, <String>['sleep', 'health_log', 'note']);
+    });
+
+    test('drops health rows when caregiver cannot view health', () {
+      final List<String> filtered =
+          FamilyMembershipHelpers.filterHealthTimelineEvents<String>(
+            events: <String>['sleep', 'health_log', 'note'],
+            canViewHealth: false,
+            typeOf: (String e) => e,
+          );
+      expect(filtered, <String>['sleep', 'note']);
+    });
+  });
 }
