@@ -203,6 +203,15 @@ void main() {
           findsOneWidget,
         );
         expect(find.byType(TextButton), findsNothing);
+
+        final Size editBtnSize = tester.getSize(
+          find.widgetWithText(AppButton, 'Edit active child profile'),
+        );
+        final Size addBtnSize = tester.getSize(
+          find.widgetWithText(AppButton, '+ Add another child'),
+        );
+        expect(editBtnSize.width, greaterThan(340));
+        expect(addBtnSize.width, greaterThan(340));
       },
     );
   });

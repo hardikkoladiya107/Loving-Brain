@@ -38,8 +38,9 @@ class _BaseScreenState extends State<BaseScreen> {
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.dark,
             statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarColor: Colors.white,
             systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             // Match primary tabs so any gap under transparent layers is neutral.

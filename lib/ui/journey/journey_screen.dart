@@ -47,8 +47,9 @@ class _JourneyScreenState extends State<JourneyScreen> {
             statusBarColor: Colors.transparent,
             statusBarIconBrightness: Brightness.dark,
             statusBarBrightness: Brightness.light,
-            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarColor: Colors.white,
             systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),

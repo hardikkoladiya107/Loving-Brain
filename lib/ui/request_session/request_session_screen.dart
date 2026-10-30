@@ -70,8 +70,13 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
         final String guideName = state.guide?.name ?? "Priya";
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.dark.copyWith(
+          value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Color(0xFFFEF8F4),
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),

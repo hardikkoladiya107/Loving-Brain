@@ -59,8 +59,9 @@ Future<void> main() async {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFFFEF8F4),
+      systemNavigationBarColor: Colors.white,
       systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarDividerColor: Colors.transparent,
     ),
   );
   await SystemChrome.setPreferredOrientations([
@@ -140,8 +141,9 @@ class _MyAppState extends State<MyApp> {
                 statusBarColor: Colors.transparent,
                 statusBarIconBrightness: Brightness.dark,
                 statusBarBrightness: Brightness.light,
-                systemNavigationBarColor: Color(0xFFFEF8F4),
+                systemNavigationBarColor: Colors.white,
                 systemNavigationBarIconBrightness: Brightness.dark,
+                systemNavigationBarDividerColor: Colors.transparent,
               ),
             ),
             fontFamily: GoogleFonts.quicksand().fontFamily,

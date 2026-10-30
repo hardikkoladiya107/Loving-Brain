@@ -82,8 +82,13 @@ class _TodayScreenState extends State<TodayScreen> {
     return BlocBuilder<TodayCubit, TodayState>(
       builder: (BuildContext context, TodayState state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.dark.copyWith(
+          value: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+            systemNavigationBarColor: Colors.white,
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarDividerColor: Colors.transparent,
           ),
           child: Scaffold(
             backgroundColor: const Color(0xFFFEF8F4),

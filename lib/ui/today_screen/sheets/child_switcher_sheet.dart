@@ -117,7 +117,7 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               // Drag Handle
               Center(
@@ -291,6 +291,8 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
               // Action: Add another child
               AppButton(
                 title: "+ Add another child",
+                padding: EdgeInsets.zero,
+                height: 52.h,
                 backgroundColor: Colors.white,
                 borderColor: const Color(0xFFE9E2DC),
                 textColor: greyColor9,
@@ -334,9 +336,11 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                 // Action: Edit active child profile
                 AppButton(
                   title: "Edit active child profile",
-                  backgroundColor: Colors.white,
-                  borderColor: const Color(0xFFE9E2DC),
-                  textColor: greyColor9,
+                  padding: EdgeInsets.zero,
+                  height: 52.h,
+                  backgroundColor: const Color(0xFFFFF7F4),
+                  borderColor: const Color(0xFFFCDFD7),
+                  textColor: primaryColor,
                   widget: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
@@ -351,7 +355,7 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                         child: "Edit active child profile".appText(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w700,
-                          color: greyColor9,
+                          color: primaryColor,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

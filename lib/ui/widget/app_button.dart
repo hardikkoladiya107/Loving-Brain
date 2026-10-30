@@ -17,6 +17,7 @@ class AppButton extends StatelessWidget {
     this.widget,
     this.borderRadius,
     this.height,
+    this.width,
     this.padding = const EdgeInsets.only(left: 16, right: 16),
     this.isLoading = false,
     this.loaderColor,
@@ -27,6 +28,7 @@ class AppButton extends StatelessWidget {
 
   final String? title;
   final double? height;
+  final double? width;
   final Widget? widget;
   final BorderRadius? borderRadius;
   final GestureTapCallback? onTap;
@@ -47,6 +49,7 @@ class AppButton extends StatelessWidget {
       child: BaseButton(
         onTap: isLoading ? null : onTap,
         child: Container(
+          width: width ?? double.infinity,
           height: height ?? 56,
           decoration: BoxDecoration(
             color: backgroundColor,
@@ -60,9 +63,10 @@ class AppButton extends StatelessWidget {
                     size: loaderSize ?? 24.r,
                   ),
                 )
-              : widget ??
-                    Center(
-                      child: Padding(
+              : Center(
+                  child:
+                      widget ??
+                      Padding(
                         padding:
                             contentPadding ??
                             const EdgeInsets.symmetric(horizontal: 16),
@@ -74,7 +78,7 @@ class AppButton extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
+                ),
         ),
       ),
     );
