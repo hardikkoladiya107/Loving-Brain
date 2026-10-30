@@ -251,12 +251,30 @@ class UserRepo {
     }
   }
 
-  /// Shares one daily send count with Cloud Functions. Failures stay local.
-  Future<void> recordNotificationSent(DateTime when) async {
+  /// Publishes the phone's UTC offset so server quiet hours match this device.
+  Future<void> syncDeviceNotificationClock() async {
+    try {
+      final String uid = preferences.getUserModel()?.uid ?? '';
+      final bool loggedIn =
+          preferences.getBool(SharedPreference.isLogin) ?? false;
+      if (!loggedIn || uid.isEmpty) {
+        return;
+      }
+      final int offsetMinutes = DateTime.now().timeZoneOffset.inMinutes;
+      await userCollection.doc(uid).set(<String, dynamic>{
+        'notification_utc_offset_minutes': offsetMinutes,
+      }, SetOptions(merge: true));
+    } catch (_) {}
+  }
+
+  /// Shares one daily send count with Cloud Functions.
+  /// Returns false only when the shared cap is already full.
+  /// A network failure returns true so a local reminder can still be set.
+  Future<bool> recordNotificationSent(DateTime when) async {
     try {
       final String uid = preferences.getUserModel()?.uid ?? '';
       if (uid.isEmpty) {
-        return;
+        return true;
       }
       final String dayKey =
           '${when.year.toString().padLeft(4, '0')}-'
@@ -265,7 +283,7 @@ class UserRepo {
       final DocumentReference<Map<String, dynamic>> ref = userCollection.doc(
         uid,
       );
-      await FirebaseFirestore.instance.runTransaction((
+      return await FirebaseFirestore.instance.runTransaction<bool>((
         Transaction transaction,
       ) async {
         final DocumentSnapshot<Map<String, dynamic>> snap = await transaction
@@ -276,12 +294,26 @@ class UserRepo {
         final int storedCount = storedDay == dayKey
             ? (data['notification_sent_count'] as num?)?.toInt() ?? 0
             : 0;
+        final Object? rawPrefs = data['notification_preferences'];
+        final Map<String, dynamic> prefs = rawPrefs is Map
+            ? Map<String, dynamic>.from(rawPrefs)
+            : <String, dynamic>{};
+        final int capRaw = (prefs['maxDailyCap'] as num?)?.toInt() ?? 3;
+        final int cap = capRaw > 0 ? capRaw : 3;
+        if (storedCount >= cap) {
+          return false;
+        }
         transaction.set(ref, <String, dynamic>{
           'notification_sent_day': dayKey,
           'notification_sent_count': storedCount + 1,
+          'notification_utc_offset_minutes':
+              DateTime.now().timeZoneOffset.inMinutes,
         }, SetOptions(merge: true));
+        return true;
       });
-    } catch (_) {}
+    } catch (_) {
+      return true;
+    }
   }
 
   Future<ApiResultStatus> updateUserToFireStore({

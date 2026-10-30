@@ -15,6 +15,7 @@ import '../../../model/user_model.dart';
 import '../../../other/fcm_token_service.dart';
 import '../../../other/preferances.dart';
 import '../../../repo/auth_repo.dart';
+import '../../../repo/user_repo.dart';
 import 'base_state.dart';
 
 class BaseCubit extends Cubit<BaseState> {
@@ -210,6 +211,7 @@ class BaseCubit extends Cubit<BaseState> {
         await AuthRepo.instance.updateUserToFireStore(
           request: <String, dynamic>{"fcm_token": token},
         );
+        await UserRepo.instance.syncDeviceNotificationClock();
       }
     } catch (e) {
       // Ignore token-sync failures; app can continue and retry later.

@@ -16,6 +16,8 @@ const {
 const {
   evaluateDelivery,
   claimDailySlot,
+  releaseDailySlot,
+  releaseFailedDeliveries,
   selectDeliverableTokens,
 } = require("../services/notificationDelivery");
 
@@ -111,17 +113,17 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
           .where("children", "array-contains", childRef)
           .get();
 
-      const tokens = await selectDeliverableTokens(
+      const deliveries = await selectDeliverableTokens(
           usersSnapshot.docs,
           "routine",
           new Date(),
       );
 
-      if (tokens.length > 0) {
+      if (deliveries.length > 0) {
         const {title, body: notificationBody} =
           getRoutineNotificationCopy(description);
         await sendMulticastBatched(
-            tokens,
+            deliveries,
             title,
             notificationBody,
         );
@@ -157,17 +159,17 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
             .get();
         userDocs.push(...users.docs);
       }
-      const tokens = await selectDeliverableTokens(
+      const deliveries = await selectDeliverableTokens(
           userDocs,
           "shared_event",
           new Date(),
       );
-      if (tokens.length > 0) {
+      if (deliveries.length > 0) {
         const eventTitle = eventData.title || "";
         const {title, body: notificationBody} =
           getSharedEventNotificationCopy(eventTitle);
         await sendMulticastBatched(
-            tokens,
+            deliveries,
             title,
             notificationBody,
         );
@@ -182,15 +184,18 @@ exports.sendScheduledNotification = onRequest(async (req, res) => {
 });
 
 /**
- * Sends multicast in batches of FCM_MULTICAST_LIMIT to respect API limit.
- * @param {string[]} tokens - FCM tokens.
+ * Sends reserved deliveries in batches of FCM_MULTICAST_LIMIT.
+ * Gives the daily slot back when a token fails.
+ * @param {Array<{token: string, ref: object, decision: object}>} deliveries
  * @param {string} title - Notification title.
  * @param {string} body - Notification body.
  */
-async function sendMulticastBatched(tokens, title, body) {
-  for (let i = 0; i < tokens.length; i += FCM_MULTICAST_LIMIT) {
-    const chunk = tokens.slice(i, i + FCM_MULTICAST_LIMIT);
-    await sendMulticastNotification(chunk, title, body);
+async function sendMulticastBatched(deliveries, title, body) {
+  for (let i = 0; i < deliveries.length; i += FCM_MULTICAST_LIMIT) {
+    const chunk = deliveries.slice(i, i + FCM_MULTICAST_LIMIT);
+    const tokens = chunk.map((item) => item.token);
+    const result = await sendMulticastNotification(tokens, title, body);
+    await releaseFailedDeliveries(chunk, result);
   }
 }
 
@@ -217,13 +222,13 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
         .where("is_notification", "==", true)
         .get();
 
-    const tokens = await selectDeliverableTokens(
+    const deliveries = await selectDeliverableTokens(
         usersSnapshot.docs,
         "announcement",
         new Date(),
     );
 
-    if (tokens.length === 0) {
+    if (deliveries.length === 0) {
       return res.status(200).send({
         success: true,
         message: "No eligible users found (no tokens or notifications disabled)",
@@ -231,13 +236,13 @@ exports.sendNotificationToAll = onRequest(async (req, res) => {
       });
     }
 
-    await sendMulticastBatched(tokens, title, body);
-    logger.info(`Broadcast notification sent to ${tokens.length} users.`);
+    await sendMulticastBatched(deliveries, title, body);
+    logger.info(`Broadcast notification sent to ${deliveries.length} users.`);
 
     return res.status(200).send({
       success: true,
       message: "Notifications sent successfully",
-      sent: tokens.length,
+      sent: deliveries.length,
     });
   } catch (error) {
     logger.error("Error sending notifications", {error});
@@ -265,6 +270,7 @@ exports.sendPushNotification = onRequest(async (req, res) => {
         .where("fcm_token", "==", token)
         .limit(1)
         .get();
+    let reserved = null;
     if (!owners.empty) {
       const owner = owners.docs[0];
       const kind = (data && data.type) ? String(data.type) : "announcement";
@@ -282,11 +288,15 @@ exports.sendPushNotification = onRequest(async (req, res) => {
           skipped: "daily_cap",
         });
       }
+      reserved = {ref: owner.ref, decision};
     }
 
     const result = await sendNotification(token, title, body, data);
 
     if (!result.success) {
+      if (reserved) {
+        await releaseDailySlot(reserved.ref, reserved.decision);
+      }
       throw result.error;
     }
 

@@ -1,7 +1,11 @@
 const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {sendMulticastNotification} = require("../notification");
-const {evaluateDelivery, claimDailySlot} = require("./notificationDelivery");
+const {
+  evaluateDelivery,
+  claimDailySlot,
+  releaseFailedDeliveries,
+} = require("./notificationDelivery");
 const {NOTIFICATION_COPY} = require("../config/constants");
 
 /**
@@ -57,7 +61,8 @@ async function handleEnergyBridgeWrite(event, deps = {}) {
       [];
     if (parentUids.length === 0) return;
 
-    const tokens = [];
+    const deliveries = [];
+    const seenTokens = new Set();
     const uidChunkSize = 10;
     for (let i = 0; i < parentUids.length; i += uidChunkSize) {
       const chunk = parentUids.slice(i, i + uidChunkSize);
@@ -66,19 +71,19 @@ async function handleEnergyBridgeWrite(event, deps = {}) {
           .get();
       for (const userDoc of usersSnap.docs) {
         const data = userDoc.data() || {};
+        const rawToken = data.fcm_token;
+        const token = typeof rawToken === "string" ? rawToken.trim() : "";
+        if (!token || seenTokens.has(token)) continue;
         const decision = evaluateDelivery(data, "energy_bridge", now);
         if (!decision.allow) continue;
         const claimed = await claimDailySlot(userDoc.ref, data, decision);
         if (!claimed) continue;
-        const token = data.fcm_token;
-        if (token && typeof token === "string" && token.trim()) {
-          tokens.push(token.trim());
-        }
+        seenTokens.add(token);
+        deliveries.push({token, ref: userDoc.ref, decision});
       }
     }
 
-    const uniqueTokens = [...new Set(tokens)];
-    if (uniqueTokens.length === 0) return;
+    if (deliveries.length === 0) return;
 
     const childName = (childData.child_name || "").toString().trim();
     const durationMinutes = Number(afterData.duration_minutes || 105);
@@ -86,8 +91,8 @@ async function handleEnergyBridgeWrite(event, deps = {}) {
       childName || "Your child"
     } has been in high energy for ${durationMinutes} minutes`;
 
-    await sendMulticast(
-        uniqueTokens,
+    const result = await sendMulticast(
+        deliveries.map((item) => item.token),
         notificationCopy.ENERGY_BRIDGE.TITLE,
         notificationBody,
         {
@@ -96,9 +101,10 @@ async function handleEnergyBridgeWrite(event, deps = {}) {
           screen: "smart_moment",
         },
     );
+    await releaseFailedDeliveries(deliveries, result);
     log.info("Energy bridge fired push sent", {
       childId,
-      recipients: uniqueTokens.length,
+      recipients: deliveries.length,
     });
   } catch (error) {
     log.error("Failed to send energy bridge fired push", {

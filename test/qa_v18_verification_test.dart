@@ -249,7 +249,7 @@ void main() {
     );
 
     testWidgets(
-      'Sleep update sheet auto-updates NAP STARTED & ENDED when fell asleep and woke up times are set',
+      'Sleep update sheet keeps night and nap intervals independent',
       (WidgetTester tester) async {
         tester.view.physicalSize = const Size(389, 844);
         tester.view.devicePixelRatio = 1.0;
@@ -274,20 +274,22 @@ void main() {
         );
         await tester.pump(const Duration(milliseconds: 100));
 
-        // Initially placeholder is visible
-        expect(find.text('HH:MM AM - HH:MM PM'), findsOneWidget);
+        expect(find.text('NAP STARTED'), findsOneWidget);
+        expect(find.text('NAP ENDED'), findsOneWidget);
 
-        // Set fell asleep time
-        cubit.setFellAsleepTime('10:53 pm');
+        cubit.setFellAsleepTime('10:53 PM');
         await tester.pump(const Duration(milliseconds: 100));
+        expect(find.text('10:53 PM'), findsOneWidget);
+        expect(cubit.state.napStartTime, isNull);
 
-        expect(find.text('10:53 pm \u2013 HH:MM'), findsOneWidget);
-
-        // Set woke up time
-        cubit.setWokeUpTime('10:53 pm');
+        cubit.setNapStartTime('01:00 PM');
+        cubit.setNapEndTime('02:15 PM');
         await tester.pump(const Duration(milliseconds: 100));
-
-        expect(find.text('10:53 pm \u2013 10:53 pm'), findsOneWidget);
+        expect(cubit.state.fellAsleepTime, equals('10:53 PM'));
+        expect(cubit.state.napStartTime, equals('01:00 PM'));
+        expect(cubit.state.napEndTime, equals('02:15 PM'));
+        expect(find.text('01:00 PM'), findsOneWidget);
+        expect(find.text('02:15 PM'), findsOneWidget);
 
         await cubit.close();
       },

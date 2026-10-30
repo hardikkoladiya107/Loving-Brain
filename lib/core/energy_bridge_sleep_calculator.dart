@@ -323,7 +323,13 @@ class EnergyBridgeSleepCalculator {
 
     // If the anchored estimate is outside a sensible evening range, fall back
     // to the child's usual bedtime and keep confidence honest (Doc 04 §2).
-    final DateTime softMinBedtime = DateTime(now.year, now.month, now.day, 17, 0);
+    final DateTime softMinBedtime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      17,
+      0,
+    );
     final DateTime softMaxBedtime = DateTime(
       now.year,
       now.month,
@@ -340,8 +346,13 @@ class EnergyBridgeSleepCalculator {
         effectiveAgeMonths: effectiveAgeMonths,
       );
       usedFallbackBedtime = true;
-      reasonText =
-          "Tonight's estimate is still wide — recent wake timing sits outside a typical evening window, so we are using $cName's usual bedtime as a guide.";
+      if (shortNapDiff > 0) {
+        reasonText =
+            "$cName's nap ran about $shortNapDiff minutes short, so tonight's estimate is still wide. Using $cName's usual bedtime as a guide rather than a precise early window.";
+      } else {
+        reasonText =
+            "Tonight's estimate is still wide — recent wake timing sits outside a typical evening window, so we are using $cName's usual bedtime as a guide.";
+      }
     }
 
     // 6. Evaluate confidence level and health caveats

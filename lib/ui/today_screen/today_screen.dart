@@ -257,17 +257,9 @@ class _TodayScreenState extends State<TodayScreen> {
     );
 
     if (state.prioritiseSleepFirst) {
-      return <Widget>[
-        sleepCard,
-        SizedBox(height: 16.h),
-        behaviourButton,
-      ];
+      return <Widget>[sleepCard, SizedBox(height: 16.h), behaviourButton];
     }
-    return <Widget>[
-      behaviourButton,
-      SizedBox(height: 16.h),
-      sleepCard,
-    ];
+    return <Widget>[behaviourButton, SizedBox(height: 16.h), sleepCard];
   }
 
   Widget _buildNoChildCard(BuildContext context) {

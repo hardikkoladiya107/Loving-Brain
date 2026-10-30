@@ -82,8 +82,33 @@ class V2NotificationScheduler {
     reserved.add(notificationId.toString());
     preferences.putStringList(_reservedKey(date), reserved);
     incrementCountForDate(date);
-    UserRepo.instance.recordNotificationSent(date);
+    UserRepo.instance.recordNotificationSent(date).then((bool allowed) {
+      if (allowed) {
+        return;
+      }
+      _releaseLocalSlot(notificationId: notificationId, date: date);
+      NotificationUtil.cancelNotification(notificationId);
+    });
     return true;
+  }
+
+  static void _releaseLocalSlot({
+    required int notificationId,
+    required DateTime date,
+  }) {
+    final List<String> reserved =
+        preferences.getStringList(_reservedKey(date)) ?? <String>[];
+    final String id = notificationId.toString();
+    if (!reserved.contains(id)) {
+      return;
+    }
+    reserved.remove(id);
+    preferences.putStringList(_reservedKey(date), reserved);
+    final int current = getCountForDate(date);
+    if (current > 0) {
+      final String dateStr = DateFormat('yyyy-MM-dd').format(date);
+      preferences.putInt('v2_notif_count_$dateStr', current - 1);
+    }
   }
 
   /// Returns the count of notifications delivered today
@@ -245,6 +270,7 @@ class V2NotificationScheduler {
       body: 'Wind-down may start around $timeStr tonight for $childName.',
       payload: 'sleep_window',
       scheduledDate: notifyTime,
+      allowInexact: isUserDefined,
     );
     if (!scheduled) {
       return false;
@@ -518,6 +544,7 @@ class V2NotificationScheduler {
             'Your mentorship session with $mentorName is tomorrow at ${DateFormat('h:mm a').format(sessionTime)}.',
         payload: 'mentorship_reminder',
         scheduledDate: t24h,
+        allowInexact: true,
       );
       if (scheduled) {
         reserveCapSlotIfNeeded(notificationId: id24h, date: t24h);
@@ -543,6 +570,7 @@ class V2NotificationScheduler {
         body: 'Your mentorship session starts in 1 hour.',
         payload: 'mentorship_reminder',
         scheduledDate: t1h,
+        allowInexact: true,
       );
       if (scheduled) {
         reserveCapSlotIfNeeded(notificationId: id1h, date: t1h);
@@ -669,5 +697,7 @@ class V2NotificationScheduler {
     if (!next.mentorshipUpdates) {
       await cancelAllTrackedMentorshipNotifications();
     }
+
+    await NotificationUtil.cancelQuietHoursViolations();
   }
 }

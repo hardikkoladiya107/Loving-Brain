@@ -152,4 +152,44 @@ abstract class NotificationPreferencesModel
       return true;
     }
   }
+
+  /// Mentorship reminders and a sleep time the parent chose may arrive
+  /// during quiet hours. Everything else may not.
+  bool quietHoursException(String kind) {
+    if (kind == 'mentorship_reminder') {
+      return true;
+    }
+    if (kind == 'sleep_window' && sleepReminderTimeCustomized) {
+      return true;
+    }
+    return false;
+  }
+
+  /// True when a push arriving at [now] must be dropped.
+  bool blocksIncomingNow({required String kind, required DateTime now}) {
+    if (!isInsideQuietHours(now)) {
+      return false;
+    }
+    return !quietHoursException(kind);
+  }
+
+  /// True when a pending local alarm must be removed.
+  /// Future alarms whose clock falls inside quiet hours are removed.
+  /// Alarms that are already late are removed only while it is still quiet.
+  bool dropsScheduledReminder({
+    required String kind,
+    required DateTime? scheduled,
+    required DateTime now,
+  }) {
+    if (scheduled == null) {
+      return false;
+    }
+    final bool scheduledInside = isInsideQuietHours(scheduled);
+    final bool overdueWhileQuiet =
+        scheduled.isBefore(now) && isInsideQuietHours(now);
+    if (!scheduledInside && !overdueWhileQuiet) {
+      return false;
+    }
+    return !quietHoursException(kind);
+  }
 }

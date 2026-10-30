@@ -760,6 +760,8 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
                     }
 
                     final TodayCubit cubit = context.read<TodayCubit>();
+                    final NavigatorState navigator = Navigator.of(context);
+                    final GoRouter router = GoRouter.of(context);
 
                     if (_isPlaying) {
                       await _audioPlayer.stop();
@@ -768,8 +770,8 @@ class _AddNotesUpdateSheetState extends State<AddNotesUpdateSheet> {
                     if (!mounted) return;
 
                     if (hasTypedText && EmergencyDetector.isEmergency(text)) {
-                      Navigator.pop(context);
-                      context.push(
+                      navigator.pop();
+                      router.push(
                         RoutePaths.safetyConcern,
                         extra: <String, dynamic>{
                           'mode': 'acute',

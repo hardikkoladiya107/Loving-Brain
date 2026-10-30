@@ -18,6 +18,8 @@ import 'other/app_color.dart';
 import 'other/app_extentions.dart';
 import 'other/notification_util.dart';
 import 'other/preferances.dart';
+import 'other/v2_notification_scheduler.dart';
+import 'repo/user_repo.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -33,6 +35,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         message.data['type']?.toString() ??
         message.data['route']?.toString() ??
         '';
+    try {
+      await SharedPreference.init();
+      final bool blocked = V2NotificationScheduler.loadPreferences()
+          .blocksIncomingNow(kind: payload, now: DateTime.now());
+      if (blocked) {
+        return;
+      }
+    } catch (_) {
+      return;
+    }
 
     if (title.isNotEmpty || body.isNotEmpty) {
       await NotificationUtil.showLocalNotification(
@@ -118,13 +130,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      NotificationUtil.cancelOverdueQuietHoursNotifications();
+      NotificationUtil.cancelQuietHoursViolations();
+      UserRepo.instance.syncDeviceNotificationClock();
     }
   }
 
   Future<void> initNotification() async {
     await NotificationUtil.initializePlatformNotifications();
-    await NotificationUtil.cancelOverdueQuietHoursNotifications();
+    await NotificationUtil.cancelQuietHoursViolations();
+    await UserRepo.instance.syncDeviceNotificationClock();
   }
 
   @override

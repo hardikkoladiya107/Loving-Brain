@@ -138,9 +138,9 @@ class NotificationUtil {
     if (!kIsWeb && Platform.isIOS) {
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
-            alert: true,
-            badge: true,
-            sound: true,
+            alert: false,
+            badge: false,
+            sound: false,
           );
     }
     tz.initializeTimeZones();
@@ -203,15 +203,9 @@ class NotificationUtil {
       }
     }
 
-    // Foreground FCM listener: display local banner for data-only messages.
-    // On iOS, messages that already include a notification payload are presented
-    // by setForegroundNotificationPresentationOptions — avoid a second banner.
+    // Foreground pushes are shown here, after the quiet-hours check.
+    // iOS system presentation is off so a quiet-hours push is not shown twice.
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      final bool hasNotificationPayload = message.notification != null;
-      if (!kIsWeb && Platform.isIOS && hasNotificationPayload) {
-        return;
-      }
-
       final String title =
           message.notification?.title ??
           message.data['title']?.toString() ??
@@ -225,9 +219,7 @@ class NotificationUtil {
 
       final NotificationPreferencesModel prefs =
           V2NotificationScheduler.loadPreferences();
-      final bool quietNow = prefs.isInsideQuietHours(DateTime.now());
-      final bool quietException = payload == 'mentorship_reminder';
-      if (quietNow && !quietException) {
+      if (prefs.blocksIncomingNow(kind: payload, now: DateTime.now())) {
         return;
       }
 
@@ -260,6 +252,7 @@ class NotificationUtil {
           '';
       handleNotificationClick(payload);
     }
+    await tightenPendingSchedules();
   }
 
   static Future<bool> isPermissionGranted() async {
@@ -358,12 +351,15 @@ class NotificationUtil {
     } catch (_) {}
   }
 
+  static bool _askedForExactAlarm = false;
+
   static Future<bool> scheduleNotification({
     required int id,
     required String title,
     required String body,
     required String payload,
     required DateTime scheduledDate,
+    bool allowInexact = false,
   }) async {
     try {
       final NotificationDetails platformChannelSpecifics =
@@ -374,27 +370,80 @@ class NotificationUtil {
           );
       final String stampedPayload = stampPayload(payload, scheduledDate);
       final tz.TZDateTime zoned = tz.TZDateTime.from(scheduledDate, tz.local);
-      try {
-        await _localNotifications.zonedSchedule(
-          id: id,
-          title: title,
-          body: body,
-          scheduledDate: zoned,
-          notificationDetails: platformChannelSpecifics,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          payload: stampedPayload,
-        );
-      } catch (_) {
-        await _localNotifications.zonedSchedule(
-          id: id,
-          title: title,
-          body: body,
-          scheduledDate: zoned,
-          notificationDetails: platformChannelSpecifics,
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-          payload: stampedPayload,
-        );
+      final bool exact = await _scheduleZoned(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: zoned,
+        details: platformChannelSpecifics,
+        payload: stampedPayload,
+        mode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+      if (exact) {
+        return true;
       }
+      if (!_askedForExactAlarm && !kIsWeb && Platform.isAndroid) {
+        _askedForExactAlarm = true;
+        final AndroidFlutterLocalNotificationsPlugin? android =
+            _localNotifications
+                .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin
+                >();
+        final bool? canSchedule = await android
+            ?.canScheduleExactNotifications();
+        if (canSchedule != true) {
+          await android?.requestExactAlarmsPermission();
+        }
+        final bool retried = await _scheduleZoned(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: zoned,
+          details: platformChannelSpecifics,
+          payload: stampedPayload,
+          mode: AndroidScheduleMode.exactAllowWhileIdle,
+        );
+        if (retried) {
+          return true;
+        }
+      }
+      if (!allowInexact) {
+        return false;
+      }
+      final bool inexact = await _scheduleZoned(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: zoned,
+        details: platformChannelSpecifics,
+        payload: stampedPayload,
+        mode: AndroidScheduleMode.inexactAllowWhileIdle,
+      );
+      return inexact;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> _scheduleZoned({
+    required int id,
+    required String title,
+    required String body,
+    required tz.TZDateTime scheduledDate,
+    required NotificationDetails details,
+    required String payload,
+    required AndroidScheduleMode mode,
+  }) async {
+    try {
+      await _localNotifications.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        notificationDetails: details,
+        androidScheduleMode: mode,
+        payload: payload,
+      );
       return true;
     } catch (_) {
       return false;
@@ -428,33 +477,67 @@ class NotificationUtil {
     return DateTime.tryParse(payload.substring(index + 4));
   }
 
-  /// Cancels a pending reminder that is already late and would now surface
-  /// during quiet hours. Future reminders are left in place.
-  static Future<void> cancelOverdueQuietHoursNotifications() async {
+  /// Removes pending alarms that would appear during quiet hours.
+  /// This covers a quiet-hours edit and an alarm that is already late.
+  static Future<void> cancelQuietHoursViolations() async {
     try {
       final NotificationPreferencesModel prefs =
           V2NotificationScheduler.loadPreferences();
       final DateTime now = DateTime.now();
-      if (!prefs.isInsideQuietHours(now)) {
-        return;
+      final List<PendingNotificationRequest> pending = await _localNotifications
+          .pendingNotificationRequests();
+      for (final PendingNotificationRequest request in pending) {
+        final String kind = unstampPayload(request.payload);
+        final bool drop = prefs.dropsScheduledReminder(
+          kind: kind,
+          scheduled: scheduledInstantFromPayload(request.payload),
+          now: now,
+        );
+        if (drop) {
+          await cancelNotification(request.id);
+        }
       }
+    } catch (_) {}
+  }
+
+  /// Re-schedules future alarms as exact so a killed app cannot show them late.
+  static Future<void> tightenPendingSchedules() async {
+    try {
+      final NotificationPreferencesModel prefs =
+          V2NotificationScheduler.loadPreferences();
+      final DateTime now = DateTime.now();
       final List<PendingNotificationRequest> pending = await _localNotifications
           .pendingNotificationRequests();
       for (final PendingNotificationRequest request in pending) {
         final DateTime? scheduled = scheduledInstantFromPayload(
           request.payload,
         );
-        if (scheduled == null || !scheduled.isBefore(now)) {
+        if (scheduled == null || !scheduled.isAfter(now)) {
           continue;
         }
         final String kind = unstampPayload(request.payload);
-        final bool allowedLate =
-            kind == 'mentorship_reminder' ||
-            (kind == 'sleep_window' && prefs.sleepReminderTimeCustomized);
-        if (allowedLate) {
+        if (prefs.dropsScheduledReminder(
+          kind: kind,
+          scheduled: scheduled,
+          now: now,
+        )) {
+          await cancelNotification(request.id);
+          continue;
+        }
+        final String title = request.title ?? '';
+        final String body = request.body ?? '';
+        if (title.isEmpty && body.isEmpty) {
           continue;
         }
         await cancelNotification(request.id);
+        await scheduleNotification(
+          id: request.id,
+          title: title,
+          body: body,
+          payload: kind,
+          scheduledDate: scheduled,
+          allowInexact: prefs.quietHoursException(kind),
+        );
       }
     } catch (_) {}
   }

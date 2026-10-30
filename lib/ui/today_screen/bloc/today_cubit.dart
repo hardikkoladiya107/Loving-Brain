@@ -201,7 +201,8 @@ class TodayCubit extends Cubit<TodayState> {
         supportInconsistentDays:
             supportInconsistentDays ?? state.supportInconsistentDays,
         onboardingFocusLine: onboardingFocusLine ?? state.onboardingFocusLine,
-        prioritiseSleepFirst: prioritiseSleepFirst ?? state.prioritiseSleepFirst,
+        prioritiseSleepFirst:
+            prioritiseSleepFirst ?? state.prioritiseSleepFirst,
         instantResultTitle: instantResultTitle ?? state.instantResultTitle,
         instantResultAction: instantResultAction ?? state.instantResultAction,
         instantResultActionSubtitle:
@@ -1047,9 +1048,7 @@ class TodayCubit extends Cubit<TodayState> {
           changeReason = state.sleepForecastReason.isNotEmpty
               ? state.sleepForecastReason
               : 'Bedtime estimate moved to ${state.bedtimeEstimate}.';
-          final DateTime windDown = newDt.subtract(
-            const Duration(minutes: 30),
-          );
+          final DateTime windDown = newDt.subtract(const Duration(minutes: 30));
           final String windDownLabel = DateFormat('h:mm a').format(windDown);
           instantAction = 'Start wind-down at $windDownLabel';
           instantActionSubtitle = earlier
@@ -1139,9 +1138,7 @@ class TodayCubit extends Cubit<TodayState> {
       wokeUpTime: wokeUp,
       isNightWaking: state.isNightWaking,
       sleepQualityIndex: state.sleepQualityIndex,
-      durationMinutes: interval.wakeTime
-          .difference(interval.bedTime)
-          .inMinutes,
+      durationMinutes: interval.wakeTime.difference(interval.bedTime).inMinutes,
       userId: userUid,
       childId: childId,
       createdAt: dup.createdAt,
@@ -1390,12 +1387,8 @@ class TodayCubit extends Cubit<TodayState> {
         tantrumWhatHelped: '',
         showTantrumUpdateErrors: false,
         didForecastChangeSignificantly: behaviourShifted,
-        forecastChangeReason: behaviourShifted
-            ? updatedResult.reason
-            : '',
-        instantResultTitle: behaviourShifted
-            ? updatedResult.headline
-            : '',
+        forecastChangeReason: behaviourShifted ? updatedResult.reason : '',
+        instantResultTitle: behaviourShifted ? updatedResult.headline : '',
         instantResultAction: behaviourShifted ? 'Explore Calm Plan' : '',
         instantResultActionSubtitle: behaviourShifted
             ? 'Strategies for the upcoming challenging window.'

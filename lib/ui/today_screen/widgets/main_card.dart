@@ -261,10 +261,9 @@ class MainCard extends StatelessWidget {
               children: [
                 for (final int mins in labels) ...[
                   4.spaceW,
-                  _labelForMinutes(mins).appText(
-                    color: greyColor4,
-                    fontSize: 14.sp,
-                  ),
+                  _labelForMinutes(
+                    mins,
+                  ).appText(color: greyColor4, fontSize: 14.sp),
                   4.spaceW,
                 ],
               ],

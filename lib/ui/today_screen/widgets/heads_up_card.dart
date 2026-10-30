@@ -47,9 +47,7 @@ class HeadsUpCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InfoChip(
-            chipTitle: isHealthNote ? 'Health note' : 'Calm heads-up',
-          ),
+          InfoChip(chipTitle: isHealthNote ? 'Health note' : 'Calm heads-up'),
           InkWell(
             borderRadius: BorderRadius.circular(16.r),
             onTap: isHealthNote

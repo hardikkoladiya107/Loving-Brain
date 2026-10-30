@@ -6,7 +6,11 @@ const admin = require("firebase-admin");
 const logger = require("firebase-functions/logger");
 const {HttpsError} = require("firebase-functions/v2/https");
 const {sendNotification} = require("../notification");
-const {evaluateDelivery, claimDailySlot} = require("./notificationDelivery");
+const {
+  evaluateDelivery,
+  claimDailySlot,
+  releaseDailySlot,
+} = require("./notificationDelivery");
 const {buildBrevoInvitationBody} = require("../utils/emailTemplate");
 const {
   normalizeEmail,
@@ -325,18 +329,19 @@ async function createCoParentInvitation(db, params) {
       created_at: admin.firestore.FieldValue.serverTimestamp(),
       read: false,
     });
-    const token = invitee.data.fcm_token;
+    const rawToken = invitee.data.fcm_token;
+    const token = typeof rawToken === "string" ? rawToken.trim() : "";
     const decision = evaluateDelivery(
         invitee.data,
         "co_parent_invitation",
         new Date(),
     );
     const userRef = db.collection(USERS_COLLECTION).doc(invitee.uid);
-    const claimed = decision.allow ?
+    const claimed = token && decision.allow ?
       await claimDailySlot(userRef, invitee.data, decision) :
       false;
     if (token && decision.allow && claimed) {
-      await sendNotification(
+      const result = await sendNotification(
           token,
           "Co-parent invitation",
           `${displayName} invited you to care for ${childrenNames}`,
@@ -345,6 +350,9 @@ async function createCoParentInvitation(db, params) {
             invitationId,
           },
       );
+      if (!result || result.success === false) {
+        await releaseDailySlot(userRef, decision);
+      }
     }
   }
 

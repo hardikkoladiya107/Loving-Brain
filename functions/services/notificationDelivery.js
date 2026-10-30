@@ -18,7 +18,8 @@ const DEFAULT_PREFS = {
 const INVALID_TOKEN_CODES = new Set([
   "messaging/registration-token-not-registered",
   "messaging/invalid-registration-token",
-  "messaging/invalid-argument",
+  "registration-token-not-registered",
+  "invalid-registration-token",
 ]);
 
 /**
@@ -72,8 +73,10 @@ function zonedParts(date, timeZone) {
     for (const part of fmt.formatToParts(date)) {
       mapped[part.type] = part.value;
     }
+    let hour = Number(mapped.hour);
+    if (hour === 24) hour = 0;
     return {
-      hour: Number(mapped.hour),
+      hour,
       minute: Number(mapped.minute),
       dayKey: `${mapped.year}-${mapped.month}-${mapped.day}`,
     };
@@ -119,6 +122,40 @@ function readTimeZone(userData) {
     return zone.trim();
   }
   return "UTC";
+}
+
+/**
+ * Phone-local clock. Offset minutes come from the device.
+ * @param {Date} date
+ * @param {number} offsetMinutes
+ * @return {{hour: number, minute: number, dayKey: string}}
+ */
+function partsFromOffset(date, offsetMinutes) {
+  const shifted = new Date(date.getTime() + offsetMinutes * 60000);
+  const year = shifted.getUTCFullYear();
+  const month = String(shifted.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(shifted.getUTCDate()).padStart(2, "0");
+  return {
+    hour: shifted.getUTCHours(),
+    minute: shifted.getUTCMinutes(),
+    dayKey: `${year}-${month}-${day}`,
+  };
+}
+
+/**
+ * Uses the device offset when the app has published one.
+ * Otherwise uses the profile timezone, then UTC.
+ * @param {Date} date
+ * @param {object} userData
+ * @return {{hour: number, minute: number, dayKey: string}}
+ */
+function clockParts(date, userData) {
+  const raw = userData && userData.notification_utc_offset_minutes;
+  const offset = Number(raw);
+  if (raw !== undefined && raw !== null && Number.isFinite(offset)) {
+    return partsFromOffset(date, offset);
+  }
+  return zonedParts(date, readTimeZone(userData));
 }
 
 /**
@@ -190,7 +227,7 @@ function evaluateDelivery(userData, kind, now) {
   }
   const prefs = readPrefs(data);
   const timeZone = readTimeZone(data);
-  const zoned = zonedParts(now, timeZone);
+  const zoned = clockParts(now, data);
   if (!categoryAllowed(prefs, kind)) {
     return {
       allow: false,
@@ -257,6 +294,27 @@ async function clearInvalidToken(db, token) {
 }
 
 /**
+ * @param {FirebaseFirestore.DocumentReference} ref
+ * @return {Function|null}
+ */
+function transactionRunner(ref) {
+  if (!ref || !ref.firestore) return null;
+  const run = ref.firestore.runTransaction;
+  return typeof run === "function" ? run.bind(ref.firestore) : null;
+}
+
+/**
+ * @param {object} data
+ * @param {string} dayKey
+ * @return {number}
+ */
+function countForDay(data, dayKey) {
+  const currentDay = (data && data.notification_sent_day) || "";
+  if (currentDay !== dayKey) return 0;
+  return Number((data && data.notification_sent_count) || 0);
+}
+
+/**
  * Reserves one shared daily slot. Returns false when the cap is already full.
  * @param {FirebaseFirestore.DocumentReference} ref
  * @param {object} userData
@@ -264,21 +322,97 @@ async function clearInvalidToken(db, token) {
  * @return {Promise<boolean>}
  */
 async function claimDailySlot(ref, userData, decision) {
-  if (!ref || typeof ref.update !== "function") {
-    return true;
-  }
-  const currentDay = (userData && userData.notification_sent_day) || "";
-  const currentCount = currentDay === decision.dayKey ?
-    Number(userData.notification_sent_count || 0) :
-    0;
-  if (currentCount >= decision.prefs.maxDailyCap) {
+  if (!decision || decision.allow !== true || !decision.dayKey) {
     return false;
   }
-  await ref.update({
-    notification_sent_day: decision.dayKey,
-    notification_sent_count: currentCount + 1,
-  });
-  return true;
+  const cap = decision.prefs && decision.prefs.maxDailyCap ?
+    decision.prefs.maxDailyCap :
+    DEFAULT_PREFS.maxDailyCap;
+  const dayKey = decision.dayKey;
+  const run = transactionRunner(ref);
+  if (!run) {
+    if (!ref || typeof ref.update !== "function") {
+      return true;
+    }
+    const currentCount = countForDay(userData, dayKey);
+    if (currentCount >= cap) return false;
+    await ref.update({
+      notification_sent_day: dayKey,
+      notification_sent_count: currentCount + 1,
+    });
+    return true;
+  }
+  try {
+    return await run(async (tx) => {
+      const snap = await tx.get(ref);
+      const data = snap && typeof snap.data === "function" ?
+        (snap.data() || {}) :
+        {};
+      const currentCount = countForDay(data, dayKey);
+      if (currentCount >= cap) return false;
+      tx.update(ref, {
+        notification_sent_day: dayKey,
+        notification_sent_count: currentCount + 1,
+      });
+      return true;
+    });
+  } catch (error) {
+    return false;
+  }
+}
+
+/**
+ * Gives a reserved slot back when the push did not reach the device.
+ * @param {FirebaseFirestore.DocumentReference} ref
+ * @param {object} decision
+ * @return {Promise<void>}
+ */
+async function releaseDailySlot(ref, decision) {
+  if (!ref || !decision || !decision.dayKey) return;
+  const dayKey = decision.dayKey;
+  const run = transactionRunner(ref);
+  if (!run) {
+    if (typeof ref.update !== "function") return;
+    return;
+  }
+  try {
+    await run(async (tx) => {
+      const snap = await tx.get(ref);
+      const data = snap && typeof snap.data === "function" ?
+        (snap.data() || {}) :
+        {};
+      if ((data.notification_sent_day || "") !== dayKey) return;
+      const count = Number(data.notification_sent_count || 0);
+      if (count <= 0) return;
+      tx.update(ref, {notification_sent_count: count - 1});
+    });
+  } catch (error) {
+    // A leftover slot is safer than throwing out of the send path.
+  }
+}
+
+/**
+ * @param {Array<{ref: object, decision: object}>} deliveries
+ * @param {object|undefined} result
+ * @return {Promise<void>}
+ */
+async function releaseFailedDeliveries(deliveries, result) {
+  if (!result || !Array.isArray(deliveries)) return;
+  if (result.success === false || !Array.isArray(result.responses)) {
+    if (result.success === false) {
+      for (const item of deliveries) {
+        await releaseDailySlot(item.ref, item.decision);
+      }
+    }
+    return;
+  }
+  for (let index = 0; index < result.responses.length; index++) {
+    const item = deliveries[index];
+    const response = result.responses[index];
+    if (item && response && response.success === false) {
+      await releaseDailySlot(item.ref, item.decision);
+    }
+  }
 }
 
 module.exports = {
@@ -286,6 +420,8 @@ module.exports = {
   isInvalidTokenError,
   clearInvalidToken,
   claimDailySlot,
+  releaseDailySlot,
+  releaseFailedDeliveries,
   selectDeliverableTokens,
   readPrefs,
   zonedParts,
@@ -293,24 +429,26 @@ module.exports = {
 
 /**
  * Filters user documents by toggle, quiet hours, and the shared daily cap.
- * Claims a slot for each user that will actually be notified.
+ * A slot is claimed only when that user has a token that will be sent.
  * @param {FirebaseFirestore.QueryDocumentSnapshot[]} docs
  * @param {string} kind
  * @param {Date} now
- * @return {Promise<string[]>}
+ * @return {Promise<Array<{token: string, ref: object, decision: object}>>}
  */
 async function selectDeliverableTokens(docs, kind, now) {
-  const tokens = [];
-  for (const doc of docs) {
+  const deliveries = [];
+  const seen = new Set();
+  for (const doc of docs || []) {
     const data = typeof doc.data === "function" ? doc.data() || {} : {};
+    const rawToken = data.fcm_token;
+    const token = typeof rawToken === "string" ? rawToken.trim() : "";
+    if (!token || seen.has(token)) continue;
     const decision = evaluateDelivery(data, kind, now);
     if (!decision.allow) continue;
     const claimed = await claimDailySlot(doc.ref, data, decision);
     if (!claimed) continue;
-    const token = data.fcm_token;
-    if (typeof token === "string" && token.trim()) {
-      tokens.push(token.trim());
-    }
+    seen.add(token);
+    deliveries.push({token, ref: doc.ref, decision});
   }
-  return [...new Set(tokens)];
+  return deliveries;
 }

@@ -127,9 +127,6 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
             state.tantrumWhatHappened.trim().isEmpty;
         final bool isTimeError =
             state.showTantrumUpdateErrors && state.tantrumTime == null;
-        const bool isTriggersError = false;
-        const bool isWhatHelpedError = false;
-
         return DraggableScrollableSheet(
           initialChildSize: 0.94,
           minChildSize: 0.4,
@@ -219,21 +216,12 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                         ],
                       ),
                       24.spaceH,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: "POSSIBLE TRIGGER".appText(
-                              color: secondaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13.sp,
-                              letterSpacing: 1.2,
-                              textAlign: TextAlign.start,
-                            ),
-                          ),
-                          if (isTriggersError)
-                            Icon(Icons.error, color: Colors.red, size: 16.sp),
-                        ],
+                      "POSSIBLE TRIGGER (OPTIONAL)".appText(
+                        color: secondaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13.sp,
+                        letterSpacing: 1.2,
+                        textAlign: TextAlign.start,
                       ),
                       12.spaceH,
                       Wrap(
@@ -246,28 +234,17 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                           return AppChoiceChip(
                             label: trigger,
                             isSelected: isSelected,
-                            isError: isTriggersError && !isSelected,
                             onTap: () => context
                                 .read<TodayCubit>()
                                 .toggleTantrumTrigger(trigger),
                           );
                         }),
                       ),
-                      if (isTriggersError) ...[
-                        6.spaceH,
-                        "Please select at least one trigger".appText(
-                          fontSize: 12.sp,
-                          color: Colors.red,
-                          fontWeight: FontWeight.w500,
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
                       24.spaceH,
                       _buildTextInput(
-                        label: "WHAT HELPED",
+                        label: "WHAT HELPED (OPTIONAL)",
                         hint: "Holding them close",
-                        isError: isWhatHelpedError,
-                        errorText: "Please describe what helped",
+                        isError: false,
                         icon: Icons.description_outlined,
                         onChanged: (String val) => context
                             .read<TodayCubit>()

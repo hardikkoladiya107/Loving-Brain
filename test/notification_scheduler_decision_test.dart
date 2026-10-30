@@ -240,6 +240,39 @@ void main() {
       expect(NotificationPreferencesModel.formatHHmm(21, 0), '21:00');
     });
 
+    test('quiet-hours edits drop a future check-in inside the new window', () {
+      const NotificationPreferencesModel prefs = NotificationPreferencesModel(
+        quietHoursStart: '20:00',
+        quietHoursEnd: '07:00',
+      );
+      final DateTime checkIn = DateTime(2026, 11, 2, 20, 30);
+      final DateTime morning = DateTime(2026, 11, 2, 10, 0);
+      expect(
+        prefs.dropsScheduledReminder(
+          kind: 'gentle_check_in',
+          scheduled: checkIn,
+          now: morning,
+        ),
+        isTrue,
+      );
+      expect(
+        prefs.dropsScheduledReminder(
+          kind: 'mentorship_reminder',
+          scheduled: checkIn,
+          now: morning,
+        ),
+        isFalse,
+      );
+      expect(
+        prefs.blocksIncomingNow(kind: 'energy_bridge', now: checkIn),
+        isTrue,
+      );
+      expect(
+        prefs.blocksIncomingNow(kind: 'energy_bridge', now: morning),
+        isFalse,
+      );
+    });
+
     test('12h quiet hours match HH:mm overnight window', () {
       const NotificationPreferencesModel prefs = NotificationPreferencesModel(
         quietHoursStart: '9:00 PM',
