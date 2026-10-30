@@ -35,7 +35,6 @@ class _FaqScreenState extends State<FaqScreen> {
     'Sleep',
     'Tantrums',
     'Family sharing',
-    'Billing',
     'Medical',
   ];
 
@@ -92,28 +91,9 @@ class _FaqScreenState extends State<FaqScreen> {
     ),
     FaqItem(
       category: 'Family sharing',
-      question:
-          'Do co-parents or caregivers need a separate paid subscription?',
+      question: 'Do co-parents or caregivers need their own login?',
       answer:
-          'No! A single Loving Brain subscription covers both parents and all authorized family caregivers linked to your child’s account at no extra charge.',
-    ),
-    FaqItem(
-      category: 'Billing',
-      question: 'How does the 7-day free trial work?',
-      answer:
-          'You receive complete, unrestricted access to all premium features during your 7-day trial. You can cancel at any time before the trial ends without being charged.',
-    ),
-    FaqItem(
-      category: 'Billing',
-      question: 'How do I manage, change, or cancel my subscription?',
-      answer:
-          'Subscriptions are managed securely by Apple App Store (iOS) or Google Play Store (Android). To manage or cancel, open your phone settings, tap your account name, and select "Subscriptions".',
-    ),
-    FaqItem(
-      category: 'Billing',
-      question: 'What happens to my family’s logs and data if I cancel?',
-      answer:
-          'Your family snapshot, milestones, and logged entries remain safely preserved in your private account. You can export or permanently delete your account data at any time under Settings.',
+          'Yes. Each adult signs in with their own Loving Brain account. An invited co-parent joins the same family and can see the shared child profile. This version of the app does not charge a subscription for that.',
     ),
     FaqItem(
       category: 'Medical',

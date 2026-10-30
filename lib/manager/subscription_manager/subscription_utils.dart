@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 const String productIdKey = "product_id";
@@ -11,14 +12,16 @@ const String packageNameKey = "package_name";
 const String monthlyPlan = "com.app.lovingbrain.monthly";
 const String yearly = "com.app.lovingbrain.yearly";
 
-bool isForTest = true;
-
 final List<String> kProductIds = <String>[monthlyPlan, yearly];
 
-String iosSubscriptionStatusUrl(String transactionID) {
-  return isForTest
-      ? "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/subscriptions/$transactionID?status=1"
-      : "https://api.storekit.itunes.apple.com/inApps/v1/transactions/$transactionID?status=1";
+/// Debug builds use the StoreKit sandbox host. Release builds use production.
+/// Pass [sandbox] when the caller already knows the transaction environment.
+String iosSubscriptionStatusUrl(String transactionID, {bool? sandbox}) {
+  final bool useSandbox = sandbox ?? kDebugMode;
+  final String host = useSandbox
+      ? "https://api.storekit-sandbox.itunes.apple.com"
+      : "https://api.storekit.itunes.apple.com";
+  return "$host/inApps/v1/subscriptions/$transactionID";
 }
 
 const String privacyPolicyUrl =

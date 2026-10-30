@@ -167,17 +167,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ]),
 
-                            _buildSectionTitle("Account & Plan"),
+                            _buildSectionTitle("Account"),
                             _buildGroup([
-                              _settingItem(
-                                title: LocaleKeys.subscription.tr(),
-                                icon: LucideIcons.crown,
-                                iconBgColor: const Color(0xFFE5B02B),
-                                onTap: () {
-                                  context.push(RoutePaths.subscription);
-                                },
-                                isLast: false,
-                              ),
                               _settingItem(
                                 title: LocaleKeys.termsConditions.tr(),
                                 icon: LucideIcons.fileText,

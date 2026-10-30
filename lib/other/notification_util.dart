@@ -102,7 +102,7 @@ class NotificationUtil {
       return RoutePaths.familySnapshot;
     }
     if (clean == 'subscription') {
-      return RoutePaths.subscription;
+      return RoutePaths.base;
     }
     return RoutePaths.base;
   }

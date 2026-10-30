@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loving_brain/manager/subscription_manager/subscription_utils.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -77,17 +76,10 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
       setState(() {
         _isLoading = true;
         _hasError = false;
-        _hasFallbackLoaded = false;
+        _hasFallbackLoaded = true;
       });
     }
-
-    final Uri? uri = Uri.tryParse(termsOfUseWebUrl);
-    if (uri != null && uri.hasScheme && uri.host.isNotEmpty) {
-      _controller.loadRequest(uri);
-    } else {
-      _hasFallbackLoaded = true;
-      _controller.loadFlutterAsset('assets/html/terms_and_conditions.html');
-    }
+    _controller.loadFlutterAsset('assets/html/terms_and_conditions.html');
   }
 
   @override
