@@ -4,6 +4,7 @@ import 'package:loving_brain/core/energy_bridge_sleep_calculator.dart';
 import 'package:loving_brain/core/today_home_assembler.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
+import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_state.dart';
@@ -413,6 +414,213 @@ void main() {
       expect(dismissed.showSupportOffer, isFalse);
     },
   );
+
+  test('mood plus onboarding evening alone is not an important heads-up', () {
+    // Morning reference: no evening onboarding match, and night wake at 6:30
+    // is too recent for an extended wake-window primary signal.
+    final DateTime morning = DateTime(2026, 10, 30, 10, 0);
+    final List<SleepLogModel> sleeps = <SleepLogModel>[
+      night(
+        bed: DateTime(2026, 10, 28, 19, 30),
+        wake: DateTime(2026, 10, 29, 6, 30),
+      ),
+      night(
+        bed: DateTime(2026, 10, 29, 19, 30),
+        wake: DateTime(2026, 10, 30, 6, 30),
+      ),
+      night(
+        bed: DateTime(2026, 10, 27, 19, 30),
+        wake: DateTime(2026, 10, 28, 6, 30),
+      ),
+    ];
+    final ChildModel eveningChild = ChildModel(
+      childName: 'Emma',
+      childAge: '2 years',
+      usualBedtime: '7:30 PM',
+      primaryConcern: 'Sleep',
+      difficultTimes: <String>['Evening', 'Late afternoon'],
+    );
+    final BehaviourForecastResult morningBehaviour =
+        EnergyBridgeBehaviourCalculator.calculate(
+          childModel: eveningChild,
+          tantrumLogs: <TantrumLogModel>[],
+          sleepLogs: sleeps,
+          moodLogs: <MoodLogModel>[
+            MoodLogModel(
+              childMood: 'Fussy',
+              childMoodIndex: 1,
+              parentMood: 'Okay',
+              logTime: morning,
+            ),
+          ],
+          healthLogs: const [],
+          referenceTime: morning,
+        );
+
+    expect(morningBehaviour.isPushWorthy, isFalse);
+    expect(morningBehaviour.hasPrimaryRiskSignal, isFalse);
+
+    final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
+      child: eveningChild,
+      sleepLogs: sleeps,
+      referenceNow: morning,
+    );
+    final TodayHomeSnapshot snapshot = TodayHomeAssembler.assemble(
+      child: eveningChild,
+      sleepForecast: sleep,
+      behaviourForecast: morningBehaviour,
+      sleepLogs: sleeps,
+      tantrumLogs: <TantrumLogModel>[],
+      referenceNow: morning,
+    );
+    expect(snapshot.showBehaviourHeadsUp, isFalse);
+    expect(snapshot.mode, TodayMode.normal);
+  });
+
+  test('fever suppresses behaviour heads-up in favour of health note', () {
+    final DateTime afternoon = DateTime(2026, 10, 30, 17, 0);
+    final List<SleepLogModel> sleeps = <SleepLogModel>[
+      night(
+        bed: DateTime(2026, 10, 28, 19, 30),
+        wake: DateTime(2026, 10, 29, 6, 30),
+      ),
+      night(
+        bed: DateTime(2026, 10, 29, 19, 30),
+        wake: DateTime(2026, 10, 30, 6, 30),
+      ),
+      night(
+        bed: DateTime(2026, 10, 27, 19, 30),
+        wake: DateTime(2026, 10, 28, 6, 30),
+      ),
+      nap(
+        start: DateTime(2026, 10, 30, 13, 0),
+        end: DateTime(2026, 10, 30, 13, 25),
+      ),
+    ];
+    final HealthLogModel fever = HealthLogModel(
+      issues: <String>['Fever'],
+      notes: '',
+      timestamp: afternoon,
+      userId: 'u1',
+      childId: 'c1',
+      createdAt: afternoon,
+    );
+    final ChildModel eveningChild = ChildModel(
+      childName: 'Emma',
+      childAge: '2 years',
+      usualBedtime: '7:30 PM',
+      primaryConcern: 'Sleep',
+      difficultTimes: <String>['Evening'],
+    );
+
+    final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
+      child: eveningChild,
+      sleepLogs: sleeps,
+      todayHealthLog: fever,
+      referenceNow: afternoon,
+    );
+    final BehaviourForecastResult behaviour =
+        EnergyBridgeBehaviourCalculator.calculate(
+          childModel: eveningChild,
+          tantrumLogs: <TantrumLogModel>[
+            tantrum(at: DateTime(2026, 10, 29, 17, 0)),
+            tantrum(at: DateTime(2026, 10, 28, 17, 30)),
+          ],
+          sleepLogs: sleeps,
+          moodLogs: <MoodLogModel>[
+            MoodLogModel(
+              childMood: 'Fussy',
+              childMoodIndex: 1,
+              parentMood: 'Tired',
+              logTime: afternoon,
+            ),
+          ],
+          healthLogs: <HealthLogModel>[fever],
+          referenceTime: afternoon,
+        );
+
+    expect(behaviour.isPushWorthy, isTrue);
+
+    final TodayHomeSnapshot snapshot = TodayHomeAssembler.assemble(
+      child: eveningChild,
+      sleepForecast: sleep,
+      behaviourForecast: behaviour,
+      sleepLogs: sleeps,
+      tantrumLogs: <TantrumLogModel>[
+        tantrum(at: DateTime(2026, 10, 29, 17, 0)),
+        tantrum(at: DateTime(2026, 10, 28, 17, 30)),
+      ],
+      todayHealthLog: fever,
+      referenceNow: afternoon,
+    );
+
+    expect(snapshot.showHealthHeadsUp, isTrue);
+    expect(snapshot.showBehaviourHeadsUp, isFalse);
+    expect(snapshot.mode, isNot(TodayMode.importantHeadsUp));
+    expect(snapshot.sleepForecastReason.toLowerCase(), contains('health'));
+  });
+
+  test('short nap plus evening context unlocks important heads-up', () {
+    final DateTime afternoon = DateTime(2026, 10, 30, 17, 0);
+    final List<SleepLogModel> sleeps = <SleepLogModel>[
+      night(
+        bed: DateTime(2026, 10, 28, 19, 30),
+        wake: DateTime(2026, 10, 29, 6, 30),
+      ),
+      night(
+        bed: DateTime(2026, 10, 29, 19, 30),
+        wake: DateTime(2026, 10, 30, 6, 30),
+      ),
+      night(
+        bed: DateTime(2026, 10, 27, 19, 30),
+        wake: DateTime(2026, 10, 28, 6, 30),
+      ),
+      nap(
+        start: DateTime(2026, 10, 30, 13, 0),
+        end: DateTime(2026, 10, 30, 13, 20),
+      ),
+    ];
+    final ChildModel eveningChild = ChildModel(
+      childName: 'Emma',
+      childAge: '2 years',
+      usualBedtime: '7:30 PM',
+      primaryConcern: 'Sleep',
+      difficultTimes: <String>['Evening'],
+    );
+
+    final SleepForecastResult sleep = EnergyBridgeSleepCalculator.calculate(
+      child: eveningChild,
+      sleepLogs: sleeps,
+      referenceNow: afternoon,
+    );
+    final BehaviourForecastResult behaviour =
+        EnergyBridgeBehaviourCalculator.calculate(
+          childModel: eveningChild,
+          tantrumLogs: <TantrumLogModel>[],
+          sleepLogs: sleeps,
+          moodLogs: const [],
+          healthLogs: const [],
+          referenceTime: afternoon,
+        );
+
+    expect(behaviour.hasPrimaryRiskSignal, isTrue);
+    expect(behaviour.isPushWorthy, isTrue);
+
+    final TodayHomeSnapshot snapshot = TodayHomeAssembler.assemble(
+      child: eveningChild,
+      sleepForecast: sleep,
+      behaviourForecast: behaviour,
+      sleepLogs: sleeps,
+      tantrumLogs: <TantrumLogModel>[],
+      referenceNow: afternoon,
+    );
+
+    expect(snapshot.showBehaviourHeadsUp, isTrue);
+    expect(snapshot.mode, TodayMode.importantHeadsUp);
+    expect(snapshot.headsUpHeadline.toLowerCase(), contains('harder'));
+    expect(snapshot.headsUpReason, isNotEmpty);
+    expect(snapshot.headsUpWindowStart, isNotEmpty);
+  });
 
   test('cache round-trip preserves assembled home fields', () {
     final TodayHomeSnapshot original = TodayHomeSnapshot(

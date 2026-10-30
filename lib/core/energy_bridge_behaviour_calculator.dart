@@ -49,10 +49,16 @@ class BehaviourForecastResult {
   final String? healthCaveat;
   final bool hasPersonalLogs;
 
-  /// Returns true only when at least 2 real signals support a push notification (Doc 03 §3, Doc 04 §4).
+  /// At least one primary observational signal (sleep pressure, hunger, or
+  /// repeated behaviour) — never mood/onboarding alone (Doc 03 §3).
+  final bool hasPrimaryRiskSignal;
+
+  /// True only for a combined, recent signal set that deserves an in-app / push heads-up
+  /// (Doc 03 §3, Doc 04 §4). Mood or onboarding alone never qualifies.
   bool get isPushWorthy =>
-      riskLevel == BehaviourRiskLevel.moderate ||
-      riskLevel == BehaviourRiskLevel.high;
+      (riskLevel == BehaviourRiskLevel.moderate ||
+          riskLevel == BehaviourRiskLevel.high) &&
+      hasPrimaryRiskSignal;
 
   const BehaviourForecastResult({
     required this.riskLevel,
@@ -71,6 +77,7 @@ class BehaviourForecastResult {
     required this.childAgeMonths,
     this.healthCaveat,
     required this.hasPersonalLogs,
+    this.hasPrimaryRiskSignal = false,
   });
 }
 
@@ -125,31 +132,62 @@ class EnergyBridgeBehaviourCalculator {
       legacyAgeText: childModel?.childAge ?? '',
     );
 
-    final bool hasPersonalLogs = tantrumLogs.isNotEmpty;
+    final bool hasPersonalLogs = tantrumLogs.isNotEmpty || sleepLogs.isNotEmpty;
 
-    // 1. Evaluate contributing signals (transparent & inspectable)
-    final List<String> signals = <String>[];
+    // 1. Evaluate contributing signals (transparent & inspectable).
+    // Primary = sleep pressure / hunger / repeated behaviour (Doc 04 §4).
+    // Context = mood or onboarding difficult-time — never enough alone (Doc 03 §3).
+    final List<String> primarySignals = <String>[];
+    final List<String> contextSignals = <String>[];
+
+    final List<SleepLogModel> sortedSleep = List<SleepLogModel>.from(sleepLogs)
+      ..sort(
+        (SleepLogModel a, SleepLogModel b) => b.wakeTime.compareTo(a.wakeTime),
+      );
 
     // Signal A: Sleep pressure (short nap or long wake window)
-    if (sleepLogs.isNotEmpty) {
-      final SleepLogModel latestSleep = sleepLogs.first;
-      final int? dur = latestSleep.durationMinutes;
-      if (dur != null && dur > 0 && dur < 45) {
-        signals.add('a short nap');
+    if (sortedSleep.isNotEmpty) {
+      SleepLogModel? recentNap;
+      for (final SleepLogModel log in sortedSleep) {
+        final int dur =
+            log.durationMinutes ??
+            log.wakeTime.difference(log.bedTime).inMinutes;
+        final bool looksLikeNap =
+            log.isNap || (dur > 0 && dur < 90 && !log.isNightWaking);
+        if (looksLikeNap) {
+          recentNap = log;
+          break;
+        }
+      }
+
+      if (recentNap != null) {
+        final int napDur =
+            recentNap.durationMinutes ??
+            recentNap.wakeTime.difference(recentNap.bedTime).inMinutes;
+        if (napDur > 0 && napDur < 45) {
+          primarySignals.add('a short nap');
+        }
+        final int hoursAwake = now.difference(recentNap.wakeTime).inHours;
+        if (hoursAwake >= 4 && !primarySignals.contains('a short nap')) {
+          primarySignals.add('extended wake window');
+        }
       } else {
-        final DateTime wakeDate = latestSleep.wakeTime;
-        final int hoursAwake = now.difference(wakeDate).inHours;
+        final SleepLogModel latestSleep = sortedSleep.first;
+        final int hoursAwake = now.difference(latestSleep.wakeTime).inHours;
         if (hoursAwake >= 4) {
-          signals.add('extended wake window');
+          primarySignals.add('extended wake window');
+        }
+        if (latestSleep.isNightWaking) {
+          primarySignals.add('disrupted night sleep');
         }
       }
     }
 
-    // Signal B: Mood context (fussy / dysregulated / sad)
+    // Signal B: Mood context (fussy / dysregulated / sad) — never alone
     if (moodLogs.isNotEmpty) {
       final MoodLogModel latestMood = moodLogs.first;
       if (latestMood.childMoodIndex <= 2) {
-        signals.add('fussy emotional state');
+        contextSignals.add('fussy emotional state');
       }
     }
 
@@ -162,7 +200,7 @@ class EnergyBridgeBehaviourCalculator {
           (diffTimes.contains('Evening') ||
               diffTimes.contains('Late afternoon') ||
               diffTimes.contains('Bedtime'))) {
-        signals.add('late afternoon transition rhythm');
+        contextSignals.add('late afternoon transition rhythm');
       }
     }
 
@@ -176,30 +214,42 @@ class EnergyBridgeBehaviourCalculator {
         }
       }
       if (eveningTantrumCount >= 2 &&
-          !signals.contains('late afternoon transition rhythm')) {
-        signals.add('recurring afternoon pattern');
+          !contextSignals.contains('late afternoon transition rhythm')) {
+        primarySignals.add('recurring afternoon pattern');
       }
     }
 
     // Signal E: Real hunger context (only if recorded in recent logs, Doc 04 §1 & §5)
     if (tantrumLogs.isNotEmpty) {
-      final TantrumLogModel latestTantrum = tantrumLogs.first;
+      final List<TantrumLogModel> sortedTantrums =
+          List<TantrumLogModel>.from(tantrumLogs)..sort(
+            (TantrumLogModel a, TantrumLogModel b) =>
+                b.timestamp.compareTo(a.timestamp),
+          );
+      final TantrumLogModel latestTantrum = sortedTantrums.first;
       if (now.difference(latestTantrum.timestamp).inHours < 12 &&
           latestTantrum.triggers.contains('Hunger')) {
-        signals.add('hunger context');
+        primarySignals.add('hunger context');
       }
     }
 
-    // 2. Determine Risk Level (Honest scoring: Doc 04 §4, Doc 03 §3)
+    final List<String> signals = <String>[...primarySignals, ...contextSignals];
+    final bool hasPrimaryRiskSignal = primarySignals.isNotEmpty;
+
+    // 2. Determine Risk Level (Doc 04 §4, Doc 03 §3).
+    // Moderate+ requires at least one primary observational signal plus another
+    // contributing signal. Mood + onboarding alone stays low / none.
     final BehaviourRiskLevel riskLevel;
-    if (signals.length >= 3) {
+    if (!hasPrimaryRiskSignal) {
+      riskLevel = signals.isEmpty
+          ? BehaviourRiskLevel.none
+          : BehaviourRiskLevel.low;
+    } else if (signals.length >= 3) {
       riskLevel = BehaviourRiskLevel.high;
-    } else if (signals.length == 2) {
+    } else if (signals.length >= 2) {
       riskLevel = BehaviourRiskLevel.moderate;
-    } else if (signals.length == 1) {
-      riskLevel = BehaviourRiskLevel.low;
     } else {
-      riskLevel = BehaviourRiskLevel.none;
+      riskLevel = BehaviourRiskLevel.low;
     }
 
     // 3. Determine Confidence Tier
@@ -322,6 +372,7 @@ class EnergyBridgeBehaviourCalculator {
       childAgeMonths: childAgeMonths,
       healthCaveat: healthCaveat,
       hasPersonalLogs: hasPersonalLogs,
+      hasPrimaryRiskSignal: hasPrimaryRiskSignal,
     );
   }
 

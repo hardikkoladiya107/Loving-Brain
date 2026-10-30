@@ -78,23 +78,11 @@ class _TodayScreenState extends State<TodayScreen> {
 
   Map<String, dynamic> _headsUpBrainyContext(TodayState state) {
     return BrainyEntryContext.fromHeadsUp(
-      headline: state.headsUpHeadline.isNotEmpty
-          ? state.headsUpHeadline
-          : 'A harder evening may be more likely',
-      reason: state.headsUpReason.isNotEmpty
-          ? state.headsUpReason
-          : (state.forecastSubtitle.isNotEmpty
-                ? state.forecastSubtitle
-                : 'Recent sleep and behaviour patterns'),
-      windowStart: state.headsUpWindowStart.isNotEmpty
-          ? state.headsUpWindowStart
-          : state.sleepForecastStart,
-      windowEnd: state.headsUpWindowEnd.isNotEmpty
-          ? state.headsUpWindowEnd
-          : state.sleepForecastEnd,
-      confidenceLabel: state.confidenceLevel.isNotEmpty
-          ? state.confidenceLevel
-          : 'moderate',
+      headline: state.headsUpHeadline,
+      reason: state.headsUpReason,
+      windowStart: state.headsUpWindowStart,
+      windowEnd: state.headsUpWindowEnd,
+      confidenceLabel: state.confidenceLevel,
       childName: state.childName,
     );
   }

@@ -109,6 +109,9 @@ class ViewSupportSheet extends StatelessWidget {
                       supportArea: 'Sleep',
                     );
                   }
+                  // Same cooling-off as "Not now" so the offer does not reappear
+                  // on every Today open after joining (Screen 15).
+                  await cubit.dismissSupportOffer();
                   showSnackBar(
                     message:
                         'You have joined the waitlist. We\'ll let you know when a guided sleep journey opens.',

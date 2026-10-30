@@ -196,6 +196,68 @@ void main() {
       },
     );
 
+    test('Mood plus onboarding difficult time alone is not push-worthy', () {
+      final BehaviourForecastResult result =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: ChildModel(
+              childName: 'Leo',
+              difficultTimes: <String>['Evening', 'Late afternoon'],
+            ),
+            tantrumLogs: <TantrumLogModel>[],
+            sleepLogs: <SleepLogModel>[],
+            moodLogs: <MoodLogModel>[
+              MoodLogModel(
+                childMood: 'Sad',
+                childMoodIndex: 2,
+                parentMood: 'Okay',
+                logTime: DateTime(2026, 10, 30, 17, 0),
+              ),
+            ],
+            healthLogs: <HealthLogModel>[],
+            referenceTime: DateTime(2026, 10, 30, 17, 0),
+          );
+
+      expect(result.hasPrimaryRiskSignal, isFalse);
+      expect(result.isPushWorthy, isFalse);
+      expect(result.riskLevel, BehaviourRiskLevel.low);
+      expect(
+        result.contributingSignals.contains('fussy emotional state'),
+        isTrue,
+      );
+    });
+
+    test('Short nap plus known evening difficulty is push-worthy', () {
+      final BehaviourForecastResult result =
+          EnergyBridgeBehaviourCalculator.calculate(
+            childModel: ChildModel(
+              childName: 'Leo',
+              difficultTimes: <String>['Evening'],
+            ),
+            tantrumLogs: <TantrumLogModel>[],
+            sleepLogs: <SleepLogModel>[
+              SleepLogModel(
+                id: 'nap_1',
+                date: DateTime(2026, 10, 30),
+                bedTime: DateTime(2026, 10, 30, 13, 0),
+                wakeTime: DateTime(2026, 10, 30, 13, 25),
+                durationMinutes: 25,
+              ),
+            ],
+            moodLogs: <MoodLogModel>[],
+            healthLogs: <HealthLogModel>[],
+            referenceTime: DateTime(2026, 10, 30, 17, 0),
+          );
+
+      expect(result.hasPrimaryRiskSignal, isTrue);
+      expect(result.contributingSignals.contains('a short nap'), isTrue);
+      expect(result.isPushWorthy, isTrue);
+      expect(
+        result.riskLevel == BehaviourRiskLevel.moderate ||
+            result.riskLevel == BehaviourRiskLevel.high,
+        isTrue,
+      );
+    });
+
     test(
       'BehaviourPatternSummary aggregates top triggers and strategies correctly',
       () {

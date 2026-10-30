@@ -21,23 +21,14 @@ class HeadsUpCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final TodayState state = context.watch<TodayCubit>().state;
 
+    // Copy comes only from TodayHomeAssembler / engines — never invent fallbacks.
     final String resolvedTitle = isHealthNote
-        ? (state.healthHeadsUpTitle.isNotEmpty
-              ? state.healthHeadsUpTitle
-              : 'Health check-in noted')
-        : (state.headsUpHeadline.isNotEmpty
-              ? state.headsUpHeadline
-              : 'A harder window may be more likely');
+        ? state.healthHeadsUpTitle
+        : state.headsUpHeadline;
 
     final String resolvedSubtitle = isHealthNote
-        ? (state.healthHeadsUpSubtitle.isNotEmpty
-              ? state.healthHeadsUpSubtitle
-              : 'Symptoms logged today. Rest and comfort matter most right now.')
-        : (state.headsUpReason.isNotEmpty
-              ? state.headsUpReason
-              : (state.headsUpWindowStart.isNotEmpty
-                    ? 'Between ${state.headsUpWindowStart} and ${state.headsUpWindowEnd}.'
-                    : 'A harder window may be more likely based on recent patterns.'));
+        ? state.healthHeadsUpSubtitle
+        : state.headsUpReason;
 
     return Container(
       decoration: BoxDecoration(

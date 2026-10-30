@@ -208,8 +208,12 @@ class TodayHomeAssembler {
       behaviourForecast: behaviourForecast,
       now: now,
     );
+    // Illness / notable health prefers health guidance over behavioural prediction
+    // (Doc 04 §4, Doc 06 §4).
     final bool showBehaviourHeadsUp =
-        behaviourForecast.isPushWorthy && windowStillAhead;
+        behaviourForecast.isPushWorthy &&
+        windowStillAhead &&
+        !showHealthHeadsUp;
 
     final TodayMode mode;
     if (!hasSleepLogs) {
@@ -250,15 +254,27 @@ class TodayHomeAssembler {
         ? 'Focusing on ${child!.primaryConcern!.trim()} first.'
         : '';
 
+    final String forecastSubtitle =
+        sleepForecast.healthCaveat != null &&
+            sleepForecast.healthCaveat!.trim().isNotEmpty &&
+            !showHealthHeadsUp
+        ? '${sleepForecast.subtitle} Today may be less predictable with health context noted.'
+        : sleepForecast.subtitle;
+    final String sleepReason =
+        sleepForecast.healthCaveat != null &&
+            sleepForecast.healthCaveat!.trim().isNotEmpty
+        ? '${sleepForecast.reason} ${sleepForecast.healthCaveat}'
+        : sleepForecast.reason;
+
     return TodayHomeSnapshot(
       mode: mode,
       sleepForecastStart: sleepForecast.windowStart,
       sleepForecastEnd: sleepForecast.windowEnd,
       bedtimeEstimate: sleepForecast.bedtimeEstimate,
-      forecastSubtitle: sleepForecast.subtitle,
+      forecastSubtitle: forecastSubtitle,
       confidenceLevel: sleepForecast.confidenceLabel.toLowerCase(),
       confidenceDots: sleepForecast.confidenceDots,
-      sleepForecastReason: sleepForecast.reason,
+      sleepForecastReason: sleepReason,
       hasSleepLogs: hasSleepLogs,
       hasMultiDayPatterns: hasMultiDayPatterns,
       hasAnyLogs: hasAnyLogs,

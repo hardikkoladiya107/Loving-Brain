@@ -28,23 +28,17 @@ class NiceWorkCard extends StatelessWidget {
         children: [
           const InfoChip(iconData: Icons.stars_rounded, chipTitle: 'Nice work'),
           10.spaceH,
-          (state.niceWorkTitle.isNotEmpty
-                  ? state.niceWorkTitle
-                  : 'Three nights of easier bedtime in a row')
-              .appText(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                textAlign: TextAlign.start,
-              ),
+          state.niceWorkTitle.appText(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            textAlign: TextAlign.start,
+          ),
           6.spaceH,
-          (state.niceWorkSubtitle.isNotEmpty
-                  ? state.niceWorkSubtitle
-                  : 'Nice work — this is a pattern worth noticing.')
-              .appText(
-                fontSize: 12.sp,
-                color: greyColor6,
-                textAlign: TextAlign.start,
-              ),
+          state.niceWorkSubtitle.appText(
+            fontSize: 12.sp,
+            color: greyColor6,
+            textAlign: TextAlign.start,
+          ),
         ],
       ),
     );

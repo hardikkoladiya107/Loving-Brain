@@ -61,14 +61,11 @@ class NoticedRow extends StatelessWidget {
                           20.spaceH,
                           const InfoChip(chipTitle: 'Heads-up'),
                           20.spaceH,
-                          (state.headsUpHeadline.isNotEmpty
-                                  ? state.headsUpHeadline
-                                  : 'A harder window may be more likely')
-                              .appText(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start,
-                              ),
+                          state.headsUpHeadline.appText(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start,
+                          ),
                         ],
                       ),
                     ),

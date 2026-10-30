@@ -74,6 +74,7 @@ void main() {
           childName: 'Aria',
           childAgeMonths: 24,
           hasPersonalLogs: true,
+          hasPrimaryRiskSignal: true,
         );
 
         cubit.init(forecast: forecast);
