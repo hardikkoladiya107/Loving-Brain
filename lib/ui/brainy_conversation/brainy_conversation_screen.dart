@@ -49,6 +49,9 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _imagePicker = ImagePicker();
   late BrainyConversationCubit _cubit;
+  int _lastMessageCount = 0;
+  double? _olderAnchorExtent;
+  double? _olderAnchorPixels;
 
   @override
   void didChangeDependencies() {
@@ -70,6 +73,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onChatScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BrainyConversationCubit>().init(
         conversationId: widget.conversationId,
@@ -89,10 +93,56 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onChatScroll);
     _clearDraft();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onChatScroll() {
+    if (!_scrollController.hasClients) return;
+    if (_scrollController.position.pixels > 160) return;
+    final BrainyConversationCubit cubit = context
+        .read<BrainyConversationCubit>();
+    if (!cubit.state.hasMoreMessages || cubit.state.isLoadingOlder) return;
+    _olderAnchorExtent = _scrollController.position.maxScrollExtent;
+    _olderAnchorPixels = _scrollController.position.pixels;
+    cubit.loadOlderMessages();
+  }
+
+  void _restoreOlderScroll() {
+    final double? beforeExtent = _olderAnchorExtent;
+    final double? beforePixels = _olderAnchorPixels;
+    _olderAnchorExtent = null;
+    _olderAnchorPixels = null;
+    if (beforeExtent == null || beforePixels == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      final double delta =
+          _scrollController.position.maxScrollExtent - beforeExtent;
+      if (delta <= 0) return;
+      _scrollController.jumpTo(
+        (beforePixels + delta).clamp(
+          0,
+          _scrollController.position.maxScrollExtent,
+        ),
+      );
+    });
+  }
+
+  void _followChat(BrainyConversationState state) {
+    if (state.isLoadingOlder) return;
+    final bool grew = state.messages.length > _lastMessageCount;
+    final bool loadedOlder = grew && _olderAnchorExtent != null;
+    _lastMessageCount = state.messages.length;
+    if (loadedOlder) {
+      _restoreOlderScroll();
+      return;
+    }
+    if (grew || state.isTyping) {
+      _scrollToBottom();
+    }
   }
 
   Future<void> _showImageSourcePicker(BuildContext context) async {
@@ -407,10 +457,11 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
           (BrainyConversationState previous, BrainyConversationState current) {
             return previous.messages.length != current.messages.length ||
                 previous.isTyping != current.isTyping ||
+                previous.isLoadingOlder != current.isLoadingOlder ||
                 previous.pendingSafetyMode != current.pendingSafetyMode;
           },
       listener: (BuildContext context, BrainyConversationState state) {
-        _scrollToBottom();
+        _followChat(state);
         final String? pendingMode = state.pendingSafetyMode;
         if (pendingMode != null && pendingMode.isNotEmpty) {
           final String? sourceMessage = state.pendingSafetySourceMessage;
@@ -504,18 +555,28 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                             vertical: 16.h,
                           ),
                           itemCount:
-                              state.messages.length + (state.isTyping ? 1 : 0),
+                              state.messages.length +
+                              (state.isTyping ? 1 : 0) +
+                              (state.isLoadingOlder ? 1 : 0),
                           separatorBuilder: (_, _) => 16.spaceH,
                           itemBuilder: (context, index) {
-                            if (index == state.messages.length) {
+                            final int olderOffset = state.isLoadingOlder
+                                ? 1
+                                : 0;
+                            if (state.isLoadingOlder && index == 0) {
+                              return const _OlderMessagesLoader();
+                            }
+                            final int messageIndex = index - olderOffset;
+                            if (messageIndex == state.messages.length) {
                               return _buildTypingIndicator();
                             }
-                            final BrainyMessage msg = state.messages[index];
+                            final BrainyMessage msg =
+                                state.messages[messageIndex];
                             return _buildMessageCardFromData(
                               context,
                               state,
                               msg,
-                              index,
+                              messageIndex,
                             );
                           },
                         ),
@@ -1300,6 +1361,27 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _OlderMessagesLoader extends StatelessWidget {
+  const _OlderMessagesLoader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Center(
+        child: SizedBox(
+          width: 22.w,
+          height: 22.w,
+          child: const CircularProgressIndicator(
+            strokeWidth: 2,
+            color: secondaryColor,
+          ),
+        ),
       ),
     );
   }

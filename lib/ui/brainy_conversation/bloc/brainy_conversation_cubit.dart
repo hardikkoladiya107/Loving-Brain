@@ -99,6 +99,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration>? _durationSubscription;
   final AudioPlayer _audioPlayer = AudioPlayer();
+  static const int _chatPageSize = 30;
+  int _chatLoadGeneration = 0;
+  DocumentSnapshot<Map<String, dynamic>>? _oldestChatDoc;
+  final Set<String> _knownChatDocIds = <String>{};
 
   void changeProps({
     List<BrainyMessage>? messages,
@@ -123,6 +127,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     bool clearPendingSafetyMode = false,
     String? pendingSafetySourceMessage,
     bool clearPendingSafetySourceMessage = false,
+    bool? isLoadingOlder,
+    bool? hasMoreMessages,
   }) {
     if (isClosed) return;
 
@@ -165,6 +171,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
         pendingSafetySourceMessage: clearPendingSafetySourceMessage
             ? null
             : (pendingSafetySourceMessage ?? state.pendingSafetySourceMessage),
+        isLoadingOlder: isLoadingOlder ?? state.isLoadingOlder,
+        hasMoreMessages: hasMoreMessages ?? state.hasMoreMessages,
       ),
     );
   }
@@ -178,6 +186,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
   void reset() {
     _attachedNoteIsSource = false;
+    _chatLoadGeneration += 1;
+    _oldestChatDoc = null;
+    _knownChatDocIds.clear();
     _chatsSubscription?.cancel();
     _chatsSubscription = null;
     try {
@@ -189,6 +200,9 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   void clearDraft() {
     if (isClosed) return;
     _attachedNoteIsSource = false;
+    _chatLoadGeneration += 1;
+    _oldestChatDoc = null;
+    _knownChatDocIds.clear();
     _chatsSubscription?.cancel();
     _chatsSubscription = null;
     if (state.isAudioPlaying || state.isAttachedAudioPlaying) {
@@ -205,6 +219,8 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       attachedAudioDuration: Duration.zero,
       isAudioPlaying: false,
       clearPlayingMessageId: true,
+      isLoadingOlder: false,
+      hasMoreMessages: false,
     );
   }
 
@@ -447,56 +463,232 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
   }) {
     final String uid = preferences.getUserModel()?.uid ?? '';
     if (uid.isEmpty) return;
-
+    _chatLoadGeneration += 1;
+    final int generation = _chatLoadGeneration;
+    _oldestChatDoc = null;
+    _knownChatDocIds.clear();
     _chatsSubscription?.cancel();
-    _chatsSubscription = AuthRepo.instance.userCollection
+    _chatsSubscription = null;
+    _openLatestChatPage(
+      uid: uid,
+      conversationId: conversationId,
+      generation: generation,
+      fallbackInitialQuestion: fallbackInitialQuestion,
+    );
+  }
+
+  CollectionReference<Map<String, dynamic>> _chatsCollection(
+    String uid,
+    String conversationId,
+  ) {
+    return AuthRepo.instance.userCollection
         .doc(uid)
         .collection('conversations')
         .doc(conversationId)
-        .collection('chats')
-        .orderBy('time_stamp', descending: false)
-        .snapshots()
-        .listen(
-          (QuerySnapshot<Map<String, dynamic>> snapshot) {
-            if (isClosed) return;
-            if (snapshot.docs.isEmpty) {
-              if (fallbackInitialQuestion != null &&
-                  fallbackInitialQuestion.trim().isNotEmpty &&
-                  state.messages.isEmpty &&
-                  !state.isTyping) {
-                changeProps(
-                  messages: <BrainyMessage>[
-                    BrainyMessage(
-                      id: 'initial_q',
-                      type: MessageType.user,
-                      chipTitle: 'You asked',
-                      headline: fallbackInitialQuestion,
-                    ),
-                  ],
-                );
-              }
-              return;
-            }
+        .collection('chats');
+  }
 
-            final List<BrainyMessage> mapped = <BrainyMessage>[];
-            for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
-                in snapshot.docs) {
-              mapped.addAll(_mapDocToBrainyMessages(doc.id, doc.data()));
-            }
+  Future<void> _openLatestChatPage({
+    required String uid,
+    required String conversationId,
+    required int generation,
+    String? fallbackInitialQuestion,
+  }) async {
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await _chatsCollection(
+            uid,
+            conversationId,
+          ).orderBy('time_stamp', descending: true).limit(_chatPageSize).get();
+      if (isClosed || generation != _chatLoadGeneration) return;
 
-            // Only adopt snapshot messages if we're not actively generating a response
-            // or if the snapshot already contains at least as many messages as local state.
-            // This prevents Firestore from wiping out newly generated cards or optimistic messages.
-            if (!state.isTyping || mapped.length >= state.messages.length) {
-              changeProps(messages: mapped);
-            }
-          },
-          onError: (_) {
-            _chatsSubscription?.cancel();
-            _chatsSubscription = null;
-          },
-          cancelOnError: true,
+      final List<QueryDocumentSnapshot<Map<String, dynamic>>> newestFirst =
+          snapshot.docs;
+      final bool hasMore = newestFirst.length >= _chatPageSize;
+      _oldestChatDoc = newestFirst.isEmpty ? null : newestFirst.last;
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in newestFirst) {
+        _knownChatDocIds.add(doc.id);
+      }
+      final List<BrainyMessage> recent = _mapDocsChronological(
+        newestFirst.reversed,
+      );
+
+      if (recent.isEmpty) {
+        if (fallbackInitialQuestion != null &&
+            fallbackInitialQuestion.trim().isNotEmpty &&
+            state.messages.isEmpty &&
+            !state.isTyping) {
+          changeProps(
+            messages: <BrainyMessage>[
+              BrainyMessage(
+                id: 'initial_q',
+                type: MessageType.user,
+                chipTitle: 'You asked',
+                headline: fallbackInitialQuestion,
+              ),
+            ],
+            hasMoreMessages: false,
+            isLoadingOlder: false,
+          );
+        } else {
+          changeProps(hasMoreMessages: false, isLoadingOlder: false);
+        }
+      } else if (state.isTyping || _hasPendingMessages(state.messages)) {
+        _mergeServerMessages(recent);
+        changeProps(hasMoreMessages: hasMore, isLoadingOlder: false);
+      } else {
+        changeProps(
+          messages: recent,
+          hasMoreMessages: hasMore,
+          isLoadingOlder: false,
         );
+      }
+
+      _watchNewerChats(
+        uid: uid,
+        conversationId: conversationId,
+        generation: generation,
+        newestDoc: newestFirst.isEmpty ? null : newestFirst.first,
+      );
+    } catch (_) {
+      if (!isClosed && generation == _chatLoadGeneration) {
+        changeProps(isLoadingOlder: false);
+      }
+    }
+  }
+
+  void _watchNewerChats({
+    required String uid,
+    required String conversationId,
+    required int generation,
+    required DocumentSnapshot<Map<String, dynamic>>? newestDoc,
+  }) {
+    if (generation != _chatLoadGeneration) return;
+    Query<Map<String, dynamic>> query = _chatsCollection(
+      uid,
+      conversationId,
+    ).orderBy('time_stamp');
+    if (newestDoc != null) {
+      query = query.startAfterDocument(newestDoc);
+    }
+    _chatsSubscription?.cancel();
+    _chatsSubscription = query.snapshots().listen(
+      (QuerySnapshot<Map<String, dynamic>> snapshot) {
+        if (isClosed || generation != _chatLoadGeneration) return;
+        final List<QueryDocumentSnapshot<Map<String, dynamic>>> fresh = snapshot
+            .docs
+            .where(
+              (QueryDocumentSnapshot<Map<String, dynamic>> doc) =>
+                  !_knownChatDocIds.contains(doc.id),
+            )
+            .toList();
+        if (fresh.isEmpty) return;
+        for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in fresh) {
+          _knownChatDocIds.add(doc.id);
+        }
+        _mergeServerMessages(_mapDocsChronological(fresh));
+      },
+      onError: (_) {
+        _chatsSubscription?.cancel();
+        _chatsSubscription = null;
+      },
+      cancelOnError: true,
+    );
+  }
+
+  Future<void> loadOlderMessages() async {
+    final String uid = preferences.getUserModel()?.uid ?? '';
+    final String? conversationId = state.conversationId;
+    final DocumentSnapshot<Map<String, dynamic>>? oldest = _oldestChatDoc;
+    if (uid.isEmpty ||
+        conversationId == null ||
+        conversationId.isEmpty ||
+        oldest == null ||
+        !state.hasMoreMessages ||
+        state.isLoadingOlder) {
+      return;
+    }
+    final int generation = _chatLoadGeneration;
+    changeProps(isLoadingOlder: true);
+    try {
+      final QuerySnapshot<Map<String, dynamic>> snapshot =
+          await _chatsCollection(uid, conversationId)
+              .orderBy('time_stamp', descending: true)
+              .startAfterDocument(oldest)
+              .limit(_chatPageSize)
+              .get();
+      if (isClosed || generation != _chatLoadGeneration) return;
+      if (snapshot.docs.isNotEmpty) {
+        _oldestChatDoc = snapshot.docs.last;
+      }
+      final List<BrainyMessage> older = _mapDocsChronological(
+        snapshot.docs.reversed,
+      );
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> doc
+          in snapshot.docs) {
+        _knownChatDocIds.add(doc.id);
+      }
+      final Set<String> existingIds = state.messages
+          .map((BrainyMessage m) => m.id)
+          .whereType<String>()
+          .toSet();
+      final List<BrainyMessage> freshOlder = older
+          .where(
+            (BrainyMessage m) => m.id == null || !existingIds.contains(m.id),
+          )
+          .toList();
+      changeProps(
+        messages: <BrainyMessage>[...freshOlder, ...state.messages],
+        hasMoreMessages: snapshot.docs.length >= _chatPageSize,
+        isLoadingOlder: false,
+      );
+    } catch (_) {
+      if (!isClosed && generation == _chatLoadGeneration) {
+        changeProps(isLoadingOlder: false);
+      }
+    }
+  }
+
+  List<BrainyMessage> _mapDocsChronological(
+    Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  ) {
+    final List<BrainyMessage> mapped = <BrainyMessage>[];
+    for (final QueryDocumentSnapshot<Map<String, dynamic>> doc in docs) {
+      mapped.addAll(_mapDocToBrainyMessages(doc.id, doc.data()));
+    }
+    return mapped;
+  }
+
+  void _mergeServerMessages(List<BrainyMessage> incoming) {
+    if (incoming.isEmpty) return;
+    final List<BrainyMessage> next = List<BrainyMessage>.from(state.messages);
+    for (final BrainyMessage serverMsg in incoming) {
+      if (serverMsg.id != null &&
+          next.any((BrainyMessage m) => m.id == serverMsg.id)) {
+        continue;
+      }
+      final int replaceAt = next.indexWhere((BrainyMessage m) {
+        final String id = m.id ?? '';
+        final bool pending =
+            id.isEmpty ||
+            id.startsWith('local_') ||
+            id.startsWith('retry_') ||
+            id.startsWith('safety_') ||
+            id.startsWith('clinical_') ||
+            id.startsWith('offline_');
+        return pending &&
+            m.type == serverMsg.type &&
+            m.chipTitle == serverMsg.chipTitle &&
+            m.headline == serverMsg.headline;
+      });
+      if (replaceAt >= 0) {
+        next[replaceAt] = serverMsg;
+      } else {
+        next.add(serverMsg);
+      }
+    }
+    changeProps(messages: next);
   }
 
   List<BrainyMessage> _mapDocToBrainyMessages(
@@ -710,7 +902,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
       changeProps(
         messages: <BrainyMessage>[
-          ...state.messages,
+          ..._withoutPlaceholders(state.messages),
           optimisticUserMsg,
           safetyMsg,
         ],
@@ -785,7 +977,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     if (isOffline) {
       changeProps(
         messages: <BrainyMessage>[
-          ...state.messages,
+          ..._withoutPlaceholders(state.messages),
           optimisticUserMsg,
           BrainyMessage(
             id: 'offline_${DateTime.now().millisecondsSinceEpoch}',
@@ -806,7 +998,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
     }
 
     changeProps(
-      messages: [...state.messages, optimisticUserMsg],
+      messages: <BrainyMessage>[
+        ..._withoutPlaceholders(state.messages),
+        optimisticUserMsg,
+      ],
       isTyping: true,
       clearSelectedImage: true,
       clearSelectedImages: true,
@@ -886,24 +1081,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       hasPersonalData: contextSummary.hasPersonalData,
     );
 
-    // Build multi-turn conversational history
-    final List<Map<String, dynamic>> history = <Map<String, dynamic>>[];
-    for (final BrainyMessage msg in state.messages) {
-      if (msg.id == optimisticUserMsg.id) continue;
-      if (msg.type == MessageType.user) {
-        history.add(<String, dynamic>{'role': 'user', 'content': msg.headline});
-      } else if (msg.type == MessageType.aiInfo ||
-          msg.type == MessageType.aiAction) {
-        final String combinedText =
-            msg.subtext != null && msg.subtext!.isNotEmpty
-            ? '${msg.headline}\n${msg.subtext}'
-            : msg.headline;
-        history.add(<String, dynamic>{
-          'role': 'assistant',
-          'content': combinedText,
-        });
-      }
-    }
+    final List<Map<String, dynamic>> history = _modelHistory(
+      state.messages,
+      skipId: optimisticUserMsg.id,
+    );
 
     List<BrainyMessage> aiCards = <BrainyMessage>[];
     try {
@@ -916,7 +1097,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             history: history,
             systemPrompt: systemPrompt,
           )
-          .timeout(const Duration(seconds: 45));
+          .timeout(const Duration(seconds: 80));
 
       aiResult.whenOrNull(
         data: (dynamic data) {
@@ -1047,23 +1228,10 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
       hasPersonalData: contextSummary.hasPersonalData,
     );
 
-    final List<Map<String, dynamic>> history = <Map<String, dynamic>>[];
-    for (final BrainyMessage msg in cleaned) {
-      if (msg.id == lastUserMsg.id) continue;
-      if (msg.type == MessageType.user) {
-        history.add(<String, dynamic>{'role': 'user', 'content': msg.headline});
-      } else if (msg.type == MessageType.aiInfo ||
-          msg.type == MessageType.aiAction) {
-        final String combinedText =
-            msg.subtext != null && msg.subtext!.isNotEmpty
-            ? '${msg.headline}\n${msg.subtext}'
-            : msg.headline;
-        history.add(<String, dynamic>{
-          'role': 'assistant',
-          'content': combinedText,
-        });
-      }
-    }
+    final List<Map<String, dynamic>> history = _modelHistory(
+      cleaned,
+      skipId: lastUserMsg.id,
+    );
 
     final File? imgFile =
         (lastUserMsg.imageLocalPath != null &&
@@ -1087,7 +1255,7 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
             history: history,
             systemPrompt: systemPrompt,
           )
-          .timeout(const Duration(seconds: 45));
+          .timeout(const Duration(seconds: 80));
 
       aiResult.whenOrNull(
         data: (dynamic data) {
@@ -1189,6 +1357,74 @@ class BrainyConversationCubit extends Cubit<BrainyConversationState> {
 
   String mergeAttachedContextForTesting(String liveContext) =>
       _mergeAttachedContext(liveContext);
+
+  @visibleForTesting
+  List<Map<String, dynamic>> modelHistoryForTesting(
+    List<BrainyMessage> messages, {
+    String? skipId,
+  }) => _modelHistory(messages, skipId: skipId);
+
+  bool _hasPendingMessages(List<BrainyMessage> messages) {
+    return messages.any((BrainyMessage message) {
+      final String id = message.id ?? '';
+      return id.isEmpty ||
+          id.startsWith('local_') ||
+          id.startsWith('retry_') ||
+          id.startsWith('safety_') ||
+          id.startsWith('clinical_') ||
+          id.startsWith('offline_');
+    });
+  }
+
+  List<BrainyMessage> _withoutPlaceholders(List<BrainyMessage> messages) {
+    return messages.where((BrainyMessage message) {
+      final String id = message.id ?? '';
+      return !id.startsWith('default_');
+    }).toList();
+  }
+
+  List<Map<String, dynamic>> _modelHistory(
+    List<BrainyMessage> messages, {
+    String? skipId,
+  }) {
+    final List<Map<String, dynamic>> history = <Map<String, dynamic>>[];
+    final StringBuffer assistant = StringBuffer();
+
+    void flushAssistant() {
+      final String text = assistant.toString().trim();
+      assistant.clear();
+      if (text.isEmpty) return;
+      history.add(<String, dynamic>{'role': 'assistant', 'content': text});
+    }
+
+    for (final BrainyMessage message in messages) {
+      if (skipId != null && message.id == skipId) continue;
+      final String id = message.id ?? '';
+      if (id.startsWith('default_')) continue;
+      if (message.type == MessageType.user) {
+        flushAssistant();
+        if (message.headline.trim().isNotEmpty) {
+          history.add(<String, dynamic>{
+            'role': 'user',
+            'content': message.headline.trim(),
+          });
+        }
+      } else if (message.type == MessageType.aiInfo ||
+          message.type == MessageType.aiAction) {
+        if (assistant.isNotEmpty) {
+          assistant.writeln();
+        }
+        assistant.writeln(message.chipTitle);
+        assistant.writeln(message.headline.trim());
+        final String detail = message.subtext?.trim() ?? '';
+        if (detail.isNotEmpty) {
+          assistant.writeln(detail);
+        }
+      }
+    }
+    flushAssistant();
+    return history;
+  }
 
   String _mergeAttachedContext(String liveContext) {
     final String attached = state.attachedContext?.trim() ?? '';

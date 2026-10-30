@@ -297,6 +297,39 @@ Dim the lights before bedtime.''';
     );
 
     test(
+      'Sample cards are left out of the model history for a real question',
+      () async {
+        final BrainyConversationCubit cubit = BrainyConversationCubit();
+        final List<Map<String, dynamic>> history = cubit
+            .modelHistoryForTesting(<BrainyMessage>[
+              BrainyMessage(
+                id: 'default_user',
+                type: MessageType.user,
+                chipTitle: 'You asked',
+                headline: 'Why is bedtime harder lately?',
+              ),
+              BrainyMessage(
+                id: 'default_info',
+                type: MessageType.aiInfo,
+                chipTitle: 'What may be happening',
+                headline: 'Nap rhythm may be shifting',
+              ),
+              BrainyMessage(
+                id: 'real_user',
+                type: MessageType.user,
+                chipTitle: 'You asked',
+                headline: 'He woke at 5',
+              ),
+            ]);
+
+        expect(history, hasLength(1));
+        expect(history.first['role'], 'user');
+        expect(history.first['content'], 'He woke at 5');
+        await cubit.close();
+      },
+    );
+
+    test(
       'Empty AI response emits friendly retry card and stops typing',
       () async {
         final BrainyConversationCubit cubit = BrainyConversationCubit();

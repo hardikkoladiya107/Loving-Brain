@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/child_state_model.dart';
+import 'package:loving_brain/model/essential_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
 import 'package:loving_brain/model/mood_log_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
@@ -98,6 +99,23 @@ class AiDataTools {
     <String, dynamic>{
       'type': 'function',
       'function': <String, dynamic>{
+        'name': 'get_recent_mood_and_notes',
+        'description':
+            'Retrieve recent mood check-ins and parent quick notes from the last two weeks.',
+        'parameters': <String, dynamic>{
+          'type': 'object',
+          'properties': <String, dynamic>{
+            'limit': <String, dynamic>{
+              'type': 'integer',
+              'description': 'Number of each log type to retrieve (default 6)',
+            },
+          },
+        },
+      },
+    },
+    <String, dynamic>{
+      'type': 'function',
+      'function': <String, dynamic>{
         'name': 'get_health_and_essentials',
         'description':
             'Retrieve child health notes, symptoms, and essential care instructions (allergies, medications, soothing cues).',
@@ -135,6 +153,16 @@ class AiDataTools {
           'concerns': child?.concerns ?? <String>[],
           'difficult_times': child?.difficultTimes ?? <String>[],
           'possible_triggers': child?.possibleTriggers ?? <String>[],
+          'success_goal': child?.successGoal ?? '',
+          'conditions': child?.conditions ?? <String>[],
+          'care_notes': (child?.essentials ?? <EssentialNote>[])
+              .map(
+                (EssentialNote note) => <String, dynamic>{
+                  'title': note.title ?? '',
+                  'detail': note.description ?? '',
+                },
+              )
+              .toList(),
         };
         return jsonEncode(profile);
 
@@ -176,6 +204,56 @@ class AiDataTools {
         );
         return jsonEncode(<String, dynamic>{'tantrum_logs': logs});
 
+      case 'get_recent_mood_and_notes':
+        final int moodLimit = (arguments['limit'] as num?)?.toInt() ?? 6;
+        if (childId.isEmpty) {
+          return jsonEncode(<String, dynamic>{
+            'mood_logs': <dynamic>[],
+            'quick_notes': <dynamic>[],
+          });
+        }
+        final ApiResultStatus<List<MoodLogModel>> moodResult =
+            await TodayLogRepo.instance.getRecentMoodLogs(
+              childId,
+              limit: moodLimit,
+            );
+        final ApiResultStatus<List<QuickNoteModel>> noteResult =
+            await TodayLogRepo.instance.getRecentQuickNotes(
+              childId,
+              limit: moodLimit,
+            );
+        List<Map<String, dynamic>> moodLogs = <Map<String, dynamic>>[];
+        List<Map<String, dynamic>> quickNotes = <Map<String, dynamic>>[];
+        moodResult.whenOrNull(
+          data: (List<MoodLogModel> list) {
+            moodLogs = list
+                .map(
+                  (MoodLogModel m) => <String, dynamic>{
+                    'date': m.logTime.toIso8601String().split('T').first,
+                    'child_mood': m.childMood,
+                    'parent_mood': m.parentMood,
+                  },
+                )
+                .toList();
+          },
+        );
+        noteResult.whenOrNull(
+          data: (List<QuickNoteModel> list) {
+            quickNotes = list
+                .map(
+                  (QuickNoteModel n) => <String, dynamic>{
+                    'date': n.timestamp.toIso8601String().split('T').first,
+                    'note': n.note,
+                  },
+                )
+                .toList();
+          },
+        );
+        return jsonEncode(<String, dynamic>{
+          'mood_logs': moodLogs,
+          'quick_notes': quickNotes,
+        });
+
       case 'get_health_and_essentials':
         final ApiResultStatus<List<HealthLogModel>> result = await TodayLogRepo
             .instance
@@ -189,6 +267,15 @@ class AiDataTools {
         return jsonEncode(<String, dynamic>{
           'recent_health_logs': healthLogs,
           'concerns_and_essentials': child?.concerns ?? <String>[],
+          'conditions': child?.conditions ?? <String>[],
+          'care_notes': (child?.essentials ?? <EssentialNote>[])
+              .map(
+                (EssentialNote note) => <String, dynamic>{
+                  'title': note.title ?? '',
+                  'detail': note.description ?? '',
+                },
+              )
+              .toList(),
         });
 
       default:
@@ -282,6 +369,27 @@ class AiDataTools {
         },
       );
 
+      final ApiResultStatus<List<MoodLogModel>> moodRes = await TodayLogRepo
+          .instance
+          .getRecentMoodLogs(effectiveChildId, limit: 5);
+      moodRes.whenOrNull(
+        data: (List<MoodLogModel> list) {
+          final List<MoodLogModel> todayMoods = list
+              .where((MoodLogModel m) => m.logTime.isAfter(startOfDay))
+              .toList();
+          if (todayMoods.isNotEmpty) {
+            summary['mood'] = todayMoods
+                .map(
+                  (MoodLogModel m) => <String, dynamic>{
+                    'child_mood': m.childMood,
+                    'parent_mood': m.parentMood,
+                  },
+                )
+                .toList();
+          }
+        },
+      );
+
       // Quick notes
       final ApiResultStatus<List<QuickNoteModel>> notesRes = await TodayLogRepo
           .instance
@@ -341,6 +449,7 @@ class AiDataTools {
     bool hasBehaviour = false;
     bool hasMood = false;
     bool hasHealth = false;
+    bool hasNotes = false;
 
     final ApiResultStatus<List<SleepLogModel>> sleepRes = await TodayLogRepo
         .instance
@@ -418,13 +527,47 @@ class AiDataTools {
       },
     );
 
+    final ApiResultStatus<List<QuickNoteModel>> noteRes = await TodayLogRepo
+        .instance
+        .getRecentQuickNotes(childId, limit: 10);
+    noteRes.whenOrNull(
+      data: (List<QuickNoteModel> list) {
+        final List<QuickNoteModel> recent = list
+            .where((QuickNoteModel n) => n.timestamp.isAfter(cutoff))
+            .toList();
+        if (recent.isEmpty) return;
+        hasNotes = true;
+        buffer.writeln('- Parent notes (${recent.length}):');
+        for (final QuickNoteModel n in recent.take(5)) {
+          buffer.writeln(
+            '  * ${n.timestamp.toIso8601String().split('T').first}: \'${n.note}\'',
+          );
+        }
+      },
+    );
+
     final String? concern = childModel?.primaryConcern?.trim();
     if (concern != null && concern.isNotEmpty) {
       buffer.writeln('- Active focus / concern: $concern');
     }
+    final String? goal = childModel?.successGoal?.trim();
+    if (goal != null && goal.isNotEmpty) {
+      buffer.writeln('- Current goal: $goal');
+    }
+    final List<EssentialNote> careNotes =
+        childModel?.essentials ?? <EssentialNote>[];
+    if (careNotes.isNotEmpty) {
+      buffer.writeln('- Care notes (allergies, medication, soothing):');
+      for (final EssentialNote note in careNotes.take(8)) {
+        final String title = (note.title ?? '').trim();
+        final String detail = (note.description ?? '').trim();
+        if (title.isEmpty && detail.isEmpty) continue;
+        buffer.writeln('  * $title${detail.isEmpty ? '' : ': $detail'}');
+      }
+    }
 
     final bool hasPersonalData =
-        hasSleep || hasBehaviour || hasMood || hasHealth;
+        hasSleep || hasBehaviour || hasMood || hasHealth || hasNotes;
     if (!hasPersonalData) {
       buffer.writeln(
         '- No sleep, behaviour, mood, or health logs in the last $contextWindowDays days.',

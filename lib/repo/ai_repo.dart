@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:loving_brain/core/ai_data_tools.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 
 import '../model/transcribe_model.dart';
@@ -140,32 +141,79 @@ class AiRepo {
         'brainyChat',
         options: HttpsCallableOptions(timeout: _callableTimeout),
       );
-      final HttpsCallableResult<dynamic> response = await callable
-          .call(<String, dynamic>{
-            'messageText': finalText,
-            'systemPrompt': systemPrompt,
-            'history': history ?? <Map<String, dynamic>>[],
-            'imageUrls': imageUrls,
-          })
-          .timeout(_callableTimeout);
+      final List<Map<String, dynamic>> toolTail = <Map<String, dynamic>>[];
+      for (int round = 0; round < 3; round++) {
+        final HttpsCallableResult<dynamic> response = await callable
+            .call(<String, dynamic>{
+              'messageText': finalText,
+              'systemPrompt': systemPrompt,
+              'history': history ?? <Map<String, dynamic>>[],
+              'imageUrls': imageUrls,
+              'tools': AiDataTools.openAiTools,
+              'toolTail': toolTail,
+            })
+            .timeout(_callableTimeout);
 
-      final dynamic data = response.data;
-      if (data is Map) {
-        final String content = data['text']?.toString() ?? '';
-        if (content.trim().isNotEmpty) {
-          return ApiResultStatus.data(
-            data: <String, dynamic>{
-              'output': <Map<String, dynamic>>[
-                <String, dynamic>{
-                  'type': 'message',
-                  'role': 'assistant',
-                  'content': <Map<String, dynamic>>[
-                    <String, dynamic>{'type': 'text', 'text': content},
-                  ],
-                },
-              ],
-            },
+        final dynamic data = response.data;
+        if (data is! Map) {
+          return ApiResultStatus.error(
+            error: Exception('Failed to get response'),
           );
+        }
+        final List<dynamic> toolCalls = data['toolCalls'] is List
+            ? data['toolCalls'] as List<dynamic>
+            : <dynamic>[];
+        if (toolCalls.isEmpty) {
+          final String content = data['text']?.toString() ?? '';
+          if (content.trim().isNotEmpty) {
+            return ApiResultStatus.data(
+              data: <String, dynamic>{
+                'output': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'type': 'message',
+                    'role': 'assistant',
+                    'content': <Map<String, dynamic>>[
+                      <String, dynamic>{'type': 'text', 'text': content},
+                    ],
+                  },
+                ],
+              },
+            );
+          }
+          return ApiResultStatus.error(
+            error: Exception('Failed to get response'),
+          );
+        }
+
+        final dynamic assistantMessage = data['assistantMessage'];
+        if (assistantMessage is Map) {
+          toolTail.add(Map<String, dynamic>.from(assistantMessage));
+        }
+        for (final dynamic call in toolCalls) {
+          if (call is! Map) continue;
+          final String callId = call['id']?.toString() ?? '';
+          final dynamic function = call['function'];
+          if (callId.isEmpty || function is! Map) continue;
+          final String name = function['name']?.toString() ?? '';
+          if (name.isEmpty) continue;
+          Map<String, dynamic> arguments = <String, dynamic>{};
+          final dynamic rawArguments = function['arguments'];
+          if (rawArguments is String && rawArguments.trim().isNotEmpty) {
+            try {
+              final dynamic decoded = jsonDecode(rawArguments);
+              if (decoded is Map) {
+                arguments = Map<String, dynamic>.from(decoded);
+              }
+            } catch (_) {}
+          } else if (rawArguments is Map) {
+            arguments = Map<String, dynamic>.from(rawArguments);
+          }
+          final String output = await AiDataTools.executeTool(name, arguments);
+          toolTail.add(<String, dynamic>{
+            'role': 'tool',
+            'tool_call_id': callId,
+            'content': output,
+          });
         }
       }
       return ApiResultStatus.error(error: Exception('Failed to get response'));

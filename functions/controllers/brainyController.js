@@ -97,6 +97,19 @@ exports.brainyChat = onCall(
         messages.push({role: "user", content: messageText});
       }
 
+      appendToolTail(messages, data.toolTail);
+
+      const tools = sanitizeTools(data.tools);
+      const body = {
+        model: "gpt-4o",
+        messages,
+        temperature: 0.4,
+      };
+      if (tools && tools.length > 0) {
+        body.tools = tools;
+        body.tool_choice = "auto";
+      }
+
       let response;
       try {
         response = await fetch(OPENAI_CHAT_URL, {
@@ -105,11 +118,7 @@ exports.brainyChat = onCall(
             "Content-Type": "application/json",
             Authorization: `Bearer ${apiKey}`,
           },
-          body: JSON.stringify({
-            model: "gpt-4o",
-            messages,
-            temperature: 0.7,
-          }),
+          body: JSON.stringify(body),
         });
       } catch (err) {
         logger.error("OpenAI chat network error", err);
@@ -126,14 +135,106 @@ exports.brainyChat = onCall(
       }
 
       const json = await response.json();
-      const text =
-      json?.choices?.[0]?.message?.content?.toString()?.trim() || "";
+      const message = json?.choices?.[0]?.message || {};
+      const toolCalls = Array.isArray(message.tool_calls) ?
+        message.tool_calls :
+        [];
+      if (toolCalls.length > 0) {
+        return {
+          text: "",
+          toolCalls: toolCalls.map((call) => ({
+            id: call.id,
+            type: "function",
+            function: {
+              name: call?.function?.name || "",
+              arguments: call?.function?.arguments || "{}",
+            },
+          })),
+          assistantMessage: {
+            role: "assistant",
+            content: typeof message.content === "string" ?
+              message.content :
+              null,
+            tool_calls: toolCalls,
+          },
+        };
+      }
+      const text = message?.content?.toString()?.trim() || "";
       if (!text) {
         throw new HttpsError("internal", "Empty AI response.");
       }
       return {text};
     },
 );
+
+/**
+ * Keeps only the function tools the app is allowed to offer.
+ * @param {unknown} raw
+ * @return {Array<Object>|null}
+ */
+function sanitizeTools(raw) {
+  if (!Array.isArray(raw)) return null;
+  const allowed = new Set([
+    "get_child_profile",
+    "get_today_summary",
+    "get_recent_sleep_logs",
+    "get_recent_tantrum_logs",
+    "get_recent_mood_and_notes",
+    "get_health_and_essentials",
+  ]);
+  const tools = [];
+  for (const tool of raw) {
+    const name = tool?.function?.name;
+    if (tool?.type !== "function" || !allowed.has(name)) continue;
+    tools.push(tool);
+    if (tools.length >= 8) break;
+  }
+  return tools;
+}
+
+/**
+ * Appends a validated assistant/tool tail so a follow-up call can continue.
+ * @param {Array<Object>} messages
+ * @param {unknown} raw
+ */
+function appendToolTail(messages, raw) {
+  if (!Array.isArray(raw)) return;
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    if (item.role === "assistant" && Array.isArray(item.tool_calls)) {
+      const calls = item.tool_calls
+          .filter((call) => call && call.id && call.function && call.function.name)
+          .slice(0, 6)
+          .map((call) => ({
+            id: String(call.id),
+            type: "function",
+            function: {
+              name: String(call.function.name),
+              arguments: typeof call.function.arguments === "string" ?
+                call.function.arguments.slice(0, 4000) :
+                JSON.stringify(call.function.arguments || {}),
+            },
+          }));
+      if (calls.length > 0) {
+        messages.push({
+          role: "assistant",
+          content: typeof item.content === "string" ? item.content : null,
+          tool_calls: calls,
+        });
+      }
+    } else if (
+      item.role === "tool" &&
+      typeof item.tool_call_id === "string" &&
+      typeof item.content === "string"
+    ) {
+      messages.push({
+        role: "tool",
+        tool_call_id: item.tool_call_id,
+        content: item.content.slice(0, 12000),
+      });
+    }
+  }
+}
 
 /**
  * transcribeAudio
