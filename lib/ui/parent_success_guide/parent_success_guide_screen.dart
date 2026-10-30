@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/guide_profile/guide_profile_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
@@ -52,7 +53,7 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => context.pop(),
                       icon: Icon(Icons.arrow_back, color: darkBlue),
                     ),
                   ),
@@ -133,7 +134,7 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: InkWell(
-                            onTap: () => Navigator.pop(context),
+                            onTap: () => context.pop(),
                             child: Container(
                               padding: EdgeInsets.all(8.r),
                               decoration: const BoxDecoration(
@@ -411,11 +412,9 @@ class _ParentSuccessGuideScreenState extends State<ParentSuccessGuideScreen> {
               AppButton(
                 title: "Request a check-in",
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => GuideProfileScreen(guideId: guide.id),
-                    ),
+                  context.push(
+                    RoutePaths.guideProfile,
+                    extra: <String, dynamic>{'guideId': guide.id},
                   );
                 },
               ),

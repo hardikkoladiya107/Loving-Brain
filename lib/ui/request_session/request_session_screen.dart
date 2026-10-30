@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/session_request_confirmation/session_request_confirmation_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -46,13 +47,9 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
               message: "Session request submitted successfully",
               type: SnackBarType.SUCCESS,
             );
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SessionRequestConfirmationScreen(
-                  guideName: state.guide?.name ?? "your guide",
-                ),
-              ),
+            context.pushReplacement(
+              RoutePaths.sessionConfirmation,
+              extra: state.guide?.name ?? "your guide",
             );
           },
           error: (Exception error) {
@@ -103,7 +100,7 @@ class _RequestSessionScreenState extends State<RequestSessionScreen> {
                     Row(
                       children: [
                         InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(12.r),
                             decoration: const BoxDecoration(

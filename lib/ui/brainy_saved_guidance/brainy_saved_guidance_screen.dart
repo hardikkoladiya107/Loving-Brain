@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import 'bloc/brainy_saved_guidance_cubit.dart';
 import 'bloc/brainy_saved_guidance_state.dart';

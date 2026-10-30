@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/router/route_paths.dart';
-import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
 import 'package:loving_brain/ui/today_screen/sheets/child_switcher_sheet.dart';
 
 import '../bloc/today_cubit.dart';
@@ -28,11 +28,10 @@ class TodayHeader extends StatelessWidget {
                 onTap: () async {
                   if (state.activeChildId.isEmpty) {
                     final TodayCubit todayCubit = context.read<TodayCubit>();
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const ChildProfileScreen(fromManageChildren: true),
+                    await context.push(
+                      RoutePaths.childProfilePath(
+                        preferences.getUserModel()?.uid ?? '',
+                        fromManageChildren: true,
                       ),
                     );
                     todayCubit.init();

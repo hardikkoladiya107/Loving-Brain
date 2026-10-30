@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 import 'bloc/brainy_history_cubit.dart';
@@ -230,14 +231,12 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(14.r),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BrainyConversationScreen(
-                          initialChat: s['title'],
-                          topic: s['topic'],
-                        ),
-                      ),
+                    context.push(
+                      RoutePaths.brainyConversation,
+                      extra: <String, dynamic>{
+                        'initialChat': s['title'],
+                        'topic': s['topic'],
+                      },
                     );
                   },
                   child: Padding(
@@ -297,15 +296,13 @@ class _BrainyHistoryScreenState extends State<BrainyHistoryScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(24.r),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BrainyConversationScreen(
-                  conversationId: convId.startsWith('sample_') ? null : convId,
-                  initialChat: item.title,
-                  topic: item.topic,
-                ),
-              ),
+            context.push(
+              RoutePaths.brainyConversation,
+              extra: <String, dynamic>{
+                'conversationId': convId.startsWith('sample_') ? null : convId,
+                'initialChat': item.title,
+                'topic': item.topic,
+              },
             );
           },
           onLongPress: () => _showDeleteDialog(context, convId),

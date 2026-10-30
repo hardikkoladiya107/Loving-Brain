@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'bloc/today_cubit.dart';
 import 'bloc/today_state.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -178,15 +181,13 @@ class _TodayScreenState extends State<TodayScreen> {
                         AppButton(
                           title: "Ask Brainy",
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BrainyConversationScreen(
-                                  initialChat:
-                                      "I'm new here and want to understand how Loving-Brain works for my child.",
-                                  topic: "Getting Started",
-                                ),
-                              ),
+                            context.push(
+                              RoutePaths.brainyConversation,
+                              extra: <String, dynamic>{
+                                'initialChat':
+                                    "I'm new here and want to understand how Loving-Brain works for my child.",
+                                'topic': "Getting Started",
+                              },
                             );
                           },
                           backgroundColor: Colors.transparent,
@@ -210,15 +211,13 @@ class _TodayScreenState extends State<TodayScreen> {
                         AppButton(
                           title: "Ask Brainy",
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BrainyConversationScreen(
-                                  initialChat:
-                                      "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
-                                  topic: "Calm Heads-Up",
-                                ),
-                              ),
+                            context.push(
+                              RoutePaths.brainyConversation,
+                              extra: <String, dynamic>{
+                                'initialChat':
+                                    "A harder evening window is likely tonight. What can I do to keep bedtime calm?",
+                                'topic': "Calm Heads-Up",
+                              },
                             );
                           },
                           backgroundColor: Colors.transparent,
@@ -286,11 +285,10 @@ class _TodayScreenState extends State<TodayScreen> {
             title: "Add child profile",
             onTap: () async {
               final TodayCubit cubit = context.read<TodayCubit>();
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      const ChildProfileScreen(fromManageChildren: true),
+              await context.push(
+                RoutePaths.childProfilePath(
+                  preferences.getUserModel()?.uid ?? '',
+                  fromManageChildren: true,
                 ),
               );
               cubit.init();

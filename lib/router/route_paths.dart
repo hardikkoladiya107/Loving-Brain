@@ -39,6 +39,41 @@ class RoutePaths {
   static const String consistencyRecognition = '/consistency-recognition';
   static const String addChild = '/add-child';
 
+  // Sprint 3, 4, 5, 6 & V2 Feature paths
+  static const String brainyConversation = '/brainy-conversation';
+  static const String brainyHistory = '/brainy-history';
+  static const String brainySaved = '/brainy-saved';
+  static const String helpSafety = '/help-safety';
+  static const String behaviourPattern = '/behaviour-pattern';
+  static const String calmHeadsUp = '/calm-heads-up';
+  static const String afterReflection = '/after-reflection';
+  static const String chooseSupportArea = '/choose-support-area';
+  static const String guideList = '/guide-list';
+  static const String guideProfile = '/guide-profile';
+  static const String requestSession = '/request-session';
+  static const String parentSuccessGuide = '/parent-success-guide';
+  static const String postSessionPlan = '/post-session-plan';
+  static const String programmeDetail = '/programme-detail';
+  static const String enrolledJourney = '/enrolled-journey';
+  static const String programRecommendation = '/program-recommendation';
+  static const String mentorshipUnavailable = '/mentorship-unavailable';
+  static const String familyTimeline = '/family-timeline';
+  static const String familyMenu = '/family-menu';
+  static const String permissions = '/permissions';
+  static const String inviteCaregiver = '/invite-caregiver';
+  static const String invitePending = '/invite-pending';
+  static const String inviteAccepted = '/invite-accepted';
+  static const String familySharingConsent = '/family-sharing-consent';
+  static const String sharedChildSummary = '/shared-child-summary';
+  static const String harderWeek = '/harder-week';
+  static const String tryingThisWeek = '/trying-this-week';
+  static const String sleepPattern = '/sleep-pattern';
+  static const String sleepNoData = '/sleep-no-data';
+  static const String sleepLowConfidence = '/sleep-low-confidence';
+  static const String notifications = '/notifications';
+  static const String privacyData = '/privacy-data';
+  static const String statesGallery = '/states-gallery';
+
   static String childProfilePath(
     String userId, {
     bool fromManageChildren = false,

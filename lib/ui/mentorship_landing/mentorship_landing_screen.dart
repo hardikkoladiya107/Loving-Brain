@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/choose_support_area/choose_support_area_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_screen.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
 
 import 'bloc/mentorship_landing_cubit.dart';
 import 'bloc/mentorship_landing_state.dart';
@@ -147,13 +147,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                           Expanded(
                             child: _buildGridCard(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const ProgrammeDetailScreen(),
-                                  ),
-                                );
+                                context.push(RoutePaths.programmeDetail);
                               },
                               iconPath: Assets
                                   .v2
@@ -169,14 +163,9 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                           Expanded(
                             child: _buildGridCard(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const ChooseSupportAreaScreen(
-                                          initialArea: 'Behaviour',
-                                        ),
-                                  ),
+                                context.push(
+                                  RoutePaths.chooseSupportArea,
+                                  extra: 'Behaviour',
                                 );
                               },
                               iconPath: Assets
@@ -200,14 +189,9 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                           Expanded(
                             child: _buildGridCard(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const ChooseSupportAreaScreen(
-                                          initialArea: 'Parent Wellbeing',
-                                        ),
-                                  ),
+                                context.push(
+                                  RoutePaths.chooseSupportArea,
+                                  extra: 'Parent Wellbeing',
                                 );
                               },
                               iconPath: Assets
@@ -224,14 +208,9 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
                           Expanded(
                             child: _buildGridCard(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        const ChooseSupportAreaScreen(
-                                          initialArea: 'Co-parenting',
-                                        ),
-                                  ),
+                                context.push(
+                                  RoutePaths.chooseSupportArea,
+                                  extra: 'Co-parenting',
                                 );
                               },
                               iconPath: Assets
@@ -261,12 +240,7 @@ class _MentorshipLandingScreenState extends State<MentorshipLandingScreen> {
   Widget _buildMainMentorshipCard(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (_) => const ChooseSupportAreaScreen(),
-          ),
-        );
+        context.push(RoutePaths.chooseSupportArea);
       },
       child: Container(
         width: double.infinity,

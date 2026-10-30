@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
-import 'package:loving_brain/ui/brainy_history/brainy_history_screen.dart';
-import 'package:loving_brain/ui/brainy_saved_guidance/brainy_saved_guidance_screen.dart';
 import 'package:loving_brain/other/permission_helper.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
@@ -50,12 +49,12 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
     context.read<BrainyHomeCubit>().clearChatText();
     _textController.clear();
     FocusScope.of(context).unfocus();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) =>
-            BrainyConversationScreen(initialChat: trimmed, topic: topic),
-      ),
+    context.push(
+      RoutePaths.brainyConversation,
+      extra: <String, dynamic>{
+        'initialChat': trimmed,
+        'topic': topic,
+      },
     );
   }
 
@@ -115,14 +114,12 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                           imageQuality: 80,
                         );
                         if (picked != null && context.mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BrainyConversationScreen(
-                                initialImagePaths: <String>[picked.path],
-                                topic: topic,
-                              ),
-                            ),
+                          context.push(
+                            RoutePaths.brainyConversation,
+                            extra: <String, dynamic>{
+                              'initialImagePaths': <String>[picked.path],
+                              'topic': topic,
+                            },
                           );
                         }
                       } catch (_) {}
@@ -193,14 +190,12 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                           final List<String> paths = pickedList
                               .map((XFile e) => e.path)
                               .toList();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BrainyConversationScreen(
-                                initialImagePaths: paths,
-                                topic: topic,
-                              ),
-                            ),
+                          context.push(
+                            RoutePaths.brainyConversation,
+                            extra: <String, dynamic>{
+                              'initialImagePaths': paths,
+                              'topic': topic,
+                            },
                           );
                         }
                       } catch (_) {}
@@ -422,12 +417,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(30),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const BrainyHistoryScreen(),
-                        ),
-                      );
+                      context.push(RoutePaths.brainyHistory);
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -454,12 +444,7 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(30),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const BrainySavedGuidanceScreen(),
-                        ),
-                      );
+                      context.push(RoutePaths.brainySaved);
                     },
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -630,15 +615,13 @@ class _BrainyHomeScreenState extends State<BrainyHomeScreen> {
                             builder: (sheetContext) => BrainyVoiceSheet(
                               topic: state.selectedTopic,
                               onSendAudio: (audioFile, text) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BrainyConversationScreen(
-                                      initialAudioFile: audioFile,
-                                      initialChat: text,
-                                      topic: state.selectedTopic,
-                                    ),
-                                  ),
+                                context.push(
+                                  RoutePaths.brainyConversation,
+                                  extra: <String, dynamic>{
+                                    'initialAudioFile': audioFile,
+                                    'initialChat': text,
+                                    'topic': state.selectedTopic,
+                                  },
                                 );
                               },
                             ),

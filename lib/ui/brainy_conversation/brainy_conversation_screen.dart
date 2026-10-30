@@ -11,7 +11,8 @@ import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/permission_helper.dart';
 import 'package:loving_brain/ui/brainy_ai/sheets/brainy_voice_sheet.dart';
-import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
@@ -410,10 +411,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                 } catch (_) {}
               },
               onReadSafety: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HelpSafetyScreen()),
-                );
+                context.push(RoutePaths.helpSafety);
               },
             );
           });
@@ -1175,10 +1173,7 @@ class _BrainyConversationScreenState extends State<BrainyConversationScreen> {
                   color: const Color(0xFFD32F2F),
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HelpSafetyScreen()),
-                  );
+                  context.push(RoutePaths.helpSafety);
                 },
               ),
             ),

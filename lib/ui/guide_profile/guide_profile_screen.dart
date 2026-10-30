@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
-import 'package:loving_brain/ui/request_session/request_session_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
@@ -113,7 +113,7 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(8.r),
                             decoration: const BoxDecoration(
@@ -298,12 +298,7 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
               AppButton(
                 title: "Request a session",
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (_) => RequestSessionScreen(guide: guide),
-                    ),
-                  );
+                  context.push(RoutePaths.requestSession, extra: guide);
                 },
               ),
               if (showSleepReset) ...[
@@ -316,12 +311,7 @@ class _GuideProfileScreenState extends State<GuideProfileScreen> {
                     textAlign: TextAlign.center,
                   ),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (_) => const ProgrammeDetailScreen(),
-                      ),
-                    );
+                    context.push(RoutePaths.programmeDetail);
                   },
                 ),
               ],

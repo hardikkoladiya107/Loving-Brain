@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/mentorship_unavailable/mentorship_unavailable_screen.dart';
-import 'package:loving_brain/ui/program_recommendation/program_recommendation_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 void showViewSupportSheet(BuildContext context, {int daysCount = 0}) {
@@ -86,12 +86,7 @@ class ViewSupportSheet extends StatelessWidget {
                 title: "View support",
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ProgramRecommendationScreen(),
-                    ),
-                  );
+                  context.push(RoutePaths.programRecommendation);
                 },
               ),
               12.spaceH,
@@ -99,12 +94,7 @@ class ViewSupportSheet extends StatelessWidget {
                 title: "Join waitlist",
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MentorshipUnavailableScreen(),
-                    ),
-                  );
+                  context.push(RoutePaths.mentorshipUnavailable);
                 },
                 backgroundColor: Colors.white,
                 textColor: greyColor9,

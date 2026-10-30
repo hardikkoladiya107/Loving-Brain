@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/mentorship_models.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/guide_profile/guide_profile_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 import 'bloc/guide_list_cubit.dart';
 import 'bloc/guide_list_state.dart';
@@ -67,7 +68,7 @@ class _GuideListScreenState extends State<GuideListScreen> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InkWell(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => context.pop(),
                       child: Container(
                         padding: EdgeInsets.all(8.r),
                         decoration: const BoxDecoration(
@@ -122,12 +123,9 @@ class _GuideListScreenState extends State<GuideListScreen> {
                             return _GuideCard(
                               guide: guide,
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (_) =>
-                                        GuideProfileScreen(guideId: guide.id),
-                                  ),
+                                context.push(
+                                  RoutePaths.guideProfile,
+                                  extra: <String, dynamic>{'guideId': guide.id},
                                 );
                               },
                             );

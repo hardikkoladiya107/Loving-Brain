@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/mentorship_landing/mentorship_landing_screen.dart';
-import 'package:loving_brain/ui/programme_detail/programme_detail_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 class ProgramRecommendationScreen extends StatefulWidget {
@@ -113,19 +113,14 @@ class _ProgramRecommendationScreenState
                 AppButton(
                   title: "View All programs",
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const MentorshipLandingScreen(),
-                      ),
-                    );
+                    context.push(RoutePaths.mentorshipLanding);
                   },
                   backgroundColor: primaryColor,
                   textColor: Colors.white,
                 ),
                 16.spaceH,
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => context.pop(),
                   child: "Not now".appText(
                     fontSize: 16.sp,
                     color: greyColor,
@@ -181,7 +176,7 @@ class _ProgramRecommendationScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               InkWell(
-                onTap: () => Navigator.pop(context),
+                onTap: () => context.pop(),
                 child: Container(
                   margin: EdgeInsets.only(left: 16.w, top: 16.h),
                   padding: const EdgeInsets.all(8),

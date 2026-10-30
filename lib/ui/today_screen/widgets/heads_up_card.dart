@@ -4,7 +4,8 @@ import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/repo/today_log_repo.dart';
-import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
@@ -94,10 +95,7 @@ class HeadsUpCard extends StatelessWidget {
           AppButton(
             title: "See calm plan",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CalmPlanScreen()),
-              );
+              context.push(RoutePaths.calmPlan);
             },
           ),
         ],

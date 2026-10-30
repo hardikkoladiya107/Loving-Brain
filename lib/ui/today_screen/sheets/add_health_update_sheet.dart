@@ -8,7 +8,8 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/help_safety/help_safety_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/alert_bottom_sheet.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_choice_chip.dart';
@@ -308,12 +309,7 @@ class AddHealthUpdateSheet extends StatelessWidget {
                           );
                         },
                         onReadSafety: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const HelpSafetyScreen(),
-                            ),
-                          );
+                          context.push(RoutePaths.helpSafety);
                         },
                         tertiaryButtonText: "Not now, return to Health update",
                       );

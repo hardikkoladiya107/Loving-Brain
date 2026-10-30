@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
-import 'package:loving_brain/ui/choose_support_area/choose_support_area_screen.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 import 'package:loving_brain/ui/widget/common_info_card.dart';
@@ -89,7 +89,7 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: InkWell(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () => context.pop(),
                           child: Container(
                             padding: EdgeInsets.all(8.r),
                             decoration: const BoxDecoration(
@@ -183,13 +183,9 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
               AppButton(
                 title: "View available guides",
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ChooseSupportAreaScreen(
-                        initialArea: "Sleep guidance",
-                      ),
-                    ),
+                  context.push(
+                    RoutePaths.chooseSupportArea,
+                    extra: "Sleep guidance",
                   );
                 },
               ),
@@ -202,15 +198,13 @@ class _ProgrammeDetailScreenState extends State<ProgrammeDetailScreen> {
                   textAlign: TextAlign.center,
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BrainyConversationScreen(
-                        initialChat:
-                            "Can you help me understand if the 6-Week Sleep Journey fits my family's situation?",
-                        topic: "Sleep Journey",
-                      ),
-                    ),
+                  context.push(
+                    RoutePaths.brainyConversation,
+                    extra: <String, dynamic>{
+                      'initialChat':
+                          "Can you help me understand if the 6-Week Sleep Journey fits my family's situation?",
+                      'topic': "Sleep Journey",
+                    },
                   );
                 },
               ),

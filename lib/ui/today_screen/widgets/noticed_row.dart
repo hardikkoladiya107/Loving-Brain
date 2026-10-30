@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loving_brain/gen/assets.gen.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/onboarding/widgets/info_chip.dart';
-import 'package:loving_brain/ui/behaviour_pattern/behaviour_pattern_screen.dart';
-import 'package:loving_brain/ui/calm_heads_up/calm_heads_up_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 
 class NoticedRow extends StatelessWidget {
   const NoticedRow({super.key});
@@ -27,12 +27,7 @@ class NoticedRow extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20.r),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CalmHeadsUpScreen(),
-                      ),
-                    );
+                    context.push(RoutePaths.calmHeadsUp);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(16.w),
@@ -77,12 +72,7 @@ class NoticedRow extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20.r),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BehaviourPatternScreen(),
-                      ),
-                    );
+                    context.push(RoutePaths.behaviourPattern);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(16.w),

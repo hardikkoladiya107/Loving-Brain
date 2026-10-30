@@ -9,8 +9,8 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/repo/child_repo.dart';
-import 'package:loving_brain/ui/add_child/add_child_screen.dart';
-import 'package:loving_brain/ui/child_profile_v2/child_profile_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
@@ -319,14 +319,10 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                   ],
                 ),
                 onTap: () async {
-                  final NavigatorState navigator = Navigator.of(context);
                   final TodayCubit todayCubit = context.read<TodayCubit>();
-                  navigator.pop();
-                  final dynamic created = await navigator.push<dynamic>(
-                    MaterialPageRoute<dynamic>(
-                      builder: (_) => const AddChildScreen(),
-                    ),
-                  );
+                  Navigator.pop(context);
+                  final dynamic created =
+                      await context.push<dynamic>(RoutePaths.addChild);
                   if (created == true) {
                     todayCubit.init();
                   }
@@ -365,13 +361,14 @@ class _ChildSwitcherSheetState extends State<ChildSwitcherSheet> {
                     ],
                   ),
                   onTap: () async {
-                    final NavigatorState navigator = Navigator.of(context);
                     final TodayCubit todayCubit = context.read<TodayCubit>();
-                    navigator.pop();
-                    await navigator.push(
-                      MaterialPageRoute<void>(
-                        builder: (_) =>
-                            const ChildProfileScreen(fromManageChildren: false),
+                    Navigator.pop(context);
+                    await context.push(
+                      RoutePaths.childProfilePath(
+                        activeChild?.reference?.id ??
+                            preferences.getUserModel()?.uid ??
+                            '',
+                        fromManageChildren: false,
                       ),
                     );
                     todayCubit.init();

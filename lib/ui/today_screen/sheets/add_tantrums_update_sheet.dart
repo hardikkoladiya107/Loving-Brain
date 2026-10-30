@@ -9,7 +9,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/other/snack_bar.dart';
-import 'package:loving_brain/ui/calm_plan/calm_plan_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import '../bloc/today_cubit.dart';
 import '../bloc/today_state.dart';
 import 'instant_result_sheet.dart';
@@ -99,10 +100,7 @@ class AddTantrumsUpdateSheet extends StatelessWidget {
                       ? "Proven responses ready for upcoming challenging windows."
                       : "Strategies to help you stay calm and respond with confidence.",
                   onActionTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CalmPlanScreen()),
-                    );
+                    context.push(RoutePaths.calmPlan);
                   },
                 );
               }

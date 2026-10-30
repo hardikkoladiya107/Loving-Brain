@@ -9,7 +9,8 @@ import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/ui/brainy_ai/bloc/brainy_voice_cubit.dart';
 import 'package:loving_brain/ui/brainy_ai/bloc/brainy_voice_state.dart';
-import 'package:loving_brain/ui/brainy_conversation/brainy_conversation_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
 
 class BrainyVoiceSheet extends StatefulWidget {
@@ -207,14 +208,13 @@ class _BrainyVoiceSheetState extends State<BrainyVoiceSheet>
                                 if (widget.onSendAudio != null) {
                                   widget.onSendAudio!(file, text);
                                 } else {
-                                  navigator.push(
-                                    MaterialPageRoute(
-                                      builder: (_) => BrainyConversationScreen(
-                                        initialChat: text,
-                                        initialAudioFile: file,
-                                        topic: widget.topic,
-                                      ),
-                                    ),
+                                  context.push(
+                                    RoutePaths.brainyConversation,
+                                    extra: <String, dynamic>{
+                                      'initialChat': text,
+                                      'initialAudioFile': file,
+                                      'topic': widget.topic,
+                                    },
                                   );
                                 }
                               },
