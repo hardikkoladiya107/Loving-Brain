@@ -26,11 +26,21 @@ import 'bloc/onboarding_state.dart';
 import 'widgets/onboarding_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key, this.addAnotherChild = false});
+  const OnboardingScreen({
+    super.key,
+    this.addAnotherChild = false,
+    this.editConcerns = false,
+    this.initialConcerns = const <String>[],
+  });
 
   /// Reuses the child pages (little one, usual day, hardest times)
   /// for a parent who is already onboarded.
   final bool addAnotherChild;
+
+  /// Reuses the concerns step so an existing child profile can change
+  /// routines without walking the rest of onboarding.
+  final bool editConcerns;
+  final List<String> initialConcerns;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -87,9 +97,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   late final OnboardingCubit _cubit;
 
-  int get _flowPageCount => widget.addAnotherChild ? 3 : _totalPages;
+  int get _flowPageCount {
+    if (widget.editConcerns) {
+      return 1;
+    }
+    if (widget.addAnotherChild || _cubit.skipChildSetup) {
+      return 3;
+    }
+    return _totalPages;
+  }
 
-  int get _firstFlowPage => widget.addAnotherChild ? _childFlowStartPage : 0;
+  int get _firstFlowPage {
+    if (widget.editConcerns) {
+      return 1;
+    }
+    return widget.addAnotherChild ? _childFlowStartPage : 0;
+  }
+
+  int get _lastFlowPage {
+    if (widget.editConcerns) {
+      return 1;
+    }
+    if (widget.addAnotherChild) {
+      return _totalPages - 1;
+    }
+    if (_cubit.skipChildSetup) {
+      return 2;
+    }
+    return _totalPages - 1;
+  }
 
   @override
   void initState() {
@@ -98,6 +134,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _cubit = context.read<OnboardingCubit>();
     if (widget.addAnotherChild) {
       _cubit.beginAddAnotherChild();
+    } else if (widget.editConcerns) {
+      _cubit.beginEditConcerns(widget.initialConcerns);
     } else {
       _cubit.init();
     }
@@ -113,6 +151,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         _childNameController.text = _cubit.state.childName;
       }
       if (!widget.addAnotherChild &&
+          !widget.editConcerns &&
           _cubit.state.currentPage > 0 &&
           _pageController.hasClients) {
         _pageController.jumpToPage(_cubit.state.currentPage);
@@ -122,7 +161,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void dispose() {
-    if (widget.addAnotherChild && !_cubit.isClosed) {
+    if ((widget.addAnotherChild || widget.editConcerns) && !_cubit.isClosed) {
       _cubit.reset();
     }
     _pageController.dispose();
@@ -136,13 +175,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     if (!isValid) return;
 
-    if (state.currentPage < _totalPages - 1) {
+    if (state.currentPage < _lastFlowPage) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 320),
         curve: Curves.easeOut,
       );
     } else if (widget.addAnotherChild) {
       _cubit.addAnotherChild();
+    } else if (widget.editConcerns) {
+      context.pop(List<String>.from(_cubit.state.concerns));
     } else {
       _cubit.completeOnboarding();
     }
@@ -154,7 +195,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         duration: const Duration(milliseconds: 320),
         curve: Curves.easeOut,
       );
-    } else if (widget.addAnotherChild) {
+    } else if (widget.addAnotherChild || widget.editConcerns) {
       if (context.canPop()) {
         context.pop();
       }
@@ -1367,38 +1408,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 )
                 .appPadding(left: 32.r, right: 20.r),
           ],
-          24.spaceH,
-          Center(
-            child: BaseButton(
-              onTap: () {
-                _showEnterInviteCodeDialog(context);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(color: const Color(0xFFEAE9FD)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.mail_outline_rounded,
-                      size: 18.sp,
-                      color: _accentPurple,
-                    ),
-                    8.spaceW,
-                    "Joining as a co-parent? Enter invite code".appText(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: _accentPurple,
-                    ),
-                  ],
+          if (!_cubit.skipChildSetup) ...<Widget>[
+            24.spaceH,
+            Center(
+              child: BaseButton(
+                onTap: () {
+                  _showEnterInviteCodeDialog(context);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 10.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: const Color(0xFFEAE9FD)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.mail_outline_rounded,
+                        size: 18.sp,
+                        color: _accentPurple,
+                      ),
+                      8.spaceW,
+                      "Joining as a co-parent? Enter invite code".appText(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: _accentPurple,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
           20.spaceH,
         ],
       ),
@@ -1665,6 +1711,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       listener: (BuildContext context, OnboardingState state) {
         state.completeStatus.whenOrNull(
           data: (dynamic _) {
+            if (widget.editConcerns) return;
             if (widget.addAnotherChild) {
               if (context.canPop()) {
                 context.pop(true);
@@ -1713,39 +1760,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     10.spaceH,
 
-                    // 6-segment linear progress indicator
-                    OnboardingPageIndicator(
-                      totalPages: _flowPageCount,
-                      currentPage: widget.addAnotherChild
-                          ? state.currentPage - _childFlowStartPage
-                          : state.currentPage,
-                      controller: _pageController,
-                      activeColor: _accentPurple,
-                      onSegmentTap: (int index) {
-                        _pageController.animateToPage(
-                          index,
-                          duration: const Duration(milliseconds: 320),
-                          curve: Curves.easeOut,
-                        );
-                      },
-                    ).appPadding(left: 20.r, right: 20.r),
-                    20.spaceH,
+                    if (!widget.editConcerns) ...<Widget>[
+                      OnboardingPageIndicator(
+                        totalPages: _flowPageCount,
+                        currentPage: widget.addAnotherChild
+                            ? state.currentPage - _childFlowStartPage
+                            : state.currentPage,
+                        controller: _pageController,
+                        activeColor: _accentPurple,
+                        onSegmentTap: (int index) {
+                          _pageController.animateToPage(
+                            index,
+                            duration: const Duration(milliseconds: 320),
+                            curve: Curves.easeOut,
+                          );
+                        },
+                      ).appPadding(left: 20.r, right: 20.r),
+                      20.spaceH,
+                    ],
 
                     Expanded(
                       child: PageView(
                         controller: _pageController,
                         physics: const NeverScrollableScrollPhysics(),
                         onPageChanged: (int index) {
+                          if (widget.editConcerns) return;
                           final int page = widget.addAnotherChild
                               ? index + _childFlowStartPage
                               : index;
                           _cubit.onPageChanged(page);
                         },
-                        children: widget.addAnotherChild
+                        children: widget.editConcerns
+                            ? <Widget>[_buildPage2(state)]
+                            : widget.addAnotherChild
                             ? <Widget>[
                                 _buildPage4(state),
                                 _buildPage5(state),
                                 _buildPage6(state),
+                              ]
+                            : _cubit.skipChildSetup
+                            ? <Widget>[
+                                _buildPage1(state),
+                                _buildPage2(state),
+                                _buildPage3(state),
                               ]
                             : <Widget>[
                                 _buildPage1(state),

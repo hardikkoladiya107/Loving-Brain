@@ -6,6 +6,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/location_data_model.dart';
 import 'package:loving_brain/model/user_model.dart';
+import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/repo/auth_repo.dart';
 import 'package:loving_brain/repo/co_parent_repo.dart';
@@ -18,17 +19,38 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
   LocationDataModel? _locationData;
   LocationDataModel? get locationData => _locationData;
 
+  static const String childDeletedMessage = 'Child profile deleted';
+
   bool get isPrimaryParent {
     final UserModel? user = preferences.getUserModel();
     final ChildModel? child = state.childModel ?? preferences.getChildModel();
-    final String uid = user?.uid ?? '';
-    if (uid.isEmpty || child == null) return false;
-    final String? primary = child.primaryParentUid?.trim();
-    if (primary != null && primary.isNotEmpty) {
-      return primary == uid;
+    if (child == null) return false;
+    return FamilyMembershipHelpers.canDeleteChildProfile(
+      callerUid: user?.uid ?? '',
+      primaryParentUid: child.primaryParentUid,
+      parentReferenceIds: child.parentReferenceIds ?? const <String>[],
+    );
+  }
+
+  /// Id used by delete. Falls back to the signed-in parent's linked child
+  /// when the loaded profile has no document reference yet.
+  String? get managedChildId {
+    final String modelId = state.childModel?.reference?.id.trim() ?? '';
+    if (modelId.isNotEmpty) return modelId;
+    final UserModel? user = preferences.getUserModel();
+    final String defaultId = user?.defaultChild?.id.trim() ?? '';
+    if (defaultId.isNotEmpty) return defaultId;
+    final List<DocumentReference<Object?>>? children = user?.children;
+    if (children != null && children.length == 1) {
+      final String onlyId = children.first.id.trim();
+      if (onlyId.isNotEmpty) return onlyId;
     }
-    final List<String>? ids = child.parentReferenceIds;
-    return ids != null && ids.isNotEmpty && ids.first == uid;
+    return null;
+  }
+
+  bool get canDeleteChild {
+    final String? childId = managedChildId;
+    return isPrimaryParent && childId != null && childId.isNotEmpty;
   }
 
   void changeProps({
@@ -250,28 +272,26 @@ class ChildProfileV2Cubit extends Cubit<ChildProfileV2State> {
   }
 
   Future<void> removeChild() async {
-    if (!isPrimaryParent) {
+    if (!canDeleteChild) {
       changeProps(
         saveStatus: ApiResultStatus.error(
-          error: Exception('Only the primary parent can remove this child.'),
+          error: Exception('Only the primary parent can delete this child.'),
         ),
       );
       return;
     }
-    final String childId = state.childModel?.reference?.id ?? '';
-    if (childId.isEmpty) {
-      changeProps(
-        saveStatus: ApiResultStatus.error(
-          error: Exception('Child not found.'),
-        ),
-      );
-      return;
-    }
+    final String childId = managedChildId ?? '';
     changeProps(saveStatus: const ApiResultStatus.loading());
     final ApiResultStatus result = await CoParentRepo.instance.removeChild(
       childId: childId,
     );
-    changeProps(saveStatus: result);
+    if (result is Error<dynamic>) {
+      changeProps(saveStatus: result);
+      return;
+    }
+    changeProps(
+      saveStatus: const ApiResultStatus.data(data: childDeletedMessage),
+    );
   }
 
   Future<void> saveProfile() async {

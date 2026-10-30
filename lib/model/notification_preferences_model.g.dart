@@ -17,6 +17,8 @@ _NotificationPreferencesModel _$NotificationPreferencesModelFromJson(
   quietHoursEnd: json['quietHoursEnd'] as String? ?? '07:00',
   sleepReminderTime: json['sleepReminderTime'] as String? ?? '7:15 PM',
   checkInReminderTime: json['checkInReminderTime'] as String? ?? '8:30 PM',
+  sleepReminderTimeCustomized:
+      json['sleepReminderTimeCustomized'] as bool? ?? false,
   maxDailyCap: (json['maxDailyCap'] as num?)?.toInt() ?? 3,
 );
 
@@ -31,5 +33,6 @@ Map<String, dynamic> _$NotificationPreferencesModelToJson(
   'quietHoursEnd': instance.quietHoursEnd,
   'sleepReminderTime': instance.sleepReminderTime,
   'checkInReminderTime': instance.checkInReminderTime,
+  'sleepReminderTimeCustomized': instance.sleepReminderTimeCustomized,
   'maxDailyCap': instance.maxDailyCap,
 };

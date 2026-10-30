@@ -14,6 +14,7 @@ class RoutePaths {
   static const String faq = '/faq';
   static const String parentProfile = '/parent-profile';
   static const String childProfile = '/child-profile/:userId';
+  static const String editChildConcerns = '/edit-child-concerns';
   static const String base = '/base';
 
   // Active V2 paths

@@ -21,6 +21,31 @@ class FamilyMembershipHelpers {
     'relationship_to_child',
   };
 
+  /// Only the child creator (primary parent) may delete the profile.
+  /// Co-parents are linked later and must not pass this check.
+  static bool canDeleteChildProfile({
+    required String callerUid,
+    required String? primaryParentUid,
+    required List<String> parentReferenceIds,
+  }) {
+    final String uid = callerUid.trim();
+    if (uid.isEmpty) return false;
+    final String primary = (primaryParentUid ?? '').trim();
+    if (primary.isNotEmpty) {
+      return primary == uid;
+    }
+    return parentReferenceIds.isNotEmpty && parentReferenceIds.first == uid;
+  }
+
+  /// A new account that already cares for a child (accepted invite before
+  /// onboarding) should not be asked to create another child.
+  static bool shouldSkipChildOnboardingPages({
+    required bool hasDefaultChild,
+    required bool hasChildren,
+  }) {
+    return hasDefaultChild || hasChildren;
+  }
+
   /// Onboarding must array-union the new child and only set default when empty.
   static bool shouldSetDefaultChildOnOnboarding({
     required bool hasExistingDefaultChild,

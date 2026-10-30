@@ -12,6 +12,7 @@ import 'package:loving_brain/other/v2_notification_scheduler.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
 
@@ -198,8 +199,15 @@ class NotificationUtil {
       }
     }
 
-    // Foreground FCM listener: display local banner
+    // Foreground FCM listener: display local banner for data-only messages.
+    // On iOS, messages that already include a notification payload are presented
+    // by setForegroundNotificationPresentationOptions — avoid a second banner.
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      final bool hasNotificationPayload = message.notification != null;
+      if (!kIsWeb && Platform.isIOS && hasNotificationPayload) {
+        return;
+      }
+
       final String title =
           message.notification?.title ??
           message.data['title']?.toString() ??
@@ -338,7 +346,7 @@ class NotificationUtil {
     } catch (_) {}
   }
 
-  static Future<void> scheduleNotification({
+  static Future<bool> scheduleNotification({
     required int id,
     required String title,
     required String body,
@@ -361,7 +369,51 @@ class NotificationUtil {
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         payload: payload,
       );
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Opens the OS page where the parent can enable notifications for this app.
+  static Future<void> openSystemNotificationSettings() async {
+    try {
+      if (kIsWeb) {
+        return;
+      }
+      if (Platform.isIOS) {
+        await launchUrl(Uri.parse('app-settings:'));
+        return;
+      }
+      if (Platform.isAndroid) {
+        final Uri notificationSettings = Uri.parse(
+          'intent:#Intent;action=android.settings.APP_NOTIFICATION_SETTINGS;'
+          'S.android.provider.extra.APP_PACKAGE=com.app.loving_brain;end',
+        );
+        if (await canLaunchUrl(notificationSettings)) {
+          await launchUrl(
+            notificationSettings,
+            mode: LaunchMode.externalApplication,
+          );
+          return;
+        }
+        final Uri appDetails = Uri.parse(
+          'intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;'
+          'data=package:com.app.loving_brain;end',
+        );
+        if (await canLaunchUrl(appDetails)) {
+          await launchUrl(appDetails, mode: LaunchMode.externalApplication);
+        }
+      }
     } catch (_) {}
+  }
+
+  /// True when the OS has already been asked for notification permission.
+  static Future<bool> wasNotificationPermissionRequested() async {
+    return preferences.getBool(
+          SharedPreference.notificationPermissionRequested,
+        ) ??
+        false;
   }
 
   static Future<void> cancelNotification(int id) async {

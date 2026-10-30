@@ -255,6 +255,19 @@ class AppRouter {
               const AddChildScreen(),
         ),
         GoRoute(
+          path: RoutePaths.editChildConcerns,
+          builder: (BuildContext context, GoRouterState state) {
+            final Object? extra = state.extra;
+            final List<String> initialConcerns = extra is List<String>
+                ? extra
+                : const <String>[];
+            return OnboardingScreen(
+              editConcerns: true,
+              initialConcerns: initialConcerns,
+            );
+          },
+        ),
+        GoRoute(
           path: RoutePaths.base,
           builder: (BuildContext context, GoRouterState state) =>
               const BaseScreen(),

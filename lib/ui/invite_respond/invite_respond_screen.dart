@@ -16,6 +16,7 @@ import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/other/snack_bar.dart';
 import 'package:loving_brain/router/route_paths.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';
+import 'package:loving_brain/ui/widget/app_loading_indicator.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import 'bloc/invite_respond_cubit.dart';
@@ -211,7 +212,7 @@ class _InviteRespondScreenState extends State<InviteRespondScreen> {
       builder: (BuildContext context, InviteRespondState state) {
         final InviteRespondCubit cubit = context.read<InviteRespondCubit>();
         final bool canRespond =
-            state.status == 'REQUESTED' || state.status.isEmpty;
+            !state.isLoadingPreview && state.status == 'REQUESTED';
         final String childName = state.childNames.trim().isNotEmpty
             ? state.childNames.trim()
             : 'their child';
@@ -268,16 +269,6 @@ class _InviteRespondScreenState extends State<InviteRespondScreen> {
                         ),
                       ),
                       24.spaceH,
-                      if (state.isLoadingPreview)
-                        SizedBox(
-                          width: 28.w,
-                          height: 28.w,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            color: primaryColor,
-                          ),
-                        ),
-                      if (state.isLoadingPreview) 16.spaceH,
                       'Co-parent invitation'.appText(
                         fraunces: true,
                         fontSize: 28,
@@ -286,18 +277,22 @@ class _InviteRespondScreenState extends State<InviteRespondScreen> {
                         textAlign: TextAlign.start,
                         letterSpacing: 0,
                       ),
-                      10.spaceH,
-                      intro.appText(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: greyColor,
-                        textAlign: TextAlign.start,
-                        letterSpacing: 0,
-                        height: 1.4,
-                      ),
-                      20.spaceH,
-                      _detailsCard(state),
-                      const Spacer(),
+                      if (state.isLoadingPreview)
+                        const Expanded(child: AppLoadingIndicator())
+                      else ...<Widget>[
+                        10.spaceH,
+                        intro.appText(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: greyColor,
+                          textAlign: TextAlign.start,
+                          letterSpacing: 0,
+                          height: 1.4,
+                        ),
+                        20.spaceH,
+                        _detailsCard(state),
+                        const Spacer(),
+                      ],
                       if (canRespond) ...<Widget>[
                         AppButton(
                           title: 'Accept invitation',

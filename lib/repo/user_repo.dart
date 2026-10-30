@@ -222,6 +222,35 @@ class UserRepo {
     }
   }
 
+  /// Raw `notification_preferences` map from the user document, if present.
+  Future<Map<String, dynamic>?> getNotificationPreferencesMap({
+    required String uid,
+  }) async {
+    try {
+      if (uid.isEmpty) {
+        return null;
+      }
+      final DocumentSnapshot<Map<String, dynamic>> doc = await userCollection
+          .doc(uid)
+          .get();
+      final Map<String, dynamic>? data = doc.data();
+      if (!doc.exists || data == null) {
+        return null;
+      }
+      final Object? raw = data['notification_preferences'];
+      if (raw is Map<String, dynamic>) {
+        return raw;
+      }
+      if (raw is Map) {
+        return Map<String, dynamic>.from(raw);
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error reading notification_preferences: $e');
+      return null;
+    }
+  }
+
   Future<ApiResultStatus> updateUserToFireStore({
     String? uId,
     required Map<String, dynamic> request,

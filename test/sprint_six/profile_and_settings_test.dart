@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/notification_preferences_model.dart';
+import 'package:loving_brain/other/preferances.dart';
 import 'package:loving_brain/ui/child_profile_v2/bloc/child_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/help_safety/bloc/help_safety_cubit.dart';
 import 'package:loving_brain/ui/notifications/bloc/notifications_cubit.dart';
 import 'package:loving_brain/repo/offline_sync_repo.dart';
 import 'package:loving_brain/ui/parent_profile_v2/bloc/parent_profile_v2_cubit.dart';
 import 'package:loving_brain/ui/privacy_data/bloc/privacy_data_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -115,9 +117,92 @@ void main() {
       },
     );
 
+    test('12-hour quiet hours strings still enforce the overnight window', () {
+      const NotificationPreferencesModel prefs = NotificationPreferencesModel(
+        quietHoursStart: '9:00 PM',
+        quietHoursEnd: '7:00 AM',
+      );
+
+      expect(
+        prefs.isInsideQuietHours(const TimeOfDay(hour: 22, minute: 0)),
+        isTrue,
+      );
+      expect(
+        prefs.isInsideQuietHours(const TimeOfDay(hour: 2, minute: 0)),
+        isTrue,
+      );
+      expect(
+        prefs.isInsideQuietHours(const TimeOfDay(hour: 14, minute: 30)),
+        isFalse,
+      );
+      expect(
+        prefs.isInsideQuietHours(const TimeOfDay(hour: 7, minute: 0)),
+        isFalse,
+      );
+    });
+
+    test('same-day quiet hours and unparseable fallback', () {
+      const NotificationPreferencesModel sameDay = NotificationPreferencesModel(
+        quietHoursStart: '13:00',
+        quietHoursEnd: '15:00',
+      );
+      expect(
+        sameDay.isInsideQuietHours(const TimeOfDay(hour: 14, minute: 0)),
+        isTrue,
+      );
+      expect(
+        sameDay.isInsideQuietHours(const TimeOfDay(hour: 12, minute: 59)),
+        isFalse,
+      );
+      expect(
+        sameDay.isInsideQuietHours(const TimeOfDay(hour: 15, minute: 0)),
+        isFalse,
+      );
+
+      const NotificationPreferencesModel broken = NotificationPreferencesModel(
+        quietHoursStart: 'not-a-time',
+        quietHoursEnd: 'also-bad',
+      );
+      // Falls back to default 21:00–07:00
+      expect(
+        broken.isInsideQuietHours(const TimeOfDay(hour: 22, minute: 0)),
+        isTrue,
+      );
+      expect(
+        broken.isInsideQuietHours(const TimeOfDay(hour: 14, minute: 0)),
+        isFalse,
+      );
+    });
+
+    test('reminder time strings resolve to the same clock', () {
+      final DateTime day = DateTime(2026, 10, 30);
+      final DateTime? fromDisplay =
+          NotificationPreferencesModel.resolveDateTimeOn(
+            day: day,
+            timeString: '8:30 PM',
+          );
+      final DateTime? fromHHmm = NotificationPreferencesModel.resolveDateTimeOn(
+        day: day,
+        timeString: '20:30',
+      );
+      final DateTime? changed = NotificationPreferencesModel.resolveDateTimeOn(
+        day: day,
+        timeString: '9:15 PM',
+      );
+
+      expect(fromDisplay, DateTime(2026, 10, 30, 20, 30));
+      expect(fromHHmm, DateTime(2026, 10, 30, 20, 30));
+      expect(changed, DateTime(2026, 10, 30, 21, 15));
+      expect(changed, isNot(DateTime(2026, 10, 30, 20, 30)));
+    });
+
     test('NotificationsCubit toggles preferences cleanly', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      await SharedPreference.init();
+
       final NotificationsCubit cubit = NotificationsCubit();
       cubit.init();
+      await Future<void>.delayed(Duration.zero);
 
       final bool initialSleep = cubit.state.sleepEnabled;
       await cubit.toggleSleep();

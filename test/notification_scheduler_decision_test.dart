@@ -111,7 +111,8 @@ void main() {
         ).toJson(),
       );
 
-      final DateTime insideQuiet = DateTime(2026, 10, 30, 22, 30);
+      // Distinct calendar day from other cap tests so reserved slots do not collide.
+      final DateTime insideQuiet = DateTime(2026, 11, 1, 22, 30);
 
       expect(
         V2NotificationScheduler.canSendNotification(
@@ -131,35 +132,38 @@ void main() {
       );
     });
 
-    test('user-defined sleep bypasses quiet hours; forecast sleep does not', () async {
-      await preferences.saveNotificationPreferences(
-        const NotificationPreferencesModel(
-          sleepReminders: true,
-          quietHoursStart: '21:00',
-          quietHoursEnd: '07:00',
-          maxDailyCap: 3,
-        ).toJson(),
-      );
+    test(
+      'user-defined sleep bypasses quiet hours; forecast sleep does not',
+      () async {
+        await preferences.saveNotificationPreferences(
+          const NotificationPreferencesModel(
+            sleepReminders: true,
+            quietHoursStart: '21:00',
+            quietHoursEnd: '07:00',
+            maxDailyCap: 3,
+          ).toJson(),
+        );
 
-      final DateTime insideQuiet = DateTime(2026, 10, 30, 21, 30);
+        final DateTime insideQuiet = DateTime(2026, 11, 2, 21, 30);
 
-      expect(
-        V2NotificationScheduler.canSendNotification(
-          type: 'sleep',
-          targetTime: insideQuiet,
-          bypassQuietHours: false,
-        ),
-        isFalse,
-      );
-      expect(
-        V2NotificationScheduler.canSendNotification(
-          type: 'sleep',
-          targetTime: insideQuiet,
-          bypassQuietHours: true,
-        ),
-        isTrue,
-      );
-    });
+        expect(
+          V2NotificationScheduler.canSendNotification(
+            type: 'sleep',
+            targetTime: insideQuiet,
+            bypassQuietHours: false,
+          ),
+          isFalse,
+        );
+        expect(
+          V2NotificationScheduler.canSendNotification(
+            type: 'sleep',
+            targetTime: insideQuiet,
+            bypassQuietHours: true,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('toggle off refuses scheduling for that type', () async {
       await preferences.saveNotificationPreferences(
@@ -174,7 +178,7 @@ void main() {
         ).toJson(),
       );
 
-      final DateTime afternoon = DateTime(2026, 10, 30, 15, 0);
+      final DateTime afternoon = DateTime(2026, 11, 3, 15, 0);
       expect(
         V2NotificationScheduler.canSendNotification(
           type: 'sleep',
@@ -209,22 +213,22 @@ void main() {
 
   group('NotificationPreferencesModel time helpers', () {
     test('parseTimeOfDayString accepts 12h and 24h', () {
-      expect(
-        NotificationPreferencesModel.parseTimeOfDayString('21:00'),
-        (21, 0),
-      );
-      expect(
-        NotificationPreferencesModel.parseTimeOfDayString('9:00 PM'),
-        (21, 0),
-      );
-      expect(
-        NotificationPreferencesModel.parseTimeOfDayString('12:00 AM'),
-        (0, 0),
-      );
-      expect(
-        NotificationPreferencesModel.parseTimeOfDayString('12:30 PM'),
-        (12, 30),
-      );
+      expect(NotificationPreferencesModel.parseTimeOfDayString('21:00'), (
+        21,
+        0,
+      ));
+      expect(NotificationPreferencesModel.parseTimeOfDayString('9:00 PM'), (
+        21,
+        0,
+      ));
+      expect(NotificationPreferencesModel.parseTimeOfDayString('12:00 AM'), (
+        0,
+        0,
+      ));
+      expect(NotificationPreferencesModel.parseTimeOfDayString('12:30 PM'), (
+        12,
+        30,
+      ));
       expect(
         NotificationPreferencesModel.parseTimeOfDayString('garbage'),
         isNull,

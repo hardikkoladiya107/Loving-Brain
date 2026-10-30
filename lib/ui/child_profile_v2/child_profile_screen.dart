@@ -61,19 +61,121 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
     }
   }
 
+  Future<void> _editConcerns(
+    BuildContext context,
+    ChildProfileV2Cubit cubit,
+  ) async {
+    final List<String> initial = cubit.state.concerns
+        .split(',')
+        .map((String concern) => concern.trim())
+        .where((String concern) => concern.isNotEmpty)
+        .toList();
+    final Object? result = await context.push<Object?>(
+      RoutePaths.editChildConcerns,
+      extra: initial,
+    );
+    if (result is List<String> && context.mounted) {
+      cubit.updateField(concerns: result.join(', '));
+    }
+  }
+
+  Future<void> _confirmDeleteChild(
+    BuildContext context,
+    ChildProfileV2Cubit cubit,
+  ) async {
+    final String childName = cubit.state.name.trim().isNotEmpty
+        ? cubit.state.name.trim()
+        : 'this child';
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.4),
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+          insetPadding: EdgeInsets.symmetric(horizontal: 28.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  width: 52.w,
+                  height: 52.w,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFEBEE),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    color: const Color(0xFFD84315),
+                    size: 26.sp,
+                  ),
+                ),
+                16.spaceH,
+                'Delete child profile?'.appText(
+                  fontSize: 20.sp,
+                  color: greyColor9,
+                  fraunces: true,
+                  textAlign: TextAlign.center,
+                ),
+                10.spaceH,
+                'This permanently deletes $childName\'s profile, shared logs, and access for every linked parent. This cannot be undone.'
+                    .appText(
+                      fontSize: 14.sp,
+                      color: greyColor,
+                      textAlign: TextAlign.center,
+                      height: 1.4,
+                    ),
+                20.spaceH,
+                AppButton(
+                  height: 48.h,
+                  padding: EdgeInsets.zero,
+                  title: 'Delete',
+                  backgroundColor: const Color(0xFFD84315),
+                  borderColor: const Color(0xFFD84315),
+                  textColor: Colors.white,
+                  onTap: () => Navigator.pop(dialogContext, true),
+                ),
+                12.spaceH,
+                AppButton(
+                  height: 48.h,
+                  padding: EdgeInsets.zero,
+                  title: 'Cancel',
+                  backgroundColor: const Color(0xFFF8F5F2),
+                  borderColor: const Color(0xFFE9E2DC),
+                  textColor: greyColor9,
+                  onTap: () => Navigator.pop(dialogContext, false),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (confirmed == true && context.mounted) {
+      await cubit.removeChild();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChildProfileV2Cubit, ChildProfileV2State>(
       listener: (context, state) {
         state.saveStatus.whenOrNull(
-          loading: () => EasyLoading.show(status: 'Saving...'),
+          loading: () => EasyLoading.show(),
           data: (dynamic message) {
             EasyLoading.dismiss();
-            showSnackBar(
-              message: message?.toString() ?? 'Profile saved successfully',
-              type: SnackBarType.SUCCESS,
-            );
-            if (widget.fromManageChildren && context.canPop()) {
+            final String text = message is String && message.trim().isNotEmpty
+                ? message.trim()
+                : 'Profile saved successfully';
+            showSnackBar(message: text, type: SnackBarType.SUCCESS);
+            final bool deleted =
+                text == ChildProfileV2Cubit.childDeletedMessage;
+            if ((deleted || widget.fromManageChildren) && context.canPop()) {
               context.pop(true);
             }
           },
@@ -214,8 +316,10 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                           EditableFieldCard(
                             label: "ROUTINES & CONCERNS",
                             value: state.concerns,
-                            onChanged: (v) => cubit.updateField(concerns: v),
-                            onEdit: () {},
+                            hintText: "Choose routines and concerns",
+                            readOnly: true,
+                            onTap: () => _editConcerns(context, cubit),
+                            onEdit: () => _editConcerns(context, cubit),
                           ),
                           12.spaceH,
                           EditableFieldCard(
@@ -309,47 +413,15 @@ class _ChildProfileScreenState extends State<ChildProfileScreen> {
                             body:
                                 "Changing the date of birth will re-base age guidance from the next day.",
                           ),
-                          if (cubit.isPrimaryParent &&
-                              state.childModel?.reference != null) ...<Widget>[
+                          if (cubit.canDeleteChild) ...<Widget>[
                             24.spaceH,
                             AppButton(
-                              title: 'Remove child',
+                              title: 'Delete child',
+                              padding: EdgeInsets.zero,
                               backgroundColor: Colors.white,
                               borderColor: const Color(0xFFD84315),
                               textColor: const Color(0xFFD84315),
-                              onTap: () async {
-                                final bool? confirmed = await showDialog<bool>(
-                                  context: context,
-                                  builder: (BuildContext dialogContext) {
-                                    return AlertDialog(
-                                      title: const Text('Remove child?'),
-                                      content: const Text(
-                                        'This permanently deletes this child profile and shared logs for all linked parents.',
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(
-                                            dialogContext,
-                                            false,
-                                          ),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(dialogContext, true),
-                                          child: const Text('Remove'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                if (confirmed == true && context.mounted) {
-                                  await cubit.removeChild();
-                                  if (context.mounted && context.canPop()) {
-                                    context.pop(true);
-                                  }
-                                }
-                              },
+                              onTap: () => _confirmDeleteChild(context, cubit),
                             ),
                           ],
                           if (state.isEdited) 120.spaceH else 40.spaceH,

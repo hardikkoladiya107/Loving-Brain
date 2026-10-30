@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:loving_brain/model/notification_preferences_model.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
+import 'package:loving_brain/other/notification_util.dart';
 import 'package:loving_brain/other/permission_helper.dart';
 
 import 'bloc/notifications_cubit.dart';
@@ -18,13 +20,28 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NotificationsCubit>().init();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      context.read<NotificationsCubit>().refreshPermissionStatus();
+    }
   }
 
   String _formatDisplayTime(String raw) {
@@ -56,6 +73,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     BuildContext context, {
     required String currentTime,
     required Function(String) onSelected,
+    bool persistAsHHmm = false,
   }) async {
     TimeOfDay initialTime = const TimeOfDay(hour: 19, minute: 15);
     try {
@@ -93,6 +111,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
 
     if (picked != null && context.mounted) {
+      if (persistAsHHmm) {
+        onSelected(
+          NotificationPreferencesModel.formatHHmm(picked.hour, picked.minute),
+        );
+        return;
+      }
       final DateTime now = DateTime.now();
       final DateTime dt = DateTime(
         now.year,
@@ -104,6 +128,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       final String formatted = DateFormat('h:mm a').format(dt);
       onSelected(formatted);
     }
+  }
+
+  Future<void> _onPermissionBannerTap(NotificationsCubit cubit) async {
+    final bool alreadyRequested =
+        await NotificationUtil.wasNotificationPermissionRequested();
+    if (!mounted) {
+      return;
+    }
+    if (!alreadyRequested) {
+      final bool granted = await PermissionHelper.ensureNotificationPermission(
+        context,
+      );
+      cubit.changeProps(isPermissionDenied: !granted);
+      return;
+    }
+    await NotificationUtil.openSystemNotificationSettings();
+    await cubit.refreshPermissionStatus();
   }
 
   @override
@@ -199,13 +240,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           if (state.isPermissionDenied) ...[
                             16.spaceH,
                             GestureDetector(
-                              onTap: () async {
-                                final bool granted =
-                                    await PermissionHelper.ensureNotificationPermission(
-                                      context,
-                                    );
-                                cubit.changeProps(isPermissionDenied: !granted);
-                              },
+                              onTap: () => _onPermissionBannerTap(cubit),
                               child: Container(
                                 padding: EdgeInsets.all(14.r),
                                 decoration: BoxDecoration(
@@ -230,6 +265,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                                 fontSize: 13.sp,
                                                 color: const Color(0xFF856404),
                                                 fontWeight: FontWeight.w500,
+                                                textAlign: TextAlign.start,
                                               ),
                                     ),
                                   ],
@@ -397,6 +433,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         currentTime: _formatDisplayTime(
                                           state.quietHoursStart,
                                         ),
+                                        persistAsHHmm: true,
                                         onSelected: (String time) =>
                                             cubit.updateQuietHours(start: time),
                                       ),
@@ -445,6 +482,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                         currentTime: _formatDisplayTime(
                                           state.quietHoursEnd,
                                         ),
+                                        persistAsHHmm: true,
                                         onSelected: (String time) =>
                                             cubit.updateQuietHours(end: time),
                                       ),

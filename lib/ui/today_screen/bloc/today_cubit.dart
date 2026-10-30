@@ -7,6 +7,7 @@ import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/model/health_log_model.dart';
 import 'package:loving_brain/model/mood_log_model.dart';
+import 'package:loving_brain/model/notification_preferences_model.dart';
 import 'package:loving_brain/model/quick_note_model.dart';
 import 'package:loving_brain/model/sleep_log_model.dart';
 import 'package:loving_brain/model/tantrum_log_model.dart';
@@ -554,24 +555,36 @@ class TodayCubit extends Cubit<TodayState> {
         );
       }
       if (windDownStart.isAfter(DateTime.now())) {
+        final NotificationPreferencesModel notifPrefs =
+            V2NotificationScheduler.loadPreferences();
+        DateTime? userDefinedNotifyTime;
+        if (notifPrefs.sleepReminderTimeCustomized) {
+          userDefinedNotifyTime =
+              NotificationPreferencesModel.resolveDateTimeOn(
+                day: DateTime.now(),
+                timeString: notifPrefs.sleepReminderTime,
+              );
+        }
         await V2NotificationScheduler.scheduleSleepWindow(
           childId: childId,
           childName: child?.childName ?? state.childName,
           windDownStart: windDownStart,
+          userDefinedNotifyTime: userDefinedNotifyTime,
         );
       }
     }
 
-    // Schedule Gentle Check-In at 8:30 PM if no logs today (Doc 03 §4)
+    // Schedule Gentle Check-In at user-selected time (default ~8:30 PM) if no logs today
     if (childId.isNotEmpty) {
       final DateTime now = DateTime.now();
-      final DateTime checkInTime = DateTime(
-        now.year,
-        now.month,
-        now.day,
-        20,
-        30,
-      );
+      final NotificationPreferencesModel notifPrefs =
+          V2NotificationScheduler.loadPreferences();
+      final DateTime checkInTime =
+          NotificationPreferencesModel.resolveDateTimeOn(
+            day: now,
+            timeString: notifPrefs.checkInReminderTime,
+          ) ??
+          DateTime(now.year, now.month, now.day, 20, 30);
       if (checkInTime.isAfter(now)) {
         final bool hasLogsToday =
             sleepLogs.any(

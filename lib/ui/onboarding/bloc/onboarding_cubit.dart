@@ -17,17 +17,54 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   LocationDataModel? _locationData;
   LocationDataModel? get locationData => _locationData;
   bool _addAnotherChild = false;
+  bool _skipChildSetup = false;
+  bool _editConcerns = false;
+
+  /// True when this account already cares for a child, so onboarding
+  /// keeps the three parent pages and does not create another child.
+  bool get skipChildSetup => _skipChildSetup;
 
   void reset() {
     _addAnotherChild = false;
+    _skipChildSetup = false;
+    _editConcerns = false;
     _locationData = null;
     emit(const OnboardingState());
+  }
+
+  /// Opens only the concerns step so a saved child can be edited
+  /// without restarting onboarding or writing the onboarding draft.
+  void beginEditConcerns(List<String> concerns) {
+    _addAnotherChild = false;
+    _skipChildSetup = false;
+    _editConcerns = true;
+    final List<String> selected = concerns
+        .map((String concern) => concern.trim())
+        .where((String concern) => concern.isNotEmpty)
+        .toList();
+    emit(
+      OnboardingState(
+        currentPage: 1,
+        concerns: selected,
+        primaryConcern: selected.isNotEmpty ? selected.first : '',
+        isMoreThanOneSelected: selected.length > 1,
+      ),
+    );
+  }
+
+  void _refreshSkipChildSetup(UserModel? user) {
+    _skipChildSetup = FamilyMembershipHelpers.shouldSkipChildOnboardingPages(
+      hasDefaultChild: user?.defaultChild != null,
+      hasChildren: user?.children?.isNotEmpty ?? false,
+    );
   }
 
   /// Child-only flow for a parent who already finished onboarding.
   /// Starts on the little-one page and does not touch the onboarding draft.
   void beginAddAnotherChild() {
     _addAnotherChild = true;
+    _skipChildSetup = false;
+    _editConcerns = false;
     final UserModel? user = preferences.getUserModel();
     _locationData =
         user?.locationData ?? LocationDataModel.tryParse(user?.location);
@@ -44,7 +81,9 @@ class OnboardingCubit extends Cubit<OnboardingState> {
 
   void init() {
     _addAnotherChild = false;
+    _editConcerns = false;
     final UserModel? user = preferences.getUserModel();
+    _refreshSkipChildSetup(user);
     final String? parentName = user?.parentName?.trim();
     final String initialParentName =
         (parentName != null && parentName.isNotEmpty) ? parentName : '';
@@ -58,10 +97,14 @@ class OnboardingCubit extends Cubit<OnboardingState> {
       if (draftUid != null && user?.uid != null && draftUid != user!.uid) {
         preferences.clearOnboardingDraft(uid: user.uid);
         reset();
+        _refreshSkipChildSetup(user);
         return;
       }
 
-      final int savedPage = (draft['currentPage'] as num?)?.toInt() ?? 0;
+      int savedPage = (draft['currentPage'] as num?)?.toInt() ?? 0;
+      if (_skipChildSetup && savedPage > 2) {
+        savedPage = 2;
+      }
       final String? savedDob = draft['dateOfBirth'] as String?;
       DateTime? dob;
       if (draft['childDob'] != null) {
@@ -210,7 +253,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   }
 
   void _persistDraft(OnboardingState next) {
-    if (_addAnotherChild || next.completeStatus is Data) {
+    if (_addAnotherChild || _editConcerns || next.completeStatus is Data) {
       return;
     }
     final UserModel? user = preferences.getUserModel();
@@ -559,6 +602,40 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     );
   }
 
+  Future<void> _finishOnboardingForLinkedChild({
+    required UserModel user,
+    required LocationDataModel? resolvedLoc,
+  }) async {
+    final String primaryConcern = state.primaryConcern.isNotEmpty
+        ? state.primaryConcern
+        : (state.concerns.isNotEmpty ? state.concerns.first : '');
+    final Map<String, dynamic> userUpdate = <String, dynamic>{
+      'parent_name': state.parentName.trim(),
+      'relationship_to_child': state.parentRole,
+      'preferred_language': state.preferredLanguage,
+      'location': resolvedLoc?.toJson() ?? state.location,
+      if (resolvedLoc != null) 'location_data': resolvedLoc.toJson(),
+      'concerns': state.concerns,
+      'primary_concern': primaryConcern,
+      'success_goal': state.successGoal,
+      'is_onboarding_completed': true,
+    };
+    final ApiResultStatus updateResult = await AuthRepo.instance
+        .updateUserToFireStore(uId: user.uid, request: userUpdate);
+    if (updateResult is Error) {
+      changeProps(completeStatus: updateResult);
+      return;
+    }
+
+    await AuthRepo.instance.syncUserAndDefaultChild(uId: user.uid!);
+    await preferences.clearOnboardingDraft(uid: user.uid);
+    _locationData = null;
+    _skipChildSetup = false;
+    emit(
+      const OnboardingState(completeStatus: ApiResultStatus.data(data: true)),
+    );
+  }
+
   Future<void> completeOnboarding() async {
     changeProps(completeStatus: const ApiResultStatus.loading());
     try {
@@ -567,14 +644,23 @@ class OnboardingCubit extends Cubit<OnboardingState> {
         throw Exception("User not found. Please log in again.");
       }
 
+      final LocationDataModel? resolvedLoc =
+          _locationData ?? LocationDataModel.tryParse(state.location);
+
+      if (_skipChildSetup) {
+        await _finishOnboardingForLinkedChild(
+          user: user,
+          resolvedLoc: resolvedLoc,
+        );
+        return;
+      }
+
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
       final int ageInMonths = AgeUtils.resolvedAgeInMonths(
         dob: state.childDob,
         legacyAgeText: '',
       );
       final String computedChildAge = AgeUtils.ageLabelFromMonths(ageInMonths);
-      final LocationDataModel? resolvedLoc =
-          _locationData ?? LocationDataModel.tryParse(state.location);
 
       // 1. Create Child Document with full onboarding details
       final DocumentReference<Map<String, dynamic>> childDoc = firestore

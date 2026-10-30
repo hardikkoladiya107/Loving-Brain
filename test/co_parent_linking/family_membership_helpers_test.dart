@@ -52,6 +52,78 @@ void main() {
     });
   });
 
+  group('FamilyMembershipHelpers.canDeleteChildProfile', () {
+    test('allows the primary parent', () {
+      expect(
+        FamilyMembershipHelpers.canDeleteChildProfile(
+          callerUid: 'parent_1',
+          primaryParentUid: 'parent_1',
+          parentReferenceIds: <String>['parent_1', 'coparent_2'],
+        ),
+        isTrue,
+      );
+    });
+
+    test('blocks a co-parent even when they are linked', () {
+      expect(
+        FamilyMembershipHelpers.canDeleteChildProfile(
+          callerUid: 'coparent_2',
+          primaryParentUid: 'parent_1',
+          parentReferenceIds: <String>['parent_1', 'coparent_2'],
+        ),
+        isFalse,
+      );
+    });
+
+    test('falls back to the first linked parent when primary is unset', () {
+      expect(
+        FamilyMembershipHelpers.canDeleteChildProfile(
+          callerUid: 'parent_1',
+          primaryParentUid: '',
+          parentReferenceIds: <String>['parent_1', 'coparent_2'],
+        ),
+        isTrue,
+      );
+      expect(
+        FamilyMembershipHelpers.canDeleteChildProfile(
+          callerUid: 'coparent_2',
+          primaryParentUid: null,
+          parentReferenceIds: <String>['parent_1', 'coparent_2'],
+        ),
+        isFalse,
+      );
+    });
+  });
+
+  group('FamilyMembershipHelpers.shouldSkipChildOnboardingPages', () {
+    test('skips child pages when the account already has a child', () {
+      expect(
+        FamilyMembershipHelpers.shouldSkipChildOnboardingPages(
+          hasDefaultChild: true,
+          hasChildren: false,
+        ),
+        isTrue,
+      );
+      expect(
+        FamilyMembershipHelpers.shouldSkipChildOnboardingPages(
+          hasDefaultChild: false,
+          hasChildren: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('keeps the full onboarding when no child is linked yet', () {
+      expect(
+        FamilyMembershipHelpers.shouldSkipChildOnboardingPages(
+          hasDefaultChild: false,
+          hasChildren: false,
+        ),
+        isFalse,
+      );
+    });
+  });
+
   group('FamilyMembershipHelpers.filterHealthTimelineEvents', () {
     test('keeps health rows when caregiver can view health', () {
       final List<String> filtered =

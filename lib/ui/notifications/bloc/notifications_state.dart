@@ -14,6 +14,7 @@ abstract class NotificationsState with _$NotificationsState {
     @Default(true) bool weeklyReviewEnabled,
     @Default('7:15 PM') String sleepReminderTime,
     @Default('8:30 PM') String checkInReminderTime,
+    @Default(false) bool sleepReminderTimeCustomized,
     @Default('21:00') String quietHoursStart,
     @Default('07:00') String quietHoursEnd,
     @Default(3) int maxDailyCap,
