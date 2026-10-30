@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:loving_brain/generated/locale_keys.g.dart';
 import 'package:loving_brain/main.dart';
 import 'package:loving_brain/model/api_result_status.dart';
@@ -28,6 +29,7 @@ class DeepLinkManager {
   final AppLinks appLinks = AppLinks();
 
   StreamSubscription<Uri>? _appLinkStreamSubscription;
+  bool _isFetchingInvitation = false;
 
   Future<void> init() async {
     await _handleInitialLink();
@@ -73,8 +75,18 @@ class DeepLinkManager {
   }
 
   Future<void> _processInvitation(String invitationId) async {
-    final ApiResultStatus previewResult = await CoParentRepo.instance
-        .getInvitationPreview(invitationId: invitationId);
+    _showFetchingInvitation();
+    final ApiResultStatus previewResult;
+    try {
+      previewResult = await CoParentRepo.instance.getInvitationPreview(
+        invitationId: invitationId,
+      );
+    } catch (_) {
+      await _hideFetchingInvitation();
+      _showError(LocaleKeys.deepLinkLoadFailed.tr());
+      return;
+    }
+    await _hideFetchingInvitation();
 
     String invitedEmail = '';
     String maskedEmail = '';
@@ -162,6 +174,28 @@ class DeepLinkManager {
         namedArgs: <String, String>{'email': messageEmail},
       ),
     );
+  }
+
+  void _showFetchingInvitation() {
+    _isFetchingInvitation = true;
+    _presentFetchingInvitation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _presentFetchingInvitation();
+    });
+  }
+
+  void _presentFetchingInvitation() {
+    if (!_isFetchingInvitation) {
+      return;
+    }
+    try {
+      EasyLoading.show(status: LocaleKeys.fetchingInvitation.tr());
+    } catch (_) {}
+  }
+
+  Future<void> _hideFetchingInvitation() async {
+    _isFetchingInvitation = false;
+    await EasyLoading.dismiss();
   }
 
   void _showError(String message) {

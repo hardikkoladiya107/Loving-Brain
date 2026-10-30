@@ -561,5 +561,6 @@ abstract class  LocaleKeys {
   static const brainyNoAudioRecorded = 'brainyNoAudioRecorded';
   static const brainyHistoryLoadError = 'brainyHistoryLoadError';
   static const brainySavedLoadError = 'brainySavedLoadError';
+  static const fetchingInvitation = 'fetchingInvitation';
 
 }

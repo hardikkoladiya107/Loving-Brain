@@ -565,6 +565,7 @@
   "brainyGeneralGuidanceLabel": "This answer is general guidance and is not based on your child's pattern yet.",
   "brainyNoAudioRecorded": "No audio was recorded. Please speak and try again.",
   "brainyHistoryLoadError": "Could not load history",
-  "brainySavedLoadError": "Could not load saved guidance"
+  "brainySavedLoadError": "Could not load saved guidance",
+  "fetchingInvitation": "Fetching invitation"
 }
 
