@@ -47,7 +47,6 @@ import 'package:loving_brain/ui/parent_success_guide/bloc/parent_success_guide_c
 import 'package:loving_brain/ui/permissions/bloc/permissions_cubit.dart';
 import 'package:loving_brain/ui/post_session_plan/bloc/post_session_plan_cubit.dart';
 import 'package:loving_brain/ui/privacy_data/bloc/privacy_data_cubit.dart';
-import 'package:loving_brain/ui/profile/bloc/profile_cubit.dart';
 import 'package:loving_brain/ui/programme_detail/bloc/programme_detail_cubit.dart';
 import 'package:loving_brain/ui/request_session/bloc/request_session_cubit.dart';
 import 'package:loving_brain/ui/session_request_confirmation/bloc/session_request_confirmation_cubit.dart';
@@ -57,7 +56,6 @@ import 'package:loving_brain/ui/sleep_forecast/bloc/sleep_forecast_cubit.dart';
 import 'package:loving_brain/ui/sleep_low_confidence/bloc/sleep_low_confidence_cubit.dart';
 import 'package:loving_brain/ui/sleep_no_data/bloc/sleep_no_data_cubit.dart';
 import 'package:loving_brain/ui/sleep_pattern/bloc/sleep_pattern_cubit.dart';
-import 'package:loving_brain/ui/subscription/bloc/subscription_cubit.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 import 'package:loving_brain/ui/tonights_plan/bloc/tonights_plan_cubit.dart';
 import 'package:loving_brain/ui/trying_this_week/bloc/trying_this_week_cubit.dart';
@@ -188,13 +186,7 @@ class AppSessionManager {
       context.read<BaseCubit>().reset();
     } catch (_) {}
     try {
-      context.read<ProfileCubit>().reset();
-    } catch (_) {}
-    try {
       context.read<PrivacyDataCubit>().reset();
-    } catch (_) {}
-    try {
-      context.read<SubscriptionCubit>().reset();
     } catch (_) {}
     try {
       context.read<FamilySnapshotCubit>().reset();

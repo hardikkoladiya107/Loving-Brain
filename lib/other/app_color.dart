@@ -90,19 +90,8 @@ const Color yellowColor4 = Color(0xFFFDE466);
 const Color yellowColor5 = Color(0xFFfeeb3a);
 const Color yellowColor6 = Color(0xFFFFED79);
 
-const Color gentleReminderIconColor = Color(0xFF06CB5B);
-const Color dailyEmotionCheckIconColor = Color(0xFFF5DB48);
-const Color todayPlayIdeaIconColor = Color(0xFFFFC138);
-const Color scheduleReminderIconColor = Color(0xFF81592F);
-const Color termsAndConditionIconColor = Color(0xFF005CD6);
-const Color privacyPolicyIconColor = Color(0xFFFF1616);
-const Color rateThisAppIconColor = Color(0xFF8C52FF);
-const Color shareThisAppIconColor = Color(0xFFFF66C4);
-const Color logoutAppIconColor = Color(0xFFFF7684);
-const Color deleteAccountIconColor = Color(0xFF8C52FF);
 const Color sleepSummaryBackgroundColor = Color(0xFF357696);
 
-const Color subscriptionColor = Color(0xFF6C79BF);
 const Color tabBarBgColor = Color(0xFFECF4A6);
 const Color selectedTabColor = Color(0xFFD0EBF4);
 const Color fillTextfieldColor = Color(0xFFEAEAEA);

@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 ///
 /// Collection stays off in debug and profile so local runs do not fill the
 /// dashboard. Only the Firebase Auth uid is attached to a report.
+/// Every public method swallows Crashlytics failures so reporting can never
+/// block startup, login, or logout.
 class CrashReporting {
   CrashReporting._();
 
@@ -13,33 +15,39 @@ class CrashReporting {
 
   /// Call once after [Firebase.initializeApp].
   static Future<void> initialise() async {
-    await _crashlytics.setCrashlyticsCollectionEnabled(kReleaseMode);
-    if (!kReleaseMode) {
-      return;
-    }
+    try {
+      await _crashlytics.setCrashlyticsCollectionEnabled(kReleaseMode);
+      if (!kReleaseMode) {
+        return;
+      }
 
-    FlutterError.onError = _crashlytics.recordFlutterFatalError;
-    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-      _crashlytics.recordError(error, stack, fatal: true);
-      return true;
-    };
+      FlutterError.onError = _crashlytics.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        _crashlytics.recordError(error, stack, fatal: true);
+        return true;
+      };
 
-    final User? currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      await setUser(currentUser.uid);
-    }
+      final User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        await setUser(currentUser.uid);
+      }
+    } catch (_) {}
   }
 
   static Future<void> setUser(String uid) async {
-    final String trimmed = uid.trim();
-    if (trimmed.isEmpty) {
-      return;
-    }
-    await _crashlytics.setUserIdentifier(trimmed);
+    try {
+      final String trimmed = uid.trim();
+      if (trimmed.isEmpty) {
+        return;
+      }
+      await _crashlytics.setUserIdentifier(trimmed);
+    } catch (_) {}
   }
 
   static Future<void> clearUser() async {
-    await _crashlytics.setUserIdentifier('');
+    try {
+      await _crashlytics.setUserIdentifier('');
+    } catch (_) {}
   }
 
   /// Non-fatal report for isolates that do not share the main handlers
@@ -52,6 +60,13 @@ class CrashReporting {
     if (!kReleaseMode) {
       return;
     }
-    await _crashlytics.recordError(error, stack, reason: reason, fatal: false);
+    try {
+      await _crashlytics.recordError(
+        error,
+        stack,
+        reason: reason,
+        fatal: false,
+      );
+    } catch (_) {}
   }
 }

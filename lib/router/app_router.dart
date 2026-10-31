@@ -66,7 +66,6 @@ import 'package:loving_brain/ui/sleep_pattern/sleep_pattern_screen.dart';
 import 'package:loving_brain/ui/splash/splash_screen.dart';
 import 'package:loving_brain/ui/states_gallery/states_gallery_screen.dart';
 import 'package:loving_brain/ui/widget/skeleton_loader.dart';
-import 'package:loving_brain/ui/subscription/subscription_screen.dart';
 import 'package:loving_brain/ui/success_screen/success_screen.dart';
 import 'package:loving_brain/ui/terms_and_conditions/terms_and_conditions.dart';
 import 'package:loving_brain/ui/today_screen/sheets/add_behaviour_sheet.dart';
@@ -142,11 +141,6 @@ class AppRouter {
         return null;
       },
       routes: <RouteBase>[
-        GoRoute(
-          path: RoutePaths.subscription,
-          builder: (BuildContext context, GoRouterState state) =>
-              const SubscriptionScreen(),
-        ),
         GoRoute(
           path: RoutePaths.essentials,
           builder: (BuildContext context, GoRouterState state) =>

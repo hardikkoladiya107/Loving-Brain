@@ -19,6 +19,7 @@ import 'package:loving_brain/ui/onboarding/bloc/onboarding_cubit.dart';
 import 'package:loving_brain/ui/widget/app_text_field.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../../manager/apple_sign_in/apple_signin_manager.dart';
 import '../../../generated/locale_keys.g.dart';
 import '../../../other/app_color.dart';
 import '../../../other/snack_bar.dart';
@@ -191,13 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
               "Exception: ",
               "",
             );
-            final String normalizedMessage = message.toLowerCase();
-            final bool isGoogleSignInCancelled =
-                normalizedMessage.contains('code=canceled') ||
-                normalizedMessage.contains('cancelled by the user') ||
-                normalizedMessage.contains('canceled') ||
-                normalizedMessage.contains('empty account');
-            if (isGoogleSignInCancelled) {
+            if (isSilentSignInCancellation(message)) {
               return;
             }
             showSnackBar(message: message, type: SnackBarType.ERROR);

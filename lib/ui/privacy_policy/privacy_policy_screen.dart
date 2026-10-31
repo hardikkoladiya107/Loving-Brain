@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:loving_brain/manager/subscription_manager/subscription_utils.dart';
+import 'package:loving_brain/other/legal_urls.dart';
 import 'package:loving_brain/other/app_color.dart';
 import 'package:loving_brain/other/app_extentions.dart';
 import 'package:loving_brain/ui/widget/app_button.dart';

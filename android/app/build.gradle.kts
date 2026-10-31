@@ -1,10 +1,11 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 
 plugins {
     id("com.android.application")
     id("dev.flutter.flutter-gradle-plugin")
 //    id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -34,6 +35,9 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            configure<CrashlyticsExtension> {
+                nativeSymbolUploadEnabled = true
+            }
         }
     }
 }

@@ -101,9 +101,6 @@ class NotificationUtil {
     if (clean == 'family_snapshot') {
       return RoutePaths.familySnapshot;
     }
-    if (clean == 'subscription') {
-      return RoutePaths.base;
-    }
     return RoutePaths.base;
   }
 

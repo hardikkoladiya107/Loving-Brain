@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loving_brain/model/api_result_status.dart';
 import 'package:loving_brain/model/child_model.dart';
 import 'package:loving_brain/other/app_session_manager.dart';
+import 'package:loving_brain/other/crash_reporting.dart';
 import 'package:loving_brain/other/fcm_token_service.dart';
 import 'package:loving_brain/other/family_membership_helpers.dart';
 import 'package:loving_brain/other/preferances.dart';
@@ -135,6 +136,7 @@ class AuthRepo {
     final UserModel? userModel = await getUserFromUid(uId: uId);
     if (userModel == null) return null;
 
+    await CrashReporting.setUser(uId);
     await preferences.saveUserModel(userModel);
     await preferences.putBool(SharedPreference.isLogin, true);
 
@@ -351,6 +353,9 @@ class AuthRepo {
       await callable.call<dynamic>(<String, dynamic>{});
 
       try {
+        await CrashReporting.clearUser();
+      } catch (_) {}
+      try {
         await AppSessionManager.instance.clearAllSessionStates();
       } catch (_) {}
       try {
@@ -376,6 +381,9 @@ class AuthRepo {
       );
     } catch (e) {
       if (FirebaseAuth.instance.currentUser == null) {
+        try {
+          await CrashReporting.clearUser();
+        } catch (_) {}
         try {
           await FcmTokenService.detachFcmFromSignedInUser();
         } catch (_) {}
@@ -684,6 +692,9 @@ class AuthRepo {
   Future<ApiResultStatus> logout() async {
     try {
       try {
+        await CrashReporting.clearUser();
+      } catch (_) {}
+      try {
         await AppSessionManager.instance.clearAllSessionStates();
       } catch (_) {}
       try {
@@ -837,34 +848,33 @@ class AuthRepo {
     try {
       UserCredential signInUser;
       String appleFullName = '';
-      String appleEmail = '';
+      String credentialEmail = '';
 
       if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
         final AppleSignInResult? result = await AppleSignInManager.instance
             .authenticateWithNonce();
         if (result == null) {
-          return ApiResultStatus.error(
-            error: Exception(
-              'Apple Sign-In cancelled by the user (code=canceled)',
-            ),
-          );
+          return ApiResultStatus.error(error: Exception(appleCancelledMessage));
         }
 
         final AuthorizationCredentialAppleID appleSignInAccount =
             result.credential;
-        final List<String> nameParts = <String>[
-          appleSignInAccount.givenName?.trim() ?? '',
-          appleSignInAccount.familyName?.trim() ?? '',
-        ];
-        appleFullName = nameParts
-            .where((String part) => part.isNotEmpty)
-            .join(' ');
-        appleEmail = appleSignInAccount.email ?? '';
-
+        final String? identityToken = appleSignInAccount.identityToken;
+        if (identityToken == null || identityToken.isEmpty) {
+          return ApiResultStatus.error(
+            error: Exception(appleMissingTokenMessage),
+          );
+        }
+        appleFullName = appleDisplayName(
+          givenName: appleSignInAccount.givenName,
+          familyName: appleSignInAccount.familyName,
+        );
+        credentialEmail = appleEmail(appleEmail: appleSignInAccount.email);
+        final String authorizationCode = appleSignInAccount.authorizationCode;
         final OAuthCredential oauthCredential = OAuthProvider("apple.com")
             .credential(
-              idToken: appleSignInAccount.identityToken,
-              accessToken: appleSignInAccount.authorizationCode,
+              idToken: identityToken,
+              accessToken: authorizationCode.isEmpty ? null : authorizationCode,
               rawNonce: result.rawNonce,
             );
 
@@ -890,10 +900,14 @@ class AuthRepo {
           } catch (_) {}
         }
 
-        final String resolvedName = appleFullName.isNotEmpty
-            ? appleFullName
-            : (signInUser.user!.displayName ?? '');
-        final String resolvedEmail = signInUser.user!.email ?? appleEmail;
+        final String resolvedName = appleDisplayName(
+          givenName: appleFullName.isEmpty ? null : appleFullName,
+          storedName: signInUser.user!.displayName,
+        );
+        final String resolvedEmail = appleEmail(
+          appleEmail: credentialEmail,
+          storedEmail: signInUser.user!.email,
+        );
 
         UserModel? userModel = await getUserFromUid(uId: signInUser.user!.uid);
         if (userModel == null) {
@@ -919,6 +933,10 @@ class AuthRepo {
           if ((userModel.displayName ?? '').trim().isEmpty &&
               resolvedName.isNotEmpty) {
             updates["display_name"] = resolvedName;
+          }
+          if ((userModel.parentName ?? '').trim().isEmpty &&
+              resolvedName.isNotEmpty) {
+            updates["parent_name"] = resolvedName;
           }
           if ((userModel.email ?? '').trim().isEmpty &&
               resolvedEmail.isNotEmpty) {
@@ -951,16 +969,14 @@ class AuthRepo {
       if (e.code == 'canceled' ||
           e.code == 'web-context-canceled' ||
           e.code == 'user-cancelled') {
-        return ApiResultStatus.error(
-          error: Exception(
-            'Apple Sign-In cancelled by the user (code=canceled)',
-          ),
-        );
+        return ApiResultStatus.error(error: Exception(appleCancelledMessage));
       }
-      final String message =
-          'FirebaseAuth Apple Sign-In failed. code=${e.code}, message=${e.message ?? "no_message"}';
-      debugPrint(message);
-      return ApiResultStatus.error(error: Exception(message));
+      debugPrint(
+        'FirebaseAuth Apple Sign-In failed. code=${e.code}, message=${e.message ?? "no_message"}',
+      );
+      return ApiResultStatus.error(
+        error: Exception(appleSignInFailureMessage(e.code)),
+      );
     } on FirebaseException catch (e) {
       return onFirebaseException(e);
     } catch (e) {

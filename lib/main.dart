@@ -16,6 +16,7 @@ import 'manager/deep_link/deep_link_manager.dart';
 import 'manager/google_sign_in/google_signin_manager.dart';
 import 'other/app_color.dart';
 import 'other/app_extentions.dart';
+import 'other/crash_reporting.dart';
 import 'other/notification_util.dart';
 import 'other/preferances.dart';
 import 'other/v2_notification_scheduler.dart';
@@ -23,37 +24,47 @@ import 'repo/user_repo.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await NotificationUtil.initializeBGNotifications();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await NotificationUtil.initializeBGNotifications();
 
-  // Data-only messages are not automatically displayed by the Android OS tray,
-  // so we display them via local notifications while preventing duplicates for notification messages.
-  if (message.notification == null) {
-    final String title = message.data['title']?.toString() ?? 'Loving Brain';
-    final String body = message.data['body']?.toString() ?? '';
-    final String payload =
-        message.data['type']?.toString() ??
-        message.data['route']?.toString() ??
-        '';
-    try {
-      await SharedPreference.init();
-      final bool blocked = V2NotificationScheduler.loadPreferences()
-          .blocksIncomingNow(kind: payload, now: DateTime.now());
-      if (blocked) {
+    // Data-only messages are not automatically displayed by the Android OS tray,
+    // so we display them via local notifications while preventing duplicates for notification messages.
+    if (message.notification == null) {
+      final String title = message.data['title']?.toString() ?? 'Loving Brain';
+      final String body = message.data['body']?.toString() ?? '';
+      final String payload =
+          message.data['type']?.toString() ??
+          message.data['route']?.toString() ??
+          '';
+      try {
+        await SharedPreference.init();
+        final bool blocked = V2NotificationScheduler.loadPreferences()
+            .blocksIncomingNow(kind: payload, now: DateTime.now());
+        if (blocked) {
+          return;
+        }
+      } catch (_) {
         return;
       }
-    } catch (_) {
-      return;
-    }
 
-    if (title.isNotEmpty || body.isNotEmpty) {
-      await NotificationUtil.showLocalNotification(
-        id: message.hashCode,
-        title: title,
-        body: body,
-        payload: payload,
-      );
+      if (title.isNotEmpty || body.isNotEmpty) {
+        await NotificationUtil.showLocalNotification(
+          id: message.hashCode,
+          title: title,
+          body: body,
+          payload: payload,
+        );
+      }
     }
+  } catch (error, stack) {
+    await CrashReporting.recordNonFatal(
+      error,
+      stack,
+      reason: 'fcm_background_handler',
+    );
   }
 }
 
@@ -66,6 +77,8 @@ void notificationTapBackground(NotificationResponse? payload) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await CrashReporting.initialise();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -82,7 +95,6 @@ Future<void> main() async {
   ]);
   await EasyLocalization.ensureInitialized();
   await SharedPreference.init();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await GoogleSignInManager.instance.initialise();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   configLoading();

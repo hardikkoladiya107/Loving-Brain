@@ -19,6 +19,7 @@ import 'package:loving_brain/ui/widget/app_button.dart';
 import 'package:loving_brain/ui/widget/base_button.dart';
 
 import '../../../gen/assets.gen.dart';
+import '../../../manager/apple_sign_in/apple_signin_manager.dart';
 import '../../../other/app_color.dart';
 import '../../widget/app_text_field.dart';
 import 'bloc/register_cubit.dart';
@@ -364,12 +365,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               "Exception: ",
               "",
             );
-            final String normalized = message.toLowerCase();
-            final bool isCancelled =
-                normalized.contains('code=canceled') ||
-                normalized.contains('cancelled by the user') ||
-                normalized.contains('canceled') ||
-                normalized.contains('empty account');
+            final bool isCancelled = isSilentSignInCancellation(message);
             context.read<RegisterCubit>().changeProps(
               apiResultStatus: const ApiResultStatus.initial(),
             );

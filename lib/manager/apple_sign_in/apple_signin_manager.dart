@@ -3,6 +3,69 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+/// Parent-facing copy for a Firebase Auth failure during Sign in with Apple.
+String appleSignInFailureMessage(String code) {
+  switch (code) {
+    case 'network-request-failed':
+      return 'No internet connection. Check your network and try again.';
+    case 'invalid-credential':
+    case 'invalid-verification-code':
+    case 'missing-or-invalid-nonce':
+      return 'Apple sign-in could not be verified. Please try again.';
+    case 'account-exists-with-different-credential':
+      return 'This Apple email is already used with another sign-in. Try that method, or use a different Apple ID.';
+    case 'user-disabled':
+      return 'This account has been disabled.';
+    case 'too-many-requests':
+      return 'Too many attempts. Wait a moment and try again.';
+    default:
+      return 'Sign in with Apple failed. Please try again.';
+  }
+}
+
+/// Apple only sends the person's name on the first approval.
+/// Later logins keep the name Firebase already stored.
+String appleDisplayName({
+  String? givenName,
+  String? familyName,
+  String? storedName,
+}) {
+  final String fromApple = <String>[
+    (givenName ?? '').trim(),
+    (familyName ?? '').trim(),
+  ].where((String part) => part.isNotEmpty).join(' ');
+  if (fromApple.isNotEmpty) {
+    return fromApple;
+  }
+  return (storedName ?? '').trim();
+}
+
+/// Prefer the email Firebase already attached to the account.
+/// Hide My Email arrives as a privaterelay address and is kept as-is.
+String appleEmail({String? appleEmail, String? storedEmail}) {
+  final String stored = (storedEmail ?? '').trim();
+  if (stored.isNotEmpty) {
+    return stored;
+  }
+  return (appleEmail ?? '').trim();
+}
+
+const String appleMissingTokenMessage =
+    'Apple did not return a sign-in token. Make sure this iPhone is signed in to iCloud, then try again.';
+
+const String appleCancelledMessage =
+    'Apple Sign-In cancelled by the user (code=canceled)';
+
+/// Login and register stay quiet for a dismissed sheet.
+/// Real failures must not match this, or the snackbar never shows.
+bool isSilentSignInCancellation(String message) {
+  final String normalized = message.replaceAll('Exception: ', '').toLowerCase();
+  return normalized.contains('code=canceled') ||
+      normalized.contains('cancelled by the user') ||
+      normalized.contains('canceled') ||
+      normalized.contains('empty account');
+}
+
 class AppleSignInResult {
   final AuthorizationCredentialAppleID credential;
   final String rawNonce;
@@ -40,17 +103,18 @@ class AppleSignInManager {
       return AppleSignInResult(credential: credential, rawNonce: rawNonce);
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled) {
-        throw Exception('Apple Sign-In cancelled by the user (code=canceled)');
+        throw Exception(appleCancelledMessage);
       }
-      if (e.code == AuthorizationErrorCode.unknown) {
-        debugPrint(
-          'Apple Sign-In unknown error. code=${e.code.name}, message=${e.message}',
-        );
+      debugPrint(
+        'Apple Sign-In error. code=${e.code.name}, message=${e.message}',
+      );
+      if (e.code == AuthorizationErrorCode.unknown ||
+          e.code == AuthorizationErrorCode.notInteractive) {
         throw Exception(
           'Sign in with Apple could not start. Make sure this iPhone is signed in to iCloud, then try again.',
         );
       }
-      throw Exception('Apple Sign-In failed (${e.code.name}): ${e.message}');
+      throw Exception('Sign in with Apple failed. Please try again.');
     } on SignInWithAppleException catch (e) {
       throw Exception('Apple Sign-In failed: $e');
     }
@@ -60,6 +124,9 @@ class AppleSignInManager {
     final AppleSignInResult? result = await authenticateWithNonce();
     return result?.credential;
   }
+
+  @visibleForTesting
+  static String sha256Hex(String input) => _sha256ofString(input);
 
   static String _sha256ofString(String input) {
     final List<int> bytes = utf8.encode(input);

@@ -5,15 +5,8 @@ import 'package:loving_brain/model/location_data_model.dart';
 class UserModel {
   UserModel({
     String? uid,
-    String? platform,
     String? email,
     String? phoneNumber,
-    String? productId,
-    String? originalTransactionId,
-    String? subscriptionStatus,
-    String? transactionId,
-    String? purchaseToken,
-    DateTime? freeTaskUseTime,
     DateTime? updatedDate,
     DateTime? lastOpened,
     DateTime? lastStreakUpdate,
@@ -42,18 +35,11 @@ class UserModel {
     bool? isOnboardingCompleted,
   }) {
     _uid = uid;
-    _platform = platform;
     _email = email;
     _phoneNumber = phoneNumber;
-    _productId = productId;
-    _originalTransactionId = originalTransactionId;
-    _subscriptionStatus = subscriptionStatus;
-    _freeTaskUseTime = freeTaskUseTime;
     _updatedDate = updatedDate;
     _lastOpened = lastOpened;
     _lastStreakUpdate = lastStreakUpdate;
-    _transactionId = transactionId;
-    _purchaseToken = purchaseToken;
     _displayName = displayName;
     _parentName = parentName;
     _parentGender = parentGender;
@@ -84,12 +70,6 @@ class UserModel {
     bool fromConvert = false,
   }) {
     _uid = jsonObject['uid'];
-    _platform = jsonObject['platform'];
-    _productId = jsonObject['product_id'];
-    _originalTransactionId = jsonObject['original_transaction_id'];
-    _transactionId = jsonObject['transactionId'];
-    _subscriptionStatus = jsonObject['subscription_status'];
-    _purchaseToken = jsonObject['purchase_token'];
     _email = jsonObject['email'];
     _displayName = jsonObject['display_name'];
     _phoneNumber = jsonObject['phone_number'] ?? jsonObject['phoneNumber'];
@@ -246,32 +226,12 @@ class UserModel {
     } catch (e) {
       e;
     }
-    try {
-      if (fromConvert) {
-        if (jsonObject['free_task_use_time'] != null) {
-          _freeTaskUseTime = DateTime.parse(jsonObject['free_task_use_time']);
-        }
-      } else {
-        if (jsonObject['free_task_use_time'] != null) {
-          _freeTaskUseTime = (jsonObject['free_task_use_time'] as Timestamp)
-              .toDate();
-        }
-      }
-    } catch (e) {
-      e;
-    }
   }
 
   String? _uid;
 
-  String? _platform;
-  String? _productId;
   String? _email;
   String? _phoneNumber;
-  String? _originalTransactionId;
-  String? _subscriptionStatus;
-  String? _transactionId;
-  String? _purchaseToken;
   String? _displayName;
   String? _parentName;
   String? _parentGender;
@@ -282,7 +242,6 @@ class UserModel {
   String? _parentEmail;
 
   DateTime? _parentDateOfBirth;
-  DateTime? _freeTaskUseTime;
   DateTime? _updatedDate;
   DateTime? _lastOpened;
   DateTime? _lastStreakUpdate;
@@ -305,15 +264,8 @@ class UserModel {
 
   UserModel copyWith({
     String? uid,
-    String? platform,
-    String? productId,
     String? email,
     String? phoneNumber,
-    String? originalTransactionId,
-    String? subscriptionStatus,
-    String? transactionId,
-    String? purchaseToken,
-    DateTime? freeTaskUseTime,
     DateTime? updatedDate,
     DateTime? lastOpened,
     DateTime? lastStreakUpdate,
@@ -345,18 +297,11 @@ class UserModel {
   }) {
     return UserModel(
       uid: uid ?? _uid,
-      platform: platform ?? _platform,
       email: email ?? _email,
       phoneNumber: phoneNumber ?? _phoneNumber,
-      productId: productId ?? _productId,
-      subscriptionStatus: subscriptionStatus ?? _subscriptionStatus,
-      originalTransactionId: originalTransactionId ?? _originalTransactionId,
-      freeTaskUseTime: freeTaskUseTime ?? _freeTaskUseTime,
       updatedDate: updatedDate ?? _updatedDate,
       lastOpened: lastOpened ?? _lastOpened,
       lastStreakUpdate: lastStreakUpdate ?? _lastStreakUpdate,
-      transactionId: transactionId ?? _transactionId,
-      purchaseToken: purchaseToken ?? _purchaseToken,
       displayName: displayName ?? _displayName,
       parentName: parentName ?? _parentName,
       parentGender: parentGender ?? _parentGender,
@@ -387,31 +332,17 @@ class UserModel {
 
   String? get uid => _uid;
 
-  String? get platform => _platform;
-
-  String? get productId => _productId;
-
   String? get email => _email;
 
   String? get phoneNumber => _phoneNumber;
 
   String? get parentEmail => _parentEmail;
 
-  String? get subscriptionStatus => _subscriptionStatus;
-
-  String? get originalTransactionId => _originalTransactionId;
-
-  String? get transactionId => _transactionId;
-
-  String? get purchaseToken => _purchaseToken;
-
   DateTime? get updatedDate => _updatedDate;
 
   DateTime? get lastOpened => _lastOpened;
 
   DateTime? get lastStreakUpdate => _lastStreakUpdate;
-
-  DateTime? get freeTaskUseTime => _freeTaskUseTime;
 
   String? get displayName => _displayName;
 
@@ -485,21 +416,12 @@ class UserModel {
 
   Map<String, dynamic>? get jsonObject => _originalJson;
 
-  Map<String, dynamic> toJson({
-    bool forConvert = false,
-    bool updateFreeTaskTime = true,
-  }) {
+  Map<String, dynamic> toJson({bool forConvert = false}) {
     final Map<String, dynamic> map = <String, dynamic>{};
     map['uid'] = _uid;
 
-    map['platform'] = _platform;
     map['email'] = _email;
     map['phone_number'] = _phoneNumber;
-    map['product_id'] = _productId;
-    map['original_transaction_id'] = _originalTransactionId;
-    map['subscription_status'] = _subscriptionStatus;
-    map['transactionId'] = _transactionId;
-    map['purchase_token'] = _purchaseToken;
     map['display_name'] = _displayName;
     map['parent_name'] = _parentName;
     map['parent_gender'] = _parentGender;
@@ -584,24 +506,6 @@ class UserModel {
         if (_lastStreakUpdate != null) {
           Timestamp ts = Timestamp.fromDate(_lastStreakUpdate!);
           map['last_streak_update'] = ts;
-        }
-      }
-    } catch (e) {
-      e;
-    }
-
-    try {
-      if (updateFreeTaskTime) {
-        if (forConvert) {
-          if (_freeTaskUseTime != null) {
-            Timestamp ts = Timestamp.fromDate(_freeTaskUseTime!);
-            map['free_task_use_time'] = ts.toDate().toIso8601String();
-          }
-        } else {
-          if (_freeTaskUseTime != null) {
-            Timestamp ts = Timestamp.fromDate(_freeTaskUseTime!);
-            map['free_task_use_time'] = ts;
-          }
         }
       }
     } catch (e) {

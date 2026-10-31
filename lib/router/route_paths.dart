@@ -18,7 +18,6 @@ class RoutePaths {
   static const String base = '/base';
 
   // Active V2 paths
-  static const String subscription = '/subscription';
   static const String essentials = '/essentials';
   static const String allergies = '/allergies';
   static const String medications = '/medications';
