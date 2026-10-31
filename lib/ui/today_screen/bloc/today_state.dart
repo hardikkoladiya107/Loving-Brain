@@ -9,6 +9,46 @@ enum TodayMode { normal, newParent, importantHeadsUp }
 /// Destination for a Noticed insight card on Today.
 enum TodayNoticedDestination { none, sleepPattern, behaviourPattern }
 
+/// One daytime nap inside the sleep update sheet.
+class NapDraft {
+  const NapDraft({this.start, this.end, this.error = ''});
+
+  final String? start;
+  final String? end;
+  final String error;
+
+  bool get hasStart => start != null && start!.trim().isNotEmpty;
+
+  bool get hasEnd => end != null && end!.trim().isNotEmpty;
+
+  bool get isComplete => hasStart && hasEnd;
+
+  NapDraft copyWith({
+    String? start,
+    String? end,
+    String? error,
+    bool clearStart = false,
+    bool clearEnd = false,
+  }) {
+    return NapDraft(
+      start: clearStart ? null : (start ?? this.start),
+      end: clearEnd ? null : (end ?? this.end),
+      error: error ?? this.error,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is NapDraft &&
+        other.start == start &&
+        other.end == end &&
+        other.error == error;
+  }
+
+  @override
+  int get hashCode => Object.hash(start, end, error);
+}
+
 @freezed
 abstract class TodayState with _$TodayState {
   const factory TodayState({
@@ -65,8 +105,8 @@ abstract class TodayState with _$TodayState {
     // Check-in fields
     @Default(null) String? fellAsleepTime,
     @Default(null) String? wokeUpTime,
-    @Default(null) String? napStartTime,
-    @Default(null) String? napEndTime,
+    @Default(false) bool includeNaps,
+    @Default(<NapDraft>[]) List<NapDraft> napDrafts,
     @Default(false) bool showSleepUpdateErrors,
 
     // Mood

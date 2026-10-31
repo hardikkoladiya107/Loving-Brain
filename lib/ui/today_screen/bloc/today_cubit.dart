@@ -129,8 +129,8 @@ class TodayCubit extends Cubit<TodayState> {
     String? instantResultActionSubtitle,
     String? fellAsleepTime,
     String? wokeUpTime,
-    String? napStartTime,
-    String? napEndTime,
+    bool? includeNaps,
+    List<NapDraft>? napDrafts,
     bool clearSleepInputs = false,
     bool clearNapInputs = false,
     bool? showSleepUpdateErrors,
@@ -211,12 +211,12 @@ class TodayCubit extends Cubit<TodayState> {
             ? null
             : (fellAsleepTime ?? state.fellAsleepTime),
         wokeUpTime: clearSleepInputs ? null : (wokeUpTime ?? state.wokeUpTime),
-        napStartTime: (clearSleepInputs || clearNapInputs)
-            ? null
-            : (napStartTime ?? state.napStartTime),
-        napEndTime: (clearSleepInputs || clearNapInputs)
-            ? null
-            : (napEndTime ?? state.napEndTime),
+        includeNaps: (clearSleepInputs || clearNapInputs)
+            ? false
+            : (includeNaps ?? state.includeNaps),
+        napDrafts: (clearSleepInputs || clearNapInputs)
+            ? const <NapDraft>[]
+            : (napDrafts ?? state.napDrafts),
         showSleepUpdateErrors:
             showSleepUpdateErrors ?? state.showSleepUpdateErrors,
         selectedChildMoodIndex:
@@ -799,17 +799,77 @@ class TodayCubit extends Cubit<TodayState> {
   void setWokeUpTime(String time) =>
       changeProps(wokeUpTime: time, showSleepUpdateErrors: false);
 
-  void setNapStartTime(String time) =>
-      changeProps(napStartTime: time, showSleepUpdateErrors: false);
+  static const int maxNapsPerUpdate = 4;
+  static const String napOverlapError = 'This nap overlaps another nap';
 
-  void setNapEndTime(String time) =>
-      changeProps(napEndTime: time, showSleepUpdateErrors: false);
+  void setIncludeNaps(bool value) {
+    if (!value) {
+      changeProps(
+        includeNaps: false,
+        clearNapInputs: true,
+        showSleepUpdateErrors: false,
+      );
+      return;
+    }
+    final List<NapDraft> drafts = state.napDrafts.isEmpty
+        ? const <NapDraft>[NapDraft()]
+        : state.napDrafts;
+    changeProps(
+      includeNaps: true,
+      napDrafts: drafts,
+      showSleepUpdateErrors: false,
+    );
+  }
 
-  void setNapTimes(String? start, String? end) => changeProps(
-    napStartTime: start,
-    napEndTime: end,
-    showSleepUpdateErrors: false,
-  );
+  void addNapDraft() {
+    if (!state.includeNaps || state.napDrafts.length >= maxNapsPerUpdate) {
+      return;
+    }
+    final List<NapDraft> next = List<NapDraft>.from(state.napDrafts)
+      ..add(const NapDraft());
+    changeProps(napDrafts: next, showSleepUpdateErrors: false);
+  }
+
+  /// Extra naps can be removed. The first nap stays until the switch is turned off.
+  void removeNapDraft(int index) {
+    if (index <= 0 || index >= state.napDrafts.length) {
+      return;
+    }
+    final List<NapDraft> next = List<NapDraft>.from(state.napDrafts)
+      ..removeAt(index);
+    changeProps(napDrafts: next, showSleepUpdateErrors: false);
+    _refreshNapOverlapErrors();
+  }
+
+  void setNapDraftStart(int index, String time) {
+    _replaceNapDraft(index, start: time, clearError: true);
+    _refreshNapOverlapErrors();
+  }
+
+  void setNapDraftEnd(int index, String time) {
+    _replaceNapDraft(index, end: time, clearError: true);
+    _refreshNapOverlapErrors();
+  }
+
+  void _replaceNapDraft(
+    int index, {
+    String? start,
+    String? end,
+    String? error,
+    bool clearError = false,
+  }) {
+    if (index < 0 || index >= state.napDrafts.length) {
+      return;
+    }
+    final List<NapDraft> next = List<NapDraft>.from(state.napDrafts);
+    final NapDraft current = next[index];
+    next[index] = current.copyWith(
+      start: start,
+      end: end,
+      error: clearError ? '' : error,
+    );
+    changeProps(napDrafts: next, showSleepUpdateErrors: false);
+  }
 
   void clearNapTimes() => changeProps(clearNapInputs: true);
 
@@ -846,46 +906,224 @@ class TodayCubit extends Cubit<TodayState> {
     return null;
   }
 
-  Future<void> saveSleepLog({bool forceSave = false}) async {
-    final bool hasNight =
-        state.fellAsleepTime != null && state.wokeUpTime != null;
-    final bool hasNap = state.napStartTime != null && state.napEndTime != null;
+  int? _clockMinutes(String text) {
+    try {
+      final DateTime parsed = TodayLogRepo.parseTimeString(
+        text,
+        referenceDate: DateTime(2026, 1, 1),
+      );
+      return parsed.hour * 60 + parsed.minute;
+    } catch (_) {
+      return null;
+    }
+  }
 
-    if (!hasNight && !hasNap) {
-      triggerSleepUpdateErrors();
+  /// Indexes of naps that share any time with another nap.
+  /// A nap that ends at the same minute the next one starts is not an overlap.
+  Set<int> _overlappingNapIndexes(List<NapDraft> drafts) {
+    final List<({int index, int start, int end})> spans =
+        <({int index, int start, int end})>[];
+    for (int index = 0; index < drafts.length; index++) {
+      final NapDraft draft = drafts[index];
+      if (!draft.isComplete) {
+        continue;
+      }
+      if (draft.error.isNotEmpty && draft.error != napOverlapError) {
+        continue;
+      }
+      final int? startMin = _clockMinutes(draft.start!);
+      final int? endMin = _clockMinutes(draft.end!);
+      if (startMin == null || endMin == null || endMin <= startMin) {
+        continue;
+      }
+      if ((endMin - startMin) >= 720) {
+        continue;
+      }
+      spans.add((index: index, start: startMin, end: endMin));
+    }
+
+    final Set<int> overlapping = <int>{};
+    for (int left = 0; left < spans.length; left++) {
+      for (int right = left + 1; right < spans.length; right++) {
+        final bool sharesTime =
+            spans[left].start < spans[right].end &&
+            spans[right].start < spans[left].end;
+        if (sharesTime) {
+          overlapping.add(spans[left].index);
+          overlapping.add(spans[right].index);
+        }
+      }
+    }
+    return overlapping;
+  }
+
+  void _refreshNapOverlapErrors() {
+    if (!state.includeNaps) {
+      return;
+    }
+    final List<NapDraft> drafts = List<NapDraft>.from(state.napDrafts);
+    for (int index = 0; index < drafts.length; index++) {
+      if (drafts[index].error == napOverlapError) {
+        drafts[index] = drafts[index].copyWith(error: '');
+      }
+    }
+    final Set<int> overlapping = _overlappingNapIndexes(drafts);
+    for (final int index in overlapping) {
+      drafts[index] = drafts[index].copyWith(error: napOverlapError);
+    }
+    final bool hasError = drafts.any(
+      (NapDraft draft) => draft.error.trim().isNotEmpty,
+    );
+    changeProps(napDrafts: drafts, showSleepUpdateErrors: hasError);
+  }
+
+  /// Returns false and paints field errors when night or nap input cannot be saved.
+  bool _applySleepFormValidation({required DateTime now}) {
+    final bool nightStart =
+        state.fellAsleepTime != null && state.fellAsleepTime!.trim().isNotEmpty;
+    final bool nightEnd =
+        state.wokeUpTime != null && state.wokeUpTime!.trim().isNotEmpty;
+    final bool nightComplete = nightStart && nightEnd;
+    final bool nightPartial = nightStart != nightEnd;
+
+    final List<NapDraft> marked = <NapDraft>[];
+    bool napsValid = !state.includeNaps || state.napDrafts.isNotEmpty;
+
+    if (state.includeNaps) {
+      for (final NapDraft draft in state.napDrafts) {
+        String error = '';
+        if (!draft.hasStart || !draft.hasEnd) {
+          error = 'Required';
+        } else {
+          final int? startMin = _clockMinutes(draft.start!);
+          final int? endMin = _clockMinutes(draft.end!);
+          if (startMin == null || endMin == null) {
+            error = 'Choose a valid time';
+          } else if (endMin <= startMin) {
+            error = 'Nap must end after it starts';
+          } else if ((endMin - startMin) >= 720) {
+            error = 'Nap cannot be longer than 12 hours';
+          } else {
+            final DateTime startDt = TodayLogRepo.parseTimeString(
+              draft.start!,
+              referenceDate: now,
+            );
+            final DateTime endDt = TodayLogRepo.parseTimeString(
+              draft.end!,
+              referenceDate: now,
+            );
+            if (startDt.isAfter(now) || endDt.isAfter(now)) {
+              error = 'Nap time cannot be in the future';
+            }
+          }
+        }
+        if (error.isNotEmpty) {
+          napsValid = false;
+        }
+        marked.add(draft.copyWith(error: error));
+      }
+
+      final Set<int> overlapping = _overlappingNapIndexes(marked);
+      if (overlapping.isNotEmpty) {
+        napsValid = false;
+        for (final int index in overlapping) {
+          if (marked[index].error.isEmpty) {
+            marked[index] = marked[index].copyWith(error: napOverlapError);
+          }
+        }
+      }
+
+      if (napsValid && nightComplete) {
+        final ResolvedSleepInterval night = TodayLogRepo.resolveSleepInterval(
+          bedTimeText: state.fellAsleepTime!,
+          wakeTimeText: state.wokeUpTime!,
+          now: now,
+        );
+        for (int i = 0; i < marked.length; i++) {
+          final NapDraft draft = marked[i];
+          if (!draft.isComplete) {
+            continue;
+          }
+          final DateTime startDt = TodayLogRepo.parseTimeString(
+            draft.start!,
+            referenceDate: now,
+          );
+          final DateTime endDt = TodayLogRepo.parseTimeString(
+            draft.end!,
+            referenceDate: now,
+          );
+          final bool overlapsNight =
+              startDt.isBefore(night.wakeTime) && night.bedTime.isBefore(endDt);
+          if (overlapsNight) {
+            napsValid = false;
+            marked[i] = draft.copyWith(error: 'This nap overlaps night sleep');
+          }
+        }
+      }
+    }
+
+    final bool nothingToSave = !nightComplete && !state.includeNaps;
+    final bool invalid = nightPartial || nothingToSave || !napsValid;
+    if (invalid) {
+      changeProps(
+        napDrafts: state.includeNaps ? marked : state.napDrafts,
+        showSleepUpdateErrors: true,
+      );
+      return false;
+    }
+
+    final bool staleErrors = state.napDrafts.any(
+      (NapDraft draft) => draft.error.isNotEmpty,
+    );
+    if (state.includeNaps && (staleErrors || state.showSleepUpdateErrors)) {
+      changeProps(napDrafts: marked, showSleepUpdateErrors: false);
+    } else if (state.showSleepUpdateErrors) {
+      changeProps(showSleepUpdateErrors: false);
+    }
+    return true;
+  }
+
+  Future<void> saveSleepLog({bool forceSave = false}) async {
+    final DateTime now = DateTime.now();
+    if (!_applySleepFormValidation(now: now)) {
       return;
     }
 
+    final bool hasNight =
+        state.fellAsleepTime != null &&
+        state.fellAsleepTime!.trim().isNotEmpty &&
+        state.wokeUpTime != null &&
+        state.wokeUpTime!.trim().isNotEmpty;
+    final List<NapDraft> napsToSave = state.includeNaps
+        ? state.napDrafts.where((NapDraft draft) => draft.isComplete).toList()
+        : const <NapDraft>[];
+
     final String childId = _resolveTargetChildId();
     final String userUid = _resolveUserUid();
-    final DateTime now = DateTime.now();
     final int qualityIndex = state.sleepQualityIndex;
 
     // Check for duplicate sleep interval if not forced (Doc 06 §3)
     if (!forceSave) {
-      final List<ResolvedSleepInterval> intervals = <ResolvedSleepInterval>[];
+      final List<({DateTime bed, DateTime wake})> intervals =
+          <({DateTime bed, DateTime wake})>[];
       if (hasNight) {
-        intervals.add(
-          TodayLogRepo.resolveSleepInterval(
-            bedTimeText: state.fellAsleepTime!,
-            wakeTimeText: state.wokeUpTime!,
-            now: now,
-          ),
+        final ResolvedSleepInterval night = TodayLogRepo.resolveSleepInterval(
+          bedTimeText: state.fellAsleepTime!,
+          wakeTimeText: state.wokeUpTime!,
+          now: now,
         );
+        intervals.add((bed: night.bedTime, wake: night.wakeTime));
       }
-      if (hasNap) {
-        intervals.add(
-          TodayLogRepo.resolveSleepInterval(
-            bedTimeText: state.napStartTime!,
-            wakeTimeText: state.napEndTime!,
-            now: now,
-          ),
-        );
+      for (final NapDraft draft in napsToSave) {
+        intervals.add((
+          bed: TodayLogRepo.parseTimeString(draft.start!, referenceDate: now),
+          wake: TodayLogRepo.parseTimeString(draft.end!, referenceDate: now),
+        ));
       }
-      for (final ResolvedSleepInterval interval in intervals) {
+      for (final ({DateTime bed, DateTime wake}) interval in intervals) {
         final SleepLogModel? duplicate = await findOverlappingSleepLog(
-          bedTime: interval.bedTime,
-          wakeTime: interval.wakeTime,
+          bedTime: interval.bed,
+          wakeTime: interval.wake,
         );
         if (duplicate != null) {
           changeProps(duplicateSleepLogDetected: duplicate);
@@ -951,34 +1189,16 @@ class TodayCubit extends Cubit<TodayState> {
       }
     }
 
-    if (hasNap) {
-      final ResolvedSleepInterval interval = TodayLogRepo.resolveSleepInterval(
-        bedTimeText: state.napStartTime!,
-        wakeTimeText: state.napEndTime!,
-        now: now,
+    for (final NapDraft draft in napsToSave) {
+      final DateTime napBed = TodayLogRepo.parseTimeString(
+        draft.start!,
+        referenceDate: now,
       );
-      final DateTime napBed = interval.bedTime;
-      final DateTime napWake = interval.wakeTime;
+      final DateTime napWake = TodayLogRepo.parseTimeString(
+        draft.end!,
+        referenceDate: now,
+      );
       final int napDurationMins = napWake.difference(napBed).inMinutes;
-      if (napDurationMins <= 0) {
-        changeProps(
-          isLoading: false,
-          saveStatus: ApiResultStatus.error(
-            error: Exception('Nap end time must be after start time'),
-          ),
-        );
-        return;
-      }
-      if (napDurationMins >= 720) {
-        changeProps(
-          isLoading: false,
-          saveStatus: ApiResultStatus.error(
-            error: Exception('Nap duration cannot exceed 12 hours'),
-          ),
-        );
-        return;
-      }
-
       result = await TodayLogRepo.instance.addSleepLog(
         childId: childId,
         log: SleepLogModel(
@@ -986,8 +1206,8 @@ class TodayCubit extends Cubit<TodayState> {
           date: DateTime(now.year, now.month, now.day),
           bedTime: napBed,
           wakeTime: napWake,
-          fellAsleepTime: state.napStartTime,
-          wokeUpTime: state.napEndTime,
+          fellAsleepTime: draft.start,
+          wokeUpTime: draft.end,
           isNightWaking: false,
           sleepQualityIndex: qualityIndex,
           durationMinutes: napDurationMins,
@@ -996,6 +1216,10 @@ class TodayCubit extends Cubit<TodayState> {
           createdAt: now,
         ),
       );
+      if (result is Error<String>) {
+        changeProps(isLoading: false, isSuccess: false, saveStatus: result);
+        return;
+      }
     }
 
     if (result is Data<String>) {
@@ -1115,8 +1339,17 @@ class TodayCubit extends Cubit<TodayState> {
     final String prevEstimate = state.bedtimeEstimate;
     final String prevConfidence = state.confidenceLevel;
 
-    final String fellAsleep = state.fellAsleepTime ?? state.napStartTime ?? '';
-    final String wokeUp = state.wokeUpTime ?? state.napEndTime ?? '';
+    String fellAsleep = state.fellAsleepTime ?? '';
+    String wokeUp = state.wokeUpTime ?? '';
+    if (fellAsleep.isEmpty || wokeUp.isEmpty) {
+      for (final NapDraft draft in state.napDrafts) {
+        if (draft.isComplete) {
+          fellAsleep = draft.start!;
+          wokeUp = draft.end!;
+          break;
+        }
+      }
+    }
     if (fellAsleep.isEmpty || wokeUp.isEmpty) {
       triggerSleepUpdateErrors();
       return;

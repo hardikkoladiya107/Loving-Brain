@@ -67,7 +67,61 @@ void main() {
     cubit.setNapDraftEnd(1, '02:00 AM');
 
     await cubit.saveSleepLog();
-    expect(cubit.state.napDrafts[1].error, 'This nap overlaps another nap');
+    expect(cubit.state.napDrafts[0].error, TodayCubit.napOverlapError);
+    expect(cubit.state.napDrafts[1].error, TodayCubit.napOverlapError);
+    expect(cubit.state.isLoading, isFalse);
+
+    cubit.close();
+  });
+
+  test('overlapping naps are flagged on both rows as soon as times match', () {
+    final TodayCubit cubit = TodayCubit();
+    cubit.setIncludeNaps(true);
+    cubit.setNapDraftStart(0, '08:00 AM');
+    cubit.setNapDraftEnd(0, '09:30 AM');
+    cubit.addNapDraft();
+    cubit.setNapDraftStart(1, '09:00 AM');
+    cubit.setNapDraftEnd(1, '10:00 AM');
+
+    expect(cubit.state.showSleepUpdateErrors, isTrue);
+    expect(cubit.state.napDrafts[0].error, TodayCubit.napOverlapError);
+    expect(cubit.state.napDrafts[1].error, TodayCubit.napOverlapError);
+
+    cubit.addNapDraft();
+    cubit.setNapDraftStart(2, '09:15 AM');
+    cubit.setNapDraftEnd(2, '09:45 AM');
+    expect(cubit.state.napDrafts[2].error, TodayCubit.napOverlapError);
+
+    cubit.setNapDraftStart(1, '10:00 AM');
+    cubit.setNapDraftEnd(1, '10:40 AM');
+    cubit.setNapDraftStart(2, '11:00 AM');
+    cubit.setNapDraftEnd(2, '11:30 AM');
+    expect(cubit.state.napDrafts[0].error, isEmpty);
+    expect(cubit.state.napDrafts[1].error, isEmpty);
+    expect(cubit.state.napDrafts[2].error, isEmpty);
+
+    cubit.close();
+  });
+
+  test('identical nap times and a nap inside another nap are overlaps', () {
+    final TodayCubit cubit = TodayCubit();
+    cubit.setIncludeNaps(true);
+    cubit.setNapDraftStart(0, '08:00 AM');
+    cubit.setNapDraftEnd(0, '09:00 AM');
+    cubit.addNapDraft();
+    cubit.setNapDraftStart(1, '08:00 AM');
+    cubit.setNapDraftEnd(1, '09:00 AM');
+    expect(cubit.state.napDrafts[0].error, TodayCubit.napOverlapError);
+    expect(cubit.state.napDrafts[1].error, TodayCubit.napOverlapError);
+
+    cubit.setNapDraftStart(1, '08:15 AM');
+    cubit.setNapDraftEnd(1, '08:40 AM');
+    expect(cubit.state.napDrafts[0].error, TodayCubit.napOverlapError);
+    expect(cubit.state.napDrafts[1].error, TodayCubit.napOverlapError);
+
+    cubit.removeNapDraft(1);
+    expect(cubit.state.napDrafts.length, 1);
+    expect(cubit.state.napDrafts.first.error, isEmpty);
 
     cubit.close();
   });

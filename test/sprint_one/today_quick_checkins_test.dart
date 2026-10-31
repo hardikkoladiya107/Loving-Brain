@@ -289,12 +289,12 @@ void main() {
 
       cubit.setFellAsleepTime('01:30 PM');
       expect(cubit.state.fellAsleepTime, equals('01:30 PM'));
-      expect(cubit.state.napStartTime, isNull);
+      expect(cubit.state.includeNaps, isFalse);
       expect(cubit.state.showSleepUpdateErrors, isFalse);
 
       cubit.setWokeUpTime('03:00 PM');
       expect(cubit.state.wokeUpTime, equals('03:00 PM'));
-      expect(cubit.state.napEndTime, isNull);
+      expect(cubit.state.napDrafts, isEmpty);
 
       cubit.toggleNightWaking(true);
       expect(cubit.state.isNightWaking, isTrue);
@@ -302,15 +302,16 @@ void main() {
       cubit.setSleepQuality(4);
       expect(cubit.state.sleepQualityIndex, equals(4));
 
-      cubit.setNapStartTime('01:00 PM');
-      cubit.setNapEndTime('02:30 PM');
-      expect(cubit.state.napStartTime, equals('01:00 PM'));
-      expect(cubit.state.napEndTime, equals('02:30 PM'));
+      cubit.setIncludeNaps(true);
+      cubit.setNapDraftStart(0, '01:00 PM');
+      cubit.setNapDraftEnd(0, '02:30 PM');
+      expect(cubit.state.napDrafts.first.start, equals('01:00 PM'));
+      expect(cubit.state.napDrafts.first.end, equals('02:30 PM'));
       expect(cubit.state.fellAsleepTime, equals('01:30 PM'));
 
       cubit.clearNapTimes();
-      expect(cubit.state.napStartTime, isNull);
-      expect(cubit.state.napEndTime, isNull);
+      expect(cubit.state.includeNaps, isFalse);
+      expect(cubit.state.napDrafts, isEmpty);
       expect(cubit.state.fellAsleepTime, equals('01:30 PM'));
     });
 

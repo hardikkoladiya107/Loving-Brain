@@ -20,11 +20,9 @@ import 'instant_result_sheet.dart';
 Future<void> showAddSleepUpdateSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: const Color(0xFFFFFFFF),
+    backgroundColor: Colors.transparent,
     isScrollControlled: true,
-    constraints: BoxConstraints(
-      maxHeight: MediaQuery.of(context).size.height * 0.85,
-    ),
+    useSafeArea: true,
     builder: (BuildContext context) => const AddSleepUpdateSheet(),
   );
 }
@@ -164,217 +162,332 @@ class AddSleepUpdateSheet extends StatelessWidget {
         );
       },
       builder: (BuildContext context, TodayState state) {
-        final bool nightIncomplete =
-            (state.fellAsleepTime == null) != (state.wokeUpTime == null);
-        final bool napIncomplete =
-            (state.napStartTime == null) != (state.napEndTime == null);
-        final bool missingBoth =
-            state.fellAsleepTime == null &&
-            state.wokeUpTime == null &&
-            state.napStartTime == null &&
-            state.napEndTime == null;
+        final bool nightStartMissing =
+            state.fellAsleepTime == null ||
+            state.fellAsleepTime!.trim().isEmpty;
+        final bool nightEndMissing =
+            state.wokeUpTime == null || state.wokeUpTime!.trim().isEmpty;
+        final bool missingEverything =
+            nightStartMissing && nightEndMissing && !state.includeNaps;
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 2.h,
-                      width: 60.w,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.r),
-                        color: greyColor7,
-                      ),
-                    ),
-                  ],
-                ),
-                12.spaceH,
-                'Sleep update'.appText(
-                  fontSize: 28.sp,
-                  fraunces: true,
-                  textAlign: TextAlign.start,
-                ),
-                12.spaceH,
-                'Takes about twenty seconds'.appText(
-                  color: greyColor,
-                  fontSize: 14.sp,
-                  textAlign: TextAlign.start,
-                ),
-                24.spaceH,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _buildTimeInput(
-                        label: 'FELL ASLEEP',
-                        time: state.fellAsleepTime,
-                        isError:
-                            state.showSleepUpdateErrors &&
-                            (missingBoth ||
-                                (state.fellAsleepTime == null &&
-                                    state.wokeUpTime != null)),
-                        errorText: 'Required',
-                        onTap: () => _pickTime(
-                          context: context,
-                          onPicked: (String formatted) {
-                            context.read<TodayCubit>().setFellAsleepTime(
-                              formatted,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    12.spaceW,
-                    Expanded(
-                      child: _buildTimeInput(
-                        label: 'WOKE UP',
-                        time: state.wokeUpTime,
-                        isError:
-                            state.showSleepUpdateErrors &&
-                            (missingBoth ||
-                                (state.wokeUpTime == null &&
-                                    state.fellAsleepTime != null)),
-                        errorText: 'Required',
-                        onTap: () => _pickTime(
-                          context: context,
-                          onPicked: (String formatted) {
-                            context.read<TodayCubit>().setWokeUpTime(formatted);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                24.spaceH,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _buildTimeInput(
-                        label: 'NAP STARTED',
-                        time: state.napStartTime,
-                        isError:
-                            state.showSleepUpdateErrors &&
-                            napIncomplete &&
-                            state.napStartTime == null,
-                        errorText: 'Required with nap end',
-                        onTap: () => _pickTime(
-                          context: context,
-                          onPicked: (String formatted) {
-                            context.read<TodayCubit>().setNapStartTime(
-                              formatted,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    12.spaceW,
-                    Expanded(
-                      child: _buildTimeInput(
-                        label: 'NAP ENDED',
-                        time: state.napEndTime,
-                        isError:
-                            state.showSleepUpdateErrors &&
-                            napIncomplete &&
-                            state.napEndTime == null,
-                        errorText: 'Required with nap start',
-                        onTap: () => _pickTime(
-                          context: context,
-                          onPicked: (String formatted) {
-                            context.read<TodayCubit>().setNapEndTime(formatted);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                8.spaceH,
-                'Log night sleep, a nap, or both.'.appText(
-                  fontSize: 12.sp,
-                  color: greyColor6,
-                  textAlign: TextAlign.start,
-                ),
-                24.spaceH,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    'Night waking'.appText(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.sp,
-                    ),
-                    CupertinoSwitch(
-                      value: state.isNightWaking,
-                      onChanged: (bool value) =>
-                          context.read<TodayCubit>().toggleNightWaking(value),
-                      activeTrackColor: primaryColor,
-                    ),
-                  ],
-                ),
-                24.spaceH,
-                'SLEEP QUALITY'.appText(
-                  color: secondaryColor,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 12.sp,
-                  letterSpacing: 1.2,
-                ),
-                12.spaceH,
-                Row(
-                  children: List.generate(
-                    5,
-                    (int index) => GestureDetector(
-                      onTap: () =>
-                          context.read<TodayCubit>().setSleepQuality(index),
-                      child: Container(
-                        height: 24.h,
-                        width: 24.w,
-                        margin: EdgeInsets.only(right: 12.w),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color:
-                              (state.sleepQualityIndex >= 0 &&
-                                  index <= state.sleepQualityIndex)
-                              ? secondaryColor
-                              : greyColor11,
-                        ),
-                      ),
+        return DraggableScrollableSheet(
+          initialChildSize: 0.94,
+          minChildSize: 0.45,
+          maxChildSize: 0.96,
+          expand: false,
+          builder:
+              (BuildContext sheetContext, ScrollController scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24.r),
                     ),
                   ),
-                ),
-                24.spaceH,
-                AppButton(
-                  isLoading: state.isLoading,
-                  title: 'Save update',
-                  onTap: () {
-                    final bool hasNight =
-                        state.fellAsleepTime != null &&
-                        state.wokeUpTime != null;
-                    final bool hasNap =
-                        state.napStartTime != null && state.napEndTime != null;
-                    if ((!hasNight && !hasNap) ||
-                        nightIncomplete ||
-                        napIncomplete) {
-                      context.read<TodayCubit>().triggerSleepUpdateErrors();
-                    } else {
-                      context.read<TodayCubit>().saveSleepLog();
-                    }
-                  },
-                  backgroundColor: primaryColor,
-                  textColor: Colors.white,
-                ),
-                24.spaceH,
-              ],
-            ).appPadding(all: 16.r),
-          ),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+                    ),
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 2.h,
+                                width: 60.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  color: greyColor7,
+                                ),
+                              ),
+                            ],
+                          ),
+                          12.spaceH,
+                          'Sleep update'.appText(
+                            fontSize: 28.sp,
+                            fraunces: true,
+                            textAlign: TextAlign.start,
+                          ),
+                          12.spaceH,
+                          'Takes about twenty seconds'.appText(
+                            color: greyColor,
+                            fontSize: 14.sp,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: _buildTimeInput(
+                                  label: 'FELL ASLEEP',
+                                  time: state.fellAsleepTime,
+                                  isError:
+                                      state.showSleepUpdateErrors &&
+                                      (missingEverything ||
+                                          (nightStartMissing &&
+                                              !nightEndMissing)),
+                                  errorText: 'Required',
+                                  onTap: () => _pickTime(
+                                    context: context,
+                                    onPicked: (String formatted) {
+                                      context
+                                          .read<TodayCubit>()
+                                          .setFellAsleepTime(formatted);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              12.spaceW,
+                              Expanded(
+                                child: _buildTimeInput(
+                                  label: 'WOKE UP',
+                                  time: state.wokeUpTime,
+                                  isError:
+                                      state.showSleepUpdateErrors &&
+                                      (missingEverything ||
+                                          (nightEndMissing &&
+                                              !nightStartMissing)),
+                                  errorText: 'Required',
+                                  onTap: () => _pickTime(
+                                    context: context,
+                                    onPicked: (String formatted) {
+                                      context.read<TodayCubit>().setWokeUpTime(
+                                        formatted,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          8.spaceH,
+                          'Night sleep is enough on its own.'.appText(
+                            fontSize: 12.sp,
+                            color: greyColor6,
+                            textAlign: TextAlign.start,
+                          ),
+                          24.spaceH,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    'Add a nap'.appText(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 16.sp,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    4.spaceH,
+                                    'Daytime nap for today'.appText(
+                                      fontSize: 12.sp,
+                                      color: greyColor6,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              CupertinoSwitch(
+                                key: const ValueKey<String>(
+                                  'include_naps_switch',
+                                ),
+                                value: state.includeNaps,
+                                onChanged: (bool value) => context
+                                    .read<TodayCubit>()
+                                    .setIncludeNaps(value),
+                                activeTrackColor: primaryColor,
+                              ),
+                            ],
+                          ),
+                          if (state.includeNaps) ...[
+                            16.spaceH,
+                            for (
+                              int index = 0;
+                              index < state.napDrafts.length;
+                              index++
+                            )
+                              _buildNapRow(context, state, index),
+                            if (state.napDrafts.length <
+                                TodayCubit.maxNapsPerUpdate) ...[
+                              8.spaceH,
+                              AppButton(
+                                key: const ValueKey<String>('add_nap_button'),
+                                title: 'Add nap',
+                                onTap: () =>
+                                    context.read<TodayCubit>().addNapDraft(),
+                                backgroundColor: Colors.white,
+                                borderColor: greyColor12,
+                                textColor: greyColor9,
+                              ),
+                            ],
+                          ],
+                          24.spaceH,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              'Night waking'.appText(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16.sp,
+                              ),
+                              CupertinoSwitch(
+                                value: state.isNightWaking,
+                                onChanged: (bool value) => context
+                                    .read<TodayCubit>()
+                                    .toggleNightWaking(value),
+                                activeTrackColor: primaryColor,
+                              ),
+                            ],
+                          ),
+                          24.spaceH,
+                          'SLEEP QUALITY'.appText(
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12.sp,
+                            letterSpacing: 1.2,
+                          ),
+                          12.spaceH,
+                          Row(
+                            children: List.generate(
+                              5,
+                              (int index) => GestureDetector(
+                                onTap: () => context
+                                    .read<TodayCubit>()
+                                    .setSleepQuality(index),
+                                child: Container(
+                                  height: 24.h,
+                                  width: 24.w,
+                                  margin: EdgeInsets.only(right: 12.w),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color:
+                                        (state.sleepQualityIndex >= 0 &&
+                                            index <= state.sleepQualityIndex)
+                                        ? secondaryColor
+                                        : greyColor11,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          24.spaceH,
+                          AppButton(
+                            isLoading: state.isLoading,
+                            title: 'Save update',
+                            onTap: () {
+                              context.read<TodayCubit>().saveSleepLog();
+                            },
+                            backgroundColor: primaryColor,
+                            textColor: Colors.white,
+                          ),
+                          24.spaceH,
+                        ],
+                      ).appPadding(all: 16.r),
+                    ),
+                  ),
+                );
+              },
         );
       },
+    );
+  }
+
+  Widget _buildNapRow(BuildContext context, TodayState state, int index) {
+    final NapDraft draft = state.napDrafts[index];
+    final bool showError =
+        state.showSleepUpdateErrors && draft.error.trim().isNotEmpty;
+    final bool bothFilled = draft.hasStart && draft.hasEnd;
+    final bool startError = showError && (!draft.hasStart || bothFilled);
+    final bool endError = showError && (!draft.hasEnd || bothFilled);
+    final bool canDelete = index > 0;
+    final bool showHeading = state.napDrafts.length > 1;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (showHeading)
+            Row(
+              children: [
+                Expanded(
+                  child: 'Nap ${index + 1}'.appText(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                if (canDelete)
+                  IconButton(
+                    key: ValueKey<String>('delete_nap_$index'),
+                    onPressed: () =>
+                        context.read<TodayCubit>().removeNapDraft(index),
+                    icon: Icon(
+                      Icons.delete_outline_rounded,
+                      color: primaryColor,
+                      size: 22.sp,
+                    ),
+                  ),
+              ],
+            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _buildTimeInput(
+                  label: 'NAP STARTED',
+                  time: draft.start,
+                  isError: startError,
+                  showErrorText: false,
+                  errorText: draft.error,
+                  onTap: () => _pickTime(
+                    context: context,
+                    onPicked: (String formatted) {
+                      context.read<TodayCubit>().setNapDraftStart(
+                        index,
+                        formatted,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              12.spaceW,
+              Expanded(
+                child: _buildTimeInput(
+                  label: 'NAP ENDED',
+                  time: draft.end,
+                  isError: endError,
+                  showErrorText: false,
+                  errorText: draft.error,
+                  onTap: () => _pickTime(
+                    context: context,
+                    onPicked: (String formatted) {
+                      context.read<TodayCubit>().setNapDraftEnd(
+                        index,
+                        formatted,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (showError) ...[
+            4.spaceH,
+            draft.error.appText(
+              fontSize: 12.sp,
+              color: Colors.red,
+              fontWeight: FontWeight.w500,
+              textAlign: TextAlign.start,
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -383,6 +496,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
     required String? time,
     required bool isError,
     String? errorText,
+    bool showErrorText = true,
     required VoidCallback onTap,
     String dummyText = 'HH:MM AM',
   }) {
@@ -428,7 +542,7 @@ class AddSleepUpdateSheet extends StatelessWidget {
             ),
           ),
         ),
-        if (isError) ...[
+        if (isError && showErrorText) ...[
           4.spaceH,
           (errorText ?? 'Please select time').appText(
             fontSize: 12.sp,

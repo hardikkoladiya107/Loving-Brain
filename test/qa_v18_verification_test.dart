@@ -274,22 +274,55 @@ void main() {
         );
         await tester.pump(const Duration(milliseconds: 100));
 
-        expect(find.text('NAP STARTED'), findsOneWidget);
-        expect(find.text('NAP ENDED'), findsOneWidget);
+        expect(find.text('NAP STARTED'), findsNothing);
+        expect(find.text('Add a nap'), findsOneWidget);
 
         cubit.setFellAsleepTime('10:53 PM');
         await tester.pump(const Duration(milliseconds: 100));
         expect(find.text('10:53 PM'), findsOneWidget);
-        expect(cubit.state.napStartTime, isNull);
+        expect(cubit.state.includeNaps, isFalse);
+        expect(cubit.state.napDrafts, isEmpty);
 
-        cubit.setNapStartTime('01:00 PM');
-        cubit.setNapEndTime('02:15 PM');
+        cubit.setIncludeNaps(true);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(find.text('NAP STARTED'), findsOneWidget);
+        expect(find.text('Add nap'), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey<String>('delete_nap_1')),
+          findsNothing,
+        );
+
+        cubit.setNapDraftStart(0, '01:00 PM');
+        cubit.setNapDraftEnd(0, '02:15 PM');
         await tester.pump(const Duration(milliseconds: 100));
         expect(cubit.state.fellAsleepTime, equals('10:53 PM'));
-        expect(cubit.state.napStartTime, equals('01:00 PM'));
-        expect(cubit.state.napEndTime, equals('02:15 PM'));
+        expect(cubit.state.napDrafts.first.start, equals('01:00 PM'));
+        expect(cubit.state.napDrafts.first.end, equals('02:15 PM'));
         expect(find.text('01:00 PM'), findsOneWidget);
         expect(find.text('02:15 PM'), findsOneWidget);
+
+        cubit.addNapDraft();
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(find.text('NAP STARTED'), findsNWidgets(2));
+        expect(
+          find.byKey(const ValueKey<String>('delete_nap_1')),
+          findsOneWidget,
+        );
+
+        cubit.removeNapDraft(0);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(cubit.state.napDrafts.length, 2);
+
+        cubit.removeNapDraft(1);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(cubit.state.napDrafts.length, 1);
+        expect(find.text('NAP STARTED'), findsOneWidget);
+
+        cubit.setIncludeNaps(false);
+        await tester.pump(const Duration(milliseconds: 100));
+        expect(find.text('NAP STARTED'), findsNothing);
+        expect(cubit.state.fellAsleepTime, equals('10:53 PM'));
+        expect(cubit.state.napDrafts, isEmpty);
 
         await cubit.close();
       },
