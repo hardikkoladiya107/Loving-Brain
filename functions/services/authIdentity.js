@@ -10,7 +10,10 @@ const {
   OTP_MAX_ATTEMPTS,
   OTP_TTL_MS,
   OTP_SEND_COOLDOWN_MS,
+  APP_REVIEW_EMAIL,
   normalizeEmail,
+  isAppReviewEmail,
+  isAppReviewOtp,
   generateOtpCode,
   hashOtp,
   createSalt,
@@ -221,11 +224,70 @@ async function backfillInvitationToUid(db, params) {
   return count;
 }
 
+/**
+ * Give the App Review account a finished parent profile and one sample child
+ * so reviewers open Today instead of onboarding.
+ * @param {FirebaseFirestore.Firestore} db
+ * @param {string} uid
+ * @return {Promise<void>}
+ */
+async function ensureAppReviewProfile(db, uid) {
+  const userRef = db.collection("users").doc(uid);
+  const snap = await userRef.get();
+  const data = snap.exists ? (snap.data() || {}) : {};
+  const children = Array.isArray(data.children) ? data.children : [];
+  const ready = data.is_onboarding_completed === true &&
+    Boolean(data.parent_name) &&
+    (Boolean(data.default_child) || children.length > 0);
+  if (ready) return;
+
+  const childRef = db.collection("children").doc();
+  const childDob = admin.firestore.Timestamp.fromDate(
+      new Date("2024-06-15T00:00:00.000Z"),
+  );
+  await childRef.set({
+    child_name: "Mia",
+    child_gender: "Girl",
+    child_age: "2 years",
+    child_dob: childDob,
+    relationship_to_child: "Mother",
+    parent_reference_ids: [uid],
+    primary_parent_uid: uid,
+    concerns: ["Sleep"],
+    primary_concern: "Sleep",
+    success_goal: "Easier bedtimes",
+    usual_wake_time: "7:00 AM",
+    usual_bedtime: "7:30 PM",
+    usual_naps: "1",
+    night_wakings: "1-2",
+    difficult_times: ["Bedtime"],
+    possible_triggers: ["Tired"],
+  });
+
+  await userRef.set({
+    uid,
+    email: APP_REVIEW_EMAIL,
+    display_name: "Apple Review",
+    parent_name: "Apple Review",
+    relationship_to_child: "Mother",
+    preferred_language: "English",
+    is_onboarding_completed: true,
+    is_google_sign_in: false,
+    is_apple_in: false,
+    streak: 0,
+    children: admin.firestore.FieldValue.arrayUnion(childRef),
+    default_child: childRef,
+  }, {merge: true});
+}
+
 module.exports = {
   OTP_MAX_ATTEMPTS,
   OTP_TTL_MS,
   OTP_SEND_COOLDOWN_MS,
+  APP_REVIEW_EMAIL,
   normalizeEmail,
+  isAppReviewEmail,
+  isAppReviewOtp,
   generateOtpCode,
   hashOtp,
   createSalt,
@@ -234,4 +296,5 @@ module.exports = {
   resolveUidForEmail,
   mergeProfileOntoAuthUid,
   backfillInvitationToUid,
+  ensureAppReviewProfile,
 };

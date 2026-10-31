@@ -26,6 +26,10 @@ exports.sendEmailOtp = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Email is required.");
   }
 
+  if (authIdentity.isAppReviewEmail(email)) {
+    return {success: true, message: "OTP sent successfully."};
+  }
+
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) {
     logger.error("BREVO_API_KEY configuration is missing at runtime.");
@@ -105,6 +109,24 @@ exports.verifyEmailOtp = onCall(async (request) => {
 
   if (!email || !otpCode) {
     throw new HttpsError("invalid-argument", "Email and OTP are required.");
+  }
+
+  if (authIdentity.isAppReviewEmail(email)) {
+    if (!authIdentity.isAppReviewOtp(email, otpCode)) {
+      throw new HttpsError("permission-denied", "Invalid OTP.");
+    }
+    const reviewUid = await authIdentity.resolveUidForEmail(db, email);
+    await authIdentity.ensureAppReviewProfile(db, reviewUid);
+    try {
+      const reviewToken = await admin.auth().createCustomToken(reviewUid);
+      return {success: true, token: reviewToken, uid: reviewUid};
+    } catch (error) {
+      logger.error("Error generating custom token:", error);
+      throw new HttpsError(
+          "internal",
+          "Error generating authentication token.",
+      );
+    }
   }
 
   const otpDocRef = db.collection("otps").doc(email);

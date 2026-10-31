@@ -7,12 +7,35 @@ const OTP_MAX_ATTEMPTS = 5;
 const OTP_TTL_MS = 10 * 60 * 1000;
 const OTP_SEND_COOLDOWN_MS = 60 * 1000;
 
+/** App Review sign-in. This inbox is not mailed a code. */
+const APP_REVIEW_EMAIL = "applereview@lovingbrain.com";
+const APP_REVIEW_OTP = "590274";
+
 /**
  * @param {string|null|undefined} email
  * @return {string}
  */
 function normalizeEmail(email) {
   return (email || "").trim().toLowerCase();
+}
+
+/**
+ * @param {string|null|undefined} email
+ * @return {boolean}
+ */
+function isAppReviewEmail(email) {
+  return normalizeEmail(email) === APP_REVIEW_EMAIL;
+}
+
+/**
+ * Fixed code for the App Review account only.
+ * @param {string|null|undefined} email
+ * @param {string|null|undefined} otp
+ * @return {boolean}
+ */
+function isAppReviewOtp(email, otp) {
+  const code = String(otp || "").trim();
+  return isAppReviewEmail(email) && code === APP_REVIEW_OTP;
 }
 
 /**
@@ -132,7 +155,11 @@ module.exports = {
   OTP_MAX_ATTEMPTS,
   OTP_TTL_MS,
   OTP_SEND_COOLDOWN_MS,
+  APP_REVIEW_EMAIL,
+  APP_REVIEW_OTP,
   normalizeEmail,
+  isAppReviewEmail,
+  isAppReviewOtp,
   generateOtpCode,
   hashOtp,
   createSalt,
