@@ -1012,8 +1012,17 @@ class TodayCubit extends Cubit<TodayState> {
               draft.end!,
               referenceDate: now,
             );
-            if (startDt.isAfter(now) || endDt.isAfter(now)) {
-              error = 'Nap time cannot be in the future';
+            final bool startAhead = startDt.isAfter(now);
+            final bool endAhead = endDt.isAfter(now);
+            if (startAhead && endAhead) {
+              error =
+                  '${draft.start} and ${draft.end} haven’t happened yet. Change both to times that are already past.';
+            } else if (endAhead) {
+              error =
+                  '${draft.end} hasn’t happened yet. Change Nap ended to a time that is already past.';
+            } else if (startAhead) {
+              error =
+                  '${draft.start} hasn’t happened yet. Change Nap started to a time that is already past.';
             }
           }
         }

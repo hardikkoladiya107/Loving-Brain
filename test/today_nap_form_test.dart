@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:loving_brain/ui/today_screen/bloc/today_cubit.dart';
 
 void main() {
@@ -123,6 +124,26 @@ void main() {
     expect(cubit.state.napDrafts.length, 1);
     expect(cubit.state.napDrafts.first.error, isEmpty);
 
+    cubit.close();
+  });
+
+  test('a future nap end names that time in the error', () async {
+    final DateTime now = DateTime.now();
+    final DateTime start = now.subtract(const Duration(minutes: 40));
+    final DateTime end = now.add(const Duration(hours: 1));
+    final String startLabel = DateFormat('hh:mm a').format(start);
+    final String endLabel = DateFormat('hh:mm a').format(end);
+
+    final TodayCubit cubit = TodayCubit();
+    cubit.setIncludeNaps(true);
+    cubit.setNapDraftStart(0, startLabel);
+    cubit.setNapDraftEnd(0, endLabel);
+    await cubit.saveSleepLog();
+
+    expect(cubit.state.showSleepUpdateErrors, isTrue);
+    expect(cubit.state.napDrafts.first.error, contains(endLabel));
+    expect(cubit.state.napDrafts.first.error, contains('already past'));
+    expect(cubit.state.isLoading, isFalse);
     cubit.close();
   });
 
